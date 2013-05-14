@@ -1,5 +1,8 @@
-<img src="https://github.com/cheizer/MacPatch/master/Images/MPLogo_64x64.png" alt="MPLogo" title="MPLogo">
-MacPatch
+<div>
+    <img src="https://github.com/cheizer/MacPatch/raw/gh-pages/images/MPLogo_64x64.png" style="vertical-align: middle;"/>
+    <span style="vertical-align: middle;font-size: 28px;">MacPatch</span>
+</div>
+
 ========
 
 ### Overview
