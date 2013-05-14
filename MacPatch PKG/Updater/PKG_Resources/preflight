@@ -1,0 +1,41 @@
+#!/bin/bash	
+
+# ***************************************************************************************
+# PreFlight Script for MacPatch Client Updater Installer
+# ver 2.0
+# Created By Charles Heizer @ LLNL
+# 
+#
+# ***************************************************************************************
+
+systemVersion=`/usr/bin/sw_vers -productVersion`
+majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
+minorVer=`echo $systemVersion | cut -d . -f 2`
+buildVer=`echo $systemVersion | cut -d . -f 3`
+
+if [ $majorVer -le 106 ]; then
+	echo "OS version is not supported."
+	exit 1;
+fi
+
+dts=`date +%Y%m%d%H%M%S`
+
+if [ -e "/Library/LaunchDaemons/gov.llnl.mp.agentUpdater.plist" ]; then
+	
+	/bin/launchctl stop gov.llnl.mp.agentUpdater
+	sleep 1
+	/bin/launchctl unload -w /Library/LaunchDaemons/gov.llnl.mp.agentUpdater.plist
+	sleep 1
+	
+	echo "Remove LaunchDaemon Files..."
+	rm -rf "/Library/LaunchDaemons/gov.llnl.mp.agentUpdater.plist"
+	
+	echo "Remove MPAgentUp2Date binary and files..."
+	if [ ! -d "/Library/MacPatch/.logs" ]; then
+		mkdir -p "/Library/MacPatch/.logs"
+	fi	
+	mv "/Library/MacPatch/Updater/Logs/MPAgentUp2Date.log" "/Library/MacPatch/.logs/MPAgentUp2Date.log.${dts}"
+	rm -rf "/Library/MacPatch/Updater"
+fi	
+
+exit 0

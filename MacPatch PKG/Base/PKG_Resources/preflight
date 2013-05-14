@@ -1,0 +1,85 @@
+#!/bin/sh
+
+# ***************************************************************************************
+# PreFlight Script for MacPatch Client Installer
+# ver 1.5
+# Created By Charles Heizer
+# LLNL
+#
+#
+# ***************************************************************************************
+
+systemVersion=`/usr/bin/sw_vers -productVersion`
+majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
+minorVer=`echo $systemVersion | cut -d . -f 2`
+buildVer=`echo $systemVersion | cut -d . -f 3`
+
+if [ $majorVer -le 106 ]; then
+	echo "OS version is not supported."
+	exit 1;
+fi
+
+MPBaseDir="/Library/MacPatch"
+MPClientDir="${MPBaseDir}/Client"
+dts=`date +%Y%m%d%H%M%S`
+usrID="NULL"
+if [ -e "$1/Contents/Resources/ccusr" ]; then
+	usrID=`"$1"/Contents/Resources/ccusr`
+fi
+
+
+# ***************************************************************************************
+# Kill the running MP processes
+
+# Launch Daemons
+if [ -f "/Library/LaunchDaemons/gov.llnl.mp.agent.plist" ]; then	
+	/bin/launchctl remove gov.llnl.mp.agent
+	sleep 2
+	/bin/launchctl unload -w /Library/LaunchDaemons/gov.llnl.mp.agent.plist
+	sleep 2
+fi
+
+if [ -f "/Library/LaunchDaemons/gov.llnl.mp.worker.plist" ]; then	
+	/bin/launchctl remove gov.llnl.mp.worker
+	sleep 2
+	/bin/launchctl unload -w /Library/LaunchDaemons/gov.llnl.mp.worker.plist
+	sleep 2
+fi	
+
+# Launch Agents
+if [ -f "/Library/LaunchAgents/gov.llnl.mpRBWatcher.plist" ]; then
+	if [ "$usrID" != "NULL" ]; then
+		chroot -u $usrID / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mpRBWatcher.plist
+	fi	
+fi
+
+if [ -f "/Library/LaunchAgents/gov.llnl.mp.status.plist" ]; then
+	if [ "$usrID" != "NULL" ]; then
+		chroot -u $usrID / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist
+	fi
+fi
+
+# ***************************************************************************************
+# MacPatch Pre-Deployment
+#
+
+# Remove the temp Migration Dir if exists
+if [ -d "/private/tmp/MPMigration" ]; then
+	rm -rf "/private/tmp/MPMigration"
+fi
+mkdir -p "/private/tmp/MPMigration"
+
+if [ -f "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist" ]; then
+	cp "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist" "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist"
+fi
+
+if [ -f "/Library/LaunchDaemons/gov.llnl.mp.worker.plist" ]; then	
+	rm /Library/LaunchDaemons/gov.llnl.mp.worker.plist
+fi	
+
+if [ -d "$MPClientDir" ]; then
+	echo "Removing $MPClientDir"
+	rm -rf "$MPClientDir"
+fi
+
+exit 0

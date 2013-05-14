@@ -1,0 +1,169 @@
+#!/bin/sh
+
+# ***************************************************************************************
+# PostFlight Script for MacPatch Client Installer
+# ver 1.5
+# Created By Charles Heizer
+# LLNL
+#
+# ***************************************************************************************
+
+MP_ROOT="/Library/MacPatch"
+MP_ROOT_CLIENT="/Library/MacPatch/Client"
+
+# System Version Info
+sysVersion=$(uname -r)
+sysMajorVersion=${sysVersion%%.*}
+tempMinorVersion=${sysVersion#*.}
+sysMinorVersion=${tempMinorVersion%%.*}
+
+# Current Logged in user info
+cUsr="null"
+if [ -e "$1/Contents/Resources/ccusr" ]; then
+	cUsr=`"$1"/Contents/Resources/ccusr`
+	echo "Current User is: $cUsr"
+fi
+
+# Script Functions
+isIload () {
+	pid=`ps -e | grep iLoadAssistant | grep -v grep | awk '{print $1}'`
+	echo $pid
+}
+
+function setOwnerAndPerms {
+	if [ -f "$1" ]; then
+		/usr/sbin/chown root:wheel $1
+		/bin/chmod 0644 $1
+	fi
+}
+
+# ******************************************************************
+# Set owner & permissions
+setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.agent.plist
+setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.worker.plist
+setOwnerAndPerms /Library/LaunchAgents/gov.llnl.mpRBWatcher.plist
+setOwnerAndPerms /Library/LaunchAgents/gov.llnl.mp.status.plist
+
+if [ ! -d "/Library/Application Support/MPClientStatus" ]; then
+	mkdir "/Library/Application Support/MPClientStatus"
+fi
+chmod +a 'everyone allow read,write,delete,add_file,file_inherit,directory_inherit' "/Library/Application Support/MPClientStatus"
+
+# Define swuad plist vars
+agentPrefs="/Library/Preferences/gov.llnl.mpagent"
+agentPrefsPlist="/Library/Preferences/gov.llnl.mpagent.plist"
+
+# ******************************************************************
+# Migration data ...
+#
+if [ -f "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist" ]; then
+	"$1/Contents/Resources/MPPrefMigrate" -F "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist" -T "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
+fi
+
+# ******************************************************************
+# Set Agent Plist data ...
+#
+if [ -e "$1/Contents/Resources/gov.llnl.mpagent.plist" ]; then
+	echo "Backup old plist file..."
+	echo "Migrate settings from old plist to new"
+	"$1/Contents/Resources/mergePrefs.py" -b -i "$1/Contents/Resources/gov.llnl.mpagent.plist" -t "${agentPrefsPlist}"
+fi
+
+# Copy in client version info
+if [ -e "$1/Contents/Resources/.mpVersion.plist" ]; then
+	cp "$1/Contents/Resources/.mpVersion.plist" "/Library/MacPatch/Client/.mpVersion.plist"
+fi
+
+# ******************************************************************
+# Run Agent Components to populate DB with current info ************
+#
+
+# Run Client Check-in
+/Library/MacPatch/Client/MPAgent -c
+sleep 1
+
+# Run Client AV Scan
+/Library/MacPatch/Client/MPInventory -t All
+sleep 1
+
+# If iLoadAssitant is not running, scan for patches, AV, and inventory
+if [ -z "$(isIload)" ]; then
+
+	# Run Client Vul Scan
+	/Library/MacPatch/Client/MPAgentExec -s
+	sleep 1
+	
+	# Run Client AV Scan
+	/Library/MacPatch/Client/MPAgentExec -a
+	sleep 1
+else
+	CNT=`/usr/libexec/PlistBuddy -c "Print mpTasks" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist | grep Dict | wc -l`
+	#loop CNT
+	NXTDAY=$(date -j -v+1d +"%Y-%m-%d")
+	INT=0
+	while [ $INT -lt $CNT ]; do 
+		if [ `/usr/libexec/PlistBuddy -c "Print :mpTasks:$INT:cmd" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist` == "kMPVulScan" ]; then
+			/usr/libexec/PlistBuddy -c "Set :mpTasks:$INT:startdate $NXTDAY" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist
+		elif [ `/usr/libexec/PlistBuddy -c "Print :mpTasks:$INT:cmd" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist` == "kMPVulUpdate" ]; then
+			/usr/libexec/PlistBuddy -c "Set :mpTasks:$INT:startdate $NXTDAY" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist
+		fi
+		INT=`expr $INT + 1`
+	done
+fi
+
+# ******************************************************************
+# Quick Clean Up from older release ********************************
+#
+if [ -f "/var/root/Library/Preferences/com.apple.loginwindow.plist" ]; then
+	/usr/bin/defaults delete /var/root/Library/Preferences/com.apple.loginwindow LogoutHook
+fi
+
+# ******************************************************************
+# Launch the MPAgent service ***************************************
+#
+/bin/launchctl load -w /Library/LaunchDaemons/gov.llnl.mp.agent.plist
+/bin/sleep 2
+
+# ******************************************************************
+# Launch Worker		    ********************************************
+# 
+/bin/launchctl load -w /Library/LaunchDaemons/gov.llnl.mp.worker.plist
+sleep 2
+
+# ******************************************************************
+# Start LaunchAgent Apps *******************************************
+#
+# Note: On Mac OS X 10.6 and higher they have to stoped and started as 
+# the current logged in user.
+#
+
+if [ "$cUsr" != "null" ]; then
+	uPid=`ps -aex -o pid,user,comm | grep "loginwindow.app" | grep "$cUsr" | sed 's/^[ \t]*//' | cut -d " " -f 1`
+	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.mpRBWatcher.plist`
+	echo "mpRBWatcher($uPid)=$res"
+	
+	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.mp.status.plist`
+	echo "mpStatus($uPid)=$res"
+fi
+
+# Without this, may have a hard time upgrading 
+if [ $sysMajorVersion -ge 10 ] ; then
+	pkgutil --forget gov.llnl.macpatch.base
+	pkgutil --forget gov.llnl.macpatch.updater
+else
+	if [ -d "/Library/Receipts/MPBaseClient.pkg" ]; then
+		rm -rf "/Library/Receipts/MPBaseClient.pkg"
+	fi
+	if [ -d "/Library/Receipts/MPUpdateClient.pkg" ]; then
+		rm -rf "/Library/Receipts/MPUpdateClient.pkg"
+	fi	
+fi
+
+# ******************************************************************
+# Symlink MPLogs dir to /L/Logs ************************************
+#
+if [ ! -e "/Library/Logs/MacPatch" ]; then
+	ln -s /Library/MacPatch/Client/Logs /Library/Logs/MacPatch
+fi
+
+exit 0;

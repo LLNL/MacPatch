@@ -1,0 +1,101 @@
+#!/usr/bin/python
+
+# mergePrefs.py
+# Jorge Escobar
+# 1/30/2013
+
+# Usage:
+#	mergePrefs -b -i /path/to/infile.plist -t /path/to/target.plist
+#	-b, --backup
+#		backup target plist before changing
+#	-i, --infile
+#		plist used to merge with target plist
+#	-t, --target
+#		plist that is the target of the infile plist
+
+import os, sys, getopt
+import plistlib
+import xml.parsers.expat as expat
+import datetime
+import re
+
+## Functions ##
+
+def usage():
+	print "Usage: mergePrefs -b -i /path/to/infile.plist -t /path/to/target.plist"
+	print "       -b, --backup     backup target plist before changing"
+	print "       -i, --infile     plist used to merge with target plist"
+	print "       -t, --target     plist that is the target of the infile plist"
+
+def safeReadPlist(plistPath):
+# This function returns an empty dict if it fails to read the plist
+	convertedPlistPath = "/tmp/tmp.plist"
+	myPlist = dict()
+	
+	# Check if plist exists
+	if not os.path.isfile(plistPath):
+		print "%s does not exist." % plistPath
+		return myPlist
+	
+	# Try reading the plist as-is
+	try:
+		myPlist = plistlib.Plist.fromFile(plistPath)
+	# If there was an ExpatError the plist was probably binary, lets convert it to xml
+	except (expat.ExpatError):
+		# Convert plist to xml format
+		os.system("/usr/bin/plutil -convert xml1 %s -o %s" % (plistPath, convertedPlistPath))
+		
+		# Try reading it now
+		try:
+			myPlist = plistlib.Plist.fromFile(convertedPlistPath)
+		# If there was an error this time, idk ... this plist has issues
+		except (ImportError):
+			print "Sorry there was an error with %s" % plistPath
+			sys.exit(1)
+	except (ImportError):
+		print "Sorry there was an error with %s" % plistPath
+		sys.exit(1)
+	except:
+		print 'Unexpected error:', sys.exc_info()[0]
+		sys.exit(1)
+	return myPlist
+
+## Main ##
+
+backup = False
+
+try:
+	opts, args = getopt.getopt(sys.argv[1:],"bt:i:",["backup", "target=", "infile="])
+except getopt.GetoptError:
+	usage()
+	sys.exit(2)
+for opt, arg in opts:
+	if opt in ("-t", "--target"):
+		targetPlist = safeReadPlist(arg)	# if file doesn't exist an empty dict is created
+		targetPlistPath = arg
+	if opt in ("-i", "--infile"):
+		inPlist = safeReadPlist(arg)
+	if opt in ("-b", "--backup"):
+		backup = True
+
+# Merge default settings
+targetPlist.update(inPlist.default)
+
+# Merge enforced settings
+targetPlist.update(inPlist.enforced)
+
+# Merge local "perm" settings, if file exists
+LOCAL_PERM_PLIST_PATH = "/Library/Preferences/gov.llnl.mpagent.perm.plist"
+if os.path.isfile(LOCAL_PERM_PLIST_PATH):
+	permPlist = safeReadPlist(LOCAL_PERM_PLIST_PATH)
+	targetPlist.update(permPlist)
+
+# Backup target plist if requrested
+if backup == True:
+	if os.path.isfile(targetPlistPath):
+		now = str(datetime.datetime.now())
+		timestamp = re.sub('[^\w]', '', now)	# removes non alphas
+		os.rename(targetPlistPath, "%s.%s" % (targetPlistPath, timestamp))
+
+# Write out new plist
+plistlib.writePlist(targetPlist, targetPlistPath)

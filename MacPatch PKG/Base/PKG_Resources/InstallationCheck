@@ -1,0 +1,18 @@
+#!/bin/sh
+
+########################################################
+
+systemVersion=`/usr/bin/sw_vers -productVersion`
+majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
+minorVer=`echo $systemVersion | cut -d . -f 2`
+buildVer=`echo $systemVersion | cut -d . -f 3`
+
+if [ $majorVer -le 106 ]; then
+	EXIT_VALUE=113
+fi
+
+EXIT_VALUE=0
+
+########################################################
+
+exit $EXIT_VALUE;
