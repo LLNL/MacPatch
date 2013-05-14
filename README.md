@@ -1,3 +1,6 @@
+<p align="center" >
+  <img src="https://github.com/AFNetworking/AFNetworking/raw/gh-pages/afnetworking-logo.png" alt="AFNetworking" title="AFNetworking">
+</p>
 MacPatch
 ========
 
