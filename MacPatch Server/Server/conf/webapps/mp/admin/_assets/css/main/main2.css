@@ -1,0 +1,136 @@
+@charset "UTF-8";
+/* CSS Document */
+
+/* Alternating Row Colors (Supposed to simulate iTunes look) */
+/* Used with spry tags                                       */
+.even {
+	background-color: #FFFFFF;
+}
+.odd {
+	background-color: #EDF3FE;
+}
+
+/* CLASS - Section */
+.resultsListTable {
+	background-color: #000000;
+	border-spacing: 1px;
+	border:solid;
+	border-width:thin;
+	*border-collapse: expression('separate', cellSpacing = '1px');
+}
+
+.resultsListTable th {
+	background-color: #CCCCCC;
+	padding: 4px;
+	text-align:center;
+	font-size:14px;
+}
+
+.resultsListTable td {
+	padding: 4px;
+	font-size:11px;
+}
+
+ct1 {
+	font-size:16px;
+	line-height: 42px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	vertical-align: bottom;
+}	
+
+table.generictable {
+	font-family: Arial, Helvetica, sans-serif;
+	margin:10px 0pt 15px;
+	margin: 0px 0pt 4px;
+	font-size: 12px;
+	text-align: left;
+}
+
+table.generictable a {
+	font-size: 11px;
+	color: #000000;
+	border: none;
+}
+
+table.formTable {
+	background-color: #000000;
+	border-spacing: 1px;
+	*border-collapse: expression('separate', cellSpacing = '1px');
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left;
+}
+
+table.formTable th {
+	background-color: #CCCCCC;
+	padding: 4px;
+	font: normal 12px Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	vertical-align: top;
+}
+
+table.formTable td {
+	background-color: #FFF;
+	font: normal 12px Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	vertical-align: top;
+	overflow:hidden;
+}
+// Compilance CIS Table
+table.cisTable {
+	background-color: #000000;
+	border-spacing: 1px;
+	*border-collapse: expression('separate', cellSpacing = '1px');
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left;
+}
+
+table.cisTable th {
+	background-color: #CCCCCC;
+	padding: 4px;
+	font: normal 12px Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	vertical-align: top;
+}
+
+table.cisTable td {
+	background-color: white;
+	font: normal 12px Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	vertical-align: top;
+	overflow:hidden;
+	white-space: normal
+}
+
+
+#input { 
+	width:500px;
+}
+
+#bodySize {
+	width: 1100px;
+	height: 1000px;
+	margin-top: 0;
+	margin-right: auto;
+	margin-bottom: 0;
+	margin-left: auto;
+}
+
+pre
+{
+white-space: pre-wrap; /* CSS2.1 compliant */
+white-space: -moz-pre-wrap; /* Mozilla-based browsers */
+white-space: o-pre-wrap; /* Opera 7+ */
+}
+
+/* ID - Section
+table#resultsList2 {
+    background-color:#000000;
+}
+*/

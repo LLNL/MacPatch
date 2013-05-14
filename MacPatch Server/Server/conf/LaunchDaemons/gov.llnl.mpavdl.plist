@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Disabled</key>
+	<true/>
+	<key>Label</key>
+	<string>gov.llnl.MPAVDownloader</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Library/MacPatch/Server/bin/MPAVDownloader</string>
+		<string>-p</string>
+		<string>/Library/MacPatch/Server/conf/etc/gov.llnl.mpavdl.plist</string>
+	</array>
+	<key>StartInterval</key>
+	<integer>43200</integer>
+	<key>ServiceDescription</key>
+	<string>MacPatch SAV AV Defs Downloader</string>
+	<key>StandardOutPath</key>
+	<string>/Library/MacPatch/Server/Logs/mpAVDL_stdout.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Library/MacPatch/Server/Logs/mpAVDL_stderr.log</string>
+</dict>
+</plist>

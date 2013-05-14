@@ -1,0 +1,78 @@
+MacPatch Components Licenses
+
+------------------------------------------------------
+C & Objective-C Components
+------------------------------------------------------
+
+• asi-http-request (BSD License)
+http://allseeing-i.com/ASIHTTPRequest/
+
+• NSData & NSString -- Base64Extensions (AS IS)
+http://www.dribin.org/dave/resources/files/
+
+• NSFileManager+DirectoryLocations (AS IS)
+http://cocoawithlove.com/
+
+• JSONKit (BSD License)
+http://github.com/johnezang/JSONKit
+
+• LibComponentLogging (MIT license)
+http://0xc0.de/trace
+https://github.com/aharren/LibComponentLogging-Core
+
+• RegexKitLite (BSD License)
+http://regexkit.sourceforge.net/
+
+• NSDate+Helper (AS IS)
+https://github.com/billymeltdown/nsdate-helper
+
+• FMDB (MIT License)
+https://github.com/ccgus/fmdb
+
+• NSDirectoryServices (None)
+http://javworld.com/Extreme/DirServ.html
+
+------------------------------------------------------
+Web Components
+------------------------------------------------------
+
+• OpenBD Ready-2-Run Jetty 7.5.4
+http://www.openbluedragon.org/
+OpenBD - GPL ( http://www.openbluedragon.org/zerocost/ )
+Jetty - LICENSE-APACHE-2.0 and LICENSE-ECLIPSE-1.0
+
+• JQuery (MIT License)
+http://jquery.com/
+http://jquery.org/license/
+
+• jqGrid (MIT License)
+http://www.trirand.com/blog/
+http://www.trirand.com/blog/?page_id=932 (License)
+http://www.opensource.org/licenses/mit-license.php
+
+• jQuery Context Menu Plugin (GPL & MIT License)
+http://abeautifulsite.net/blog/2008/09/jquery-context-menu-plugin/
+Dual License:
+GPL - http://www.opensource.org/licenses/gpl-3.0.html
+MIT - http://www.opensource.org/licenses/mit-license.php
+
+• YUI Library (BSD License)
+http://developer.yahoo.com/yui/2/
+BSD - http://developer.yahoo.com/yui/license.html
+
+• tablesorter (GPL & MIT License)
+http://tablesorter.com/docs/
+Dual licensed under MIT or GPL licenses.
+http://www.opensource.org/licenses/mit-license.php
+http://www.opensource.org/licenses/gpl-license.php
+
+• Smart Wizard
+http://tech-laboratory.blogspot.com/
+Creative Commons Attribution-ShareAlike 3.0 Unported License.
+http://creativecommons.org/licenses/by-sa/3.0/
+
+• DataMgr (GNU Lesser General Public License)
+http://datamgr.riaforge.org/
+License: 
+LGPL (GNU Lesser General Public License)
+http://www.opensource.org/licenses/lgpl-license.php

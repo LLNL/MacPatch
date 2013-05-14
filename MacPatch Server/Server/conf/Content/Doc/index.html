@@ -1,0 +1,426 @@
+<html>
+<head>
+	<title>MacPatch</title>
+	<link href="css/main.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+
+.sectionHeadName {
+	font-size: 18px;
+	color:#000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+.sectionText {
+	font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: normal;
+}
+
+a.aText:link {color:#000000}
+a.aText:visited {color:#000000}
+a.aText:active {color:#000000}
+
+.sectionIndented {
+	padding-top: 10px;
+   padding-left: 20pt;
+}
+
+.sectionIndentedFigureText {
+   padding-left: 20pt;
+   font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: normal;
+}
+
+.style0 a {font-size: 12px; color:#000000;}
+.style1 {font-size: 12px}
+.style2 {font-size: 12px; font-weight: bold; }
+.style3 {font-size: 12px; font-style: italic; }
+.style4 {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.ul_table {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	margin-bottom:12px;
+	border: 1px solid black;
+	border-collapse:collapse;
+}
+.ul_table th {
+	padding: 4px;
+	border: 1px solid black;
+	background:#CCC;
+}
+.ul_table td {
+	padding-left:10px;
+	border: 1px solid black;
+}
+</style>
+</head>
+<body>
+	<div id="headermain">
+    	<div id="headerbanner">
+    		<table cellpadding="0" cellspacing="0" width="1100">
+                <tr>
+                  <td width="10">
+                    <img src="images/BannerLeftCorner.gif" />
+                  </td>
+                  <td valign="top" bgcolor="#000000">
+                    <img src="images/macpatchbanner.jpg" />
+                  </td>
+                  <td align="right" bgcolor="#000000" valign="bottom">  
+                    <a href="/admin">Admin Login</a>
+                  </td>
+                    <td width="10">
+                    <img src="images/BannerRightCorner.gif" />
+                    </td>
+                </tr>
+            </table>
+    	</div>
+        <div id="headermenu">
+        	<table cellpadding="0" cellspacing="0" width="1100" background="images/article-title-bg-apple.png">
+                <tr height="30">
+                	<td><a href="/clients" class="headermenuIndentFirst">Client Download</a>&nbsp;</td>
+                </tr>
+            </table>
+        </div>
+        <div id="headerStatusBar">
+            &nbsp;
+        </div>
+    </div>
+	<!--- Main Body Section-->
+    <div id="bodymain">
+    	<div id="bodycontainer">
+          <br />
+          <h2>MacPatch 2.1.x Documentation</h2>
+        <div>
+          <p class="sectionHeadName">Overview </p>
+          <p class="sectionText">MacPatch simplifies the act of patching your Mac OS X based systems. The client relies on using the built-in software update application for patching the Mac OS X system updates and it's own scan and patch engine for custom patches. MacPatch offers features and functionality that provide Mac OS X administrators with best possible patching solution to meet the challenges of supporting Mac OS X in the enterprise today. </p>
+          <blockquote>
+            <p class="sectionText"><span class="sectionText"><strong><em>Features Include</em></strong></span></p>
+          </blockquote>
+          <ul>
+            <li><span class="sectionText">Apple Software update server support</span></li>
+            <li><span class="sectionText">Custom patch creation</span></li>
+            <li><span class="sectionText">Custom patch groups</span></li>
+            <li><span class="sectionText">Patch baselines</span></li>
+            <li><span class="sectionText">Client reboot notification</span></li>
+            <li><span class="sectionText">Inventory Collection</span></li>
+            <li><span class="sectionText">Reporting</span></li>
+          </ul>
+          <hr />
+          <p class="sectionHeadName">Deployment</p>
+          <p class="sectionText">The deployment of the client is fairly straightforward and simple. The client installer is in the Apple PKG format. With the installer being in this format you have the option of using LANDesk or something like Apple Remote Desktop. Once the client is deployed you can accept the client default settings or push out a custom property list file (plist), with your desired settings. </p>
+          <hr />
+          <p class="sectionHeadName">System Requirements</p>
+          <p class="sectionText">Mac OS X Intel 32 & 64bit<br />
+          Mac OS X 10.6.8 and higher.</p>
+          <hr />
+          <p class="sectionText"><span class="sectionHeadName">MacPatch File &amp; Applications</span><br />
+            <br />
+            This is a break down of the client related files and folders.<br />
+            <br />
+            <strong>Client Directory</strong>: /Library/MacPatch/Client 
+          </p>
+          <div class="sectionIndented">
+			<table class="ul_table">
+            	<tr>
+            	  <th align="center"><strong>Name</strong></th>
+            	  <th align="center"><strong>Type</strong></th>
+            	  <th align="center"><strong>Description</strong></th>
+           	  </tr>
+            	<tr>
+            	  <td>.tasks</td>
+            	  <td>Directory</td>
+            	  <td>Contains all MacPatch client tasks</td>
+          	  </tr>
+            	<tr>
+                	<td>Data</td>
+                    <td>Directory</td>
+                    <td>Used for inventory files and downloads</td>
+                </tr>
+                <tr>
+                	<td>Logs</td>
+                    <td>Directory</td>
+                    <td>All of the client logs</td>
+                </tr>
+                <tr>
+                  <td>MPAgent</td>
+                  <td>Tool</td>
+                  <td>MacPatch primary agent/scheduler</td>
+                </tr>
+                <tr>
+                  <td>MPAgentExec</td>
+                  <td>Tool</td>
+                  <td>MacPatch Agent Task Executor</td>
+                </tr>
+                <tr>
+                  <td>MPClientStatus.app</td>
+                  <td>Application</td>
+                  <td>Menu bar application.</td>
+                </tr>
+                <tr>
+                  <td>MPWorker</td>
+                  <td>Tool</td>
+                  <td>Helper application for  elevated rights.</td>
+                </tr>
+                <tr>
+                  <td>MPLogout.app</td>
+                  <td>Application</td>
+                  <td>Software update gui for installing updates on logout</td>
+                </tr>
+                <tr>
+                  <td>MPReboot.app</td>
+                  <td>Application</td>
+                  <td>Reboot notification</td>
+                </tr>
+                <tr>
+                  <td>MPTask Editor.app</td>
+                  <td>Application</td>
+                  <td>Edit MacPatch agent tasks</td>
+                </tr>
+                <tr>
+                  <td>Self Patch.app</td>
+                  <td>Application</td>
+                  <td>MacPatch self patch application.</td>
+                </tr>
+                <tr>
+                  <td>Tools</td>
+                  <td>Directory</td>
+                  <td>Contains Support Tools</td>
+                </tr>
+                <tr>
+                	<td>MPRebootD</td>
+                    <td>Application</td>
+                    <td>MacPatch reboot watcher, will promt end-user if reboot is needed.</td>
+                </tr>
+            </table>
+			<span class="sectionText">
+          </span></div>
+          <span class="sectionText">
+          <p><strong>Client Property List Files</strong>:</p></span>
+          <div class="sectionIndented">
+          <table class="ul_table">
+          		<tr>
+            	  <th align="center"><strong>File</strong></th>
+            	  <th align="center"><strong>Description</strong></th>
+           	  </tr>
+            	<tr>
+                	<td>/Library/Preferences/gov.llnl.mpagent.plist</td>
+                    <td>Primary Agent Config File</td>
+                </tr>
+                <tr>
+                	<td>/Library/Preferences/gov.llnl.mpagent.perm.plist</td>
+                    <td>Enforced Attributes for Agent Config File</td>
+                </tr>
+          </table>
+        </div>
+		<span class="sectionText"><strong>Self-Updater Directory</strong>: /Library/MacPatch/Updater</span>
+          
+        <div class="sectionIndented">
+            <table class="ul_table">
+            	<tr>
+            	  <th align="center"><strong>Name</strong></th>
+            	  <th align="center"><strong>Type</strong></th>
+            	  <th align="center"><strong>Description</strong></th>
+           	  </tr>
+              <tr>
+                <td>MPAgentUp2Date</td>
+                <td>Tool</td>
+                <td>MacPatch Client Updater daemon</td>
+              </tr>
+              <tr>
+                <td>Log</td>
+                <td>Directory</td>
+                <td>All of the client logs</td>
+              </tr>
+            </table>
+          </div>
+        <span class="sectionText"></span>
+        <hr />
+		<p class="sectionHeadName">Usage</p> 
+		<p class="sectionText">
+			The MacPatch application does not take a lot of steps to get it up and running. By default if you install the client and leave it in the default client group it will be patched daily at 12:30PM and it will receive the entire vendor recommended patches and updates.
+			If you want to take the product and make it work for you and to see what's going on in your environment you'll need to do some customizing. The first thing I would recommend is organizing your clients by putting then in a Client Group. This is done my changing the &quot;Domain&quot; property  value (Figure 1) in the gov.llnl.mpagent.plist. This can be done using the "Property List Editor" application that comes with the developer tools.
+		</p>
+		<div class="sectionIndented">
+			<img width=434 height=277 src="docs/MacPatchOverview_files/image002.png" />
+            <br />
+            <span class="sectionIndentedFigureText">Figure 1</span>
+            <br />
+		</div>
+		<p class="sectionText">
+			A few more changes that you may want to consider are <strong>Client Vulnerability Scan</strong> time, <strong>Client Vulnerability Update</strong> time.
+		</p>
+        <p class="sectionText">
+        Using the MacPatch task editor application ("MPTask Editor.app") update the "Interval" time for the selected task (Figure 2). Note, you will need admin priviledges to permform this function.
+        </p>
+        <div class="sectionIndented">
+		  <img src="docs/MacPatchOverview_files/MPTask_Editor_001.png" />
+            <br />
+            <span class="sectionIndentedFigureText">Figure 2</span>
+            <br />
+		</div>
+		<blockquote>
+		  <p class="sectionText">&nbsp;</p>
+		</blockquote>
+		<p class="sectionText">
+		  The last  change you'll want to consider is optional. It's creating your own patch group. A patch group is a custom group of client patches. So if you don't want to deploy a patch to your clients for whatever reason you can. The first step is to login to the MacPatch web admin section and choose Build Patch Group (Figure 3)
+		</p>
+      	<div class="sectionIndented">
+			<img width=355 height=187 src="images/buildPatchGroup.png" />
+            <br />
+            <span class="sectionIndentedFigureText">Figure 3</span>
+            <br />
+		</div>
+        <p class="sectionText">
+        	Select and unselect which patches you want to choose and save the new patch group, No Spaces In the Name (Figure 3b). By default the recommended patches are selected.
+ 		</p>
+        <div class="sectionIndented"> <img src="images/buildPatchGroupAndSave.png" alt="Figure2b" width=532 height=271 /> <br />
+          <span class="sectionIndentedFigureText">Figure 3b</span><br />
+        </div>
+        <p class="sectionText">
+			Now that the new patch groups has been created you'll want to assign it to the clients, to do this you'll need to edit the gov.llnl.swuad.plist file again. 
+            The value you need to change is the "<strong>PatchGroup</strong>" attribute (Figure 4).
+		</p>
+        <div class="sectionIndented">
+			<img width=434 height=277 src="docs/MacPatchOverview_files/image006.png" />
+            <br />
+            <span class="sectionIndentedFigureText">Figure 4</span>
+            <br />
+		</div>
+        <p class="sectionText">
+			You'll want to change the value to the name of the patch group you just created.
+ 		</p>
+        <p class="sectionText">
+		  Once all of your changes are done to the property list file you can either deploy it before you install the client of afterwards.
+		</p>
+		<hr />
+		<p class="sectionHeadName">Client Preferences Settings</p> 
+        <p class="sectionText">
+       	<span style="font-weight:bold;">Default Attributes and Settings</span><br />
+			Plist file: /Library/Preferences/gov.llnl.mpagent.plist
+		</p>
+		<div class="sectionIndented">
+			<table class="ul_table">
+            	<tr>
+            	  <th align="center"><strong>Property</strong></th>
+            	  <th align="center"><strong>Description</strong></th>
+            	  <th align="center"><strong>Default Value</strong></th>
+            	  <th align="center"><strong>Required</strong></th>
+            	  <th align="center"><strong>Managed</strong></th>
+           	  </tr>
+            	<tr>
+                	<td>AllowClient</td>
+                    <td>1 Yes, 0 No</td>
+                    <td>Default 1</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                	<td>AllowServer</td>
+                    <td>1 Yes, 0 No</td>
+                    <td>Default 0</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                </tr>
+            	<tr>
+                	<td>Description</td>
+                    <td>Description of the settings</td>
+                    <td>Default Global</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                	<td>DialogText</td>
+                    <td>Dialog Text used for the Reboot Application (Depricated)</td>
+                    <td>Default "Call your local support or call ext. 4-HELP"</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                	<td>Domain</td>
+                    <td>This is used for creating client groups. (e.g. SMSG-Systems)</td>
+                    <td>Default "Default"</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                  <td>MPServerAddress</td>
+                  <td>MacPatch server address</td>
+                  <td>mpprod01.llnl.gov</td>
+                  <td>Yes</td>
+                  <td>No</td>
+                </tr>
+                <tr>
+                  <td>MPServerPort</td>
+                  <td>MacPatch server port</td>
+                  <td>2600</td>
+                  <td>Yes</td>
+                  <td>No</td>
+                </tr>
+                <tr>
+                  <td>MPServerSSL</td>
+                  <td>MacPatch server uses ssl (1 Yes, 0 No)</td>
+                  <td>1</td>
+                  <td>Yes</td>
+                  <td>No</td>
+                </tr>
+                <tr>
+                  <td>PatchState</td>
+                  <td>Change allowable patch state for install</td>
+                  <td>Default Production</td>
+                  <td>No</td>
+                  <td>No</td>
+                </tr>
+                <tr>
+                	<td>Reboot</td>
+                    <td>1 Yes, 0 No (Allow System to be Rebooted)</td>
+                    <td>Default 1</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                	<td>PatchGroup</td>
+                    <td>The name of the patch group for which the client uses</td>
+                    <td>Default is "RecommendedPatches"</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                  <td>MPProxyEnabled</td>
+                  <td>Enable MacPatch proxy server support</td>
+                  <td>1 Yes, 0 No</td>
+                  <td>0</td>
+                  <td>No</td>
+                </tr>
+      		</table>
+		</div>  
+        
+        <p class="sectionText"><b>MPClientStatus Application</b></p>  
+        <p class="sectionText">Plist file(s): /Library/Preferences/gov.llnl.MPClientStatus.plist or ~/Library/Preferences/gov.llnl.MPClientStatus.plist</p>
+        <div class="sectionIndented">
+              <table class="ul_table">
+                <tr>
+                  <th align="center"><strong>Property</strong></th>
+                  <th align="center"><strong>Description</strong></th>
+                  <th align="center"><strong>Default Value</strong></th>
+                  <th align="center"><strong>Required</strong></th>
+                </tr>
+                <tr>
+                  <td>EnableASUS</td>
+                  <td>Allows end-user to open SoftwareUpdate gui application.</td>
+                  <td>No</td>
+                  <td>No</td>
+                </tr>
+              </table>
+        </div>
+        <br>
+        </div>
+		</div> <!--- bodycontainer-->
+	</div> <!--- container-->
+</body>
+</html>
