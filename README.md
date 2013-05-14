@@ -1,6 +1,4 @@
-<p align="center" >
-  <img src="https://github.com/cheizer/MacPatch/master/Images/MPLogo_64x64.png" alt="MPLogo" title="MPLogo">
-</p>
+<img src="https://github.com/cheizer/MacPatch/master/Images/MPLogo_64x64.png" alt="MPLogo" title="MPLogo">
 MacPatch
 ========
 
