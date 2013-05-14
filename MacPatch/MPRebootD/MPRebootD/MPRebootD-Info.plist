@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2013 Lawrence Livremore National Laboratory. All rights reserved.</string>
+	<key>MPInfo</key>
+	<string>MacPatch 2.1.0 Client Software</string>
+	<key>CFBundleIdentifier</key>
+	<string>gov.llnl.MPRebootD</string>
+	<key>CFBundleName</key>
+	<string>MPRebootD</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+</dict>
+</plist>
