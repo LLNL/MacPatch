@@ -1,7 +1,5 @@
 #<img src="https://github.com/cheizer/MacPatch/raw/gh-pages/images/MPLogo_64x64.png" alt="MPLogo" title="MPLogo"> MacPatch
 
-========
-
 ## Overview
 
 MacPatch simplifies the act of patching and installing software on Mac OS X based systems. The client relies on using the built-in software update application for patching the Mac OS X system updates and it's own scan and patch engine for custom patches. 
@@ -35,6 +33,7 @@ Mac OS X 10.7.0 and higher.
 
 ###DataBase
 MySQL 5.1.x and higher
+
 
 ========
 ## License
