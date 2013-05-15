@@ -5,8 +5,6 @@ MacPatch simplifies the act of patching and installing software on Mac OS X base
 
 MacPatch offers features and functionality that provide Mac OS X administrators with best possible patching solution to meet the challenges of supporting Mac OS X in the enterprise today.
 
-========
-
 ## Features
 
 <ul>
@@ -21,8 +19,6 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 <li>Software Catalog
 </ul>
 
-========
-
 ## System Requirements
 
 ###Client
@@ -35,8 +31,6 @@ Mac OS X 10.7.0 and higher.
 ###DataBase
 MySQL 5.1.x and higher
 
-
-========
 
 ## License
 
