@@ -1,4 +1,5 @@
-<img src="https://github.com/cheizer/MacPatch/raw/gh-pages/images/MPLogo_64x64.png" alt="MPLogo" title="MPLogo"> MacPatch
+#<img src="https://github.com/cheizer/MacPatch/raw/gh-pages/images/MPLogo_64x64.png" alt="MPLogo" title="MPLogo"> MacPatch
+
 ========
 
 ## Overview
