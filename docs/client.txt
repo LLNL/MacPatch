@@ -39,4 +39,11 @@ The MacPatch application does not take a lot of steps to get it up and running. 
 A few more changes that you may want to consider are `Client Vulnerability Scan` time and `Client Vulnerability Update` time.
 Using **MPTask Editor.app** update the `Interval` time for the selected task. 
 
-Attention:Note: you will need admin priviledges to permform this function.
+Attention: you will need admin priviledges to permform this function.
+
+###MPClientStatus Application
+* Plist file: /Library/Preferences/com.example.MPClientStatus.plist
+* ~/Library/Preferences/com.example.MPClientStatus.plist
+
+* Property: `EnableASUS` Allows end-user to open SoftwareUpdate GUI application.
+** 1 = Yes, 0 = No *(Default is 0)*
