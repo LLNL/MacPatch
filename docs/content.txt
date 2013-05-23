@@ -1,4 +1,3 @@
-![MPLogo](../Images/MPLogo_64x64.png "MPLogo")
-
+#![MacPatch logo](../Images/MPLogo_64x64.png "Logo") Content Creation
 
 ##Content Creation

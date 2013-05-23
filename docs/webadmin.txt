@@ -1,0 +1,11 @@
+#![MacPatch logo](../Images/MPLogo_64x64.png "Logo") WebAdmin
+
+##Creating Patch Groups
+A patch group is a custom group of client patches. This allows you to select which patches each group will receive. 
+1. The first step is to login to the MacPatch web admin section and choose *Patches -> Patch Group(s) -> Build*
+2. Select which patches you want and save the new patch group.
+  Warning: Do not use spaces in the Patch Group name.
+3. Now that the new patch groups has been created you'll want to assign clients to it. To do this you'll need to edit the `gov.llnl.mp.agent.plist` file one your client systems. This can be done a few ways.
+  * Use Apple Remote Desktop's "Send UNIX command" feature to deploy the following command.
+```defaults write /Library/Preferences/com.example.mpagent PatchGroup *groupname*```
+  * You can also deploy a modified client plist file at the same time you install the client agent.
