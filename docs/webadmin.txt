@@ -1,7 +1,8 @@
 #![MacPatch logo](../Images/MPLogo_64x64.png "Logo") WebAdmin
 
 ##Creating Patch Groups
-A patch group is a custom group of client patches. This allows you to select which patches each group will receive. 
+A *Patch Group* is a custom group of client patches. This allows you to select which patches each group will receive.
+
 1. The first step is to login to the MacPatch web admin section and choose *Patches -> Patch Group(s) -> Build*
 2. Select which patches you want and save the new patch group.
   
