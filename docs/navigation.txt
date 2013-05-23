@@ -1,2 +1,5 @@
+[Main](index.txt)
 [Client](client.txt)
 [Content](content.txt)
+[WebAdmin](webadmin.txt)
+[GitHub Repo](https://github.com/SMSG-MAC-DEV/MacPatch)
