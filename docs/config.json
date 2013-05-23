@@ -3,9 +3,5 @@
     "Title": "MacPatch Documentation",
     "Css": [
         "http://webspace.markdown.io/custom/mystyles.css"
-    ],
-    "StandaloneCss": false,
-    "Javascript": [
-        "http://webspace.markdown.io/custom/myscript.js"
     ]
 }
