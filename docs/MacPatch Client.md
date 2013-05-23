@@ -1,1 +1,0 @@
-###MacPatch Client Documentation
