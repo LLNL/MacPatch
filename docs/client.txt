@@ -7,9 +7,9 @@ The deployment of the client is fairly straightforward and simple. The client in
 This is a break down of the client related files and folders.
 
 ###Client Directory: /Library/MacPatch/Client
-* .tasks				Directory 		Contains all MacPatch client tasks
-* Data					Directory 		Used for inventory files and downloads
-* logs 					Directory 		All of the client logs
+* .tasks		Directory		Contains all MacPatch client tasks
+* Data		Directory 		Used for inventory files and downloads
+* logs 		Directory 		All of the client logs
 * MPAgent 				Tool 			MacPatch primary agent/scheduler
 * MPAgentExec 			Tool 			MacPatch Agent Task Executor
 * MPClientStatus.app 	Application 	Menu bar application.
