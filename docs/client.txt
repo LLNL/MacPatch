@@ -1,1 +1,4 @@
-###Client Documentation
+		![MacPatch logo](../Images/MPLogo_64x64.png "Logo")
+
+
+##Client Documentation

@@ -1,4 +1,5 @@
 #<img src="https://github.com/cheizer/MacPatch/raw/gh-pages/images/MPLogo_64x64.png" alt="MPLogo" title="MPLogo"> MacPatch
+#![MPLogo](../Images/MPLogo_64x64.png "MPLogo") MacPath
 
 ## Overview
 MacPatch simplifies the act of patching and installing software on Mac OS X based systems. The client relies on using the built-in software update application for patching the Mac OS X system updates and it's own scan and patch engine for custom patches. 
@@ -7,17 +8,15 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 
 ## Features
 
-<ul>
-<li>Apple Software update server support
-<li>Custom patch creation
-<li>Custom patch groups
-<li>Patch baselines
-<li>Client reboot notification
-<li>Inventory Collection
-<li>Basic Reporting
-<li>End-User Self Patch
-<li>Software Catalog
-</ul>
+* Apple Software update server support
+* Custom patch creation
+* Custom patch groups
+* Patch baselines
+* Client reboot notification
+* Inventory Collection
+* Basic Reporting
+* End-User Self Patch
+* Software Catalog
 
 ## System Requirements
 
@@ -34,4 +33,4 @@ MySQL 5.1.x and higher
 
 ## License
 
-MacPatch is available under the GNU GPLv2 license. See the LICENSE file for more info.
+MacPatch is available under the GNU GPLv2 license. See the [LICENSE](LICENSE "License") file for more info.
