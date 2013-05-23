@@ -7,31 +7,47 @@ The deployment of the client is fairly straightforward and simple. The client in
 This is a break down of the client related files and folders.
 
 ###Client Directory: /Library/MacPatch/Client
-* .tasks		Directory		Contains all MacPatch client tasks
-* Data		Directory 		Used for inventory files and downloads
-* logs 		Directory 		All of the client logs
-* MPAgent 				Tool 			MacPatch primary agent/scheduler
-* MPAgentExec 			Tool 			MacPatch Agent Task Executor
-* MPClientStatus.app 	Application 	Menu bar application.
-* MPHelperD 			Tool 			Helper application for Self Patch to install updates under elevated rights.
-* MPInventory 			Tool 			MacPatch Inventory Collection application.
-* MPLogout.app 			Application 	Software update gui for installing updates on logout
-* MPReboot.app 			Application 	Reboot notification
-* MPTask Editor.app 	Application 	Edit MacPatch agent tasks
-* Self Patch.app 		Application 	MacPatch self patch application.
-* Tools 				Directory 		Contains Support Tools
-* mpRBWatcher 			Application 	MacPatch reboot watcher, will promt end-user if reboot is needed.
+* .tasks
+  * Directory _ Contains all MacPatch client tasks
+* Data
+  * Directory - Used for inventory files and downloads
+* Logs
+  * Directory - All of the client logs
+* MPAgent 				
+  * Tool - MacPatch primary agent/scheduler
+* MPAgentExec 			
+  * Tool - MacPatch Agent Task Executor
+* MPClientStatus.app 	
+  * Application  - Menu bar application.
+* MPHelperD 			
+  * Tool - Helper application for Self Patch to install updates under elevated rights.
+* MPInventory 			
+  * Tool - MacPatch Inventory Collection application.
+* MPLogout.app 			
+  * Application - Software update gui for installing updates on logout
+* MPReboot.app 			
+  * Application - Reboot notification
+* MPTask Editor.app 	
+  * Application - Edit MacPatch agent tasks
+* Self Patch.app 		
+  * Application - MacPatch self patch application.
+* Tools 				
+  * Directory - Contains Support Tools
+* mpRBWatcher 			
+  * Application - MacPatch reboot watcher, will promt end-user if reboot is needed.
 
 ###Client Library Files:
-/Library/Frameworks/MPFramework.framework - Agent Framework
+* /Library/Frameworks/MPFramework.framework - Agent Framework
 
 ###Client Property List Files:
 * /Library/Preferences/gov.llnl.mpagent.plist 			Primary Agent Config File
 * /Library/Preferences/gov.llnl.mpagent.perm.plist 		Enforced Attributes for Agent Config File
 
 ###Self-Updater Directory: /Library/MacPatch/Updater
-* MPAgentUp2Date 		Tool 			MacPatch Client Updater daemon
-* Log 					Directory 		All of the client logs
+* MPAgentUp2Date
+  * Tool - MacPatch Client Updater daemon
+* Log
+  * Directory - All of the client logs
 
 ##Usage
 The MacPatch application does not take a lot of steps to get it up and running. By default if you install the client and leave it in the default client group it will be patched daily at 12:30PM and it will receive the entire vendor recommended patches and updates. If you want to take the product and make it work for you and to see what's going on in your environment you'll need to do some customizing. The first thing I would recommend is organizing your clients by putting then in a Client Group. This is done my changing the "Domain" property value in the gov.llnl.mpagent.plist.
