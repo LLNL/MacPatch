@@ -1,4 +1,4 @@
-		![MPLogo](../Images/MPLogo_64x64.png "MPLogo")
+![MPLogo](../Images/MPLogo_64x64.png "MPLogo")
 
 
 ##Content Creation

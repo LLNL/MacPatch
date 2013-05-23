@@ -1,4 +1,4 @@
-		![MacPatch logo](../Images/MPLogo_64x64.png "Logo")
+![MacPatch logo](../Images/MPLogo_64x64.png "Logo")
 
 
 #Client Documentation
@@ -36,7 +36,6 @@ This is a break down of the client related files and folders.
 MPAgentUp2Date - Tool – MacPatch Client Updater daemon
 Log - Directory - All of the client logs
 
-
 <table>
   <tr><th colspan="3" style="text-align:left;">Client Directory</th></tr>
   <tr>
@@ -54,19 +53,12 @@ Log - Directory - All of the client logs
     <td>Directory</td>
     <td>All of the client logs</td>
   </tr>
-
-
   <tr>
     <td>C1</td>
     <td>C2</td>
     <td>C3</td>
   </tr>
 </table>
-
-
-
-
-
 
 ##Usage
 The MacPatch application does not take a lot of steps to get it up and running. By default if you install the client and leave it in the default client group it will be patched daily at 12:30PM and it will receive the entire vendor recommended patches and updates. If you want to take the product and make it work for you and to see what's going on in your environment you'll need to do some customizing. The first thing I would recommend is organizing your clients by putting then in a Client Group. This is done my changing the "Domain" property value in the gov.llnl.mpagent.plist.
