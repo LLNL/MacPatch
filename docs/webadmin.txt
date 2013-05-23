@@ -1,4 +1,4 @@
-#![MacPatch logo](../Images/MPLogo_64x64.png "Logo") WebAdmin
+#![MacPatch logo](../Images/MPLogo_64x64.png "Logo") WebAdmin Console
 
 ##Creating Patch Groups
 A *Patch Group* is a custom group of client patches. This allows you to select which patches each group will receive.

@@ -1,4 +1,4 @@
-#![MacPatch logo](../Images/MPLogo_64x64.png "Logo") Client
+#![MacPatch logo](../Images/MPLogo_64x64.png "Logo") Client Agent
 
 ##Deployment
 The deployment of the client is fairly straightforward and simple. The client installer is in the Apple PKG format. With the installer being in this format you have the option of using something like Apple Remote Desktop. Once the client is deployed you can accept the client default settings or push out a custom property list file (plist), with your desired settings.
@@ -42,8 +42,7 @@ Using **MPTask Editor.app** update the `Interval` time for the selected task.
 Attention: you will need admin priviledges to permform this function.
 
 ###MPClientStatus Application
-* Plist file: /Library/Preferences/com.example.MPClientStatus.plist
-* ~/Library/Preferences/com.example.MPClientStatus.plist
+Plist file: /Library/Preferences/com.example.MPClientStatus.plist **OR** ~/Library/Preferences/com.example.MPClientStatus.plist
 
 * Property: `EnableASUS` Allows end-user to open SoftwareUpdate GUI application.
-** 1 = Yes, 0 = No *(Default is 0)*
+  * 1 = Yes, 0 = No *(Default is 0)*

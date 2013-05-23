@@ -20,7 +20,7 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 ## System Requirements
 
 ###Client
-Mac OS X Intel 32 & 64bit.<br>
+Mac OS X Intel 32 & 64bit.  
 Mac OS X 10.6.8 and higher.
 
 ###Server
