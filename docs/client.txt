@@ -38,4 +38,5 @@ The MacPatch application does not take a lot of steps to get it up and running. 
 
 A few more changes that you may want to consider are `Client Vulnerability Scan` time and `Client Vulnerability Update` time.
 Using **MPTask Editor.app** update the `Interval` time for the selected task. 
-Attention: you will need admin priviledges to permform this function.
+
+Attention:Note: you will need admin priviledges to permform this function.
