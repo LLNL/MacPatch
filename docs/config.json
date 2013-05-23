@@ -1,4 +1,5 @@
 {
+    "Theme": "journal",
     "Title": "MacPatch Documentation",
     "Css": [
         "http://webspace.markdown.io/custom/mystyles.css"
