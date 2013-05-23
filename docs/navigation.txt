@@ -1,3 +1,2 @@
-[Main](readme.md)
-[Client](client.md)
-[Content](content.md)
+[Client](client.txt)
+[Content](content.txt)
