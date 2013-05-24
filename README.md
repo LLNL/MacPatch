@@ -33,3 +33,5 @@ MySQL 5.1.x and higher
 ## License
 
 MacPatch is available under the GNU GPLv2 license. See the [LICENSE](LICENSE "License") file for more info.
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/f0c2b334a4ca441f0c3cd43fa74ea1b3 "githalytics.com")](http://githalytics.com/SMSG-MAC-DEV/MacPatch)
