@@ -1,7 +1,7 @@
 {
     "Title": "MacPatch Documentation",
     "Css": [
-        "http://bootswatch.com/flatly/bootstrap.min.css"
+        "bootstrap.css"
     ],
     "StandaloneCss": false
 }
