@@ -4,5 +4,5 @@
         "http://webspace.markdown.io/custom/mystyles.css",
         "http://bootswatch.com/flatly/bootstrap.min.css"
     ],
-    "StandaloneCss": true
+    "StandaloneCss": false
 }
