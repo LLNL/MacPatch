@@ -2,6 +2,8 @@
     "Theme": "journal",
     "Title": "MacPatch Documentation",
     "Css": [
-        "http://webspace.markdown.io/custom/mystyles.css"
-    ]
+        "http://webspace.markdown.io/custom/mystyles.css",
+        "http://bootswatch.com/flatly/bootstrap.min.css"
+    ],
+    "StandaloneCss": true
 }
