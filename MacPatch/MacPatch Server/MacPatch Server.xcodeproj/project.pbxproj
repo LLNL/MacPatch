@@ -21,6 +21,19 @@
 			name = SERVER_BUILD_DEBUG;
 			productName = SERVER_BUILD_DEBUG;
 		};
+		8FDBA6771752C2230017865A /* SERVER_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 8FDBA6801752C2230017865A /* Build configuration list for PBXAggregateTarget "SERVER_BUILD" */;
+			buildPhases = (
+			);
+			dependencies = (
+				8FDBA6781752C2230017865A /* PBXTargetDependency */,
+				8FDBA67C1752C2230017865A /* PBXTargetDependency */,
+				8FDBA67E1752C2230017865A /* PBXTargetDependency */,
+			);
+			name = SERVER_BUILD;
+			productName = SERVER_BUILD_DEBUG;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +87,27 @@
 			remoteInfo = MPInventoryD;
 		};
 		8FD208E616E56AF600F78296 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD2088C16E5681B00F78296 /* MPSAVDownloader.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD2087A16E5681B00F78296;
+			remoteInfo = MPSAVDownloader;
+		};
+		8FDBA6791752C2230017865A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F991EA51444A42400AF9DE2;
+			remoteInfo = MPPatchLoader;
+		};
+		8FDBA67D1752C2230017865A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F89F8691651881F0040DA18;
+			remoteInfo = MPInventoryD;
+		};
+		8FDBA67F1752C2230017865A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FD2088C16E5681B00F78296 /* MPSAVDownloader.xcodeproj */;
 			proxyType = 1;
@@ -156,6 +190,7 @@
 			);
 			projectRoot = "";
 			targets = (
+				8FDBA6771752C2230017865A /* SERVER_BUILD */,
 				8FD208DC16E56AD900F78296 /* SERVER_BUILD_DEBUG */,
 			);
 		};
@@ -213,6 +248,21 @@
 			name = MPSAVDownloader;
 			targetProxy = 8FD208E616E56AF600F78296 /* PBXContainerItemProxy */;
 		};
+		8FDBA6781752C2230017865A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPPatchLoader;
+			targetProxy = 8FDBA6791752C2230017865A /* PBXContainerItemProxy */;
+		};
+		8FDBA67C1752C2230017865A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPInventoryD;
+			targetProxy = 8FDBA67D1752C2230017865A /* PBXContainerItemProxy */;
+		};
+		8FDBA67E1752C2230017865A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPSAVDownloader;
+			targetProxy = 8FDBA67F1752C2230017865A /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -248,6 +298,24 @@
 			};
 			name = Release;
 		};
+		8FDBA6811752C2230017865A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				PRODUCT_NAME = "SERVER_BUILD_DEBUG copy";
+				SDKROOT = macosx10.7;
+			};
+			name = Debug;
+		};
+		8FDBA6821752C2230017865A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				PRODUCT_NAME = "SERVER_BUILD_DEBUG copy";
+				SDKROOT = macosx10.7;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -265,6 +333,15 @@
 			buildConfigurations = (
 				8FD208DE16E56AD900F78296 /* Debug */,
 				8FD208DF16E56AD900F78296 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8FDBA6801752C2230017865A /* Build configuration list for PBXAggregateTarget "SERVER_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FDBA6811752C2230017865A /* Debug */,
+				8FDBA6821752C2230017865A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
