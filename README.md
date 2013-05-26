@@ -20,14 +20,19 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 ## System Requirements
 
 ###Client
-Mac OS X Intel 32 & 64bit.  
-Mac OS X 10.6.8 and higher.
+* Mac OS X Intel 32 & 64bit.  
+* Mac OS X 10.6.8 and higher.
 
-###Server
-Mac OS X 10.7.0 and higher.
-
-###DataBase
-MySQL 5.1.x and higher
+#####Server Requirements:* Mac OS X or Mac OS X Server 10.7 or higher
+* Using Intel Hardware, PPC is not supported
+* 4 GB of RAM, 8 GB is recommended
+* Java v1.6 or higher
+* MySQL version 5.1 or higher, MySQL 5.5 or 5.6 is recommended.
+* Xcode 4.3 or higher#####Server (TCP) Ports Used:
+######Default
+80, 443, 2600, 2601, 2602
+######Configurable
+2600, 2601, 2602
 
 
 ## License
