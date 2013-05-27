@@ -52,7 +52,7 @@ cd ${TMP_DIR}
 curl -L -O http://www.us.apache.org/dist/httpd/httpd-2.4.3.tar.gz
 curl -L -O http://www.us.apache.org/dist/apr/apr-1.4.6.tar.gz
 curl -L -O http://www.us.apache.org/dist/apr/apr-util-1.4.1.tar.gz
-curl -L -O http://voxel.dl.sourceforge.net/project/pcre/pcre/8.31/pcre-8.31.tar.gz
+curl -L -O ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.31.tar.gz
 
 # Apache HTTPD
 mkdir ${TMP_DIR}/httpd
