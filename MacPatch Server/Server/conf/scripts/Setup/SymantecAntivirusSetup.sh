@@ -53,6 +53,13 @@ function configAVSync ()
 	
 		defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mpavdl 'MPServerPort' "$server_port"
 	fi
+	
+	if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist ]; then
+		ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist /Library/LaunchDaemons/gov.llnl.mpavdl.plist
+	fi
+	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist
+	chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist
+
 }
 
 # -----------------------------------

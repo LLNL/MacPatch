@@ -8,13 +8,13 @@ $(document).ready(function(){
 			modal: true,
 			buttons: {
 				'New Baseline': function() {
-					window.location.href = "index.cfm?adm_mp_patch_baseline_create=True";
+					window.location.href = "<cfoutput>#session.cflocFix#/admin/index.cfm?adm_mp_patch_baseline_create=True</cfoutput>";
 				},
 				Cancel: function() {
-					window.location.href = "<cfoutput>#CGI.HTTP_REFERER#</cfoutput>";
+					window.location.href = "<cfoutput>#session.cflocFix#/admin/index.cfm?patch_baseline</cfoutput>";
 				}
 			},
-			close: function(){window.location.href = "<cfoutput>#CGI.HTTP_REFERER#</cfoutput>";}
+			close: function(){window.location.href = "<cfoutput>#session.cflocFix#/admin/index.cfm?patch_baseline</cfoutput>";}
 	});
 });
 </script>
@@ -23,4 +23,5 @@ $(document).ready(function(){
   <p style="text-align:left;"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to create a new patch baseline.<br />
     <br />
     Are you sure?</p>
+    <cfoutput>#session.cflocFix#/admin/index.cfm?adm_mp_patch_baseline_create=True</cfoutput>
 </div>

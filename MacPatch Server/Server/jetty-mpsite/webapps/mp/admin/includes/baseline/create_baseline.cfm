@@ -86,4 +86,4 @@
 </cftry>
 
 
-<cflocation url="#CGI.HTTP_ORIGIN#/admin/index.cfm?patch_baseline">
+<cflocation url="#session.cflocFix#/admin/index.cfm?patch_baseline">

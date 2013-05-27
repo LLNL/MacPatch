@@ -144,16 +144,20 @@ p.solid {border-style: solid;}
 </cfquery>
 
 <cfquery datasource="#session.dbsource#" name="qGetModelNumbers" maxrows="10">
-    SELECT	EQP_MODEL_ID as ModelType, Count(EQP_MODEL_ID) As Count
-    FROM	mp_cmdb_view
-    Group By EQP_MODEL_ID
+	SELECT
+	hw.mpa_Model_Identifier AS ModelType, Count(hw.mpa_Model_Identifier) As Count
+	FROM mp_clients mpc
+	LEFT JOIN mpi_SPHardwareOverview hw ON hw.cuuid = mpc.cuuid
+    Group By hw.mpa_Model_Identifier
     Order By Count Desc
 </cfquery>
 
 <cfquery datasource="#session.dbsource#" name="qGetOSType">
-    SELECT	OS_MAJ_VER_STD_NAM as OSType, Count(OS_MAJ_VER_STD_NAM) As Count
-    FROM	mp_cmdb_view
-    Group By OS_MAJ_VER_STD_NAM
+    SELECT	
+	mpc.ostype AS OSType, Count(mpc.ostype) As Count
+    FROM mp_clients mpc
+	LEFT JOIN mpi_SPHardwareOverview hw ON hw.cuuid = mpc.cuuid
+    Group By mpc.ostype
     Order By Count Desc
 </cfquery>
 
@@ -700,10 +704,14 @@ p.solid {border-style: solid;}
     </table>
 <cfelseif IsDefined("url.Series") and url.Series EQ "ModelTypeBreakDown">
     <cfquery datasource="#session.dbsource#" name="qMoreInfo" cachedwithin="#CreateTimeSpan(0, 0, 0, 15)#">
-    	SELECT	cv.EQP_MODEL_ID, cv.EQP_MODEL_NAM, cv.RAM, cv.CPU, ci.cuuid, ci.hostname, ci.ipaddr, ci.Domain, ci.PatchGroup, ci.osver, ci.mdate
-        FROM	mp_cmdb_view cv
-        LEFT 	JOIN mp_clients_view ci
-		ON 		cv.MP_CLIENT_ID=ci.cuuid 
+    	SELECT	
+        ci.cuuid, ci.hostname, ci.ipaddr, ci.Domain, ci.PatchGroup, ci.osver, ci.mdate,
+        hw.mpa_Memory AS RAM,
+        hw.mpa_Model_Identifier AS EQP_MODEL_ID,
+        hw.mpa_Model_Name AS EQP_MODEL_NAM
+    	FROM
+        mp_clients_view ci
+        LEFT JOIN mpi_SPHardwareOverview hw ON hw.cuuid = ci.cuuid
         Where 0=0
 		<cfif IsDefined("session.cgrp") and ListLen(session.cgrp,",") GTE 1>
             AND
@@ -764,10 +772,17 @@ p.solid {border-style: solid;}
     
 <cfelseif IsDefined("url.Series") and url.Series EQ "OSTypeBreakDown">
     <cfquery datasource="#session.dbsource#" name="qMoreInfo" cachedwithin="#CreateTimeSpan(0, 0, 0, 15)#">
-    	SELECT	cv.EQP_MODEL_ID, cv.EQP_MODEL_NAM, cv.RAM, cv.CPU, cv.OS_MAJ_VER_STD_NAM, ci.cuuid, ci.hostname, ci.ipaddr, ci.Domain, ci.PatchGroup, ci.osver, ci.mdate
-        FROM	mp_cmdb_view cv
-        LEFT 	JOIN mp_clients_view ci
-		ON 		cv.MP_CLIENT_ID=ci.cuuid 
+        SELECT	
+        ci.cuuid, ci.hostname, ci.ipaddr, ci.Domain, ci.PatchGroup, ci.osver, ci.mdate,
+        hw.mpa_Model_Identifier AS EQP_MODEL_ID,
+        hw.mpa_Model_Name AS EQP_MODEL_NAM,
+        hw.mpa_Memory AS RAM,
+        hw.mpa_Processor_Name AS CPU,
+        hw.ostype AS OS_MAJ_VER_STD_NAM
+    	FROM
+        mp_clients_view ci
+        LEFT JOIN mpi_SPHardwareOverview hw ON hw.cuuid = ci.cuuid
+        
         Where 0=0
 		<cfif IsDefined("session.cgrp") and ListLen(session.cgrp,",") GTE 1>
             AND

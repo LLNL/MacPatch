@@ -12,11 +12,12 @@
 	Values ('#session.username#', '#uuid#', 1) 
 </cfquery>
 <!--- Add the Patches --->
+<cfif IsDefined('form.addPatch')>
 <cfloop index="p" list="#form.addPatch#" delimiters=",">
 	<cfquery datasource="#session.dbsource#" name="qPut">
 		Insert Into mp_patch_group_patches (patch_id, patch_group_id)
 		Values ('#p#', '#uuid#') 
 	</cfquery>
 </cfloop>
-
+</cfif>
 <cflocation url="#CGI.HTTP_ORIGIN#/admin/index.cfm?listpatchgroups">

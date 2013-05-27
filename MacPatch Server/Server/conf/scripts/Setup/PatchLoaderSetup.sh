@@ -80,5 +80,10 @@ if [ -n "$t1" ]; then
 	defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mploader 'MPServerPort' "$mp_server_port"
 fi
 
+if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist ]; then
+	ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist /Library/LaunchDaemons/gov.llnl.mploader.plist
+fi
+chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist
+chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist
 
 
