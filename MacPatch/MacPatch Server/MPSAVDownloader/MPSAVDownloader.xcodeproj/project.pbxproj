@@ -1,0 +1,399 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8FD2087F16E5681B00F78296 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD2087E16E5681B00F78296 /* Foundation.framework */; };
+		8FD2088216E5681B00F78296 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2088116E5681B00F78296 /* main.m */; };
+		8FD2088616E5681B00F78296 /* MPSAVDownloader.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8FD2088516E5681B00F78296 /* MPSAVDownloader.1 */; };
+		8FD2089F16E5687600F78296 /* CHDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089416E5687500F78296 /* CHDownloader.m */; };
+		8FD208A016E5687600F78296 /* AVDefs.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089616E5687500F78296 /* AVDefs.m */; };
+		8FD208A116E5687600F78296 /* MPLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089816E5687500F78296 /* MPLog.m */; };
+		8FD208A216E5687600F78296 /* MPSoap.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089A16E5687500F78296 /* MPSoap.m */; };
+		8FD208A316E5687600F78296 /* MPNetUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089C16E5687600F78296 /* MPNetUtils.m */; };
+		8FD208A416E5687600F78296 /* SSCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089E16E5687600F78296 /* SSCrypto.m */; };
+		8FD208BF16E568ED00F78296 /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD208AE16E568ED00F78296 /* lcl.m */; };
+		8FD208C016E568ED00F78296 /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD208B616E568ED00F78296 /* LCLLogFile.m */; };
+		8FD208C116E568ED00F78296 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD208BE16E568ED00F78296 /* RegexKitLite.m */; };
+		8FD208C316E5693200F78296 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208C216E5693200F78296 /* Cocoa.framework */; };
+		8FD208C516E5693800F78296 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208C416E5693800F78296 /* SystemConfiguration.framework */; };
+		8FD208C716E5694000F78296 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208C616E5694000F78296 /* libicucore.dylib */; };
+		8FD208C916E5694700F78296 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208C816E5694700F78296 /* libcrypto.dylib */; };
+		8FD208CB16E5697B00F78296 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208CA16E5697B00F78296 /* libcurl.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8FD2087916E5681B00F78296 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				8FD2088616E5681B00F78296 /* MPSAVDownloader.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8FD2087B16E5681B00F78296 /* MPSAVDownloader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MPSAVDownloader; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FD2087E16E5681B00F78296 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		8FD2088116E5681B00F78296 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8FD2088416E5681B00F78296 /* MPSAVDownloader-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MPSAVDownloader-Prefix.pch"; sourceTree = "<group>"; };
+		8FD2088516E5681B00F78296 /* MPSAVDownloader.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MPSAVDownloader.1; sourceTree = "<group>"; };
+		8FD2089316E5687500F78296 /* CHDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDownloader.h; sourceTree = "<group>"; };
+		8FD2089416E5687500F78296 /* CHDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDownloader.m; sourceTree = "<group>"; };
+		8FD2089516E5687500F78296 /* AVDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVDefs.h; sourceTree = "<group>"; };
+		8FD2089616E5687500F78296 /* AVDefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVDefs.m; sourceTree = "<group>"; };
+		8FD2089716E5687500F78296 /* MPLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPLog.h; sourceTree = "<group>"; };
+		8FD2089816E5687500F78296 /* MPLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPLog.m; sourceTree = "<group>"; };
+		8FD2089916E5687500F78296 /* MPSoap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSoap.h; sourceTree = "<group>"; };
+		8FD2089A16E5687500F78296 /* MPSoap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSoap.m; sourceTree = "<group>"; };
+		8FD2089B16E5687500F78296 /* MPNetUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPNetUtils.h; sourceTree = "<group>"; };
+		8FD2089C16E5687600F78296 /* MPNetUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPNetUtils.m; sourceTree = "<group>"; };
+		8FD2089D16E5687600F78296 /* SSCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSCrypto.h; sourceTree = "<group>"; };
+		8FD2089E16E5687600F78296 /* SSCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSCrypto.m; sourceTree = "<group>"; };
+		8FD208A816E568ED00F78296 /* lcl_config_components.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_components.h; sourceTree = "<group>"; };
+		8FD208A916E568ED00F78296 /* lcl_config_extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_extensions.h; sourceTree = "<group>"; };
+		8FD208AA16E568ED00F78296 /* lcl_config_logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_logger.h; sourceTree = "<group>"; };
+		8FD208AB16E568ED00F78296 /* LCLLogFileConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LCLLogFileConfig.h; sourceTree = "<group>"; };
+		8FD208AD16E568ED00F78296 /* lcl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl.h; sourceTree = "<group>"; };
+		8FD208AE16E568ED00F78296 /* lcl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = lcl.m; sourceTree = "<group>"; };
+		8FD208AF16E568ED00F78296 /* lcl_config_components.template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_components.template.h; sourceTree = "<group>"; };
+		8FD208B016E568ED00F78296 /* lcl_config_extensions.template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_extensions.template.h; sourceTree = "<group>"; };
+		8FD208B116E568ED00F78296 /* lcl_config_logger.template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_logger.template.h; sourceTree = "<group>"; };
+		8FD208B216E568ED00F78296 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		8FD208B416E568ED00F78296 /* lcl_config_logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_logger.h; sourceTree = "<group>"; };
+		8FD208B516E568ED00F78296 /* LCLLogFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LCLLogFile.h; sourceTree = "<group>"; };
+		8FD208B616E568ED00F78296 /* LCLLogFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LCLLogFile.m; sourceTree = "<group>"; };
+		8FD208B716E568ED00F78296 /* LCLLogFileConfig.template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LCLLogFileConfig.template.h; sourceTree = "<group>"; };
+		8FD208B816E568ED00F78296 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		8FD208BA16E568ED00F78296 /* qlog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qlog.h; sourceTree = "<group>"; };
+		8FD208BB16E568ED00F78296 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		8FD208BD16E568ED00F78296 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
+		8FD208BE16E568ED00F78296 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
+		8FD208C216E5693200F78296 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		8FD208C416E5693800F78296 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		8FD208C616E5694000F78296 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		8FD208C816E5694700F78296 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
+		8FD208CA16E5697B00F78296 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8FD2087816E5681B00F78296 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FD208CB16E5697B00F78296 /* libcurl.dylib in Frameworks */,
+				8FD208C916E5694700F78296 /* libcrypto.dylib in Frameworks */,
+				8FD208C716E5694000F78296 /* libicucore.dylib in Frameworks */,
+				8FD208C516E5693800F78296 /* SystemConfiguration.framework in Frameworks */,
+				8FD208C316E5693200F78296 /* Cocoa.framework in Frameworks */,
+				8FD2087F16E5681B00F78296 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8FD2087216E5681B00F78296 = {
+			isa = PBXGroup;
+			children = (
+				8FD2088016E5681B00F78296 /* MPSAVDownloader */,
+				8FD2087D16E5681B00F78296 /* Frameworks */,
+				8FD2087C16E5681B00F78296 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8FD2087C16E5681B00F78296 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8FD2087B16E5681B00F78296 /* MPSAVDownloader */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8FD2087D16E5681B00F78296 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8FD208CA16E5697B00F78296 /* libcurl.dylib */,
+				8FD208C816E5694700F78296 /* libcrypto.dylib */,
+				8FD208C616E5694000F78296 /* libicucore.dylib */,
+				8FD208C416E5693800F78296 /* SystemConfiguration.framework */,
+				8FD208C216E5693200F78296 /* Cocoa.framework */,
+				8FD2087E16E5681B00F78296 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8FD2088016E5681B00F78296 /* MPSAVDownloader */ = {
+			isa = PBXGroup;
+			children = (
+				8FD2088116E5681B00F78296 /* main.m */,
+				8FD2089316E5687500F78296 /* CHDownloader.h */,
+				8FD2089416E5687500F78296 /* CHDownloader.m */,
+				8FD2089516E5687500F78296 /* AVDefs.h */,
+				8FD2089616E5687500F78296 /* AVDefs.m */,
+				8FD2089716E5687500F78296 /* MPLog.h */,
+				8FD2089816E5687500F78296 /* MPLog.m */,
+				8FD2089916E5687500F78296 /* MPSoap.h */,
+				8FD2089A16E5687500F78296 /* MPSoap.m */,
+				8FD2089B16E5687500F78296 /* MPNetUtils.h */,
+				8FD2089C16E5687600F78296 /* MPNetUtils.m */,
+				8FD2089D16E5687600F78296 /* SSCrypto.h */,
+				8FD2089E16E5687600F78296 /* SSCrypto.m */,
+				8FD208A716E568ED00F78296 /* Logging */,
+				8FD208BC16E568ED00F78296 /* RegexKitLite */,
+				8FD2089216E5683E00F78296 /* Resources */,
+				8FD2088316E5681B00F78296 /* Supporting Files */,
+			);
+			path = MPSAVDownloader;
+			sourceTree = "<group>";
+		};
+		8FD2088316E5681B00F78296 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8FD2088416E5681B00F78296 /* MPSAVDownloader-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8FD2089216E5683E00F78296 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8FD2088516E5681B00F78296 /* MPSAVDownloader.1 */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		8FD208A716E568ED00F78296 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				8FD208A816E568ED00F78296 /* lcl_config_components.h */,
+				8FD208A916E568ED00F78296 /* lcl_config_extensions.h */,
+				8FD208AA16E568ED00F78296 /* lcl_config_logger.h */,
+				8FD208AB16E568ED00F78296 /* LCLLogFileConfig.h */,
+				8FD208AC16E568ED00F78296 /* LibComponentLogging-Core */,
+				8FD208B316E568ED00F78296 /* LibComponentLogging-LogFile */,
+				8FD208B916E568ED00F78296 /* LibComponentLogging-qlog */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		8FD208AC16E568ED00F78296 /* LibComponentLogging-Core */ = {
+			isa = PBXGroup;
+			children = (
+				8FD208AD16E568ED00F78296 /* lcl.h */,
+				8FD208AE16E568ED00F78296 /* lcl.m */,
+				8FD208AF16E568ED00F78296 /* lcl_config_components.template.h */,
+				8FD208B016E568ED00F78296 /* lcl_config_extensions.template.h */,
+				8FD208B116E568ED00F78296 /* lcl_config_logger.template.h */,
+				8FD208B216E568ED00F78296 /* README.md */,
+			);
+			path = "LibComponentLogging-Core";
+			sourceTree = "<group>";
+		};
+		8FD208B316E568ED00F78296 /* LibComponentLogging-LogFile */ = {
+			isa = PBXGroup;
+			children = (
+				8FD208B416E568ED00F78296 /* lcl_config_logger.h */,
+				8FD208B516E568ED00F78296 /* LCLLogFile.h */,
+				8FD208B616E568ED00F78296 /* LCLLogFile.m */,
+				8FD208B716E568ED00F78296 /* LCLLogFileConfig.template.h */,
+				8FD208B816E568ED00F78296 /* README.md */,
+			);
+			path = "LibComponentLogging-LogFile";
+			sourceTree = "<group>";
+		};
+		8FD208B916E568ED00F78296 /* LibComponentLogging-qlog */ = {
+			isa = PBXGroup;
+			children = (
+				8FD208BA16E568ED00F78296 /* qlog.h */,
+				8FD208BB16E568ED00F78296 /* README.md */,
+			);
+			path = "LibComponentLogging-qlog";
+			sourceTree = "<group>";
+		};
+		8FD208BC16E568ED00F78296 /* RegexKitLite */ = {
+			isa = PBXGroup;
+			children = (
+				8FD208BD16E568ED00F78296 /* RegexKitLite.h */,
+				8FD208BE16E568ED00F78296 /* RegexKitLite.m */,
+			);
+			path = RegexKitLite;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8FD2087A16E5681B00F78296 /* MPSAVDownloader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8FD2088916E5681B00F78296 /* Build configuration list for PBXNativeTarget "MPSAVDownloader" */;
+			buildPhases = (
+				8FD2087716E5681B00F78296 /* Sources */,
+				8FD2087816E5681B00F78296 /* Frameworks */,
+				8FD2087916E5681B00F78296 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MPSAVDownloader;
+			productName = MPSAVDownloader;
+			productReference = 8FD2087B16E5681B00F78296 /* MPSAVDownloader */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8FD2087316E5681B00F78296 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = LLNL;
+			};
+			buildConfigurationList = 8FD2087616E5681B00F78296 /* Build configuration list for PBXProject "MPSAVDownloader" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 8FD2087216E5681B00F78296;
+			productRefGroup = 8FD2087C16E5681B00F78296 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8FD2087A16E5681B00F78296 /* MPSAVDownloader */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8FD2087716E5681B00F78296 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FD2088216E5681B00F78296 /* main.m in Sources */,
+				8FD2089F16E5687600F78296 /* CHDownloader.m in Sources */,
+				8FD208A016E5687600F78296 /* AVDefs.m in Sources */,
+				8FD208A116E5687600F78296 /* MPLog.m in Sources */,
+				8FD208A216E5687600F78296 /* MPSoap.m in Sources */,
+				8FD208A316E5687600F78296 /* MPNetUtils.m in Sources */,
+				8FD208A416E5687600F78296 /* SSCrypto.m in Sources */,
+				8FD208BF16E568ED00F78296 /* lcl.m in Sources */,
+				8FD208C016E568ED00F78296 /* LCLLogFile.m in Sources */,
+				8FD208C116E568ED00F78296 /* RegexKitLite.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8FD2088716E5681B00F78296 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.7;
+			};
+			name = Debug;
+		};
+		8FD2088816E5681B00F78296 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx10.7;
+			};
+			name = Release;
+		};
+		8FD2088A16E5681B00F78296 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MPSAVDownloader/MPSAVDownloader-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
+			};
+			name = Debug;
+		};
+		8FD2088B16E5681B00F78296 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MPSAVDownloader/MPSAVDownloader-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8FD2087616E5681B00F78296 /* Build configuration list for PBXProject "MPSAVDownloader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FD2088716E5681B00F78296 /* Debug */,
+				8FD2088816E5681B00F78296 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8FD2088916E5681B00F78296 /* Build configuration list for PBXNativeTarget "MPSAVDownloader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FD2088A16E5681B00F78296 /* Debug */,
+				8FD2088B16E5681B00F78296 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8FD2087316E5681B00F78296 /* Project object */;
+}
