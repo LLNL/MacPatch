@@ -49,14 +49,18 @@ mkdir -p ${TMP_DIR}
 cd ${TMP_DIR}
 
 # Download Software
-curl -L -O http://www.us.apache.org/dist/httpd/httpd-2.4.3.tar.gz
+#curl -L -O http://www.us.apache.org/dist/httpd/httpd-2.4.3.tar.gz
+curl -L -O http://www.us.apache.org/dist/httpd/httpd-2.4.4.tar.gz
 curl -L -O http://www.us.apache.org/dist/apr/apr-1.4.6.tar.gz
-curl -L -O http://www.us.apache.org/dist/apr/apr-util-1.4.1.tar.gz
-curl -L -O ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.31.tar.gz
+#curl -L -O http://www.us.apache.org/dist/apr/apr-util-1.4.1.tar.gz
+curl -L -O http://www.us.apache.org/dist/apr/apr-util-1.5.2.tar.gz
+#curl -L -O ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.31.tar.gz
+curl -L -O ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.32.tar.gz
 
 # Apache HTTPD
 mkdir ${TMP_DIR}/httpd
-tar xvfz ${TMP_DIR}/httpd-2.4.3.tar.gz --strip 1 -C ${TMP_DIR}/httpd
+#tar xvfz ${TMP_DIR}/httpd-2.4.3.tar.gz --strip 1 -C ${TMP_DIR}/httpd
+tar xvfz ${TMP_DIR}/httpd-2.4.4.tar.gz --strip 1 -C ${TMP_DIR}/httpd
 cp ${MP_CONF_DIR}/httpd/layout/config.layout.httpd ${TMP_DIR}/httpd/config.layout
 
 # APR
@@ -67,13 +71,15 @@ cp ${MP_CONF_DIR}/httpd/layout/config.layout.apr ${TMP_DIR}/httpd/srclib/apr/con
 
 # APR-UTIL
 mkdir ${TMP_DIR}/apr-util
-tar xvfz ${TMP_DIR}/apr-util-1.4.1.tar.gz --strip 1 -C ${TMP_DIR}/apr-util
+#tar xvfz ${TMP_DIR}/apr-util-1.4.1.tar.gz --strip 1 -C ${TMP_DIR}/apr-util
+tar xvfz ${TMP_DIR}/apr-util-1.5.2.tar.gz --strip 1 -C ${TMP_DIR}/apr-util
 cp -R ${TMP_DIR}/apr-util ${TMP_DIR}/httpd/srclib/apr-util
 cp ${MP_CONF_DIR}/httpd/layout/config.layout.apr ${TMP_DIR}/httpd/srclib/apr-util/config.layout
 
 # PCRE
 mkdir ${TMP_DIR}/pcre
-tar xvfz ${TMP_DIR}/pcre-8.31.tar.gz --strip 1 -C ${TMP_DIR}/pcre
+#tar xvfz ${TMP_DIR}/pcre-8.31.tar.gz --strip 1 -C ${TMP_DIR}/pcre
+tar xvfz ${TMP_DIR}/pcre-8.32.tar.gz --strip 1 -C ${TMP_DIR}/pcre
 
 if [ ! -d "${MP_BUILD_DIR}" ]; then
 	mkdir -p "${MP_BUILD_DIR}"
@@ -128,6 +134,10 @@ cp ${MP_CONF_DIR}/httpd/conf/extra/httpd-mpm.conf ${MP_HTTPD_DIR}/conf/extra/htt
 # ------------------------------------------------------------
 # Generate self signed certificates
 # ------------------------------------------------------------
+
+if [ ! -d "/Library/MacPatch/Server/conf/apacheCerts" ]; then
+	mkdir -p /Library/MacPatch/Server/conf/apacheCerts
+fi
 
 USER="MacPatch"
 EMAIL="admin@localhost"
