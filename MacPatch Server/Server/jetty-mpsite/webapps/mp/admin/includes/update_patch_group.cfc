@@ -444,7 +444,7 @@
     	<cfargument name="id" required="yes">
 
          <cfquery datasource="#this.ds#" name="qGetApplePatchCriteria" result="res" cachedwithin="#CreateTimeSpan(0, 0, 0, 30)#">
-			select puuid, type, type_order, type_action, type_data From mp_apple_patch_criteria
+			select puuid, supatchname, type, type_order, type_action, type_data From mp_apple_patch_criteria
 			Where puuid = '#arguments.id#'
 			Order By type_action, type_order Asc
         </cfquery>

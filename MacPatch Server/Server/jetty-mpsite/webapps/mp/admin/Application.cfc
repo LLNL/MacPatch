@@ -19,7 +19,14 @@
 	http://openbd.org/manual/?/app_application
 --->
 <cffunction name="onApplicationStart">
-	<cfset application.starttime	= now()>
+	<cfset StructClear(application) />
+	<cfset application.starttime = now()>
+    <cfreturn true />
+</cffunction>
+
+<cffunction name="onApplicationEnd" returnType="void" output="false">
+    <cfargument name="applicationScope" required="true" />
+    <cfreturn />
 </cffunction>
 
 <!--- ---------------------------------------------
@@ -28,6 +35,9 @@
 	--->
 <cffunction name="onRequestStart">
 	<cfargument name="uri" required="true"/>
+    
+
+	<cferror type="exception" template="/admin/error/error.cfm" exception="any">
 
 	<!---
 		This tells the browser never to cache the secure pages so people are prevented from going
@@ -46,21 +56,21 @@
             <cfset session.IsAdmin=#logInUserGroupRights(form._user,'0')#>
             <cfset session.dbsource="mpds">
             <cfset session.cgrp="">
-            <cfset session.usrKey=#CreateUuid()#>
+            <cfset session.usrKey=#Generatesecretkey("AES")#>
         <cfelseif logInUserDatabase( form._user, form._pass )> 
         	<cfset session.loggedin = true>
             <cfset session.Username="#form._user#">
             <cfset session.IsAdmin=#logInUserGroupRights(form._user,'1')#>
             <cfset session.dbsource="mpds">
             <cfset session.cgrp="">
-            <cfset session.usrKey=#Generatesecretkey("AES","256")#>
+            <cfset session.usrKey=#Generatesecretkey("AES")#>
         <cfelseif logInUserDirectory( form._user, form._pass )> 
         	<cfset session.loggedin = true>
             <cfset session.Username="#form._user#">
             <cfset session.IsAdmin=#logInUserGroupRights(form._user,'2')#>
             <cfset session.dbsource="mpds">
             <cfset session.cgrp="">
-            <cfset session.usrKey=#Generatesecretkey("AES","256")#>
+            <cfset session.usrKey=#Generatesecretkey("AES")#>
 		<cfelse>
 			<cfset StructDelete(session,"loggedin")>
 			<cfset session.error = "Incorrect username or password">
@@ -70,6 +80,7 @@
 		<cfset session.cflocFix = "https://#cgi.HTTP_HOST#">
         <cfinvoke component="Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
     	<cfset application.settings = _AppSettings>
+        <cfset application.settings.users.admin.pass = "">
         
         <!--- Clear the login form variables, so they dont get re-used --->
         <cfset StructClear(form)>
@@ -86,6 +97,9 @@
 
 </cffunction>
 
+<!--- ----------------------------------------------------------------------
+	Error handeling for the app.
+	--->
 
 
 <!--- ----------------------------------------------------------------------
@@ -109,8 +123,6 @@
 	</cfif>
 
 </cffunction>
-
-
 
 <!--- ----------------------------------------------------------------------
 	This one will authenticate against a table in a remote database; let us assume

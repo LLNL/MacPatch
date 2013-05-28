@@ -7,13 +7,14 @@
 	}
 </style>
 <cfoutput>
+
 <link rel="stylesheet" href="/admin/_assets/css/main/main.css" type="text/css" />
 <link rel="stylesheet" href="/admin/_assets/css/main/main2.css" type="text/css" />
 
 <cfif IsDefined("ISjqGrid") and ISjqGrid IS true>
 	<!--- Base Theme and JQuery Script --->
 	<script type="text/javascript" src="/admin/_assets/js/jquery/jquery-1.8.3.min.js"></script>
-    <link type="text/css" href="/admin/_assets/js/jquery/themes/macpatch/jquery-ui-1.8.1.macpatch.css" rel="stylesheet" />
+	<link type="text/css" href="/admin/_assets/js/jquery/themes/macpatch/jquery-ui-1.8.1.macpatch.css" rel="stylesheet" />
 
 	<!--- jqGrid - jquery --->
     <link rel="stylesheet" type="text/css" href="/admin/_assets/js/jquery/addons/jqGrid/css/ui.jqgrid.css">
@@ -34,11 +35,11 @@
     <script type="text/javascript" src="/admin/_assets/js/jquery/ui/jquery.ui.dialog.js"></script>
     <script type="text/javascript" src="/admin/_assets/js/jquery/external/jquery.bgiframe-2.1.2.js"></script>
 
-	<!--- Over rides --->
+	<!--- Over rides ---> 
     <style type="text/css">
-		.ui-jqgrid {font-size:10px;}
-		.ui-jqgrid .ui-jqgrid-titlebar {font-size:16px; font-weight:bold; font-style:italic;}
-		.ui-jqgrid .ui-jqgrid-htable th {font-size:11px; font-weight:bold; color:##000; vertical-align:bottom;}
+		.ui-jqgrid {font-size:12px;}
+		.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
+		.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; color:##000; vertical-align:bottom;}
 	</style>
 
 <cfelseif IsDefined("ISPBWizard") and ISPBWizard IS true>

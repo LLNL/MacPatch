@@ -23,5 +23,4 @@ $(document).ready(function(){
   <p style="text-align:left;"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to create a new patch baseline.<br />
     <br />
     Are you sure?</p>
-    <cfoutput>#session.cflocFix#/admin/index.cfm?adm_mp_patch_baseline_create=True</cfoutput>
 </div>

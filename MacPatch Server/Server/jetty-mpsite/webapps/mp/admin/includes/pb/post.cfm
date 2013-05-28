@@ -149,5 +149,5 @@
         </cfquery>
 	</cfif>
 </CFLOOP>
-<cflocation url="#SESSION.cflocFix#/admin/index.cfm?mp_patch_list">
+<cflocation url="#SESSION.cflocFix#/admin/index.cfm?adm_mp_patch_list">
 

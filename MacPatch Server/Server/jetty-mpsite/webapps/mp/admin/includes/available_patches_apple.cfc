@@ -35,7 +35,7 @@
 				
 				--->
 				<cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-					select Distinct ap.akey, ap.supatchname, ap.postdate, ap.title, ap.version, ap.restartaction, GROUP_CONCAT(apr.osver_support) as osver_support, ap.patch_state,
+					select Distinct ap.akey, ap.supatchname, ap.postdate, ap.title, ap.version, ap.restartaction, GROUP_CONCAT(ap.osver_support) as osver_support, apr.patch_state,
 				CASE WHEN EXISTS
 				( SELECT 1
 					FROM mp_apple_patch_criteria apc
@@ -43,7 +43,7 @@
 				THEN "Yes" ELSE "No"
 				END AS hasCriteria
     			From apple_patches ap
-				INNER JOIN apple_patches_real apr ON ap.akey = apr.akey
+				INNER JOIN apple_patches_mp_additions apr ON ap.supatchname = apr.supatchname
 					WHERE 
 						#PreserveSingleQuotes(strSearch)#
 					GROUP BY ap.akey	
@@ -57,7 +57,7 @@
 			</cftry>
 		<cfelse>
             <cfquery name="selUsers" datasource="#session.dbsource#" result="res">				
-                select Distinct ap.akey, ap.supatchname, ap.postdate, ap.title, ap.version, ap.restartaction, GROUP_CONCAT(apr.osver_support) as osver_support, ap.patch_state,
+                select Distinct ap.akey, ap.supatchname, ap.postdate, ap.title, ap.version, ap.restartaction, GROUP_CONCAT(ap.osver_support) as osver_support, apr.patch_state,
 				CASE WHEN EXISTS
 				( SELECT 1
 					FROM mp_apple_patch_criteria apc
@@ -65,7 +65,7 @@
 				THEN "Yes" ELSE "No"
 				END AS hasCriteria
     			From apple_patches ap
-				INNER JOIN apple_patches_real apr ON ap.akey = apr.akey
+				INNER JOIN apple_patches_mp_additions apr ON ap.supatchname = apr.supatchname
                 Where 0=0
     
                 <cfif blnSearch>
@@ -92,7 +92,7 @@
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
 			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
-			<cfset arrUsers[i] = [#akey#, #akey#, #supatchname#, #version#, #title#, #iif(restartaction EQ "NoRestart",DE("No"),DE("Yes"))#, #osver_support#, #hasCriteria#, #patch_state#, #DateFormat(postdate,"yyyy-mm-dd")#]>
+			<cfset arrUsers[i] = [#supatchname#, #supatchname#, #supatchname#, #version#, #title#, #iif(restartaction EQ "NoRestart",DE("No"),DE("Yes"))#, #osver_support#, #hasCriteria#, #patch_state#, #DateFormat(postdate,"yyyy-mm-dd")#]>
 			<cfset i = i + 1>			
 		</cfloop>
 		
@@ -110,8 +110,7 @@
 		<cfreturn stcReturn>
 		
 	</cffunction>
-
-            
+  
     <cffunction name="addEditMPApplePatches" access="remote" hint="Add or Edit" returnformat="json" output="no">
 		<cfargument name="id" required="no" hint="Field that was editted">
 		<cfargument name="patch_state" required="no">
@@ -124,11 +123,11 @@
 			<cftry>
 				<cfquery name="editRecord" datasource="#session.dbsource#" result="res">
 					UPDATE
-						apple_patches
+						apple_patches_mp_additions
 					SET
 						patch_state = <cfqueryparam value="#Arguments.patch_state#">
 					WHERE
-						akey = <cfqueryparam value="#arguments.id#">
+						supatchname = <cfqueryparam value="#arguments.id#">
 				</cfquery>
                 <cfcatch type="any">			
 					<cfset strMsgType = "Error">

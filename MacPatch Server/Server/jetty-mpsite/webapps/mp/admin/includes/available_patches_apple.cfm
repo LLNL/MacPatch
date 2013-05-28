@@ -34,7 +34,7 @@
 				  {name:'version', index:'version', width:50, sorttype:'float'},
 				  {name:'title', index:'title', width:160, align:"left"},
 				  {name:'restartaction', index:'restartaction', width:40, align:"center"},
-				  {name:'osver_support', index:'osver_support', width:80, align:"left"},
+				  {name:'osver_support', index:'osver_support', width:80, align:"left", hidden: true},
 				  {name:'hasCriteria', index:'hasCriteria', width:40, align:"center"},
 				  {name:'patch_state', index:'patch_state', width:50, align:"left", editable:true, edittype:"select", editoptions:{value:"Production:Production;QA:QA;Create:Create;Disabled:Disabled"}},
 				  {name:'postdate', index:'postdate', width:70, align:"center"}
@@ -62,9 +62,10 @@
 					for(var i=0;i<ids.length;i++){
 						var cl = ids[i];
 						var aps = jQuery("#list").getCell(cl,1);
+						var suname = jQuery("#list").getCell(cl,2);
 						info = "<input type='image' style='padding-left:2px;' onclick=loadContent('info','"+cl+"'); src='./_assets/images/jqGrid/info_16.png'>";
 						<cfif session.IsAdmin IS true>
-						edit = "<input type='image' style='padding-left:2px;' onclick=load('./index.cfm?adm_apple_patch_edit="+ids[i]+"'); src='./_assets/images/jqGrid/edit_16.png'>";
+						edit = "<input type='image' style='padding-left:2px;' onclick=load('./index.cfm?adm_apple_patch_edit="+ids[i]+"&adm_apple_patch_edit_name="+suname+"'); src='./_assets/images/jqGrid/edit_16.png'>";
 						<cfelse>
 						edit = "<input type='image' style='padding-left:2px;' onclick=load('./index.cfm?adm_apple_patch_view="+ids[i]+"'); src='./_assets/images/jqGrid/info.png'>";
 						</cfif>
@@ -85,11 +86,14 @@
 					$('#'+id).removeClass('ui-priority-secondary');
 
 					<cfif session.IsAdmin IS true>
+					var suPatchNameID = $("#list").getDataIDs().indexOf(lastsel);
+					var suPatchNameIDVal = jQuery("#list").getCell(suPatchNameID,2);
 					$('#list').editRow(id, true, undefined, function(res) {
 					    // res is the response object from the $.ajax call
 					    $("#list").trigger("reloadGrid");
 					});
 					</cfif>
+					
 					lastsel = id;
 				},
 				jsonReader: {

@@ -305,7 +305,7 @@ table.genTable td
 }
 </style>
 <cfsilent>
-<cfparam name="jobType" default="Delete Expired Clients">
+<cfparam name="jobType" default="Delete Expired Clients,Purge Old Client Data">
 <cfparam name="jobtaskType" default="ONCE,DAILY,INTERVAL">
 <cfsavecontent variable="deleteTypeTask">
   <nocfml><cfoutput>
@@ -348,14 +348,55 @@ table.genTable td
 	</cfform>
   </cfoutput></nocfml>	
 </cfsavecontent>
+<cfsavecontent variable="purgeTypeTask">
+  <nocfml><cfoutput>
+	<hr>
+	<div style="font-size:16px; margin-top:20px;">Add - Server Task</div>
+    <cfform action="index.cfm?adm_server_jobs" method="Post" name="AddNewTask">
+		<fieldset>
+    	<legend>Server Task Schedule:</legend>
+			<table border="0" class="tbltask">
+			<tr><td>Task Name:</td><td><input type="text" name="taskName" size="40" maxlength="50" value="#form.TYPE#" readonly></td></tr>
+			<tr><td>Interval:</td>
+			<td><input type="radio" name="runinterval" value="once"> One Time @ <input type="text" name="starttime_once" size="5" maxlength="5" value=""> (Time 24hs.)<br>
+			<input type="radio" name="runinterval" value="recurring"> Recurring <select name="tasktype">
+			<option value="" selected="true">- select -</option>
+			<option value="DAILY">daily</option>
+			<option value="WEEKLY">weekly</option>
+			<option value="MONTHLY">monthly</option>
+			</select> @ <input type="text" name="starttime_recurring" size="5" maxlength="5" value=""> (Time 24hs.)<br>
+			<input type="radio" name="runinterval" value="daily"> Daily every <input type="text" name="interval" size="5" maxlength="5" value="" id="datepicker"> seconds from <input type="text" name="starttime_daily" id="starttime_daily" size="5" maxlength="5"  value=""> to <input type="text" name="endtime_daily" id="endtime_daily" size="5" maxlength="5" value=""> (Time 24hs.) (Note: Must Contain Start Time)
+			<br>
+			</td></tr>
+			<tr><td>Duration:</td><td>Start Date: <input type="text" name="taskStartDateTime" size="12" maxlength="12" value=""> End Date: <input type="text" name="taskEndDateTime" size="12" maxlength="12" value=""> (Date Format DD/MM/YYYY)</td></tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<table>
+			<tr><td>
+            	<input type="hidden" name="url" value="http://<cfoutput>#CGI.HTTP_HOST#</cfoutput>:2601/tasks/cleanupInventoryData.cfm">
+            	<input type="hidden" name="fAction" value="AddNewTask">
+            </td></tr>
+			<tr><td><input class="button medium gray" type="button" value="Cancel" onclick="window.location='index.cfm?adm_server_jobs'">
+			<input class="button medium gray" type="button" value="Save" onclick="this.form.submit();"></td></tr>
+			</table>
+		</fieldset>
+	</cfform>
+  </cfoutput></nocfml>	
+</cfsavecontent>
 </cfsilent>
 
 <cfif #IsDefined("form.faction")#>
 	<cfif form.faction EQ "AddNewTask" OR form.faction EQ "EditTask">
+		<cfif ISDefined("form.actionVarName")>
+			<cfset theURL = "#form.URL#?#form.actionVarName#=#form.actionVar#">
+		<cfelse>
+			<cfset theURL = "#form.URL#">
+		</cfif>	
 		<cfschedule
 			action="UPDATE"
 			task="#form.TASKNAME#"
-			URL="#form.URL#?#form.actionVarName#=#form.actionVar#"
+			URL="#theURL#"
 			interval="#form.TASKTYPE#"
 			StartDate="#DateFormat(form.TASKSTARTDATETIME,"mm/dd/yyyy")#"
 			StartTime="#TimeFormat(form.STARTTIME_RECURRING)#"
@@ -373,8 +414,8 @@ table.genTable td
 <br>
 <form action="index.cfm?adm_server_jobs" method="Post" name="AddJob">
 	Add New Task: <select name="Type" onChange="this.form.submit();">
+		<option value="NA">...</option>
 	    <cfloop list="#jobType#" delimiters="," index="_type">
-	        <option value="NA">...</option>
 	        <cfoutput>
 		    <option value="#_type#">#_type#</option>
 		    </cfoutput>
@@ -474,6 +515,9 @@ table.genTable td
 <cfif isDefined("Type")>
 <cfif Type EQ "Delete Expired Clients">
 <cfoutput>#render(deleteTypeTask)#</cfoutput>
+</cfif>
+<cfif Type EQ "Purge Old Client Data">
+<cfoutput>#render(purgeTypeTask)#</cfoutput>
 </cfif>
 </cfif>
 

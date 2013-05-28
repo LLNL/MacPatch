@@ -17,10 +17,9 @@
 <!--- Update the Main Record --->
 <cftry>
 <cfquery name="qInsert1" datasource="#session.dbsource#" result="res">
-	Update apple_patches
-    Set 
-		severity = <cfqueryparam value="#form.patch_severity#">
-    Where akey = '#form.akey#'
+	Update	apple_patches_mp_additions
+    Set		severity = <cfqueryparam value="#form.patch_severity#">
+    Where	supatchname = <cfqueryparam value="#form.akey#">
 </cfquery>
 <cfcatch type="any">
 	<!--- The message to display. --->
@@ -60,10 +59,10 @@
         <cftry>
         <cfquery name="qInsert2" datasource="#session.dbsource#">
             Insert Into mp_apple_patch_criteria (
-                puuid, type, type_action, type_data, type_order
+                puuid, supatchname, type, type_action, type_data, type_order
             )
             Values (
-                <cfqueryparam value="#form.akey#">, <cfqueryparam value="#Evaluate("TYPE_"&nid)#">, <cfqueryparam value="#Evaluate("TYPE_ACTION"&nid)#">, <cfqueryparam value="#Evaluate(ntitle&"_"&nid)#" cfsqltype="CF_SQL_LONGVARCHAR">, <cfqueryparam value="#order#">
+                <cfqueryparam value="#form.akey#">, <cfqueryparam value="#form.supatchname#">, <cfqueryparam value="#Evaluate("TYPE_"&nid)#">, <cfqueryparam value="#Evaluate("TYPE_ACTION"&nid)#">, <cfqueryparam value="#Evaluate(ntitle&"_"&nid)#" cfsqltype="CF_SQL_LONGVARCHAR">, <cfqueryparam value="#order#">
             )
         </cfquery>
 		<cfcatch type="any">

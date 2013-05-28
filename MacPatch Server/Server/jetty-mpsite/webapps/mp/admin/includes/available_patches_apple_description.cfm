@@ -7,20 +7,13 @@
 </head>
 <body>
 <cfsilent>
-<!---
-<cfquery datasource="#session.dbsource#" name="qGet">
-    select description64
-    From apple_patches
-	Where supatchname = '#url.id#'
-</cfquery>
---->
 <cfquery datasource="#session.dbsource#" name="qGet">
     select description64
     From apple_patches
     <cfif isdefined("url.id")>
 		Where supatchname = '#url.id#'
     <cfelseif isdefined("url.pid")>
-    	Where akey = '#url.pid#'
+    	Where supatchname = '#url.pid#'
     </cfif>
 </cfquery>
 </cfsilent>

@@ -17,15 +17,17 @@
 <cfset nid = "COPY_"&#qGetPatch.patch_name#>
 <cfquery name="qDupPatch" datasource="#session.dbsource#">
 	INSERT INTO mp_patches (
-		puuid, bundle_id, patch_name, patch_ver, description,
+		puuid, bundle_id, patch_name, patch_ver, patch_vendor, description,
         description_url, patch_severity, patch_state, cve_id, cdate, mdate, active,
-        pkg_name, pkg_hash, pkg_path, pkg_url, patch_reboot
+        pkg_name, pkg_hash, pkg_path, pkg_url, patch_reboot, pkg_preinstall, pkg_postinstall,
+		pkg_size, pkg_env_var
     )
     Values (
-        '#new_puuid#', '#qGetPatch.bundle_id#', '#nid#', '#qGetPatch.patch_ver#', '#qGetPatch.description#',
+        '#new_puuid#', '#qGetPatch.bundle_id#', '#nid#', '#qGetPatch.patch_ver#', '#qGetPatch.patch_vendor#', '#qGetPatch.description#',
         '#qGetPatch.description_url#', '#qGetPatch.patch_severity#', 'Create', '#qGetPatch.cve_id#',
         #cDate#, #cDate#, '0', '#qGetPatch.pkg_name#', '#qGetPatch.pkg_hash#', 
-        '#qGetPatch.pkg_path#', '#qGetPatch.pkg_url#', '#qGetPatch.patch_reboot#'
+        '#qGetPatch.pkg_path#', '#qGetPatch.pkg_url#', '#qGetPatch.patch_reboot#', '#qGetPatch.pkg_preinstall#',
+		'#qGetPatch.pkg_postinstall#', '#qGetPatch.pkg_size#', '#qGetPatch.pkg_env_var#'
     )
 </cfquery>
 
@@ -82,6 +84,6 @@
 	</cfoutput>
 </cfif>
 
-<cflocation url="#SESSION.cflocFix#/admin/index.cfm?adm_mp_patch_list">
+<cflocation url="#SESSION.cflocFix#/admin/index.cfm?mp_patch_list">
 <cfabort>
 

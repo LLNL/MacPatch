@@ -6,8 +6,13 @@
 
 <cfquery name="selPatch" datasource="#session.dbsource#">
     select *
-    From apple_patches
-    Where akey = <cfqueryparam value="#l_akey#">
+    From apple_patches ap
+	LEFT JOIN `apple_patches_mp_additions` `api` ON (
+			(
+				`api`.`supatchname` = `ap`.`supatchname`
+			)
+		)
+    Where ap.supatchname = <cfqueryparam value="#l_akey#">
 </cfquery>
 
 <cfquery name="selPatchCri" datasource="#session.dbsource#">
@@ -81,6 +86,7 @@
 
 <cfform name="UpdateAppleCriteria" method="post" action="#action#">
   <cfinput type="hidden" name="akey" value="#l_akey#">
+  <cfinput type="hidden" name="supatchname" value="#l_suname#">
   <div id="smartwizard" class="wiz-container">
     <ul id="wizard-anchor">
       <li><a href="#wizard-1">
