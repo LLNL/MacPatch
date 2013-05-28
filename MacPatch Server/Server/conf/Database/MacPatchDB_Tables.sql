@@ -127,6 +127,21 @@ CREATE TABLE `apple_patches_real_hst` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
+--  Table structure for `apple_patches_mp_additions`
+-- ----------------------------
+DROP TABLE IF EXISTS `apple_patches_mp_additions`;
+CREATE TABLE `apple_patches_mp_additions` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `version` varchar(20) NOT NULL,
+  `supatchname` varchar(100) NOT NULL,
+  `severity` varchar(20) DEFAULT 'High',
+  `severity_int` int(2) DEFAULT '3',
+  `patch_state` varchar(10) DEFAULT 'Create',
+  PRIMARY KEY (`rid`),
+  KEY `idx_apple_patches` (`supatchname`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
 --  Table structure for `dataMgrlogs`
 -- ----------------------------
 DROP TABLE IF EXISTS `dataMgrlogs`;
