@@ -1,8 +1,7 @@
 <cfcomponent name="client_checkin" extends="_mpbase">
 	
-	<cfparam name="mainTable" default="apple_patches_real">
-	<cfparam name="mainTableHst" default="apple_patches_real_hst">
-	<cfparam name="mainTableAlt" default="apple_patches">
+	<cfparam name="mainTable" default="apple_patches">
+	<cfparam name="mainTableAdditions" default="apple_patches_mp_additions">
 
 	<cffunction name="_apple" access="public" returntype="any" output="no">
 		<cfargument name="data" hint="Encoded Data">
@@ -48,6 +47,7 @@
 				<cfreturn _res>
 			</cfif>
 			
+			<!--- Old Way
 			<cfset _copyRequest = copyToHistory(xOS)>
 			<cfif _copyRequest.errorCode NEQ "0">
 				<cfset elog("Error[#_copyRequest.errorCode#]: #_copyRequest.errorMessage#")>
@@ -58,12 +58,14 @@
 			<cfif _delRequest.errorCode NEQ "0">
 				<cfset elog("Error[#_delRequest.errorCode#]: #_delRequest.errorMessage#")>
 				<cfreturn _delRequest>
-			</cfif>	
+			</cfif>
+			--->	
 			
 			<cfloop array="#l_data['DATA']#" index="iArr">
 				<cfif ArrayLen(iArr) EQ ArrayLen(xCols)>
-					<cfset l_row = #genRow(xCols,iArr)#>
 					
+					<cfset l_row = #genRow(xCols,iArr)#>
+					<cflog file="patch_loader" type="Information" application="no" text="rowInsert">
 					<cfset _ires = rowInsert(xCols,iArr,mainTable)>
 					<cfset ilog("Insert record for #l_row.akey#. Result[#_ires.error#]: #_ires.errorMessage#")>
 					<cfif #_ires.error# NEQ "0">
@@ -132,6 +134,7 @@
 			<cfreturn _res> 
 		</cfif>
 		
+		<!--- Check Structure of Data for Insert/Update --->
 		<cfloop array="#arguments.aCols#" index="i">
 			<cfif isSimpleValue(i) AND refindnocase(sqlregex,i)>
 				<cfset _res.error = "1">
@@ -139,71 +142,48 @@
 				<cfreturn _res>
 			</cfif>
 		</cfloop>
+		
 		<cftry>
-			<cfquery name="qInsert" datasource="#mpDBSource#" result="qRes">
-				INSERT INTO #arguments.aTbl# ( #ArrayToList(arguments.aCols,",")# )
-				Values (
-				<cfqueryparam value="#arguments.aVals[1]#">
-				<cfif #Arraylen(aVals)# GTE 2>
-				<cfloop from="2" to="#Arraylen(arguments.aVals)#" index="v">
-				,<cfqueryparam value="#arguments.aVals[v]#">
-				</cfloop>
-				</cfif>
-				)
-			</cfquery>
+			<!--- Check to See if the Patch Already Exists --->
+			<cfset _PatchVersion = ArrayFindnocase(arguments.aCols,"version")>
+			<cfset _PatchVersionVal = arguments.aVals[_PatchVersion]>
+			<cfset _SUPatchName = ArrayFindnocase(arguments.aCols,"supatchname")>
+			<cfset _SUPatchNameVal = arguments.aVals[_SUPatchName]>
 			
-			<cfset _theKey = ArrayFindnocase(arguments.aCols,"akey")>
-            <cfset _thePName = ArrayFindnocase(arguments.aCols,"patchname")>
-            <cfset _theSUPName = ArrayFindnocase(arguments.aCols,"supatchname")>
-            <cfset _theVersion = ArrayFindnocase(arguments.aCols,"version")>
-			<cfset _theOSIdx = ArrayFindnocase(arguments.aCols,"osver_support")>
-			<cfset var x_theColsArray = arguments.aCols>
-			<cfset var x_theValsArray = arguments.aVals>
+			<cflog file="patch_loader" type="Information" application="no" text="_PatchVersion=#_PatchVersion#">
+			<cflog file="patch_loader" type="Information" application="no" text="_PatchVersionVal=#_PatchVersionVal#">
+			<cflog file="patch_loader" type="Information" application="no" text="_SUPatchName=#_SUPatchName#">
+			<cflog file="patch_loader" type="Information" application="no" text="_SUPatchNameVal=#_SUPatchNameVal#">
 			
-			<cfif _theOSIdx NEQ 0>
-				<cfset _arrDel = ArrayDeleteAt(x_theColsArray,_theOSIdx)>
-				<cfset _arrDel = ArrayDeleteAt(x_theValsArray,_theOSIdx)>
+			<cflog file="patch_loader" type="Information" application="no" text="_rowExists">
+			
+			<cfset _rowExists = existsInTable(arguments.aTbl,'supatchname',_SUPatchNameVal)>
+			
+			<cflog file="patch_loader" type="Information" application="no" text="_rowExists=#_rowExists#">
+			
+			<cfif _rowExists EQ False>
+				<cflog file="patch_loader" type="Information" application="no" text="Do Insert">
+			
+				<cfquery name="qInsert" datasource="#mpDBSource#" result="qRes">
+					INSERT INTO #arguments.aTbl# ( #ArrayToList(arguments.aCols,",")# )
+					Values (
+					<cfqueryparam value="#arguments.aVals[1]#">
+					<cfif #Arraylen(aVals)# GTE 2>
+					<cfloop from="2" to="#Arraylen(arguments.aVals)#" index="v">
+					,<cfqueryparam value="#arguments.aVals[v]#">
+					</cfloop>
+					</cfif>
+					)
+				</cfquery>
+				
+				<!--- Insert Additional MP Data --->
+				<cfquery name="qInsertAlt" datasource="#mpDBSource#" result="qResAlt">
+					INSERT INTO #mainTableAdditions# ( version, supatchname )
+					Values (<cfqueryparam value="#_PatchVersionVal#">,<cfqueryparam value="#_SUPatchNameVal#">)
+				</cfquery>
 			</cfif>
-			
-			<cfif _theKey NEQ 0>
-				<cfset _theKeyVal = arguments.aVals[_theKey]>
-                <cfset _thePNameVal = arguments.aVals[_thePName]>
-                <cfset _theSUPNameVal = arguments.aVals[_theSUPName]>
-                <cfset _theVersionVal = arguments.aVals[_theVersion]>
-				<cfif existsInAltTable(_theKeyVal) EQ False>
-					<cfquery name="qInsertAlt" datasource="#mpDBSource#" result="qResAlt">
-						INSERT INTO #mainTableAlt# ( #ArrayToList(x_theColsArray,",")# )
-						Values (
-						<cfqueryparam value="#x_theValsArray[1]#">
-						<cfif #Arraylen(x_theValsArray)# GTE 2>
-						<cfloop from="2" to="#Arraylen(x_theValsArray)#" index="v">
-						,<cfqueryparam value="#x_theValsArray[v]#">
-						</cfloop>
-						</cfif>
-						)
-					</cfquery>
-				<cfelse>
-                	<cfif isSameInAltTable(_theKeyVal,_thePNameVal,_theSUPNameVal,_theVersionVal) EQ False>
-                		<cfquery name="qUpdateAlt" datasource="#mpDBSource#" result="qResAlt">
-                            UPDATE #mainTableAlt#
-                            SET patchname = <cfqueryparam value="#_thePNameVal#">,
-                            supatchname = <cfqueryparam value="#_theSUPNameVal#">,
-                            version = <cfqueryparam value="#_theVersionVal#">
-                            Where akey = <cfqueryparam value="#_theKeyVal#">
-                        </cfquery>	
-                
-                	</cfif>
-					<cfset _res.error = "1">
-					<cfset _res.errorMessage = "Error: _theKeyVal was True">
-					<cfreturn _res>		
-				</cfif>
-			<cfelse>
-				<cfset _res.error = "1">
-				<cfset _res.errorMessage = "Error: Inserting data, akey not found in columns.">
-				<cfreturn _res>	
-			</cfif>
-			
 		<cfcatch>
+				<cflog file="patch_loader" type="Error" application="no" text="Error: Inserting data, #cfcatch.message# #cfcatch.detail#">
 				<cfset _res.error = "1">
 				<cfset _res.errorMessage = "Error: Inserting data, #cfcatch.message# #cfcatch.detail#">
 				<cfreturn _res>
@@ -242,6 +222,27 @@
 		<cfreturn _res>
 	</cffunction>
 	
+	<cffunction name="existsInTable" access="private" returntype="any" output="no">
+		<cfargument name="aTable">
+		<cfargument name="aField">
+		<cfargument name="aFieldValue">
+
+    	<cfquery datasource="#mpDBSource#" name="qGet">
+            Select #arguments.aField#
+            From #arguments.aTable#
+            Where #arguments.aField# = <cfqueryparam value="#arguments.aFieldValue#">
+        </cfquery>
+		
+        <cfif qGet.RecordCount EQ 0>
+			<cfset elog("existsInTable was false for #arguments.aField#=#arguments.aFieldValue#")>
+        	<cfreturn False>
+        <cfelse>
+			<cfset elog("existsInTable was true for #arguments.aField#=#arguments.aFieldValue#")>
+        	<cfreturn True>
+        </cfif>
+	</cffunction>
+	
+	<!--- Not Used Anymore --->
 	<cffunction name="existsInAltTable" access="private" returntype="any" output="no">
 		<cfargument name="theKey">
 
@@ -260,6 +261,7 @@
         </cfif>
 	</cffunction>
     
+	<!--- Not Used Anymore --->
     <cffunction name="isSameInAltTable" access="private" returntype="any" output="no">
 		<cfargument name="theKey">
         <cfargument name="thePatchName">

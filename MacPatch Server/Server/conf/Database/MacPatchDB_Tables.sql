@@ -1,7 +1,7 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.1.0
+	Version 2.1.1
 */
 
 SET NAMES utf8;
@@ -228,6 +228,7 @@ DROP TABLE IF EXISTS `mp_apple_patch_criteria`;
 CREATE TABLE `mp_apple_patch_criteria` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `puuid` varchar(50) DEFAULT NULL,
+  `supatchname` varchar(255) DEFAULT NULL,
   `type` varchar(25) DEFAULT NULL,
   `type_data` mediumtext,
   `type_action` int(1) unsigned DEFAULT '0',

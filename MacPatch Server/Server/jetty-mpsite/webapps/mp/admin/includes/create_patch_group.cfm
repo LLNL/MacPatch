@@ -20,4 +20,4 @@
 	</cfquery>
 </cfloop>
 </cfif>
-<cflocation url="#CGI.HTTP_ORIGIN#/admin/index.cfm?listpatchgroups">
+<cflocation url="#session.cflocFix#/admin/index.cfm?listpatchgroups">
