@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>AGENT_BUILD_DEBUG copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>21</integer>
+		</dict>
 		<key>AGENT_BUILD_DEBUG.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -12,6 +17,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>8F68EADE1757D4D500982EF9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>8FE560C316DE70F800BB7600</key>
 		<dict>
 			<key>primary</key>

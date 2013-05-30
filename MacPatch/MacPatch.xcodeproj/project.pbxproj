@@ -7,6 +7,30 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		8F68EADE1757D4D500982EF9 /* AGENT_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 8F68EAFB1757D4D500982EF9 /* Build configuration list for PBXAggregateTarget "AGENT_BUILD" */;
+			buildPhases = (
+			);
+			dependencies = (
+				8F68EADF1757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAE11757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAE31757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAE51757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAE71757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAE91757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAEB1757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAED1757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAEF1757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAF11757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAF31757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAF51757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAF71757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAF91757D4D500982EF9 /* PBXTargetDependency */,
+			);
+			name = AGENT_BUILD;
+			productName = AGENT_BUILD_DEBUG;
+		};
 		8FE560C316DE70F800BB7600 /* AGENT_BUILD_DEBUG */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 8FE560C416DE70F800BB7600 /* Build configuration list for PBXAggregateTarget "AGENT_BUILD_DEBUG" */;
@@ -40,6 +64,104 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8F4B1EE916DD77BD00E15A9E;
 			remoteInfo = MPAgent;
+		};
+		8F68EAE01757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F4B1EE816DD77BD00E15A9E;
+			remoteInfo = MPAgent;
+		};
+		8F68EAE21757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FE5610516DE9A7A00BB7600 /* MPAgentExec.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FE560F316DE9A7A00BB7600;
+			remoteInfo = MPAgentExec;
+		};
+		8F68EAE41757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FE560B916DE70D900BB7600 /* MPFramework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F4B1DE216DD1BC600E15A9E;
+			remoteInfo = MacPatch;
+		};
+		8F68EAE61757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD88F1016DFCF5900A870A3 /* MPReboot.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD88EEF16DFCF5900A870A3;
+			remoteInfo = MPReboot;
+		};
+		8F68EAE81757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD88FE716DFDD9200A870A3 /* MPCatalog.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD88FC616DFDD9200A870A3;
+			remoteInfo = MPCatalog;
+		};
+		8F68EAEA1757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD88EC216DFCD0A00A870A3 /* MPWorker.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD88EB016DFCD0A00A870A3;
+			remoteInfo = MPWorker;
+		};
+		8F68EAEC1757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD8906716DFE84600A870A3 /* MPClientStatus.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD8904616DFE84600A870A3;
+			remoteInfo = MPClientStatus;
+		};
+		8F68EAEE1757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD890C716DFEDB700A870A3 /* Self Patch.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD890A616DFEDB700A870A3;
+			remoteInfo = "Self Patch";
+		};
+		8F68EAF01757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD88F8E16DFD3FB00A870A3 /* MPLogout.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD88F6D16DFD3FB00A870A3;
+			remoteInfo = MPLogout;
+		};
+		8F68EAF21757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD88E8916DFC59F00A870A3 /* MPRebootD.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD88E7716DFC59F00A870A3;
+			remoteInfo = MPRebootD;
+		};
+		8F68EAF41757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD88E2D16DFB40B00A870A3 /* MPAgentUp2Date.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD88E1B16DFB40B00A870A3;
+			remoteInfo = MPAgentUp2Date;
+		};
+		8F68EAF61757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FD88F5216DFD26C00A870A3 /* MPTaskEditor.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD88F3116DFD26C00A870A3;
+			remoteInfo = MPTaskEditor;
+		};
+		8F68EAF81757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FA7063F1700AC0E00A1C57C /* GetCurrentConsoleUser.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76F960486AA7600D96B5E;
+			remoteInfo = ccusr;
+		};
+		8F68EAFA1757D4D500982EF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F90C30B1700AF9D006E36D0;
+			remoteInfo = MPPrefMigrate;
 		};
 		8F90C3211700AF9E006E36D0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -473,6 +595,7 @@
 			projectRoot = "";
 			targets = (
 				8FE560C316DE70F800BB7600 /* AGENT_BUILD_DEBUG */,
+				8F68EADE1757D4D500982EF9 /* AGENT_BUILD */,
 			);
 		};
 /* End PBXProject section */
@@ -579,6 +702,76 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXTargetDependency section */
+		8F68EADF1757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPAgent;
+			targetProxy = 8F68EAE01757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAE11757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPAgentExec;
+			targetProxy = 8F68EAE21757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAE31757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MacPatch;
+			targetProxy = 8F68EAE41757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAE51757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPReboot;
+			targetProxy = 8F68EAE61757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAE71757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPCatalog;
+			targetProxy = 8F68EAE81757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAE91757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPWorker;
+			targetProxy = 8F68EAEA1757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAEB1757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPClientStatus;
+			targetProxy = 8F68EAEC1757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAED1757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Self Patch";
+			targetProxy = 8F68EAEE1757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAEF1757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPLogout;
+			targetProxy = 8F68EAF01757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAF11757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPRebootD;
+			targetProxy = 8F68EAF21757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAF31757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPAgentUp2Date;
+			targetProxy = 8F68EAF41757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAF51757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPTaskEditor;
+			targetProxy = 8F68EAF61757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAF71757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ccusr;
+			targetProxy = 8F68EAF81757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
+		8F68EAF91757D4D500982EF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPPrefMigrate;
+			targetProxy = 8F68EAFA1757D4D500982EF9 /* PBXContainerItemProxy */;
+		};
 		8F90C3271700AFF2006E36D0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MPPrefMigrate;
@@ -670,6 +863,26 @@
 			};
 			name = Release;
 		};
+		8F68EAFC1757D4D500982EF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "AGENT_BUILD_DEBUG copy";
+				SDKROOT = macosx10.7;
+			};
+			name = Debug;
+		};
+		8F68EAFD1757D4D500982EF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "AGENT_BUILD_DEBUG copy";
+				SDKROOT = macosx10.7;
+			};
+			name = Release;
+		};
 		8FE560C516DE70F800BB7600 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -698,6 +911,15 @@
 			buildConfigurations = (
 				8F4B1ED416DD771300E15A9E /* Debug */,
 				8F4B1ED516DD771300E15A9E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8F68EAFB1757D4D500982EF9 /* Build configuration list for PBXAggregateTarget "AGENT_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F68EAFC1757D4D500982EF9 /* Debug */,
+				8F68EAFD1757D4D500982EF9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

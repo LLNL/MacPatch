@@ -282,7 +282,8 @@
 	<cfset proxyConfig = getServerDataOfType(qGetAgentConfig,"Proxy")>
 	<cfset masterConfig = getServerDataOfType(qGetAgentConfig,"Master")>
 
-	
+	<!--- Due to a bug in HTML forms, I need to replace the keynames with the proper case since it is converted to uppercase --->
+	<cfset prefsKeys="AllowClient,AllowServer,Description,Domain,PatchGroup,Reboot,SWDistGroup,MPProxyEnabled,MPProxyServerAddress,MPProxyServerPort,MPServerAddress,MPServerPort,MPServerSSL"> 
 
 	<cfsavecontent variable="thePlist">
 	<cfoutput>	
@@ -294,6 +295,7 @@
 		<dict>
 			<cfloop query="_config.result">
 				<cfif _config.result.enforced EQ 0>
+                	<cfset aKeyIDD = listFindNoCase(prefsKeys,_config.result.aKey,",")>
 					<cfif FindNoCase("Proxy",_config.result.aKey) GTE 1>
 						<!--- If Proxy Config is not enforced --->
 						<cfset defaultProxy = 1>
@@ -301,7 +303,7 @@
 						<!--- If Mast server Config is not enforced --->	
 						<cfset defaultMaster = 1>
 					<cfelse>
-						<key>#_config.result.aKey#</key>
+						<key>#ListGetAt(prefsKeys,aKeyIDD,",")#</key>
 						<string>#_config.result.aKeyValue#</string>
 					</cfif>
 				</cfif>
@@ -327,6 +329,7 @@
 		<dict>
 			<cfloop query="_config.result">
 				<cfif _config.result.enforced EQ 1>
+                	<cfset aKeyIDE = listFindNoCase(prefsKeys,_config.result.aKey,",")>
 					<cfif FindNoCase("Proxy",_config.result.aKey) GTE 1>
 					<!--- If Proxy Config is not enforced --->
 						<cfset enforceProxy = 1>
@@ -334,7 +337,7 @@
 					<!--- If Mast server Config is not enforced --->
 						<cfset enforceMaster = 1>
 					<cfelse>
-						<key>#_config.result.aKey#</key>
+						<key>#ListGetAt(prefsKeys,aKeyIDE,",")#</key>
 						<string>#_config.result.aKeyValue#</string>
 					</cfif>
 				</cfif>
