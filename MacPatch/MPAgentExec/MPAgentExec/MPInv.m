@@ -1340,7 +1340,7 @@ done:
     NSArray *pwrData = nil;
     NSFileManager *fm = [NSFileManager defaultManager];
 	NSMutableDictionary *details;
-	NSString *pmPlist = @"/Library/Preferences/SystemConfiguration/com.apple.PowerManagement.plist"
+	NSString *pmPlist = @"/Library/Preferences/SystemConfiguration/com.apple.PowerManagement.plist";
 	
 	if ([fm fileExistsAtPath:pmPlist])
     {
@@ -1349,7 +1349,7 @@ done:
             
         }
 	} else {
-        logit(lcl_vError, @"File %@ does not exist.",pathInfo);
+        logit(lcl_vError, @"File %@ does not exist.",pmPlist);
 	}
     
     return pwrData;
