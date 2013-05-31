@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8F68EADE1757D4D500982EF9"
-               BuildableName = "AGENT_BUILD_DEBUG copy"
+               BuildableName = "AGENT_BUILD"
                BlueprintName = "AGENT_BUILD"
                ReferencedContainer = "container:MacPatch.xcodeproj">
             </BuildableReference>

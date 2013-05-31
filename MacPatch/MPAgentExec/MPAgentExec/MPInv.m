@@ -1342,6 +1342,7 @@ done:
 	NSMutableDictionary *details;
 	NSString *pmPlist = @"/Library/Preferences/SystemConfiguration/com.apple.PowerManagement.plist";
 	
+    /* Needs to be completed
 	if ([fm fileExistsAtPath:pmPlist])
     {
         NSDictionary *pmDataRaw = [NSDictionary dictionaryWithContentsOfFile:pmPlist];
@@ -1351,7 +1352,7 @@ done:
 	} else {
         logit(lcl_vError, @"File %@ does not exist.",pmPlist);
 	}
-    
+    */
     return pwrData;
 }
 
