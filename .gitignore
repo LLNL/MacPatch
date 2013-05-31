@@ -1,7 +1,7 @@
 # Xcode
 .DS_Store
 */build/*
-profile
+# profile
 *.moved-aside
 DerivedData
 .idea/

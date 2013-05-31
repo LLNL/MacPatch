@@ -40,7 +40,7 @@
 
 @implementation MPFileVaultInfo
 
-@synthesize state;
+//@synthesize state;
 
 - (id)init
 {
