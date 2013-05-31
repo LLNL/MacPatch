@@ -40,8 +40,6 @@
 
 @implementation MPFileVaultInfo
 
-//@synthesize state;
-
 - (id)init
 {
     self = [super init];
@@ -112,8 +110,8 @@
     if (data == nil) {
         return;
     }
-    /* Not completed yet
-    NSString *results = [NSString stringWithUTF8Data:data];
+
+    NSString *results = [[NSString alloc] initWithData:data encoding: NSUTF8StringEncoding];
     if ([argument isEqualToString:@"status"]) {
         [self setStatus:results];
         return;
@@ -122,15 +120,13 @@
         [self parseUsersOutput:results];
         return;
     }
-     */
+    
 }
 
 - (void)parseUsersOutput:(NSString *)aString;
 {
     //smith1,286A5B18-32C0-4C1B-B69D-2C4D6B5FD110
     //local,94188C0B-5535-4195-B534-372ABB1E0CAB
-    return;
-    /*
     @try {
         NSMutableArray *data = (NSMutableArray *)[aString componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
         for (int i = 0; i < [data count]; i++)
@@ -143,7 +139,6 @@
     @catch (NSException *exception) {
         qlerror(@"%@",exception);
     }
-    */
 }
 
 

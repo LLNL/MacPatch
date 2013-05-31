@@ -42,7 +42,7 @@ static NSString *urlEncode(id object)
 
 - (void)setObject:(id)anObject forKey:(id)aKey defaultObject:(id)aDefaultObject
 {
-	if (anObject == nil || anObject == NULL) {
+	if (anObject == nil || anObject == NULL || [anObject isEqualTo:@""]) {
 		if (aDefaultObject == nil || aDefaultObject == NULL) { 
 			[self setObject:@"" forKey:aKey];
 		} else {

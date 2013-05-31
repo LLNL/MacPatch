@@ -1338,21 +1338,35 @@ done:
 - (NSArray *)parsePowerManagmentInfo
 {
     NSArray *pwrData = nil;
+    NSMutableArray *_pwrData = [[NSMutableArray alloc] init];
     NSFileManager *fm = [NSFileManager defaultManager];
-	NSMutableDictionary *details;
 	NSString *pmPlist = @"/Library/Preferences/SystemConfiguration/com.apple.PowerManagement.plist";
 	
-    /* Needs to be completed
+    /* Needs to be completed */
 	if ([fm fileExistsAtPath:pmPlist])
     {
         NSDictionary *pmDataRaw = [NSDictionary dictionaryWithContentsOfFile:pmPlist];
         if ([pmDataRaw objectForKey:@"Custom Profile"]) {
+            NSDictionary *cProfiles = [pmDataRaw objectForKey:@"Custom Profile"];
             
+            NSMutableDictionary *dProfile;
+            for (NSString *n in [cProfiles allKeys]) {
+                NSDictionary *d = [cProfiles objectForKey:n];
+                dProfile = [[NSMutableDictionary alloc] initWithDictionary:[self pwrSchema]];
+                // Set Profile Name
+                [dProfile setObject:n forKey:@"profile_name"];
+                // Set All other objects for keys
+                for (NSString *k in [d allKeys]) {
+                    [dProfile setObject:[d valueForKey:k] forKey:[[k lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"_"]];
+                }
+                [_pwrData addObject:dProfile];
+            }
         }
 	} else {
         logit(lcl_vError, @"File %@ does not exist.",pmPlist);
 	}
-    */
+    
+    pwrData = [NSArray arrayWithArray:_pwrData];
     return pwrData;
 }
 
