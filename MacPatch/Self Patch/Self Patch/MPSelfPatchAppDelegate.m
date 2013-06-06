@@ -337,7 +337,7 @@ static BOOL gDone = false;
             result = 1001;
         }
         if (!proxy) {
-            result = 1001;
+            result = 1002;
             goto done;
         }
     }
