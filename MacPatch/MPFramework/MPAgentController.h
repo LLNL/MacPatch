@@ -80,8 +80,6 @@
 
 -(BOOL)checkPatchPreAndPostForRebootRequired:(NSArray *)aDictArray;
 -(void)removeInstalledPatchFromCacheFile:(NSString *)aPatchName;
--(BOOL)checkSignature:(NSString *)aStringPath;
-
 
 -(BOOL)isTaskRunning:(NSString *)aTaskName;
 -(void)writeTaskRunning:(NSString *)aTaskName;

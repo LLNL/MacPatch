@@ -61,6 +61,7 @@
 #import "JSONKit.h"
 // Crypto
 #import "MPCrypto.h"
+#import "MPCodeSign.h"
 // ASI Stuff
 #import "ASICacheDelegate.h"
 #import "ASIDataCompressor.h"

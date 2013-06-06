@@ -406,23 +406,16 @@ done:
 {
 	BOOL hashResult = FALSE;
 	
-	//SSCrypto *crypto;
 	MPCrypto *crypto;
 
-	//NSData		*fileData	= [NSData dataWithContentsOfFile:localFilePath];
-	//NSString	*stringData	= [[[NSString alloc] initWithData:fileData encoding:NSASCIIStringEncoding] autorelease];	
-	//if (!fileData) {return FALSE;}
 	if (![[NSFileManager defaultManager] fileExistsAtPath:localFilePath]) {
 		qlerror(@"Unable to get hash for file %@. File is missing.",localFilePath);	
 		return FALSE;
 	}
-	
-	//crypto = [[SSCrypto alloc] init];
-	//[crypto setClearTextWithData:fileData];
+
 	crypto = [[MPCrypto alloc] init];
 	
 	if ([type isEqualToString:@"MD5"]) {
-		//if ([[[crypto digest:@"MD5"] hexval] isEqualToString:hash])
 		if ([[[crypto md5HashForFile:localFilePath] uppercaseString] isEqualToString:[hash uppercaseString]])
 		{
 			hashResult = TRUE;
@@ -430,7 +423,6 @@ done:
 	} 
 	else if ([type isEqualToString:@"SHA1"])
 	{
-		//if ([[[crypto digest:@"SHA1"] hexval] isEqualToString:hash])
 		if ([[[crypto sha1HashForFile:localFilePath] uppercaseString] isEqualToString:[hash uppercaseString]])
 		{
 			hashResult = TRUE;

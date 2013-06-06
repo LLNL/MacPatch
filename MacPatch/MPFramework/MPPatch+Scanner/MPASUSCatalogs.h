@@ -24,7 +24,6 @@
  */
 
 #import <Cocoa/Cocoa.h>
-@class MPSoap;
 @class MPNetworkUtils;
 @class MPServerConnection;
 
@@ -32,7 +31,6 @@
 {
     MPNetworkUtils      *mpNetworkUtils;
     MPServerConnection  *mpServerConnection;
-	MPSoap              *soapObj;
 }
 
 -(id)initWithServerConnection:(MPServerConnection *)aSrvObj;

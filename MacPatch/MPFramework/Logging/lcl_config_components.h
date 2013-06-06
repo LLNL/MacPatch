@@ -25,8 +25,6 @@ _lcl_component(MPClientCheckInData, "MPClientCheckInData",  "MPClientCheckInData
 _lcl_component(MPNSTask,            "MPNSTask",         "MPNSTask")
 _lcl_component(MPWEBServices,       "MPWEBServices",    "MPWEBServices")
 
-_lcl_component(MPWebServices,       "MPWebServices",        "MPWebServices")
-
 
 
 

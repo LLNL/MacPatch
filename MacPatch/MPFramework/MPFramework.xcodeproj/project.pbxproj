@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F00CD0517610F1D008CC39E /* MPCodeSign.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F00CD0317610F1D008CC39E /* MPCodeSign.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F00CD0617610F1D008CC39E /* MPCodeSign.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F00CD0417610F1D008CC39E /* MPCodeSign.m */; };
 		8F4B1DEE16DD1D6400E15A9E /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 724EE9841698A57A007FD391 /* Constants.m */; };
 		8F4B1DEF16DD1D6400E15A9E /* MPNetworkUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA7EA1D161DEF81001748EA /* MPNetworkUtils.m */; };
 		8F4B1DF016DD1D6400E15A9E /* MPServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 72EE30D91696446600919D87 /* MPServerConnection.m */; };
@@ -132,6 +134,8 @@
 		724EE9841698A57A007FD391 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		72EE30D81696446600919D87 /* MPServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPServerConnection.h; sourceTree = "<group>"; };
 		72EE30D91696446600919D87 /* MPServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPServerConnection.m; sourceTree = "<group>"; };
+		8F00CD0317610F1D008CC39E /* MPCodeSign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCodeSign.h; sourceTree = "<group>"; };
+		8F00CD0417610F1D008CC39E /* MPCodeSign.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCodeSign.m; sourceTree = "<group>"; };
 		8F018296147839CF0013EDE0 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		8F018297147839CF0013EDE0 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		8F051CF3146847B100510AF7 /* MPInstaller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPInstaller.h; sourceTree = "<group>"; };
@@ -320,6 +324,8 @@
 				8FF861CF162CAA3900198774 /* MPASINet.m */,
 				8F7B15CC15068211005CEA32 /* MPCrypto.h */,
 				8F7B15CD15068211005CEA32 /* MPCrypto.m */,
+				8F00CD0317610F1D008CC39E /* MPCodeSign.h */,
+				8F00CD0417610F1D008CC39E /* MPCodeSign.m */,
 				8FAEF635145F1773006284B2 /* MPPatch+Scanner */,
 				8F4B1F3316DE64BF00E15A9E /* MacPatch+SWDist */,
 				8FAEF64E145F187C006284B2 /* WebServices */,
@@ -613,6 +619,7 @@
 				8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */,
 				8F4B1F2F16DE639100E15A9E /* NSData+Base64.h in Headers */,
 				8F4B1F3716DE64DA00E15A9E /* MPSWTasks.h in Headers */,
+				8F00CD0517610F1D008CC39E /* MPCodeSign.h in Headers */,
 				8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */,
 				8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */,
 			);
@@ -738,6 +745,7 @@
 				8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */,
 				8FE560D216DE899B00BB7600 /* MPSWInstaller.m in Sources */,
 				8FE560D816DE932900BB7600 /* MPAgentController.m in Sources */,
+				8F00CD0617610F1D008CC39E /* MPCodeSign.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

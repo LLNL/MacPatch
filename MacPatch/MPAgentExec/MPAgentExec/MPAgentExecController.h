@@ -83,8 +83,6 @@
 -(void)scanForAVDefsAndUpdate;
 -(void)scanAndUpdateAgentUpdater;
 -(NSDictionary *)getAgentUpdaterInfo;
--(BOOL)checkSignature:(NSString *)aStringPath;
-
 
 -(BOOL)isTaskRunning:(NSString *)aTaskName;
 -(void)writeTaskRunning:(NSString *)aTaskName;

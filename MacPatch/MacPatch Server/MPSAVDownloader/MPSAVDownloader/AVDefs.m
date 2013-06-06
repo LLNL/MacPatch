@@ -24,7 +24,6 @@
  */
 
 #import "AVDefs.h"
-#import "SSCrypto.h"
 #import "RegexKitLite/RegexKitLite.h"
 #include <curl/curl.h>
 #include <stdio.h>
@@ -263,29 +262,6 @@
 	NSString *regexString = @"_([0-9].*)_"; 
 	NSString *matchedString = [avFileName stringByMatching:regexString capture:1]; 
 	return matchedString;
-}
-
-
--(NSString *)getFileHash:(NSString *)localFilePath hashType:(NSString *)type
-{
-	NSString *hashResult = nil;
-	SSCrypto *crypto;
-	NSData *fileData	= [NSData dataWithContentsOfFile:localFilePath];
-	
-	if (!fileData)
-		return NULL;
-	
-	crypto = [[SSCrypto alloc] init];
-	[crypto setClearTextWithData:fileData];
-	
-	if ([type isEqualToString:@"MD5"]) {
-		hashResult = [[crypto digest:@"MD5"] hexval];
-	} else if ([type isEqualToString:@"SHA1"]) {
-		hashResult = [[crypto digest:@"SHA1"] hexval];
-	}
-	
-    [crypto release];
-	return hashResult;
 }
 
 - (void) dealloc {

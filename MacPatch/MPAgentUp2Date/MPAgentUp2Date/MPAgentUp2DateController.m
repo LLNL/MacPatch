@@ -111,9 +111,11 @@
 	logit(lcl_vDebug,@"WS Result: %@",plist);
 	logit(lcl_vInfo,@"Evaluate local versions for updates.");
 	// See if the update is needed
-	NSDictionary *_update = nil;
+	/* Not Implemented Yet
+    NSDictionary *_update = nil;
     MPOSCheck *mpos = nil;
     NSMutableArray *_osSupport = [NSMutableArray arrayWithObjects:@"*",nil];
+    */
 	int needsUpdate = 0;
 	if ([[plist objectForKey:@"updateAvailable"] boolValue] == YES) {
         needsUpdate++;

@@ -66,7 +66,4 @@
 - (NSString *)getHostSerialNumber;
 - (NSDictionary *)getOSInfo;
 
-// CodeSign Validate
-- (BOOL)validateAppHashes:(NSString *)aStringPath;
-- (BOOL)checkSignature:(NSString *)aStringPath;
 @end

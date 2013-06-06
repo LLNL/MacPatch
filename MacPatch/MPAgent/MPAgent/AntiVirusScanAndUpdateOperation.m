@@ -25,6 +25,7 @@
 
 #import "AntiVirusScanAndUpdateOperation.h"
 #import "MPAgent.h"
+#import "MacPatch.h"
 
 @interface AntiVirusScanAndUpdateOperation (Private)
 
@@ -110,7 +111,7 @@
 	if (![fm fileExistsAtPath:appPath]) {
 		logit(lcl_vError,@"Unable to find MPAgentExec app.");
 	} else {
-		if ([si checkSignature:appPath]) {
+		if ([MPCodeSign checkSignature:appPath]) {
 			NSError *error = nil;
 			NSString *result;
 			MPNSTask *mpr = [[MPNSTask alloc] init];
@@ -139,7 +140,7 @@
 		logit(lcl_vError,@"Unable to find MPAgentExec app.");
 	}
 
-	if ([si checkSignature:appPath]) 
+	if ([MPCodeSign checkSignature:appPath]) 
 	{	
 		NSError *error = nil;
 		NSString *result;

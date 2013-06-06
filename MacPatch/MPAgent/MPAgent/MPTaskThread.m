@@ -25,6 +25,7 @@
 
 #import "MPTaskThread.h"
 #import "MPDefaultsWatcher.h"
+#import "MacPatch.h"
 
 #define CLIENT_VER_FILE		@"/Library/MacPatch/Client/.mpVersion.plist"
 
@@ -186,8 +187,8 @@ NSLock *lock;
 		[taskpool drain];
 		return;
 	}
-	MPAgent *si = [MPAgent sharedInstance];
-	if (![si checkSignature:invAppPath]) {
+
+	if (![MPCodeSign checkSignature:invAppPath]) {
 		[taskpool drain];
 		return; // Not a valid signature, bail.
 	}
@@ -215,8 +216,8 @@ NSLock *lock;
 		[taskpool drain];
 		return;
 	}
-	MPAgent *si = [MPAgent sharedInstance];
-	if (![si checkSignature:appPath]) {
+    
+	if (![MPCodeSign checkSignature:appPath]) {
 		[taskpool drain];
 		return; // Not a valid signature, bail.
 	}
@@ -243,8 +244,8 @@ NSLock *lock;
 		[taskpool drain];
 		return;
 	}
-	MPAgent *si = [MPAgent sharedInstance];
-	if (![si checkSignature:appPath]) {
+
+	if (![MPCodeSign checkSignature:appPath]) {
 		[taskpool drain];
 		return; // Not a valid signature, bail.
 	}
@@ -272,8 +273,8 @@ NSLock *lock;
 		[taskpool drain];
 		return;
 	}
-	MPAgent *si = [MPAgent sharedInstance];
-	if (![si checkSignature:appPath]) {
+
+	if (![MPCodeSign checkSignature:appPath]) {
 		[taskpool drain];
 		return; // Not a valid signature, bail.
 	}
@@ -301,8 +302,8 @@ NSLock *lock;
 		[taskpool drain];
 		return;
 	}
-	MPAgent *si = [MPAgent sharedInstance];
-	if (![si checkSignature:appPath]) {
+
+	if (![MPCodeSign checkSignature:appPath]) {
 		[taskpool drain];
 		return; // Not a valid signature, bail.
 	}
@@ -329,8 +330,8 @@ NSLock *lock;
 		[taskpool drain];
 		return;
 	}
-	MPAgent *si = [MPAgent sharedInstance];
-	if (![si checkSignature:appPath]) {
+
+	if (![MPCodeSign checkSignature:appPath]) {
 		[taskpool drain];
 		return; // Not a valid signature, bail.
 	}

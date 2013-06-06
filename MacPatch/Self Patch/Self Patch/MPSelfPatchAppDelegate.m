@@ -338,8 +338,8 @@ static BOOL gDone = false;
         }
         if (!proxy) {
             result = 1001;
+            goto done;
         }
-        goto done;
     }
 	
     @try 

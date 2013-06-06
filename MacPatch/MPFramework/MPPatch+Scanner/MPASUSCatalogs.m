@@ -24,7 +24,6 @@
  */
 
 #import "MPASUSCatalogs.h"
-#import "MPSoap.h"
 #import "MPJson.h"
 #import "MPNetworkUtils.h"
 
@@ -44,7 +43,6 @@
 		@try {
             mpNetworkUtils = [[MPNetworkUtils alloc] init];
             mpServerConnection = aSrvObj;
-			soapObj = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSControllerCocoa.cfc"];
 		}
 		@catch (NSException *exception) {
 			qlerror(@"Exception: %@",exception);
@@ -62,7 +60,6 @@
 - (void) dealloc
 {
     [mpNetworkUtils release];
-	[soapObj release];
 	[super dealloc];
 }	
 
@@ -129,11 +126,11 @@
 					newCatalogURL = [catURLS objectAtIndex:i];
 					break;
 				} else {
-                    qlwarning(@"CatalogURL: %@ did not return 200.",[catURLS objectAtIndex:i]);
+                    qlerror(@"CatalogURL: %@ did not return 200.",[catURLS objectAtIndex:i]);
 					continue;
 				}
 			} else {
-                qlwarning(@"CatalogURL: %@ is not reachable.",[catURLS objectAtIndex:i]);
+                qlerror(@"CatalogURL: %@ is not reachable.",[catURLS objectAtIndex:i]);
 				continue;	
 			}
 		}

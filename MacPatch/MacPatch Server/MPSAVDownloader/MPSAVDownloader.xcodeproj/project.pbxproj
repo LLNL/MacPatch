@@ -15,14 +15,12 @@
 		8FD208A116E5687600F78296 /* MPLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089816E5687500F78296 /* MPLog.m */; };
 		8FD208A216E5687600F78296 /* MPSoap.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089A16E5687500F78296 /* MPSoap.m */; };
 		8FD208A316E5687600F78296 /* MPNetUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089C16E5687600F78296 /* MPNetUtils.m */; };
-		8FD208A416E5687600F78296 /* SSCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2089E16E5687600F78296 /* SSCrypto.m */; };
 		8FD208BF16E568ED00F78296 /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD208AE16E568ED00F78296 /* lcl.m */; };
 		8FD208C016E568ED00F78296 /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD208B616E568ED00F78296 /* LCLLogFile.m */; };
 		8FD208C116E568ED00F78296 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD208BE16E568ED00F78296 /* RegexKitLite.m */; };
 		8FD208C316E5693200F78296 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208C216E5693200F78296 /* Cocoa.framework */; };
 		8FD208C516E5693800F78296 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208C416E5693800F78296 /* SystemConfiguration.framework */; };
 		8FD208C716E5694000F78296 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208C616E5694000F78296 /* libicucore.dylib */; };
-		8FD208C916E5694700F78296 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208C816E5694700F78296 /* libcrypto.dylib */; };
 		8FD208CB16E5697B00F78296 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD208CA16E5697B00F78296 /* libcurl.dylib */; };
 /* End PBXBuildFile section */
 
@@ -55,8 +53,6 @@
 		8FD2089A16E5687500F78296 /* MPSoap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSoap.m; sourceTree = "<group>"; };
 		8FD2089B16E5687500F78296 /* MPNetUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPNetUtils.h; sourceTree = "<group>"; };
 		8FD2089C16E5687600F78296 /* MPNetUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPNetUtils.m; sourceTree = "<group>"; };
-		8FD2089D16E5687600F78296 /* SSCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSCrypto.h; sourceTree = "<group>"; };
-		8FD2089E16E5687600F78296 /* SSCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSCrypto.m; sourceTree = "<group>"; };
 		8FD208A816E568ED00F78296 /* lcl_config_components.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_components.h; sourceTree = "<group>"; };
 		8FD208A916E568ED00F78296 /* lcl_config_extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_extensions.h; sourceTree = "<group>"; };
 		8FD208AA16E568ED00F78296 /* lcl_config_logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_logger.h; sourceTree = "<group>"; };
@@ -79,7 +75,6 @@
 		8FD208C216E5693200F78296 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8FD208C416E5693800F78296 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8FD208C616E5694000F78296 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
-		8FD208C816E5694700F78296 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		8FD208CA16E5697B00F78296 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -89,7 +84,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8FD208CB16E5697B00F78296 /* libcurl.dylib in Frameworks */,
-				8FD208C916E5694700F78296 /* libcrypto.dylib in Frameworks */,
 				8FD208C716E5694000F78296 /* libicucore.dylib in Frameworks */,
 				8FD208C516E5693800F78296 /* SystemConfiguration.framework in Frameworks */,
 				8FD208C316E5693200F78296 /* Cocoa.framework in Frameworks */,
@@ -121,7 +115,6 @@
 			isa = PBXGroup;
 			children = (
 				8FD208CA16E5697B00F78296 /* libcurl.dylib */,
-				8FD208C816E5694700F78296 /* libcrypto.dylib */,
 				8FD208C616E5694000F78296 /* libicucore.dylib */,
 				8FD208C416E5693800F78296 /* SystemConfiguration.framework */,
 				8FD208C216E5693200F78296 /* Cocoa.framework */,
@@ -144,8 +137,6 @@
 				8FD2089A16E5687500F78296 /* MPSoap.m */,
 				8FD2089B16E5687500F78296 /* MPNetUtils.h */,
 				8FD2089C16E5687600F78296 /* MPNetUtils.m */,
-				8FD2089D16E5687600F78296 /* SSCrypto.h */,
-				8FD2089E16E5687600F78296 /* SSCrypto.m */,
 				8FD208A716E568ED00F78296 /* Logging */,
 				8FD208BC16E568ED00F78296 /* RegexKitLite */,
 				8FD2089216E5683E00F78296 /* Resources */,
@@ -284,7 +275,6 @@
 				8FD208A116E5687600F78296 /* MPLog.m in Sources */,
 				8FD208A216E5687600F78296 /* MPSoap.m in Sources */,
 				8FD208A316E5687600F78296 /* MPNetUtils.m in Sources */,
-				8FD208A416E5687600F78296 /* SSCrypto.m in Sources */,
 				8FD208BF16E568ED00F78296 /* lcl.m in Sources */,
 				8FD208C016E568ED00F78296 /* LCLLogFile.m in Sources */,
 				8FD208C116E568ED00F78296 /* RegexKitLite.m in Sources */,
@@ -392,6 +382,7 @@
 				8FD2088B16E5681B00F78296 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

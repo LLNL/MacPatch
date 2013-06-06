@@ -25,6 +25,7 @@
 
 #import "InventoryOperation.h"
 #import "MPAgent.h"
+#import "MacPatch.h"
 
 @interface InventoryOperation (Private)
 
@@ -104,7 +105,7 @@
 		return;
 	}
 
-	if (![si checkSignature:invAppPath]) {
+	if (![MPCodeSign checkSignature:invAppPath]) {
 		return; // Not a valid signature, bail.
 	}
 	
