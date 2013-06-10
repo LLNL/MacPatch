@@ -1,9 +1,10 @@
-<cfparam name="mainZipFileName" default="MPClientInstaller.mpkg.zip">
+<cfparam name="mainZipFileName" default="MPClientInstall.pkg.zip">
+<cfparam name="infoFileName" default="mpInfo.ini">
 
 <cfif IsDefined("form.AgentPackage") AND form.AgentPackage EQ "Upload">
 	<cfif #form.pkg# gt "">
     	<cfset pkgUUID = #CreateUUID()#>
-		<cfset ulTmpPath = #GetTempdirectory()# & "/" & #pkgUUID#>
+		<cfset ulTmpPath = #GetTempdirectory()# & #pkgUUID#>
 		<cfif directoryexists(ulTmpPath) EQ False>
         	<cfdirectory action="create" directory="#ulTmpPath#" recurse="true">
 		</cfif>
@@ -20,6 +21,8 @@
 			<cfdirectory action="delete" directory="#ulTmpPath#" recurse="true">
 			<cfabort>
 		</cfif>
+        
+        <cfset pkgName = #clientfilename# />
 		
 		<!--- Unzip the Main Client Installer --->
 		<cfexecute 
@@ -28,8 +31,16 @@
    			variable = "unzipResult"
   			timeout = "15">
 		</cfexecute>
-
-		<cfset iniFile = "#ulTmpPath#/#clientfilename#/Contents/Resources/.mpInfo.ini">
+        
+        <!--- Extract Flat Package --->
+        <cfexecute 
+			name = "/usr/sbin/pkgutil"
+			arguments = "--expand #ulTmpPath#/#pkgName# #ulTmpPath#/MPClientInstall"
+			variable = "pkgExpanded"
+			timeout = "15">
+		</cfexecute>
+        
+		<cfset iniFile = "#ulTmpPath#/MPClientInstall/Resources/#infoFileName#">
 		<cfset sections = GetProfilesections(iniFile)>
 		<cfset data = structNew()>
 		<cfset pkgs = arrayNew(1)>
@@ -61,11 +72,12 @@
 			<cfabort>
 		</cfif>
 		
+        
 		<!--- Configure Packages for update mechanisim --->
 		<cfset results = 0>
 		<cfloop collection="#data#" item="key">
 			<cftry>
-				<cfset _i = processPackage(pkgUUID,clientfilename,data[key],key,agentPlist.result)>
+				<cfset _i = processPackage(pkgUUID,pkgName,data[key],key,agentPlist.result)>
 				<cfif _i.errorNo NEQ "0">
 					<cfdump var="Error[#_i.errorNo#]:#_i#">
 				</cfif>
@@ -81,16 +93,20 @@
 			<cflocation url="#session.cflocFix#/admin/index.cfm?#session.curRef#">
 			<cfabort>
 		</cfif>
-		
+        
 		<!--- Write Config to Main Package --->
-		<cffile action="delete" file="#ulTmpPath#/#clientfilename#.zip">
-		<cffile action = "write" 
-    		file = "#ulTmpPath#/#clientfilename#/Contents/Packages/MPBaseClient.pkg/Contents/Resources/gov.llnl.mpagent.plist" 
-    		output = "#agentPlist.result#">
+		<cffile action="delete" file="#ulTmpPath#/#clientfilename#.zip">	
+        <cffile action="delete" file="#ulTmpPath#/#pkgName#">    
+        <cfexecute 
+			name = "/usr/sbin/pkgutil"
+			arguments = "--flatten #ulTmpPath#/MPClientInstall #ulTmpPath#/#pkgName#"
+			variable = "flattenResult"
+			timeout = "15">
+		</cfexecute>
 		<cfexecute 
 			name = "/usr/bin/ditto"
-			arguments = "-c -k --keepParent #ulTmpPath#/#clientfilename# #ulTmpPath#/#clientfilename#.zip"
-			variable = "aMainZipResult"
+			arguments = "-c -k #ulTmpPath#/#pkgName# #ulTmpPath#/#pkgName#.zip"
+			variable = "aZipResult"
 			timeout = "15">
 		</cfexecute>
 		
@@ -119,7 +135,8 @@
             </cftry>
 		</cfloop>
 	
-		<cfset rm_File = "#ulTmpPath#/#clientfilename#">
+    	<!--- Clean up the temp Dir --->
+		<cfset rm_File = "#ulTmpPath#">
 		<cfdirectory action="delete" directory="#rm_File#" recurse="true">
     </cfif>
 
@@ -127,6 +144,138 @@
 </cfif>	
 
 <cffunction name="processPackage" access="public" output="no" returntype="any">
+    <cfargument name="gCUUID">
+	<cfargument name="mainPkg">
+	<cfargument name="pkgStruct" type="struct">
+    <cfargument name="pType">
+	<cfargument name="agentConfigPlist">
+	
+    <cfset var pkg = "0">
+	<cfset var pkgName = "">
+	<cfset var pkgHash = "">
+	<cfset var version = "0">
+	<cfset var agent_version = "0">
+	<cfset var build = "0">
+	<cfset var framework = "0">
+	<cfset var osVerSupport = "*">
+	
+	<cfset tmpDir = #GetTempdirectory()# & #arguments.gCUUID#>
+	
+	<cfset var result = Structnew()>
+	<cfset result.errorNo = "0">
+	<cfset result.errorMsg = "">
+	
+	<cfif StructKeyExists(arguments.pkgStruct,"agent_version")>
+		<cfset agent_version = Replace(arguments.pkgStruct["agent_version"],"""","","All")>
+	<cfelse>
+		<cfset result.errorNo = "1">
+		<cfset result.errorMsg = "Error: agent version attribute was missing.">	
+		<cfreturn result>	
+	</cfif>	
+	
+	<cfif StructKeyExists(arguments.pkgStruct,"pkg")>
+		<cfset pkg = Replace(arguments.pkgStruct["pkg"],"""","","All")>
+		<cfset pkgName = GetFilefrompath(pkg)>
+	<cfelse>
+		<cfset result.errorNo = "1">
+		<cfset result.errorMsg = "Error: pkg attribute was missing.">	
+		<cfreturn result>	
+	</cfif>	
+	
+	<cfif StructKeyExists(arguments.pkgStruct,"version")>
+		<cfset version = Replace(arguments.pkgStruct["version"],"""","","All")>
+	<cfelse>
+		<cfset result.errorNo = "1">
+		<cfset result.errorMsg = "Error: version attribute was missing.">	
+		<cfreturn result>	
+	</cfif>
+	
+	<cfif StructKeyExists(arguments.pkgStruct,"build")>
+		<cfset build = Replace(arguments.pkgStruct["build"],"""","","All")>
+	</cfif>
+	
+	<cfif StructKeyExists(arguments.pkgStruct,"framework")>
+		<cfset framework = Replace(arguments.pkgStruct["framework"],"""","","All")>
+	</cfif>
+	
+	<cfif StructKeyExists(arguments.pkgStruct,"osver")>
+		<cfset osVerSupport = Replace(arguments.pkgStruct["osver"],"""","","All")>
+	</cfif>
+    
+    <cfsavecontent variable="mpVerPlist">
+	<cfoutput>	
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+	<plist version="1.0">
+    <dict>
+        <key>bug</key>
+        <string>#ListGetAt(version,3,".")#</string>
+        <key>build</key>
+        <string>#build#</string>
+        <key>framework</key>
+        <string>#framework#</string>
+        <key>major</key>
+        <string>#ListGetAt(version,1,".")#</string>
+        <key>minor</key>
+        <string>#ListGetAt(version,2,".")#</string>
+        <key>version</key>
+        <string>#version#</string>
+    </dict>
+	</plist>
+	</cfoutput>
+	</cfsavecontent>
+	<cfset mpVersion = htmlCompressFormat(mpVerPlist, 2)>
+	
+	<!--- Create Paths --->
+	<cfset pkgPath = tmpDir & "/MPClientInstall/" & pkg>
+	<cfset pkgPathZip = tmpDir & "/" & pkgName & ".zip">
+	<cfset pkgURLPath = "/mp-content/clients/updates/#arguments.gCUUID#/"& GetFilefrompath(pkgPathZip)>
+	
+	<!--- Add Agent Config To Package --->
+	<cffile action = "write" 
+    		file = "#pkgPath#/Scripts/gov.llnl.mpagent.plist" 
+    		output = "#arguments.agentConfigPlist#">
+    <cffile action = "write" 
+    		file = "#pkgPath#/Scripts/.mpVersion.plist" 
+    		output = "#mpVersion#">        
+	<cfexecute 
+        name = "/usr/sbin/pkgutil"
+        arguments = "--flatten #pkgPath# #tmpDir#/#pkg#"
+        variable = "flattenResult"
+        timeout = "15">
+    </cfexecute>
+	<!--- Compress the inner pkg --->	
+	<cfexecute 
+		name = "/usr/bin/ditto"
+		arguments = "-c -k #pkgPath# #pkgPathZip#"
+		variable = "aBaseZipResult"
+		timeout = "15">
+	</cfexecute>
+	
+	<cfset pkgHash = getSHA1Hash(pkgPathZip)>
+	
+	<cfif arguments.ptype EQ "agent">
+		<cfset ptype = "app">
+    <cfelseif arguments.ptype EQ "updater">    
+    	<cfset ptype = "update">
+	<cfelse>
+		<cfset ptype = "NA">
+	</cfif>
+	<cftry>
+		<cfquery datasource="mpds" name="qAddUpdate">
+			Insert INTO mp_client_agents (puuid, type, agent_ver, version, build, framework, pkg_name, pkg_url, pkg_hash, osver)
+			Values('#arguments.gCUUID#', '#ptype#', '#agent_version#', '#version#', '#build#', '#framework#', '#pkgName#', '#pkgURLPath#', '#pkgHash#', '#osVerSupport#')
+		</cfquery>
+	<cfcatch>
+		<cfset result.errorNo = "1">
+		<cfset result.errorMsg = "Error: #cfcatch.Detail# #cfcatch.message#">	
+	</cfcatch>
+	</cftry>
+	
+	<cfreturn result>
+</cffunction>
+
+<cffunction name="processPackageOrig" access="public" output="no" returntype="any">
     <cfargument name="gCUUID">
 	<cfargument name="mainPkg">
 	<cfargument name="pkgStruct" type="struct">
@@ -191,8 +340,9 @@
 	<cfset pkgURLPath = "/mp-content/clients/updates/#arguments.gCUUID#/"& GetFilefrompath(pkgPathZip)>
 	
 	<!--- Add Agent Config To Package --->
+    <!--- "#pkgPath#/Contents/Resources/gov.llnl.mpagent.plist" --->
 	<cffile action = "write" 
-    		file = "#pkgPath#/Contents/Resources/gov.llnl.mpagent.plist" 
+    		file = "#pkgPath#/Resources/gov.llnl.mpagent.plist" 
     		output = "#arguments.agentConfigPlist#">
 	
 	<!--- Compress the inner pkg --->	
@@ -262,7 +412,10 @@
 				<cfreturn response>
 			</cfif>
 		<cfelse>
-		
+			<!--- No Results --->
+            <cfset response.errorNo = "1">
+			<cfset response.errorMsg = "Error: #cfcatch.Detail# #cfcatch.message#">
+			<cfreturn response>
 		</cfif>
 		<cfcatch>
 			<cfset response.errorNo = "1">
@@ -282,8 +435,7 @@
 	<cfset proxyConfig = getServerDataOfType(qGetAgentConfig,"Proxy")>
 	<cfset masterConfig = getServerDataOfType(qGetAgentConfig,"Master")>
 
-	<!--- Due to a bug in HTML forms, I need to replace the keynames with the proper case since it is converted to uppercase --->
-	<cfset prefsKeys="AllowClient,AllowServer,Description,Domain,PatchGroup,Reboot,SWDistGroup,MPProxyEnabled,MPProxyServerAddress,MPProxyServerPort,MPServerAddress,MPServerPort,MPServerSSL"> 
+	
 
 	<cfsavecontent variable="thePlist">
 	<cfoutput>	
@@ -295,7 +447,6 @@
 		<dict>
 			<cfloop query="_config.result">
 				<cfif _config.result.enforced EQ 0>
-                	<cfset aKeyIDD = listFindNoCase(prefsKeys,_config.result.aKey,",")>
 					<cfif FindNoCase("Proxy",_config.result.aKey) GTE 1>
 						<!--- If Proxy Config is not enforced --->
 						<cfset defaultProxy = 1>
@@ -303,7 +454,7 @@
 						<!--- If Mast server Config is not enforced --->	
 						<cfset defaultMaster = 1>
 					<cfelse>
-						<key>#ListGetAt(prefsKeys,aKeyIDD,",")#</key>
+						<key>#_config.result.aKey#</key>
 						<string>#_config.result.aKeyValue#</string>
 					</cfif>
 				</cfif>
@@ -329,7 +480,6 @@
 		<dict>
 			<cfloop query="_config.result">
 				<cfif _config.result.enforced EQ 1>
-                	<cfset aKeyIDE = listFindNoCase(prefsKeys,_config.result.aKey,",")>
 					<cfif FindNoCase("Proxy",_config.result.aKey) GTE 1>
 					<!--- If Proxy Config is not enforced --->
 						<cfset enforceProxy = 1>
@@ -337,7 +487,7 @@
 					<!--- If Mast server Config is not enforced --->
 						<cfset enforceMaster = 1>
 					<cfelse>
-						<key>#ListGetAt(prefsKeys,aKeyIDE,",")#</key>
+						<key>#_config.result.aKey#</key>
 						<string>#_config.result.aKeyValue#</string>
 					</cfif>
 				</cfif>

@@ -63,6 +63,9 @@
 						    <cfcase value="MPServerSSL"> 
 						        <cfset fKeyName = "MPServerSSL">
 						    </cfcase>
+                            <cfcase value="CheckSignatures"> 
+						        <cfset fKeyName = "CheckSignatures">
+						    </cfcase>
 						</cfswitch>
 						<cfquery datasource="#session.dbsource#" name="addConfigData">
 							Insert Into mp_agent_config_data (aid, aKey, aKeyValue, enforced)
@@ -142,6 +145,9 @@
 						    <cfcase value="MPServerSSL"> 
 						        <cfset efKeyName = "MPServerSSL">
 						    </cfcase>
+                            <cfcase value="CheckSignatures"> 
+						        <cfset fKeyName = "CheckSignatures">
+						    </cfcase>
 						</cfswitch>
 						<cfquery datasource="#session.dbsource#" name="qSetDefaultConfig">
 							Update mp_agent_config_data
@@ -169,6 +175,8 @@
 				<cfcatch type="any">
 					<cfset session.message.text = CFCATCH.Message />
 					<cfset session.message.type = "error" />
+					<cfdump var="#session.message#">
+					<cfabort>
 					<cflocation url="#session.cflocFix#/admin/index.cfm?agent_config" addtoken="false" />
 				</cfcatch>
 			</cftry>

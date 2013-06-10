@@ -8,7 +8,7 @@
 	<string>gov.llnl.mp.invd</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Library/MacPatch/Server/bin/mpinvd</string>
+		<string>/Library/MacPatch/Server/bin/MPInventoryD</string>
 		<string>-c</string>
 		<string>/Library/MacPatch/Server/conf/etc/siteconfig.xml</string>
 		<string>-f</string>

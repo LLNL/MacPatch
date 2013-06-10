@@ -127,13 +127,14 @@
                 </cfoutput>
                 
                 <cfif _pCount EQ 2>
-					<!--- Update Agent Config Plist--->
+					<!--- Update Agent Config Plist
 					<cfset caObj = CreateObject("component","agent_config").init(session.dbsource)>
 					<cfset caObj.updatePackageConfig(_pid)>
-					
+					--->
+                    
                 	<!--- Move Main Installer Into Production --->
-                    <cfset _mainPkg = #pkgBaseLoc# & "/MPClientInstaller.mpkg.zip">
-                    <cfset _newMainPkg = #pkgBaseLoc# & "/updates/" & #_pid# & "/MPClientInstaller.mpkg.zip">
+                    <cfset _mainPkg = #pkgBaseLoc# & "/MPClientInstall.pkg.zip">
+                    <cfset _newMainPkg = #pkgBaseLoc# & "/updates/" & #_pid# & "/MPClientInstall.pkg.zip">
                     <cfif FileExists(_mainPkg)>
                     	<cfset _rm = FileDelete(_mainPkg)>
                     </cfif>    
