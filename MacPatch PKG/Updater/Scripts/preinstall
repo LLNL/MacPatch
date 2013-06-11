@@ -27,15 +27,6 @@ if [ -e "/Library/LaunchDaemons/gov.llnl.mp.agentUpdater.plist" ]; then
 	/bin/launchctl unload -w /Library/LaunchDaemons/gov.llnl.mp.agentUpdater.plist
 	sleep 1
 	
-	echo "Remove LaunchDaemon Files..."
-	rm -rf "/Library/LaunchDaemons/gov.llnl.mp.agentUpdater.plist"
-	
-	echo "Remove MPAgentUp2Date binary and files..."
-	if [ ! -d "/Library/MacPatch/.logs" ]; then
-		mkdir -p "/Library/MacPatch/.logs"
-	fi	
-	mv "/Library/MacPatch/Updater/Logs/MPAgentUp2Date.log" "/Library/MacPatch/.logs/MPAgentUp2Date.log.${dts}"
-	rm -rf "/Library/MacPatch/Updater"
 fi	
 
 exit 0
