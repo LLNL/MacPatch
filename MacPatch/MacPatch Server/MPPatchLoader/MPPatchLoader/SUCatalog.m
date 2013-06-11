@@ -102,8 +102,11 @@
 		
 		l_patch = [[NSMutableDictionary alloc] init];
 		[l_patch setObject:aKey forKey:@"akey"];
-		[l_patch setObject:[curPatch objectForKey:@"ServerMetadataURL"] forKey:@"ServerMetadataURL"];
-		
+        if ([curPatch objectForKey:@"ServerMetadataURL"]) {
+            [l_patch setObject:[curPatch objectForKey:@"ServerMetadataURL"] forKey:@"ServerMetadataURL"];
+        } else {
+            [l_patch setObject:@"" forKey:@"ServerMetadataURL"];
+        }
 		
 		[l_patch setObject:[dformat stringFromDate:[curPatch objectForKey:@"PostDate"]] forKey:@"postdate"];
 		[l_patch setObject:l_osVer forKey:@"osver"];

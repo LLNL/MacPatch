@@ -32,7 +32,7 @@
 #include <getopt.h>
 #import "MPManager.h"
 
-#define APPVERSION			"1.1.1"
+#define APPVERSION			"1.1.2"
 #define APPNAME				@"MPPatchLoader"
 
 void usage(void);
@@ -293,55 +293,8 @@ int main (int argc, char * argv[])
             continue;
         }
         [aArray addObjectsFromArray:xData];
-        //[aSet addObjectsFromArray:xData];
-        /*
-		xHash = nil;
-		xHash = [patchFile getSHA1FromFile]; 
-		
-		xErr = nil;
-		xData = [NSArray arrayWithContentsOfFile:patchFile];
-        if ([xData count] <= 0) {
-            logit(lcl_vError,@"Contents of file %@ was nil.",patchFile);
-            continue;
-        }
-        
-		xOSRev = [[xData objectAtIndex:0] objectForKey:@"osver"];
-		if (([appSupportFileDict objectForKey:xOSRev]) && (forceRepost == NO)) {
-			if ([[appSupportFileDict objectForKey:xOSRev] isEqualToString:xHash]) {
-				logit(lcl_vInfo,@"Content hash for %@ has not changed. No need to re-post.",xOSRev);
-				continue;
-			} else {
-				logit(lcl_vInfo,@"Content hash for %@ has changed.",xOSRev);
-			}
-		}
-		
-		postResult = [mpJson postJSONDataForMethodWithExtraKeyAndValue:@"mp_patch_loader"
-																key:@"OS" 
-															  value:xOSRev 
-															   data:xData 
-															  error:&xErr];
-		if (xErr) {
-			logit(lcl_vError,@"%@ %@",[xErr localizedDescription], [xErr localizedFailureReason]);
-			continue;
-		}
-		
-		if (postResult) {
-			logit(lcl_vInfo,@"Content for %@ has been posted.",xOSRev);
-		} else {
-			logit(lcl_vError,@"Content for %@ has not been posted and returned a error.",xOSRev);
-		}
-		
-		[appSupportFileDict setObject:xHash forKey:xOSRev];
-		[appSupportFileDict writeToFile:appSupportFile atomically:YES];
-		
-		if (keepPatchFiles == NO) {
-			xErr = nil;
-			[fm removeItemAtPath:patchFile error:&xErr];
-			if (xErr)
-				logit(lcl_vError,@"Error trying to remove %@",patchFile);
-		}
-        */
 	}
+
     NSSet *cats = [NSSet setWithArray:[aArray valueForKey: @"akey"]];
     for (NSString *_akey in cats)
     {
@@ -364,34 +317,29 @@ int main (int argc, char * argv[])
             }
         }
     }
-    
-    postResult = [mpJson postJSONDataForMethodWithExtraKeyAndValue:@"mp_patch_loader"
-                                                               key:@"OS"
-                                                             value:@"*"
-                                                              data:(NSArray *)cArray
-                                                             error:&xErr];
-    if (xErr) {
-        logit(lcl_vError,@"%@ %@",[xErr localizedDescription], [xErr localizedFailureReason]);
-        exit(1);
-    }
-    
-    if (postResult) {
-        logit(lcl_vInfo,@"Content has been posted.");
+    if (cArray) {
+        if ([cArray count] >= 1) {
+            postResult = [mpJson postJSONDataForMethodWithExtraKeyAndValue:@"mp_patch_loader"
+                                                                       key:@"OS"
+                                                                     value:@"*"
+                                                                      data:(NSArray *)cArray
+                                                                     error:&xErr];
+            if (xErr) {
+                logit(lcl_vError,@"%@ %@",[xErr localizedDescription], [xErr localizedFailureReason]);
+                exit(1);
+            }
+            
+            if (postResult) {
+                logit(lcl_vInfo,@"Content has been posted.");
+            } else {
+                logit(lcl_vError,@"Content has not been posted and returned a error.");
+            }
+        } else {
+           logit(lcl_vError,@"Content length was 0");
+        }
     } else {
-        logit(lcl_vError,@"Content has not been posted and returned a error.");
+        logit(lcl_vError,@"Content array was nil.");
     }
-    
-    //[appSupportFileDict setObject:xHash forKey:xOSRev];
-    //[appSupportFileDict writeToFile:appSupportFile atomically:YES];
-    /*
-    if (keepPatchFiles == NO) {
-        xErr = nil;
-        [fm removeItemAtPath:patchFile error:&xErr];
-        if (xErr)
-            logit(lcl_vError,@"Error trying to remove %@",patchFile);
-    }
-    */
-    
 	
 	// Release memory objects
 	[mpJson release];
