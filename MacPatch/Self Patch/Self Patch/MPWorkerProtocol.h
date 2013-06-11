@@ -67,6 +67,7 @@
 
 - (int)createDirAtPathWithIntermediateDirectoriesViaHelper:(in bycopy NSString *)path intermediateDirectories:(BOOL)withDirs;
 - (int)writeDataToFileViaHelper:(id)data toFile:(NSString *)aFile;
+- (int)writeArrayToFileViaHelper:(in bycopy NSArray *)data toFile:(in bycopy NSString *)aFile;
 - (int)setPermissionsForFileViaHelper:(in bycopy NSString *)aFile posixPerms:(unsigned long)posixPermissions;
 - (void)setDebugLogging:(BOOL)aState;
 

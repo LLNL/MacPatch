@@ -580,7 +580,11 @@ done:
 	
     @try 
 	{
-		result = [proxy writeDataToFileViaHelper:data toFile:aFile];
+        if ([data isMemberOfClass:[NSArray class]] || [data isMemberOfClass:[NSMutableArray class]]) {
+            result = [proxy writeArrayToFileViaHelper:data toFile:aFile];
+        } else {
+            result = [proxy writeDataToFileViaHelper:data toFile:aFile];
+        }
     }
     @catch (NSException *e) {
         logit(lcl_vError,@"Trying to write data to file(%@). %@",aFile, e);
