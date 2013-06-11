@@ -11,6 +11,9 @@
 MP_ROOT="/Library/MacPatch"
 MP_ROOT_CLIENT="/Library/MacPatch/Client"
 
+# Script Parent Dir Path
+SRC=$(cd $(dirname "$0"); pwd)
+
 # System Version Info
 sysVersion=$(uname -r)
 sysMajorVersion=${sysVersion%%.*}
@@ -19,8 +22,8 @@ sysMinorVersion=${tempMinorVersion%%.*}
 
 # Current Logged in user info
 cUsr="null"
-if [ -e "$1/Contents/Resources/ccusr" ]; then
-	cUsr=`"$1"/Contents/Resources/ccusr`
+if [ -e "${SRC}/ccusr" ]; then
+	cUsr=`${SRC}/ccusr`
 	echo "Current User is: $cUsr"
 fi
 
@@ -57,21 +60,21 @@ agentPrefsPlist="/Library/Preferences/gov.llnl.mpagent.plist"
 # Migration data ...
 #
 if [ -f "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist" ]; then
-	"$1/Contents/Resources/MPPrefMigrate" -F "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist" -T "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
+	"${SRC}/MPPrefMigrate" -F "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist" -T "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
 fi
 
 # ******************************************************************
 # Set Agent Plist data ...
 #
-if [ -e "$1/Contents/Resources/gov.llnl.mpagent.plist" ]; then
+if [ -e "${SRC}/gov.llnl.mpagent.plist" ]; then
 	echo "Backup old plist file..."
 	echo "Migrate settings from old plist to new"
-	"$1/Contents/Resources/mergePrefs.py" -b -i "$1/Contents/Resources/gov.llnl.mpagent.plist" -t "${agentPrefsPlist}"
+	"${SRC}/mergePrefs.py" -b -i "${SRC}/gov.llnl.mpagent.plist" -t "${agentPrefsPlist}"
 fi
 
 # Copy in client version info
-if [ -e "$1/Contents/Resources/.mpVersion.plist" ]; then
-	cp "$1/Contents/Resources/.mpVersion.plist" "/Library/MacPatch/Client/.mpVersion.plist"
+if [ -e "${SRC}/.mpVersion.plist" ]; then
+	cp "${SRC}/.mpVersion.plist" "/Library/MacPatch/Client/.mpVersion.plist"
 fi
 
 # ******************************************************************
@@ -82,8 +85,8 @@ fi
 /Library/MacPatch/Client/MPAgent -c
 sleep 1
 
-# Run Client AV Scan
-/Library/MacPatch/Client/MPInventory -t All
+# Run Client Inventory Scan
+/Library/MacPatch/Client/MPAgentExec -t All
 sleep 1
 
 # If iLoadAssitant is not running, scan for patches, AV, and inventory
@@ -147,17 +150,8 @@ if [ "$cUsr" != "null" ]; then
 fi
 
 # Without this, may have a hard time upgrading 
-if [ $sysMajorVersion -ge 10 ] ; then
-	pkgutil --forget gov.llnl.macpatch.base
-	pkgutil --forget gov.llnl.macpatch.updater
-else
-	if [ -d "/Library/Receipts/MPBaseClient.pkg" ]; then
-		rm -rf "/Library/Receipts/MPBaseClient.pkg"
-	fi
-	if [ -d "/Library/Receipts/MPUpdateClient.pkg" ]; then
-		rm -rf "/Library/Receipts/MPUpdateClient.pkg"
-	fi	
-fi
+pkgutil --forget gov.llnl.mp.agent.base
+pkgutil --forget gov.llnl.macpatch.base
 
 # ******************************************************************
 # Symlink MPLogs dir to /L/Logs ************************************

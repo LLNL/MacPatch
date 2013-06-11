@@ -19,12 +19,15 @@ if [ $majorVer -le 106 ]; then
 	exit 1;
 fi
 
+# Script Parent Dir Path
+SRC=$(cd $(dirname "$0"); pwd)
+
 MPBaseDir="/Library/MacPatch"
 MPClientDir="${MPBaseDir}/Client"
 dts=`date +%Y%m%d%H%M%S`
 usrID="NULL"
-if [ -e "$1/Contents/Resources/ccusr" ]; then
-	usrID=`"$1"/Contents/Resources/ccusr`
+if [ -e "${SRC}/ccusr" ]; then
+	usrID=`${SRC}/ccusr`
 fi
 
 
