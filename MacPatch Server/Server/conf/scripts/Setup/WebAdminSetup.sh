@@ -13,7 +13,7 @@ clear
 MP_SRV_BASE="/Library/MacPatch/Server"
 MP_SRV_CONF="${MP_SRV_BASE}/conf"
 HTTPD_CONF="${MP_SRV_BASE}/Apache2/conf/extra/httpd-vhosts.conf"
-MP_DEFAULT_PORT="2601"
+MP_DEFAULT_PORT="2602"
 
 function checkHostConfig () {
 	if [ "`whoami`" != "root" ] ; then   # If not root user,
@@ -60,7 +60,7 @@ BalancerMember_STR="BalancerMember http://$server_name:$server_port route=$serve
 
 echo "Writing config to httpd.conf..."
 ServerHstString=`echo $BalancerMember_STR | sed 's#\/#\\\/#g'`
-sed -i '' '/\t*#WslBalanceStart/,/\t*#WslBalanceStop/{;/\t*#/!s/.*/'"$ServerHstString"'/;}' "${HTTPD_CONF}"
+sed -i '' '/\t*#AdminBalanceStart/,/\t*#AdminBalanceStart/{;/\t*#/!s/.*/'"$ServerHstString"'/;}' "${HTTPD_CONF}"
 perl -i -p -e 's/@@/\n/g' "${HTTPD_CONF}"
 
 echo "Writing configuration data to jetty file ..."

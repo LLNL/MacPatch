@@ -13,7 +13,7 @@ clear
 MP_SRV_BASE="/Library/MacPatch/Server"
 MP_SRV_CONF="${MP_SRV_BASE}/conf"
 HTTPD_CONF="${MP_SRV_BASE}/Apache2/conf/extra/httpd-vhosts.conf"
-MP_DEFAULT_PORT="2602"
+MP_DEFAULT_PORT="2601"
 
 function checkHostConfig () {
 	if [ "`whoami`" != "root" ] ; then   # If not root user,
