@@ -78,6 +78,7 @@ CREATE TABLE `apple_patches` (
   `severity` varchar(20) DEFAULT 'High',
   `severity_int` int(2) DEFAULT '3',
   `patch_state` varchar(10) DEFAULT 'Create',
+  `osver_support` varchar(10) DEFAULT 'NA',
   PRIMARY KEY (`rid`),
   KEY `idx_apple_patches` (`supatchname`,`patchname`,`restartaction`),
   KEY `idx_akey` (`akey`)
@@ -98,7 +99,7 @@ CREATE TABLE `apple_patches_real` (
   `title` varchar(255) NOT NULL,
   `description` text CHARACTER SET utf8,
   `description64` longtext,
-  `osver_support` varchar(10) NOT NULL DEFAULT 'NA',
+  `osver_support` varchar(10) DEFAULT 'NA',
   `cdate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`rid`),
   UNIQUE KEY `idx_akey` (`akey`,`osver_support`),
@@ -120,7 +121,7 @@ CREATE TABLE `apple_patches_real_hst` (
   `title` varchar(255) NOT NULL,
   `description` text CHARACTER SET utf8,
   `description64` longtext,
-  `osver_support` varchar(10) NOT NULL,
+  `osver_support` varchar(10) DEFAULT 'NA',
   `cdate` datetime DEFAULT NULL,
   `hstdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`rid`)
@@ -137,6 +138,7 @@ CREATE TABLE `apple_patches_mp_additions` (
   `severity` varchar(20) DEFAULT 'High',
   `severity_int` int(2) DEFAULT '3',
   `patch_state` varchar(10) DEFAULT 'Create',
+  `osver_support` varchar(10) DEFAULT 'NA',
   PRIMARY KEY (`rid`),
   KEY `idx_apple_patches` (`supatchname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
