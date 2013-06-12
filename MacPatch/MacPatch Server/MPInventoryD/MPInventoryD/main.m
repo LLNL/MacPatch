@@ -57,7 +57,7 @@ void usage(void);
     NSArray *cNodes = [confxXmlDoc nodesForXPath:@"//settings/database/prod/*" error:&err];
     
     if ([cNodes count] <= 0) {
-        NSLog(@"Nothing found ...");
+        qlinfo(@"Nothing found ...");
         return nil;
     }
     

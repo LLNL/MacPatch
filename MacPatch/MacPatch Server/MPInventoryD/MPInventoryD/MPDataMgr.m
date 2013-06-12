@@ -525,48 +525,46 @@
     NSArray *fd_nodes = [_xmlDoc nodesForXPath:@"//table/field" error:&err];
     NSMutableArray *fieldNamesArray = [[NSMutableArray alloc] init];
     if (!err) {
-        if ([rm_nodes count] >= 1) {
-            NSMutableArray *a = [[NSMutableArray alloc] init];
-            DBField *field;
-            for (NSXMLElement *e in fd_nodes)
-            {
-                field = [[DBField alloc] init];
-                if ([e attributeForName:@"ColumnName"])
-                {    
-                    [field setName:[self cleanColumnName:[[e attributeForName:@"ColumnName"] stringValue]]];
-                    [fieldNamesArray addObject:[self cleanColumnName:[[e attributeForName:@"ColumnName"] stringValue]]];
-                }
-                if ([e attributeForName:@"CF_DATATYPE"]) {
-                    [field setDataType:[self getDataType:[[e attributeForName:@"CF_DATATYPE"] stringValue]]];
-                }
-                if ([e attributeForName:@"Length"]) {
-                    [field setLength:[[e attributeForName:@"Length"] stringValue]];
-                }
-                if ([e attributeForName:@"CF_DATATYPE_EXT"]) {
-                    [field setDataTypeExt:[[e attributeForName:@"CF_DATATYPE_EXT"] stringValue]];
-                }
-                if ([e attributeForName:@"Increment"]) {
-                    [field setAutoIncrement:([[[e attributeForName:@"Increment"] stringValue] isEqualToString:@"true"] ? @"AUTO_INCREMENT" : @" ")];
-                }
-                if ([e attributeForName:@"PrimaryKey"]) {
-                    [field setPrimaryKey:([[[e attributeForName:@"PrimaryKey"] stringValue] isEqualToString:@"true"] ? @"PRI" : @" ")];
-                }
-                if ([e attributeForName:@"AllowNull"]) {
-                    [field setPrimaryKey:([[[e attributeForName:@"AllowNull"] stringValue] isEqualToString:@"true"] ? @"NULL" : @"NOT NULL")];
-                }
-                // Quick Fix in Date/Time Fields
-                if ([self stringContains:[field dataType] search:@"date"] || [self stringContains:[field dataType] search:@"time"]) {
-                    // Empty the default value of 255
-                    [field setLength:@""];
-                }
-                qltrace(@"fieldDescription: %@",[field fieldDescription]);
-                [a addObject:field];
-                field = nil;
+        NSMutableArray *a = [[NSMutableArray alloc] init];
+        DBField *field;
+        for (NSXMLElement *e in fd_nodes)
+        {
+            field = [[DBField alloc] init];
+            if ([e attributeForName:@"ColumnName"])
+            {    
+                [field setName:[self cleanColumnName:[[e attributeForName:@"ColumnName"] stringValue]]];
+                [fieldNamesArray addObject:[self cleanColumnName:[[e attributeForName:@"ColumnName"] stringValue]]];
             }
-            if (a != nil) {
-                if ([a count] >= 3) {
-                    [self setTableFields:a];
-                }
+            if ([e attributeForName:@"CF_DATATYPE"]) {
+                [field setDataType:[self getDataType:[[e attributeForName:@"CF_DATATYPE"] stringValue]]];
+            }
+            if ([e attributeForName:@"Length"]) {
+                [field setLength:[[e attributeForName:@"Length"] stringValue]];
+            }
+            if ([e attributeForName:@"CF_DATATYPE_EXT"]) {
+                [field setDataTypeExt:[[e attributeForName:@"CF_DATATYPE_EXT"] stringValue]];
+            }
+            if ([e attributeForName:@"Increment"]) {
+                [field setAutoIncrement:([[[e attributeForName:@"Increment"] stringValue] isEqualToString:@"true"] ? @"AUTO_INCREMENT" : @" ")];
+            }
+            if ([e attributeForName:@"PrimaryKey"]) {
+                [field setPrimaryKey:([[[e attributeForName:@"PrimaryKey"] stringValue] isEqualToString:@"true"] ? @"PRI" : @" ")];
+            }
+            if ([e attributeForName:@"AllowNull"]) {
+                [field setPrimaryKey:([[[e attributeForName:@"AllowNull"] stringValue] isEqualToString:@"true"] ? @"NULL" : @"NOT NULL")];
+            }
+            // Quick Fix in Date/Time Fields
+            if ([self stringContains:[field dataType] search:@"date"] || [self stringContains:[field dataType] search:@"time"]) {
+                // Empty the default value of 255
+                [field setLength:@""];
+            }
+            qltrace(@"fieldDescription: %@",[field fieldDescription]);
+            [a addObject:field];
+            field = nil;
+        }
+        if (a != nil) {
+            if ([a count] >= 3) {
+                [self setTableFields:a];
             }
         }
     }
@@ -613,7 +611,7 @@
                 if (hasObj >= 1) {
                     [r setObject:[[c objectAtIndex:1] stringValue] forKey:[[c objectAtIndex:0] stringValue]];
                 } else {
-                    NSLog(@"Data contains extra column %@ (%@)",[[c objectAtIndex:0] stringValue],[[c objectAtIndex:1] stringValue]);
+                    qlinfo(@"Data contains extra column %@ (%@)",[[c objectAtIndex:0] stringValue],[[c objectAtIndex:1] stringValue]);
                 }
             }
         }
@@ -839,7 +837,6 @@
             // They are equal, we need to compare
             if ([xmlFieldName isEqualToString:dbFieldName])
             {
-                //NSLog(@"compare: %@",xmlFieldName);
                 for (NSString *key in xmlFieldsDict.allKeys)
                 {
                     if ([key isEqualToString:@"allowNull"]) {

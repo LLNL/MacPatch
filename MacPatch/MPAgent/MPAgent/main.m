@@ -151,7 +151,6 @@ int main (int argc, char * argv[])
 	[MPLog setupLogging:_logFile level:lcl_vDebug];
 	
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"MPAgentDebug"]) {
-        NSLog(@"MPAGENT *** MPAgentDebug");
 		debugLogging = YES;
 	}
 	

@@ -123,8 +123,6 @@ typedef NSUInteger MPPostDataType;
 {
     if (self = [super init])
     {
-        NSLog(@"init");
-        
 		connections = [[NSMutableArray alloc] init];
         mpServerConnection = [[MPServerConnection alloc] initWithNilServerObj];
         

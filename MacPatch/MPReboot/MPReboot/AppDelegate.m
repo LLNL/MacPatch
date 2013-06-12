@@ -76,8 +76,8 @@ NSString * const kRBSWInstallAlertBody = @"Quiting this application will restart
     }
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {	
-	//NSLog(@"applicationDidFinishLaunching");	
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
 	[[NSApplication sharedApplication]requestUserAttention:NSCriticalRequest];
 }
 
@@ -107,8 +107,7 @@ NSString * const kRBSWInstallAlertBody = @"Quiting this application will restart
 	[self set_confirmed:YES];
 	
 	OSStatus error = noErr;
-#ifdef DEBUG	
-	NSLog(@"ifdef DEBUG");
+#ifdef DEBUG
 	error = SendAppleEventToSystemProcess(kAELogOut);
 #else
 	error = SendAppleEventToSystemProcess(kAEReallyLogOut);
