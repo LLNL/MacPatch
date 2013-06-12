@@ -510,7 +510,7 @@
         <!--- Check to see if the table is a mpi table (inventory) --->
         <!--- If it is a mpi_ table, then write out a inventory file --->
         <cfif #IsXmlNode(xmldoc.tables.table)#>
-            <cfif findNoCase("mpi_", xmldoc.tables.table.XmlAttributes.name) NEQ 0>
+            <cfif findNoCase("mpi_", xmldoc.tables.table.XmlAttributes.name) NEQ 0 OR findNoCase("mp_", xmldoc.tables.table.XmlAttributes.name) NEQ 0>
                 <cftry>
 					<cfset jvmObj = CreateObject("java","java.lang.System").getProperties() />
 					<!--- Figureout if Jetty Or Tomcat --->

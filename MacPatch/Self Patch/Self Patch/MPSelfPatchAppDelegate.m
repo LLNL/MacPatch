@@ -747,8 +747,8 @@ done:
 							 dbTablePrefix:@"mp_" 
 							 dbFieldPrefix:@""
 							  updateFields:@"cuuid,patch"
-								 deleteCol:@"type" 
-							deleteColValue:@"Apple"];
+								 deleteCol:@"NA"
+							deleteColValue:@""];
 	
 	
 	// Encode to base64 and send to web service	

@@ -14,8 +14,8 @@
 #
 # -------------------------------------------------------------
 
-GITROOT="/Users/demo/gittmp/MacPatch"
-BUILDROOT="/Users/demp/gittmp/Client"
+GITROOT="/Library/MacPatch/tmp/MacPatch"
+BUILDROOT="/Library/MacPatch/tmp/Client"
 BASEPKGVER="2.1.1.0"
 UPDTPKGVER="2.1.1.0"
 
