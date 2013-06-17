@@ -4,7 +4,7 @@
 # MacPatch Web Admin Server Setup Script
 # MacPatch Version 2.1.x
 #
-# Script Ver. 1.0.0
+# Script Ver. 1.0.1
 #
 #-----------------------------------------
 clear
