@@ -25,7 +25,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <SystemConfiguration/SystemConfiguration.h>
 
-int main (int argc, const char * argv[]) {
+int main (int argc, char * argv[]) {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init]; 
 	
 	int c;	

@@ -334,18 +334,19 @@ done:
     if ([element attributeForName:@"versStr"]) {
         if ([[[element attributeForName:@"versStr"] stringValue] isEqualToString:@"SU_VERS"]) {
             // Search for "SU_VERS" = ...
-            NSString *regexString	= @"(\"SU_VERS\" = )(.*?)+";
+            NSString *regexString	= @"(?i)(\"SU_VERS\")(\\s*=\\s*)(.*)";
             NSString *matchedString = [aDistData stringByMatching:regexString];
             NSString *matchedStringParse1 = [[matchedString componentsSeparatedByString:@"="] objectAtIndex:1];
             NSString *matchedStringTrim1 = [matchedStringParse1 stringByReplacingOccurrencesOfString:@"\"" withString:@""];
             NSString *matchedStringTrim2 = [matchedStringTrim1 stringByReplacingOccurrencesOfString:@";" withString:@""];
             suVersData = [matchedStringTrim2 stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-            
         } else {
             suVersData = [[element attributeForName:@"versStr"] stringValue];
         }
     }
- 
+    if (suVersData == NULL || [suVersData isEqualTo:@""]) {
+        suVersData = @"0.1";
+    }
     return suVersData;
 }
 

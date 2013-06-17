@@ -128,13 +128,15 @@
     //smith1,286A5B18-32C0-4C1B-B69D-2C4D6B5FD110
     //local,94188C0B-5535-4195-B534-372ABB1E0CAB
     @try {
+        NSMutableArray *newData = [NSMutableArray array];
         NSMutableArray *data = (NSMutableArray *)[aString componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
         for (int i = 0; i < [data count]; i++)
         {
-            [data replaceObjectAtIndex:i withObject:[[[data objectAtIndex:i] componentsSeparatedByString: @","] objectAtIndex:0]];
+            qldebug(@"Parsing %@",[data objectAtIndex:i]);
+            [newData addObject:[[[data objectAtIndex:i] componentsSeparatedByString: @","] objectAtIndex:0]];
         }
         
-        [self setUsers:[data componentsJoinedByString:@","]];
+        [self setUsers:[newData componentsJoinedByString:@","]];
     }
     @catch (NSException *exception) {
         qlerror(@"%@",exception);

@@ -129,8 +129,8 @@
 															  dbTablePrefix:@"mp_"
 															  dbFieldPrefix:@""
 															   updateFields:@"cuuid,patch"
-																  deleteCol:@"NA"
-															 deleteColValue:@""]];
+																  deleteCol:@"cuuid"
+                                                             deleteColValue:[MPSystemInfo clientUUID]]];
 	
 	// Encode to base64 and send to web service	
 	qldebug(@"Patch scan info to send to web service:\n%@",resXML);
