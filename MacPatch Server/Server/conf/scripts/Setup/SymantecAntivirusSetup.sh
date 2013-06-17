@@ -12,6 +12,7 @@ clear
 # Variables
 MP_SRV_BASE="/Library/MacPatch/Server"
 MP_SRV_CONF="${MP_SRV_BASE}/conf"
+MP_DEFAULT_PORT="2601"
 
 function checkHostConfig () {
 	if [ "`whoami`" != "root" ] ; then   # If not root user,
@@ -43,12 +44,13 @@ function configAVSync ()
 		defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mpavdl 'MPServerAddress' "$server_name"
 	fi
 	
-	read -p "Use SSL for MacPatch connection [$mp_server_ssl]: " -e t1
+	read -p "Use SSL for MacPatch connection [Y]: " -e t1
 	if [ -n "$t1" ]; then
 		if [ "$t1" == "y" ] || [ "$t1" == "Y" ]; then
 			server_port="2600"
 		else	
-			server_port="2602"
+			read -p "MacPatch Port [$MP_DEFAULT_PORT]: " server_port
+			server_port=${server_port:-$MP_DEFAULT_PORT}
 		fi
 	
 		defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mpavdl 'MPServerPort' "$server_port"

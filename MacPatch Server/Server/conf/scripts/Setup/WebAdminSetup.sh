@@ -60,7 +60,7 @@ BalancerMember_STR="BalancerMember http://$server_name:$server_port route=$serve
 
 echo "Writing config to httpd.conf..."
 ServerHstString=`echo $BalancerMember_STR | sed 's#\/#\\\/#g'`
-sed -i '' '/\t*#AdminBalanceStart/,/\t*#AdminBalanceStart/{;/\t*#/!s/.*/'"$ServerHstString"'/;}' "${HTTPD_CONF}"
+sed -i '' '/\t*#AdminBalanceStart/,/\t*#AdminBalanceStop/{;/\t*#/!s/.*/'"$ServerHstString"'/;}' "${HTTPD_CONF}"
 perl -i -p -e 's/@@/\n/g' "${HTTPD_CONF}"
 
 echo "Writing configuration data to jetty file ..."

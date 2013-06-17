@@ -12,6 +12,7 @@ clear
 # Variables
 MP_SRV_BASE="/Library/MacPatch/Server"
 MP_SRV_CONF="${MP_SRV_BASE}/conf"
+MP_DEFAULT_PORT="2601"
 
 function checkHostConfig () {
 	if [ "`whoami`" != "root" ] ; then   # If not root user,
@@ -60,7 +61,7 @@ fi
 defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mploader ASUSServer "http://${server_name}:${server_port}"
 
 mp_server_name=`hostname -f`
-mp_server_port="2602"
+mp_server_port="2601"
 mp_server_ssl="N"
 read -p "MacPatch Server Name: [$mp_server_name]: " -e t1
 if [ -n "$t1" ]; then
@@ -73,8 +74,9 @@ if [ -n "$t1" ]; then
 		mp_server_port="2600"
 		defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mploader 'MPServerUseSSL' -bool YES
 	else	
-		mp_server_port="2602"
 		defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mploader 'MPServerUseSSL' -bool NO
+		read -p "MacPatch Port [$MP_DEFAULT_PORT]: " mp_server_port
+		mp_server_port=${server_port:-$MP_DEFAULT_PORT}
 	fi
 	
 	defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mploader 'MPServerPort' "$mp_server_port"
