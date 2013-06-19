@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">12D61</string>
+		<string key="IBDocument.SystemVersion">12E55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -868,15 +868,13 @@
 												<string key="NSFrameSize">{715, 17}</string>
 												<reference key="NSSuperview" ref="85229719"/>
 												<reference key="NSWindow"/>
-												<reference key="NSNextKeyView" ref="753488416"/>
+												<reference key="NSNextKeyView" ref="930313066"/>
 												<reference key="NSTableView" ref="290120948"/>
 											</object>
-											<object class="_NSCornerView" key="NSCornerView" id="753488416">
-												<reference key="NSNextResponder" ref="37268566"/>
+											<object class="_NSCornerView" key="NSCornerView">
+												<nil key="NSNextResponder"/>
 												<int key="NSvFlags">-2147483392</int>
 												<string key="NSFrame">{{701, 0}, {16, 17}}</string>
-												<reference key="NSSuperview" ref="37268566"/>
-												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="930313066"/>
 											</object>
 											<object class="NSMutableArray" key="NSTableColumns">
@@ -1197,7 +1195,6 @@
 									<reference key="NSBGColor" ref="952712896"/>
 									<int key="NScvFlags">4</int>
 								</object>
-								<reference ref="753488416"/>
 							</object>
 							<string key="NSFrame">{{-1, 143}, {717, 206}}</string>
 							<reference key="NSSuperview" ref="307145101"/>
@@ -1208,7 +1205,6 @@
 							<reference key="NSHScroller" ref="731557186"/>
 							<reference key="NSContentView" ref="930313066"/>
 							<reference key="NSHeaderClipView" ref="85229719"/>
-							<reference key="NSCornerView" ref="753488416"/>
 							<bytes key="NSScrollAmts">QSAAAEEgAABBoAAAQaAAAA</bytes>
 							<double key="NSMinMagnification">0.25</double>
 							<double key="NSMaxMagnification">4</double>
@@ -1255,17 +1251,26 @@
 						<object class="NSTextField" id="40296988">
 							<reference key="NSNextResponder" ref="307145101"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{66, 357}, {136, 34}}</string>
+							<string key="NSFrame">{{66, 357}, {159, 34}}</string>
 							<reference key="NSSuperview" ref="307145101"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="37268566"/>
+							<bool key="NSViewIsLayerTreeHost">YES</bool>
+							<object class="NSShadow" key="NSViewShadow">
+								<double key="NSShadowHoriz">2</double>
+								<double key="NSShadowVert">-2</double>
+								<object class="NSColor" key="NSShadowColor" id="958244648">
+									<int key="NSColorSpace">1</int>
+									<bytes key="NSRGB">MCAwIDAAA</bytes>
+								</object>
+							</object>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="242911816">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents">Self Patch</string>
 								<object class="NSFont" key="NSSupport">
-									<string key="NSName">LucidaGrande</string>
+									<string key="NSName">LucidaGrande-Bold</string>
 									<double key="NSSize">28</double>
 									<int key="NSfFlags">16</int>
 								</object>
@@ -2761,6 +2766,10 @@
 					<string>539.IBPluginDependency</string>
 					<string>540.IBPluginDependency</string>
 					<string>541.IBPluginDependency</string>
+					<string>541.IBViewIntegration.shadowBlurRadius</string>
+					<string>541.IBViewIntegration.shadowColor</string>
+					<string>541.IBViewIntegration.shadowOffsetHeight</string>
+					<string>541.IBViewIntegration.shadowOffsetWidth</string>
 					<string>542.IBPluginDependency</string>
 					<string>543.IBPluginDependency</string>
 					<string>544.IBPluginDependency</string>
@@ -2882,6 +2891,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<real value="0.0"/>
+					<reference ref="958244648"/>
+					<real value="-2"/>
+					<real value="2"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

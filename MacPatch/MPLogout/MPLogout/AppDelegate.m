@@ -473,7 +473,7 @@ done:
         // File was created within 15 minutes of last scan...
         if (([[NSDate date] timeIntervalSinceDate:fmDate] / 60) < 15) {
             logit(lcl_vDebug, @"Within 15 Minutes. Using scan file.");
-            approvedUpdatesArray = [NSArray arrayWithContentsOfFile:updateFilePath];
+            approvedUpdatesArray = [NSKeyedUnarchiver unarchiveObjectWithFile:updateFilePath];
             if ([approvedUpdatesArray count] <= 0) {
                 [statusText setStringValue:@"Begin scanning host for patches..."];
                 [statusText display];

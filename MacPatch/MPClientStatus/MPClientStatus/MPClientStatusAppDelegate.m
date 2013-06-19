@@ -27,6 +27,22 @@
 #import "MacPatch.h"
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "MPAppUsage.h"
+#import "MPWorkerProtocol.h"
+
+// Private Methods
+@interface MPClientStatusAppDelegate ()
+
+// Helper
+- (void)connect;
+- (void)connect:(NSError **)err;
+- (void)cleanup;
+- (void)connectionDown:(NSNotification *)notification;
+
+// Worker Methods
+- (void)disableASUSSchedule;
+
+@end
+
 
 @implementation MPClientStatusAppDelegate
 
@@ -63,7 +79,8 @@
     
 	// Turn off Scheduled Software Updates
 	[self setAsusAlertOpen:NO];
-	[self turnOffSoftwareUpdateSchedule];
+	//[self turnOffSoftwareUpdateSchedule];
+    [self disableASUSSchedule];
 	
 	statusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain];
 	[statusItem setMenu:statusMenu];
@@ -131,6 +148,108 @@
     [appName autorelease];
     [appVersion autorelease];
 	[super dealloc];
+}
+
+#pragma mark -
+#pragma mark MPWorker
+- (void)connect
+{
+    // Use mach ports for communication, since we're local.
+    NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
+	
+    [connection setRequestTimeout: 10.0];
+    [connection setReplyTimeout: 1800.0]; //30 min to install
+	
+    @try {
+        proxy = [[connection rootProxy] retain];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
+		
+        [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
+        BOOL successful = [proxy registerClient:self];
+        if (!successful) {
+            NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+            [self cleanup];
+        }
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Could not connect to MPHelper: %@", e);
+        [self cleanup];
+    }
+}
+
+- (void)connect:(NSError **)err
+{
+    // Use mach ports for communication, since we're local.
+    NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
+	
+    [connection setRequestTimeout: 10.0];
+    [connection setReplyTimeout: 1800.0]; //30 min to install
+	
+    @try {
+        proxy = [[connection rootProxy] retain];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
+		
+        [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
+        BOOL successful = [proxy registerClient:self];
+        if (!successful) {
+            NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+            NSMutableDictionary *details = [NSMutableDictionary dictionary];
+			[details setValue:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue." forKey:NSLocalizedDescriptionKey];
+            if (err != NULL)  *err = [NSError errorWithDomain:@"world" code:1 userInfo:details];
+            [self cleanup];
+        }
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Could not connect to MPHelper: %@", e);
+        [self cleanup];
+    }
+}
+
+- (void)cleanup
+{
+    if (proxy)
+    {
+        NSConnection *connection = [proxy connectionForProxy];
+        [connection invalidate];
+        [proxy release];
+        proxy = nil;
+    }
+	
+}
+
+- (void)connectionDown:(NSNotification *)notification
+{
+    logit(lcl_vInfo,@"MPWorker connection down");
+    [self cleanup];
+}
+
+#pragma mark - Worker Methods
+
+- (int)disableASUSSchedule
+{
+    NSError *error = nil;
+	if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            logit(lcl_vError,@"disableSoftwareUpdateScheduleViaHelper error 1001: %@",[error localizedDescription]);
+        }
+        if (!proxy) {
+            logit(lcl_vError,@"disableSoftwareUpdateScheduleViaHelper error 1002: Unable to get proxy object.");
+            goto done;
+        }
+    }
+	
+    @try
+	{
+		logit(lcl_vDebug,@"[proxy run disableSoftwareUpdateScheduleViaHelper]");
+		[proxy disableSoftwareUpdateScheduleViaHelper];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"disableSoftwareUpdateScheduleViaHelper error: %@", e);
+    }
+	
+done:
+	[self cleanup];
 }
 
 #pragma mark -
@@ -362,8 +481,8 @@
 	NSAutoreleasePool *pool = [NSAutoreleasePool new];
 	// Run Once, to show current status
 	[self showLastCheckInMethod];
-	
-	NSTimer *timer = [NSTimer timerWithTimeInterval:600.0 
+	// 600.0
+	NSTimer *timer = [NSTimer timerWithTimeInterval:120.0
 											 target:self 
 										   selector:@selector(showLastCheckInMethod) 
 										   userInfo:nil 
@@ -442,8 +561,8 @@
 	NSAutoreleasePool *pool = [NSAutoreleasePool new];
 	// Run Once, to show current status
 	[self getClientPatchStatusMethod];
-	
-	NSTimer *timer = [NSTimer timerWithTimeInterval:1800.0 
+	// 1800.0
+	NSTimer *timer = [NSTimer timerWithTimeInterval:120.0
 											 target:self 
 										   selector:@selector(getClientPatchStatusMethod) 
 										   userInfo:nil 
@@ -545,7 +664,7 @@
 	
 	if ([fileManager fileExistsAtPath: l_file] == YES)
 	{
-		logit(lcl_vInfo,@"Found file at %@",l_file);
+		logit(lcl_vDebug,@"Found file at %@",l_file);
 		[self performSelectorInBackground:@selector(getClientPatchStatusMethod) withObject:nil];
 		[fileManager removeItemAtPath:l_file error:NULL];
 	} 

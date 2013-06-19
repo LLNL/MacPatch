@@ -882,6 +882,13 @@ done:
     
     return NO;
 }
+#pragma softwareupdate
+// Proxy Method
+- (void)disableSoftwareUpdateScheduleViaHelper
+{
+    logit(lcl_vInfo,@"Turning off softwareupdate schedule.");
+    [NSTask launchedTaskWithLaunchPath:ASUS_BIN_PATH arguments:[NSArray arrayWithObjects:@"--schedule", @"off", nil]];
+}
 
 #pragma mark SelfPatch
 // Proxy Method
@@ -1322,10 +1329,13 @@ done:
 }
 
 // Proxy Method
-- (int)writeArrayToFileViaHelper:(in bycopy NSArray *)data toFile:(in bycopy NSString *)aFile
+- (int)writeArrayToFileViaHelper:(NSArray *)data toFile:(NSString *)aFile
 {
     @try {
-        [data writeToFile:aFile atomically:YES];
+        BOOL result = [NSKeyedArchiver archiveRootObject:data toFile:aFile];
+        if (!result) {
+            logit(lcl_vError,@"Error writing array to %@.",aFile);
+        }
     }
     @catch (NSException *exception) {
         logit(lcl_vError,@"Error writing data to file(%@)\n%@.",aFile,exception);

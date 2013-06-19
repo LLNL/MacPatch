@@ -34,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8FA9ADFC177225950055506B /* MPWorkerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPWorkerProtocol.h; sourceTree = "<group>"; };
 		8FD8904716DFE84600A870A3 /* MPClientStatus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPClientStatus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD8904A16DFE84600A870A3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8FD8904D16DFE84600A870A3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -146,6 +147,7 @@
 				8FD8906E16DFE8B200A870A3 /* MPClientStatusAppDelegate.m */,
 				8FD8906F16DFE8B200A870A3 /* MPAppUsage.h */,
 				8FD8907016DFE8B200A870A3 /* MPAppUsage.m */,
+				8FA9ADFC177225950055506B /* MPWorkerProtocol.h */,
 				8FD8909016DFE9B900A870A3 /* FMDB */,
 				8FD8907316DFE8BE00A870A3 /* Resources */,
 				8FD8905116DFE84600A870A3 /* Supporting Files */,

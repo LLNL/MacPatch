@@ -52,6 +52,7 @@ static BOOL gDone = false;
 - (BOOL)setPermissionsForFile:(NSString *)aFile;
 - (int)createDirAtPathWithIntermediateDirs:(NSString *)path intermediateDirs:(BOOL)withDirs;
 - (int)writeDataToFile:(id)data file:(NSString *)aFile;
+- (int)writeArrayToFile:(NSArray *)data file:(NSString *)aFile;
 - (int)setLoggingState:(BOOL)aState;
 
 @end
@@ -580,17 +581,34 @@ done:
 	
     @try 
 	{
-        if ([data isMemberOfClass:[NSArray class]] || [data isMemberOfClass:[NSMutableArray class]]) {
-            result = [proxy writeArrayToFileViaHelper:data toFile:aFile];
-        } else {
-            result = [proxy writeDataToFileViaHelper:data toFile:aFile];
-        }
+        result = [proxy writeDataToFileViaHelper:data toFile:aFile];
     }
     @catch (NSException *e) {
         logit(lcl_vError,@"Trying to write data to file(%@). %@",aFile, e);
     }
 	
 done:	
+	[self cleanup];
+    return result;
+}
+
+- (int)writeArrayToFile:(NSArray *)data file:(NSString *)aFile
+{
+    int result = -1;
+	if (!proxy) {
+        [self connect];
+        if (!proxy) goto done;
+    }
+	
+    @try
+	{
+        result = [proxy writeArrayToFileViaHelper:data toFile:aFile];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to write data to file(%@). %@",aFile, e);
+    }
+	
+done:
 	[self cleanup];
     return result;
 }
@@ -929,8 +947,7 @@ done:
             [self createDirAtPathWithIntermediateDirs:[_approvedPatchesFile stringByDeletingLastPathComponent] intermediateDirs:YES];
         }
         
-        [self writeDataToFile:approvedUpdatesArray file:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
-        
+        [self writeArrayToFile:(NSArray *)approvedUpdatesArray file:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
         
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:approvedUpdatesArray];	

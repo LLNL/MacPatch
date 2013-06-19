@@ -24,13 +24,17 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import "MPWorkerProtocol.h"
 
 @class MPDefaults, MPAsus, MPSoap, MPAppUsage, ASIHTTPRequest;
 @class MPServerConnection;
 
-@interface MPClientStatusAppDelegate : NSObject 
+@interface MPClientStatusAppDelegate : NSObject <MPWorkerClient>
 {
 	NSWindow *window;
+    
+    // Helper
+	id       proxy;
 	
 	// Status Menu
 	IBOutlet NSMenu *statusMenu;

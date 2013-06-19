@@ -314,7 +314,7 @@ done:
     
     if ([fm isWritableFileAtPath:[_approvedPatchesFile stringByDeletingLastPathComponent]]) {
         logit(lcl_vDebug,@"Writing approved patches to %@",_approvedPatchesFile);
-        [approvedUpdatesArray writeToFile:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] atomically:YES];
+        [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
     } else {
         logit(lcl_vError,@"Unable to write approved patches file %@. Patch file will not be used.",_approvedPatchesFile);
     }
@@ -1197,8 +1197,8 @@ done:
 		// No file, nothing todo.
 		return;
 	}
-	
-	NSMutableArray *_patchesArray = [NSMutableArray arrayWithContentsOfFile:_approvedPatchesFile];
+    
+	NSMutableArray *_patchesArray = [NSMutableArray arrayWithContentsOfFile:[NSKeyedUnarchiver unarchiveObjectWithFile:_approvedPatchesFile]];
 	if ([_patchesArray count] <= 0) {
 		// No Items in the Array, delete the file
 		[fm removeItemAtPath:_approvedPatchesFile error:NULL];
@@ -1220,7 +1220,7 @@ done:
 		[fm removeItemAtPath:_approvedPatchesFile error:NULL];
 		return;
 	} else {
-		[_patchesArray writeToFile:_approvedPatchesFile atomically:YES];
+        [NSKeyedArchiver archiveRootObject:_patchesArray toFile:_approvedPatchesFile];
 	}
 	
 	return;

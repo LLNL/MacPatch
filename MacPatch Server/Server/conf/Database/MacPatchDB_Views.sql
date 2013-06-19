@@ -41,7 +41,7 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patch_status_pre
 --  View structure for `mp_client_patches_apple_view`
 -- ----------------------------
 DROP VIEW IF EXISTS `mp_client_patches_apple_view`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_apple_view` AS select `mpca`.`rid` AS `rid`,`mpca`.`cuuid` AS `cuuid`,`mpca`.`date` AS `date`,`mpca`.`patch` AS `patch`,`mpca`.`type` AS `type`,`mpca`.`description` AS `description`,`mpca`.`size` AS `size`,`mpca`.`recommended` AS `recommended`,`mpca`.`restart` AS `restart`,`ap`.`akey` AS `patch_id` from (`mp_client_patches_apple` `mpca` left join `apple_patches_real` `ap` on((`ap`.`supatchname` = `mpca`.`patch`)));
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_apple_view` AS select `mpca`.`rid` AS `rid`,`mpca`.`cuuid` AS `cuuid`,`mpca`.`date` AS `date`,`mpca`.`patch` AS `patch`,`mpca`.`type` AS `type`,`mpca`.`description` AS `description`,`mpca`.`size` AS `size`,`mpca`.`recommended` AS `recommended`,`mpca`.`restart` AS `restart`,`ap`.`akey` AS `patch_id` from (`mp_client_patches_apple` `mpca` left join `apple_patches` `ap` on((`ap`.`supatchname` = `mpca`.`patch`)));
 
 -- ----------------------------
 --  View structure for `mp_client_patches_third_view`

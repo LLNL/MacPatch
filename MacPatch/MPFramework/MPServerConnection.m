@@ -102,7 +102,7 @@
     [self setMpDefaults:[mpd defaults]];
     [mpd release];
     [mpn release];
-    [tmpInfo release];
+    //[tmpInfo release];
 }
 
 - (int)refreshServerObject
