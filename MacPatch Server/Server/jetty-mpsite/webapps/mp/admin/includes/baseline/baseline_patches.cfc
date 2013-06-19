@@ -118,33 +118,16 @@
             </cfquery>
         
 		<cfset records = selUsers>
-		
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-		
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-		
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
-			<cfset arrUsers[i] = [#rid#, #p_name#, #p_version#, #p_type#, #p_patch_state#, #p_postdate#]>
+			<cfset arrUsers[i] = [#rid#, #baseline_enabled#, #p_name#, #p_version#, #p_type#, #p_postdate#]>
 			<cfset i = i + 1>			
 		</cfloop>
 		
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(selUsers.recordcount/arguments.rows)>
-		
-		<!--- The JSON return. 
-			Total - Total Number of Pages we will have calculated above
-			Page - Current page user is on
-			Records - Total number of records
-			rows = our data 
-		--->
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#selUsers.recordcount#,rows=#arrUsers#}>
 		
 		<cfreturn stcReturn>
@@ -171,11 +154,8 @@
         	</cfloop>
 		</cfif>
         
-        
-        <!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-		
 		<cfreturn strReturn>
     </cffunction>
             
@@ -204,7 +184,6 @@
             	cdate = '#cdate#'    
             </cfquery>
             <cfcatch type="any">
-            <!--- Error, return message --->
             	<cfset strMsgType = "Error">
             	<cfset strMsg = "Error occured when Editting User. An Error report has been submitted to support. #cfcatch.detail# -- #cfcatch.message#">
             </cfcatch>
@@ -213,9 +192,6 @@
 			<cfset strMsgType = "Add">
 			<cfset strMsg = "Notice, MP add."> 
         <cfelseif oper EQ "del"> 
-        	<!---   
-           	<cfset strReturn = delMPPatch(Arguments.id)>
-            --->
             <cfquery name="delPatch" datasource="#session.dbsource#">
 				DELETE FROM mp_baseline WHERE baseline_id = '#Arguments.id#'
 			</cfquery>
@@ -224,10 +200,8 @@
 			</cfquery>
 		</cfif>
         
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-		
 		<cfreturn strReturn>
 	</cffunction>
 
@@ -237,7 +211,6 @@
 	    <cfargument name="searchString" required="no" default="" hint="Search Text">
 		
 			<cfset var searchVal = "">
-		
 			<cfscript>
 				switch(Arguments.searchOper)
 				{
@@ -270,10 +243,38 @@
 						searchVal = "#Arguments.searchField# LIKE '%#Arguments.searchString#%'";
 						break;
 				}	
-			
 			</cfscript>
-			
 			<cfreturn searchVal>
-		
 	</cffunction>
+
+	<cffunction name="toggleBaselinePatch" access="remote" returnformat="json">
+		<cfargument name="id" required="no" hint="Field that was editted">
+
+		<cfset var strMsg = "">
+		<cfset var strMsgType = "Success">
+		<cfset var userdata = "">
+
+		<cftry>
+        	<cfquery name="checkIt" datasource="#session.dbsource#">
+                Select baseline_enabled From mp_baseline_patches
+                where rid = <cfqueryparam value="#Arguments.id#">
+            </cfquery>
+            <cfif checkIt.RecordCount EQ 1>        
+                <cfquery name="setIt" datasource="#session.dbsource#">
+                    Update mp_baseline_patches
+                    Set baseline_enabled = <cfqueryparam value="#IIF(checkIt.baseline_enabled EQ '1', DE('0'),DE('1'))#">
+                    where rid = <cfqueryparam value="#Arguments.id#">
+                </cfquery>
+            </cfif>
+        	<cfcatch type="any">
+            	<cfset strMsgType = "Error">
+            	<cfset strMsg = "Error occured while setting baseline state. #cfcatch.detail# -- #cfcatch.message#">
+            </cfcatch>
+        </cftry>
+			
+		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
+		<cfset strReturn = {userdata=#userdata#}>
+		<cfreturn strReturn>
+	</cffunction>
+    
 </cfcomponent>	

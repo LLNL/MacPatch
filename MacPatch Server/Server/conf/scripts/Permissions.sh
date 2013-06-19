@@ -1,8 +1,12 @@
 #!/bin/bash
 
 #
-# Set permissions
+# Set/Fix permissions
 #
+
+# Add _appserver to _www group and vice versa
+dseditgroup -o edit -a _appserver -t user _www
+dseditgroup -o edit -a _www -t user _appserverusr
 
 chown -R root:admin /Library/MacPatch/Server
 chown -R 79:70 /Library/MacPatch/Server/jetty-mpwsl

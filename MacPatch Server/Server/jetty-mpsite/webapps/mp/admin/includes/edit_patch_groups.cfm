@@ -101,7 +101,7 @@ a.pInfo:active  { color:black; text-decoration:none; border-bottom-style: dotted
 <cfset currPatchList = ValueList(qGet1.id, ",")>
 <cfif qGetName.type EQ "0">
     <cfquery datasource="#session.dbsource#" name="qGet2">
-		select b.*, IFNULL(ui.baseline_id,'') as baseline_id
+		select Distinct b.*, IFNULL(ui.baseline_enabled,'0') as baseline_enabled
         From combined_patches_view b
         LEFT JOIN baseline_prod_view ui ON ui.p_id = b.id
 		Where b.patch_state = 'Production'
@@ -112,21 +112,21 @@ a.pInfo:active  { color:black; text-decoration:none; border-bottom-style: dotted
 		select Distinct
 		b.id,b.name,b.version, Cast(b.postdate as date) as postdate, b.title, b.reboot,
 		b.type,b.suname,b.active,b.severity,b.patch_state,b.size,
- 		IFNULL(ui.baseline_id,'') as baseline_id
+ 		IFNULL(ui.baseline_enabled,'0') as baseline_enabled
         From combined_patches_view b
-        LEFT JOIN baseline_qa_view ui ON ui.p_id = b.id
+        LEFT OUTER JOIN baseline_qa_view ui ON ui.p_id = b.id
         Where b.patch_state IN ('Production','QA')
         Order By postdate DESC
     </cfquery>
 <cfelseif qGetName.type EQ "2"> 
 	<cfquery datasource="#session.dbsource#" name="qGet2">
-        select b.*, IFNULL(ui.baseline_id,'') as baseline_id
+        select Distinct b.*, IFNULL(ui.baseline_enabled,'0') as baseline_enabled
         From combined_patches_view b
         LEFT JOIN baseline_qa_view ui ON ui.p_id = b.id
+        Where b.patch_state IN ('Production','QA')
         Order By postdate DESC
     </cfquery>
 </cfif>
-
 <h3>Update Patch Group <cfoutput>"#qGetName.name#"</cfoutput></h3>
 <p>Patch Count: (<cfoutput>#qGet2.RecordCount#</cfoutput>)</p>
 <form name="UpdatePatchGroup" action="index.cfm" method="post">
@@ -174,7 +174,7 @@ a.pInfo:active  { color:black; text-decoration:none; border-bottom-style: dotted
 				<td align="center">#Reboot#</td>
 				<td align="center">#type#</td>
 				<td align="center">#patch_state#</td>
-                <td align="center"><cfif #Len(baseline_id)# GT 6>Required</cfif></td>
+                <td align="center"><cfif #baseline_enabled# EQ 1>Required</cfif></td>
 				<td align="center">#DateFormat(postdate,"mm/dd/yyyy")#</td>
 			</tr>
 			</cfoutput></cfloop>

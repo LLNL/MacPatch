@@ -21,7 +21,7 @@
 
 <cfquery datasource="#session.dbsource#" name="qBaselineList" result="iGetProd">
 	Select 
-	p_id as id, p_name as name, p_version as version, p_postdate as postdate, p_title as title, p_reboot as reboot, p_type as type, p_suname as suname, p_active as active, p_severity as severity, p_patch_state as patch_state 
+	p_id as id, baseline_enabled, p_name as name, p_version as version, p_postdate as postdate, p_title as title, p_reboot as reboot, p_type as type, p_suname as suname, p_active as active, p_severity as severity, p_patch_state as patch_state 
 	from mp_baseline_patches
 	Where baseline_id = <cfqueryparam value="#bID#">
 	Order By p_postdate Desc
@@ -48,7 +48,7 @@
 	
 </cfquery>
 
-<cfset myNewQuery = QueryNew("id, name, version, postdate, title, reboot, type, suname, active, severity, patch_state")>
+<cfset myNewQuery = QueryNew("id, baseline_enabled, name, version, postdate, title, reboot, type, suname, active, severity, patch_state")>
 <cfset newRow = QueryAddRow(MyNewQuery, #qBaselineList.RecordCount# + #qBaselineListNew.recordCount#)>
 <cfset counter = 0>
 
@@ -56,6 +56,7 @@
 <cfoutput query="qBaselineList">
      <cfset counter = counter + 1>
      <cfset temp = QuerySetCell(myNewQuery, "id", qBaselineList.id, counter)>
+     <cfset temp = QuerySetCell(myNewQuery, "baseline_enabled", qBaselineList.baseline_enabled, counter)>
      <cfset temp = QuerySetCell(myNewQuery, "name", qBaselineList.name, counter)>
      <cfset temp = QuerySetCell(myNewQuery, "version", qBaselineList.version, counter)>
 	 <cfset temp = QuerySetCell(myNewQuery, "postdate", qBaselineList.postdate, counter)>
@@ -71,6 +72,7 @@
 <cfoutput query="qBaselineListNew">
      <cfset counter = counter + 1>
      <cfset temp = QuerySetCell(myNewQuery, "id", qBaselineListNew.id, counter)>
+     <cfset temp = QuerySetCell(myNewQuery, "baseline_enabled", "0", counter)>
      <cfset temp = QuerySetCell(myNewQuery, "name", qBaselineListNew.name, counter)>
      <cfset temp = QuerySetCell(myNewQuery, "version", qBaselineListNew.version, counter)>
 	 <cfset temp = QuerySetCell(myNewQuery, "postdate", qBaselineListNew.postdate, counter)>
@@ -89,10 +91,12 @@
 </cfsilent>
 <cftry>
 <cfoutput query="myNewQuery">
-	<cfquery datasource="#session.dbsource#" name="qBaseline" result="iResult">
-	    INSERT INTO mp_baseline_patches (baseline_id, p_id, p_name, p_version, p_postdate, p_title, p_reboot, p_type, p_suname, p_active, p_severity, p_patch_state)
-	    select _latin1 '#dts#' AS `baseline_id`, '#id#', '#name#', '#version#', #postdate#, '#title#', '#reboot#', '#type#', '#suname#', '#active#', '#severity#', '#patch_state#'
-	</cfquery>
+	<cfif checkForExistingPatch(dts,id) EQ false>
+        <cfquery datasource="#session.dbsource#" name="qBaseline" result="iResult">
+            INSERT INTO mp_baseline_patches (baseline_id, p_id, baseline_enabled, p_name, p_version, p_postdate, p_title, p_reboot, p_type, p_suname, p_active, p_severity, p_patch_state)
+            select _latin1 '#dts#' AS `baseline_id`, '#id#', '#baseline_enabled#', '#name#', '#version#', #postdate#, '#title#', '#reboot#', '#type#', '#suname#', '#active#', '#severity#', '#patch_state#'
+        </cfquery>
+    </cfif>
 </cfoutput>
 <cfcatch type="Database">
 	<!--- Cleanup --->
@@ -161,3 +165,28 @@
 
 <cflocation url="#session.cflocFix#/admin/index.cfm?patch_baseline">
 
+<cffunction name="checkForExistingPatch" access="private" returntype="any">
+    <cfargument name="baseline_id" required="no" hint="Field that was editted">
+    <cfargument name="patch_id" required="no" hint="Field that was editted">
+    
+    <cfset var result = false>
+    <cfset var strMsgType = "Success">
+    <cfset var userdata = "">
+    
+    <cftry>
+        <cfquery datasource="#session.dbsource#" name="qBaseline">
+            Select p_id from mp_baseline_patches
+            Where baseline_id = <cfqueryparam value="#Arguments.baseline_id#">
+            AND p_id = <cfqueryparam value="#Arguments.patch_id#">
+        </cfquery>
+        <cfif qBaseline.RecordCount EQ 1>        
+            <cfset result = true>
+        </cfif>
+        <cfcatch type="any">
+            <cfset strMsgType = "Error">
+            <cfset strMsg = "Error occured while setting baseline state. #cfcatch.detail# -- #cfcatch.message#">
+        </cfcatch>
+    </cftry>
+        
+    <cfreturn result>
+</cffunction>

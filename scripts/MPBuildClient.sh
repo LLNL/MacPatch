@@ -91,3 +91,6 @@ pkgutil --flatten ${BUILDROOT}/Combined/.MPClientInstall ${BUILDROOT}/Combined/M
 # Clean Up 
 rm -rf ${BUILDROOT}/Combined/.MPClientInstall
 #rm -rf ${BUILDROOT}/Combined/.MPClientInstall.pkg
+
+# Compress for upload
+ditto -c -k ${BUILDROOT}/Combined/MPClientInstall.pkg ${BUILDROOT}/Combined/MPClientInstall.pkg.zip

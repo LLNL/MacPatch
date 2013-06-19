@@ -8,7 +8,7 @@
 	<string>gov.llnl.MPAVDownloader</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Library/MacPatch/Server/bin/MPAVDownloader</string>
+		<string>/Library/MacPatch/Server/bin/MPSAVDownloader</string>
 		<string>-p</string>
 		<string>/Library/MacPatch/Server/conf/etc/gov.llnl.mpavdl.plist</string>
 	</array>

@@ -13,7 +13,7 @@
     <cfif isdefined("url.id")>
 		Where supatchname = '#url.id#'
     <cfelseif isdefined("url.pid")>
-    	Where supatchname = '#url.pid#'
+    	Where akey = '#url.pid#'
     </cfif>
 </cfquery>
 </cfsilent>

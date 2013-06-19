@@ -21,19 +21,6 @@
 			<cfset strSearch = buildSearchString(Arguments.searchField,Arguments.searchOper,Arguments.searchString)>
 			<cfset blnSearch = true>
 			<cftry>
-				<!---
-				select Distinct b.akey, b.supatchname, b.postdate, b.title, b.version, b.restartaction,
-					CASE WHEN EXISTS
-					( SELECT 1
-						FROM mp_apple_patch_criteria v
-						WHERE v.puuid = b.akey)
-					THEN "Yes" ELSE "No"
-					END AS hasCriteria
-    				From apple_patches b
-					WHERE 
-						#PreserveSingleQuotes(strSearch)#
-				
-				--->
 				<cfquery name="selUsers" datasource="#session.dbsource#" result="res">
 					select Distinct ap.akey, ap.supatchname, ap.postdate, ap.title, ap.version, ap.restartaction, GROUP_CONCAT(ap.osver_support) as osver_support, apr.patch_state,
 				CASE WHEN EXISTS

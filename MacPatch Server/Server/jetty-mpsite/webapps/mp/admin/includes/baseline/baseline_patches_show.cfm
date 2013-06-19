@@ -37,6 +37,15 @@
 			
 			var selMe = 0;
 			var lastsel=-1;
+			var getColumnIndexByName = function(grid, columnName) {
+                    var cm = grid.jqGrid('getGridParam', 'colModel'), i, l;
+                    for (i = 0, l = cm.length; i < l; i += 1) {
+                        if (cm[i].name === columnName) {
+                            return i; // return the index
+                        }
+                    }
+                    return -1;
+            };
 			$("#list").jqGrid(
 			{
 				sortable: true,
@@ -54,13 +63,15 @@
 					searchOper: function() { return "cn"; }
 				},
 				</cfif>
-				colNames:['', 'Patch', 'Version', 'Type', 'State', 'Post Date'],
+				colNames:['','', 'Patch', 'Version', 'Type', 'Post Date'],
 				colModel :[ 
-				  {name:'rid',index:'rid', width:36, align:"center", sortable:false, resizable:false, hidden:true},		
+				  {name:'rid',index:'rid', width:36, align:"center", sortable:false, resizable:false, hidden:true},
+				  {name:'enbl', index:'enbl', width: 30, align:'center', sortable:true, sorttype:'int', 
+				  formatter:'checkbox', editoptions:{value:'1:0'}, 
+				  formatoptions:{disabled:<cfif session.IsAdmin IS true>false<cfelse>true</cfif>}},		
 				  {name:'p_name', index:'p_name', width:200}, 
 				  {name:'p_version', index:'p_version', width:100},
-				  {name:'p_type', index:'p_type', width:200}, 
-				  {name:'p_state', index:'p_state', width:100},
+				  {name:'p_type', index:'p_type', width:100, align:"center"},
 				  {name:'p_postdate', index:'p_postdate', width:200}
 				],
 				altRows:true,
@@ -73,21 +84,43 @@
 				imgpath: '/', //Image path for prev/next etc images
 				caption: 'Patch Baseline<cfif qBInfo.Recordcount GTE 1><cfoutput> - #qBInfo.name#</cfoutput></cfif>', //Grid Name
 				height:'auto', //I like auto, so there is no blank space between. Using a fixed height can mean either a scrollbar or a blank space before the pager
-				recordtext: "View {0} ? {1} of {2} Records",
+				recordtext: "View {0} - {1} of {2} Records",
 				pgtext: "Page {0} of {1}",
 				pginput:true,
 				width:980,
 				hidegrid:false,
-				multiselect: true,
-				multiboxonly: true,
+				multiselect: false,
+				multiboxonly: false,
 				editurl:"includes/baseline/baseline_patches.cfc?method=addEditMPBaselinePatches",//Not used right now.
-				toolbar:[false,"top"],//Shows the toolbar at the top. I will decide if I need to put anything in there later.
-				//The JSON reader. This defines what the JSON data returned from the CFC should look like
+				toolbar:[false,"top"],
 				loadComplete: function(){ 
 					var ids = jQuery("#list").getDataIDs(); 
 					for(var i=0;i<ids.length;i++){ 
 						var cl = ids[i];
-					} 
+					}
+					// Auto Enable Disable on Checkbox
+                    var iCol = getColumnIndexByName ($(this), 'enbl'), rows = this.rows, i, c = rows.length;
+                    for (i = 0; i < c; i += 1) {
+                        $(rows[i].cells[iCol]).click(function (e) {
+                            var id = $(e.target).closest('tr')[0].id,
+                                isChecked = $(e.target).is(':checked');
+								
+                            $.ajax({
+							    url: "./includes/baseline/baseline_patches.cfc"
+							  , type: "get"
+							  , dataType: "json"
+							  , data: {
+							      method: "toggleBaselinePatch",
+							  	  id: id
+							  }
+							  // this runs if an error
+							  , error: function (xhr, textStatus, errorThrown){
+							    // show error
+							    alert(errorThrown);
+							  }
+							});
+                        });
+                    }
 				}, 
 				onSelectRow: function(id){
 					/* This section of code fixes the highlight issues, with altRows */
@@ -115,7 +148,7 @@
 					}
 				}
 			);
-			jQuery("#list").jqGrid('navGrid','#pager',{edit:false,add:false,del:true,view:false})
+			jQuery("#list").jqGrid('navGrid','#pager',{edit:false,add:false,del:false,view:false})
 			.navSeparatorAdd('#pager')
 			.navButtonAdd('#pager', {
 				caption:    "Export (CSV)",

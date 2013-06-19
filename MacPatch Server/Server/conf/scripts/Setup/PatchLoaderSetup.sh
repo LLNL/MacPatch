@@ -4,7 +4,7 @@
 # MacPatch Server Setup Script
 # MacPatch Version 2.1.x
 #
-# Script Ver. 1.0.0
+# Script Ver. 1.0.1
 #
 #-----------------------------------------
 clear
@@ -21,15 +21,10 @@ function checkHostConfig () {
 	   echo "You must be an admin user to run this script."
 	   echo "Please re-run the script using sudo."
 	   echo
-	   #exit 1;
+	   exit 1;
 	fi
 	
-	osType=`sw_vers -productName`
 	osVer=`sw_vers -productVersion | cut -d . -f 2`
-	if [ "$osType" != "Mac OS X Server" ]; then
-		echo "System is not running Mac OS X Server. Server is recommended."
-		#exit 1
-	fi
 	if [ "$osVer" -le "6" ]; then
 		echo "System is not running Mac OS X (Server) 10.7 or higher. Setup can not continue."
 		exit 1
