@@ -99,7 +99,7 @@
 {
 	NSAutoreleasePool *rPool = [[NSAutoreleasePool alloc] init];
 	logit(lcl_vInfo,@"Running client inventory scan.");
-	NSString *invAppPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPInventory"];
+	NSString *invAppPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
 	if (![fm fileExistsAtPath:invAppPath]) {
 		logit(lcl_vError,@"Unable to find MPInventory app to collect inventory data.");
 		return;
