@@ -1,7 +1,8 @@
 /*
 	MacPatch Database Schema
 	Main Views
-	Version 2.1.1
+	Version 2.1.1.1
+	Mod Date: 7/11/2013
 */
 
 SET NAMES utf8;
@@ -11,13 +12,13 @@ SET FOREIGN_KEY_CHECKS = 0;
 --  View structure for `baseline_prod_view`
 -- ----------------------------
 DROP VIEW IF EXISTS `baseline_prod_view`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `baseline_prod_view` AS select `a`.`baseline_id` AS `baseline_id`,`a`.`name` AS `name`,`b`.`p_id` AS `p_id`,`b`.`p_name` AS `p_name`,`b`.`p_version` AS `p_version`,`b`.`p_postdate` AS `p_postdate`,`b`.`p_title` AS `p_title`,`b`.`p_reboot` AS `p_reboot`,`b`.`p_type` AS `p_type`,`b`.`p_suname` AS `p_suname`,`b`.`p_active` AS `p_active`,`b`.`p_severity` AS `p_severity`,`b`.`p_patch_state` AS `p_patch_state` from (`mp_baseline` `a` join `mp_baseline_patches` `b` on((`a`.`baseline_id` = `b`.`baseline_id`))) where (`a`.`state` = _utf8'1');
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `baseline_prod_view` AS select `a`.`baseline_id` AS `baseline_id`,`b`.`baseline_enabled` AS `baseline_enabled`,`a`.`name` AS `name`,`b`.`p_id` AS `p_id`,`b`.`p_name` AS `p_name`,`b`.`p_version` AS `p_version`,`b`.`p_postdate` AS `p_postdate`,`b`.`p_title` AS `p_title`,`b`.`p_reboot` AS `p_reboot`,`b`.`p_type` AS `p_type`,`b`.`p_suname` AS `p_suname`,`b`.`p_active` AS `p_active`,`b`.`p_severity` AS `p_severity`,`b`.`p_patch_state` AS `p_patch_state` from (`mp_baseline` `a` join `mp_baseline_patches` `b` on((`a`.`baseline_id` = `b`.`baseline_id`))) where (`a`.`state` = _utf8'1');
 
 -- ----------------------------
 --  View structure for `baseline_qa_view`
 -- ----------------------------
 DROP VIEW IF EXISTS `baseline_qa_view`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `baseline_qa_view` AS select `a`.`baseline_id` AS `baseline_id`,`a`.`name` AS `name`,`b`.`p_id` AS `p_id`,`b`.`p_name` AS `p_name`,`b`.`p_version` AS `p_version`,`b`.`p_postdate` AS `p_postdate`,`b`.`p_title` AS `p_title`,`b`.`p_reboot` AS `p_reboot`,`b`.`p_type` AS `p_type`,`b`.`p_suname` AS `p_suname`,`b`.`p_active` AS `p_active`,`b`.`p_severity` AS `p_severity`,`b`.`p_patch_state` AS `p_patch_state` from (`mp_baseline` `a` join `mp_baseline_patches` `b` on((`a`.`baseline_id` = `b`.`baseline_id`))) where (`a`.`state` = _utf8'2');
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `baseline_qa_view` AS select `a`.`baseline_id` AS `baseline_id`,`b`.`baseline_enabled` AS `baseline_enabled`,`a`.`name` AS `name`,`b`.`p_id` AS `p_id`,`b`.`p_name` AS `p_name`,`b`.`p_version` AS `p_version`,`b`.`p_postdate` AS `p_postdate`,`b`.`p_title` AS `p_title`,`b`.`p_reboot` AS `p_reboot`,`b`.`p_type` AS `p_type`,`b`.`p_suname` AS `p_suname`,`b`.`p_active` AS `p_active`,`b`.`p_severity` AS `p_severity`,`b`.`p_patch_state` AS `p_patch_state` from (`mp_baseline` `a` join `mp_baseline_patches` `b` on((`a`.`baseline_id` = `b`.`baseline_id`))) where (`a`.`state` = _utf8'2');
 
 -- ----------------------------
 --  View structure for `mp_clients_view`
@@ -56,16 +57,16 @@ DROP VIEW IF EXISTS `mp_client_patches_full_view`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_full_view` AS select `mp_client_patches_apple_view`.`cuuid` AS `cuuid`,`mp_client_patches_apple_view`.`date` AS `date`,`mp_client_patches_apple_view`.`patch` AS `patch`,`mp_client_patches_apple_view`.`type` AS `type`,`mp_client_patches_apple_view`.`description` AS `description`,`mp_client_patches_apple_view`.`size` AS `size`,`mp_client_patches_apple_view`.`recommended` AS `recommended`,`mp_client_patches_apple_view`.`restart` AS `restart`,`mp_client_patches_apple_view`.`patch_id` AS `patch_id` from `mp_client_patches_apple_view` union select `mp_client_patches_third_view`.`cuuid` AS `cuuid`,`mp_client_patches_third_view`.`date` AS `date`,`mp_client_patches_third_view`.`patch` AS `patch`,`mp_client_patches_third_view`.`type` AS `type`,`mp_client_patches_third_view`.`description` AS `description`,`mp_client_patches_third_view`.`size` AS `size`,`mp_client_patches_third_view`.`recommended` AS `recommended`,`mp_client_patches_third_view`.`restart` AS `restart`,`mp_client_patches_third_view`.`patch_id` AS `patch_id` from `mp_client_patches_third_view`;
 
 -- ----------------------------
---  View structure for `client_patch_status_view`
--- ----------------------------
-DROP VIEW IF EXISTS `client_patch_status_view`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `client_patch_status_view` AS select `a`.`cuuid` AS `cuuid`,`a`.`date` AS `date`,`a`.`patch` AS `patch`,`a`.`type` AS `type`,`a`.`description` AS `description`,`a`.`size` AS `size`,`a`.`recommended` AS `recommended`,`a`.`restart` AS `restart`,`a`.`patch_id` AS `patch_id`,`cci`.`hostname` AS `hostname`,`cci`.`Domain` AS `ClientGroup`,`cci`.`ipaddr` AS `ipaddr`,(to_days(`a`.`date`) - to_days(`cpv`.`postdate`)) AS `DaysNeeded` from ((`mp_client_patches_full_view` `a` left join `combined_patches_view` `cpv` on((`cpv`.`id` = `a`.`patch_id`))) left join `mp_clients_view` `cci` on((`a`.`cuuid` = `cci`.`cuuid`))) where (`a`.`date` <> _utf8'0000-00-00 00:00:00');
-
--- ----------------------------
 --  View structure for `mp_client_patch_status_view`
 -- ----------------------------
 DROP VIEW IF EXISTS `mp_client_patch_status_view`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patch_status_view` AS select `a`.`cuuid` AS `cuuid`,`a`.`date` AS `date`,`a`.`patch` AS `patch`,`a`.`type` AS `type`,`a`.`description` AS `description`,`a`.`size` AS `size`,`a`.`recommended` AS `recommended`,`a`.`restart` AS `restart`,`a`.`patch_id` AS `patch_id`,`cci`.`hostname` AS `hostname`,`cci`.`Domain` AS `ClientGroup`,`cci`.`ipaddr` AS `ipaddr`,`cci`.`PatchGroup` AS `PatchGroup`,(to_days(`a`.`date`) - to_days(`cpv`.`postdate`)) AS `DaysNeeded` from ((`mp_client_patches_full_view` `a` left join `combined_patches_view` `cpv` on((`cpv`.`id` = `a`.`patch_id`))) left join `mp_clients_view` `cci` on((`a`.`cuuid` = `cci`.`cuuid`))) where (`a`.`date` <> _utf8'0000-00-00 00:00:00');
+
+-- ----------------------------
+--  View structure for `client_patch_status_view`
+-- ----------------------------
+DROP VIEW IF EXISTS `client_patch_status_view`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `client_patch_status_view` AS select `a`.`cuuid` AS `cuuid`,`a`.`date` AS `date`,`a`.`patch` AS `patch`,`a`.`type` AS `type`,`a`.`description` AS `description`,`a`.`size` AS `size`,`a`.`recommended` AS `recommended`,`a`.`restart` AS `restart`,`a`.`patch_id` AS `patch_id`,`cci`.`hostname` AS `hostname`,`cci`.`Domain` AS `ClientGroup`,`cci`.`ipaddr` AS `ipaddr`,(to_days(`a`.`date`) - to_days(`cpv`.`postdate`)) AS `DaysNeeded` from ((`mp_client_patches_full_view` `a` left join `combined_patches_view` `cpv` on((`cpv`.`id` = `a`.`patch_id`))) left join `mp_clients_view` `cci` on((`a`.`cuuid` = `cci`.`cuuid`))) where (`a`.`date` <> _utf8'0000-00-00 00:00:00');
 
 -- ----------------------------
 --  View structure for `mp_installed_patches_view`
