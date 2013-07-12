@@ -85,7 +85,7 @@
 				<cfcatch type="any">
 					<cfset results = #results# + "1">
 					<cfset session.lastErrorNo = "#cfcatch.ErrorCode#">
-					<cfset session.lastErrorMsg = "#cfcatch.Detail# #cfcatch.Message#">
+					<cfset session.lastErrorMsg = "#cfcatch.detail# #cfcatch.Message#">
 				</cfcatch>
 			</cftry>
 		</cfloop>
@@ -414,7 +414,7 @@
 		<cfelse>
 			<!--- No Results --->
             <cfset response.errorNo = "1">
-			<cfset response.errorMsg = "Error: #cfcatch.Detail# #cfcatch.message#">
+			<cfset response.errorMsg = "Error: No MacPatch servers found. Please make sure you have configured the servers first.">
 			<cfreturn response>
 		</cfif>
 		<cfcatch>
