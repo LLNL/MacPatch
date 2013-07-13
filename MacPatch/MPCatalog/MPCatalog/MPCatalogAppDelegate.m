@@ -634,7 +634,7 @@
         return nil;
     }
     
-    _a = [NSArray arrayWithContentsOfFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
+    _a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
     for (id item in _a) 
     {
         d = [[NSMutableDictionary alloc] initWithDictionary:item];
@@ -1099,7 +1099,7 @@
 
 - (IBAction)getSoftwareDataFromFile:(id)sender
 {
-    NSArray *a = [NSArray arrayWithContentsOfFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
+    NSArray *a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
     
     if (a && [a count] > 0) {
 		[arrayController removeObjects:[arrayController arrangedObjects]];
@@ -1248,7 +1248,7 @@
         }
         
         [self writeArrayFileViaProxy:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"] data:content];
-        _a = [NSArray arrayWithContentsOfFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
+        _a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
         for (id item in _a) 
         {
             d = [[NSMutableDictionary alloc] initWithDictionary:item];
@@ -1331,7 +1331,7 @@
         
     } else {
         /* If there is no content, dosp[lay only installed items */
-        _a = [NSArray arrayWithContentsOfFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
+        _a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
         if (_a) {
             
             for (id item in _a) 
