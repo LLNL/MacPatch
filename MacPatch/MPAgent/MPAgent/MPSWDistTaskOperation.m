@@ -313,7 +313,7 @@
     {
         /* If there is content */
         [content writeToFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"] atomically:NO];
-        _a = [NSArray arrayWithContentsOfFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
+        _a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
         for (id item in _a) 
         {
             d = [[NSMutableDictionary alloc] initWithDictionary:item];
