@@ -14,11 +14,6 @@ majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
 minorVer=`echo $systemVersion | cut -d . -f 2`
 buildVer=`echo $systemVersion | cut -d . -f 3`
 
-if [ $majorVer -le 106 ]; then
-	echo "OS version is not supported."
-	exit 1;
-fi
-
 # Script Parent Dir Path
 SRC=$(cd $(dirname "$0"); pwd)
 
