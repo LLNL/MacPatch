@@ -506,12 +506,12 @@ done:
                 continue;
             }
         }
-        
+        /* Not completed ...
         if ([self checkPatchPreAndPostForRebootRequired:patchPatchesArray]) {
             logit(lcl_vInfo,@"One or more of the pre & post installs requires a reboot, this patch will be installed on logout.");
             continue;
         }
-        
+        */
         // Now proceed to the download and install
         installResult = -1;
         
