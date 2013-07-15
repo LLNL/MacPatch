@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8FAED30A179462F600A06120 /* NSData-Base64Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAED307179462F600A06120 /* NSData-Base64Extensions.m */; };
 		8FAED30B179462F600A06120 /* NSString-Base64Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAED309179462F600A06120 /* NSString-Base64Extensions.m */; };
+		8FAED30D1794664300A06120 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FAED30C1794664300A06120 /* libcrypto.dylib */; };
 		8FD2087F16E5681B00F78296 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD2087E16E5681B00F78296 /* Foundation.framework */; };
 		8FD2088216E5681B00F78296 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2088116E5681B00F78296 /* main.m */; };
 		8FD2088616E5681B00F78296 /* MPSAVDownloader.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8FD2088516E5681B00F78296 /* MPSAVDownloader.1 */; };
@@ -44,6 +45,7 @@
 		8FAED307179462F600A06120 /* NSData-Base64Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData-Base64Extensions.m"; sourceTree = "<group>"; };
 		8FAED308179462F600A06120 /* NSString-Base64Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString-Base64Extensions.h"; sourceTree = "<group>"; };
 		8FAED309179462F600A06120 /* NSString-Base64Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString-Base64Extensions.m"; sourceTree = "<group>"; };
+		8FAED30C1794664300A06120 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		8FD2087B16E5681B00F78296 /* MPSAVDownloader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MPSAVDownloader; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD2087E16E5681B00F78296 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8FD2088116E5681B00F78296 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FAED30D1794664300A06120 /* libcrypto.dylib in Frameworks */,
 				8FD208CB16E5697B00F78296 /* libcurl.dylib in Frameworks */,
 				8FD208C716E5694000F78296 /* libicucore.dylib in Frameworks */,
 				8FD208C516E5693800F78296 /* SystemConfiguration.framework in Frameworks */,
@@ -120,6 +123,7 @@
 		8FD2087D16E5681B00F78296 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FAED30C1794664300A06120 /* libcrypto.dylib */,
 				8FD208CA16E5697B00F78296 /* libcurl.dylib */,
 				8FD208C616E5694000F78296 /* libicucore.dylib */,
 				8FD208C416E5693800F78296 /* SystemConfiguration.framework */,
