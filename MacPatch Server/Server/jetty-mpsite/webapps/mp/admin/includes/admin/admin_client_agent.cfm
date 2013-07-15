@@ -54,7 +54,7 @@
 				  {name:'osver', index:'osver', width:60, editable:true,edittype:"text"},
 				  {name:'version', index:'version', width:50, sorttype:'float', editable:true,edittype:"text",editoptions:{size:30,maxlength:50}},
 				  {name:'build', index:'build', width:40, sorttype:'float', editable:true,edittype:"text",editoptions:{size:30,maxlength:50}}, 
-				  {name:'framework', index:'framework', width:60, sorttype:'float', editable:true,edittype:"text",editoptions:{size:30,maxlength:50}}, 
+				  {name:'framework', index:'framework', width:60, sorttype:'float', hidden:true}, 
 				  {name:'pkg_name', index:'pkg_name', width:100},
 				  {name:'pkg_url', index:'pkg_url', width:100, editable:true,edittype:"text"},
 				  {name:'pkg_hash', index:'pkg_hash', width:100, editrules:{readonly:true}},
@@ -130,15 +130,7 @@
 					$("td.delmsg", $form[0]).html("<div align='left'>Selecting delete will remove both the <br> Agent & Updater packages.</div>");
 				},
 			}
-			)
-			.navButtonAdd('#agent_pager',{
-			   caption:"", 
-			   buttonicon:"ui-icon-plus", 
-			   title:"Add New Patch",
-			   onClickButton: function(){ 
-				 load('./index.cfm?adm_mp_agents_client');
-			   }
-			});
+			);
 			</cfif>
 			var lastCFilterSel
 			$("#agentFilter").jqGrid(
