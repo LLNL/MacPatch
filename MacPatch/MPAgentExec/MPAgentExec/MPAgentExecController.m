@@ -1199,7 +1199,7 @@ done:
 		return;
 	}
     
-	NSMutableArray *_patchesArray = [NSMutableArray arrayWithContentsOfFile:[NSKeyedUnarchiver unarchiveObjectWithFile:_approvedPatchesFile]];
+	NSMutableArray *_patchesArray = [NSMutableArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:_approvedPatchesFile]];
 	if ([_patchesArray count] <= 0) {
 		// No Items in the Array, delete the file
 		[fm removeItemAtPath:_approvedPatchesFile error:NULL];
