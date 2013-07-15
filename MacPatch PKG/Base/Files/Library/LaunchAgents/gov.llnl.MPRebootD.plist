@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>gov.llnl.mpRBWatcher</string>
+	<string>gov.llnl.MPRebootD</string>
 	<key>OnDemand</key>
 	<false/>
 	<key>KeepAlive</key>
 	<true/>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Library/MacPatch/Client/mpRBWatcher</string>
+		<string>/Library/MacPatch/Client/MPRebootD</string>
 	</array>
 </dict>
 </plist>

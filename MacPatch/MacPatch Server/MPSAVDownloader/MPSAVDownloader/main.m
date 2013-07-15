@@ -257,7 +257,7 @@ int main (int argc, char * argv[]) {
 		_httpType = [NSString stringWithString:@"https"];
 	}
     
-	NSURL *_wsURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@:%@/MPWSController.cfc",_httpType,[prefs objectForKey:@"MPServerAddress"],[prefs objectForKey:@"MPServerPort"]]];
+    NSURL *_wsURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@:%@/MPWSControllerCocoa.cfc",_httpType,[prefs objectForKey:@"MPServerAddress"],[prefs objectForKey:@"MPServerPort"]]];
 	logit(lcl_vInfo,@"_wsURL: %@",_wsURL);
 	MPSoap *mps = [[MPSoap alloc] initWithURL:_wsURL nameSpace:@"http://MPWSController.cfc"];
 	

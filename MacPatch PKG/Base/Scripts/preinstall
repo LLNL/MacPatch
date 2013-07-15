@@ -45,9 +45,17 @@ if [ -f "/Library/LaunchDaemons/gov.llnl.mp.worker.plist" ]; then
 fi	
 
 # Launch Agents
+
+# Old Clean up for now ...
 if [ -f "/Library/LaunchAgents/gov.llnl.mpRBWatcher.plist" ]; then
 	if [ "$usrID" != "NULL" ]; then
 		chroot -u $usrID / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mpRBWatcher.plist
+	fi	
+fi
+
+if [ -f "/Library/LaunchAgents/gov.llnl.MPRebootD.plist" ]; then
+	if [ "$usrID" != "NULL" ]; then
+		chroot -u $usrID / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist
 	fi	
 fi
 
