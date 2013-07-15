@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8FAED30F1794AEA900A06120 /* Installcomplete.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FAED30E1794AEA900A06120 /* Installcomplete.tif */; };
+		8FAED3111794AEB100A06120 /* running.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 8FAED3101794AEB100A06120 /* running.tiff */; };
+		8FAED3131794AEC700A06120 /* exclamation.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FAED3121794AEC700A06120 /* exclamation.tif */; };
 		8FD88F7216DFD3FB00A870A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88F7116DFD3FB00A870A3 /* Cocoa.framework */; };
 		8FD88F7C16DFD3FB00A870A3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88F7A16DFD3FB00A870A3 /* InfoPlist.strings */; };
 		8FD88F7E16DFD3FB00A870A3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88F7D16DFD3FB00A870A3 /* main.m */; };
@@ -30,6 +33,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8FAED30E1794AEA900A06120 /* Installcomplete.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Installcomplete.tif; sourceTree = "<group>"; };
+		8FAED3101794AEB100A06120 /* running.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = running.tiff; sourceTree = "<group>"; };
+		8FAED3121794AEC700A06120 /* exclamation.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = exclamation.tif; sourceTree = "<group>"; };
 		8FD88F6E16DFD3FB00A870A3 /* MPLogout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPLogout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD88F7116DFD3FB00A870A3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8FD88F7416DFD3FB00A870A3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -164,6 +170,9 @@
 		8FD88FB616DFD49900A870A3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8FAED3121794AEC700A06120 /* exclamation.tif */,
+				8FAED3101794AEB100A06120 /* running.tiff */,
+				8FAED30E1794AEA900A06120 /* Installcomplete.tif */,
 				8FD88FAE16DFD49600A870A3 /* MPLogout.icns */,
 				8FD88FAF16DFD49600A870A3 /* MainMenu.xib */,
 			);
@@ -224,6 +233,9 @@
 				8FD88F7C16DFD3FB00A870A3 /* InfoPlist.strings in Resources */,
 				8FD88FB416DFD49600A870A3 /* MPLogout.icns in Resources */,
 				8FD88FB516DFD49600A870A3 /* MainMenu.xib in Resources */,
+				8FAED30F1794AEA900A06120 /* Installcomplete.tif in Resources */,
+				8FAED3111794AEB100A06120 /* running.tiff in Resources */,
+				8FAED3131794AEC700A06120 /* exclamation.tif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
