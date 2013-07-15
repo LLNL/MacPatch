@@ -221,7 +221,7 @@
 - (int)patchSoftwareViaProxy:(NSDictionary *)aInstallDict;
 - (int)removeSoftwareViaProxy:(NSString *)removeScript;
 - (int)writeToFileViaProxy:(NSString *)aFile data:(id)data;
-- (int)writeArrayFileViaProxy:(NSString *)aFile data:(id)data;
+- (int)writeArrayFileViaProxy:(NSString *)aFile data:(NSArray *)data;
 
 - (BOOL)hasCanceledInstall:(NSDictionary *)task;
 
@@ -1548,7 +1548,7 @@ done:
 	return results;
 }
 
-- (int)writeArrayFileViaProxy:(NSString *)aFile data:(id)data
+- (int)writeArrayFileViaProxy:(NSString *)aFile data:(NSArray *)data
 {
     int results = -1;
 	
