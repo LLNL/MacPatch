@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8FAED30A179462F600A06120 /* NSData-Base64Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAED307179462F600A06120 /* NSData-Base64Extensions.m */; };
+		8FAED30B179462F600A06120 /* NSString-Base64Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAED309179462F600A06120 /* NSString-Base64Extensions.m */; };
 		8FD2087F16E5681B00F78296 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD2087E16E5681B00F78296 /* Foundation.framework */; };
 		8FD2088216E5681B00F78296 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2088116E5681B00F78296 /* main.m */; };
 		8FD2088616E5681B00F78296 /* MPSAVDownloader.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8FD2088516E5681B00F78296 /* MPSAVDownloader.1 */; };
@@ -38,6 +40,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8FAED306179462F600A06120 /* NSData-Base64Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData-Base64Extensions.h"; sourceTree = "<group>"; };
+		8FAED307179462F600A06120 /* NSData-Base64Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData-Base64Extensions.m"; sourceTree = "<group>"; };
+		8FAED308179462F600A06120 /* NSString-Base64Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString-Base64Extensions.h"; sourceTree = "<group>"; };
+		8FAED309179462F600A06120 /* NSString-Base64Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString-Base64Extensions.m"; sourceTree = "<group>"; };
 		8FD2087B16E5681B00F78296 /* MPSAVDownloader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MPSAVDownloader; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD2087E16E5681B00F78296 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8FD2088116E5681B00F78296 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -137,6 +143,10 @@
 				8FD2089A16E5687500F78296 /* MPSoap.m */,
 				8FD2089B16E5687500F78296 /* MPNetUtils.h */,
 				8FD2089C16E5687600F78296 /* MPNetUtils.m */,
+				8FAED306179462F600A06120 /* NSData-Base64Extensions.h */,
+				8FAED307179462F600A06120 /* NSData-Base64Extensions.m */,
+				8FAED308179462F600A06120 /* NSString-Base64Extensions.h */,
+				8FAED309179462F600A06120 /* NSString-Base64Extensions.m */,
 				8FD208A716E568ED00F78296 /* Logging */,
 				8FD208BC16E568ED00F78296 /* RegexKitLite */,
 				8FD2089216E5683E00F78296 /* Resources */,
@@ -278,6 +288,8 @@
 				8FD208BF16E568ED00F78296 /* lcl.m in Sources */,
 				8FD208C016E568ED00F78296 /* LCLLogFile.m in Sources */,
 				8FD208C116E568ED00F78296 /* RegexKitLite.m in Sources */,
+				8FAED30A179462F600A06120 /* NSData-Base64Extensions.m in Sources */,
+				8FAED30B179462F600A06120 /* NSString-Base64Extensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
