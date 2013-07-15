@@ -412,7 +412,8 @@ done:
         // File was created within 15 minutes of last scan...
         if (([[NSDate date] timeIntervalSinceDate:fmDate] / 60) < 16) {
             logit(lcl_vDebug, @"Within 15 Minutes. Using scan file.");
-            updatesArray = [NSArray arrayWithContentsOfFile:updateFilePath];
+            //updatesArray = [NSArray arrayWithContentsOfFile:updateFilePath];
+            updatesArray = [NSKeyedUnarchiver unarchiveObjectWithFile:updateFilePath];
         } else {
             logit(lcl_vDebug, @"Older than 15 Minutes, rescanning.");
             [self scanForPatchesWithFilterWaitAndForce:0 byPassRunning:YES];
