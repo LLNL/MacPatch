@@ -25,14 +25,18 @@
 
 #import <Cocoa/Cocoa.h>
 
+@protocol MPPatchScanDelegate;
 @class MPSoap;
 @class MPServerConnection;
 
 @interface MPPatchScan : NSObject 
 {
+    id<MPPatchScanDelegate>delegate;
     MPServerConnection *mpServerConnection;
 	BOOL useDistributedNotification;
 }
+
+@property(nonatomic, assign) id<MPPatchScanDelegate>delegate;
 
 - (id)initWithServerConnection:(MPServerConnection *)aSrvObj;
 
@@ -46,5 +50,11 @@
 -(NSArray *)retrieveCustomPatchScanList;
 -(NSArray *)createPatchArrayFromXML:(NSString *)xmlText xPath:(NSString *)aXql;
 -(void)sendNotificationTo:(NSString *)aName userInfo:(NSDictionary *)aUserInfo;
+
+@end
+
+@protocol MPPatchScanDelegate <NSObject>
+
+- (void)patchScan:(MPPatchScan *)patchScan didReciveStatusData:(NSString *)data;
 
 @end

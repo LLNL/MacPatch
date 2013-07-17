@@ -25,19 +25,20 @@
 
 #import <Foundation/Foundation.h>
 #import "MPWorkerProtocol.h"
+#import "MPPatchScan.h"
 
 @class MPServerConnection;
 
-@interface MPWorker : NSObject <MPWorkerServer>
+@interface MPWorker : NSObject <MPWorkerServer,MPPatchScanDelegate>
 {
     
     int                 taskTimeoutValue;
     id<MPWorkerClient> _client;
     
-@private    
+@private
     NSFileManager       *fm;
     MPServerConnection  *mpServerConnection;
-    NSMutableArray      *connections; 
+    NSMutableArray      *connections;
     NSTask              *swTask;
     NSPipe              *pipe_task;
 	NSFileHandle        *fh_task;
@@ -48,8 +49,8 @@
     int                 installtaskResult;
     NSURL               *mp_SOFTWARE_DATA_DIR;
     
-// SelfPatch
-   NSTask              *spTask; 
+    // SelfPatch
+    NSTask              *spTask;
 }
 
 @property (nonatomic, retain) id<MPWorkerClient> _client;
