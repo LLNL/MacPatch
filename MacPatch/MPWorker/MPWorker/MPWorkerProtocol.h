@@ -67,9 +67,16 @@
 - (void)setLogoutHookViaHelper;
 
 - (int)createDirAtPathWithIntermediateDirectoriesViaHelper:(in bycopy NSString *)path intermediateDirectories:(BOOL)withDirs;
+- (int)createDirAtPathWithIntermediateDirectoriesViaHelper:(in bycopy NSString *)path intermediateDirectories:(BOOL)withDirs attributes:(NSDictionary *)attrs;
 - (int)writeDataToFileViaHelper:(id)data toFile:(NSString *)aFile;
 - (int)writeArrayToFileViaHelper:(NSArray *)data toFile:(NSString *)aFile;
 - (int)setPermissionsForFileViaHelper:(in bycopy NSString *)aFile posixPerms:(unsigned long)posixPermissions;
 - (void)setDebugLogging:(BOOL)aState;
+
+// Inventory Collection
+- (int)collectInventoryData;
+
+// Misc
+- (NSString *)createAppSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask directoryAttributes:(in bycopy NSDictionary *)attributes;
 
 @end

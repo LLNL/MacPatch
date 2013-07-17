@@ -28,8 +28,8 @@
 #import "MacPatch.h"
 #import <AppKit/AppKit.h>
 
-enum { 
-    kMPInstallStatus = 0, 
+enum {
+    kMPInstallStatus = 0,
     kMPProcessStatus = 1
 };
 typedef NSUInteger MPPostDataType;
@@ -47,7 +47,7 @@ typedef NSUInteger MPPostDataType;
 		{
             return [self availableData];
         }
-		@catch (NSException *e) 
+		@catch (NSException *e)
 		{
 			if ([[e name] isEqualToString:NSFileHandleOperationException]) {
 				if ([[e reason] isEqualToString:@"*** -[NSConcreteFileHandle availableData]: Interrupted system call"]) {
@@ -95,7 +95,7 @@ typedef NSUInteger MPPostDataType;
 - (NSString *)downloadedSWPath:(NSDictionary *)dict;
 - (BOOL)verifyFileHash:(NSString *)aPath knownHash:(NSString *)kHash type:(NSString *)hashType;
 
-#pragma mark - MPWorker (Private) - Patching 
+#pragma mark - MPWorker (Private) - Patching
 
 - (NSString *)getSizeFromDescription:(NSString *)aDesc;
 - (NSString *)getRecommendedFromDescription:(NSString *)aDesc;
@@ -107,7 +107,7 @@ typedef NSUInteger MPPostDataType;
 - (void)taskDataAvailable:(NSNotification *)aNotification;
 - (void)taskCompleted:(NSNotification *)aNotification;
 
-@end 
+@end
 
 @implementation MPWorker
 
@@ -174,7 +174,7 @@ typedef NSUInteger MPPostDataType;
 }
 // Proxy Method
 - (int)installSoftwareViaHelper:(in bycopy NSDictionary *)aSWDict
-{    
+{
     int result = 0;
     NSString *pkgType = [[aSWDict valueForKeyPath:@"Software.sw_type"] uppercaseString];
     NSError *err = nil;
@@ -192,7 +192,7 @@ typedef NSUInteger MPPostDataType;
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[zipFile lastPathComponent]);
             [mpa release];
-            return 1; 
+            return 1;
         }
         
         logit(lcl_vInfo,@"Unzipping file %@.",zipFile);
@@ -207,7 +207,7 @@ typedef NSUInteger MPPostDataType;
         if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
             result = 1;
             [mpa release];
-            return result; 
+            return result;
         }
         
         // Copy App To Applications
@@ -217,10 +217,10 @@ typedef NSUInteger MPPostDataType;
         result = [self runScript:mountPoint];
         
         // Run Post Install Script, if copy was good
-        if (result == 0) 
+        if (result == 0)
         {
             if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:1] == NO) {
-                logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");  
+                logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");
             }
         }
         
@@ -231,7 +231,7 @@ typedef NSUInteger MPPostDataType;
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[zipFile lastPathComponent]);
             [mpa release];
-            return 1; 
+            return 1;
         }
         
         logit(lcl_vInfo,@"Unzipping file %@.",zipFile);
@@ -245,16 +245,16 @@ typedef NSUInteger MPPostDataType;
         if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
             result = 1;
             [mpa release];
-            return result; 
+            return result;
         }
         
         result = [self installPkgFromZIP:[aSWDict objectForKey:@"id"] environment:[aSWDict objectForKey:@"pkgEnv"]];
         
         // Run Post Install Script, if copy was good
-        if (result == 0) 
+        if (result == 0)
         {
             if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:1] == NO) {
-                logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");  
+                logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");
             }
         }
         
@@ -265,7 +265,7 @@ typedef NSUInteger MPPostDataType;
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[zipFile lastPathComponent]);
             [mpa release];
-            return 1; 
+            return 1;
         }
         
         logit(lcl_vInfo,@"Unzipping file %@.",zipFile);
@@ -280,7 +280,7 @@ typedef NSUInteger MPPostDataType;
         if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
             result = 1;
             [mpa release];
-            return result; 
+            return result;
         }
         
         // Copy App To Applications
@@ -290,10 +290,10 @@ typedef NSUInteger MPPostDataType;
         result = [self copyAppFrom:mountPoint action:1];
         
         // Run Post Install Script, if copy was good
-        if (result == 0) 
+        if (result == 0)
         {
             if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:1] == NO) {
-                logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");  
+                logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");
             }
         }
         
@@ -305,7 +305,7 @@ typedef NSUInteger MPPostDataType;
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[dmgFile lastPathComponent]);
             [mpa release];
-            return 1; 
+            return 1;
         }
         
         int m = -1;
@@ -315,17 +315,17 @@ typedef NSUInteger MPPostDataType;
             if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
                 result = 1;
                 [mpa release];
-                return result; 
+                return result;
             }
             
             // Run PKG Installs
             result = [self installPkgFromDMG:[aSWDict objectForKey:@"id"] environment:[aSWDict valueForKeyPath:@"Software.sw_env_var"]];
             
             // Run Post Install Script, if copy was good
-            if (result == 0) 
+            if (result == 0)
             {
                 if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:1] == NO) {
-                    logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");  
+                    logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");
                 }
             }
         }
@@ -338,7 +338,7 @@ typedef NSUInteger MPPostDataType;
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[dmgFile lastPathComponent]);
             logit(lcl_vError,@"%@: %@ (%@)",dmgFile,fHash,[aSWDict valueForKeyPath:@"Software.sw_hash"]);
             [mpa release];
-            return 1; 
+            return 1;
         }
         
         int m = -1;
@@ -348,17 +348,17 @@ typedef NSUInteger MPPostDataType;
             if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
                 result = 1;
                 [mpa release];
-                return result; 
+                return result;
             }
             
             // Copy App To Applications
             result = [self copyAppFromDMG:[aSWDict objectForKey:@"id"]];
             
             // Run Post Install Script, if copy was good
-            if (result == 0) 
+            if (result == 0)
             {
                 if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:1] == NO) {
-                    logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");  
+                    logit(lcl_vTrace,@"Error running post install script. Just log it as the install was good.");
                 }
             }
         }
@@ -523,7 +523,7 @@ typedef NSUInteger MPPostDataType;
     
     int pkgInstallResult = -1;
     NSArray *installArgs;
-    for (NSString *pkg in onlyPkgs) 
+    for (NSString *pkg in onlyPkgs)
     {
         [self postDataToClient:[NSString stringWithFormat:@"Begin installing %@",pkg] type:kMPProcessStatus];
         installArgs = [NSArray arrayWithObjects:@"-verboseR", @"-pkg", [mountPoint stringByAppendingPathComponent:pkg], @"-target", @"/", nil];
@@ -549,7 +549,7 @@ typedef NSUInteger MPPostDataType;
     
     int pkgInstallResult = -1;
     NSArray *installArgs;
-    for (NSString *pkg in onlyPkgs) 
+    for (NSString *pkg in onlyPkgs)
     {
         [self postDataToClient:[NSString stringWithFormat:@"Begin installing %@",pkg] type:kMPProcessStatus];
         installArgs = [NSArray arrayWithObjects:@"-verboseR", @"-pkg", [NSString pathWithComponents:[NSArray arrayWithObjects:[mp_SOFTWARE_DATA_DIR path],@"sw",pkgID, pkg, nil]], @"-target", @"/", nil];
@@ -571,7 +571,7 @@ typedef NSUInteger MPPostDataType;
             if ([[aSWDict objectForKey:@"sw_pre_install"] isEqualToString:@""] == NO)
             {
                 [self postDataToClient:@"Running pre-install script..." type:kMPProcessStatus];
-                @try 
+                @try
                 {
                     _script = [[aSWDict objectForKey:@"sw_pre_install"] decodeBase64WithNewLinesReturnString:NO];
                     if (![mps runScript:_script]) {
@@ -597,7 +597,7 @@ typedef NSUInteger MPPostDataType;
             if ([[aSWDict objectForKey:@"sw_post_install"] isEqualToString:@""] == NO)
             {
                 [self postDataToClient:@"Running post-install script..." type:kMPProcessStatus];
-                @try 
+                @try
                 {
                     _script = [[aSWDict objectForKey:@"sw_post_install"] decodeBase64WithNewLinesReturnString:NO];
                     if (![mps runScript:_script]) {
@@ -620,12 +620,12 @@ typedef NSUInteger MPPostDataType;
         }
     } else {
         return NO;
-    }   
+    }
 }
 
 - (int)runScript:(NSString *)aDir
 {
-    int result = 0; 
+    int result = 0;
     NSArray *dirContents = [fm contentsOfDirectoryAtPath:aDir error:nil];
     NSPredicate *fltr = [NSPredicate predicateWithFormat:@"(SELF like [cd] '*.sh') OR (SELF like [cd] '*.rb') OR (SELF like [cd] '*.py')"];
     NSArray *onlyScripts = [dirContents filteredArrayUsingPredicate:fltr];
@@ -633,7 +633,7 @@ typedef NSUInteger MPPostDataType;
     NSError *err = nil;
     NSString *scriptText = nil;
     MPScript *mps = nil;
-    for (NSString *scpt in onlyScripts) 
+    for (NSString *scpt in onlyScripts)
     {
         err = nil;
         scriptText = [NSString stringWithContentsOfFile:[aDir stringByAppendingPathComponent:scpt] encoding:NSUTF8StringEncoding error:&err];
@@ -642,7 +642,7 @@ typedef NSUInteger MPPostDataType;
             logit(lcl_vError,@"%@",[err description]);
             result = 3;
             break;
-        }    
+        }
         mps = [[MPScript alloc] init];
         [self postDataToClient:[NSString stringWithFormat:@"Running script %@",scpt] type:kMPProcessStatus];
         if ([mps runScript:scriptText]) {
@@ -661,7 +661,7 @@ typedef NSUInteger MPPostDataType;
 #pragma mark Misc
 - (int)copyAppFrom:(NSString *)aDir action:(int)action
 {
-    int result = 0;  
+    int result = 0;
     NSArray *dirContents = [fm contentsOfDirectoryAtPath:aDir error:nil];
     NSPredicate *fltr = [NSPredicate predicateWithFormat:@"self ENDSWITH '.app'"];
     NSArray *onlyApps = [dirContents filteredArrayUsingPredicate:fltr];
@@ -732,7 +732,7 @@ typedef NSUInteger MPPostDataType;
 	
 }
 
-- (void)taskTimeout:(NSNotification *)aNotification 
+- (void)taskTimeout:(NSNotification *)aNotification
 {
 	logit(lcl_vInfo,@"Task timedout, killing task.");
 	[_timeoutTimer invalidate];
@@ -741,7 +741,7 @@ typedef NSUInteger MPPostDataType;
 }
 
 - (int)runTask:(NSString *)aBinPath binArgs:(NSArray *)aBinArgs environment:(NSString *)env
-{   
+{
 	[self setTaskIsRunning:YES];
 	[self setTaskTimedOut:NO];
 	
@@ -763,7 +763,7 @@ typedef NSUInteger MPPostDataType;
 	[environment setObject:@"YES" forKey:@"NSUnbufferedIO"];
 	[environment setObject:@"1" forKey:@"COMMAND_LINE_INSTALL"];
 	
-    if ([env isEqualToString:@"NA"] == NO && [[env trim] length] > 0) 
+    if ([env isEqualToString:@"NA"] == NO && [[env trim] length] > 0)
     {
         NSArray *l_envArray;
         NSArray *l_envItems;
@@ -777,7 +777,7 @@ typedef NSUInteger MPPostDataType;
             } else {
                 logit(lcl_vError,@"Unable to set env variable. Variable not well formed %@",item);
             }
-        }	
+        }
     }
     
     [swTask setEnvironment:environment];
@@ -793,9 +793,9 @@ typedef NSUInteger MPPostDataType;
         // If timeout is set start it ...
         if (taskTimeoutValue != 0) {
             [NSThread detachNewThreadSelector:@selector(taskTimeoutThread) toTarget:self withObject:nil];
-        }    
-	} 
-	@catch (NSException *e) 
+        }
+	}
+	@catch (NSException *e)
     {
 		logit(lcl_vError,@"Install returned error. %@\n%@",[e reason],[e userInfo]);
 		taskResult = 1;
@@ -811,7 +811,7 @@ typedef NSUInteger MPPostDataType;
 	{
         // If the data is not null, then post the data back to the client and log it locally
         tmpStr = [[NSString alloc] initWithData:dataChunk encoding:NSUTF8StringEncoding];
-		if ([[tmpStr trim] length] != 0) 
+		if ([[tmpStr trim] length] != 0)
         {
             if ([tmpStr containsString:@"PackageKit: Missing bundle path"] == NO) {
                 logit(lcl_vInfo,@"%@",tmpStr);
@@ -871,11 +871,11 @@ done:
     NSString *fHash = [mpCrypto getHashForFileForType:aPath type:hashType];
     [mpCrypto release];
     
-    if (![[fHash uppercaseString] isEqualToString:[kHash uppercaseString]]) 
+    if (![[fHash uppercaseString] isEqualToString:[kHash uppercaseString]])
     {
         logit(lcl_vError,@"Error unable to verify software hash for file %@.",[aPath lastPathComponent]);
         logit(lcl_vDebug,@"Known:%@ = %@",kHash,fHash);
-        return NO; 
+        return NO;
     } else {
         return YES;
     }
@@ -967,12 +967,12 @@ done:
 			}
 			if (!([[strArr objectAtIndex:i] rangeOfString:@"Copyright"].location == NSNotFound)) {
 				continue;
-			}	
+			}
 			
 			// Strip the White Space and any New line data
 			tmpStr = [[strArr objectAtIndex:i] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 			
-			// If the object/string starts with *,!,- then allow it 
+			// If the object/string starts with *,!,- then allow it
 			if ([[tmpStr substringWithRange:NSMakeRange(0,1)] isEqual:@"*"] || [[tmpStr substringWithRange:NSMakeRange(0,1)] isEqual:@"!"] || [[tmpStr substringWithRange:NSMakeRange(0,1)] isEqual:@"-"]) {
 				tmpDict = [[NSMutableDictionary alloc] init];
 				logit(lcl_vInfo,@"Apple Update: %@",[tmpStr substringWithRange:NSMakeRange(2,([tmpStr length]-2))]);
@@ -1008,20 +1008,20 @@ done:
                                                             name: @"ScanForNotification"
                                                           object: nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-                                             selector:@selector(scanForNotification:) 
-                                                 name:@"ScanForNotification" 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(scanForNotification:)
+                                                 name:@"ScanForNotification"
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ScanForNotification" object:nil userInfo:nil];
     
-
+    
 	NSArray *result = nil;
     [mpServerConnection refreshServerObject];
     
 	MPSoap *soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
 	MPPatchScan *patchScanObj = [[MPPatchScan alloc] initWithServerConnection:mpServerConnection];
-    
+    [patchScanObj setDelegate:self];
     [patchScanObj setUseDistributedNotification:YES];
 	result = [NSArray arrayWithArray:[patchScanObj scanForPatches:soap]];
 	
@@ -1038,8 +1038,15 @@ done:
 	if(notification)
 	{
 		logit(lcl_vDebug,@"[scanForNotification]: %@",tmpDict);
-	}	
+	}
 }
+
+- (void)patchScan:(MPPatchScan *)patchScan didReciveStatusData:(NSString *)data
+{
+    [self postDataToClient:data type:kMPProcessStatus];
+    NSLog(@"%@",data);
+}
+
 // Proxy Method
 - (int)installAppleSoftwareUpdateViaHelper:(in bycopy NSString *)approvedUpdate
 {
@@ -1081,9 +1088,9 @@ done:
         // If timeout is set start it ...
         if (taskTimeoutValue != 0) {
             [NSThread detachNewThreadSelector:@selector(taskTimeoutThread) toTarget:self withObject:nil];
-        }    
-	} 
-	@catch (NSException *e) 
+        }
+	}
+	@catch (NSException *e)
     {
 		logit(lcl_vError,@"Install returned error. %@\n%@",[e reason],[e userInfo]);
 		taskResult = 1;
@@ -1099,7 +1106,7 @@ done:
 	{
         // If the data is not null, then post the data back to the client and log it locally
         tmpStr = [[NSString alloc] initWithData:dataChunk encoding:NSUTF8StringEncoding];
-		if ([[tmpStr trim] length] != 0) 
+		if ([[tmpStr trim] length] != 0)
         {
             if ([tmpStr containsString:@"PackageKit: Missing bundle path"] == NO) {
                 logit(lcl_vInfo,@"%@",tmpStr);
@@ -1200,8 +1207,8 @@ done:
 				} else {
 					logit(lcl_vError,@"Unable to set env variable. Variable not well formed %@",item);
 				}
-			}	
-		}	
+			}
+		}
 	}
 	
 	[swTask setEnvironment:environment];
@@ -1212,9 +1219,9 @@ done:
 	
     fh_task = [pipe_task fileHandleForReading];
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self 
-											 selector:@selector(taskCompleted:) 
-												 name:NSTaskDidTerminateNotification 
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(taskCompleted:)
+												 name:NSTaskDidTerminateNotification
 											   object:swTask];
 	
 	[[NSNotificationCenter defaultCenter] addObserver: self
@@ -1270,7 +1277,7 @@ done:
 	NSDictionary *dict =[NSDictionary dictionaryWithObjectsAndKeys:MPLOGOUT_BIN_PATH, @"LogoutHook",nil];
 	
 	if ([fm fileExistsAtPath:MPLOGOUT_BIN_PATH]) {
-		[dict writeToFile:thePlist atomically:YES];	
+		[dict writeToFile:thePlist atomically:YES];
 	} else {
 		logit(lcl_vError,@"MPLogout is missing, no install will occure on logout.");
 	}
@@ -1280,8 +1287,8 @@ done:
 {
     //0664UL
 	NSError *err = nil;
-	[fm setAttributes:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedLong:posixPermissions] forKey:NSFilePosixPermissions]  
-		 ofItemAtPath:aFile 
+	[fm setAttributes:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedLong:posixPermissions] forKey:NSFilePosixPermissions]
+		 ofItemAtPath:aFile
 				error:&err];
 	
 	if (err) {
