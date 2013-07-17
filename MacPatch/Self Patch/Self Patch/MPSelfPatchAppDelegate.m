@@ -30,6 +30,45 @@
 
 static BOOL gDone = false;
 
+@interface FileSizeTransformer : NSValueTransformer {
+    
+}
+
++ (Class)transformedValueClass;
++ (BOOL)allowsReverseTransformation;
+- (id)transformedValue:(id)value;
+
+@end
+
+@implementation FileSizeTransformer
++ (Class)transformedValueClass;
+{
+    return [NSString class];
+}
+
++ (BOOL)allowsReverseTransformation;
+{
+    return NO;
+}
+- (id)transformedValue:(id)value;
+{
+    // Data contains "K" remove it to turn it in to a number value
+    double convertedValue = [[value stringByReplacingOccurrencesOfString:@"K" withString:@""] doubleValue];
+    // Data is already at k, other wise set bytes to 0
+    int multiplyFactor = 1;
+    
+    NSArray *tokens = [NSArray arrayWithObjects:@"B",@"KB",@"MB",@"GB",@"TB",nil];
+    
+    while (convertedValue > 1024) {
+        convertedValue /= 1024;
+        multiplyFactor++;
+    }
+    
+    return [NSString stringWithFormat:@"%4.2f %@",convertedValue, [tokens objectAtIndex:multiplyFactor]];
+}
+
+@end
+
 // Private Methods
 @interface MPSelfPatchAppDelegate ()
 
@@ -225,15 +264,7 @@ static BOOL gDone = false;
 {
 	return YES;
 }
-/*
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)app 
-{
-    [[proxy connectionForProxy] invalidate];
-    [self cleanup];
-	
-    return (NSTerminateNow);
-}
-*/
+
 -(void)dealloc
 {
 	[soap release];
@@ -319,7 +350,7 @@ static BOOL gDone = false;
 #pragma mark Client Callbacks
 - (void)statusData:(in bycopy NSString *)aData
 {
-    //[statusTextStatus setStringValue:aData];
+    [spStatusText setStringValue:aData];
 }
 - (void)installData:(in bycopy NSString *)aData
 {
@@ -684,11 +715,6 @@ done:
 	[spCancelButton setEnabled:YES];
 }
 
-- (IBAction)runTest:(id)sender
-{
-	// A Test Method
-}
-
 - (void)runPatchScan
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -861,16 +887,6 @@ done:
 		[spStatusText setStringValue:@"Canceling request..."];
 		goto done;
 	}
-	
-	// Scan for Custom Patches to see what is relevant for the system
-	[[NSDistributedNotificationCenter defaultCenter] addObserver: self
-                                                        selector: @selector(scanForNotification:)
-                                                            name: @"ScanForNotification"
-                                                          object: nil];
-	[[NSDistributedNotificationCenter defaultCenter] addObserver: self
-                                                        selector: @selector(scanForNotificationFinished:)
-                                                            name: @"ScanForNotificationFinished"
-                                                          object: nil];
 	
     [spStatusText setStringValue:@"Scanning for custom updates..."];
     [spStatusText display];
@@ -1389,7 +1405,6 @@ done:
 	NSPredicate		*selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
 	NSMutableArray	*patches				  = [NSMutableArray arrayWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
 	
-	//NSMutableArray *patches = [NSMutableArray arrayWithArray:[arrayController arrangedObjects]];
 	NSMutableDictionary *patch = [[NSMutableDictionary alloc] initWithDictionary:[patches objectAtIndex:idx]];
 	if (aStatusImage == 0) {
 		[patch setObject:[NSImage imageNamed:@"NSRemoveTemplate"] forKey:@"statusImage"];
@@ -1540,26 +1555,7 @@ done:
 }
 
 #pragma mark Notifications
-
-- (void)scanForNotification:(NSNotification *)notification
-{
-	if(notification)
-	{
-        NSDictionary *tmpDict = [notification userInfo];
-		[spStatusText setStringValue:[NSString stringWithFormat:@"Scanning for %@",[tmpDict objectForKey:@"pname"]]];
-		[spStatusText display];
-	}	
-}
-- (void)scanForNotificationFinished:(NSNotification *)notification
-{
-    if(notification)
-	{
-        NSDictionary *tmpDict = [notification userInfo];
-		NSNumber *patchesNeeded = [tmpDict objectForKey:@"patchesNeeded"];
-        logit(lcl_vTrace,@"Number of patches needed %d",[patchesNeeded intValue]);
-	}	
-}
-
+/*
 - (void)readInstallData:(NSNotification *)notification
 {
 	if(notification)
@@ -1574,6 +1570,7 @@ done:
 		}	
 	}
 }
+
 - (void)installStatusCompleteNotify:(NSNotification *)notification
 {
 	if(notification)
@@ -1588,4 +1585,5 @@ done:
 		gDone = true;
 	}	
 }
+*/
 @end
