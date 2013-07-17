@@ -13,7 +13,6 @@
 			buildPhases = (
 			);
 			dependencies = (
-				8F68EAE31757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EADF1757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAE11757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAE51757D4D500982EF9 /* PBXTargetDependency */,
@@ -39,7 +38,6 @@
 			dependencies = (
 				8FE560CA16DE711300BB7600 /* PBXTargetDependency */,
 				8FD890EA16E5248800A870A3 /* PBXTargetDependency */,
-				8FE560C816DE710F00BB7600 /* PBXTargetDependency */,
 				8FD890DE16E5248800A870A3 /* PBXTargetDependency */,
 				8FD890E016E5248800A870A3 /* PBXTargetDependency */,
 				8FD890E216E5248800A870A3 /* PBXTargetDependency */,
@@ -78,13 +76,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8FE560F316DE9A7A00BB7600;
 			remoteInfo = MPAgentExec;
-		};
-		8F68EAE41757D4D500982EF9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FE560B916DE70D900BB7600 /* MPFramework.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F4B1DE216DD1BC600E15A9E;
-			remoteInfo = MacPatch;
 		};
 		8F68EAE61757D4D500982EF9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -324,20 +315,6 @@
 			remoteGlobalIDString = 8FD88F3116DFD26C00A870A3;
 			remoteInfo = MPTaskEditor;
 		};
-		8FE560C116DE70D900BB7600 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FE560B916DE70D900BB7600 /* MPFramework.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8F4B1DE316DD1BC600E15A9E;
-			remoteInfo = MacPatch;
-		};
-		8FE560C716DE710F00BB7600 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FE560B916DE70D900BB7600 /* MPFramework.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F4B1DE216DD1BC600E15A9E;
-			remoteInfo = MacPatch;
-		};
 		8FE560C916DE711300BB7600 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */;
@@ -368,7 +345,7 @@
 		8FD88FE716DFDD9200A870A3 /* MPCatalog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPCatalog.xcodeproj; path = MPCatalog/MPCatalog.xcodeproj; sourceTree = "<group>"; };
 		8FD8906716DFE84600A870A3 /* MPClientStatus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPClientStatus.xcodeproj; path = MPClientStatus/MPClientStatus.xcodeproj; sourceTree = "<group>"; };
 		8FD890C716DFEDB700A870A3 /* Self Patch.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Self Patch.xcodeproj"; path = "Self Patch/Self Patch.xcodeproj"; sourceTree = "<group>"; };
-		8FE560B916DE70D900BB7600 /* MPFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPFramework.xcodeproj; path = MPFramework/MPFramework.xcodeproj; sourceTree = "<group>"; };
+		8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPLibrary.xcodeproj; path = MPFramework/MPLibrary.xcodeproj; sourceTree = "<group>"; };
 		8FE5610516DE9A7A00BB7600 /* MPAgentExec.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAgentExec.xcodeproj; path = MPAgentExec/MPAgentExec.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -389,7 +366,7 @@
 				8FD88FE716DFDD9200A870A3 /* MPCatalog.xcodeproj */,
 				8FD8906716DFE84600A870A3 /* MPClientStatus.xcodeproj */,
 				8FD890C716DFEDB700A870A3 /* Self Patch.xcodeproj */,
-				8FE560B916DE70D900BB7600 /* MPFramework.xcodeproj */,
+				8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */,
 				8FD2086F16E567AC00F78296 /* MacPatch Server.xcodeproj */,
 			);
 			sourceTree = "<group>";
@@ -497,14 +474,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8FE560BA16DE70D900BB7600 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8FE560C216DE70D900BB7600 /* libMacPatch.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8FE5610616DE9A7A00BB7600 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -558,10 +527,6 @@
 				{
 					ProductGroup = 8FD8906816DFE84600A870A3 /* Products */;
 					ProjectRef = 8FD8906716DFE84600A870A3 /* MPClientStatus.xcodeproj */;
-				},
-				{
-					ProductGroup = 8FE560BA16DE70D900BB7600 /* Products */;
-					ProjectRef = 8FE560B916DE70D900BB7600 /* MPFramework.xcodeproj */;
 				},
 				{
 					ProductGroup = 8FD88F8F16DFD3FB00A870A3 /* Products */;
@@ -685,13 +650,6 @@
 			remoteRef = 8FD890CB16DFEDB900A870A3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		8FE560C216DE70D900BB7600 /* libMacPatch.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMacPatch.a;
-			remoteRef = 8FE560C116DE70D900BB7600 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		8FE5610A16DE9A7B00BB7600 /* MPAgentExec */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -711,11 +669,6 @@
 			isa = PBXTargetDependency;
 			name = MPAgentExec;
 			targetProxy = 8F68EAE21757D4D500982EF9 /* PBXContainerItemProxy */;
-		};
-		8F68EAE31757D4D500982EF9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MacPatch;
-			targetProxy = 8F68EAE41757D4D500982EF9 /* PBXContainerItemProxy */;
 		};
 		8F68EAE51757D4D500982EF9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -831,11 +784,6 @@
 			isa = PBXTargetDependency;
 			name = MPTaskEditor;
 			targetProxy = 8FD890EF16E5248800A870A3 /* PBXContainerItemProxy */;
-		};
-		8FE560C816DE710F00BB7600 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MacPatch;
-			targetProxy = 8FE560C716DE710F00BB7600 /* PBXContainerItemProxy */;
 		};
 		8FE560CA16DE711300BB7600 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -38,6 +38,8 @@
 
 @implementation MPPatchScan
 
+@synthesize delegate;
+
 - (BOOL)useDistributedNotification
 {
     return useDistributedNotification;
@@ -95,9 +97,10 @@
 		tmpDict = [NSDictionary dictionaryWithDictionary:[customPatches objectAtIndex:i]];
 		qlinfo(@"*******************");
 		qlinfo(@"Scanning for %@(%@)",[tmpDict objectForKey:@"pname"],[tmpDict objectForKey:@"pversion"]);
+        [delegate patchScan:self didReciveStatusData:[NSString stringWithFormat:@"Scanning for %@(%@)",[tmpDict objectForKey:@"pname"],[tmpDict objectForKey:@"pversion"]]];
 		[self sendNotificationTo:@"ScanForNotification" userInfo:tmpDict];
 		
-		[NSThread sleepForTimeInterval:0.3];
+		[NSThread sleepForTimeInterval:0.1];
 		
 		result = [self scanHostForPatch:tmpDict];
 		if (result == YES) {
@@ -156,7 +159,7 @@
 	notifyInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:(int)[patchesNeeded count]] forKey:@"patchesNeeded"];
 	
 done:
-	
+	[delegate patchScan:self didReciveStatusData:@"Custom patch scan completed."];
 	[self sendNotificationTo:@"ScanForNotificationFinished" userInfo:notifyInfo];
 	resultArr = [NSArray arrayWithArray:patchesNeeded];
 	[patchesNeeded release];
@@ -200,8 +203,8 @@ done:
 
 		qlinfo(@"*******************");
 		qlinfo(@"Scanning for %@(%@)",[tmpDict objectForKey:@"pname"],[tmpDict objectForKey:@"pversion"]);
-        
-		[NSThread sleepForTimeInterval:0.3];
+        [delegate patchScan:self didReciveStatusData:[NSString stringWithFormat:@"Scanning for %@(%@)",[tmpDict objectForKey:@"pname"],[tmpDict objectForKey:@"pversion"]]];
+		[NSThread sleepForTimeInterval:0.1];
 		result = [self scanHostForPatch:tmpDict];
 		if (result == YES) {
 			patch = [[NSMutableDictionary alloc] init];
@@ -227,6 +230,7 @@ done:
 	}
 
 done:
+    [delegate patchScan:self didReciveStatusData:@"Custom patch scan completed."];
 	resultArr = [NSArray arrayWithArray:patchesNeeded];
 	[patchesNeeded release];
 	return resultArr;

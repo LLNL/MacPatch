@@ -37,7 +37,7 @@ int main(int argc, const char * argv[])
     NSPort *receivePort = nil;
     if (argc >= 2) {
 		if (strcmp(argv[1], "-v") == 0) {
-            printf("1.0.0\n");
+            printf("1.1.0\n");
 			return (0);
         }
     }
@@ -90,11 +90,11 @@ static void setUpLogging ()
 		// enable logging for all components up to level Debug
 		lcl_configure_by_name("*", lcl_vDebug);
 		[MPLog MirrorMessagesToStdErr:YES];
-		logit(lcl_vInfo,@"***** MPStatus MPWorker started -- Debug Enabled *****");
+		logit(lcl_vInfo,@"***** MPWorker started -- Debug Enabled *****");
 	} else {
 		// enable logging for all components up to level Info
 		lcl_configure_by_name("*", lcl_vInfo);
-		logit(lcl_vInfo,@"***** MPStatus MPWorker started *****");
+		logit(lcl_vInfo,@"***** MPWorker started *****");
 	}
 }
 
