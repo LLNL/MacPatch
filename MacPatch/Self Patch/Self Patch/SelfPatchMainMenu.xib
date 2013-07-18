@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">12E55</string>
+		<string key="IBDocument.SystemVersion">12F20</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.39</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -1883,10 +1883,14 @@
 							<string key="NSLabel">value: arrangedObjects.size</string>
 							<string key="NSBinding">value</string>
 							<string key="NSKeyPath">arrangedObjects.size</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">FileSizeTransformer</string>
+							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">645</int>
+					<int key="connectionID">660</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -2973,7 +2977,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">659</int>
+			<int key="maxID">660</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2990,9 +2994,11 @@
 							<string>showLogInConsole:</string>
 							<string>showPrefsPanel:</string>
 							<string>stopAndCloseSelfPatch:</string>
+							<string>windowCloseWillExit:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3009,6 +3015,7 @@
 							<string>showLogInConsole:</string>
 							<string>showPrefsPanel:</string>
 							<string>stopAndCloseSelfPatch:</string>
+							<string>windowCloseWillExit:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3030,6 +3037,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">stopAndCloseSelfPatch:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">windowCloseWillExit:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 						</object>

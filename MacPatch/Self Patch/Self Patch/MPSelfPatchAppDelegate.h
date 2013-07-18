@@ -84,8 +84,6 @@
 - (void)runPatchScan;
 - (void)runPatchUpdates;
 - (void)openRebootApp;
-- (void)scanForNotification:(NSNotification *)notification;
-- (void)scanForNotificationFinished:(NSNotification *)notification;
 
 // Misc
 - (NSDictionary *)getClientPatchState;
