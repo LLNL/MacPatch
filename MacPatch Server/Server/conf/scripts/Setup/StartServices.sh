@@ -102,7 +102,7 @@ fi
 # from time to time and need to be fixed.
 # -----------------------------------------
 if [ "$action" == "load" ]; then
-	 Add _appserver to _www group and vice versa
+	# Add _appserver to _www group and vice versa
 	dseditgroup -o edit -a _appserver -t user _www
 	dseditgroup -o edit -a _www -t user _appserverusr
 
