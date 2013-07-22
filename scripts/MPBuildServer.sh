@@ -23,7 +23,7 @@ else
 	mkdir -p ${BUILDROOT}	
 fi	
 
-if [ -d "$GITROOT" ]; then
+if [ ! -d "$GITROOT" ]; then
 	echo "$GITROOT is missing. Please clone MacPatch repo to /Library/MacPatch/tmp"
 	echo
 	echo "cd /Library/MacPatch/tmp; git clone https://github.com/SMSG-MAC-DEV/MacPatch.git"
@@ -47,7 +47,7 @@ mkdir -p /Library/MacPatch/Server/Logs
 # ------------------
 # Compile the agent components
 # ------------------
-xcodebuild -project ${GITROOT}/MacPatch/MacPatch/MacPatch\ Server/MacPatch\ Server.xcodeproj -target SERVER_BUILD SYMROOT=${BUILDROOT}
+xcodebuild -project ${GITROOT}/MacPatch/MacPatch\ Server/MacPatch\ Server.xcodeproj -target SERVER_BUILD SYMROOT=${BUILDROOT}
 
 # ------------------
 # Remove the build and symbol files
