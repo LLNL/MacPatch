@@ -73,7 +73,7 @@ chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist
 echo
 echo "Please note, if you wish to replicate content from your own Apple SoftwareUpdate server"
 echo "you will need to edit the ${MP_SRV_BASE}/conf/etc/gov.llnl.mp.patchloader.plist"
-echo "file. 
+echo "file. "
 echo
 
 
