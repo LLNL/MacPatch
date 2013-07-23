@@ -2,6 +2,7 @@
   MacPatch Database Schema
 	All Tables
 	Version 2.1.1
+	Rev 2
 */
 
 SET NAMES utf8;
