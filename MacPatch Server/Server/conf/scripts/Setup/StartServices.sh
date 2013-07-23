@@ -134,8 +134,6 @@ then
 		fi		
 fi
 
-exit
-
 if [ -e "/Library/LaunchDaemons/gov.llnl.mploader.plist" ] && ([[ "$service" == "All" || "$service" == "gov.llnl.mploader.plist" ]])
 then
 		echo "Starting MacPatch SoftwareUpdate Server Helper..."
