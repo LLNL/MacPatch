@@ -13,6 +13,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				C5387B36179EE346001761D2 /* PBXTargetDependency */,
 				8F68EADF1757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAE11757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAE51757D4D500982EF9 /* PBXTargetDependency */,
@@ -329,6 +330,20 @@
 			remoteGlobalIDString = 8FE560F416DE9A7A00BB7600;
 			remoteInfo = MPAgentExec;
 		};
+		C5387B33179EE314001761D2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8F4B1DE316DD1BC600E15A9E;
+			remoteInfo = MacPatch;
+		};
+		C5387B35179EE346001761D2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F4B1DE216DD1BC600E15A9E;
+			remoteInfo = MacPatch;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -482,6 +497,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		C5387B2E179EE314001761D2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C5387B34179EE314001761D2 /* libMacPatch.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXProject section */
@@ -527,6 +550,10 @@
 				{
 					ProductGroup = 8FD8906816DFE84600A870A3 /* Products */;
 					ProjectRef = 8FD8906716DFE84600A870A3 /* MPClientStatus.xcodeproj */;
+				},
+				{
+					ProductGroup = C5387B2E179EE314001761D2 /* Products */;
+					ProjectRef = 8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */;
 				},
 				{
 					ProductGroup = 8FD88F8F16DFD3FB00A870A3 /* Products */;
@@ -655,6 +682,13 @@
 			fileType = "compiled.mach-o.executable";
 			path = MPAgentExec;
 			remoteRef = 8FE5610916DE9A7B00BB7600 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C5387B34179EE314001761D2 /* libMacPatch.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMacPatch.a;
+			remoteRef = C5387B33179EE314001761D2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -789,6 +823,11 @@
 			isa = PBXTargetDependency;
 			name = MPAgent;
 			targetProxy = 8FE560C916DE711300BB7600 /* PBXContainerItemProxy */;
+		};
+		C5387B36179EE346001761D2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MacPatch;
+			targetProxy = C5387B35179EE346001761D2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
