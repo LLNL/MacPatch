@@ -270,6 +270,7 @@ CREATE TABLE `mp_baseline_patches` (
   `p_active` varchar(255) DEFAULT NULL,
   `p_severity` varchar(255) DEFAULT NULL,
   `p_patch_state` varchar(255) DEFAULT NULL,
+  `baseline_enabled` int(1) DEFAULT '0',
   PRIMARY KEY (`rid`,`baseline_id`),
   KEY `b_idx` (`baseline_id`),
   KEY `pid_idx` (`p_id`)
