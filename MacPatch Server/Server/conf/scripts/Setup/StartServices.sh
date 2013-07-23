@@ -10,7 +10,7 @@
 clear
 
 # Default is bogus
-action="reload"
+action="load"
 service="All"
 dryrun="0"
 
