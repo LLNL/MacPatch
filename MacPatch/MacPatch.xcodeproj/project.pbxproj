@@ -16,17 +16,17 @@
 				C5387B36179EE346001761D2 /* PBXTargetDependency */,
 				8F68EADF1757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAE11757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAF31757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAE91757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAF11757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAF71757D4D500982EF9 /* PBXTargetDependency */,
+				8F68EAF91757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAE51757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAE71757D4D500982EF9 /* PBXTargetDependency */,
-				8F68EAE91757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAEB1757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAED1757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAEF1757D4D500982EF9 /* PBXTargetDependency */,
-				8F68EAF11757D4D500982EF9 /* PBXTargetDependency */,
-				8F68EAF31757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAF51757D4D500982EF9 /* PBXTargetDependency */,
-				8F68EAF71757D4D500982EF9 /* PBXTargetDependency */,
-				8F68EAF91757D4D500982EF9 /* PBXTargetDependency */,
 			);
 			name = AGENT_BUILD;
 			productName = AGENT_BUILD_DEBUG;
@@ -37,19 +37,20 @@
 			buildPhases = (
 			);
 			dependencies = (
+				72589118179F6BAC0058FF64 /* PBXTargetDependency */,
 				8FE560CA16DE711300BB7600 /* PBXTargetDependency */,
 				8FD890EA16E5248800A870A3 /* PBXTargetDependency */,
+				8FD890EE16E5248800A870A3 /* PBXTargetDependency */,
+				8FD890E216E5248800A870A3 /* PBXTargetDependency */,
+				8FD890EC16E5248800A870A3 /* PBXTargetDependency */,
+				8FA706471700AC2000A1C57C /* PBXTargetDependency */,
+				8F90C3271700AFF2006E36D0 /* PBXTargetDependency */,
 				8FD890DE16E5248800A870A3 /* PBXTargetDependency */,
 				8FD890E016E5248800A870A3 /* PBXTargetDependency */,
-				8FD890E216E5248800A870A3 /* PBXTargetDependency */,
 				8FD890E416E5248800A870A3 /* PBXTargetDependency */,
 				8FD890E616E5248800A870A3 /* PBXTargetDependency */,
 				8FD890E816E5248800A870A3 /* PBXTargetDependency */,
-				8FD890EC16E5248800A870A3 /* PBXTargetDependency */,
-				8FD890EE16E5248800A870A3 /* PBXTargetDependency */,
 				8FD890F016E5248800A870A3 /* PBXTargetDependency */,
-				8FA706471700AC2000A1C57C /* PBXTargetDependency */,
-				8F90C3271700AFF2006E36D0 /* PBXTargetDependency */,
 			);
 			name = AGENT_BUILD_DEBUG;
 			productName = AGENT_BUILD_DEBUG;
@@ -57,6 +58,13 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXContainerItemProxy section */
+		72589117179F6BAC0058FF64 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F4B1DE216DD1BC600E15A9E;
+			remoteInfo = MacPatch;
+		};
 		8F4B1EFE16DD77BE00E15A9E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */;
@@ -694,6 +702,11 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXTargetDependency section */
+		72589118179F6BAC0058FF64 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MacPatch;
+			targetProxy = 72589117179F6BAC0058FF64 /* PBXContainerItemProxy */;
+		};
 		8F68EADF1757D4D500982EF9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MPAgent;
