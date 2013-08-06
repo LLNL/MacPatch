@@ -67,7 +67,7 @@
 						<cfif session.IsAdmin IS true>
 						edit = "<input type='image' style='padding-left:2px;' onclick=load('./index.cfm?adm_apple_patch_edit="+ids[i]+"&adm_apple_patch_edit_name="+suname+"'); src='./_assets/images/jqGrid/edit_16.png'>";
 						<cfelse>
-						edit = "<input type='image' style='padding-left:2px;' onclick=load('./index.cfm?adm_apple_patch_view="+ids[i]+"'); src='./_assets/images/jqGrid/info.png'>";
+						edit = "<input type='image' style='padding-left:2px;' onclick=load('./index.cfm?adm_apple_patch_view="+ids[i]+"&adm_apple_patch_name="+suname+"'); src='./_assets/images/jqGrid/info.png'>";
 						</cfif>
 						jQuery("#list").setRowData(ids[i],{akeyE:edit,akey:info})
 					}
