@@ -31,6 +31,7 @@
 			<cfset ISPBWizard=true>
 			<cfinclude template="./_js.cfm">
 			<cfset l_akey = #url.adm_apple_patch_view#>
+			<cfset l_suname = #url.adm_apple_patch_name#>
 			<cfset isReadOnly = "true">
 			<center><cfinclude template="./includes/pb/apple_patch_builder_wizard_edit.cfm"></center>
 		</cfif>
