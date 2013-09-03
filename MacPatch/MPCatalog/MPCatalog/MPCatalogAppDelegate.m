@@ -1033,7 +1033,7 @@
 
 - (void)downloadFinished
 {
-    [statusTextStatus setStringValue:@"Done"];
+    [statusTextStatus setStringValue:@"Download Complete"];
 	isDownloading = NO;
 }
 

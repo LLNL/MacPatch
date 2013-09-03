@@ -87,6 +87,9 @@
 			case 7:
 				[self scanAndUpdateAgentUpdater];
 				break;
+            case 8:
+				[self runSWDistScanAndInstall];
+				break;
 			case 99:
 				// Run as daemon
 				[self setUseOperationQueue:YES];
@@ -311,6 +314,23 @@
 {
 	[MPTaskThread runAgentScanAndUpdate];
 	exit(0);
+}
+
+- (void)runSWDistScanAndInstall
+{
+    swDistOp = [[MPSWDistTaskOperation alloc] init];
+    [queue addOperation:swDistOp];
+    [swDistOp release], swDistOp = nil;
+
+    if ([NSThread isMainThread]) {
+        while ([[queue operations] count] > 0) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+    } else {
+        [queue waitUntilAllOperationsAreFinished];
+    }
+
+    exit(0);
 }
 				 
 				 

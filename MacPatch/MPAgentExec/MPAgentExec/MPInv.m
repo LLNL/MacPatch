@@ -52,7 +52,6 @@
 	if (self) {
 		[self setCUUID:[MPSystemInfo clientUUID]];
 		mpServerConnection = [[MPServerConnection alloc] init];
-        mpSoap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
 	}	
 	return self;
 }
@@ -61,7 +60,6 @@
 {    
 	[invResults autorelease];
     [cUUID autorelease];
-    [mpSoap release];
 	[super dealloc];
 }
 
@@ -209,47 +207,26 @@
 - (BOOL)sendResultsToWebService:(NSString *)aDataMgrXML
 {
 	BOOL result = NO;
-	MPDataMgr	*dataMgr	= [[MPDataMgr alloc] init];
-	
-	// Encode to base64 and send to web service	
+
+	// Encode to base64 and send to web service
 	NSString	*cleanXMLString = [aDataMgrXML validXMLString];
 	NSString	*xmlB64String	= [[cleanXMLString dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
 	if (!xmlB64String) {
 		logit(lcl_vError,@"Unable to encode xml data.");
-		[dataMgr release];
-		dataMgr = nil;
-		return result;	
+		return result;
 	}
-	NSDictionary	*msgParams	= [NSDictionary dictionaryWithObject:xmlB64String forKey:@"encodedXML"];
-	NSString		*message	= [mpSoap createBasicSOAPMessage:@"ProcessXML" argDictionary:msgParams];
-	if (!message) {
-		logit(lcl_vError,@"Soap message was nil.");
-		[dataMgr release];
-		dataMgr = nil;
-		return result;	
-	}
-	
-	NSError *err = nil;
-	NSData *soapResult = [mpSoap invoke:message isBase64:NO error:&err];
-	NSString *ws = [[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding];
-	sleep(2); // Quick Sleep "-|
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-	} else {
-		if ([ws isEqualTo:@"1"] == TRUE || [ws isEqualTo:@"true"] == TRUE) {
-			logit(lcl_vInfo,@"Results posted to webservice.");
-			result = YES;
-		} else {
-			logit(lcl_vError,@"Results posted to webservice returned false.");
-			result = NO;
-		}
-	}
-	[ws release];
-	ws = nil;
-	
-	[dataMgr release];
-	dataMgr = nil;
-	
+
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    result = [mpws postDataMgrXML:xmlB64String error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"Results posted to webservice returned false.");
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    } else {
+        logit(lcl_vInfo,@"Results posted to webservice.");
+        result = YES;
+    }
+
 	return result;
 }
 

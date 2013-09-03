@@ -150,6 +150,7 @@
     
     // Check to see if there is anything to install
     if (mandatoryInstllTasks == nil || [mandatoryInstllTasks count] <= 0) {
+        logit(lcl_vInfo,@"No mandatory software tasks to install.");
         return;
     }
     MPSWInstaller  *mpCatalogD;
@@ -312,7 +313,8 @@
     if (content) 
     {
         /* If there is content */
-        [content writeToFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"] atomically:NO];
+        //[content writeToFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"] atomically:NO];
+        [NSKeyedArchiver archiveRootObject:content toFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
         _a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
         for (id item in _a) 
         {

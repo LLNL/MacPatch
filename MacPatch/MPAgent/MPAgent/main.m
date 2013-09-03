@@ -31,7 +31,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"1.1.0"
+#define APPVERSION	@"1.5.0"
 #define APPNAME		@"MPAgent"
 
 void usage(void);
@@ -63,6 +63,7 @@ int main (int argc, char * argv[])
 			{"AVInfo"			,no_argument	    ,0, 'a'},
 			{"AVUpdate"			,no_argument	    ,0, 'U'},
 			{"AgentUpdater"		,no_argument	    ,0, 'G'},
+            {"SWScanUpdate" 	,no_argument	    ,0, 'S'},
 			{"Echo"				,no_argument		,0, 'e'},
 			{"Verbose"			,no_argument		,0, 'V'},
 			{"version"			,no_argument		,0, 'v'},
@@ -71,7 +72,7 @@ int main (int argc, char * argv[])
 		};
 		// getopt_long stores the option index here.
 		int option_index = 0;
-		c = getopt_long (argc, argv, "dqDTcsuiaUGeVvh", long_options, &option_index);
+		c = getopt_long (argc, argv, "dqDTcsuiaUGSeVvh", long_options, &option_index);
 		
 		// Detect the end of the options.
 		if (c == -1)
@@ -106,6 +107,9 @@ int main (int argc, char * argv[])
 			case 'G':
 				a_Type = 7;
 				break;
+            case 'S':
+				a_Type = 8;
+				break;
 			case 'V':
 				verboseLogging = YES;
 				break;
@@ -127,13 +131,14 @@ int main (int argc, char * argv[])
 				usage();
 		}
 	}
-	
-	if (optind < argc) {
-		while (optind < argc)
-			argv[optind++];
-		usage();
-		exit(0);
-	}
+
+    if (optind < argc) {
+        while (optind < argc) {
+            printf ("Invalid argument %s ", argv[optind++]);
+        }
+        usage();
+        exit(0);
+    }
 	
 	// Make sure the user is root or is using sudo
 	if (getuid()) {

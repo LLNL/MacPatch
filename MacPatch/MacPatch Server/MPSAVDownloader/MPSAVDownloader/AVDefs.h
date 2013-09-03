@@ -57,6 +57,5 @@
 - (NSArray *)itemsInCollection:(NSArray *)collection containingWord:(NSString *)word;
 - (NSString *)returnAVDefsFileDate:(NSString *)avFileName;
 - (NSXMLDocument *)createAVXMLDoc:(NSArray *)theArray;
-- (NSString *)getFileHash:(NSString *)localFilePath hashType:(NSString *)type;
 
 @end

@@ -129,7 +129,7 @@
 	curValLong = (curValLong + bytes);
 	if (curValLong != 0) {
 		[controller appendDownloadProgress:(((double)curValLong / (double)maxValLong) * 100)];
-		[controller appendDownloadProgressPercent:[NSString stringWithFormat:@"%.0f%",((double)curValLong / (double)maxValLong) * 100]];
+		[controller appendDownloadProgressPercent:[NSString stringWithFormat:@"%.0f%%",((double)curValLong / (double)maxValLong) * 100]];
 	}	
 }
 

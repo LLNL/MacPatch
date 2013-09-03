@@ -25,7 +25,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class SoapServices;
 @class MPServerConnection;
 
 @interface MPAntiVirus : NSObject 
@@ -36,7 +35,6 @@
 	NSString		*avDefsDate;
 	NSDictionary	*l_Defaults;
 	
-	SoapServices        *soapService;
     MPServerConnection  *mpServerConnection;
 }
 
@@ -51,7 +49,7 @@
 // Scan & Update
 - (void)scanDefs;
 - (void)scanAndUpdateDefs;
-
+- (void)avScanAndUpdate:(BOOL)runUpdate;
 
 // Collect
 - (NSDictionary *)getAvAppInfo;

@@ -49,5 +49,6 @@
 
 - (NSString *)synchronousRequestForURL:(NSString *)aURI error:(NSError **)err;
 - (NSString *)synchronousRequestForURLWithFormData:(NSString *)aURI form:(NSDictionary *)aFormData error:(NSError **)err;
+- (NSString *)startSynchronousRequestWithFormData:(NSString *)aBaseURL method:(NSString *)aMethod form:(NSDictionary *)aFormData error:(NSError **)err;
 
 @end

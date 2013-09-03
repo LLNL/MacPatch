@@ -43,7 +43,7 @@
 		
 		
 		theRequest = [NSURLRequest requestWithURL:theURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
-		theDownload = [[NSURLDownload alloc] initWithRequest:theRequest delegate:self];
+        theDownload = [[NSURLDownload alloc] initWithRequest:theRequest delegate:self];
 		
 		if (theDownload) {	
 			// set the destination file now
@@ -84,7 +84,7 @@
 	logit(lcl_vInfo,@"Saving downloaded files to %@",filePath);
 	if (![dFM fileExistsAtPath:filePath]) {
 		logit(lcl_vInfo,@"Missing %@",filePath);
-		[dFM createDirectoryAtPath:filePath attributes:nil];
+        [dFM createDirectoryAtPath:filePath withIntermediateDirectories:YES attributes:nil error:NULL];
 		logit(lcl_vInfo,@"Created %@",filePath);
 	}
 	logit(lcl_vInfo,@"Downloading %@",filename);
@@ -97,7 +97,7 @@
     [download release];
 	
     // inform the user
-    logit(lcl_vError,@"Download failed! Error - %@ %@", [error localizedDescription], [[error userInfo] objectForKey:NSErrorFailingURLStringKey]);
+    logit(lcl_vError,@"Download failed! Error - %@ %@", [error localizedDescription], [[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
 	isDownloading = NO;
 }
 

@@ -21,10 +21,6 @@ function checkHostConfig () {
 	
 	osType=`sw_vers -productName`
 	osVer=`sw_vers -productVersion | cut -d . -f 2`
-	if [ "$osType" != "Mac OS X Server" ]; then
-		echo "System is not running Mac OS X Server. Server is recommended."
-		#exit 1
-	fi
 	if [ "$osVer" -le "5" ]; then
 		echo "System is not running Mac OS X (Server) 10.6 or higher. Setup can not continue."
 		exit 1
@@ -48,38 +44,37 @@ fi
 mkdir -p ${TMP_DIR}
 cd ${TMP_DIR}
 
+HTTPD_SW="httpd-2.4.6.tar.gz"
+APR_SW="apr-1.4.8.tar.gz"
+APRUTIL_SW="apr-util-1.5.2.tar.gz"
+PCRE_SW="pcre-8.33.tar.gz"
+
 # Download Software
-#curl -L -O http://www.us.apache.org/dist/httpd/httpd-2.4.3.tar.gz
-curl -L -O http://www.us.apache.org/dist/httpd/httpd-2.4.4.tar.gz
-curl -L -O http://www.us.apache.org/dist/apr/apr-1.4.6.tar.gz
-#curl -L -O http://www.us.apache.org/dist/apr/apr-util-1.4.1.tar.gz
-curl -L -O http://www.us.apache.org/dist/apr/apr-util-1.5.2.tar.gz
-#curl -L -O ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.31.tar.gz
-curl -L -O ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.32.tar.gz
+curl -L -O http://www.us.apache.org/dist/httpd/${HTTPD_SW}
+curl -L -O http://www.us.apache.org/dist/apr/${APR_SW}
+curl -L -O http://www.us.apache.org/dist/apr/${APRUTIL_SW}
+curl -L -O ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${PCRE_SW}
 
 # Apache HTTPD
 mkdir ${TMP_DIR}/httpd
-#tar xvfz ${TMP_DIR}/httpd-2.4.3.tar.gz --strip 1 -C ${TMP_DIR}/httpd
-tar xvfz ${TMP_DIR}/httpd-2.4.4.tar.gz --strip 1 -C ${TMP_DIR}/httpd
+tar xvfz ${TMP_DIR}/${HTTPD_SW} --strip 1 -C ${TMP_DIR}/httpd
 cp ${MP_CONF_DIR}/httpd/layout/config.layout.httpd ${TMP_DIR}/httpd/config.layout
 
 # APR
 mkdir ${TMP_DIR}/apr
-tar xvfz ${TMP_DIR}/apr-1.4.6.tar.gz --strip 1 -C ${TMP_DIR}/apr
+tar xvfz ${TMP_DIR}/${APR_SW} --strip 1 -C ${TMP_DIR}/apr
 cp -R ${TMP_DIR}/apr ${TMP_DIR}/httpd/srclib/apr
 cp ${MP_CONF_DIR}/httpd/layout/config.layout.apr ${TMP_DIR}/httpd/srclib/apr/config.layout
 
 # APR-UTIL
 mkdir ${TMP_DIR}/apr-util
-#tar xvfz ${TMP_DIR}/apr-util-1.4.1.tar.gz --strip 1 -C ${TMP_DIR}/apr-util
-tar xvfz ${TMP_DIR}/apr-util-1.5.2.tar.gz --strip 1 -C ${TMP_DIR}/apr-util
+tar xvfz ${TMP_DIR}/${APRUTIL_SW} --strip 1 -C ${TMP_DIR}/apr-util
 cp -R ${TMP_DIR}/apr-util ${TMP_DIR}/httpd/srclib/apr-util
 cp ${MP_CONF_DIR}/httpd/layout/config.layout.apr ${TMP_DIR}/httpd/srclib/apr-util/config.layout
 
 # PCRE
 mkdir ${TMP_DIR}/pcre
-#tar xvfz ${TMP_DIR}/pcre-8.31.tar.gz --strip 1 -C ${TMP_DIR}/pcre
-tar xvfz ${TMP_DIR}/pcre-8.32.tar.gz --strip 1 -C ${TMP_DIR}/pcre
+tar xvfz ${TMP_DIR}/${PCRE_SW} --strip 1 -C ${TMP_DIR}/pcre
 
 if [ ! -d "${MP_BUILD_DIR}" ]; then
 	mkdir -p "${MP_BUILD_DIR}"

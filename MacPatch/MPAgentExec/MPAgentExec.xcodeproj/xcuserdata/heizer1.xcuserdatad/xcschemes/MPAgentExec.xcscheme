@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-e -A"
+            argument = "-esF"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

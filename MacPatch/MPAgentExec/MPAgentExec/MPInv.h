@@ -26,7 +26,6 @@
 #import <Cocoa/Cocoa.h>
 
 @class MPServerConnection;
-@class MPSoap;
 
 @interface MPInv : NSObject 
 {
@@ -34,7 +33,6 @@
     
 	NSArray		*invResults;
 	NSString	*cUUID;
-    MPSoap      *mpSoap;
 }
 // Getters * Setters
 @property (nonatomic, retain) NSArray *invResults;

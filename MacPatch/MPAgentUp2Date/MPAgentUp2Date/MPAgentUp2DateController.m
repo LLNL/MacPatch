@@ -57,7 +57,6 @@
 		[self set_updateData:nil];
         [self set_osVerDictionary:[MPSystemInfo osVersionOctets]];
         mpAsus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
-        mpSoap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
         mpDataMgr = [[MPDataMgr alloc] init];
     }
     return self;    
@@ -74,50 +73,20 @@
 	// Get local application versions
 	logit(lcl_vInfo,@"Collecting agent version information.");	
 	NSDictionary *_agentInfo = [self collectVersionInfo];
-	
-	// Set up Soap Arguments
-	NSArray *mKeys = [NSArray arrayWithObjects:@"cuuid", @"agentVersion", @"agentBuild", @"agentFramework", nil];
-	NSArray *mObjects = [NSArray arrayWithObjects:[MPSystemInfo clientUUID], 
-						 [_agentInfo objectForKey:@"agentVersion"],
-						 [_agentInfo objectForKey:@"agentBuild"],
-						 [_agentInfo objectForKey:@"agentFramework"],nil];
-	
-	logit(lcl_vInfo,@"Requesting update data from server.");
-	NSDictionary *messageDict = [NSDictionary dictionaryWithObjects:mObjects forKeys:mKeys];
-	NSString *soapMessage = [mpSoap createBasicSOAPMessage:@"GetAgentUpdates" argDictionary:messageDict];
-	NSError *err = nil;
-	NSData *mpResult = [mpSoap invoke:soapMessage isBase64:NO error:&err];
-	[mpSoap release];
-	if (err) {
-		logit(lcl_vError,@"%@, error code %d (%@)",[err localizedDescription], (int)[err code], [err domain]);
-	//	return 0;
-	}
-	// Convert NSData Result from Base64 String 
-	NSString *_resultString = [[[NSString alloc] initWithData:mpResult encoding:NSUTF8StringEncoding] autorelease];
-	_resultString = [[_resultString decodeBase64WithNewLinesReturnString:NO] trim];
-	
-	// Soap reult is a string plist, now put it into a NSDictionary
-	NSString *error = nil;
-	NSPropertyListFormat format;
-	NSDictionary *plist = [NSPropertyListSerialization propertyListFromData:[_resultString dataUsingEncoding:NSUTF8StringEncoding] 
-														   mutabilityOption:NSPropertyListImmutable 
-																	 format:&format 
-														   errorDescription:&error];
-	
-	if(!plist || error){
-		logit(lcl_vError,@"Error: %@",error);
-		return 0;
-	}
-	logit(lcl_vDebug,@"WS Result: %@",plist);
+
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    NSDictionary *updateInfo = [mpws getAgentUpdates:[_agentInfo objectForKey:@"agentVersion"] build:[_agentInfo objectForKey:@"agentBuild"] error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@, error code %d (%@)",[wsErr localizedDescription], (int)[wsErr code], [wsErr domain]);
+        //	return 0;
+    }
+	logit(lcl_vDebug,@"WS Result: %@",updateInfo);
+
 	logit(lcl_vInfo,@"Evaluate local versions for updates.");
 	// See if the update is needed
-	/* Not Implemented Yet
-    NSDictionary *_update = nil;
-    MPOSCheck *mpos = nil;
-    NSMutableArray *_osSupport = [NSMutableArray arrayWithObjects:@"*",nil];
-    */
 	int needsUpdate = 0;
-	if ([[plist objectForKey:@"updateAvailable"] boolValue] == YES) {
+	if ([[updateInfo objectForKey:@"updateAvailable"] boolValue] == YES) {
         needsUpdate++;
 	}
 	
@@ -127,7 +96,7 @@
 		logit(lcl_vInfo,@"Client agent is up to date.");
 	}
 	
-	[self set_updateData:plist];
+	[self set_updateData:updateInfo];
 	return needsUpdate;
 }
 

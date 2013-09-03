@@ -276,13 +276,10 @@ int main (int argc, char * argv[])
 	MPJson *mpJson = [[MPJson alloc] init];
 	NSError *xErr = nil;
 	NSArray *xData = nil;
-	NSString *xOSRev = nil;
-	NSString *xHash = nil;
 	BOOL postResult = NO;
     
     NSMutableArray *aArray = [[NSMutableArray alloc] init];
     NSMutableArray *bArray = [[NSMutableArray alloc] init];
-    NSMutableSet *aSet = [[NSMutableSet alloc] init];
 	
 	for (id patchFile in dlPatchSets) {
 

@@ -3,7 +3,7 @@
   <system>
     <buffersize>0</buffersize>
     <strictarraypassbyreference>false</strictarraypassbyreference>
-    <password>admin</password>
+    <password>t1skioOH6Fpz</password>
     <licensekey></licensekey>
     <assert>false</assert>
     <missingtemplatehandler></missingtemplatehandler>
@@ -26,28 +26,17 @@
     <maxfiles>1000</maxfiles>
     <trustcache>false</trustcache>
   </file>
-  <cfschedule>
-  </cfschedule>
   <javacustomtags>
     <classes>/WEB-INF/classes</classes>
   </javacustomtags>
   <nativecustomtags>
   </nativecustomtags>
-  <cfchart>
-    <cachesize>1000</cachesize>
-    <storage>file</storage>
-  </cfchart>
   <fonts>
     <dirs>C:\Windows\Fonts</dirs>
   </fonts>
   <cfquery>
     <cache>true</cache>
-    <cachecount>1000</cachecount>
   </cfquery>
-  <openbdadminapi>
-    <version>2.0</version>
-    <lastupdated>31/Jul/2012 13:59:47</lastupdated>
-  </openbdadminapi>
   <cfapplication>
     <j2eesession>true</j2eesession>
     <clientglobalupdatesdisabled>true</clientglobalupdatesdisabled>
@@ -59,15 +48,11 @@
     <enabled>true</enabled>
     <clientstorage>cookie</clientstorage>
   </cfapplication>
-  <cfcachecontent>
-    <datasource></datasource>
-    <total>1000</total>
-  </cfcachecontent>
   <cfmail>
     <interval>240</interval>
     <smtpserver>127.0.0.1</smtpserver>
-    <charset>UTF-8</charset>
     <smtpport>25</smtpport>
+    <charset>UTF-8</charset>
   </cfmail>
   <cfmlcustomtags>
     <mapping name="cf">

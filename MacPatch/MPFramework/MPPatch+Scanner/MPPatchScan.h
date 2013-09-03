@@ -26,7 +26,6 @@
 #import <Cocoa/Cocoa.h>
 
 @protocol MPPatchScanDelegate;
-@class MPSoap;
 @class MPServerConnection;
 
 @interface MPPatchScan : NSObject 
@@ -43,12 +42,10 @@
 - (BOOL)useDistributedNotification;
 - (void)setUseDistributedNotification:(BOOL)flag;
 
--(NSArray *)scanForPatches:(MPSoap *)aSoapObj;
--(NSArray *)scanForPatches:(MPSoap *)aSoapObj bundleID:(NSString *)aBundleID;
+-(NSArray *)scanForPatches;
+-(NSArray *)scanForPatchesWithbundleID:(NSString *)aBundleID;
 -(BOOL)scanHostForPatch:(NSDictionary *)aPatch;
 
--(NSArray *)retrieveCustomPatchScanList;
--(NSArray *)createPatchArrayFromXML:(NSString *)xmlText xPath:(NSString *)aXql;
 -(void)sendNotificationTo:(NSString *)aName userInfo:(NSDictionary *)aUserInfo;
 
 @end

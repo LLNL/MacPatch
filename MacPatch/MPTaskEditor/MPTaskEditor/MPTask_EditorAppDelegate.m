@@ -113,7 +113,6 @@
 
 - (BOOL)populateInterfaceFromPlist:(NSDictionary *)plist
 {
-	//taskFilesArray = [NSArray arrayWithObject:plist];
 	if (usingAltTaskFile) {
 		window.title = MP_ALT_TASKS_PLIST;
 	} else {
@@ -129,7 +128,6 @@
 }
 - (IBAction)updateTableRow:(id)sender
 {
-	//NSLog(@"Boom");
 	if ([[intervalStart titleOfSelectedItem] isEqualTo:@"RECURRING"] ){
 		[intervalDate setEnabled:YES];
 	} else {
@@ -152,8 +150,6 @@
 	int intRow = (int)[dataManager selectionIndex];
 	NSMutableDictionary *boom = [[dataManager arrangedObjects] objectAtIndex:intRow];
 	[boom setObject:updateString forKey:@"interval"];
-	
-	//[[dataManager selection] setObject:updateString forKey:@"interval"];
 }
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
@@ -193,19 +189,6 @@
 	return YES;
 }
 
-
-//- (void)textDidBeginEditing:(NSNotification *)aNotification
-//{
-//	NSLog(@"Editing...");
-//	[saveButton setEnabled:NO];
-//	[saveButton setTitle:@"Editing..."];
-//}
-//- (void)textDidEndEditing:(NSNotification *)aNotification
-//{
-//	NSLog(@"Done Editing...");
-//	[saveButton setTitle:@"Save"];
-//	[saveButton setEnabled:YES];
-//}
 - (IBAction)savePlist:(id)sender
 {
 	

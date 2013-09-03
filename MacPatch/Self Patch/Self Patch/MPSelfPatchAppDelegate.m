@@ -225,18 +225,9 @@ static BOOL gDone = false;
 {
 	return YES;
 }
-/*
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)app 
-{
-    [[proxy connectionForProxy] invalidate];
-    [self cleanup];
-	
-    return (NSTerminateNow);
-}
-*/
+
 -(void)dealloc
 {
-	[soap release];
 	[asus release];
     [mpServerConnection release];
     [self cleanup];
@@ -712,7 +703,6 @@ done:
 	
     [mpServerConnection refreshServerObject];
 	asus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
-	soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:WS_NAMESPACE];
 	
 	if (killTaskThread == YES) {
 		[spStatusText setStringValue:@"Canceling request..."];
@@ -721,7 +711,13 @@ done:
 	
 	// Get Patch Group Patches
 	[spStatusText setStringValue:@"Getting approved patch list for client."];
-	NSDictionary *patchGroupPatches = [asus getPatchGroupPatches:[mpServerConnection.mpDefaults objectForKey:@"PatchGroup"] encode:YES];
+    MPWebServices *mpws;
+    mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    }
 	if (!patchGroupPatches) {
 		NSRunAlertPanel(@"Communications Error", @"There was a issue getting the approved patches for the patch group, scan will exit.", @"OK", nil,nil);
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
@@ -771,22 +767,16 @@ done:
 	
 	// Encode to base64 and send to web service	
 	NSString *xmlBase64String   = [[dataMgrXML dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
-	NSDictionary	*msgArgs	= [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[MPSystemInfo clientUUID],xmlBase64String,nil] 
-														forKeys:[NSArray arrayWithObjects:@"cuuid",@"encodedXML",nil]];
-	NSString		*message	= [soap createBasicSOAPMessage:@"DataMgrXML" argDictionary:msgArgs];
-	NSError         *p_err      = nil;
-	NSData          *soapResult = [soap invoke:message isBase64:NO error:&p_err];
-	if (p_err) {
-		logit(lcl_vError,@"%@",[p_err localizedDescription]);
-	} else {
-		NSString *ws = [[[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding] autorelease];
-		if ([ws isEqualTo:@"1"] == TRUE || [ws isEqualTo:@"true"] == TRUE) {
-			logit(lcl_vInfo,@"Scan results posted to webservice.");
-		} else {
-			logit(lcl_vError,@"Scan results posted to webservice returned false.");
-		}
-	}
-	
+    mpws = [[[MPWebServices alloc] init] autorelease];
+    wsErr = nil;
+    [mpws postDataMgrXML:xmlBase64String error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"Scan results posted to webservice returned false.");
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    } else {
+        logit(lcl_vInfo,@"Scan results posted to webservice.");
+    }
+
 	if (killTaskThread == YES) {
 		[spStatusText setStringValue:@"Canceling request..."];
 		goto done;
@@ -983,7 +973,6 @@ done:
 	[spCancelButton setEnabled:NO];
 	
 	[approvedUpdatesArray release];
-	[soap release];
 	[asus release];
 	
 	[pool drain];
@@ -1428,56 +1417,21 @@ done:
 
 - (void)postInstallToWebService:(NSString *)aPatch type:(NSString *)aType
 {
-	NSString *cuuid = [MPSystemInfo clientUUID];
-	soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:WS_NAMESPACE];
-	NSData *soapResult;
-	// First we need to post the installed patch
-	NSArray *patchInstalledArray;
-	patchInstalledArray = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:aPatch,@"patch",aType,@"type",nil]];
-	
-	MPDataMgr *dataMgr = [[MPDataMgr alloc] init];
-	NSString *resXML = [NSString stringWithString:[dataMgr GenXMLForDataMgr:patchInstalledArray dbTable:@"installed_patches" 
-															  dbTablePrefix:@"mp_"
-															  dbFieldPrefix:@""
-															   updateFields:@"cuuid,patch"]];
-	
-	NSString *xmlBase64String = [[resXML dataUsingEncoding: NSASCIIStringEncoding] encodeBase64WithNewlines:NO]; 
-	NSString *message = [soap createSOAPMessage:@"ProcessXML" argName:@"encodedXML" argType:@"string" argValue:xmlBase64String];
-	
-	NSError *err = nil;
-	soapResult = [soap invoke:message isBase64:NO error:&err];
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-	}
-	NSString *ws1 = [[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding];
-	
-	// Now we need to update the client patch tables and remove the entry.
-	// datamgr can not do this since it's a different table
-	NSDictionary *soapMsgData = [NSDictionary dictionaryWithObjectsAndKeys:aPatch,@"patch",aType,@"type",cuuid,@"cuuid",nil];
-	message = [soap createBasicSOAPMessage:@"UpdateInstalledPatches" argDictionary:soapMsgData];
-	err = nil;
-	soapResult = [soap invoke:message isBase64:NO error:&err];
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-	}
-	NSString *ws2 = [[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding];
-	
-	if ([ws1 isEqualTo:@"1"] == TRUE || [ws1 isEqualTo:@"true"] == TRUE) {
-		logit(lcl_vInfo,@"Patch (%@) install result was posted to webservice.",aPatch);
-	} else {
-		logit(lcl_vError,@"Patch (%@) install result was not posted to webservice.",aPatch);
-	}
-	if ([ws2 isEqualTo:@"0"] == YES  || [ws2 isEqualTo:@"false"] == TRUE) {
-		logit(lcl_vError,@"Client patch state for (%@) was not posted to webservice.",aPatch);
-	}
-	
-	// We should queue this in case we fail.
-	
-	//Release Objects
-	[ws2 release];
-	[ws1 release];
-	[dataMgr release];
-	[soap release];
+    BOOL result = NO;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    result = [mpws postPatchInstallResultsToWebService:aPatch patchType:aType error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    } else {
+        if (result == TRUE) {
+            logit(lcl_vInfo,@"Patch (%@) install result was posted to webservice.",aPatch);
+        } else {
+            logit(lcl_vError,@"Patch (%@) install result was not posted to webservice.",aPatch);
+        }
+    }
+
+    return;
 }
 
 - (IBAction)showLogInConsole:(id)sender
@@ -1507,36 +1461,6 @@ done:
 		prefsController = [[PrefsController alloc] init];
 	
 	[prefsController showWindow:self];
-}
-
-#pragma mark -
-#pragma mark Misc
-- (NSDictionary *)getClientPatchState
-{	
-	NSDictionary *patchStateData = NULL;
-	soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:WS_NAMESPACE];
-	
-	// Get the patch group patches
-	NSString *message = [soap createSOAPMessage:@"ClientPatchStatus" argName:@"cuuid" argType:@"string" argValue:[MPSystemInfo clientUUID]];
-	NSError *err = nil;
-	NSData *result = [soap invoke:message isBase64:NO error:&err];
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-		goto done;
-	}
-	
-	
-	NSString *returnPlistXML = [[[NSString alloc] initWithData:result encoding:NSASCIIStringEncoding] autorelease];	
-	@try {
-		patchStateData = [returnPlistXML propertyList];
-	}
-	@catch (NSException * e) {
-		logit(lcl_vError,@"Problem parsing return plist data. %@, %@",[e reason],[e userInfo]);
-	}
-	
-done:	
-	[soap release];
-	return (NSDictionary *)patchStateData;
 }
 
 #pragma mark Notifications

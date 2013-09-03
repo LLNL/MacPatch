@@ -26,7 +26,8 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface CHDownloader : NSObject {
+@interface CHDownloader : NSObject <NSURLDownloadDelegate>
+{
 	NSURLRequest	*theRequest;
 	NSURLDownload	*theDownload;
 

@@ -69,6 +69,9 @@
 -(BOOL)runScript:(NSString *)aScript
 {
 	BOOL result = FALSE;
+
+
+    NSString *cleanScript = [aScript stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
 	
 	CFUUIDRef uuid = CFUUIDCreate(NULL);
 	NSString *tmpID = (NSString *)CFUUIDCreateString(NULL, uuid);
@@ -76,7 +79,7 @@
 	
 	NSString *tmpFile = [NSTemporaryDirectory() stringByAppendingPathComponent:tmpID];
 	NSError *err = nil;
-	[aScript writeToFile:tmpFile atomically:YES encoding:NSASCIIStringEncoding error:&err];
+	[cleanScript writeToFile:tmpFile atomically:YES encoding:NSStringEncodingConversionAllowLossy error:&err];
 	if (err) {
 		result = FALSE; goto done;
 	}

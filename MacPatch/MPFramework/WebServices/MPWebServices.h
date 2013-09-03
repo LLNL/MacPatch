@@ -36,11 +36,27 @@
     NSDictionary *_defaults;
 }
 
+-(id)initWithDefaults:(NSDictionary *)aDefaults;
+
 // Methods
 - (NSDictionary *)getCatalogURLSForHostOS:(NSError **)err;
-- (NSDictionary *)downloadPatchGroupContent:(NSError **)err;
+- (NSDictionary *)getPatchGroupContent:(NSError **)err;
+- (BOOL)postPatchScanResultsForType:(NSInteger)aPatchScanType results:(NSDictionary *)resultsDictionary error:(NSError **)err;
+- (BOOL)postPatchInstallResultsToWebService:(NSString *)aPatch patchType:(NSString *)aPatchType error:(NSError **)err;
 
-// Software Distribution
+- (NSArray *)getCustomPatchScanList:(NSError **)err;
+- (BOOL)postClientAVData:(NSDictionary *)aDict error:(NSError **)err;
+- (NSString *)getLatestAVDefsDate:(NSError **)err;
+- (NSString *)getAvUpdateURL:(NSError **)err;
+
+- (NSDictionary *)getAgentUpdates:(NSString *)curAppVersion build:(NSString *)curBuildVersion error:(NSError **)err;
+- (NSDictionary *)getAgentUpdaterUpdates:(NSString *)curAppVersion error:(NSError **)err;
+
+
+- (BOOL)postDataMgrXML:(NSString *)aDataMgrXML error:(NSError **)err;
+- (BOOL)postSAVDefsDataXML:(NSString *)aAVXML encoded:(BOOL)aEncoded error:(NSError **)err;
+
+
 - (BOOL)postJSONDataForMethod:(NSString *)aMethod data:(NSDictionary *)aData error:(NSError **)err;
-
+- (NSDictionary *)sendRequestUsingMethodAndArgs:(NSString *)aMethod argsDictionary:(NSDictionary *)aDict error:(NSError **)err;
 @end

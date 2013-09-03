@@ -57,7 +57,6 @@
         [self set_defaults:mpServerConnection.mpDefaults];
 		[self set_cuuid:[MPSystemInfo clientUUID]];
         mpAsus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
-        mpSoap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
         mpDataMgr = [[MPDataMgr alloc] init];
 		[self setILoadMode:NO];
 		[self setForceRun:NO];
@@ -81,7 +80,6 @@
         [self set_defaults:mpServerConnection.mpDefaults];
 		[self set_cuuid:[MPSystemInfo clientUUID]];
         mpAsus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
-        mpSoap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
         mpDataMgr = [[MPDataMgr alloc] init];
 		[self setILoadMode:NO];
 		[self setForceRun:NO];
@@ -94,9 +92,7 @@
 - (void)dealloc
 {
     [mpAsus release];
-    [mpSoap release];
     [mpDataMgr release];
-    
     [super dealloc];
 }
 
@@ -154,7 +150,14 @@
 	NSMutableDictionary *tmpDict;
 	
 	// Get Patch Group Patches
-	NSDictionary *patchGroupPatches = [mpAsus getPatchGroupPatches:[_defaults objectForKey:@"PatchGroup"] encode:YES];
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+        goto done;
+    }
+
 	if (!patchGroupPatches) {
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
 		goto done;
@@ -196,23 +199,16 @@
         
         // Encode to base64 and send to web service
         NSString *xmlBase64String = [[dataMgrXML dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
-        NSDictionary *msgArgs = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[MPSystemInfo clientUUID],xmlBase64String,nil]
-                                                            forKeys:[NSArray arrayWithObjects:@"cuuid",@"encodedXML",nil]];
-        NSString *message = [mpSoap createBasicSOAPMessage:@"DataMgrXML" argDictionary:msgArgs];
-        
-        NSError *p_err = nil;
-        NSData *soapResult = [mpSoap invoke:message isBase64:NO error:&p_err];
-        if (p_err) {
-            logit(lcl_vError,@"%@",[p_err localizedDescription]);
+        MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+        NSError *wsErr = nil;
+        [mpws postDataMgrXML:xmlBase64String error:&wsErr];
+        if (wsErr) {
+            logit(lcl_vError,@"Scan results posted to webservice returned false.");
+            logit(lcl_vError,@"%@",wsErr.localizedDescription);
         } else {
-            NSString *ws = [[[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding] autorelease];
-            if ([ws isEqualTo:@"1"] == TRUE || [ws isEqualTo:@"true"] == TRUE) {
-                logit(lcl_vInfo,@"Scan results posted to webservice.");
-            } else {
-                logit(lcl_vError,@"Scan results posted to webservice returned false.");
-            }
+            logit(lcl_vInfo,@"Scan results posted to webservice.");
         }
-        
+
         // Process patches
         if (!applePatchesArray) {
             logit(lcl_vInfo,@"The scan results for ASUS scan were nil.");
@@ -293,7 +289,7 @@
                     [tmpDict setObject:approvedPatch forKey:@"patches"];
                     [tmpDict setObject:[customPatch objectForKey:@"patch_id"] forKey:@"patch_id"];
                     [tmpDict setObject:@"Third" forKey:@"type"];
-                    [tmpDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
+                    [tmpDict setObject:[customPatch objectForKey:@"bundleid"] forKey:@"bundleid"];
                     
                     logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
                     [approvedUpdatesArray addObject:tmpDict];
@@ -329,14 +325,24 @@ done:
 {
 	NSMutableArray      *approvedUpdatesArray = [[NSMutableArray alloc] init];
 	NSMutableDictionary *tmpDict;
-	
-	// Get Patch Group Patches
-	NSDictionary *patchGroupPatches = [mpAsus getPatchGroupPatches:[_defaults objectForKey:@"PatchGroup"] encode:YES];
+
+
+    // Get Patch Group Patches
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+        [approvedUpdatesArray release];
+		return;
+    }
+
 	if (!patchGroupPatches) {
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
         [approvedUpdatesArray release];
 		return;
 	}
+
     NSArray *approvedCustomPatches = nil;
     approvedCustomPatches = [patchGroupPatches objectForKey:@"CustomUpdates"];
     
@@ -470,7 +476,6 @@ done:
 	MPCrypto			*_crypto;
     MPInstaller         *mpInstaller = nil;
     MPScript            *mpScript = nil;
-    SoapServices        *soapService = [[SoapServices alloc] init];
     NSDictionary		*patch;
 	NSDictionary		*currPatchToInstallDict;
 	NSArray				*patchPatchesArray;
@@ -671,7 +676,12 @@ done:
                 // Instal is complete, post result to web service
                 
                 @try {
-                    [soapService postInstallResultsToWebService:[patch objectForKey:@"patch_id"] type:@"third"];
+                    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+                    NSError *wsErr = nil;
+                    [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
+                    if (wsErr) {
+                        logit(lcl_vError,@"%@", wsErr.localizedDescription);
+                    }
                 }
                 @catch (NSException *e) {
                     logit(lcl_vError,@"%@", e);
@@ -789,7 +799,12 @@ done:
             
             // Post the results to web service
             @try {
-                [soapService postInstallResultsToWebService:[patch objectForKey:@"patch"] type:@"apple"];
+                MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+                NSError *wsErr = nil;
+                [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch"] patchType:@"apple" error:&wsErr];
+                if (wsErr) {
+                    logit(lcl_vError,@"%@", wsErr.localizedDescription);
+                }
             }
             @catch (NSException *e) {
                 logit(lcl_vError,@"%@", e);
@@ -918,7 +933,6 @@ done:
 	MPCrypto			*_crypto;
     MPInstaller         *mpInstaller = nil;
     MPScript            *mpScript = nil;
-    SoapServices        *soapService = [[SoapServices alloc] init];
     NSDictionary		*patch;
 	NSDictionary		*currPatchToInstallDict;
 	NSArray				*patchPatchesArray;
@@ -1114,7 +1128,12 @@ done:
                 // *****************************
                 // Instal is complete, post result to web service
                 @try {
-                    [soapService postInstallResultsToWebService:[patch objectForKey:@"patch_id"] type:@"third"];
+                    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+                    NSError *wsErr = nil;
+                    [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
+                    if (wsErr) {
+                        logit(lcl_vError,@"%@", wsErr.localizedDescription);
+                    }
                 }
                 @catch (NSException *e) {
                     logit(lcl_vError,@"%@", e);
@@ -1376,7 +1395,6 @@ done:
 
 - (NSDictionary *)getAgentUpdaterInfo
 {
-    
 	NSString *updateAppPath = [MP_ROOT stringByAppendingPathComponent:@"Updater/MPAgentUp2Date"];
 	
 	NSError *error = nil;
@@ -1393,28 +1411,15 @@ done:
 	}
 	
 	// Check for updates
-	SoapServices *soap = [[SoapServices alloc] initWithServerConnection:mpServerConnection];
-	NSString *result = [soap postBasicSOAPMessage:@"GetAgentUpdaterUpdates"
-									argDictionary:[NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:_cuuid,verString,nil]
-																			  forKeys:[NSArray arrayWithObjects:@"cuuid",@"agentUp2DateVer",nil]]];
-	
-	NSString *err = nil;
-    NSPropertyListFormat format;
-	id soapResult = [NSPropertyListSerialization propertyListFromData:[[result decodeBase64WithNewLinesReturnString:NO] dataUsingEncoding:NSUTF8StringEncoding]
-													 mutabilityOption:NSPropertyListImmutable
-															   format:&format
-													 errorDescription:&err];
-    if (!soapResult) {
-        logit(lcl_vError,@"Error reading plist from soapResult.Error = '%@'",err);
-		soapResult = nil;
-    } else {
-		logit(lcl_vDebug,@"%@",soapResult);
-	}
-	
-	[soap release];
-	[mpr release];
-	
-	return (NSDictionary *)soapResult;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    NSDictionary *result = [mpws getAgentUpdaterUpdates:verString error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr);
+        return nil;
+    }
+    [mpr release];
+    return result;
 }
 
 - (BOOL)isTaskRunning:(NSString *)aTaskName

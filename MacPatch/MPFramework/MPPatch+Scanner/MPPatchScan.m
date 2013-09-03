@@ -24,7 +24,6 @@
  */
 
 #import "MPPatchScan.h"
-#import "MPSoap.h"
 #import "MPDefaults.h"
 #import "MPDataMgr.h"
 #import "MPOSCheck.h"
@@ -69,7 +68,7 @@
 }
 
 
--(NSArray *)scanForPatches:(MPSoap *)aSoapObj
+-(NSArray *)scanForPatches
 {
 	NSArray *resultArr = nil;
 	NSMutableArray *patchesNeeded = [[NSMutableArray alloc] init];
@@ -114,7 +113,7 @@
                 [patch setObject:@"Y" forKey:@"recommended"];
                 [patch setObject:[tmpDict objectForKey:@"reboot"] forKey:@"restart"];
                 [patch setObject:[tmpDict objectForKey:@"puuid"] forKey:@"patch_id"];
-                [patch setObject:[tmpDict objectForKey:@"bundleID"] forKey:@"bundleID"];
+                [patch setObject:[tmpDict objectForKey:@"bundleid"] forKey:@"bundleid"];
                 [patchesNeeded addObject:patch];
             }
             @catch (NSException *exception) {
@@ -126,35 +125,30 @@
 		}
 	}
 	
-	// 3. Post patches needed to web service
-	MPDataMgr *dataMgr = [[[MPDataMgr alloc] init] autorelease];
-	NSString *resXML = [NSString stringWithString:[dataMgr GenXMLForDataMgr:patchesNeeded dbTable:@"client_patches_third" 
+    
+
+
+    // 3. Post patches needed to web service
+    MPDataMgr *dataMgr = [[[MPDataMgr alloc] init] autorelease];
+	NSString *resXML = [NSString stringWithString:[dataMgr GenXMLForDataMgr:patchesNeeded dbTable:@"client_patches_third"
 															  dbTablePrefix:@"mp_"
 															  dbFieldPrefix:@""
 															   updateFields:@"cuuid,patch"
 																  deleteCol:@"cuuid"
                                                              deleteColValue:[MPSystemInfo clientUUID]]];
-	
-	// Encode to base64 and send to web service	
+
+	// Encode to base64 and send to web service
+
 	qldebug(@"Patch scan info to send to web service:\n%@",resXML);
 	NSString *xmlBase64String = [[resXML dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
-	NSString *message = [aSoapObj createSOAPMessage:@"ProcessXML" argName:@"encodedXML" argType:@"string" argValue:xmlBase64String];
-	NSError *err = nil;
-	NSData *soapResult = [aSoapObj invoke:message isBase64:NO error:&err];
-	if (err) {
-		qlerror(@"%@",[err localizedDescription]);
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    [mpws postDataMgrXML:xmlBase64String error:&wsErr];
+    if (wsErr) {
+        qlerror(@"%@",wsErr.localizedDescription);
 		goto done;
-	}
-	
-	
-	NSString *ws = [[[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding] autorelease];
-	
-	if ([ws isEqualTo:@"1"] == TRUE || [ws isEqualTo:@"true"] == TRUE) {
-		qlinfo(@"Install results posted to webservice.");
-	} else {
-		qlerror(@"Install results posted to webservice returned false.");
-	}
-	
+    }
+
 	// Notify with completion result
 	notifyInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:(int)[patchesNeeded count]] forKey:@"patchesNeeded"];
 	
@@ -166,7 +160,7 @@ done:
 	return resultArr;
 }
 
--(NSArray *)scanForPatches:(MPSoap *)aSoapObj bundleID:(NSString *)aBundleID
+-(NSArray *)scanForPatchesWithbundleID:(NSString *)aBundleID
 {
     NSArray *resultArr = nil;
 	NSMutableArray *patchesNeeded = [[NSMutableArray alloc] init];
@@ -274,7 +268,7 @@ done:
 	int i = 0;
 	for (i=0;i<[queryArray count];i++)
 	{	
-		qryArr = [[queryArray objectAtIndex:i] componentsSeparatedByString:@"@" escapeString:@"@@"];
+		qryArr = [[[queryArray objectAtIndex:i] objectForKey:@"qStr"] componentsSeparatedByString:@"@" escapeString:@"@@"];
 		if ([@"OSArch" isEqualToString:[qryArr objectAtIndex:0]]) {
 			mpos = [[MPOSCheck alloc] init];
 			if ([mpos checkOSArch:[qryArr objectAtIndex:1]]) {
@@ -385,116 +379,15 @@ done:
 
 -(NSArray *)retrieveCustomPatchScanList
 {
-	NSArray  *patchGroupPatchesArray = NULL;
-	NSDictionary *cDefaults = mpServerConnection.mpDefaults;
-	MPSoap *mps = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
-	
-	NSString *patchState;
-	if ([[cDefaults allKeys] containsObject:@"PatchState"] == YES) {
-		patchState = [NSString stringWithString:[cDefaults objectForKey:@"PatchState"]];
-	} else {
-		patchState = @"Production";
-	}
-	
-	
-	NSDictionary *mpsArgs = [NSDictionary dictionaryWithObjectsAndKeys:
-							 @"true",@"encode",
-							 @"1",@"active",
-							 patchState,@"state",
-							 nil];
-	
-	NSString *message = [mps createBasicSOAPMessage:@"GetScanList" argDictionary:mpsArgs];
-	NSError *err = nil;
-	NSData *result = [mps invoke:message isBase64:YES error:&err];
-	if (err) {
-		qlerror(@"%@",[err localizedDescription]);
-		goto done;
-	}
-	
-	NSString *patchesXML = [[[NSString alloc] initWithData:result encoding:NSASCIIStringEncoding] autorelease];
-	qltrace(@"Custom Patch Scan List: %@",patchesXML);	
-
-	NSString *xPathQuery = @"//patches/patch";
-	patchGroupPatchesArray = [NSArray arrayWithArray:[self createPatchArrayFromXML:patchesXML xPath:xPathQuery]];
-	
-done:	
-	[mps release];
-	return patchGroupPatchesArray;
-}
-
-/* Example XML to parse
- 
- <?xml version="1.0" encoding="UTF-8"?>
- <root>
- <patches>
- <patch pname="Microsoft Office 2008" puuid="184D6FF9-0B2A-44AF-8942CA916C5C252A" pversion="12.2.4" reboot="No">
- <query id="1">OSType@Mac OS X, Mac OS X Server</query>
- <query id="2">OSVersion@*</query>
- <query id="19">File@EXISTS@/Applications/Microsoft Office 2008/Office/MicrosoftOffice.framework@True;EQ</query>
- <query id="20">File@VERSION@/Applications/Microsoft Office 2008/Office/MicrosoftOffice.framework@12.2.4;LT</query>
- </patch>
- 
- */ 
-
-- (NSArray *)createPatchArrayFromXML:(NSString *)xmlText xPath:(NSString *)aXql
-{
-	NSMutableArray *tmpPatchArr = [[NSMutableArray alloc] init];
-	NSMutableDictionary *tmpPatch;
-	
-	NSError *err=nil;
-	NSArray *result=nil;
-	NSXMLDocument *xmlDoc = [[NSXMLDocument alloc] initWithXMLString:xmlText options:(NSXMLNodePreserveWhitespace|NSXMLNodePreserveCDATA) error:&err]; // Removed NSXMLDocumentTidyXML option, messed up scripts
-	if (err) {
-		qlerror(@"%@:%@ Error reading XML string: %@", [self class], NSStringFromSelector(_cmd), [err localizedDescription]);
-		goto done;
-	}
-	
-	result = [NSArray arrayWithArray:[xmlDoc nodesForXPath:aXql error:&err]];
-	if (err) {
-		qlerror(@"%@:%@ Error in nodesForXPath: %@", [self class], NSStringFromSelector(_cmd), [err localizedDescription]);
-		result = nil;
-		goto done;
-	}
-	
-	NSXMLElement *x;
-	NSArray *objectElements;
-	NSMutableArray *tmpQuery;
-	int i = 0;
-	int y = 0;
-	for (i=0;i<[result count];i++)
-	{	
-        x = [result objectAtIndex:i];	
-		tmpPatch = [[NSMutableDictionary alloc] init];
-        @try {
-            [tmpPatch setObject:[[x attributeForName:@"pname"] stringValue]		forKey:@"pname"];
-            [tmpPatch setObject:[[x attributeForName:@"pversion"] stringValue]	forKey:@"pversion"];
-            [tmpPatch setObject:[[x attributeForName:@"puuid"] stringValue]		forKey:@"puuid"];
-            [tmpPatch setObject:[[x attributeForName:@"reboot"] stringValue]	forKey:@"reboot"];
-            [tmpPatch setObject:[[x attributeForName:@"bundleID"] stringValue]	forKey:@"bundleID"];
-            
-            objectElements = [x elementsForName:@"query"]; //[x nodesForXpath:@"query" error:nil];
-            if ([objectElements count] > 0)
-            {
-                tmpQuery = [[NSMutableArray alloc] init];
-                for (y=0;y<[objectElements count];y++)
-                    [tmpQuery addObject:[[objectElements objectAtIndex:y] stringValue]];
-                [tmpPatch setObject:[NSArray arrayWithArray:tmpQuery] forKey:@"query"];
-                [tmpQuery release];
-            }
-            qltrace(@"Patch Scan Object: %@",tmpPatch);
-            [tmpPatchArr addObject:tmpPatch];
-        }
-        @catch (NSException *exception) {
-            qlerror(@"%@",exception);
-        }
-		[tmpPatch release];
-	}
-    result = [NSArray arrayWithArray:tmpPatchArr];
-	
-done:	
-	[xmlDoc release];
-	[tmpPatchArr release];
-	return result;
+	NSArray  *scanListArray = NULL;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    scanListArray = [mpws getCustomPatchScanList:&wsErr];
+    if (wsErr) {
+        qlerror(@"%@",[wsErr localizedDescription]);
+        return NULL;
+    }
+    return scanListArray;
 }
 
 -(void)sendNotificationTo:(NSString *)aName userInfo:(NSDictionary *)aUserInfo

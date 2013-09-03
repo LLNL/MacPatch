@@ -24,10 +24,9 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "MacPatch.h"
 #import "CHDownloader.h"
 #import "AVDefs.h"
-#import "MPLog.h"
-#import "MPSoap.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -184,7 +183,6 @@ int main (int argc, char * argv[]) {
 	// AVDefs
 	AVDefs *av = [[AVDefs alloc] init];
 	[av setRemoteAVInfoURL:[prefs objectForKey:@"avDefsInfoURL"]];
-	//[av setRemoteAVURL:[prefs objectForKey:@"avDownloadURL"]];
 	[av setRemoteAVURL:[prefs objectForKey:@"avDefsInfoURL"]];
 	[av setDlFilePathDir:[prefs objectForKey:@"avDownloadToFilePath"]];
 	[av setDlFilePath:[NSString stringWithFormat:@"%@%@",[prefs objectForKey:@"avHostDLPrefixURL"],[prefs objectForKey:@"avPath"]]];
@@ -211,7 +209,7 @@ int main (int argc, char * argv[]) {
 		[fileManager createDirectoryAtPath:[prefs objectForKey:@"avDownloadToFilePath"] withIntermediateDirectories:YES attributes:nil error:&fhErr];
 		
 		if (fhErr) {
-			logit(lcl_vError,@"Error creating download directory (%@): %@ %@",[prefs objectForKey:@"avDownloadToFilePath"] , [fhErr localizedDescription], [[fhErr userInfo] objectForKey:NSErrorFailingURLStringKey]);
+			logit(lcl_vError,@"Error creating download directory (%@): %@ %@",[prefs objectForKey:@"avDownloadToFilePath"] , [fhErr localizedDescription], [[fhErr userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
 			logit(lcl_vError,@"Now exiting.");
 			exit(0);
 		}
@@ -223,7 +221,7 @@ int main (int argc, char * argv[]) {
 	// Loop Through tmpArr
 	while (anObject = [enumerator nextObject]) {
 		NSString *theLoFile = [[prefs objectForKey:@"avDownloadToFilePath"] stringByAppendingPathComponent:anObject];
-		NSString *theDLFile = anObject; //[[av remoteAVURL] stringByAppendingPathComponent:anObject];
+		NSString *theDLFile = anObject;
 		if ([[NSFileManager defaultManager] fileExistsAtPath:theLoFile] == NO || purgeLocalFiles == YES) {
 			[fDownloader setFileURL:[[prefs objectForKey:@"avDownloadURL"] stringByAppendingPathComponent:theDLFile]];
 			[fDownloader setFilePath:[prefs objectForKey:@"avDownloadToFilePath"]];
@@ -246,31 +244,25 @@ int main (int argc, char * argv[]) {
 															encoding:NSUTF8StringEncoding
 															   error:&err];
 	if(err) {
-        logit(lcl_vError,@"Error creating XML file: %@ %@", [err localizedDescription], [[err userInfo] objectForKey:NSErrorFailingURLStringKey]);
+        logit(lcl_vError,@"Error creating XML file: %@ %@", [err localizedDescription], [[err userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
 	}
 	
 	// Send Results to WebService
-	NSData * data = [NSData dataWithContentsOfFile:[[prefs objectForKey:@"avDownloadToFilePath"] stringByAppendingPathComponent:@"savdefs.xml"]];
-    NSString * base64 = [data encodeBase64WithNewlines: YES];
-	NSString *_httpType = @"http";
-	if ([[prefs objectForKey:@"MPServerSSL"] isEqualTo:@"1"]) {
-		_httpType = [NSString stringWithString:@"https"];
-	}
-    
-    NSURL *_wsURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@:%@/MPWSControllerCocoa.cfc",_httpType,[prefs objectForKey:@"MPServerAddress"],[prefs objectForKey:@"MPServerPort"]]];
-	logit(lcl_vInfo,@"_wsURL: %@",_wsURL);
-	MPSoap *mps = [[MPSoap alloc] initWithURL:_wsURL nameSpace:@"http://MPWSController.cfc"];
-	
-	NSString *message = [mps createSOAPMessage:@"AddSavAvDefs" argName:@"theXmlFile" argType:@"string" argValue:base64];
-	logit(lcl_vInfo,@"WS message: %@",message);
-	logit(lcl_vInfo,@"Posting data to web service.");
-	NSData *result = [mps invoke:message isBase64:NO error:NULL];
-	[mps release];
-	mps = nil;
-	
-	NSString *aStr = [[[NSString alloc] initWithData:result encoding:NSASCIIStringEncoding] autorelease];
-	logit(lcl_vInfo,@"WebService Response: %@",aStr);
-	
+	NSData *data = [[xmlData XMLStringWithOptions:NSXMLNodePrettyPrint] dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64XML = [data encodeBase64WithNewLines:YES];
+    MPWebServices *mpws = [[[MPWebServices alloc] initWithDefaults:prefs] autorelease];
+    NSError *wsErr = nil;
+    BOOL result = NO;
+    result = [mpws postSAVDefsDataXML:base64XML encoded:YES error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    }
+    if (result == YES) {
+        logit(lcl_vInfo,@"AV Defs Data was posted.");
+    } else {
+        logit(lcl_vInfo,@"AV Defs Data was not posted.");
+    }
+
 	[pool release];
     return 0;
     

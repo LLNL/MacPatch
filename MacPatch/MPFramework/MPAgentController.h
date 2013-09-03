@@ -27,7 +27,6 @@
 
 @class MPServerConnection;
 @class MPAsus;
-@class MPSoap;
 @class MPDataMgr;
 
 @interface MPAgentController : NSObject
@@ -39,7 +38,6 @@
     NSString        *_appPid;
     
     MPAsus          *mpAsus;
-    MPSoap          *mpSoap;
     MPDataMgr       *mpDataMgr;
 	
     BOOL			iLoadMode;

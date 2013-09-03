@@ -225,7 +225,7 @@
 
 #pragma mark - Worker Methods
 
-- (int)disableASUSSchedule
+- (void)disableASUSSchedule
 {
     NSError *error = nil;
 	if (!proxy) {

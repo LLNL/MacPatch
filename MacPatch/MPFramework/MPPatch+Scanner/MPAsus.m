@@ -25,7 +25,6 @@
 
 #import "MPAsus.h"
 #import "MPNetworkUtils.h"
-#import	"MPSoap.h"
 #import "MPPatchScan.h"
 #import "ASIHTTPRequest.h"
 
@@ -88,12 +87,20 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 		} else {
 			[self setAllowServer:NO];
 		}
-		
-		qldebug(@"SOAP Init: %@",mpServerConnection.MP_SOAP_URL);
-		soapObj = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSControllerCocoa.cfc"];
-        
     }
     return self;
+}
+
+#pragma mark -
+#pragma mark dealloc
+//===========================================================
+//  dealloc
+//===========================================================
+- (void) dealloc
+{
+    [mpNetworkUtils release];
+    [catalogURLArray release];
+	[super dealloc];
 }
 
 #pragma mark -
@@ -235,101 +242,12 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 
 #pragma mark softwareupdate methods
 
-- (NSArray *)getAppleSoftwareUpdates
-{
-	qlinfo(@"Scanning for Apple software updates.");
-	
-	NSArray *appleUpdates = nil;
-	// Check & Set CatalogURL
-	if (![self checkAndSetCatalogURL:[self catalogURLArray]]) {
-		qlerror(@"Error: unable to verify and set CatalogURL.");
-		return nil;
-	}
-	
-	NSTask *task = [[NSTask alloc] init];
-    [task setLaunchPath: ASUS_BIN_PATH];
-    [task setArguments: [NSArray arrayWithObjects: @"-l", nil]];
-	
-    NSPipe *pipe = [NSPipe pipe];
-    [task setStandardOutput: pipe];
-    [task setStandardError: pipe];
-	
-	NSFileHandle *file = [pipe fileHandleForReading];
-	
-    [task launch];
-	[task waitUntilExit];
-	
-	int status = [task terminationStatus];
-	if (status != 0) {
-		qlerror(@"Error: softwareupdate exit code = %d",status);
-		[task release];
-		return appleUpdates;
-	}
-	[task release];
-	
-	NSData *data = [file readDataToEndOfFile];
-    NSString *string = [[NSString alloc] initWithData:data encoding: NSUTF8StringEncoding];
-	
-	if (!([string rangeOfString:@"No new"].location == NSNotFound)) {
-		qlinfo(@"No new updates.");
-		[string release];
-		return appleUpdates;
-	}
-	
-	// We have updates so we need to parse the results
-	NSArray *strArr = [NSArray arrayWithArray:[string componentsSeparatedByString:@"\n"]];
-	[string release];
-	
-	NSMutableArray *tmpAppleUpdates = [[NSMutableArray alloc] init];
-	NSString *tmpStr;
-	NSMutableDictionary *tmpDict;
-	
-	for (int i=0; i<[strArr count]; i++) {
-		// Ignore empty lines
-		if ([[strArr objectAtIndex:i] length] != 0) {
-			
-			 //Clear the tmpDict object before populating it
-			
-			if (!([[strArr objectAtIndex:i] rangeOfString:@"Software Update Tool"].location == NSNotFound)) {
-				continue;
-			}
-			if (!([[strArr objectAtIndex:i] rangeOfString:@"Copyright"].location == NSNotFound)) {
-				continue;
-			}	
-			
-			// Strip the White Space and any New line data
-			tmpStr = [[strArr objectAtIndex:i] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-			
-			// If the object/string starts with *,!,- then allow it 
-			if ([[tmpStr substringWithRange:NSMakeRange(0,1)] isEqual:@"*"] || [[tmpStr substringWithRange:NSMakeRange(0,1)] isEqual:@"!"] || [[tmpStr substringWithRange:NSMakeRange(0,1)] isEqual:@"-"]) {
-				tmpDict = [[NSMutableDictionary alloc] init];
-				qlinfo(@"Apple Update: %@",[tmpStr substringWithRange:NSMakeRange(2,([tmpStr length]-2))]);
-				[tmpDict setObject:[tmpStr substringWithRange:NSMakeRange(2,([tmpStr length]-2))] forKey:@"patch"];
-				[tmpDict setObject:[[[tmpStr substringWithRange:NSMakeRange(2,([tmpStr length]-2))] componentsSeparatedByString:@"-"] lastObject] forKey:@"version"];
-				[tmpDict setObject:[[strArr objectAtIndex:(i+1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] forKey:@"description"];
-				if ([[[strArr objectAtIndex:(i+1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] containsString:@"[restart]" ignoringCase:YES] == TRUE) {
-					[tmpDict setObject:@"TRUE" forKey:@"reboot"];
-				} else {
-					[tmpDict setObject:@"FALSE" forKey:@"reboot"];
-				}
-				
-				[tmpAppleUpdates addObject:tmpDict];
-				[tmpDict release];
-			} // if is an update
-		} // if / empty lines
-	} // for loop
-	appleUpdates = [NSArray arrayWithArray:tmpAppleUpdates];
-	[tmpAppleUpdates release];
-	
-	return appleUpdates;
-}
-
 - (NSArray *)scanForCustomUpdates
 {
 	NSArray *result = nil;
 	MPPatchScan *patchScanObj = [[MPPatchScan alloc] init];
 	[patchScanObj setUseDistributedNotification:YES];
-	result = [NSArray arrayWithArray:[patchScanObj scanForPatches:soapObj]];
+	result = [NSArray arrayWithArray:[patchScanObj scanForPatches]];
 	[patchScanObj release];
 	return result;
 }
@@ -339,7 +257,7 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
     NSArray *result = nil;
 	MPPatchScan *patchScanObj = [[MPPatchScan alloc] init];
 	[patchScanObj setUseDistributedNotification:NO];
-	result = [NSArray arrayWithArray:[patchScanObj scanForPatches:soapObj bundleID:aBundleID]];
+	result = [NSArray arrayWithArray:[patchScanObj scanForPatchesWithbundleID:aBundleID]];
 	[patchScanObj release];
 	return result;
 }
@@ -580,43 +498,6 @@ done:
 
 #pragma mark Custom Patch install
 
-- (NSDictionary *)getPatchGroupPatches:(NSString *)aPatchGroup encode:(BOOL)aEncode
-{	
-	int t = 0;
-	// Get the patch group patches
-	NSData *result;
-	NSDictionary *patchData = NULL;
-	NSString *message = [soapObj createSOAPMessage:@"GetPatchGroupPatchesExtended" argName:@"PatchGroup" argType:@"string" argValue:aPatchGroup];
-	NSError *err = nil;
-
-start:
-	
-	result = [soapObj invoke:message isBase64:NO error:&err];
-	if (err) {
-		qlerror(@"%@",[err localizedDescription]);
-		if (t < 5) {
-			t++;
-			sleep(5);
-			goto start;
-		}
-		goto done;
-	}
-	
-	if ([result length] <= 1) {
-		qlerror(@"Result was zero length.");
-		goto done;
-	}
-	
-	NSString *patchesXML = [[NSString alloc] initWithData:result encoding:NSASCIIStringEncoding];	
-	patchData = [patchesXML propertyList];
-	qldebug(@"patchData: %@",patchData);
-	[patchesXML release];
-
-done:	
-
-	return patchData;
-}
-
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
     qldebug(@"[downloadUpdate] url=%@",aURL);
@@ -716,8 +597,6 @@ done:
     return [string trim];
 }
 
-
-
 #pragma mark -
 #pragma mark Helper Methods
 //=========================================================== 
@@ -770,7 +649,6 @@ done:
     return 0;
 }
 
-
 #pragma mark Notifications
 
 - (void)readInstallTaskData:(NSNotification *)aNotification
@@ -797,19 +675,6 @@ done:
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"ASUSInstallComplete" object:nil userInfo:myData];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[fh_installTask closeFile];
-}
-
-#pragma mark -
-#pragma mark dealloc
-//=========================================================== 
-//  dealloc
-//=========================================================== 
-- (void) dealloc
-{
-    [mpNetworkUtils release];
-    [catalogURLArray release];
-	[soapObj release];
-	[super dealloc];
 }	
 
 @end

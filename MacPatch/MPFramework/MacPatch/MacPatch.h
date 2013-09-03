@@ -50,15 +50,19 @@
 #import "MPScript.h"
 #import "MPASUSCatalogs.h"
 #import "MPInstaller.h"
+#import "MPApplePatch.h"
+#import "MPCustomPatch.h"
+
 // Software Distribution
 #import "MPSWTasks.h"
 #import "MPSWInstaller.h"
+
 // WebServices
-#import "MPSoap.h"
-#import "SoapServices.h"
+#import "JSONKit.h"
 #import "MPDataMgr.h"
 #import "MPJson.h"
-#import "JSONKit.h"
+#import "MPWebServices.h"
+
 // Crypto
 #import "MPCrypto.h"
 #import "MPCodeSign.h"

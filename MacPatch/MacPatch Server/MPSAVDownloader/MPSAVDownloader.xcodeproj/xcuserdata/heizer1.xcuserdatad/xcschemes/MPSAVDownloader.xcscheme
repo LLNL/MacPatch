@@ -57,6 +57,12 @@
             ReferencedContainer = "container:MPSAVDownloader.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-e -p /Library/MacPatch/Server/conf/etc/gov.llnl.mpavdl.plist"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

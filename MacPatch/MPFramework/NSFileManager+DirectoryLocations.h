@@ -33,5 +33,6 @@
 	error:(NSError **)errorOut;
 - (NSString *)applicationSupportDirectory;
 - (NSString *)applicationSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask;
-
+// MacPatch Addition
+- (NSString *)applicationSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask directoryAttributes:(NSDictionary *)attributes;
 @end

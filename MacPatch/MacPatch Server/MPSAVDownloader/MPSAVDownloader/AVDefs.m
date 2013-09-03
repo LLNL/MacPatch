@@ -104,7 +104,7 @@
 
 - (void)parseRemoteAVData
 {
-	NSString *fileContents = [NSString stringWithContentsOfFile:avTempData];
+	NSString *fileContents = [NSString stringWithContentsOfFile:avTempData encoding:NSUTF8StringEncoding error:NULL];
 	NSArray *_fileArray = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	logit(lcl_vDebug,@"File Contents:\n%@",_fileArray);
 	
