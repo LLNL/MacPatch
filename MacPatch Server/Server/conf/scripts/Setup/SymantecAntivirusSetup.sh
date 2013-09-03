@@ -34,10 +34,9 @@ function checkHostConfig () {
 function configAVSync () 
 {	
 	server_name=`hostname -f`
-	read -p "MacPatch Server Name: [$server_name]: " -e t1
-	if [ -n "$t1" ]; then
-		defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mpavdl 'MPServerAddress' "$server_name"
-	fi
+	read -p "MacPatch Server Name: [$server_name]: " server_name
+	server_name=${server_name:-`hostname -f`}
+	defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mpavdl 'MPServerAddress' "$server_name"
 	
 	read -p "Use SSL for MacPatch connection [Y]: " -e t1
 	if [ -n "$t1" ]; then
