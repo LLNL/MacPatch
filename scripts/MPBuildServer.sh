@@ -47,7 +47,7 @@ mkdir -p /Library/MacPatch/Server/Logs
 # ------------------
 # Compile the agent components
 # ------------------
-xcodebuild -project ${GITROOT}/MacPatch/MacPatch\ Server/MacPatch\ Server.xcodeproj -target SERVER_BUILD SYMROOT=${BUILDROOT}
+xcodebuild -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target MP_SERVER_BUILD SYMROOT=${BUILDROOT}
 
 # ------------------
 # Remove the build and symbol files
