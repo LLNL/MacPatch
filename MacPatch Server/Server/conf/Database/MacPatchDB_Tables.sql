@@ -1,8 +1,8 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.1.1
-	Rev 2
+	Version 2.2.0
+	Rev 3
 */
 
 SET NAMES utf8;
@@ -96,6 +96,8 @@ CREATE TABLE `apple_patches_mp_additions` (
   `severity` varchar(20) DEFAULT 'High',
   `severity_int` int(2) DEFAULT '3',
   `patch_state` varchar(10) DEFAULT 'Create',
+  `patch_install_weight` int(2) unsigned DEFAULT '51',
+  `patch_reboot` int(1) unsigned DEFAULT '0',
   `osver_support` varchar(10) DEFAULT 'NA',
   PRIMARY KEY (`rid`),
   KEY `idx_apple_patches` (`supatchname`)
@@ -711,6 +713,7 @@ CREATE TABLE `mp_patches` (
   `patch_name` varchar(100) NOT NULL,
   `patch_ver` varchar(20) NOT NULL,
   `patch_vendor` varchar(255) DEFAULT 'NA',
+  `patch_install_weight` int(2) unsigned DEFAULT '50',
   `description` varchar(255) DEFAULT NULL,
   `description_url` varchar(255) DEFAULT NULL,
   `patch_severity` varchar(10) NOT NULL,

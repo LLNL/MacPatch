@@ -1,8 +1,8 @@
 /*
 	MacPatch Database Schema
 	Main Views
-	Version 2.1.1.1
-	Mod Date: 7/11/2013
+	Version 2.2.0.1
+	Mod Date: 9/4/2013
 */
 
 SET NAMES utf8;
@@ -30,7 +30,7 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_clients_view` AS select
 --  View structure for `combined_patches_view`
 -- ----------------------------
 DROP VIEW IF EXISTS `combined_patches_view`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `combined_patches_view` AS select distinct `ap`.`akey` AS `id`,`ap`.`patchname` AS `name`,`ap`.`version` AS `version`,`ap`.`postdate` AS `postdate`,`ap`.`title` AS `title`,(case when (`ap`.`restartaction` = _latin1'NoRestart') then _latin1'No' when (`ap`.`restartaction` = _latin1'RequireRestart') then _latin1'Yes' end) AS `reboot`,_latin1'Apple' AS `type`,`ap`.`supatchname` AS `suname`,1 AS `active`,`apa`.`severity` AS `severity`,`apa`.`patch_state` AS `patch_state`,0 AS `size` from (`apple_patches_mp_additions` `apa` left join `apple_patches` `ap` on((`ap`.`supatchname` = `apa`.`supatchname`))) union all select `mp_patches`.`puuid` AS `id`,`mp_patches`.`patch_name` AS `name`,`mp_patches`.`patch_ver` AS `version`,`mp_patches`.`cdate` AS `postdate`,`mp_patches`.`description` AS `title`,`mp_patches`.`patch_reboot` AS `reboot`,_latin1'Third' AS `type`,concat(`mp_patches`.`patch_name`,_latin1'-',`mp_patches`.`patch_ver`) AS `suname`,`mp_patches`.`active` AS `active`,`mp_patches`.`patch_severity` AS `severity`,`mp_patches`.`patch_state` AS `patch_state`,`mp_patches`.`pkg_size` AS `size` from `mp_patches`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `combined_patches_view` AS select distinct `ap`.`akey` AS `id`,`ap`.`patchname` AS `name`,`ap`.`version` AS `version`,`ap`.`postdate` AS `postdate`,`ap`.`title` AS `title`,(case when (`ap`.`restartaction` = _latin1'NoRestart') then _latin1'No' when (`ap`.`restartaction` = _latin1'RequireRestart') then _latin1'Yes' end) AS `reboot`,_latin1'Apple' AS `type`,`ap`.`supatchname` AS `suname`,1 AS `active`,`apa`.`severity` AS `severity`,`apa`.`patch_state` AS `patch_state`,`apa`.`patch_install_weight` AS `patch_install_weight`,`apa`.`patch_reboot` AS `patch_reboot_override`,0 AS `size` from (`apple_patches_mp_additions` `apa` left join `apple_patches` `ap` on((`ap`.`supatchname` = `apa`.`supatchname`))) union all select `mp_patches`.`puuid` AS `id`,`mp_patches`.`patch_name` AS `name`,`mp_patches`.`patch_ver` AS `version`,`mp_patches`.`cdate` AS `postdate`,`mp_patches`.`description` AS `title`,`mp_patches`.`patch_reboot` AS `reboot`,_latin1'Third' AS `type`,concat(`mp_patches`.`patch_name`,_latin1'-',`mp_patches`.`patch_ver`) AS `suname`,`mp_patches`.`active` AS `active`,`mp_patches`.`patch_severity` AS `severity`,`mp_patches`.`patch_state` AS `patch_state`,`mp_patches`.`patch_install_weight` AS `patch_install_weight`,(case when (`mp_patches`.`patch_reboot` = _latin1'Yes') then _latin1'1' when (`mp_patches`.`patch_reboot` = _latin1'No') then _latin1'0' end) AS `patch_reboot_override`,`mp_patches`.`pkg_size` AS `size` from `mp_patches`;
 
 -- ----------------------------
 --  View structure for `mp_client_patch_status_prequery_view`
