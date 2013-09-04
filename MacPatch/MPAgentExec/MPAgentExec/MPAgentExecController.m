@@ -251,6 +251,7 @@
                                     }
                                 }
                                 [tmpDict setObject:@"Apple" forKey:@"type"];
+                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
                                 logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
                                 [approvedUpdatesArray addObject:tmpDict];
                                 [tmpDict release];
@@ -290,6 +291,7 @@
                     [tmpDict setObject:[customPatch objectForKey:@"patch_id"] forKey:@"patch_id"];
                     [tmpDict setObject:@"Third" forKey:@"type"];
                     [tmpDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
+                    [tmpDict setObject:[approvedPatch objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
                     
                     logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
                     [approvedUpdatesArray addObject:tmpDict];
@@ -430,7 +432,11 @@ done:
         [self scanForPatchesWithFilterWaitAndForce:0 byPassRunning:YES];
 		updatesArray = [NSArray arrayWithArray:approvedPatches];
     }
-    
+
+    // Sort Array
+    NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"patch_install_weight" ascending:YES];
+    updatesArray = [updatesArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:desc]];
+
     // Populate Array with Patch Results
 	if (!updatesArray) {
 		logit(lcl_vInfo,@"Updates array is nil");

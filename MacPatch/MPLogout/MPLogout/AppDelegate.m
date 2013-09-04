@@ -245,7 +245,7 @@
 							}
 							
 							[tmpDict setObject:@"Apple" forKey:@"type"];
-							
+							[tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
 							logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
 							[approvedUpdatesArray addObject:tmpDict];
 							[tmpDict release];
@@ -290,7 +290,9 @@
 				[tmpDict setObject:approvedPatch forKey:@"patches"];
 				[tmpDict setObject:[customPatch objectForKey:@"patch_id"] forKey:@"patch_id"];
 				[tmpDict setObject:@"Third" forKey:@"type"];
-				
+                [tmpDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
+                [tmpDict setObject:[approvedPatch objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
+
 				logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
 				[approvedUpdatesArray addObject:tmpDict];
 				[tmpDict release];
@@ -494,10 +496,13 @@ done:
 		approvedUpdatesArray = [self scanHostForPatches];	
 	}
 	
-	
+    // Sort Array
+    NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"patch_install_weight" ascending:YES];
+    approvedUpdatesArray = [approvedUpdatesArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:desc]];
+
 	// If no items in array, lets bail...
 	if ([approvedUpdatesArray count] == 0 ) {
-		logit(lcl_vInfo,@"No Apple updates found.");
+		logit(lcl_vInfo,@"No approved updates found.");
 		[statusText setStringValue:@"No updates found and needed."];
 		[self RebootDialog];
 		return;
