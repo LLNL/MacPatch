@@ -47,7 +47,7 @@
 	</cfloop>
     
     <cfset _d = RemovePatchGroupData(form.group_id)>
-    <cfset _x = xObj.GetPatchGroupPatchesExtended(form.group_id)>
+    <cfset _x = xObj.GetPatchGroupPatches(form.group_id)>
     <cfset _a = AddPatchGroupData(form.group_id,_x)>
     <!--- Proxy Update 
 	<cfobject component="mpp_actions" name="mpp">
@@ -76,8 +76,8 @@
 	<cftry>
     	<cfset _hash = hash(#arguments.PatchGroupData#, "MD5")>
 		<cfquery datasource="#session.dbsource#" name="qPut">
-			Insert Into mp_patch_group_data (pid, hash, data)
-			Values ('#arguments.PatchGroupID#', '#_hash#', '#arguments.PatchGroupData#') 
+			Insert Into mp_patch_group_data (pid, hash, data, data_type)
+			Values ('#arguments.PatchGroupID#', '#_hash#', '#arguments.PatchGroupData#', 'JSON') 
 		</cfquery>
     <cfcatch></cfcatch>
     </cftry>
