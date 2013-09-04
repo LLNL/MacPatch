@@ -311,7 +311,7 @@
         <cfset thirdIDList = ValueList(qGetUpdatesThird.id)>
         <cfset var a_criteria = "" />
 		
-		<cfset content = {} />
+		<cfset response = {} />
 		<cfset response[ "AppleUpdates" ] = {} />
 		<cfset _AppleUpdates = arrayNew(1)>
 		<cfset response[ "CustomUpdates" ] = {} />
@@ -384,10 +384,10 @@
 				<cfloop query="patchRes">
 					<cfset _b = {} />
 					<cfset _b[ "name" ] = "#suname#" />
-					<cfset _b[ "hash" ] = "#pkgHash#" />
+					<cfset _b[ "hash" ] = "#pkg_hash#" />
 					<cfset _b[ "preinst" ] = "#iif(len(pkg_preinstall) is not 0,DE(ToBase64(pkg_preinstall)),DE('NA'))#" />
 					<cfset _b[ "postinst" ] = "#iif(len(pkg_postinstall) is not 0,DE(ToBase64(pkg_postinstall)),DE('NA'))#" />
-					<cfset _b[ "env" ] = "#iif(len(envVar) is not 0,DE(pkg_env_var),DE('NA'))#" />
+					<cfset _b[ "env" ] = "#iif(len(pkg_env_var) is not 0,DE(pkg_env_var),DE("NA"))#" />
 					<cfset _b[ "reboot" ] = "#patch_reboot#" />
 					<cfset _b[ "type" ] = "1" />
 					<cfset _b[ "url" ] = "#pkg_url#" />
@@ -415,7 +415,7 @@
 		</cfloop>
 		<cfset response.CustomUpdates = _CustomUpdates />
 		
-		<cfreturn response>
+		<cfreturn SerializeJSON(response)>
 	</cffunction>
 <!---	--->
 

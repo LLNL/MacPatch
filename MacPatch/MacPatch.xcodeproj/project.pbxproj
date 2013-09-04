@@ -982,6 +982,7 @@
 				8F9F89A017D6A81100ACC37B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8FE560C416DE70F800BB7600 /* Build configuration list for PBXAggregateTarget "AGENT_BUILD_DEBUG" */ = {
 			isa = XCConfigurationList;

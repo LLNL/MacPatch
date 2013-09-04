@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8F9F899E17D6A81100ACC37B"
-               BuildableName = "X_SERVER_BUILD"
+               BuildableName = "MP_SERVER_BUILD"
                BlueprintName = "MP_SERVER_BUILD"
                ReferencedContainer = "container:MacPatch.xcodeproj">
             </BuildableReference>
