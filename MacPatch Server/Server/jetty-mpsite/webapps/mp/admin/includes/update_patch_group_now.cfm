@@ -15,7 +15,7 @@
 <cfloop query="qSelect">
 	<cfoutput>
 	<cfset _d = RemovePatchGroupData(id)>
-    <cfset _x = xObj.GetPatchGroupPatchesExtended(id)>
+    <cfset _x = xObj.GetPatchGroupPatches(id)>
     <cfset _a = AddPatchGroupData(id,_x)>
 	</cfoutput>
 </cfloop> 
@@ -45,8 +45,8 @@
 	<cftry>
     	<cfset _hash = hash(#arguments.PatchGroupData#, "MD5")>
 		<cfquery datasource="#session.dbsource#" name="qPut">
-			Insert Into mp_patch_group_data (pid, hash, data)
-			Values ('#arguments.PatchGroupID#', '#_hash#', '#arguments.PatchGroupData#') 
+			Insert Into mp_patch_group_data (pid, hash, data, data_type)
+			Values ('#arguments.PatchGroupID#', '#_hash#', '#arguments.PatchGroupData#', 'JSON') 
 		</cfquery>
     <cfcatch></cfcatch>
     </cftry>
