@@ -19,10 +19,13 @@
         <cfargument name="aPathInfo" required="no">
 
         <cfscript>
-			inet = CreateObject("java", "java.net.InetAddress");
-			inet = inet.getLocalHost();
+			try {
+				inet = CreateObject("java", "java.net.InetAddress");
+				inet = inet.getLocalHost();
+			} catch (any e) {
+				inet = "localhost";
+			}
 		</cfscript>
-
     	<cfquery datasource="#this.ds#" name="qInsert">
             Insert Into ws_log (cdate, event_type, event, host, scriptName, pathInfo, serverName, serverType, serverHost)
             Values (#CreateODBCDateTime(now())#, <cfqueryparam value="#aEventType#">, <cfqueryparam value="#aEvent#">, <cfqueryparam value="#CGI.REMOTE_HOST#">, <cfqueryparam value="#CGI.SCRIPT_NAME#">, <cfqueryparam value="#CGI.PATH_TRANSLATED#">, <cfqueryparam value="#CGI.SERVER_NAME#">, <cfqueryparam value="#CGI.SERVER_SOFTWARE#">, <cfqueryparam value="#inet#">)

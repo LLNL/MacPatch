@@ -365,6 +365,14 @@
 	            </div>
 	            <div id="right">(Example: ATTR=VALUE,ATTR=VALUE)</div>
            	</div>
+			<div id="row">
+            	<div id="left"> Patch Install Weight </div>
+            	<div id="center" style="color:black;">
+                	<input name="patchInstallWeight" id="patchInstallWeight" type="range" min="0" max="100" step="1" title="" value="<cfoutput>#selPatch.patch_install_weight#</cfoutput>" onchange="document.getElementById('patchInstallWeight-out').innerHTML = this.value" />
+					<span id="patchInstallWeight-out"><cfoutput>#selPatch.patch_install_weight#</cfoutput></span>
+              	</div>
+				<div id="right">Sets a patch install weight order.<br>Lower = Earlier</div>
+            </div>
             <div id="row">
               <div id="left"> Patch Requires Reboot </div>
               <div id="center">

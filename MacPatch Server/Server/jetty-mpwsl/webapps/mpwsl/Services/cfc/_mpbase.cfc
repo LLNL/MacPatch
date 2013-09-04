@@ -11,8 +11,12 @@
 		<cfargument name="aEventType">
 		<cfargument name="aEvent">
 		<cfscript>
-			inet = CreateObject("java", "java.net.InetAddress");
-			inet = inet.getLocalHost();
+			try {
+				inet = CreateObject("java", "java.net.InetAddress");
+				inet = inet.getLocalHost();
+			} catch (any e) {
+				inet = "localhost";
+			}
 		</cfscript>
 		<cflog file="MPWSController" type="#arguments.aEventType#" application="no" text="[#inet#]: #arguments.aEvent#">
 	</cffunction>

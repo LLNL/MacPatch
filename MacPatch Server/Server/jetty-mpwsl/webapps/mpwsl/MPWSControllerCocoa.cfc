@@ -36,8 +36,12 @@
         <cfargument name="aPathInfo" required="no">
 
         <cfscript>
-			inet = CreateObject("java", "java.net.InetAddress");
-			inet = inet.getLocalHost();
+			try {
+				inet = CreateObject("java", "java.net.InetAddress");
+				inet = inet.getLocalHost();
+			} catch (any e) {
+				inet = "localhost";
+			}
 		</cfscript>
 
     	<cfquery datasource="#this.ds#" name="qGet">
