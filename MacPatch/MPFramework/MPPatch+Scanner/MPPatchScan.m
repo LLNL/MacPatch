@@ -105,6 +105,7 @@
 		if (result == YES) {
 			patch = [[NSMutableDictionary alloc] init];
             @try {
+
                 [patch setObject:[tmpDict objectForKey:@"pname"] forKey:@"patch"];
                 [patch setObject:[tmpDict objectForKey:@"pversion"] forKey:@"version"];
                 [patch setObject:@"Third" forKey:@"type"];
@@ -113,11 +114,11 @@
                 [patch setObject:@"Y" forKey:@"recommended"];
                 [patch setObject:[tmpDict objectForKey:@"reboot"] forKey:@"restart"];
                 [patch setObject:[tmpDict objectForKey:@"puuid"] forKey:@"patch_id"];
-                [patch setObject:[tmpDict objectForKey:@"bundleid"] forKey:@"bundleid"];
+                [patch setObject:[tmpDict objectForKey:@"bundleID"] forKey:@"bundleID"];
                 [patchesNeeded addObject:patch];
             }
             @catch (NSException *exception) {
-                qlerror("%@",exception);
+                qlerror("%@\n%@",exception,tmpDict);
             }
 			
 			[patch release];

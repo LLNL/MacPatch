@@ -1083,7 +1083,7 @@
     	<cfreturn true>
     </cffunction>
 
-	<cffunction name="getPatchName" access="private" returntype="boolean">
+	<cffunction name="getPatchName" access="private" returntype="any">
 		<cfargument name="patch" required="yes">
         <cfargument name="type" required="yes">
 

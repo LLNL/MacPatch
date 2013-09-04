@@ -687,6 +687,7 @@ done:
                     MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
                     NSError *wsErr = nil;
                     [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
+                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
                     if (wsErr) {
                         logit(lcl_vError,@"%@", wsErr.localizedDescription);
                     }
@@ -811,6 +812,7 @@ done:
                 MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
                 NSError *wsErr = nil;
                 [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch"] patchType:@"apple" error:&wsErr];
+                logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
                 if (wsErr) {
                     logit(lcl_vError,@"%@", wsErr.localizedDescription);
                 }
@@ -1137,6 +1139,7 @@ done:
                     MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
                     NSError *wsErr = nil;
                     [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
+                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
                     if (wsErr) {
                         logit(lcl_vError,@"%@", wsErr.localizedDescription);
                     }

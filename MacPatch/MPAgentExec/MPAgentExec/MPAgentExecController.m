@@ -289,7 +289,7 @@
                     [tmpDict setObject:approvedPatch forKey:@"patches"];
                     [tmpDict setObject:[customPatch objectForKey:@"patch_id"] forKey:@"patch_id"];
                     [tmpDict setObject:@"Third" forKey:@"type"];
-                    [tmpDict setObject:[customPatch objectForKey:@"bundleid"] forKey:@"bundleid"];
+                    [tmpDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
                     
                     logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
                     [approvedUpdatesArray addObject:tmpDict];
@@ -679,6 +679,7 @@ done:
                     MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
                     NSError *wsErr = nil;
                     [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
+                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
                     if (wsErr) {
                         logit(lcl_vError,@"%@", wsErr.localizedDescription);
                     }
@@ -802,6 +803,7 @@ done:
                 MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
                 NSError *wsErr = nil;
                 [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch"] patchType:@"apple" error:&wsErr];
+                logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
                 if (wsErr) {
                     logit(lcl_vError,@"%@", wsErr.localizedDescription);
                 }
@@ -1130,6 +1132,7 @@ done:
                 @try {
                     MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
                     NSError *wsErr = nil;
+                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
                     [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
                     if (wsErr) {
                         logit(lcl_vError,@"%@", wsErr.localizedDescription);
