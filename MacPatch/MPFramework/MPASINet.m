@@ -53,6 +53,12 @@
     return [self initWithServerConnection:_srvObj];
 }
 
+- (id)initWithDefaults:(NSDictionary *)aDefaults
+{
+    MPServerConnection *_srvObj = [[[MPServerConnection alloc] initWithDefaults:aDefaults] autorelease];
+    return [self initWithServerConnection:_srvObj];
+}
+
 - (id)initWithServerConnection:(MPServerConnection *)aSrvObj
 {
     self = [super init];

@@ -61,7 +61,23 @@
     self = [super init];
     if (self) 
     {
+        MPDefaults *mpd = [[MPDefaults alloc] init];
+        [self setMpDefaults:[mpd defaults]];
         [self createServerObject];
+        [mpd release];
+    }
+    return self;
+}
+
+- (id)initWithDefaults:(NSDictionary *)aDefaults
+{
+    self = [super init];
+    if (self)
+    {
+        MPDefaults *mpd = [[MPDefaults alloc] initWithDictionary:aDefaults];
+        [self setMpDefaults:[mpd defaults]];
+        [self createServerObject];
+        [mpd release];
     }
     return self;
 }
@@ -80,9 +96,8 @@
 
 - (void)createServerObject
 {
-    MPDefaults *mpd = [[MPDefaults alloc] init];
-    MPNetworkUtils *mpn = [[MPNetworkUtils alloc] init];
-    NSDictionary *netHostInfo = [mpn mpHostConfig];
+    MPNetworkUtils *mpn = [[MPNetworkUtils alloc] initWithDefaults:mpDefaults];
+    NSDictionary *netHostInfo = [mpn mpHostConfig:mpDefaults];
     NSMutableDictionary *tmpInfo = [[NSMutableDictionary alloc] init];
     [tmpInfo setObject:[netHostInfo objectForKey:@"HTTP_PREFIX"] forKey:@"HTTP_PREFIX"];
     [self setHTTP_PREFIX:[netHostInfo objectForKey:@"HTTP_PREFIX"]];
@@ -99,10 +114,8 @@
     [tmpInfo setObject:[netHostInfo objectForKey:@"MP_JSON_URL_PLAIN"] forKey:@"MP_JSON_URL_PLAIN"];
     [self setMP_JSON_URL_PLAIN:[netHostInfo objectForKey:@"MP_JSON_URL_PLAIN"]];
     [self setMpConnection:[NSDictionary dictionaryWithDictionary:tmpInfo]];
-    [self setMpDefaults:[mpd defaults]];
-    [mpd release];
+
     [mpn release];
-    //[tmpInfo release];
 }
 
 - (int)refreshServerObject

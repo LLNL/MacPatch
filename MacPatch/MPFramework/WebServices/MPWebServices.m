@@ -696,7 +696,7 @@ done:
     if (asiNet) {
         [asiNet release], asiNet = nil;
     }
-    asiNet = [[MPASINet alloc] init];
+    asiNet = [[MPASINet alloc] initWithDefaults:_defaults];
     requestData =  [asiNet synchronousRequestForURLWithFormData:urlString
                                                            form:[NSDictionary dictionaryWithObjectsAndKeys:aAVXML,@"xml",aEncoded ? @"true" : @"false",@"encoded", nil]
                                                           error:&error];

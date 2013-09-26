@@ -44,6 +44,7 @@
 @property (nonatomic, assign) BOOL validatesSecureCertificate;
 @property (nonatomic, assign) BOOL useClientCertAuth;
 
+- (id)initWithDefaults:(NSDictionary *)aDefaults;
 - (id)initWithServerConnection:(MPServerConnection *)aSrvObj;
 - (id)initWithServerConnectionUsingTLSAuth:(MPServerConnection *)aSrvObj;
 

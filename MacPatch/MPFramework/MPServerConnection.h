@@ -48,6 +48,7 @@
 @property (nonatomic, readonly, retain) NSDictionary *mpConnection;
 @property (nonatomic, readonly, retain) NSDictionary *mpDefaults;
 
+- (id)initWithDefaults:(NSDictionary *)aDefaults;
 - (id)initWithNilServerObj;
 - (int)refreshServerObject;
 

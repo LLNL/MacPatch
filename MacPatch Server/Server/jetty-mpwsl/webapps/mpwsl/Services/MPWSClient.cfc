@@ -685,7 +685,7 @@
                     lastFullScan =  		<cfqueryparam value="#l_LastFullScan#">,
                     savAppName = 			<cfqueryparam value="#l_CFBundleExecutable#">,
                     mdate = 			#CreateODBCDateTime(now())#
-                Where cuuid = <cfqueryparam value="#l_CUUID#">
+                Where cuuid = <cfqueryparam value="#arguments.clientID#">
             </cfquery>
             <cfcatch type="any">
                 <cfinvoke component="ws_logger" method="LogEvent">
