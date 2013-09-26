@@ -46,7 +46,7 @@
 		<cfset pkgs = arrayNew(1)>
 		
 		<!--- Add the Main Client Installer First, to the pks array --->
-		<cfset _a = #Arrayappend(pkgs,clientfile)#>
+		<cfset _a = #Arrayappend(pkgs,mainZipFileName)#>
 		
 		<!--- Create a Struct of the ini file --->
 		<cfloop collection="#sections#" item="akey">

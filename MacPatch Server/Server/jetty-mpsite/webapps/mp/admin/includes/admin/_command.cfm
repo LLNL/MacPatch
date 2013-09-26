@@ -146,16 +146,18 @@
 						        <cfset efKeyName = "MPServerSSL">
 						    </cfcase>
                             <cfcase value="CheckSignatures"> 
-						        <cfset fKeyName = "CheckSignatures">
+						        <cfset efKeyName = "CheckSignatures">
 						    </cfcase>
 						</cfswitch>
-						<cfquery datasource="#session.dbsource#" name="qSetDefaultConfig">
+
+						<cfquery datasource="#session.dbsource#" name="qSetDefaultConfigUpdate" result="r">
 							Update mp_agent_config_data
 							Set aKeyValue = <cfqueryparam value="#args[i]#">,
 							enforced = <cfqueryparam value="#listGetAt(args.ENFORCED, x)#">
 							Where aid = <cfqueryparam value="#args.config#">
 							AND aKey = <cfqueryparam value="#efKeyName#">
 						</cfquery>
+						
 						<cfset x = x + 1>
 					</cfif>
 				</cfloop>
@@ -173,12 +175,49 @@
 				</cfquery>
 				
 				<cfcatch type="any">
-					<cfset session.message.text = CFCATCH.Message />
+					<cfset session.message.text = "#CFCATCH.Message# #CFCATCH.Detail#" />
 					<cfset session.message.type = "error" />
-					<cfdump var="#session.message#">
-					<cfabort>
 					<cflocation url="#session.cflocFix#/admin/index.cfm?agent_config" addtoken="false" />
-				</cfcatch>
+				</cfcatch>				
+			</cftry>
+			
+			<cftry>
+			<!--- Update Active Agent Packages with new Config --->
+				<cfquery name="qIfBothActive" datasource="#session.dbsource#">
+                	Select active, puuid From mp_client_agents WHERE active = '1'
+            	</cfquery>
+                <cfset _pCount = 0>
+				<cfset _distinctList = structNew()>
+                <cfoutput query="qIfBothActive">
+					<cfset _distinctList[puuid] = "">
+                	<cfset _pCount = _pCount + active>
+                </cfoutput>
+				<cfset distinctList = structKeyList(_distinctList)>
+				
+                <cfif _pCount EQ 2>
+					<cfif ListLen(distinctList) EQ 1>
+        				<cfset _pkgBaseLoc = "/Library/MacPatch/Content/Web/clients">
+						<cfset _pid = ListFirst(distinctList)>
+						<!--- Update Agent Config Plist --->
+						<cfset caObj = CreateObject("component","agent_config").init(session.dbsource)>
+						<cfset pkgResult = caObj.updatePackageConfigWithResult(_pid)>
+	                    <cfdump var="#pkgResult#">
+	                    
+	                	<!--- Move Main Installer Into Production --->
+	                    <cfset _mainPkg = #_pkgBaseLoc# & "/MPClientInstall.pkg.zip">
+	                    <cfset _newMainPkg = #_pkgBaseLoc# & "/updates/" & #_pid# & "/MPClientInstall.pkg.zip">
+	                    <cfif FileExists(_mainPkg)>
+	                    	<cfset _rm = FileDelete(_mainPkg)>
+	                    </cfif>    
+	                    <cfset _cp = FileCopy(_newMainPkg,_mainPkg)>
+					</cfif>
+                </cfif>
+				
+				<cfcatch type="any">
+					<cfset session.message.text = "#CFCATCH.Message# #CFCATCH.Detail#" />
+					<cfset session.message.type = "error" />
+					<cflocation url="#session.cflocFix#/admin/index.cfm?agent_config" addtoken="false" />
+				</cfcatch>				
 			</cftry>
 			
 			<cfset session.message.text = "The scheduled task was run successfully." />

@@ -218,7 +218,7 @@
 		8FD8903F16DFE84600A870A3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = LLNL;
 			};
 			buildConfigurationList = 8FD8904216DFE84600A870A3 /* Build configuration list for PBXProject "MPClientStatus" */;
@@ -287,7 +287,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -315,7 +314,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
 			};
 			name = Debug;
@@ -324,7 +323,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -345,7 +343,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
 			};
 			name = Release;

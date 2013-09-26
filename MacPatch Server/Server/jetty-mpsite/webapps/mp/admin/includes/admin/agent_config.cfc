@@ -6,140 +6,281 @@
         <cfset variables.datasource = arguments.datasource>
         <cfset variables.logToFile = false>
 		<cfset variables.pkgBaseLoc = "/Library/MacPatch/Content/Web/clients">
-		<cfset variables.pkgBaseLoc = "/Library/MacPatch/Content/Web/clients">
-		<cfset variables.pkgName = "MPClientInstaller.mpkg.zip">
+		<cfset variables.pkgName = "MPClientInstall.pkg.zip">
 		<cfset variables.pkgNameNoZip = #ReplaceNocase(variables.pkgName,'.zip','','All')#>
+		<cfset variables.pkgList="Base.pkg,Updater.pkg">
         <cfset me = this>
         
         <cfreturn me>
+    </cffunction>
+	
+	<cffunction name="updatePackageConfigWithResult" access="public" returntype="struct" output="no">
+		<cfargument name="pkgID" required="yes">
+		
+		<cfset results = StructNew() />
+		<cfset results['errorno'] = 0 />
+		<cfset results['errormsg'] = "" />
+    	
+		<cfset ulTmpPath = #GetTempdirectory()# & "/" & #arguments.pkgID#>
+		
+		<cfif directoryexists(ulTmpPath) NEQ False>
+			<cfdirectory action="DELETE" directory="#ulTmpPath#" recurse="true">
+		</cfif>
+		
+		<cfdirectory action="create" directory="#ulTmpPath#" recurse="true">
+		<cffile action="copy" source="#pkgBaseLoc#/updates/#arguments.pkgID#/#variables.pkgName#" destination="#ulTmpPath#/#variables.pkgName#">
+		
+		<!--- Unzip the Main Client Installer --->
+		<cflog type="Error" application="yes" text="Unzip -x -k #ulTmpPath#/#variables.pkgName# #ulTmpPath#">
+		<cfexecute 
+   			name = "/usr/bin/ditto"
+   			arguments = "-x -k #ulTmpPath#/#variables.pkgName# #ulTmpPath#"
+   			variable = "unzipResult"
+  			timeout = "30">
+		</cfexecute>
+		
+		<!--- Extract Flat Package --->
+		<cflog type="Error" application="yes" text="--expand #ulTmpPath#/#pkgNameNoZip# #ulTmpPath#/MPClientInstall">
+        <cfexecute 
+			name = "/usr/sbin/pkgutil"
+			arguments = "--expand #ulTmpPath#/#pkgNameNoZip# #ulTmpPath#/MPClientInstall"
+			variable = "pkgExpanded"
+			timeout = "15">
+		</cfexecute>
+		
+		<cffile action="delete" file="#ulTmpPath#/#variables.pkgName#">
+		<cffile action="delete" file="#ulTmpPath#/#variables.pkgNameNoZip#">
+
+		<cflog application="yes" text="Create Agent Config">
+		<cfset agentPlist = {}>
+		<cfset agentPlist = createAgentConfig()>
+		
+		<cfif agentPlist.errorNo NEQ "0">
+			<cfset session.lastErrorNo = agentPlist.errorNo>
+			<cfset session.lastErrorMsg = agentPlist.errorMsg>
+			<cflog type="Error" application="yes" text="Error[#agentPlist.errorNo#]: #agentPlist.errorMsg#">
+			
+			<cfset results['errorno'] = 2 />
+			<cfset results['errormsg'] = agentPlist.errorMsg />
+			<cfreturn results>
+		</cfif>
+		
+		<!--- Configure Packages for update mechanisim --->
+		<cfset _results = 0>
+		<cflog application="yes" text="Configure Packages for update mechanisim ">
+		<cfloop index="p" list="#variables.pkgList#" delimiters=","> 
+			<cftry>
+				<cflog application="yes" text="processPackage: #arguments.pkgID#, #p#, agentPlist">
+				<cfset _i = processPackage(arguments.pkgID,p,agentPlist.result)>
+				
+				<cfif _i.errorNo NEQ "0">
+					<cflog type="Error" application="yes" text="Error [#_i.errorNo#]:#_i#">
+				</cfif>
+				<cfset _results = #_results# + #_i.errorNo#>
+				<cfcatch type="any">
+					<cfset _results = #_results# + "1">
+					<cfset session.lastErrorNo = "#cfcatch.ErrorCode#">
+					<cfset session.lastErrorMsg = "#cfcatch.detail# #cfcatch.Message#">
+					<cflog type="Error" application="yes" text="[processPackage][#cfcatch.ErrorCode#]: #session.lastErrorMsg#">
+				</cfcatch>
+			</cftry>
+		</cfloop>
+
+		<cfif _results NEQ "0">
+			<cfset results['errorno'] = 1 />
+			<cfset results['errormsg'] = session.lastErrorMsg />
+			<cfreturn results>
+		</cfif>
+		
+		
+        
+		<cflog application="yes" text="Write Config to Main Package">
+		
+		<!--- Write Config to Main Package --->
+		<cflog application="yes" text="--flatten #ulTmpPath#/MPClientInstall #ulTmpPath#/#pkgNameNoZip#">
+        <cfexecute 
+			name = "/usr/sbin/pkgutil"
+			arguments = "--flatten #ulTmpPath#/MPClientInstall #ulTmpPath#/#pkgNameNoZip#"
+			variable = "flattenResult"
+			timeout = "15">
+		</cfexecute>
+		
+		<cflog application="yes" text="-c -k #ulTmpPath#/#pkgNameNoZip# #ulTmpPath#/#pkgName#">
+		<cfexecute 
+			name = "/usr/bin/ditto"
+			arguments = "-c -k #ulTmpPath#/#variables.pkgNameNoZip# #ulTmpPath#/#pkgName#"
+			variable = "aZipResult"
+			timeout = "15">
+		</cfexecute>
+		
+		<!--- Move Packages To New Location --->
+		<cfset baseLoc = "/Library/MacPatch/Content/Web/clients/updates">
+		<cfset new_pkgBaseDir = #baseLoc# & "/" & #arguments.pkgID#>
+		<cfif directoryexists(new_pkgBaseDir) EQ False>
+        	<cftry>
+        		<cfdirectory action="create" directory="#new_pkgBaseDir#" recurse="true">
+            <cfcatch>
+				<cfset results['errorno'] = 2 />
+				<cfset results['errormsg'] = cfcatch.Detail />
+				<cfreturn results>
+            </cfcatch>
+            </cftry>
+		</cfif>
+	
+		<cflog application="yes" text="#variables.pkgList#">
+		<cfset variables.pkgList = ListAppend(variables.pkgList, variables.pkgNameNoZip, ",")>
+		<cflog application="yes" text="#variables.pkgList#">
+		
+		<cfloop index="p" list="#variables.pkgList#" delimiters=","> 
+			<cfset pkg_source = ulTmpPath & "/" & #p# & ".zip">
+            <cfset pkg_source = #Replace(pkg_source,"//","/","All")#>
+            <cftry>
+				<cflog application="yes" text="mv #pkg_source#  #new_pkgBaseDir#">
+				<cffile action="move" source="#pkg_source#" destination="#new_pkgBaseDir#">
+            <cfcatch>
+            	<cfset results['errorno'] = 2 />
+				<cfset results['errormsg'] = cfcatch.Detail />
+				<cfreturn results>
+            </cfcatch>
+            </cftry>
+		</cfloop>
+
+    	<!--- Clean up the temp Dir --->
+		<cfdirectory action="delete" directory="#ulTmpPath#" recurse="true">
+		
+		<cfreturn results>
     </cffunction>
 	
 	<cffunction name="updatePackageConfig" access="public" returntype="void" output="no">
 		<cfargument name="pkgID" required="yes">
     	
 		<cfset ulTmpPath = #GetTempdirectory()# & "/" & #arguments.pkgID#>
+		
 		<cfif directoryexists(ulTmpPath) NEQ False>
 			<cfdirectory action="DELETE" directory="#ulTmpPath#" recurse="true">
-        	<cfdirectory action="create" directory="#ulTmpPath#" recurse="true">
-			<cffile action="copy" source="#pkgBaseLoc#/updates/#arguments.pkgID#/#variables.pkgName#" destination="#ulTmpPath#/#variables.pkgName#">
 		</cfif>
 		
+		<cfdirectory action="create" directory="#ulTmpPath#" recurse="true">
+		<cffile action="copy" source="#pkgBaseLoc#/updates/#arguments.pkgID#/#variables.pkgName#" destination="#ulTmpPath#/#variables.pkgName#">
+		
 		<!--- Unzip the Main Client Installer --->
+		<cflog type="Error" application="yes" text="Unzip -x -k #ulTmpPath#/#variables.pkgName# #ulTmpPath#">
 		<cfexecute 
    			name = "/usr/bin/ditto"
    			arguments = "-x -k #ulTmpPath#/#variables.pkgName# #ulTmpPath#"
    			variable = "unzipResult"
-  			timeout = "15">
+  			timeout = "30">
 		</cfexecute>
+		
+		<!--- Extract Flat Package --->
+		<cflog type="Error" application="yes" text="--expand #ulTmpPath#/#pkgNameNoZip# #ulTmpPath#/MPClientInstall">
+        <cfexecute 
+			name = "/usr/sbin/pkgutil"
+			arguments = "--expand #ulTmpPath#/#pkgNameNoZip# #ulTmpPath#/MPClientInstall"
+			variable = "pkgExpanded"
+			timeout = "15">
+		</cfexecute>
+		
+		<cffile action="delete" file="#ulTmpPath#/#variables.pkgName#">
+		<cffile action="delete" file="#ulTmpPath#/#variables.pkgNameNoZip#">
 
-		<cfset iniFile = "#ulTmpPath#/#variables.pkgNameNoZip#/Contents/Resources/.mpInfo.ini">
-		<cfset sections = GetProfilesections(iniFile)>
-		<cfset data = structNew()>
-		<cfset pkgs = arrayNew(1)>
-	
-		<!--- Add the Main Client Installer First, to the pks array --->
-		<cfset _a = #Arrayappend(pkgs,variables.pkgName)#>
-		
-		<!--- Create a Struct of the ini file --->
-		<cfloop collection="#sections#" item="akey">
-			<cfif structKeyExists(sections, akey)>				
-			<cfset aStruct = structNew()>
-			<cfloop index="key" list="#Evaluate("sections." & akey)#">
-				<cfif key EQ "pkg">
-					<cfset _a = #Arrayappend(pkgs,GetFilefrompath(getProfileString(iniFile, akey, key)) & ".zip")#>
-				</cfif>	
-				<cfset aStruct[key] = getProfileString(iniFile, akey, key)>
-			</cfloop>
-			<cfset data[akey] = aStruct>
-			</cfif>
-		</cfloop>
-		
+		<cflog application="yes" text="Create Agent Config">
 		<cfset agentPlist = {}>
 		<cfset agentPlist = createAgentConfig()>
+		
 		<cfif agentPlist.errorNo NEQ "0">
+			<cfset session.lastErrorNo = agentPlist.errorNo>
+			<cfset session.lastErrorMsg = agentPlist.errorMsg>
 			<cflog type="Error" application="yes" text="Error[#agentPlist.errorNo#]: #agentPlist.errorMsg#">
-			<cfreturn>
+			<cflocation url="#session.cflocFix#/admin/index.cfm?#session.curRef#">
+			<cfabort>
 		</cfif>
 		
 		<!--- Configure Packages for update mechanisim --->
-		
 		<cfset results = 0>
-		<cfloop collection="#data#" item="key">
+		<cflog application="yes" text="Configure Packages for update mechanisim ">
+		<cfloop index="p" list="#variables.pkgList#" delimiters=","> 
 			<cftry>
-				<cfset _i = processPackage(arguments.pkgID,variables.pkgNameNoZip,data[key],key,agentPlist.result)>
+				<cflog application="yes" text="processPackage: #arguments.pkgID#, #p#, agentPlist">
+				<cfset _i = processPackage(arguments.pkgID,p,agentPlist.result)>
+				
 				<cfif _i.errorNo NEQ "0">
-					<cfdump var="Error[#_i.errorNo#]:#_i#">
+					<cflog type="Error" application="yes" text="Error [#_i.errorNo#]:#_i#">
 				</cfif>
 				<cfset results = #results# + #_i.errorNo#>
 				<cfcatch type="any">
 					<cfset results = #results# + "1">
-					<cflog application="yes" type="Error" text="Error [#cfcatch.ErrorCode#]: #cfcatch.Detail# #cfcatch.Message#">
+					<cfset session.lastErrorNo = "#cfcatch.ErrorCode#">
+					<cfset session.lastErrorMsg = "#cfcatch.detail# #cfcatch.Message#">
+					<cflog type="Error" application="yes" text="[processPackage][#cfcatch.ErrorCode#]: #session.lastErrorMsg#">
 				</cfcatch>
 			</cftry>
 		</cfloop>
+
 		<cfif results NEQ "0">
-			<cfreturn>
+			<cflocation url="#session.cflocFix#/admin/index.cfm?#session.curRef#">
+			<cfabort>
 		</cfif>
+        
+		<cflog application="yes" text="Write Config to Main Package">
 		
 		<!--- Write Config to Main Package --->
-		<cffile action="delete" file="#ulTmpPath#/#variables.pkgName#">
-		<cffile action = "write" 
-    		file = "#ulTmpPath#/#variables.pkgNameNoZip#/Contents/Packages/MPBaseClient.pkg/Contents/Resources/gov.llnl.mpagent.plist" 
-    		output = "#agentPlist.result#">
+		<cflog application="yes" text="--flatten #ulTmpPath#/MPClientInstall #ulTmpPath#/#pkgNameNoZip#">
+        <cfexecute 
+			name = "/usr/sbin/pkgutil"
+			arguments = "--flatten #ulTmpPath#/MPClientInstall #ulTmpPath#/#pkgNameNoZip#"
+			variable = "flattenResult"
+			timeout = "15">
+		</cfexecute>
+		
+		<cflog application="yes" text="-c -k #ulTmpPath#/#pkgNameNoZip# #ulTmpPath#/#pkgName#">
 		<cfexecute 
 			name = "/usr/bin/ditto"
-			arguments = "-c -k --keepParent #ulTmpPath#/#variables.pkgNameNoZip# #ulTmpPath#/#variables.pkgName#"
-			variable = "aMainZipResult"
+			arguments = "-c -k #ulTmpPath#/#variables.pkgNameNoZip# #ulTmpPath#/#pkgName#"
+			variable = "aZipResult"
 			timeout = "15">
 		</cfexecute>
 		
 		<!--- Move Packages To New Location --->
-		<cfset updateBaseLoc = "#variables.pkgBaseLoc#/updates">
-		<cfset new_pkgBaseDir = #updateBaseLoc# & "/" & arguments.pkgID>
-		<cfif directoryexists(new_pkgBaseDir) EQ True>
+		<cfset baseLoc = "/Library/MacPatch/Content/Web/clients/updates">
+		<cfset new_pkgBaseDir = #baseLoc# & "/" & #arguments.pkgID#>
+		<cfif directoryexists(new_pkgBaseDir) EQ False>
         	<cftry>
-				<cfdirectory action="DELETE" directory="#new_pkgBaseDir#" recurse="true">
-        		<cfdirectory action="create" directory="#new_pkgBaseDir#" recurse="true">
+        	<cfdirectory action="create" directory="#new_pkgBaseDir#" recurse="true">
             <cfcatch>
-				<cflog application="yes" type="Error" text="Error [#cfcatch.ErrorCode#]: #cfcatch.Detail# #cfcatch.Message#">
-                <cfreturn>
+            	<cfoutput>Error: #cfcatch.Detail#</cfoutput>
+                <cfabort>
             </cfcatch>
             </cftry>
 		</cfif>
+	
+		<cflog application="yes" text="#variables.pkgList#">
+		<cfset variables.pkgList = ListAppend(variables.pkgList, variables.pkgNameNoZip, ",")>
+		<cflog application="yes" text="#variables.pkgList#">
 		
-		<cfloop array="#pkgs#" index="i" from="1" to="#arraylen(pkgs)#">
-			<cfset pkg_source = ulTmpPath & "/" & #pkgs[i]#>
+		<cfloop index="p" list="#variables.pkgList#" delimiters=","> 
+			<cfset pkg_source = ulTmpPath & "/" & #p# & ".zip">
             <cfset pkg_source = #Replace(pkg_source,"//","/","All")#>
             <cftry>
+				<cflog application="yes" text="mv #pkg_source#  #new_pkgBaseDir#">
 				<cffile action="move" source="#pkg_source#" destination="#new_pkgBaseDir#">
             <cfcatch>
-            	<cflog application="yes" type="Error" text="Error [#cfcatch.ErrorCode#]: #cfcatch.Detail# #cfcatch.Message#">
-                <cfreturn>
+            	<cfoutput>Error: #cfcatch.Detail#</cfoutput>
+                <cfabort>
             </cfcatch>
             </cftry>
 		</cfloop>
 	
-		<cfset rm_File = "#ulTmpPath#/#variables.pkgNameNoZip#">
-		<cfdirectory action="delete" directory="#rm_File#" recurse="true">
+    	<!--- Clean up the temp Dir --->
+		<cfdirectory action="delete" directory="#ulTmpPath#" recurse="true">
 		
 		<cfreturn>
     </cffunction>
 
-	<cffunction name="processPackage" access="private" output="no" returntype="any">
+	<cffunction name="processPackage" access="public" output="no" returntype="any">
 	    <cfargument name="gCUUID">
 		<cfargument name="mainPkg">
-		<cfargument name="pkgStruct" type="struct">
-	    <cfargument name="pType">
 		<cfargument name="agentConfigPlist">
-		
-	    <cfset var pkg = "0">
-		<cfset var pkgName = "">
-		<cfset var pkgHash = "">
-		<cfset var version = "0">
-		<cfset var agent_version = "0">
-		<cfset var build = "0">
-		<cfset var framework = "0">
-		<cfset var osVerSupport = "*">
 		
 		<cfset tmpDir = #GetTempdirectory()# & #arguments.gCUUID#>
 		
@@ -147,105 +288,51 @@
 		<cfset result.errorNo = "0">
 		<cfset result.errorMsg = "">
 		
-		<cfif StructKeyExists(arguments.pkgStruct,"agent_version")>
-			<cfset agent_version = arguments.pkgStruct["agent_version"]>
-		<cfelse>
-			<cfset result.errorNo = "1">
-			<cfset result.errorMsg = "Error: agent version attribute was missing.">	
-			<cflog application="yes" type="Error" text="Error [#result.errorNo#]: #result.errorMsg#">
-			<cfreturn result>	
-		</cfif>	
-		
-		<cfif StructKeyExists(arguments.pkgStruct,"pkg")>
-			<cfset pkg = arguments.pkgStruct["pkg"]>
-			<cfset pkgName = GetFilefrompath(pkg)>
-		<cfelse>
-			<cfset result.errorNo = "1">
-			<cfset result.errorMsg = "Error: pkg attribute was missing.">
-			<cflog application="yes" type="Error" text="Error [#result.errorNo#]: #result.errorMsg#">
-			<cfreturn result>	
-		</cfif>	
-		
-		<cfif StructKeyExists(arguments.pkgStruct,"version")>
-			<cfset version = arguments.pkgStruct["version"]>
-		<cfelse>
-			<cfset result.errorNo = "1">
-			<cfset result.errorMsg = "Error: version attribute was missing.">
-			<cflog application="yes" type="Error" text="Error [#result.errorNo#]: #result.errorMsg#">
-			<cfreturn result>	
-		</cfif>
-		
-		<cfif StructKeyExists(arguments.pkgStruct,"build")>
-			<cfset build = arguments.pkgStruct["build"]>
-		</cfif>
-		
-		<cfif StructKeyExists(arguments.pkgStruct,"framework")>
-			<cfset framework = arguments.pkgStruct["framework"]>
-		</cfif>
-		
-		<cfif StructKeyExists(arguments.pkgStruct,"osver")>
-			<cfset osVerSupport = arguments.pkgStruct["osver"]>
-		</cfif>
-		
 		<!--- Create Paths --->
-		<cfset pkgPath = tmpDir & "/" & arguments.mainPkg & "/" & pkg>
-		<cfset pkgPathZip = tmpDir & "/" & pkgName & ".zip">
-		<cfset pkgURLPath = "/mp-content/clients/updates/#arguments.gCUUID#/"& GetFilefrompath(pkgPathZip)>
+		<cfset pkgPath = tmpDir & "/MPClientInstall/" & arguments.mainPkg>
+		<cfset pkgPathZip = tmpDir & "/" & arguments.mainPkg & ".zip">
 		
 		<!--- Add Agent Config To Package --->
+		<cflog application="yes" text="[processPackage]: write to #pkgPath#/Scripts/gov.llnl.mpagent.plist">
 		<cffile action = "write" 
-	    		file = "#pkgPath#/Contents/Resources/gov.llnl.mpagent.plist" 
+	    		file = "#pkgPath#/Scripts/gov.llnl.mpagent.plist" 
 	    		output = "#arguments.agentConfigPlist#">
-		
+	    		
+		<cflog application="yes" text="[processPackage]: --flatten #pkgPath# #tmpDir#/#arguments.mainPkg#">		    		        
+		<cfexecute 
+	        name = "/usr/sbin/pkgutil"
+	        arguments = "--flatten #pkgPath# #tmpDir#/#arguments.mainPkg#"
+	        variable = "flattenResult"
+	        timeout = "15">
+	    </cfexecute>
 		<!--- Compress the inner pkg --->	
 		<cfexecute 
 			name = "/usr/bin/ditto"
-			arguments = "-c -k --keepParent #pkgPath# #pkgPathZip#"
+			arguments = "-c -k #pkgPath# #pkgPathZip#"
 			variable = "aBaseZipResult"
 			timeout = "15">
 		</cfexecute>
 		
 		<cfset pkgHash = getSHA1Hash(pkgPathZip)>
 		
-		<cfif arguments.ptype EQ "agent">
-			<cfset ptype = "app">
-	    <cfelseif arguments.ptype EQ "updater">    
-	    	<cfset ptype = "update">
-		<cfelse>
-			<cfset ptype = "NA">
-		</cfif>
+		<cfset pType = "NA">
+		<cfset pType = #IIF(FindNoCase("base",arguments.mainPkg) GTE 1,DE('app'),DE('update'))#>
 		<cftry>
-			<cfquery datasource="mpds" name="qHasUpdate">
-				Select rid From mp_client_agents
-				Where puuid = '#arguments.gCUUID#' AND type = '#ptype#'
+			<cfquery datasource="mpds" name="qAddUpdate">
+				update mp_client_agents 
+				set pkg_hash = '#pkgHash#'
+				Where puuid = '#arguments.gCUUID#'
+				AND type = '#ptype#'
 			</cfquery>
-			
-			<cfif qHasUpdate.RecordCount EQ 1>
-				<cfquery name="qUpdateUpdate" datasource="mpds">
-					UPDATE
-						mp_client_agents
-					SET
-						pkg_hash = <cfqueryparam value="#pkgHash#">
-					WHERE
-						rid = <cfqueryparam value="#qHasUpdate.rid#">
-				</cfquery>			
-			<cfelse>
-				<cfquery datasource="mpds" name="qAddUpdate">
-					Insert INTO mp_client_agents (puuid, type, agent_ver, version, build, framework, pkg_name, pkg_url, pkg_hash, osver)
-					Values('#arguments.gCUUID#', '#ptype#', '#agent_version#', '#version#', '#build#', '#framework#', '#pkgName#', '#pkgURLPath#', '#pkgHash#', '#osVerSupport#')
-				</cfquery>
-			</cfif>
-			
-			<cfcatch>
-				<cfset result.errorNo = "1">
-				<cfset result.errorMsg = "Error: #cfcatch.Detail# #cfcatch.message#">	
-				<cflog application="yes" type="Error" text="Error [#result.errorNo#]: #result.errorMsg#">
-			</cfcatch>
+		<cfcatch>
+			<cfset result.errorNo = "1">
+			<cfset result.errorMsg = "Error: #cfcatch.Detail# #cfcatch.message#">	
+		</cfcatch>
 		</cftry>
 		
 		<cfreturn result>
 	</cffunction>
-
+	
 	<cffunction name="createAgentConfig" access="public" output="yes" returntype="any">
 	
 		<cfset var result = {} />

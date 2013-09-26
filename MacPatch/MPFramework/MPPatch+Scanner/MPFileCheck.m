@@ -127,6 +127,22 @@
 		result = [self checkFileVersion:[self filePath] patchFileVer:vVers operator:vOppr];
 		goto done;
 	}
+    else if ([theAction isEqualToString:@"PLIST"])
+	{
+		NSArray *theParams;
+		theParams = [aParam componentsSeparatedByString:@";"];
+		if ([theParams count] != 3)
+		{
+			result = FALSE; goto done;
+		}
+
+		NSString *vKey = [theParams objectAtIndex:0];
+        NSString *vVal = [theParams objectAtIndex:1];
+		NSString *vOppr = [theParams objectAtIndex:2];
+
+		result = [self checkPlistKeyValue:[self filePath] key:vKey value:vVal operator:vOppr];
+		goto done;
+	}
 	else 
 	{
 		qlerror(@"Error: unable to process action type.");
@@ -432,6 +448,94 @@ done:
     [crypto release];
 	
 	return hashResult;
+}
+
+- (BOOL)checkPlistKeyValue:(NSString *)localFilePath key:(NSString *)aKey value:(NSString *)aVal operator:(NSString *)aOp
+{
+    BOOL result = FALSE;
+    NSString *aOP = [aOp uppercaseString];
+
+    // Check if file exists
+    if (![[NSFileManager defaultManager] fileExistsAtPath:localFilePath]) {
+		qlerror(@"Unable to get hash for file %@. File is missing.",localFilePath);
+		return FALSE;
+	}
+    // Read the plist
+    NSString *errorDesc = nil;
+    NSPropertyListFormat format;
+    NSData *plistXML = [[NSFileManager defaultManager] contentsAtPath:localFilePath];
+    NSDictionary *pDict = (NSDictionary *)[NSPropertyListSerialization
+                                                  propertyListFromData:plistXML
+                                                  mutabilityOption:NSPropertyListMutableContainersAndLeaves
+                                                  format:&format
+                                                  errorDescription:&errorDesc];
+    // If it did not read error
+    if (!pDict) {
+        qlerror(@"Error reading property list %@.\n%@",localFilePath,errorDesc);
+		return FALSE;
+    }
+
+    if ([[pDict valueForKey:aKey] isKindOfClass:[NSString class]])
+    {
+        if ([aOP isEqualToString:@"EQ"])
+        {
+            if ([[pDict valueForKey:aKey] isEqualToString:aVal]) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+        else if ([aOP isEqualToString:@"NEQ"])
+        {
+            if ([[pDict valueForKey:aKey] isEqualToString:aVal] == NO) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+        else if ([aOP isEqualToString:@"IN"])
+        {
+            if ([[pDict valueForKey:aKey] containsString:aVal ignoringCase:YES]) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+    }
+    else if ([[pDict valueForKey:@"key"] isKindOfClass:[NSNumber class]])
+    {
+        if ([aOP isEqualToString:@"EQ"])
+        {
+            if ([[[pDict valueForKey:aKey] stringValue] isEqualToString:aVal]) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+        else if ([aOP isEqualToString:@"NEQ"])
+        {
+            if ([[[pDict valueForKey:aKey] stringValue] isEqualToString:aVal] == NO) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+        else if ([aOP isEqualToString:@"IN"])
+        {
+            if ([[[pDict valueForKey:aKey] stringValue] isEqualToString:aVal]) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+
+    } else {
+        qlerror(@"Error, the key object type is not supported. Use only String, Number or Bool types.");
+		return FALSE;
+    }
+
+
+    return result;
 }
 
 @end

@@ -401,6 +401,7 @@ table.genTable td
 </cfsilent>
 
 <div style="font-size:18px;">MacPatch Agent Configuration</div>
+
 <br>
 <form action="index.cfm?agent_config" method="Post" name="AddConfig">
 	<input type="hidden" name="fAction" value="AddConfig">
@@ -460,7 +461,7 @@ table.genTable td
 	</cfif>
 </cfif>
 
-<cffunction name="QueryToStruct" access="public" returntype="any" output="false">
+<cffunction name="QueryToStruct" access="public" returntype="any" output="true">
 	<!--- Define arguments. --->
 	<cfargument name="Query" type="query" required="true" />
 

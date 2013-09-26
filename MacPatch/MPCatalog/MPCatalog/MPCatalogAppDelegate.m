@@ -623,7 +623,7 @@
 
 - (NSArray *)filterMandatorySoftwareContent
 {
-    NSArray *_a;
+    NSArray *_a = nil;
     int c = 0;
     NSMutableDictionary *d;
     NSDictionary *_SoftwareCriteria;
@@ -633,8 +633,16 @@
     if ([fm fileExistsAtPath:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]] == NO) {
         return nil;
     }
-    
-    _a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
+
+    @try {
+        _a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
+    }
+    @catch ( NSException *ex ) {
+        //do whatever you need to in case of a crash
+        qlwarning(@"%@ is not a NSKeyedArchiver file. Open as a dictionary.\n%@",[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"],ex);
+        _a = [NSDictionary dictionaryWithContentsOfFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
+    }
+
     for (id item in _a) 
     {
         d = [[NSMutableDictionary alloc] initWithDictionary:item];
@@ -996,7 +1004,7 @@
                 if (_result == 0) {
                     [self removeSoftwareInstallStatus:[d objectForKey:@"id"]];
                     [self updateArrayControllerWithDictionary:d forActionType:@"remove"];
-                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Uninstall competed."]];
+                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Uninstall completed."]];
                 } else {
                     [self updateArrayControllerWithDictionary:d forActionType:@"error"];
                     [statusTextStatus setStringValue:[NSString stringWithFormat:@"Error uninstalling."]];
