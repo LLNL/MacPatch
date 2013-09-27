@@ -209,17 +209,17 @@
 	<plist version="1.0">
     <dict>
         <key>bug</key>
-        <string>#ListGetAt(version,3,".")#</string>
+        <string>#ListGetAt(agent_version,3,".")#</string>
         <key>build</key>
         <string>#build#</string>
         <key>framework</key>
         <string>#framework#</string>
         <key>major</key>
-        <string>#ListGetAt(version,1,".")#</string>
+        <string>#ListGetAt(agent_version,1,".")#</string>
         <key>minor</key>
-        <string>#ListGetAt(version,2,".")#</string>
+        <string>#ListGetAt(agent_version,2,".")#</string>
         <key>version</key>
-        <string>#version#</string>
+        <string>#agent_version#</string>
     </dict>
 	</plist>
 	</cfoutput>
