@@ -131,17 +131,39 @@ typedef NSUInteger MPPostDataType;
 		[self setTaskIsRunning:NO];
         [self setTaskTimedOut:NO];
         fm = [NSFileManager defaultManager];
+
         // Set Data Directory
+        NSError *err = nil;
         NSURL *appSupportDir = [[fm URLsForDirectory:NSApplicationSupportDirectory inDomains:NSSystemDomainMask] objectAtIndex:0];
         NSURL *appSupportMPDir = [appSupportDir URLByAppendingPathComponent:@"MacPatch"];
+        NSDictionary *attributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithShort:0777] forKey:NSFilePosixPermissions];
+
         [self setMp_SOFTWARE_DATA_DIR:[appSupportMPDir URLByAppendingPathComponent:@"SW_Data"]];
         if ([fm fileExistsAtPath:[mp_SOFTWARE_DATA_DIR path]] == NO) {
-            NSError *err = nil;
-            NSDictionary *attributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithShort:0777] forKey:NSFilePosixPermissions];
             [fm createDirectoryAtPath:[mp_SOFTWARE_DATA_DIR path] withIntermediateDirectories:YES attributes:attributes error:&err];
             if (err) {
                 logit(lcl_vError,@"%@",[err description]);
             }
+        } else {
+
+            [fm setAttributes:attributes ofItemAtPath:[mp_SOFTWARE_DATA_DIR path] error:&err];
+            if (err) {
+                logit(lcl_vError,@"%@",[err description]);
+            }
+
+            NSDirectoryEnumerator *dirEnum = [fm enumeratorAtPath:[mp_SOFTWARE_DATA_DIR path]];
+            NSString *file;
+            while (file = [dirEnum nextObject])
+            {
+                err = nil;
+                [fm setAttributes:attributes ofItemAtPath:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:file] error:&err];
+                if (err) {
+                    logit(lcl_vError,@"%@",[err description]);
+                }
+            }
+
+
+
         }
     }
     
