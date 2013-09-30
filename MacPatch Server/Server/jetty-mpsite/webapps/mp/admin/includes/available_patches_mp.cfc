@@ -22,7 +22,7 @@
 			<cfset blnSearch = true>
 			<cftry>
 				<cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-					select puuid, patch_name, patch_ver, bundle_id, patch_severity, patch_reboot, patch_state, mdate, cdate
+					select puuid, pkg_url, patch_name, patch_ver, bundle_id, patch_severity, patch_reboot, patch_state, mdate, cdate
 					From mp_patches
 					WHERE 
 						#PreserveSingleQuotes(strSearch)#
@@ -36,7 +36,7 @@
 			</cftry>
 		<cfelse>
             <cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-                select puuid, patch_name, patch_ver, bundle_id, patch_severity, patch_reboot, patch_state, mdate, cdate
+                select puuid, pkg_url, patch_name, patch_ver, bundle_id, patch_severity, patch_reboot, patch_state, mdate, cdate
 				From mp_patches
                 Where 0=0
     
@@ -49,37 +49,17 @@
 		</cfif>
         
 		<cfset records = selUsers>
-		
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-		
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-		
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
-			<cfset arrUsers[i] = [#puuid#, #patch_name#, #patch_ver#, #bundle_id#, #patch_severity#, #patch_reboot#, #patch_state#, #DateFormat(mdate, 'medium')#, #DateFormat(cdate, 'medium')#] >
+			<cfset arrUsers[i] = [#puuid#, #pkg_url#, #patch_name#, #patch_ver#, #bundle_id#, #patch_severity#, #patch_reboot#, #patch_state#, #mdate#, #cdate#] >
 			<cfset i = i + 1>			
 		</cfloop>
-		
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(selUsers.recordcount/arguments.rows)>
-		
-		<!--- The JSON return. 
-			Total - Total Number of Pages we will have calculated above
-			Page - Current page user is on
-			Records - Total number of records
-			rows = our data 
-		--->
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#selUsers.recordcount#,rows=#arrUsers#}>
-		
 		<cfreturn stcReturn>
-		
 	</cffunction>
      
     <cffunction name="addEditMPPatch" access="remote" hint="Add or Edit" returnformat="json" output="no">
@@ -90,8 +70,20 @@
 		<cfset var userdata = "">
         
 		<cfif oper EQ "edit">
-			<cfset strMsgType = "Edit">
-			<cfset strMsg = "Notice, MP edit."> 
+			<cftry>
+				<cfquery name="editRecord" datasource="#session.dbsource#" result="res">
+					UPDATE
+						mp_patches
+					SET
+						patch_state = <cfqueryparam value="#Arguments.patch_state#">
+					WHERE
+						puuid = <cfqueryparam value="#arguments.id#">
+				</cfquery>
+                <cfcatch type="any">			
+					<cfset strMsgType = "Error">
+					<cfset strMsg = "There was an issue with the Edit. An Error Report has been submitted to Support.">					
+				</cfcatch>		
+			</cftry>
 		<cfelseif oper EQ "add">
 			<cfset strMsgType = "Add">
 			<cfset strMsg = "Notice, MP add."> 
@@ -100,10 +92,8 @@
             <cfreturn strReturn>
 		</cfif>
         
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-		
 		<cfreturn strReturn>
 	</cffunction>
     
@@ -181,8 +171,6 @@
 				}	
 			
 			</cfscript>
-			
 			<cfreturn searchVal>
-		
 	</cffunction>
 </cfcomponent>	

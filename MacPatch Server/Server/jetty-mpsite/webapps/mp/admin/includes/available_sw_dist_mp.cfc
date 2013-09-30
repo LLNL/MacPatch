@@ -48,20 +48,11 @@
 		</cfif>
         
 		<cfset records = qSelSW>
-		
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-		
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-		
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
             <cfif sState EQ 0>
             	<cfset _state = "Create">
             <cfelseif sState EQ 1>
@@ -71,26 +62,15 @@
             <cfelseif sState EQ 3>
             	<cfset _state = "Disabled">
             </cfif>
-			<cfset arrSW[i] = [#suuid#, #sw_url#, #sName#, #sVersion#, #IIF(sReboot EQ 0,DE("No"),DE("Yes"))#, #_state#, #sw_Type#, #DateFormat(mdate, 'medium')#, #DateFormat(cdate, 'medium')#] >
+			<cfset arrSW[i] = [#suuid#, #sw_url#, #sName#, #sVersion#, #IIF(sReboot EQ 0,DE("No"),DE("Yes"))#, #_state#, #sw_Type#, #mdate#, #cdate#] >
 			<cfset i = i + 1>			
 		</cfloop>
 		
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
-		
-		<!--- The JSON return. 
-			Total - Total Number of Pages we will have calculated above
-			Page - Current page user is on
-			Records - Total number of records
-			rows = our data 
-		--->
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
-		
 		<cfreturn stcReturn>
-		
 	</cffunction>
-
-            
+     
     <cffunction name="addEditMPSoftware" access="remote" hint="Add or Edit" returnformat="json" output="no">
 		<cfargument name="id" required="no" hint="Field that was editted">
 		

@@ -443,11 +443,18 @@
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [swDistGroupsButton removeAllItems];
+
+    NSString *gUrl;
+    if ([_defaults objectForKey:@"SWDistGroupState"]) {
+        gUrl = [NSString stringWithFormat:@"/Services/MPWSControllerCocoa.cfc?method=GetSWDistGroups&state=%@",[[_defaults objectForKey:@"SWDistGroupState"] stringValue]];
+    } else {
+        gUrl = @"/Services/MPWSControllerCocoa.cfc?method=GetSWDistGroups";
+    }
     
     NSError *error = nil;
     NSString *result;
     MPASINet *asiNet = [[[MPASINet alloc] init] autorelease];
-    result = [asiNet synchronousRequestForURL:@"/Services/MPWSControllerCocoa.cfc?method=GetSWDistGroups" error:&error];
+    result = [asiNet synchronousRequestForURL:gUrl error:&error];
     if (error) {
         qlerror(@"%@",[error description]);
         [swDistGroupsButton addItemWithTitle:[_defaults objectForKey:@"SWDistGroup"]];

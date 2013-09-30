@@ -95,7 +95,7 @@
 <div id="custom-doc" class="yui-t7">
 <div id="hd" role="banner" align="right">
 	<img src="./_assets/images/macpatchbanner.jpg" align="left">
-	<cfoutput>v2.1.1 | <a href="../">Logout</a><br><div style="font-size:10px;">Welcome, #session.RealName#</div></cfoutput>
+	<cfoutput>v2.2.0 | <a href="../">Logout</a><br><div style="font-size:10px;">Welcome, #session.RealName#</div></cfoutput>
 </div>
 <div id="bd" role="main">
 	<div class="yui-g" style="position:relative; z-index:2;">

@@ -26,17 +26,17 @@
 			{
 				url:'./includes/available_sw_dist_mp.cfc?method=getMPSoftware', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
-				colNames:['','Download','Name', 'Version', 'Reboot', 'State', 'Dist Type', 'Modified Date', 'Create Date'],
+				colNames:['','DWNLD','Name', 'Version', 'Reboot', 'State', 'Dist Type', 'Modified Date', 'Create Date'],
 				colModel :[ 
-				  {name:'suuid',index:'suuid', width:30, align:"center", sortable:false, resizable:false},
-				  {name:'sw_url',index:'sw_url', width:50, align:"center"},
-				  {name:'sName', index:'sName', width:140}, 
-				  {name:'sVersion', index:'sVersion', width:80, sorttype:'float'},
-				  {name:'sReboot', index:'sReboot', width:70, align:"left"},
-				  {name:'sState', index:'sState', width:70, align:"left"}, 
-				  {name:'sType', index:'sType', width:70, align:"left"}, 
-				  {name:'mdate', index:'mdate', width:100, align:"center"},
-				  {name:'cdate', index:'cdate', width:100, align:"center", hidden: true}
+				  {name:'suuid',index:'suuid', width:20, align:"center", sortable:false, resizable:false},
+				  {name:'sw_url',index:'sw_url', width:30, align:"center"},
+				  {name:'sName', index:'sName', width:120}, 
+				  {name:'sVersion', index:'sVersion', width:60, sorttype:'float'},
+				  {name:'sReboot', index:'sReboot', width:40, align:"left"},
+				  {name:'sState', index:'sState', width:40, align:"left"}, 
+				  {name:'sType', index:'sType', width:50, align:"left"}, 
+				  {name:'mdate', index:'mdate', width:70, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
+				  {name:'cdate', index:'cdate', width:70, align:"center", hidden: true, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}
 				],
 				altRows:true,
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager
@@ -130,7 +130,7 @@
 	);
 </script>
 <div align="center">
-<table id="list" cellpadding="0" cellspacing="0"></table>
+<table id="list" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="pager" style="text-align:center;font-size:11px;"></div>
 </div>
 <div id="dialog" title="Detailed Patch Information" style="text-align:left;" class="ui-dialog-titlebar"></div>

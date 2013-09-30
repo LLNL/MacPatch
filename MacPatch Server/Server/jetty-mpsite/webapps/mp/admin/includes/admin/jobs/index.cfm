@@ -305,7 +305,7 @@ table.genTable td
 }
 </style>
 <cfsilent>
-<cfparam name="jobType" default="Delete Expired Clients,Purge Old Client Data">
+<cfparam name="jobType" default="Delete Expired Clients,Purge Old Client Data,Purge & Archive Install Data">
 <cfparam name="jobtaskType" default="ONCE,DAILY,INTERVAL">
 <cfsavecontent variable="deleteTypeTask">
   <nocfml><cfoutput>
@@ -384,15 +384,68 @@ table.genTable td
 	</cfform>
   </cfoutput></nocfml>	
 </cfsavecontent>
+<cfsavecontent variable="deleteInstallTypeTask">
+  <nocfml><cfoutput>
+	<hr>
+	<div style="font-size:16px; margin-top:20px;">Add - Server Task</div>
+    <cfform action="index.cfm?adm_server_jobs" method="Post" name="AddNewTask">
+		<fieldset>
+    	<legend>Server Task Schedule:</legend>
+			<table border="0" class="tbltask">
+			<tr><td>Task Name:</td><td><input type="text" name="taskName" size="40" maxlength="50" value="#form.TYPE#"></td></tr>
+			<tr><td>Interval:</td>
+			<td><input type="radio" name="runinterval" value="once"> One Time @ <input type="text" name="starttime_once" size="5" maxlength="5" value=""> (Time 24hs.)<br>
+			<input type="radio" name="runinterval" value="recurring"> Recurring <select name="tasktype">
+			<option value="" selected="true">- select -</option>
+			<option value="DAILY">daily</option>
+			<option value="WEEKLY">weekly</option>
+			<option value="MONTHLY">monthly</option>
+			</select> @ <input type="text" name="starttime_recurring" size="5" maxlength="5" value=""> (Time 24hs.)<br>
+			<input type="radio" name="runinterval" value="daily"> Daily every <input type="text" name="interval" size="5" maxlength="5" value="" id="datepicker"> seconds from <input type="text" name="starttime_daily" id="starttime_daily" size="5" maxlength="5"  value=""> to <input type="text" name="endtime_daily" id="endtime_daily" size="5" maxlength="5" value=""> (Time 24hs.) (Note: Must Contain Start Time)
+			<br>
+			</td></tr>
+			<tr><td>Duration:</td><td>Start Date: <input type="text" name="taskStartDateTime" size="12" maxlength="12" value=""> End Date: <input type="text" name="taskEndDateTime" size="12" maxlength="12" value=""> (Date Format DD/MM/YYYY)</td></tr>
+			</table>
+		</fieldset>
+		<fieldset>
+    	<legend>Server Task Action:</legend>
+			Remove Installed Patches Data After <input type="text" name="actionVar" value="180" size="3"> days.<br>
+			Archive Before Purge <input type="radio" name="actionVar" value="1" checked> Yes <input type="radio" name="actionVar" value="0"> No.
+			<input type="hidden" name="actionVarName" value="days">
+			<input type="hidden" name="actionVarName" value="archive">
+		</fieldset>
+		<fieldset>
+			<table>
+			<tr><td>
+            	<input type="hidden" name="url" value="http://<cfoutput>#CGI.HTTP_HOST#</cfoutput>:2601/tasks/cleanupInstallData.cfm">
+            	<input type="hidden" name="fAction" value="AddNewTask">
+            </td></tr>
+			<tr><td><input class="button medium gray" type="button" value="Cancel" onclick="window.location='index.cfm?adm_server_jobs'">
+			<input class="button medium gray" type="button" value="Save" onclick="this.form.submit();"></td></tr>
+			</table>
+		</fieldset>
+	</cfform>
+  </cfoutput></nocfml>	
+</cfsavecontent>
 </cfsilent>
 
 <cfif #IsDefined("form.faction")#>
 	<cfif form.faction EQ "AddNewTask" OR form.faction EQ "EditTask">
 		<cfif ISDefined("form.actionVarName")>
-			<cfset theURL = "#form.URL#?#form.actionVarName#=#form.actionVar#">
+			<cfif ListLen(form.actionVarName,",") GT 1>
+				<cfset xURL = ListGetAt(form.actionVarName,1) &"="& ListGetAt(form.actionVar,1)>
+				<cfloop index="x" from="2" to="#ListLen(form.actionVarName,",")#">
+					<cfset xURL = "#xURL#&#ListGetAt(form.actionVarName,x)#=#ListGetAt(form.actionVar,x)#">
+				</cfloop>
+			<cfelseif ListLen(form.actionVarName,",") EQ 1>
+				<cfset xURL = ListGetAt(form.actionVarName,1) &"="& ListGetAt(form.actionVar,1)>
+			<cfelse>
+				<cfset xURL = "">
+			</cfif>
+			<cfset theURL = "#ListGetAt(form.URL,1,'?')#?#xURL#">
 		<cfelse>
-			<cfset theURL = "#form.URL#">
-		</cfif>	
+			<cfset theURL = "#ListGetAt(form.URL,1,'?')#">
+		</cfif>		
 		<cfschedule
 			action="UPDATE"
 			task="#form.TASKNAME#"
@@ -444,18 +497,18 @@ table.genTable td
 	<td><cfoutput>#tData["tasktype"]#@#TimeFormat(tData["starttime"],"HH:mm:ss")#</cfoutput></td>
 	<td><cfoutput>#dateformat(tData["starttime"], "yyyy-mm-dd")# #TimeFormat(tData["starttime"], "HH:mm:ss")#</cfoutput></td>
 	<td><cfoutput>#dateformat(tData["enddate"], "yyyy-mm-dd")#</cfoutput></td>
-    <td align="center"><a href="index.cfm?adm_server_jobs&task=<cfoutput>#task#</cfoutput>&action=0" alt="Edit Task" title="Edit Task"><img src="/admin/_assets/images/icons/cog_edit.png"></a></td>
-    <td align="center"><a href="index.cfm?adm_server_jobs&task=<cfoutput>#task#</cfoutput>&action=1" alt="Remove Task" title="Remove Task"><img src="/admin/_assets/images/icons/cog_delete.png"></a></td>
-	<td align="center"><a href="index.cfm?adm_server_jobs&task=<cfoutput>#task#</cfoutput>&action=2" alt="Run Task" title="Run Task"><img src="/admin/_assets/images/icons/control_play_blue.png" border="0" width="16" height="16" /></a></td>
+    <td align="center"><a href="index.cfm?adm_server_jobs&task=<cfoutput>#URLEncodedFormat(task)#</cfoutput>&action=0" alt="Edit Task" title="Edit Task"><img src="/admin/_assets/images/icons/cog_edit.png"></a></td>
+    <td align="center"><a href="index.cfm?adm_server_jobs&task=<cfoutput>#URLEncodedFormat(task)#</cfoutput>&action=1" alt="Remove Task" title="Remove Task"><img src="/admin/_assets/images/icons/cog_delete.png"></a></td>
+	<td align="center"><a href="index.cfm?adm_server_jobs&task=<cfoutput>#URLEncodedFormat(task)#</cfoutput>&action=2" alt="Run Task" title="Run Task"><img src="/admin/_assets/images/icons/control_play_blue.png" border="0" width="16" height="16" /></a></td>
 </tr>
 </cfloop>
 </TBODY>
 </table>
 <!--- ArrayLen(tasks) GTE 1 AND --->
 <cfif isDefined("taskName") AND Len(taskName) GT 1>
-
 	<cfsilent>
     <cfschedule action="read" task="#taskName#" result="taskdata"/>
+	
     <cfsavecontent variable="editTypeTask">
       <nocfml><cfoutput>
       	<cfif #taskdata["tasktype"]# EQ "ONCE">
@@ -489,15 +542,29 @@ table.genTable td
                 <tr><td>Duration:</td><td>Start Date: <input type="text" name="taskStartDateTime" size="12" maxlength="12" value="#DateFormat(taskdata["startdate"], "mm/dd/yyyy")#"> End Date: <input type="text" name="taskEndDateTime" size="12" maxlength="12" value="#DateFormat(taskdata["enddate"], "mm/dd/yyyy")#"> (Date Format DD/MM/YYYY)</td></tr>
                 </table>
             </fieldset>
+			<cfif taskName EQ "delete expired clients">	
             <fieldset>
             <legend>Server Task Action:</legend>
                 Remove clients after <input type="text" name="actionVar" value="#getParamsFromUrlString(taskdata["url"])["days"]#" size="3"> days of inactivity.
+				<input type="hidden" name="actionVarName" value="days">
             </fieldset>
+			</cfif>
+			<cfif taskName EQ "Purge & Archive Install Data">	
+            <fieldset>
+            <legend>Server Task Action:</legend>
+				<cftry>
+				Remove Installed Patches Data After <input type="text" name="actionVar" value="#getParamsFromUrlString(taskdata["url"])["days"]#" size="3"><input type="hidden" name="actionVarName" value="days"> days.<br>
+				Archive Before Purge <input type="radio" name="actionVar" value="1" #IIF(getParamsFromUrlString(taskdata["url"])["archive"] EQ 1, DE("checked='checked'"), DE(""))#> Yes 
+				<input type="radio" name="actionVar" value="0" #IIF(getParamsFromUrlString(taskdata["url"])["archive"] EQ 0, DE("checked='checked'"), DE(""))#> No.
+				<input type="hidden" name="actionVarName" value="archive">
+				<cfcatch></cfcatch>
+				</cftry>
+            </fieldset>
+			</cfif>
             <fieldset>
                 <table>
                 <tr><td>
-                    <input type="hidden" name="url" value="http://<cfoutput>#CGI.HTTP_HOST#</cfoutput>:2601/tasks/cleanup.cfm">
-                    <input type="hidden" name="actionVarName" value="days">
+                    <input type="hidden" name="url" value="#taskdata["url"]#">
 					<input type="hidden" name="fAction" value="EditTask">
                 </td></tr>
                 <tr><td><input class="button medium gray" type="button" value="Cancel" onclick="window.location='index.cfm?adm_server_jobs'">
@@ -518,6 +585,9 @@ table.genTable td
 </cfif>
 <cfif Type EQ "Purge Old Client Data">
 <cfoutput>#render(purgeTypeTask)#</cfoutput>
+</cfif>
+<cfif Type EQ "Purge & Archive Install Data">
+<cfoutput>#render(deleteInstallTypeTask)#</cfoutput>
 </cfif>
 </cfif>
 

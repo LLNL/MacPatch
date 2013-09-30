@@ -51,46 +51,6 @@
 <!--- ********************************************************************* --->
 <!---  Methods																--->
 <!--- ********************************************************************* ---> 
-<!---
-	<cffunction name="getSoftwareForGroup" access="remote" returnType="struct" returnFormat="json" output="false">
-		<cfargument name="groupName" required="true" />
-		<cfargument name="clientID" required="false" default="0" />
-		<cfargument name="clientKey" required="false" default="0" />
-
-		<cfset response = {} />
-		<cfset response[ "errorNo" ] = "0" />
-		<cfset response[ "errorMsg" ] = "" />
-		<cfset response[ "result" ] = "" />
-
-		<cfset sw_task = {} />
-		<cfset sw_task[ "task" ] = {} />
-		<cfset sw_task[ "criteria" ] = {} />
-		<cfset sw_task[ "info" ] = {} />
-
-		<cfset sw_task.task[ "name" ] = "0" />
-		<cfset sw_task.task[ "active" ] = "" />
-		<cfset sw_task.task[ "task_type" ] = "" />
-		<cfset sw_task.task[ "task_start_datetime" ] = "" />
-		<cfset sw_task.task[ "task_end_datetime" ] = "" />
-		<cfset sw_task.task[ "tuuid" ] = "" />
-
-
-		<cftry>
-			<cfquery datasource="#this.ds#" name="qGet">
-				Select * from mp_software_group_tasks
-				Where sw_group_id = <cfqueryparam value="#getGroupID(arguments.groupName)#">
-			</cfquery>
-
-			<cfset response.result = serializeJSON(qGet)>
-		<cfcatch>
-			<cfset response.errorNo = "1">
-			<cfset response.errorMsg = cfcatch.Message>
-		</cfcatch>
-		</cftry>
-
-		<cfreturn #response#>
-	</cffunction>
---->
 	<!--- Helper --->
 	<cffunction name="getGroupID" access="private" returntype="any" output="no">
 		<cfargument name="groupName" required="true" />
@@ -225,6 +185,14 @@
 <!--- #################################################### --->
 	<cffunction name="GetSWDistGroups" access="remote" returnType="struct" returnFormat="json" output="false">
 		<cfargument name="clientID" required="false" default="0" />
+		<cfargument name="state" required="false" default="1" />
+		
+		<cfset var gState = 1>
+		<cfif IsNumeric(arguments.state)>
+			<cfset gState = arguments.state>
+		<cfelse>	
+			<cfset l = logit("Error","[GetSWDistGroups]: State arguments was not of numeric value. Setting state to Production.")>
+		</cfif>
 
 		<cfset response = {} />
 		<cfset response[ "errorNo" ] = "0" />
@@ -236,7 +204,7 @@
 				SELECT *
 				FROM
 					mp_software_groups
-				Where state = '1'	
+				Where state = '#gState#'
             </cfquery>
 			
 			<cfset _Groups = arrayNew(1)>

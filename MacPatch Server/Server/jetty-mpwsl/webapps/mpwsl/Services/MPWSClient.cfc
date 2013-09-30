@@ -252,6 +252,14 @@
 <!--- #################################################### --->
 	<cffunction name="GetSWDistGroups" access="remote" returnType="struct" returnFormat="json" output="false">
 		<cfargument name="clientID" required="false" default="0" />
+		<cfargument name="state" required="false" default="1" />
+		
+		<cfset var gState = 1>
+		<cfif IsNumeric(arguments.state)>
+			<cfset gState = arguments.state>
+		<cfelse>	
+			<cfset l = logit("Error","[GetSWDistGroups]: State arguments was not of numeric value. Setting state to Production.")>
+		</cfif>
 
 		<cfset response = {} />
 		<cfset response[ "errorNo" ] = "0" />
@@ -263,7 +271,7 @@
 				SELECT *
 				FROM
 					mp_software_groups
-				Where state = '1'	
+				Where state = '#gState#'
             </cfquery>
 			
 			<cfset _Groups = arrayNew(1)>

@@ -13,7 +13,7 @@
 				  {name:'patch', index:'patch', width:140}, 
 				  {name:'hostname', index:'hostname', width:200},
 				  {name:'domain', index:'domain', width:100}, 
-				  {name:'idate', index:'idate', width:140}
+				  {name:'idate', index:'idate', width:140, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}
 				],
 				emptyrecords: "No records to view",
 				altRows:true,

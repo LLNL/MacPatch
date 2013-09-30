@@ -41,25 +41,15 @@
         </cftry>
 
 		<cfset records = qSelSW>
-
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
 			<cfset arrSW[i] = [#gid#, #gName#, #gDescription#, #owner#, #mdate#] >
 			<cfset i = i + 1>
 		</cfloop>
 
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
 
@@ -80,7 +70,8 @@
 			<cfquery name="updateGroupData" datasource="#session.dbsource#">
 				Update mp_software_groups
 				Set gName = <cfqueryparam value="#Arguments.gName#">,
-				gDescription = <cfqueryparam value="#Arguments.gDescription#">
+				gDescription = <cfqueryparam value="#Arguments.gDescription#">,
+				state = <cfqueryparam value="#Arguments.state#">
 				where gid = <cfqueryparam value="#Arguments.id#">
 			</cfquery>
 			<cfif session.IsAdmin IS true>
@@ -115,10 +106,8 @@
 			</cfquery>
 		</cfif>
 
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-
 		<cfreturn strReturn>
 	</cffunction>
 
@@ -165,28 +154,17 @@
         </cftry>
 
 		<cfset records = qSelSW>
-
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
 			<cfset arrSW[i] = [#sw_task_id#, #gid#, #name#, #iif(active IS 0,DE("Yes"),DE("No"))#, #Ucase(sw_task_type)#] >
 			<cfset i = i + 1>
 		</cfloop>
 
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
-
 		<cfreturn stcReturn>
 	</cffunction>
 
@@ -213,10 +191,8 @@
 			</cfquery>
 		</cfif>
 
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-
 		<cfreturn strReturn>
 	</cffunction>
 
@@ -299,28 +275,17 @@
         </cftry>
 
 		<cfset records = qSelSW>
-
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
 			<cfset arrSW[i] = [#tuuid#, #getSelectedState(tuuid)#, #name#, #IIF(active EQ 0,DE('No'),DE('Yes'))#, #sw_task_type#, #sw_start_datetime#, #sw_end_datetime#]>
 			<cfset i = i + 1>
 		</cfloop>
 
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
-
 		<cfreturn stcReturn>
 	</cffunction>
 
@@ -373,10 +338,8 @@
 		</cfif>
         <cfset _taskDataRes =  PopulateSoftwareGroupData(session.mp_sw_gid) />
 
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-
 		<cfreturn strReturn>
 	</cffunction>
     

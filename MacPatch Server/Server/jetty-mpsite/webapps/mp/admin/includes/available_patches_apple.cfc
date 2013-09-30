@@ -65,37 +65,18 @@
 		</cfif>
         
 		<cfset records = selUsers>
-		
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-		
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-		
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
-			<cfset arrUsers[i] = [#supatchname#, #supatchname#, #supatchname#, #version#, #title#, #iif(restartaction EQ "NoRestart",DE("No"),DE("Yes"))#, #osver_support#, #hasCriteria#, #patch_state#, #DateFormat(postdate,"yyyy-mm-dd")#]>
+			<cfset arrUsers[i] = [#supatchname#, #supatchname#, #supatchname#, #version#, #title#, #iif(restartaction EQ "NoRestart",DE("No"),DE("Yes"))#, #osver_support#, #hasCriteria#, #patch_state#, #postdate#]>
 			<cfset i = i + 1>			
 		</cfloop>
-		
-		<!--- Calculate the Total Number of Pages for your records. --->
+
 		<cfset totalPages = Ceiling(selUsers.recordcount/arguments.rows)>
-		
-		<!--- The JSON return. 
-			Total - Total Number of Pages we will have calculated above
-			Page - Current page user is on
-			Records - Total number of records
-			rows = our data 
-		--->
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#selUsers.recordcount#,rows=#arrUsers#}>
-		
 		<cfreturn stcReturn>
-		
 	</cffunction>
   
     <cffunction name="addEditMPApplePatches" access="remote" hint="Add or Edit" returnformat="json" output="no">
@@ -128,11 +109,9 @@
             <cfset strReturn = delMPPatch(Arguments.id)>
             <cfreturn strReturn>
 		</cfif>
-        
-		<!--- We just need to pass back some user data for display purposes --->
+
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
-		<cfset strReturn = {userdata=#userdata#}>
-		
+		<cfset strReturn = {userdata=#userdata#}>		
 		<cfreturn strReturn>
 	</cffunction>
     
@@ -145,11 +124,6 @@
 		
 		<cftry>
 			<cfset strMsg = "Delete MP patch">
-            <!---
-			<cfquery name="delPatch" datasource="#session.dbsource#">
-				DELETE FROM mp_patches WHERE puuid = #Val(Arguments.id)#
-			</cfquery>
-			--->
 		<cfcatch>
 			<!--- Error, return message --->
 			<cfset strMsgType = "Error">
@@ -205,8 +179,6 @@
 				}	
 			
 			</cfscript>
-			
 			<cfreturn searchVal>
-		
 	</cffunction>
 </cfcomponent>	
