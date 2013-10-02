@@ -66,10 +66,8 @@
 				<cfset l_state = "QA">
 			</CFCASE>
 			</CFSWITCH>
-			
-            <cfset cdateNew = #DateFormat(cdate, "yyyy-mm-dd")# & " " & #TimeFormat(cdate, "HH:mm:ss")#>
-            <cfset mdateNew = #DateFormat(mdate, "yyyy-mm-dd")# & " " & #TimeFormat(mdate, "HH:mm:ss")#>
-			<cfset arrUsers[i] = [#baseline_id#, #name#, #description#, #cdateNew#, #mdateNew#, #l_state#]>
+
+			<cfset arrUsers[i] = [#baseline_id#, #name#, #description#, #cdate#, #mdate#, #l_state#]>
 			<cfset i = i + 1>			
 		</cfloop>
 
@@ -133,6 +131,7 @@
 		<cfreturn stcReturn>
 		
 	</cffunction>
+	
 	<cffunction name="addEditMPBaselinePatches" access="remote" hint="Add or Edit" returnformat="json" output="no">
     	<cfargument name="id" required="no" hint="Field that was editted">
         
@@ -170,19 +169,17 @@
 			<cfset strMsgType = "Edit">
 			<cfset strMsg = "Notice, Edit patch baseline #Arguments.ID#.">
             <cftry>
-            <cfquery name="editBaseline" datasource="#session.dbsource#" result="res">
-            Update
-            	mp_baseline
-            Set
-            	name		= '#name#',
-            	description = '#description#', 
-                mdate = #CreateODBCDateTime(now())#, 
-                state = '#state#'  
-            Where
-            	baseline_id = '#Arguments.ID#'
-            AND
-            	cdate = '#cdate#'    
-            </cfquery>
+	            <cfquery name="editBaseline" datasource="#session.dbsource#" result="res">
+	            Update
+	            	mp_baseline
+	            Set
+	            	name		= '#Arguments.name#',
+	            	description = '#Arguments.description#', 
+	                mdate = #CreateODBCDateTime(now())#, 
+	                state = '#Arguments.state#'  
+	            Where
+	            	baseline_id = '#Arguments.ID#'  
+	            </cfquery>
             <cfcatch type="any">
             	<cfset strMsgType = "Error">
             	<cfset strMsg = "Error occured when Editting User. An Error report has been submitted to support. #cfcatch.detail# -- #cfcatch.message#">

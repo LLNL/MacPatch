@@ -104,12 +104,7 @@
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
 			<cfset _dataArr = ArrayNew(1)>
 			<cfloop list="#arguments.orderedCols#" index="col" delimiters=",">
-				<cfif col EQ "cdate" OR col EQ "mdate" OR col EQ "sdate" OR col EQ "date"> 
-					<cfset _dts = #DateFormat(evaluate(col), "mm/dd/yyyy")# & " " & #TimeFormat(evaluate(col), "HH:mm:ss")#>
-					<cfset x = ArrayAppend(_dataArr,_dts)>
-				<cfelse>
-					<cfset _x = ArrayAppend(_dataArr,evaluate(col))>
-				</cfif>
+				<cfset _x = ArrayAppend(_dataArr,evaluate(col))>
 			</cfloop>
 
             <cfif hasHWData EQ true>
@@ -144,10 +139,8 @@
             <cfreturn strReturn>
 		</cfif>
         
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-		
 		<cfreturn strReturn>
 	</cffunction>
     
@@ -176,11 +169,6 @@
 	            <cfinvoke component="remove_Client" method="removeClient">
 	                <cfinvokeargument name="id" value="#index_name#">
 	            </cfinvoke>
-	            <!--- 
-				<cfquery name="delPatch" datasource="#session.dbsource#">
-					DELETE FROM ClientCheckIn WHERE cuuid = '#Arguments.id#'
-				</cfquery>
-	            --->
 			<cfcatch type="any">
 				<!--- Error, return message --->
 				<cfset strMsgType = "Error">
@@ -203,7 +191,6 @@
 	    <cfargument name="searchString" required="no" default="" hint="Search Text">
 		
 			<cfset var searchVal = "">
-		
 			<cfscript>
 				switch(Arguments.searchOper)
 				{
@@ -236,10 +223,7 @@
 						searchVal = "#Arguments.searchField# LIKE '%#Arguments.searchString#%'";
 						break;
 				}	
-			
 			</cfscript>
-			
 			<cfreturn searchVal>
-		
 	</cffunction>
 </cfcomponent>	

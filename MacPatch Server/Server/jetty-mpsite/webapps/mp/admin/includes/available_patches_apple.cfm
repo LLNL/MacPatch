@@ -1,6 +1,6 @@
 <script type="text/javascript">
 	function loadContent(param, id) {
-		$("#dialog").load("./includes/available_patches_apple_description.cfm?pid="+id);
+		$("#dialog").load("./includes/available_patches_apple_description.cfm?id="+id);
 		$("#dialog").dialog(
 		 	{
 			bgiframe: false,

@@ -458,7 +458,7 @@ table.genTable td
 			publish="NO"
 			path=""
 			file=""
-			REQUESTTIMEOUT="120"
+			REQUESTTIMEOUT="1200"
 			operation="HTTPRequest">
 	</cfif>	
 </cfif>

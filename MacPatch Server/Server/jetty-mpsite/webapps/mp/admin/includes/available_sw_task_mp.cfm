@@ -19,11 +19,11 @@
 				  {name:'name',index:'name', width:150, align:"left"},
 				  {name:'primary_suuid',index:'primary_suuid', width:30, align:"center", hidden: true},
 				  {name:'active', index:'active', width:50, align:"left"},
-				  {name:'sw_task_type', index:'sw_task_type', width:80, align:"left"},
-				  {name:'sw_start_datetime', index:'sw_start_datetime', width:120, align:"left"},
-				  {name:'sw_end_datetime', index:'sw_end_datetime', width:120, align:"left"},
-				  {name:'cdate', index:'cdate', width:120, align:"left"},
-				  {name:'mdate', index:'mdate', width:120, align:"left"}
+				  {name:'sw_task_type', index:'sw_task_type', width:60, align:"left"},
+				  {name:'sw_start_datetime', index:'sw_start_datetime', width:90, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
+				  {name:'sw_end_datetime', index:'sw_end_datetime', width:90, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
+				  {name:'cdate', index:'cdate', width:90, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }, hidden: true},
+				  {name:'mdate', index:'mdate', width:90, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i:s' }}
 				],
 				altRows:true,
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager
@@ -90,17 +90,7 @@
 			   onClickButton: function(){
 				 load('./index.cfm?adm_sw_task_new');
 			   }
-			})
-			/*
-			.navButtonAdd('#pager',{
-			   caption:"",
-			   buttonicon:"ui-icon-copy",
-			   title:"Duplicate Patch",
-			   onClickButton: function(){
-				 load("./index.cfm?adm_sw_task_dup="+ lastsel);
-			   },
-			   position:"last"
-			})*/;
+			});
 			<cfelse>
 			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false});
 			</cfif>

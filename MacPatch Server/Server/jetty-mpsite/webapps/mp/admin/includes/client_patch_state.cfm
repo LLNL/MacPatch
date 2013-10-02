@@ -23,11 +23,9 @@
 </script>
 <script type="text/javascript">	
 	$(function() {
-		// Used by build_patch_group.cfm, edit_patch_group.cfm
 		$("#listClients").tablesorter({
 			widgets: ['zebra'] 
 		});
-		
 		$("#options").tablesorter({
 			sortList: [[0,0]]
 		});
@@ -39,27 +37,27 @@
 	imageX2='plus';
 	imageX3='plus';
 	
-	function toggleDisplay(e){
-	imgX="imagePM"+e;
-	tableX="table"+e;
-	imageX="imageX"+e;
-	tableLink="tableHref"+e;
-	imageXval=eval("imageX"+e);
-	element = document.getElementById(tableX).style;
-	
-	if (element.display=='none') {
-		 element.display='block';
-	} else {
-		element.display='none';
-	}
-	if (imageXval=='plus') {
-		 document.getElementById(imgX).src='./_assets/images/minus.jpg';
-		 eval("imageX"+e+"='minus';");
-		 document.getElementById(tableLink).title='Hide Table #'+e+'a';
-	} else if (imageXval=='minus') {
-		document.getElementById(imgX).src='./_assets/images/plus.jpg';
-		eval("imageX"+e+"='plus';");
-		document.getElementById(tableLink).title='Show Table #'+e+'a';}
+	function toggleDisplay(e)
+	{
+		imgX="imagePM"+e;
+		tableX="table"+e;
+		imageX="imageX"+e;
+		tableLink="tableHref"+e;
+		imageXval=eval("imageX"+e);
+		element = document.getElementById(tableX).style;
+		
+		if (element.display=='none') {
+			 element.display='block';
+		} else {
+			element.display='none';
+		}
+		if (imageXval=='plus') {
+			 document.getElementById(imgX).src='./_assets/images/minus.jpg';
+			 eval("imageX"+e+"='minus';");
+		} else if (imageXval=='minus') {
+			document.getElementById(imgX).src='./_assets/images/plus.jpg';
+			eval("imageX"+e+"='plus';");
+		}
 	}
 </script>
 <script type="text/javascript">
@@ -80,7 +78,7 @@ function goTo()
 
 <cfparam name="URL.OrderBy" default="hostname">
 <cfparam name="URL.OrderByType" default="ASC">
-<cfparam name="URL.TableState" default="none">
+<cfparam name="URL.TableState" default="Table">
 <cfparam name="URL.DrillDown" default="">
 
 <cftry>
@@ -199,10 +197,10 @@ function goTo()
 <br />
 <img border="0" src="./_assets/images/plus.jpg" id="imagePM2" onclick="javascript:toggleDisplay('2')">&nbsp;Client(s)...
 <br />
-<div style="display:<cfoutput>#URL.TableState#</cfoutput>;" id=table2>
+<div style="display:<cfoutput>#URL.TableState#</cfoutput>;" id="table2">
 <cfset session.clientPatchStateExportQuery = qGet2>
-<div style="float: left;"> </div>
-<div style="float: right;">
+<div style="float: left;padding:2px;"></div>
+<div style="float: right;padding:2px;">
 	<img src="./_assets/images/icons/table_save.png" title="Export to CSV" align="left" onClick="window.open('includes/client_patch_state_export.cfm','Export2CSV');">Export (CSV)&nbsp;
 </div>
 <br />

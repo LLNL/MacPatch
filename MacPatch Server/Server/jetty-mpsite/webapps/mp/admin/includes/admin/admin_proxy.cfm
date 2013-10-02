@@ -1,3 +1,25 @@
+<cfsilent>
+<cfset hasProxy = false>
+<cfset proxyServer = "https://localhost:2600">
+<cftry>
+    <cfquery name="qProxySrv" datasource="#session.dbsource#" result="res">
+        select *
+        From mp_servers
+        WHERE isProxy = 1
+        AND active = 1
+    </cfquery>
+    <cfif qProxySrv.RecordCount EQ 1>
+    	<cfset hasProxy = true>
+        <cfset proxyServer = "#IIF(qProxySrv.useSSL EQ 1,DE('https://'),DE('http://'))#://#qProxySrv.server#:#qProxySrv.port#">
+    </cfif>
+    <cfcatch type="any">
+        <cfset blnSearch = false>					
+        <cfset strMsgType = "Error">
+        <cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">					
+    </cfcatch>		
+</cftry>
+</cfsilent>
+
 <style type="text/css">
 	table{
 		/*border-collapse:separate;*/
@@ -71,15 +93,6 @@
 	}
 </script>
 
-<!---
-<script type=text/javascript>
-  function refresh()
-  {
-	$("#modalIframeId").attr("src","https://mpproxy.llnl.gov:2600/mplogs/cf_logs/MPProxy.log");
-  }
-  window.setInterval("refresh()",5000);
-</script>
---->
 <script type="text/javascript">
 	function showLog() {
 		$("#divId").dialog(
@@ -91,7 +104,7 @@
 			buttons:
 				{
 					"Refresh": function() {
-						$("#modalIframeId").attr("src","https://mpproxy.llnl.gov/mplogs/cf_logs/MPProxy.log");
+						$("#modalIframeId").attr("src","<cfoutput>#proxyServer#</cfoutput>/mplogs/cf_logs/MPProxy.log");
 					},
 					"Close": function() {
 						$( this ).dialog( "close" );
@@ -101,7 +114,7 @@
 		);
 
 		$("#divId").html('<iframe id="modalIframeId" width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto" />').dialog("open");
-		$("#modalIframeId").attr("src","https://mpproxy.llnl.gov:2600/mplogs/cf_logs/MPProxy.log");
+		$("#modalIframeId").attr("src","<cfoutput>#proxyServer#</cfoutput>/mplogs/cf_logs/MPProxy.log");
    		return false;
 	}
 </script>
@@ -116,8 +129,7 @@
 			buttons:
 				{
 					"Refresh": function() {
-						/* $("#modalIframeId").attr("src","https://mpproxy.llnl.gov/mplogs/cf_logs/"+item.value+".log");
-						$("#modalIframeId").attr("src","https://mpproxy.llnl.gov:2600/MPProxyLogs.cfc?method=ReadLogFile&logFile="+item.value+".log"); */
+						/* */
 					},
 					"Close": function() {
 						$( this ).dialog( "close" );
@@ -127,7 +139,7 @@
 		);
 
 		$("#divId").html('<iframe id="modalIframeId" width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto" />').dialog("open");
-		$("#modalIframeId").attr("src","https://mpproxy.llnl.gov:2600/mplogs/cf_logs/"+item.value+".log");
+		$("#modalIframeId").attr("src","<cfoutput>#proxyServer#</cfoutput>/mplogs/cf_logs/"+item.value+".log");
    		return false;
 	}
 </script>
@@ -147,7 +159,7 @@
 				  {name:'address', index:'address', width:200, editable:true},
 				  {name:'port', index:'port', width:120, editable:true},
 				  {name:'description', index:'description', width:200, editable:true},
-				  {name:'mdate', index:'mdate', width:200, editrules:{readonly:true}}
+				  {name:'mdate', index:'mdate', width:200, editrules:{readonly:true}, formatter: 'date', formatoptions: {srcformat:'F, d Y H:i:s', newformat: 'Y-m-d H:i:s' }}
 				],
 				altRows:true,
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager
@@ -202,6 +214,7 @@
 			);
 			
 			<cfif session.IsAdmin IS true>
+			<cfif hasProxy IS true>
 			$("#list").jqGrid('navGrid',"#pager",{edit:true,add:true,del:true},{closeOnEscape:true})
 			.navButtonAdd('#pager',{
 			   caption:"",
@@ -219,12 +232,16 @@
 				 checkProxyStatus(lastsel);
 			   }
 			});
+			<cfelse>
+			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:true,del:false},{closeOnEscape:true});
+			</cfif>
 			</cfif>
 		}
 	);
 </script>
 <table id="list" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="pager"></div>
+<cfif hasProxy IS true>
 <hr>
 Proxy Server Logs:
 <select onchange="showLogData(this);" onclick="showLogData(this);">
@@ -232,5 +249,6 @@ Proxy Server Logs:
   <option>MPWSController</option>
   <option>MPWSControllerCocoa</option>
 </select>
+</cfif>
 <div id="dialog" title="Detailed Proxy Server Information" style="text-align:left;" class="ui-dialog-titlebar"></div>
 <div id="divId" title="Proxy Server Log" style="text-align:left;" class="ui-dialog-titlebar" />

@@ -31,8 +31,8 @@
 				  {name:'baseline_id',index:'baseline_id', width:36, align:"center", sortable:false, resizable:false},	
 				  {name:'name', index:'name', width:200, editable:true, edittype:'text'}, 
 				  {name:'description', index:'description', width:200, editable:true, edittype:'text'}, 
-				  {name:'cdate', index:'cdate', width:100, editable:true, edittype:'text',editoptions: {readonly: 'readonly'}},
-				  {name:'mdate', index:'mdate', width:100, editable:true, edittype:'text',editoptions: {readonly: 'readonly'}}, 
+				  {name:'cdate', index:'cdate', width:100, editable:true, edittype:'text',editoptions: {readonly: 'readonly'}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
+				  {name:'mdate', index:'mdate', width:100, editable:true, edittype:'text',editoptions: {readonly: 'readonly'}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}, 
 				  {name:'state', index:'state', width:100, editable:true, edittype:'select', editoptions:{value:{1:'Production',2:'QA',0:'Inactive'}}}
 				],
 				altRows:true,
@@ -57,11 +57,7 @@
 					var ids = jQuery("#list").getDataIDs(); 
 					for(var i=0;i<ids.length;i++){ 
 						var cl = ids[i];
-						/*
-						<cfif session.IsAdmin IS true>
-						edit = "<input type='image' style='padding-left:4px;' onclick=load('./index.cfm?adm_mp_patch_edit="+ids[i]+"'); src='./_assets/images/jqGrid/edit_16.png'>";</cfif>*/
 						info = "<input type='image' style='padding-left:4px;' onclick=load('./index.cfm?patch_baseline_info="+ids[i]+"'); src='./_assets/images/jqGrid/info_16.png'>";
-						
 						jQuery("#list").setRowData(ids[i],{baseline_id:info}) 
 					} 
 				}, 
@@ -116,7 +112,7 @@
 	);
 </script>
 <div align="center">
-<table id="list" cellpadding="0" cellspacing="0"></table>
+<table id="list" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="pager" style="text-align:center;font-size:11px;"></div>
 </div>
 <div id="dialog" title="Detailed Patch Information" style="text-align:left;" class="ui-dialog-titlebar"></div>

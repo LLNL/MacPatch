@@ -46,13 +46,17 @@
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<cfset arrSW[i] = [#gid#, #gName#, #gDescription#, #owner#, #mdate#] >
+			<cfif state GTE 1>
+				<cfset txtState = IIF(state EQ 2,DE('QA'),DE('Production'))>
+			<cfelse>
+				<cfset txtState = "Disabled">
+			</cfif>
+			<cfset arrSW[i] = [#gid#, #gName#, #gDescription#, #owner#, #txtState#, #mdate#] >
 			<cfset i = i + 1>
 		</cfloop>
 
 		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
-
 		<cfreturn stcReturn>
 	</cffunction>
 
@@ -106,8 +110,10 @@
 			</cfquery>
 		</cfif>
 
+		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
+
 		<cfreturn strReturn>
 	</cffunction>
 
@@ -191,52 +197,11 @@
 			</cfquery>
 		</cfif>
 
+		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
+
 		<cfreturn strReturn>
-	</cffunction>
-
-    <cffunction name="buildSearchString" access="private" hint="Returns the Search Opeator based on Short Form Value">
-		<cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
-	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
-	    <cfargument name="searchString" required="no" default="" hint="Search Text">
-
-			<cfset var searchVal = "">
-
-			<cfscript>
-				switch(Arguments.searchOper)
-				{
-					case "eq":
-						searchVal = "#Arguments.searchField# = '#Arguments.searchString#'";
-						break;
-					case "ne":
-						searchVal = "#Arguments.searchField# <> '#Arguments.searchString#'";
-						break;
-					case "lt":
-						searchVal = "#Arguments.searchField# < '#Arguments.searchString#'";
-						break;
-					case "le":
-						searchVal = "#Arguments.searchField# <= '#Arguments.searchString#'";
-						break;
-					case "gt":
-						searchVal = "#Arguments.searchField# > '#Arguments.searchString#'";
-						break;
-					case "ge":
-						searchVal = "#Arguments.searchField# >= '#Arguments.searchString#'";
-						break;
-					case "bw":
-						searchVal = "#Arguments.searchField# LIKE '#Arguments.searchString#%'";
-						break;
-					case "ew":
-						//Purposefully breaking ends with operator (no leading ')
-						searchVal = "#Arguments.searchField# LIKE %#Arguments.searchString#'";
-						break;
-					case "cn":
-						searchVal = "#Arguments.searchField# LIKE '%#Arguments.searchString#%'";
-						break;
-				}
-			</cfscript>
-			<cfreturn searchVal>
 	</cffunction>
 
 	<cffunction name="getCustomDataTasks" access="remote" returnformat="json">
@@ -263,8 +228,13 @@
         </cfif>
         <cftry>
             <cfquery name="qSelSW" datasource="#session.dbsource#" result="res">
-				Select Distinct mpst.*, '0' as selected
-				from mp_software_task mpst
+				Select Distinct *, '0' as selected
+				from mp_software_task
+				<cfif blnSearch>
+                WHERE
+                    #PreserveSingleQuotes(strSearch)#
+                </cfif>
+                ORDER BY #sidx# #sord#
             </cfquery>
 
             <cfcatch type="any">
@@ -284,8 +254,8 @@
 			<cfset i = i + 1>
 		</cfloop>
 
-		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
-		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
+		<cfset totalPages = Ceiling(records.recordcount/arguments.rows)>
+		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#records.RecordCount#,rows=#arrSW#}>
 		<cfreturn stcReturn>
 	</cffunction>
 
@@ -338,8 +308,10 @@
 		</cfif>
         <cfset _taskDataRes =  PopulateSoftwareGroupData(session.mp_sw_gid) />
 
+		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
+
 		<cfreturn strReturn>
 	</cffunction>
     
@@ -527,11 +499,50 @@
 		<cfargument name="TaskID">
 
 		<cfset criteria = {} />
-		<!---
-		<cfset criteria[ "suuid" ] = #arguments.order# />
-		<cfset criteria[ "order" ] = #arguments.data# />
-		--->
 		<cfreturn criteria>
+	</cffunction>
+	
+	 <cffunction name="buildSearchString" access="private" hint="Returns the Search Opeator based on Short Form Value">
+		<cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
+	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
+	    <cfargument name="searchString" required="no" default="" hint="Search Text">
+
+			<cfset var searchVal = "">
+
+			<cfscript>
+				switch(Arguments.searchOper)
+				{
+					case "eq":
+						searchVal = "#Arguments.searchField# = '#Arguments.searchString#'";
+						break;
+					case "ne":
+						searchVal = "#Arguments.searchField# <> '#Arguments.searchString#'";
+						break;
+					case "lt":
+						searchVal = "#Arguments.searchField# < '#Arguments.searchString#'";
+						break;
+					case "le":
+						searchVal = "#Arguments.searchField# <= '#Arguments.searchString#'";
+						break;
+					case "gt":
+						searchVal = "#Arguments.searchField# > '#Arguments.searchString#'";
+						break;
+					case "ge":
+						searchVal = "#Arguments.searchField# >= '#Arguments.searchString#'";
+						break;
+					case "bw":
+						searchVal = "#Arguments.searchField# LIKE '#Arguments.searchString#%'";
+						break;
+					case "ew":
+						//Purposefully breaking ends with operator (no leading ')
+						searchVal = "#Arguments.searchField# LIKE %#Arguments.searchString#'";
+						break;
+					case "cn":
+						searchVal = "#Arguments.searchField# LIKE '%#Arguments.searchString#%'";
+						break;
+				}
+			</cfscript>
+			<cfreturn searchVal>
 	</cffunction>
 
 </cfcomponent>

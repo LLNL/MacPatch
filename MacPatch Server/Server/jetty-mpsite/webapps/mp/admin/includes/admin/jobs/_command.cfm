@@ -56,7 +56,7 @@
 							publish="NO"
 							path=""
 							file=""
-							REQUESTTIMEOUT="120"
+							REQUESTTIMEOUT="1200"
 							operation="HTTPRequest">
 				<cfcatch type="any">
 					<cfset session.message.text = CFCATCH.Message />

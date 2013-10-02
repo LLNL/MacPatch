@@ -106,6 +106,8 @@ table#invTable2 {border-spacing:1px; background-color:black;}
 <cfset _cols = qGetColumns.columnlist>
 <cfset _cols = ListDeleteAt(_cols,ListContainsNoCase(_cols,'rid',","),",")>	
 <cfset _cols = ListDeleteAt(_cols,ListContainsNoCase(_cols,'cuuid',","),",")>
+<cfset _cols = ListDeleteAt(_cols,ListContainsNoCase(_cols,'cdateint',","),",")>
+<cfset _cols = ListDeleteAt(_cols,ListContainsNoCase(_cols,'dateint',","),",")>
 <cfif ListContainsNoCase(_cols,'mdate',",") AND ListContainsNoCase(_cols,'date',",")>
 <cfset _cols = ListDeleteAt(_cols,ListContainsNoCase(_cols,'mdate',","),",")>	
 </cfif>

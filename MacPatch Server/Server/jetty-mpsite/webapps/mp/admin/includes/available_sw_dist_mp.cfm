@@ -29,12 +29,12 @@
 				colNames:['','DWNLD','Name', 'Version', 'Reboot', 'State', 'Dist Type', 'Modified Date', 'Create Date'],
 				colModel :[ 
 				  {name:'suuid',index:'suuid', width:20, align:"center", sortable:false, resizable:false},
-				  {name:'sw_url',index:'sw_url', width:30, align:"center"},
+				  {name:'sw_url',index:'sw_url', width:30, align:"center", sortable:false},
 				  {name:'sName', index:'sName', width:120}, 
 				  {name:'sVersion', index:'sVersion', width:60, sorttype:'float'},
 				  {name:'sReboot', index:'sReboot', width:40, align:"left"},
 				  {name:'sState', index:'sState', width:40, align:"left"}, 
-				  {name:'sType', index:'sType', width:50, align:"left"}, 
+				  {name:'sw_Type', index:'sw_Type', width:50, align:"left"}, 
 				  {name:'mdate', index:'mdate', width:70, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
 				  {name:'cdate', index:'cdate', width:70, align:"center", hidden: true, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}
 				],
