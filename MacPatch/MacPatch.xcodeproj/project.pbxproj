@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		8F2C7CCA17FC92D6008CE21A /* PROXY_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 8F2C7CCB17FC92D6008CE21A /* Build configuration list for PBXAggregateTarget "PROXY_BUILD" */;
+			buildPhases = (
+			);
+			dependencies = (
+				8F2C7CCF17FC92E5008CE21A /* PBXTargetDependency */,
+				8FD7331F17FE277500AA71B7 /* PBXTargetDependency */,
+			);
+			name = PROXY_BUILD;
+			productName = PROXY_BUILD;
+		};
 		8F68EADE1757D4D500982EF9 /* AGENT_BUILD */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 8F68EAFB1757D4D500982EF9 /* Build configuration list for PBXAggregateTarget "AGENT_BUILD" */;
@@ -31,16 +43,16 @@
 			name = AGENT_BUILD;
 			productName = AGENT_BUILD_DEBUG;
 		};
-		8F9F899E17D6A81100ACC37B /* MP_SERVER_BUILD */ = {
+		8F9F899E17D6A81100ACC37B /* SERVER_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 8F9F89A317D6A81100ACC37B /* Build configuration list for PBXAggregateTarget "MP_SERVER_BUILD" */;
+			buildConfigurationList = 8F9F89A317D6A81100ACC37B /* Build configuration list for PBXAggregateTarget "SERVER_BUILD" */;
 			buildPhases = (
 			);
 			dependencies = (
 				8F9F89A517D6A81C00ACC37B /* PBXTargetDependency */,
 				8F9F89A717D6AB7C00ACC37B /* PBXTargetDependency */,
 			);
-			name = MP_SERVER_BUILD;
+			name = SERVER_BUILD;
 			productName = X_SERVER_BUILD;
 		};
 		8FE560C316DE70F800BB7600 /* AGENT_BUILD_DEBUG */ = {
@@ -71,6 +83,13 @@
 
 /* Begin PBXContainerItemProxy section */
 		72589117179F6BAC0058FF64 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F4B1DE216DD1BC600E15A9E;
+			remoteInfo = MacPatch;
+		};
+		8F2C7CCE17FC92E5008CE21A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */;
 			proxyType = 1;
@@ -217,6 +236,13 @@
 			remoteGlobalIDString = 8DD76F960486AA7600D96B5E;
 			remoteInfo = ccusr;
 		};
+		8FD7331E17FE277500AA71B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F2C7CB017FC9252008CE21A;
+			remoteInfo = MPProxySync;
+		};
 		8FD88E3116DFB40C00A870A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FD88E2D16DFB40B00A870A3 /* MPAgentUp2Date.xcodeproj */;
@@ -350,6 +376,13 @@
 			remoteGlobalIDString = 8FD88F3116DFD26C00A870A3;
 			remoteInfo = MPTaskEditor;
 		};
+		8FDDF2AB17FE0A4C00053F68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8F2C7CB117FC9252008CE21A;
+			remoteInfo = MPProxySync;
+		};
 		8FE560C916DE711300BB7600 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */;
@@ -381,6 +414,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPProxySync.xcodeproj; path = MPProxySync/MPProxySync.xcodeproj; sourceTree = "<group>"; };
 		8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAgent.xcodeproj; path = MPAgent/MPAgent.xcodeproj; sourceTree = "<group>"; };
 		8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPPrefMigrate.xcodeproj; path = MPPrefMigrate/MPPrefMigrate.xcodeproj; sourceTree = "<group>"; };
 		8FA7063F1700AC0E00A1C57C /* GetCurrentConsoleUser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GetCurrentConsoleUser.xcodeproj; path = CurrentConsoleUser/GetCurrentConsoleUser.xcodeproj; sourceTree = "<group>"; };
@@ -416,6 +450,7 @@
 				8FD8906716DFE84600A870A3 /* MPClientStatus.xcodeproj */,
 				8FD890C716DFEDB700A870A3 /* Self Patch.xcodeproj */,
 				8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */,
+				8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */,
 				8FD2086F16E567AC00F78296 /* MacPatch Server.xcodeproj */,
 			);
 			sourceTree = "<group>";
@@ -523,6 +558,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8FDDF2A717FE0A4C00053F68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8FDDF2AC17FE0A4C00053F68 /* MPProxySync */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8FE5610616DE9A7A00BB7600 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -598,6 +641,10 @@
 					ProjectRef = 8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */;
 				},
 				{
+					ProductGroup = 8FDDF2A717FE0A4C00053F68 /* Products */;
+					ProjectRef = 8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */;
+				},
+				{
 					ProductGroup = 8FD88F1116DFCF5900A870A3 /* Products */;
 					ProjectRef = 8FD88F1016DFCF5900A870A3 /* MPReboot.xcodeproj */;
 				},
@@ -622,7 +669,8 @@
 			targets = (
 				8F68EADE1757D4D500982EF9 /* AGENT_BUILD */,
 				8FE560C316DE70F800BB7600 /* AGENT_BUILD_DEBUG */,
-				8F9F899E17D6A81100ACC37B /* MP_SERVER_BUILD */,
+				8F9F899E17D6A81100ACC37B /* SERVER_BUILD */,
+				8F2C7CCA17FC92D6008CE21A /* PROXY_BUILD */,
 			);
 		};
 /* End PBXProject section */
@@ -712,6 +760,13 @@
 			remoteRef = 8FD890CB16DFEDB900A870A3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		8FDDF2AC17FE0A4C00053F68 /* MPProxySync */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = MPProxySync;
+			remoteRef = 8FDDF2AB17FE0A4C00053F68 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		8FE5610A16DE9A7B00BB7600 /* MPAgentExec */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -733,6 +788,11 @@
 			isa = PBXTargetDependency;
 			name = MacPatch;
 			targetProxy = 72589117179F6BAC0058FF64 /* PBXContainerItemProxy */;
+		};
+		8F2C7CCF17FC92E5008CE21A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MacPatch;
+			targetProxy = 8F2C7CCE17FC92E5008CE21A /* PBXContainerItemProxy */;
 		};
 		8F68EADF1757D4D500982EF9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -819,6 +879,11 @@
 			name = ccusr;
 			targetProxy = 8FA706461700AC2000A1C57C /* PBXContainerItemProxy */;
 		};
+		8FD7331F17FE277500AA71B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPProxySync;
+			targetProxy = 8FD7331E17FE277500AA71B7 /* PBXContainerItemProxy */;
+		};
 		8FD890DE16E5248800A870A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MPReboot;
@@ -882,6 +947,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		8F2C7CCC17FC92D6008CE21A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8F2C7CCD17FC92D6008CE21A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		8F4B1ED416DD771300E15A9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -952,6 +1031,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8F2C7CCB17FC92D6008CE21A /* Build configuration list for PBXAggregateTarget "PROXY_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F2C7CCC17FC92D6008CE21A /* Debug */,
+				8F2C7CCD17FC92D6008CE21A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		8F4B1ED316DD771300E15A9E /* Build configuration list for PBXProject "MacPatch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -970,7 +1058,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8F9F89A317D6A81100ACC37B /* Build configuration list for PBXAggregateTarget "MP_SERVER_BUILD" */ = {
+		8F9F89A317D6A81100ACC37B /* Build configuration list for PBXAggregateTarget "SERVER_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8F9F899F17D6A81100ACC37B /* Debug */,

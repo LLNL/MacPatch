@@ -7,21 +7,21 @@
 		<key>AGENT_BUILD.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
-		</dict>
-		<key>AGENT_BUILD_DEBUG.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>X_SERVER_BUILD.xcscheme</key>
+		<key>PROXY_BUILD.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>22</integer>
+			<integer>2</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>8F2C7CCA17FC92D6008CE21A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>8F68EADE1757D4D500982EF9</key>
 		<dict>
 			<key>primary</key>

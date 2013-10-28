@@ -1,7 +1,22 @@
+<!--- **************************************************************************************** --->
+<!---
+		MPDistribution - Web Services for MPProxy
+	 	Database type is MySQL
+		Version 2.0
+		Rev: 1
+		Last Modified:	10/2/2013
+--->
+<!--- **************************************************************************************** --->
 <cfcomponent output="false">
-	<cfparam name="mpDBSource" default="mpds">
-	<cfparam name="mpLogFile" default="MPProxy">
-	<cfparam name="enableLogToFile" default="false" type="boolean">
+	<!--- Configure Datasource --->
+	<cfset this.ds = "mpds">
+	<cfset this.mpLogFile = "MPProxy">
+    <cfset this.cacheDirName = "cacheIt">
+    <cfset this.enableLogToFile = false>
+
+	<cffunction name="init" returntype="MPDistribution" output="no">
+		<cfreturn this>
+	</cffunction>
 
 	<!--- Used to make xml look pretty --->
     <cfsavecontent variable="myXSLT">
@@ -32,7 +47,7 @@
 			}
 		</cfscript>
 
-        <cfquery datasource="#mpDBSource#" name="qGet">
+        <cfquery datasource="#this.ds#" name="qGet">
             Insert Into ws_log (cdate, event_type, event, host, scriptName, pathInfo, serverName, serverType, serverHost)
             Values (#CreateODBCDateTime(now())#, '#aEventType#', '#aEvent#', '#CGI.REMOTE_HOST#', '#CGI.SCRIPT_NAME#', '#CGI.PATH_TRANSLATED#','#CGI.SERVER_NAME#','#CGI.SERVER_SOFTWARE#', '#inet#')
         </cfquery>
@@ -41,13 +56,56 @@
             <cflog type="error" file="#mpLogFile#" text="#CreateODBCDateTime(now())# --[#inet#][#aEventType#] #aEvent#">
 		</cfif>
     </cffunction>
+    
+    <cffunction name="getDistributionContentAsJSON" access="remote" returnType="struct" returnFormat="json" output="false">
+		<cfset response = {} />
+		<cfset response[ "errorNo" ] = "0" />
+		<cfset response[ "errorMsg" ] = "" />
+		<cfset response[ "result" ] = "" />
 
-	<cffunction name="getDistributionContent" access="remote" returntype="string" output="no">
+		<!--- Continue --->
+        <cftry>
+            <cfquery datasource="#this.ds#" name="qGet">
+                Select `puuid`, `pkg_url`, `pkg_hash`
+                From mp_patches
+                Where `patch_state` IN ('Production','QA')
+            </cfquery>
+        
+            <cfif qGet.RecordCount LTE 0>
+           		<cfset response[ "errorNo" ] = "1001" />
+                <cfset response[ "errorMsg" ] = "No content found." />
+                <cfreturn response>
+            </cfif>
+            <cfcatch>
+                <cfset response[ "errorNo" ] = "1" />
+                <cfset response[ "errorMsg" ] = "#cfcatch.Detail# #cfcatch.Message#" />
+                <cfreturn response>
+            </cfcatch>
+		</cftry>
+        
+		<cfset _content = {} />
+        <cfset _content[ "Content" ] = {} />
+        <cfset _contArr = arrayNew(1)>
+        <cfoutput query="qGet">
+            <cfset _tmp = {} />
+            <cfset _tmp[ "puuid" ] = "#puuid#" />
+            <cfset _tmp[ "pkg_url" ] = "#pkg_url#" />
+            <cfset _tmp[ "pkg_hash" ] = "#pkg_hash#" />
+            <cfset a = ArrayAppend(_contArr,_tmp)>
+        </cfoutput>	
+        
+        <cfset _content.Content = _contArr />
+		<cfset response.result = serializeJSON(_content)>
+        
+		<cfreturn response>
+	</cffunction>
+    
+    <cffunction name="getDistributionContent" access="private" returntype="string" output="no">
 		<cfargument name="returnType">
 		<cfargument name="encode" default="yes">
 
 		<!--- Continue --->
-		<cfquery datasource="#mpDBSource#" name="qGet">
+		<cfquery datasource="#this.ds#" name="qGet">
 			Select `puuid`, `pkg_url`, `pkg_hash`
 			From mp_patches
 			Where `patch_state` IN ('Production','QA')
@@ -104,12 +162,37 @@
 		<cfreturn res>
 	</cffunction>
 	
+    <cffunction name="postSyncResultsJSON" access="remote" returnType="struct" returnFormat="json" output="false">
+		<cfargument name="logType">
+		<cfargument name="logData">
+        
+        <cfset response = {} />
+		<cfset response[ "errorNo" ] = "0" />
+		<cfset response[ "errorMsg" ] = "" />
+		<cfset response[ "result" ] = "" />
+		
+		<cftry>
+            <cfquery datasource="#this.ds#" name="qPost" result="res">
+                Insert Into mp_proxy_logs (log_type,log_data)
+                Values (<cfqueryparam value="#arguments.logType#" CFSQLType="CF_SQL_INTEGER">, <cfqueryparam value="#arguments.logData#">)
+            </cfquery>
+            <cfcatch type="any">
+                <cfset response[ "errorNo" ] = "1" />
+                <cfset response[ "errorMsg" ] = "#cfcatch.Detail# #cfcatch.Message#" />
+                <cfset log = logit("Error", "#cfcatch.Message# #cfcatch.Detail# ")>
+                <cfreturn response>
+            </cfcatch>
+		</cftry>
+        
+		<cfreturn response>
+	</cffunction>
+    
 	<cffunction name="postSyncResults" access="remote" returntype="any" output="no">
 		<cfargument name="logType">
 		<cfargument name="logData">
 		
 		<cftry>
-		<cfquery datasource="#mpDBSource#" name="qPost" result="res">
+		<cfquery datasource="#this.ds#" name="qPost" result="res">
 			Insert Into mp_proxy_logs (log_type,log_data)
 			Values (<cfqueryparam value="#arguments.logType#" CFSQLType="CF_SQL_INTEGER">, <cfqueryparam value="#arguments.logData#">)
 		</cfquery>
@@ -123,7 +206,7 @@
 	
 	<cffunction name="getPrimaryServer" access="Private" returntype="any" output="no">
 		<cftry>
-			<cfquery datasource="mpds" name="qGetServer">
+			<cfquery datasource="#this.ds#" name="qGetServer">
 				Select	server
 				From	mp_servers
 				Where	type = '1' AND active = '1'
