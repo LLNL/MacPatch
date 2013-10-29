@@ -26,7 +26,7 @@ else
 fi	
 
 # Compile the agent components
-xcodebuild -configuration Release -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target AGENT_BUILD SYMROOT=${BUILDROOT}
+xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target AGENT_BUILD SYMROOT=${BUILDROOT}
 
 # Remove the build and symbol files
 find ${BUILDROOT} -name "*.build" -print | xargs -I{} rm -rf {}

@@ -40,15 +40,24 @@
 
 @implementation MPFileVaultInfo
 
+@synthesize status = _status;
+@synthesize users = _users;
+@synthesize error = _error;
+
 - (id)init
 {
     self = [super init];
-    [self setError:nil];
-    [self setUsers:@"na"];
-    [self setState:-1];
-    [self setStatus:@"na"];
+    if (self)
+    {
+        //[self setError:nil];
+        _error = nil;
 
-    [self refresh];
+        [self setUsers:@"na"];
+        [self setState:-1];
+        [self setStatus:@"na"];
+
+        [self refresh];
+    }
     return self;
 }
 
@@ -58,7 +67,8 @@
         /* earlier than 10.8 system */
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"FileVault Inventory Requires 10.8 and higher." forKey:NSLocalizedDescriptionKey];
-        [self setError:[NSError errorWithDomain:@"myDomain" code:200 userInfo:errorDetail]];
+        //[self setError:[NSError errorWithDomain:@"myDomain" code:200 userInfo:errorDetail]];
+        _error = [NSError errorWithDomain:@"myDomain" code:200 userInfo:errorDetail];
         [self setStatus:@"FileVault Inventory Requires 10.8 and higher."];
         return;
     }
@@ -70,7 +80,8 @@
     } else {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"FileVault Inventory Requires Root Access." forKey:NSLocalizedDescriptionKey];
-        [self setError:[NSError errorWithDomain:@"myDomain" code:100 userInfo:errorDetail]];
+        //[self setError:[NSError errorWithDomain:@"myDomain" code:100 userInfo:errorDetail]];
+        _error = [NSError errorWithDomain:@"myDomain" code:100 userInfo:errorDetail];
         return;
     }
 }

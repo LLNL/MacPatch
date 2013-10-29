@@ -33,7 +33,7 @@
     self = [super init];
     
 	controller = cont;
-    downloadURL = [aURL retain];
+    downloadURL = aURL;
 	isRunning = NO;
     errorCode = -1;
 	
@@ -43,7 +43,6 @@
 - (void)dealloc
 {
     [self stopDownload];
-    [super dealloc];
 }
 
 // Here's where we actually kick off the download.

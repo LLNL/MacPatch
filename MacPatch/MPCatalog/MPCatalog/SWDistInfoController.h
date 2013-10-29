@@ -30,6 +30,6 @@
     NSDictionary *swDistInfoPanelDict;
 }
 
-@property (nonatomic, retain) NSDictionary *swDistInfoPanelDict;
+@property (nonatomic, strong) NSDictionary *swDistInfoPanelDict;
 
 @end

@@ -49,11 +49,11 @@
 {
     if (self = [super init]) 
     {
-        installedImage = [[NSImage imageNamed:@"Installcomplete"] retain];
-        insallingImage = [[NSImage imageNamed:@"running"] retain];
-        errorImage = [[NSImage imageNamed:@"exclamation"] retain];
-        emptyImage = [[NSImage imageNamed:@"empty"] retain];
-        downloadImage = [[NSImage imageNamed:@"blue_down_16"] retain];
+        installedImage = [NSImage imageNamed:@"Installcomplete"];
+        insallingImage = [NSImage imageNamed:@"running"];
+        errorImage = [NSImage imageNamed:@"exclamation"];
+        emptyImage = [NSImage imageNamed:@"empty"];
+        downloadImage = [NSImage imageNamed:@"blue_down_16"];
         
     }
     return self;
@@ -61,12 +61,11 @@
 
 - (void)dealloc 
 {
-    [installedImage release], installedImage = nil;
-    [insallingImage release], insallingImage = nil;
-    [errorImage release], errorImage = nil;
-    [emptyImage release], emptyImage = nil;
-    [downloadImage release], downloadImage = nil;
-    [super dealloc];
+    installedImage = nil;
+    insallingImage = nil;
+    errorImage = nil;
+    emptyImage = nil;
+    downloadImage = nil;
 }
 
 + (Class)transformedValueClass { return [NSImage class]; }
@@ -103,8 +102,8 @@
 {
     if (self = [super init]) 
     {
-        installedImage = [[NSImage imageNamed:@"Installcomplete"] retain];
-        emptyImage = [[NSImage imageNamed:@"empty"] retain];
+        installedImage = [NSImage imageNamed:@"Installcomplete"];
+        emptyImage = [NSImage imageNamed:@"empty"];
         
     }
     return self;
@@ -112,9 +111,8 @@
 
 - (void)dealloc 
 {
-    [installedImage release], installedImage = nil;
-    [emptyImage release], emptyImage = nil;
-    [super dealloc];
+    installedImage = nil;
+    emptyImage = nil;
 }
 
 + (Class)transformedValueClass { return [NSImage class]; }
@@ -140,19 +138,16 @@
 {
     if (self = [super init]) 
     {
-        rebootImage = [[NSImage imageNamed:@"RestartReq"] retain];
-        emptyImage = [[NSImage imageNamed:@"empty"] retain];
+        rebootImage = [NSImage imageNamed:@"RestartReq"];
+        emptyImage = [NSImage imageNamed:@"empty"];
     }
     return self;
 }
 
 - (void)dealloc 
 {
-    [rebootImage release];
     rebootImage = nil;
-    [emptyImage release];
     emptyImage = nil;
-    [super dealloc];
 }
 
 + (Class)transformedValueClass { return [NSImage class]; }
@@ -355,7 +350,8 @@
     if ([d boolForKey:@"enableDebugLogging"])
         [self setLoggingState:[d boolForKey:@"enableDebugLogging"]];
     
-    [self performSelectorInBackground:@selector(populateSoftwareGroupsPopupButton) withObject:nil];    
+    [self performSelectorInBackground:@selector(populateSoftwareGroupsPopupButton) withObject:nil];
+    [self.window display];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
@@ -366,26 +362,12 @@
 
 -(IBAction)windowCloseWillExit:(id)sender
 {
-    //[self setLoggingState:NO];
 	[NSApp terminate:nil];
 }
 
 - (void)dealloc
 {
-    [selectedItems autorelease];
-    [queue autorelease];
-    [tableView autorelease];
-    [arrayController autorelease];
-    [statusTextTitle autorelease];
-    [statusTextStatus autorelease];
-    [progressBar autorelease];
-    [installButton autorelease];
-    [removeButton autorelease];
-    [cancelButton autorelease];
-    [refreshButton autorelease];
-	
     [self cleanup];
-    [super dealloc];
 }
 
 - (IBAction)showRebootPanel:(id)sender
@@ -441,44 +423,44 @@
 
 - (void)populateSoftwareGroupsPopupButton
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [swDistGroupsButton removeAllItems];
+    @autoreleasepool {
+        [swDistGroupsButton removeAllItems];
 
-    NSString *gUrl;
-    if ([_defaults objectForKey:@"SWDistGroupState"]) {
-        gUrl = [NSString stringWithFormat:@"/Services/MPWSControllerCocoa.cfc?method=GetSWDistGroups&state=%@",[[_defaults objectForKey:@"SWDistGroupState"] stringValue]];
-    } else {
-        gUrl = @"/Services/MPWSControllerCocoa.cfc?method=GetSWDistGroups";
-    }
-    
-    NSError *error = nil;
-    NSString *result;
-    MPASINet *asiNet = [[[MPASINet alloc] init] autorelease];
-    result = [asiNet synchronousRequestForURL:gUrl error:&error];
-    if (error) {
-        qlerror(@"%@",[error description]);
-        [swDistGroupsButton addItemWithTitle:[_defaults objectForKey:@"SWDistGroup"]];
-    } else {
-        NSDictionary *j = [result objectFromJSONString];
-        
-        if ([[j objectForKey:@"errorno"] isEqualToString:@"0"]) {
-            NSArray *i = [[j objectForKey:@"result"] objectFromJSONString];
-            [self setSwDistGroupsArray:i];
-            for (NSDictionary *n in i) {
-                [swDistGroupsButton addItemWithTitle:[n objectForKey:@"Name"]];
-            }
-            
-            if ([[swDistGroupsButton itemTitles] containsObject:[_defaults objectForKey:@"SWDistGroup"]]) {
-                [swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:[_defaults objectForKey:@"SWDistGroup"]]];
-            }
-            
+        NSString *gUrl;
+        if ([_defaults objectForKey:@"SWDistGroupState"]) {
+            gUrl = [NSString stringWithFormat:@"/Services/MPWSControllerCocoa.cfc?method=GetSWDistGroups&state=%@",[[_defaults objectForKey:@"SWDistGroupState"] stringValue]];
         } else {
-            [swDistGroupsButton addItemWithTitle:[_defaults objectForKey:@"SWDistGroup"]];
+            gUrl = @"/Services/MPWSControllerCocoa.cfc?method=GetSWDistGroups";
         }
+        
+        NSError *error = nil;
+        NSString *result;
+        MPASINet *asiNet = [[MPASINet alloc] init];
+        result = [asiNet synchronousRequestForURL:gUrl error:&error];
+        if (error) {
+            qlerror(@"%@",[error description]);
+            [swDistGroupsButton addItemWithTitle:[_defaults objectForKey:@"SWDistGroup"]];
+        } else {
+            NSDictionary *j = [result objectFromJSONString];
+            
+            if ([[j objectForKey:@"errorno"] isEqualToString:@"0"]) {
+                NSArray *i = [[j objectForKey:@"result"] objectFromJSONString];
+                [self setSwDistGroupsArray:i];
+                for (NSDictionary *n in i) {
+                    [swDistGroupsButton addItemWithTitle:[n objectForKey:@"Name"]];
+                }
+                
+                if ([[swDistGroupsButton itemTitles] containsObject:[_defaults objectForKey:@"SWDistGroup"]]) {
+                    [swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:[_defaults objectForKey:@"SWDistGroup"]]];
+                }
+                
+            } else {
+                [swDistGroupsButton addItemWithTitle:[_defaults objectForKey:@"SWDistGroup"]];
+            }
+        }
+        
+        [swDistGroupsButton display];
     }
-    
-    [swDistGroupsButton display];
-    [pool drain];
 }
 
 - (IBAction)popUpChanged:(id)sender
@@ -610,7 +592,6 @@
             [progressBar stopAnimation:nil];
             [progressBar display];
         }
-        [downloadTask release];
         
     }
     
@@ -622,8 +603,8 @@
     if (_needsReboot >= 1) {
         [self showRebootPanel:nil];
     }
-    
-    [mpd release];
+
+    [self.window display];
 }
 
 #pragma mark Helpers Methods
@@ -658,7 +639,6 @@
         // Check for Mandatory apps
         if ([[d objectForKey:@"sw_task_type"] containsString:@"m" ignoringCase:YES] == NO) {
             logit(lcl_vInfo,@"%@ is not a mandatory application.",[d objectForKey:@"name"]);
-            [d release];
             continue;
         }
         
@@ -669,7 +649,6 @@
         
         if ([now timeIntervalSince1970] < [startDate timeIntervalSince1970]) {
             // Software is not ready for deployment
-            [d release];
             continue;
         }
         
@@ -680,7 +659,6 @@
             {
                 logit(lcl_vInfo,@"Optional/Mandatory date has been reached for install.");
             } else {
-                [d release];
                 continue;
             }
         }
@@ -710,11 +688,9 @@
             logit(lcl_vInfo,@"OSVersion=FALSE: %@",[_SoftwareCriteria objectForKey:@"os_vers"]);
             c++;
         }
-        [mpos release];
         mpos = nil;
         // Did not pass the criteria check
         if (c >= 1) {
-            [d release];
             continue;
         }
         
@@ -727,7 +703,6 @@
             logit(lcl_vInfo,@"%@ is already installed.",[d objectForKey:@"name"]);
         }
         
-        [d release];
         d = nil;
     }
     
@@ -736,7 +711,6 @@
         logit(lcl_vInfo,@"Approved Mandatory Software task: %@",[x objectForKey:@"name"]);
     }
     NSArray *results = [NSArray arrayWithArray:_MandatorySoftware];
-    [_MandatorySoftware release];
     return results;
 }
 
@@ -764,7 +738,6 @@
     }
     [_data addObject:installData];
     [_data writeToFile:installFile atomically:YES];
-    [installData release];
     return YES;
 }
 
@@ -793,137 +766,136 @@
 
 - (void)installSoftwareThread
 {
-    NSAutoreleasePool *iPool = [[NSAutoreleasePool alloc] init];
-    [self setTableColEdit:NO];
-    [installButton setEnabled:NO];
-    [cancelButton setEnabled:YES];
-    [refreshButton setEnabled:NO];
-    [swDistGroupsButton setEnabled:NO];
-    [self setCancelInstalls:NO];
-    
-    MPDiskUtil      *mpd                = [[MPDiskUtil alloc] init];
-    NSMutableArray  *swToInstallArray   = [NSMutableArray arrayWithArray:[arrayController arrangedObjects]];
-    
-    int _needsReboot = 0;
-    for (NSDictionary *d in swToInstallArray) 
-    {
-        if (cancelInstalls == YES) 
-        {
-            [self setCancelInstalls:NO];
-            break;
-        }
+    @autoreleasepool {
+        [self setTableColEdit:NO];
+        [installButton setEnabled:NO];
+        [cancelButton setEnabled:YES];
+        [refreshButton setEnabled:NO];
+        [swDistGroupsButton setEnabled:NO];
+        [self setCancelInstalls:NO];
         
-        if ([d objectForKey:@"selected"]) {
-            if ([[d objectForKey:@"selected"] intValue] == 1) {
-                
-                [statusTextStatus setStringValue:[NSString stringWithFormat:@"Installing %@ ...",[d objectForKey:@"name"]]];
-                logit(lcl_vInfo,@"Installing %@ (%@).",[d objectForKey:@"name"],[d objectForKey:@"id"]);
-                logit(lcl_vInfo,@"INFO: %@",[d valueForKeyPath:@"Software.sw_type"]);
-                
-                if ([self hasCanceledInstall:d]) break;
-                
-                // Create Path to download software to
-                NSString *swLoc = NULL;
-                NSString *swLocBase = [[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"sw"];
-                swLoc = [NSString pathWithComponents:[NSArray arrayWithObjects:swLocBase, [d objectForKey:@"id"], nil]];
-                
-                // Verify Disk space requirements before downloading and installing
-                NSScanner* scanner = [NSScanner scannerWithString:[d valueForKeyPath:@"Software.sw_size"]];
-                long long stringToLong;
-                if(![scanner scanLongLong:&stringToLong]) {
-                    logit(lcl_vError,@"Unable to convert size %@",[d valueForKeyPath:@"Software.sw_size"]);
-                    [self postInstallResults:99 resultText:@"Unable to calculate size." task:d];
-                    [self updateArrayControllerWithDictionary:d forActionType:@"error"];
-                    continue;
-                }
-                
-                if ([mpd diskHasEnoughSpaceForPackage:stringToLong] == NO) 
-                {
-                    logit(lcl_vError,@"This system does not have enough free disk space to install the following software %@",[d objectForKey:@"name"]);
-                    [self postInstallResults:99 resultText:@"Not enough free disk space." task:d];
-                    [self updateArrayControllerWithDictionary:d forActionType:@"error"];
-                    continue;
-                }
-                
-                // Create Download URL
-                [mpServerConnection refreshServerObject];
-                NSString *_url = [NSString stringWithFormat:@"%@://%@:%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,mpServerConnection.HTTP_HOST_PORT,[d valueForKeyPath:@"Software.sw_url"]];
-                logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
-                
-                [progressBar setDoubleValue:0.0];
-                [progressBar setIndeterminate:NO];
-                
-                downloadTask = [[MPDLWrapper alloc] initWithController:self url:[NSURL URLWithString:[_url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
-                [self updateArrayControllerWithDictionary:d forActionType:@"download"];
-                [downloadTask startDownloadAndSpecifyDownloadDirectory:swLoc];
-                
-                if ([self hasCanceledInstall:d]) break;
-                
-                logit(lcl_vDebug,@"returnCode: %d",[downloadTask returnCode]);
-                // Software was downloaded
-                if ([downloadTask returnCode] == 0) 
-                {
-                    logit(lcl_vDebug,@"Begin install for (%@).",[d objectForKey:@"name"]);
-                    int result = -1;
-                    int pResult = -1;
-
-                    [progressBar setDoubleValue:0.0];
-                    [progressBar setIndeterminate:NO];
-                    [progressBar display];
+        MPDiskUtil      *mpd                = [[MPDiskUtil alloc] init];
+        NSMutableArray  *swToInstallArray   = [NSMutableArray arrayWithArray:[arrayController arrangedObjects]];
+        
+        int _needsReboot = 0;
+        for (NSDictionary *d in swToInstallArray) 
+        {
+            if (cancelInstalls == YES) 
+            {
+                [self setCancelInstalls:NO];
+                break;
+            }
+            
+            if ([d objectForKey:@"selected"]) {
+                if ([[d objectForKey:@"selected"] intValue] == 1) {
+                    
+                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Installing %@ ...",[d objectForKey:@"name"]]];
+                    logit(lcl_vInfo,@"Installing %@ (%@).",[d objectForKey:@"name"],[d objectForKey:@"id"]);
+                    logit(lcl_vInfo,@"INFO: %@",[d valueForKeyPath:@"Software.sw_type"]);
                     
                     if ([self hasCanceledInstall:d]) break;
-                    [self updateArrayControllerWithDictionary:d forActionType:@"install"];
-                    result = [self installSoftwareViaProxy:d];
                     
-                    if (result == 0) 
-                    {
-                        // Software has been installed, now flag for reboot
-                        if ([[d valueForKeyPath:@"Software.reboot"] isEqualTo:@"1"]) {
-                            _needsReboot++;
-                        }
-                        if ([[d valueForKeyPath:@"Software.auto_patch"] isEqualTo:@"1"]) {
-                            
-                        	[progressBar setIndeterminate:YES];
-                            [progressBar startAnimation:nil];
-                            [progressBar display];
-                            
-                            [statusTextStatus setStringValue:@"Auto Patching is enabled, begin patching..."];
-                            [statusTextStatus display];
-                            
-                            pResult = [self patchSoftwareViaProxy:d];
-                            [NSThread sleepForTimeInterval:5];
-                        }
-                        
-                        [statusTextStatus setStringValue:[NSString stringWithFormat:@"Installing %@ completed.",[d objectForKey:@"name"]]];
-                        [statusTextStatus display];
-                        
-                        [self installSoftwareItem:d];
-                        [self updateArrayControllerWithDictionary:d];
-                    } else {
+                    // Create Path to download software to
+                    NSString *swLoc = NULL;
+                    NSString *swLocBase = [[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"sw"];
+                    swLoc = [NSString pathWithComponents:[NSArray arrayWithObjects:swLocBase, [d objectForKey:@"id"], nil]];
+                    
+                    // Verify Disk space requirements before downloading and installing
+                    NSScanner* scanner = [NSScanner scannerWithString:[d valueForKeyPath:@"Software.sw_size"]];
+                    long long stringToLong;
+                    if(![scanner scanLongLong:&stringToLong]) {
+                        logit(lcl_vError,@"Unable to convert size %@",[d valueForKeyPath:@"Software.sw_size"]);
+                        [self postInstallResults:99 resultText:@"Unable to calculate size." task:d];
                         [self updateArrayControllerWithDictionary:d forActionType:@"error"];
+                        continue;
                     }
                     
-                    [self postInstallResults:result resultText:@"" task:d];
-                    [progressBar stopAnimation:nil];
-                    [progressBar display];
+                    if ([mpd diskHasEnoughSpaceForPackage:stringToLong] == NO) 
+                    {
+                        logit(lcl_vError,@"This system does not have enough free disk space to install the following software %@",[d objectForKey:@"name"]);
+                        [self postInstallResults:99 resultText:@"Not enough free disk space." task:d];
+                        [self updateArrayControllerWithDictionary:d forActionType:@"error"];
+                        continue;
+                    }
+                    
+                    // Create Download URL
+                    [mpServerConnection refreshServerObject];
+                    NSString *_url = [NSString stringWithFormat:@"%@://%@:%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,mpServerConnection.HTTP_HOST_PORT,[d valueForKeyPath:@"Software.sw_url"]];
+                    logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
+                    
+                    [progressBar setDoubleValue:0.0];
+                    [progressBar setIndeterminate:NO];
+                    
+                    downloadTask = [[MPDLWrapper alloc] initWithController:self url:[NSURL URLWithString:[_url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+                    [self updateArrayControllerWithDictionary:d forActionType:@"download"];
+                    [downloadTask startDownloadAndSpecifyDownloadDirectory:swLoc];
+                    
+                    if ([self hasCanceledInstall:d]) break;
+                    
+                    logit(lcl_vDebug,@"returnCode: %d",[downloadTask returnCode]);
+                    // Software was downloaded
+                    if ([downloadTask returnCode] == 0) 
+                    {
+                        logit(lcl_vDebug,@"Begin install for (%@).",[d objectForKey:@"name"]);
+                        int result = -1;
+                        int pResult = -1;
+
+                        [progressBar setDoubleValue:0.0];
+                        [progressBar setIndeterminate:NO];
+                        [progressBar display];
+                        
+                        if ([self hasCanceledInstall:d]) break;
+                        [self updateArrayControllerWithDictionary:d forActionType:@"install"];
+                        result = [self installSoftwareViaProxy:d];
+                        
+                        if (result == 0) 
+                        {
+                            // Software has been installed, now flag for reboot
+                            if ([[d valueForKeyPath:@"Software.reboot"] isEqualTo:@"1"]) {
+                                _needsReboot++;
+                            }
+                            if ([[d valueForKeyPath:@"Software.auto_patch"] isEqualTo:@"1"]) {
+                                
+                            	[progressBar setIndeterminate:YES];
+                                [progressBar startAnimation:nil];
+                                [progressBar display];
+                                
+                                [statusTextStatus setStringValue:@"Auto Patching is enabled, begin patching..."];
+                                [statusTextStatus display];
+                                
+                                pResult = [self patchSoftwareViaProxy:d];
+                                [NSThread sleepForTimeInterval:5];
+                            }
+                            
+                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Installing %@ completed.",[d objectForKey:@"name"]]];
+                            [statusTextStatus display];
+                            
+                            [self installSoftwareItem:d];
+                            [self updateArrayControllerWithDictionary:d];
+                        } else {
+                            [self updateArrayControllerWithDictionary:d forActionType:@"error"];
+                        }
+                        
+                        [self postInstallResults:result resultText:@"" task:d];
+                        [progressBar stopAnimation:nil];
+                        [progressBar display];
+                    }
                 }
-                [downloadTask release];
             }
+        }  
+        [installButton setEnabled:YES];
+        [refreshButton setEnabled:YES];
+        [cancelButton setEnabled:NO];
+        [swDistGroupsButton setEnabled:YES];
+        [self setTableColEdit:YES];
+        
+        // Apps were installed that require a reboot
+        if (_needsReboot >= 1) {
+            [self showRebootPanel:nil];
         }
-    }  
-    [installButton setEnabled:YES];
-    [refreshButton setEnabled:YES];
-    [cancelButton setEnabled:NO];
-    [swDistGroupsButton setEnabled:YES];
-    [self setTableColEdit:YES];
-    
-    // Apps were installed that require a reboot
-    if (_needsReboot >= 1) {
-        [self showRebootPanel:nil];
+
+        [self.window setFrame:self.window.frame display:YES animate:YES];
     }
-    
-    [mpd release];
-    [iPool release];
 }
 
 - (BOOL)installSoftwareItem:(NSDictionary *)dict
@@ -950,7 +922,7 @@
     }
     [_data addObject:installData];
     [_data writeToFile:installFile atomically:YES];
-    [installData autorelease];
+
     return YES;
 }
 
@@ -977,56 +949,55 @@
         // OK clicked, delete the record
         [self performSelectorInBackground:@selector(removeSoftwareThread) withObject:nil];
     }
-    [alert release];
     
     
 }
 
 - (void)removeSoftwareThread
 {
-    NSAutoreleasePool *iPool = [[NSAutoreleasePool alloc] init];
-    [refreshButton setEnabled:NO];
-    [swDistGroupsButton setEnabled:NO];
-    [self setTableColEdit:NO];
-    
-    [progressBar setIndeterminate:YES];
-    [progressBar startAnimation:nil];
-    [progressBar display];
-    
-    int _result = 0;
-    
-    NSString *uninstallScriptEnc, *uninstallScript;
-    
+    @autoreleasepool {
+        [refreshButton setEnabled:NO];
+        [swDistGroupsButton setEnabled:NO];
+        [self setTableColEdit:NO];
+        
+        [progressBar setIndeterminate:YES];
+        [progressBar startAnimation:nil];
+        [progressBar display];
+        
+        int _result = 0;
+        
+        NSString *uninstallScriptEnc, *uninstallScript;
+        
 	for (NSDictionary *d in [arrayController arrangedObjects]) {
-        if ([d objectForKey:@"selected"] && [d objectForKey:@"installed"]) {
-            if (([[d objectForKey:@"selected"] intValue] == 1) && ([[d objectForKey:@"installed"] intValue] == 1)) {
-                [statusTextStatus setStringValue:[NSString stringWithFormat:@"Uninstalling %@ ...",[d objectForKey:@"name"]]];
-                uninstallScriptEnc = [d valueForKeyPath:@"Software.sw_uninstall"];
-                if ([uninstallScriptEnc length] > 0) {
-                    uninstallScript = [uninstallScriptEnc decodeBase64WithNewLinesReturnString:NO];
-                    logit(lcl_vDebug,@"Remove Script:\n%@",uninstallScript);
-                    _result = [self removeSoftwareViaProxy:uninstallScript];   
+            if ([d objectForKey:@"selected"] && [d objectForKey:@"installed"]) {
+                if (([[d objectForKey:@"selected"] intValue] == 1) && ([[d objectForKey:@"installed"] intValue] == 1)) {
+                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Uninstalling %@ ...",[d objectForKey:@"name"]]];
+                    uninstallScriptEnc = [d valueForKeyPath:@"Software.sw_uninstall"];
+                    if ([uninstallScriptEnc length] > 0) {
+                        uninstallScript = [uninstallScriptEnc decodeBase64WithNewLinesReturnString:NO];
+                        logit(lcl_vDebug,@"Remove Script:\n%@",uninstallScript);
+                        _result = [self removeSoftwareViaProxy:uninstallScript];   
+                    }
+                    
+                    if (_result == 0) {
+                        [self removeSoftwareInstallStatus:[d objectForKey:@"id"]];
+                        [self updateArrayControllerWithDictionary:d forActionType:@"remove"];
+                        [statusTextStatus setStringValue:[NSString stringWithFormat:@"Uninstall completed."]];
+                    } else {
+                        [self updateArrayControllerWithDictionary:d forActionType:@"error"];
+                        [statusTextStatus setStringValue:[NSString stringWithFormat:@"Error uninstalling."]];
+                    }
+                    [self postUnInstallResults:_result resultText:@"" task:d];
                 }
-                
-                if (_result == 0) {
-                    [self removeSoftwareInstallStatus:[d objectForKey:@"id"]];
-                    [self updateArrayControllerWithDictionary:d forActionType:@"remove"];
-                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Uninstall completed."]];
-                } else {
-                    [self updateArrayControllerWithDictionary:d forActionType:@"error"];
-                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Error uninstalling."]];
-                }
-                [self postUnInstallResults:_result resultText:@"" task:d];
             }
         }
+        
+        [progressBar stopAnimation:nil];
+        [progressBar display];
+        [refreshButton setEnabled:YES];
+        [swDistGroupsButton setEnabled:YES];
+        [self setTableColEdit:YES];
     }
-    
-    [progressBar stopAnimation:nil];
-    [progressBar display];
-    [refreshButton setEnabled:YES];
-    [swDistGroupsButton setEnabled:YES];
-    [self setTableColEdit:YES];
-    [iPool release];
 }
 
 #pragma mark MPDLWrapper Callbacks
@@ -1120,7 +1091,8 @@
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:a];	
 		[tableView reloadData];
-		[tableView deselectAll:self];
+		//[tableView deselectAll:self];
+        [tableView display];
 	}
 }
 
@@ -1177,9 +1149,8 @@
     
     [arrayController addObjects:[a copy]];	
     [tableView reloadData];
-    [tableView deselectAll:self];
+    //[tableView deselectAll:self];
     [tableView display];
-    [a release];
     
     [self checkboxChanged:nil];
 }
@@ -1209,36 +1180,34 @@
 
 - (void)downloadSoftwareContent
 {
-    NSAutoreleasePool *iPool = [[NSAutoreleasePool alloc] init];
-    
-    [progressBar setHidden:NO];
-    [progressBar setIndeterminate:YES];
-    [progressBar startAnimation:self];
-    [progressBar display];
-    
-    [statusTextStatus setStringValue:@"Downloading Software Distribution Content..."];
-    [NSThread sleepForTimeInterval:2];
-    
-    MPSWTasks *sw = [[MPSWTasks alloc] init];
-    [sw setGroupName:[[swDistGroupsButton selectedItem] title]];
-    [self setSwDistCurrentTitle:[[swDistGroupsButton selectedItem] title]];
-    NSError *err = nil;
-    NSDictionary *_tasks = [sw getSWTasksForGroupFromServer:&err];
-    window.title = [NSString stringWithFormat:@"MP - Software Catalog (%@)",[sw groupName]];
-    
-    if (err) {
-        [statusTextStatus setStringValue:[NSString stringWithFormat:@"%@",[[err userInfo] objectForKey:@"NSLocalizedDescription"]]];
-    } else {
-        [self filterSoftwareContent:[_tasks objectForKey:@"Tasks"]];
-        [statusTextStatus setStringValue:@"Done"];
+    @autoreleasepool
+    {
+        [progressBar setHidden:NO];
+        [progressBar setIndeterminate:YES];
+        [progressBar startAnimation:self];
+        [progressBar display];
+        
+        [statusTextStatus setStringValue:@"Downloading Software Distribution Content..."];
+        [NSThread sleepForTimeInterval:2];
+        
+        MPSWTasks *sw = [[MPSWTasks alloc] init];
+        [sw setGroupName:[[swDistGroupsButton selectedItem] title]];
+        [self setSwDistCurrentTitle:[[swDistGroupsButton selectedItem] title]];
+        NSError *err = nil;
+        NSDictionary *_tasks = [sw getSWTasksForGroupFromServer:&err];
+        window.title = [NSString stringWithFormat:@"MP - Software Catalog (%@)",[sw groupName]];
+        
+        if (err) {
+            [statusTextStatus setStringValue:[NSString stringWithFormat:@"%@",[[err userInfo] objectForKey:@"NSLocalizedDescription"]]];
+        } else {
+            [self filterSoftwareContent:[_tasks objectForKey:@"Tasks"]];
+            [statusTextStatus setStringValue:@"Done"];
+        }
+        
+        [progressBar stopAnimation:nil];
+        
+        [self checkAndInstallMandatoryApplications];
     }
-    
-    [sw release];
-    [progressBar stopAnimation:nil];
-    
-    [self checkAndInstallMandatoryApplications];
-    
-    [iPool release];
 }
 
 - (void)filterSoftwareContent:(NSArray *)content
@@ -1292,11 +1261,9 @@
                 logit(lcl_vDebug,@"OSVersion=FALSE: %@",[_SoftwareCriteria objectForKey:@"os_vers"]);
                 c++;
             }
-            [mpos release];
             mpos = nil;
             // Did not pass the criteria check
             if (c >= 1) {
-            	[d release];
                 continue;
             }
             // Check Start Date
@@ -1340,7 +1307,6 @@
             }
             
             [_SoftwareArray addObject:d];
-            [d release];
             d = nil;
         }
         
@@ -1371,7 +1337,6 @@
                     }
                 }
                 
-                [d release];
                 d = nil;
             }
             
@@ -1385,33 +1350,32 @@
 		[arrayController addObjects:_SoftwareArray];	
 	}
     [tableView reloadData];
-    [tableView deselectAll:self];
+    //[tableView deselectAll:self];
+    [tableView display];
     
     if ([_MandatorySoftware count] >= 1) {
         logit(lcl_vDebug,@"Need to install mandatory apps");
     }
     
-    [_MandatorySoftware release];
-    [_SoftwareArray release];
 }
 
 #pragma mark WebService methods
 - (void)postInstallResults:(int)resultNo resultText:(NSString *)resultString task:(NSDictionary *)taskDict
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    MPSWTasks *swt = [[[MPSWTasks alloc] init] autorelease];
-    int result = -1;
-    result = [swt postInstallResults:resultNo resultText:resultString task:taskDict];
-    [pool release];
+    @autoreleasepool {
+        MPSWTasks *swt = [[MPSWTasks alloc] init];
+        int result = -1;
+        result = [swt postInstallResults:resultNo resultText:resultString task:taskDict];
+    }
 }
 
 - (void)postUnInstallResults:(int)resultNo resultText:(NSString *)resultString task:(NSDictionary *)taskDict
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    MPSWTasks *swt = [[[MPSWTasks alloc] init] autorelease];
-    int result = -1;
-    result = [swt postUnInstallResults:resultNo resultText:resultString task:taskDict];
-    [pool release];
+    @autoreleasepool {
+        MPSWTasks *swt = [[MPSWTasks alloc] init];
+        int result = -1;
+        result = [swt postUnInstallResults:resultNo resultText:resultString task:taskDict];
+    }
 }
 
 #pragma mark Misc
@@ -1599,7 +1563,7 @@ done:
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
-        proxy = [[connection rootProxy] retain];
+        proxy = [connection rootProxy];
         
         [[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(connectionDown:)
@@ -1625,7 +1589,6 @@ done:
     {
         NSConnection *connection = [proxy connectionForProxy];
         [connection invalidate];
-        [proxy release];
         proxy = nil;
     }
 	
