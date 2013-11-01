@@ -251,7 +251,7 @@
                                     }
                                 }
                                 [tmpDict setObject:@"Apple" forKey:@"type"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
+                                [tmpDict setObject:[[approvedApplePatches objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
                                 logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
                                 [approvedUpdatesArray addObject:tmpDict];
                                 [tmpDict release];
@@ -280,8 +280,11 @@
             customPatch	= [customPatchesArray objectAtIndex:i];
             for (int x=0;x < [approvedCustomPatches count]; x++) {
                 approvedPatch	= [approvedCustomPatches objectAtIndex:x];
-                if ([[customPatch objectForKey:@"patch_id"] isEqualTo:[approvedPatch objectForKey:@"patch_id"]]) {
+                if ([[customPatch objectForKey:@"patch_id"] isEqualTo:[approvedPatch objectForKey:@"patch_id"]])
+                {
                     logit(lcl_vInfo,@"Patch %@ approved for update.",[customPatch objectForKey:@"description"]);
+                    logit(lcl_vDebug,@"Approved [customPatch]: %@",customPatch);
+                    logit(lcl_vDebug,@"Approved [approvedPatch]: %@",approvedPatch);
                     tmpDict = [[NSMutableDictionary alloc] init];
                     [tmpDict setObject:[customPatch objectForKey:@"patch"] forKey:@"patch"];
                     [tmpDict setObject:[customPatch objectForKey:@"description"] forKey:@"description"];

@@ -2142,7 +2142,7 @@
 								</object>
 								<object class="NSScroller" id="11178026">
 									<reference key="NSNextResponder" ref="515099005"/>
-									<int key="NSvFlags">-2147483392</int>
+									<int key="NSvFlags">256</int>
 									<string key="NSFrame">{{1, 319}, {799.99999999999989, 16}}</string>
 									<reference key="NSSuperview" ref="515099005"/>
 									<reference key="NSWindow"/>
@@ -2168,7 +2168,7 @@
 									<int key="NScvFlags">4</int>
 								</object>
 							</array>
-							<string key="NSFrame">{{-1, 65}, {802, 336}}</string>
+							<string key="NSFrame">{{-1, 65}, {801.99999999999989, 336}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="939235302"/>
@@ -2251,7 +2251,6 @@
 							<string key="NSFrame">{{75, 20}, {700, 12}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<int key="NSpiFlags">24842</int>
 							<double key="NSMaxValue">100</double>
 						</object>
