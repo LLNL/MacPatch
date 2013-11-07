@@ -640,7 +640,7 @@ done:
 	[spStatusText setStringValue:@""];
 	if ([[arrayController arrangedObjects] count] >= 1) {
 		[arrayController removeObjects:[arrayController arrangedObjects]];
-		[tableView reloadData];
+		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	}
 	
 	[window	makeKeyAndOrderFront:sender];
@@ -687,7 +687,7 @@ done:
     NSError *customScanError = nil;
     
 	[arrayController removeObjects:[arrayController arrangedObjects]];
-	[tableView reloadData];
+	[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	
 	[spUpdateButton setEnabled:NO];
 	[spStatusProgress startAnimation:self];
@@ -941,8 +941,7 @@ done:
         
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:approvedUpdatesArray];	
-		[tableView reloadData];
-		[tableView deselectAll:self];
+		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	}
 	
 done:	
@@ -1053,7 +1052,6 @@ done:
 					
 					// Update table view to show whats installing
 					[self updateTableAndArrayController:i status:0];
-					[tableView reloadData];
 					
 					// We have a currPatchToInstallDict to work with
 					logit(lcl_vInfo,@"Start install for patch %@ from %@",[currPatchToInstallDict objectForKey:@"url"],[patch objectForKey:@"patch"]);
@@ -1074,7 +1072,6 @@ done:
 							[spStatusText display];
 							
 							[self updateTableAndArrayController:i status:2];
-							[tableView reloadData];
 							break;
 						}
 						[spStatusText setStringValue:[NSString stringWithFormat:@"Patch download completed."]];
@@ -1084,7 +1081,6 @@ done:
 					@catch (NSException *e) {
 						logit(lcl_vError,@"%@", e);
 						[self updateTableAndArrayController:i status:2];
-						[tableView reloadData];
 						break;
 					}
 					
@@ -1103,7 +1099,6 @@ done:
 						[spStatusText display];
 						logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
 						[self updateTableAndArrayController:i status:2];
-						[tableView reloadData];
 						continue;
 					}
 					
@@ -1119,7 +1114,6 @@ done:
 						[spStatusText display];
 						logit(lcl_vError,@"Error decompressing a patch, skipping %@. Err Message:%@",[patch objectForKey:@"patch"],[err localizedDescription]);
 						[self updateTableAndArrayController:i status:2];
-						[tableView reloadData];
 						break;
 					}
 					[spStatusText setStringValue:[NSString stringWithFormat:@"Patch has been uncompressed."]];
@@ -1137,7 +1131,6 @@ done:
 						{
 							logit(lcl_vError,@"Error (%d) running pre-install script.",(int)installResult);
 							[self updateTableAndArrayController:i status:2];
-							[tableView reloadData];
 							break;
 						}
 					}
@@ -1164,7 +1157,6 @@ done:
 								[spStatusText display];
 								logit(lcl_vError,@"Error installing package, error code %d.",installResult);
 								[self updateTableAndArrayController:i status:2];
-								[tableView reloadData];
 								hadErr = YES;
 								break;
 							} else {
@@ -1180,7 +1172,6 @@ done:
 						logit(lcl_vError,@"%@", e);
 						logit(lcl_vError,@"Error attempting to install patch, skipping %@. Err Message:%@",[patch objectForKey:@"patch"],[err localizedDescription]);
 						[self updateTableAndArrayController:i status:2];
-						[tableView reloadData];
 						break;
 					}
 					if (hadErr) {
@@ -1213,7 +1204,6 @@ done:
 				    [spStatusText display];	 
                     
 					[self updateTableAndArrayController:i status:1];
-					[tableView reloadData];
 					
 				} // End patchArray To install
 			} else if ([[patch objectForKey:@"type"] isEqualTo:@"Apple"]) {
@@ -1228,9 +1218,6 @@ done:
 				
 				// Update the table view to show we are in the install process
 				[self updateTableAndArrayController:i status:0];
-				[tableView reloadData];
-				
-				
 				
 				if ([[patch objectForKey:@"hasCriteria"] boolValue] == NO || ![patch objectForKey:@"hasCriteria"]) {
 					
@@ -1308,7 +1295,6 @@ done:
 					[spStatusText display];	 
 					logit(lcl_vError,@"Error installing update, error code %d.",installResult);
 					[self updateTableAndArrayController:i status:2];
-					[tableView reloadData];
 					continue;
 				} else {
 					[spStatusText setStringValue:[NSString stringWithFormat:@"%@ was installed successfully.",[patch objectForKey:@"patch"]]];
@@ -1327,7 +1313,6 @@ done:
 					[spStatusText display];	 
 					
 					[self updateTableAndArrayController:i status:1];
-					[tableView reloadData];
 				}
 			} else {
 				continue;
@@ -1337,7 +1322,6 @@ done:
 			logit(lcl_vInfo,@"%@(%@) requires a reboot, this patch will be installed on logout.",[patch objectForKey:@"patch"],[patch objectForKey:@"version"]);
 			launchRebootWindow++;
 			[self updateTableAndArrayController:i status:3];
-			[tableView reloadData];
 			continue;
 		}
 	} //End patchesToInstallArray For Loop
@@ -1345,7 +1329,7 @@ done:
 	[spStatusText setStringValue:@"Completed."];
 	[spScanAndPatchButton setEnabled:YES];
 	[spStatusProgress stopAnimation:nil];
-	[tableView reloadData];
+    [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	
 	// Open the Reboot App
 	if (launchRebootWindow > 0) {
@@ -1378,7 +1362,6 @@ done:
 	NSPredicate		*selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
 	NSMutableArray	*patches				  = [NSMutableArray arrayWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
 	
-	//NSMutableArray *patches = [NSMutableArray arrayWithArray:[arrayController arrangedObjects]];
 	NSMutableDictionary *patch = [[NSMutableDictionary alloc] initWithDictionary:[patches objectAtIndex:idx]];
 	if (aStatusImage == 0) {
 		[patch setObject:[NSImage imageNamed:@"NSRemoveTemplate"] forKey:@"statusImage"];
@@ -1394,9 +1377,8 @@ done:
 	}
 	[patches replaceObjectAtIndex:idx withObject:patch];
 	[arrayController setContent:patches];
-	[tableView deselectAll:nil];
-	[tableView reloadData];
-	
+	[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+	[tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 	[patch release];
 }
 

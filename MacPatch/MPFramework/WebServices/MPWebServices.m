@@ -40,6 +40,9 @@
 @property (retain) NSString *_osver;
 @property (retain) NSDictionary *_defaults;
 
+- (BOOL)isPatchGroupHashValid:(NSError **)err;
+- (void)writePatchGroupCacheFileData:(NSDictionary *)aData;
+
 @end
 
 #undef  ql_component
@@ -126,6 +129,21 @@ done:
 - (NSDictionary *)getPatchGroupContent:(NSError **)err
 {
 	NSDictionary *jsonResult = nil;
+    // Check to see if local content is up to date
+    NSError *isErr = nil;
+    BOOL isValid = [self isPatchGroupHashValid:&isErr];
+    if (isValid) {
+        NSString *preJData = [self getPatchGroupCacheFileDataForGroup];
+        if ([preJData isEqualToString:@"ERROR"] == NO) {
+            @try {
+                jsonResult = [preJData objectFromJSONString];
+                return jsonResult;
+            }
+            @catch (NSException *exception) {
+                qlerror(@"%@",exception);
+            }
+        }
+    }
 	
 	// Create JSON Request URL
 	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetPatchGroupPatches&PatchGroup=%@",WS_BASE_URI,[_defaults objectForKey:@"PatchGroup"]];
@@ -154,6 +172,9 @@ done:
 	NSDictionary *deserializedData;
     @try {
         deserializedData = [requestData objectFromJSONString];
+        if ([deserializedData objectForKey:@"result"]) {
+            [self writePatchGroupCacheFileData:[deserializedData objectForKey:@"result"]];
+        }
         jsonResult = [[deserializedData objectForKey:@"result"] objectFromJSONString];
     }
     @catch (NSException *exception) {
@@ -165,6 +186,133 @@ done:
 	
 done:
 	return jsonResult;
+}
+
+- (BOOL)isPatchGroupHashValid:(NSError **)err
+{
+    NSDictionary *PatchGroupCacheFileData;
+    NSString *PatchGroupCacheFile = @"/Library/MacPatch/Client/Data/.gov.llnl.mp.patchgroup.data.plist";
+    NSString *PatchGroupHash = @"NA";
+    /*
+     PatchGroup Cache File Layout
+        NSDictionary:
+            PatchGroupName: Default
+                hash: xxxx
+                data: ....
+             PatchGroupName: QA
+                 hash: xxxx
+                 data: ....
+     */
+    if ([[NSFileManager defaultManager] fileExistsAtPath:PatchGroupCacheFile])
+    {
+        PatchGroupCacheFileData = [NSDictionary dictionaryWithContentsOfFile:PatchGroupCacheFile];
+        if (!PatchGroupCacheFileData) {
+            return NO;
+        } else {
+            if ([PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]])
+            {
+                if ([[PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]] objectForKey:@"hash"]) {
+                    PatchGroupHash = [[PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]] objectForKey:@"hash"];
+                }
+            }
+        }
+    }
+
+
+	// Create JSON Request URL
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetIsHashValidForPatchGroup&PatchGroup=%@Hash=%@",WS_BASE_URI,[_defaults objectForKey:@"PatchGroup"],PatchGroupHash];
+	qldebug(@"JSON URL: %@",urlString);
+
+	// Make request
+    NSDictionary    *userInfoDict;
+    NSError         *error = nil;
+    NSString        *requestData;
+    if (asiNet) {
+        [asiNet release], asiNet = nil;
+    }
+	asiNet = [[MPASINet alloc] init];
+    requestData = [asiNet synchronousRequestForURL:urlString error:&error];
+
+    if (error) {
+		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
+		if (err != NULL) {
+            *err = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:[error code]  userInfo:userInfoDict];
+        } else {
+            qlerror(@"%@",[error localizedDescription]);
+        }
+		goto done;
+	}
+
+	NSDictionary *deserializedData;
+    @try
+    {
+        // Result key is 1 = Yes or 0 = No
+        deserializedData = [requestData objectFromJSONString];
+        if ([deserializedData objectForKey:@"result"]) {
+            if ([[deserializedData objectForKey:@"result"] integerValue] == 1) {
+                return YES;
+            } else {
+                return NO;
+            }
+        }
+    }
+    @catch (NSException *exception) {
+        userInfoDict = [NSDictionary dictionaryWithObject:exception forKey:NSLocalizedDescriptionKey];
+        if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:1  userInfo:userInfoDict];
+        qlerror(@"%@",exception);
+        goto done;
+    }
+
+done:
+	return NO;
+}
+
+- (void)writePatchGroupCacheFileData:(NSString *)jData
+{
+    /*
+     PatchGroup Cache File Layout
+     NSDictionary:
+         PatchGroupName: Default
+             hash: xxxx
+             data: ....
+         PatchGroupName: QA
+             hash: xxxx
+             data: ....
+     */
+    MPCrypto *mpc = [[MPCrypto alloc] init];
+    NSMutableDictionary *PatchGroupInfo = [NSMutableDictionary dictionary];
+    NSMutableDictionary *PatchGroupCacheFileData = [NSMutableDictionary dictionary];
+    NSString *PatchGroupCacheFile = @"/Library/MacPatch/Client/Data/.gov.llnl.mp.patchgroup.data.plist";
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:PatchGroupCacheFile])
+    {
+        PatchGroupCacheFileData = [NSMutableDictionary dictionaryWithContentsOfFile:PatchGroupCacheFile];
+    }
+
+    [PatchGroupInfo setObject:[mpc getHashFromStringForType:jData type:@"MD5"] forKey:@"hash"];
+    [PatchGroupInfo setObject:jData forKey:@"data"];
+    [PatchGroupCacheFileData setObject:PatchGroupInfo forKey:[_defaults objectForKey:@"PatchGroup"]];
+    [PatchGroupCacheFileData writeToFile:PatchGroupCacheFile atomically:YES];
+}
+
+- (NSString *)getPatchGroupCacheFileDataForGroup
+{
+    NSString *result = @"ERROR";
+    NSDictionary *PatchGroupCacheFileData;
+    NSString *PatchGroupCacheFile = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"/Data/.gov.llnl.mp.patchgroup.data.plist"];
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:PatchGroupCacheFile])
+    {
+        PatchGroupCacheFileData = [NSMutableDictionary dictionaryWithContentsOfFile:PatchGroupCacheFile];
+        if ([PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]]) {
+            NSDictionary *pInfo = [PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]];
+            if ([pInfo objectForKey:@"data"]) {
+                result = [pInfo objectForKey:@"data"];
+            }
+        }
+    }
+
+    return result;
 }
 
 #define appleScanResults    0

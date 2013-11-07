@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-#define APPVERSION "2.0"
+#define APPVERSION "2.1.0"
 
 void usage(void);
 

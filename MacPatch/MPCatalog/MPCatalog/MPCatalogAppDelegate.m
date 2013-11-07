@@ -1090,9 +1090,8 @@
     if (a && [a count] > 0) {
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:a];	
-		[tableView reloadData];
-		//[tableView deselectAll:self];
-        [tableView display];
+        [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        [tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 	}
 }
 
@@ -1148,10 +1147,8 @@
     }
     
     [arrayController addObjects:[a copy]];	
-    [tableView reloadData];
-    //[tableView deselectAll:self];
-    [tableView display];
-    
+    [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
     [self checkboxChanged:nil];
 }
 
@@ -1349,9 +1346,8 @@
     {	
 		[arrayController addObjects:_SoftwareArray];	
 	}
-    [tableView reloadData];
-    //[tableView deselectAll:self];
-    [tableView display];
+    [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
     
     if ([_MandatorySoftware count] >= 1) {
         logit(lcl_vDebug,@"Need to install mandatory apps");

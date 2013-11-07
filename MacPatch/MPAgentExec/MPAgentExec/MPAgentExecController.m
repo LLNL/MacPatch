@@ -861,16 +861,16 @@ done:
 	
 	if (launchRebootWindow > 0) {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
-		[mpInstaller setLogoutHook];
-		
+        // 10.9
+        //[mpInstaller setLogoutHook];
+
+        NSString *_rbFile = @"/private/tmp/.MPAuthRun";
 		NSString *_rbText = @"reboot";
-		[_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot"
-				  atomically:YES
-					encoding:NSUTF8StringEncoding
-					   error:NULL];
-		
+        // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
+		// [_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+		[_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
-		[fm setAttributes:_fileAttr ofItemAtPath:@"/Users/Shared/.mpReboot/.needsReboot" error:NULL];
+		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
 	}
     
 done:
@@ -1189,17 +1189,17 @@ done:
 	
 	if (launchRebootWindow > 0) {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
-        mpInstaller = [[[MPInstaller alloc] init] autorelease];
-		[mpInstaller setLogoutHook];
-		
+        // 10.9 support
+        //mpInstaller = [[[MPInstaller alloc] init] autorelease];
+		//[mpInstaller setLogoutHook];
+
+        NSString *_rbFile = @"/private/tmp/.MPAuthRun";
 		NSString *_rbText = @"reboot";
-		[_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot"
-				  atomically:YES
-					encoding:NSUTF8StringEncoding
-					   error:NULL];
-		
+        // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
+		// [_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+		[_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
-		[fm setAttributes:_fileAttr ofItemAtPath:@"/Users/Shared/.mpReboot/.needsReboot" error:NULL];
+		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
 	}
     
 done:

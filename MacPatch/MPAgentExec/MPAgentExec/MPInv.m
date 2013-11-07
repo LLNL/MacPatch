@@ -30,14 +30,24 @@
 #import "CHDiskInfo.h"
 #import "MPUsersAndGroups.h"
 #import "MPFileVaultInfo.h"
+#import <CommonCrypto/CommonDigest.h>
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
 #define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault"
 #define kTasksPlist             @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
+#define kInvHashData            @"/Library/MacPatch/Client/Data/.gov.llnl.mp.inv.data.plist"
 
 #define LIBXML_SCHEMAS_ENABLED
 #include <libxml/xmlschemastypes.h>
+
+@interface MPInv ()
+
+- (NSString *)hashForArray:(NSArray *)aArray;
+- (BOOL)hasInvDataChanged:(NSString *)aInvType hash:(NSString *)aHash;
+- (void)writeInvDataHashToFile:(NSString *)aInvType hash:(NSString *)aHash;
+
+@end
 
 @implementation MPInv
 
@@ -140,6 +150,7 @@
 	NSDictionary *item;
 	NSString *dataMgrXML;
 	NSArray *tmpArr = nil;
+    NSString *invCollectionHash;
 	
 	for (i=0;i<[resultsArray count];i++)
 	{
@@ -147,7 +158,7 @@
 		if ([fm fileExistsAtPath:[item objectForKey:@"file"]]) {
 			// Get Array Object, then gen DataMgr String
 			if ([[item objectForKey:@"type"] isEqual:@"SPHardwareDataType"] ) {
-				tmpArr = [self parseHardwareOverview:[item objectForKey:@"file"]];	
+				tmpArr = [self parseHardwareOverview:[item objectForKey:@"file"]];
 			} else if ([[item objectForKey:@"type"] isEqual:@"SPSoftwareDataType"]) {
 				tmpArr = [self parseSystemOverviewData:[item objectForKey:@"file"]];
 			} else if ([[item objectForKey:@"type"] isEqual:@"SPNetworkDataType"]) {
@@ -173,8 +184,16 @@
 			} else if ([[item objectForKey:@"type"] isEqual:@"FileVault"]) {
 				tmpArr = [self parseFileVaultInfo];
 			}
-			
+
+
 			if (tmpArr) {
+                // Gen a hash for the inv results, if it has not changed dont post it.
+                invCollectionHash = [self hashForArray:tmpArr];
+                if ([self hasInvDataChanged:[item objectForKey:@"type"] hash:invCollectionHash] == NO) {
+                    logit(lcl_vInfo,@"Results for %@ have not changed. No need to post.",[item objectForKey:@"type"]);
+                    continue;
+                }
+
 				dataMgrXML = [dataMgr GenXMLForDataMgr:tmpArr
 											   dbTable:[item objectForKey:@"wstype"] 
 										 dbTablePrefix:@"mpi_" 
@@ -185,6 +204,7 @@
 				
 				if ([self sendResultsToWebService:dataMgrXML]) {
 					logit(lcl_vInfo,@"Results for %@ posted.",[item objectForKey:@"wstype"]);
+                    [self writeInvDataHashToFile:[item objectForKey:@"type"] hash:invCollectionHash];
 				} else {
 					logit(lcl_vError,@"Results for %@ not posted.",[item objectForKey:@"wstype"]);
 				}
@@ -421,6 +441,60 @@
     xmlMemoryDump();
 
 	return isValid;
+}
+
+- (NSString *)hashForArray:(NSArray *)aArray
+{
+    NSString *err = nil;
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:aArray format:NSPropertyListBinaryFormat_v1_0 errorDescription:&err];
+    if (err) {
+        return @"ERROR";
+    }
+
+	unsigned char outputData[CC_MD5_DIGEST_LENGTH];
+	CC_MD5([data bytes], (CC_LONG)[data length], outputData);
+
+	NSMutableString *hashStr = [NSMutableString string];
+	int i = 0;
+	for (i = 0; i < CC_MD5_DIGEST_LENGTH; ++i)
+    {
+		[hashStr appendFormat:@"%02x", outputData[i]];
+    }
+
+	return (NSString *)hashStr;
+}
+
+- (BOOL)hasInvDataChanged:(NSString *)aInvType hash:(NSString *)aHash
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSMutableDictionary *invData = [NSMutableDictionary dictionary];
+    if ([fm fileExistsAtPath:kInvHashData]) {
+        invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
+        if ([invData objectForKey:aInvType]) {
+            if ([[[invData objectForKey:aInvType] lowercaseString] isEqualToString:[aHash lowercaseString]]) {
+                return NO;
+            } else {
+                return YES;
+            }
+        } else {
+            return YES;
+        }
+    } else {
+        return YES;
+    }
+}
+
+- (void)writeInvDataHashToFile:(NSString *)aInvType hash:(NSString *)aHash
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSMutableDictionary *invData = [NSMutableDictionary dictionary];
+    if ([fm fileExistsAtPath:kInvHashData])
+    {
+        invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
+    }
+
+    [invData setObject:aHash forKey:aInvType];
+    [invData writeToFile:kInvHashData atomically:YES];
 }
 
 #pragma mark -

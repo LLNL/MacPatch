@@ -134,7 +134,7 @@
 		[agentDict setObject:[clientVer objectForKey:@"version"] forKey:@"client_version"];
 		[agentDict setObject:@"false" forKey:@"needsreboot"];
 		
-		if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.NeedsReboot"]) {
+		if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
 			[agentDict setObject:@"true" forKey:@"needsreboot"];	
 		}
 	}

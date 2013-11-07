@@ -33,6 +33,8 @@
 				8F68EAF11757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAF71757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAF91757D4D500982EF9 /* PBXTargetDependency */,
+				8F95FF84182B0E8C006242F3 /* PBXTargetDependency */,
+				8F95FF82182B0E84006242F3 /* PBXTargetDependency */,
 				8F68EAE51757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAE71757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAEB1757D4D500982EF9 /* PBXTargetDependency */,
@@ -214,6 +216,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8F90C30B1700AF9D006E36D0;
 			remoteInfo = MPPrefMigrate;
+		};
+		8F95FF7D182AFC82006242F3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F95FF77182AFC81006242F3 /* MPAuthPluginTool.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8F95FF66182AFC81006242F3;
+			remoteInfo = MPAuthPluginTool;
+		};
+		8F95FF81182B0E84006242F3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F7793FF1820401A008FA072 /* MPAuthPlugin.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F7793ED1820401A008FA072;
+			remoteInfo = MPAuthPlugin;
+		};
+		8F95FF83182B0E8C006242F3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F95FF77182AFC81006242F3 /* MPAuthPluginTool.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F95FF65182AFC81006242F3;
+			remoteInfo = MPAuthPluginTool;
 		};
 		8F9F89A417D6A81C00ACC37B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -425,6 +448,7 @@
 		8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAgent.xcodeproj; path = MPAgent/MPAgent.xcodeproj; sourceTree = "<group>"; };
 		8F7793FF1820401A008FA072 /* MPAuthPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAuthPlugin.xcodeproj; path = MPAuthPlugin/MPAuthPlugin.xcodeproj; sourceTree = "<group>"; };
 		8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPPrefMigrate.xcodeproj; path = MPPrefMigrate/MPPrefMigrate.xcodeproj; sourceTree = "<group>"; };
+		8F95FF77182AFC81006242F3 /* MPAuthPluginTool.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAuthPluginTool.xcodeproj; path = MPAuthPluginTool/MPAuthPluginTool.xcodeproj; sourceTree = "<group>"; };
 		8FA7063F1700AC0E00A1C57C /* GetCurrentConsoleUser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GetCurrentConsoleUser.xcodeproj; path = CurrentConsoleUser/GetCurrentConsoleUser.xcodeproj; sourceTree = "<group>"; };
 		8FD2086F16E567AC00F78296 /* MacPatch Server.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MacPatch Server.xcodeproj"; path = "MacPatch Server/MacPatch Server.xcodeproj"; sourceTree = "<group>"; };
 		8FD88E2D16DFB40B00A870A3 /* MPAgentUp2Date.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAgentUp2Date.xcodeproj; path = MPAgentUp2Date/MPAgentUp2Date.xcodeproj; sourceTree = "<group>"; };
@@ -445,6 +469,7 @@
 			isa = PBXGroup;
 			children = (
 				8F7793FF1820401A008FA072 /* MPAuthPlugin.xcodeproj */,
+				8F95FF77182AFC81006242F3 /* MPAuthPluginTool.xcodeproj */,
 				8FA7063F1700AC0E00A1C57C /* GetCurrentConsoleUser.xcodeproj */,
 				8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */,
 				8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */,
@@ -484,6 +509,14 @@
 			isa = PBXGroup;
 			children = (
 				8F90C3221700AF9E006E36D0 /* MPPrefMigrate */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8F95FF78182AFC81006242F3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8F95FF7E182AFC82006242F3 /* MPAuthPluginTool */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -642,6 +675,10 @@
 					ProjectRef = 8F7793FF1820401A008FA072 /* MPAuthPlugin.xcodeproj */;
 				},
 				{
+					ProductGroup = 8F95FF78182AFC81006242F3 /* Products */;
+					ProjectRef = 8F95FF77182AFC81006242F3 /* MPAuthPluginTool.xcodeproj */;
+				},
+				{
 					ProductGroup = 8FD88FE816DFDD9200A870A3 /* Products */;
 					ProjectRef = 8FD88FE716DFDD9200A870A3 /* MPCatalog.xcodeproj */;
 				},
@@ -716,6 +753,13 @@
 			fileType = "compiled.mach-o.executable";
 			path = MPPrefMigrate;
 			remoteRef = 8F90C3211700AF9E006E36D0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8F95FF7E182AFC82006242F3 /* MPAuthPluginTool */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = MPAuthPluginTool;
+			remoteRef = 8F95FF7D182AFC82006242F3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8FA706441700AC0E00A1C57C /* GetCurrentConsoleUser */ = {
@@ -891,6 +935,16 @@
 			isa = PBXTargetDependency;
 			name = MPPrefMigrate;
 			targetProxy = 8F90C3261700AFF2006E36D0 /* PBXContainerItemProxy */;
+		};
+		8F95FF82182B0E84006242F3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPAuthPlugin;
+			targetProxy = 8F95FF81182B0E84006242F3 /* PBXContainerItemProxy */;
+		};
+		8F95FF84182B0E8C006242F3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MPAuthPluginTool;
+			targetProxy = 8F95FF83182B0E8C006242F3 /* PBXContainerItemProxy */;
 		};
 		8F9F89A517D6A81C00ACC37B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
