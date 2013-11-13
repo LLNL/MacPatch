@@ -1,3 +1,7 @@
+<!---	Notes:
+        This file is included with MacPatch 2.2.0 release, only for older client support.
+        This file will be removed in the next release.
+--->
 <cfcomponent name="client_checkin" extends="_mpbase">
 	
 	<cffunction name="_base" access="public" returntype="any" output="no">

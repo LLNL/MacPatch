@@ -36,8 +36,8 @@ NSString * const AGENT_PREFS_PLIST			= @"/Library/Preferences/gov.llnl.mpagent.p
 NSString * const AGENT_FRAMEWORK_PATH		= @"/Library/Frameworks/MPFramework.framework/Resources/Info.plist";
 NSString * const APP_PREFS_PLIST			= @"/Library/Preferences/gov.llnl.MPClientStatus.plist";
 
-NSString * const WS_CLIENT_FILE             = @"/Services/MPClientService.cfc";
-NSString * const WS_SERVER_FILE             = @"/Services/MPServerService.cfc";
+NSString * const WS_CLIENT_FILE             = @"/Service/MPClientService.cfc";
+NSString * const WS_SERVER_FILE             = @"/Service/MPServerService.cfc";
 
 NSString * const ASUS_BIN_PATH				= @"/usr/sbin/softwareupdate";
 NSString * const ASUS_APP_PATH				= @"/System/Library/CoreServices/Software Update.app";

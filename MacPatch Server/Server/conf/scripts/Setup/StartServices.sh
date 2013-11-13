@@ -4,7 +4,7 @@
 # MacPatch Start/Stop Services Script
 # MacPatch Version 2.1.x
 #
-# Script Ver. 1.1.0
+# Script Ver. 1.2.0
 #
 #-----------------------------------------
 clear
@@ -38,7 +38,7 @@ function arrayContains () {
 
 function isValidService () 
 {
-	array=("gov.llnl.mpavdl.plist" "gov.llnl.mploader.plist" "gov.llnl.mp.site.plist" "gov.llnl.mp.wsl.plist" "gov.llnl.mp.invd.plist" "gov.llnl.mp.httpd.plist")
+	array=("gov.llnl.mp.wsl.plist" "gov.llnl.mp.invd.plist" "gov.llnl.mp.site.plist" "gov.llnl.mploader.plist" "gov.llnl.mpavdl.plist" "gov.llnl.mp.httpd.plist")
 	arrayContains $1 "${array[@]}"
 	return $?
 }

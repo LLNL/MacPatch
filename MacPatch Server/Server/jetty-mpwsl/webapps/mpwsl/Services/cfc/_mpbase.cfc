@@ -1,3 +1,7 @@
+<!---	Notes:
+        This file is included with MacPatch 2.2.0 release, only for older client support.
+        This file will be removed in the next release.
+--->
 <cfcomponent displayname="mpbase">
 	
 	<cfparam name="mpDBSource" default="mpds">

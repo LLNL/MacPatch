@@ -44,7 +44,7 @@ checkHostConfig
 
 mp_server_name=`hostname -f`
 mp_server_port="$MP_DEFAULT_PORT"
-mp_server_ssl="N"
+mp_server_ssl="Y"
 read -p "MacPatch Server Name: [$mp_server_name]: " -e t1
 if [ -n "$t1" ]; then
 	defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mp.patchloader 'MPServerAddress' "$server_name"
