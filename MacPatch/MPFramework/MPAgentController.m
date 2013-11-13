@@ -197,28 +197,6 @@
                                        deleteCol:@"cuuid"
                                   deleteColValue:[MPSystemInfo clientUUID]];
         
-        
-        // Encode to base64 and send to web service
-        // ###CEH###
-        /*
-        NSString *xmlBase64String = [[dataMgrXML dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
-        NSDictionary *msgArgs = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[MPSystemInfo clientUUID],xmlBase64String,nil] 
-                                                            forKeys:[NSArray arrayWithObjects:@"cuuid",@"encodedXML",nil]];
-        NSString *message = [mpSoap createBasicSOAPMessage:@"DataMgrXML" argDictionary:msgArgs];
-        
-        NSError *p_err = nil;
-        NSData *soapResult = [mpSoap invoke:message isBase64:NO error:&p_err];
-        if (p_err) {
-            logit(lcl_vError,@"%@",[p_err localizedDescription]);
-        } else {
-            NSString *ws = [[[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding] autorelease];
-            if ([ws isEqualTo:@"1"] == TRUE || [ws isEqualTo:@"true"] == TRUE) {
-                logit(lcl_vInfo,@"Scan results posted to webservice.");
-            } else {
-                logit(lcl_vError,@"Scan results posted to webservice returned false.");
-            }
-        }
-        */
 
         // Process patches
         if (!applePatchesArray) {

@@ -33,7 +33,6 @@
 @property (nonatomic, readwrite, retain) NSString *HTTP_HOST;
 @property (nonatomic, readwrite, retain) NSString *HTTP_HOST_PORT;
 @property (nonatomic, readwrite, retain) NSString *HTTP_HOST_REACHABLE;
-@property (nonatomic, readwrite, retain) NSString *MP_SOAP_URL;
 @property (nonatomic, readwrite, retain) NSString *MP_JSON_URL;
 @property (nonatomic, readwrite, retain) NSString *MP_JSON_URL_PLAIN;
 @property (nonatomic, readwrite, retain) NSDictionary *mpConnection;
@@ -50,7 +49,6 @@
 @synthesize HTTP_HOST;
 @synthesize HTTP_HOST_PORT;
 @synthesize HTTP_HOST_REACHABLE;
-@synthesize MP_SOAP_URL;
 @synthesize MP_JSON_URL;
 @synthesize MP_JSON_URL_PLAIN;
 @synthesize mpConnection;
@@ -107,8 +105,6 @@
     [self setHTTP_HOST_PORT:[netHostInfo objectForKey:@"HTTP_HOST_PORT"]];
     [tmpInfo setObject:[netHostInfo objectForKey:@"HTTP_HOST_REACHABLE"] forKey:@"HTTP_HOST_REACHABLE"];
     [self setHTTP_HOST_REACHABLE:[netHostInfo objectForKey:@"HTTP_HOST_REACHABLE"]];
-    [tmpInfo setObject:[netHostInfo objectForKey:@"MP_SOAP_URL"] forKey:@"MP_SOAP_URL"];
-    [self setMP_SOAP_URL:[netHostInfo objectForKey:@"MP_SOAP_URL"]];
     [tmpInfo setObject:[netHostInfo objectForKey:@"MP_JSON_URL"] forKey:@"MP_JSON_URL"];
     [self setMP_JSON_URL:[netHostInfo objectForKey:@"MP_JSON_URL"]];
     [tmpInfo setObject:[netHostInfo objectForKey:@"MP_JSON_URL_PLAIN"] forKey:@"MP_JSON_URL_PLAIN"];
@@ -122,6 +118,13 @@
 {
     [self createServerObject];
     return 0;
+}
+
+- (void)refreshDefaults
+{
+    MPDefaults *mpd = [[MPDefaults alloc] init];
+    [self setMpDefaults:[mpd defaults]];
+    [mpd release];
 }
 
 

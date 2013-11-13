@@ -158,7 +158,6 @@
 		</cfif>
 
 		<cfset var res = #ToBase64("ERR")#>
-		<!--- <cfset res = #ToBinary(res)#> --->
 		<cfreturn res>
 	</cffunction>
 	

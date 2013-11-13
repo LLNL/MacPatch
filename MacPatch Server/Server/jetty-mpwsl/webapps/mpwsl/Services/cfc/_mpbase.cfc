@@ -7,7 +7,7 @@
 		<cfreturn this>
 	</cffunction>
 	
-	<cffunction name="logger" access="public" returntype="void" output="no">
+	<cffunction name="logit" access="public" returntype="void" output="no">
 		<cfargument name="aEventType">
 		<cfargument name="aEvent">
 		<cfscript>
@@ -24,14 +24,14 @@
 	<cffunction name="ilog" access="public" returntype="void" output="no">
 		<cfargument name="aEvent">
 		<cfif IsSimpleValue(arguments.aEvent)>
-			<cfset logger("Information",arguments.aEvent)>
+			<cfset logit("Information",arguments.aEvent)>
 		</cfif>
 	</cffunction>
 	
 	<cffunction name="elog" access="public" returntype="void" output="no">
 		<cfargument name="aEvent">
 		<cfif IsSimpleValue(arguments.aEvent)>
-			<cfset logger("Error",arguments.aEvent)>
+			<cfset logit("Error",arguments.aEvent)>
 		</cfif>
 	</cffunction>
 

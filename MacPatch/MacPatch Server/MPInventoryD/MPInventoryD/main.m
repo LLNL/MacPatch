@@ -232,7 +232,14 @@ int main(int argc, char * argv[])
             exit(1);
         }
         if (![fm fileExistsAtPath:_filesPath]) {
-            qlerror(@"%@ dir not found.",_filesPath);
+            NSError *fErr = nil;
+            if (![fm createDirectoryAtPath:_filesPath withIntermediateDirectories:YES attributes:nil error:&fErr]){
+                qlerror(@"Failed to create %@.",_filesPath);
+                if (fErr) {
+                    qlerror(@"%@",fErr.localizedDescription);
+                }
+            }
+            qlerror(@"%@ dir not found. Exiting app.",_filesPath);
             exit(1);
         }
         

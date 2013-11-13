@@ -1,93 +1,51 @@
+<!---
+	This Server.cfc is used to get server settings populated in the 
+	server settings scope. 
+	Settings are gathered in the settings.cfc file.
+--->
 <cfcomponent output="false"> 
   <cffunction name="onServerStart"> 
-  		<cfset jvmObj = CreateObject("java","java.lang.System").getProperties() />
-        <cfset _localConf = "#jvmObj.jetty.home#/app_conf/siteconfig.xml">
-        
-		<cfif fileExists(_localConf)>
-        	<cfset _confFile = #_localConf#>
-        <cfelse>
-        	<cfset _confFile = "/Library/MacPatch/Server/conf/etc/siteconfig.xml">
-        </cfif>
-  
-        <cffile action="read" file="#_confFile#" variable="xml">
-		<cfxml variable="xmlData"><cfoutput>#xml#</cfoutput></cfxml>
+  		
+	    <cfinvoke component="Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
 		
 		<!--- main settings --->
-		<cfset srvconf.settings = structNew()>
+		<cfset srvconf.settings = _AppSettings>
 		
-		<cfif not structKeyExists(xmlData,"settings")>
-		   <cfthrow message="Invalid settings XML file!">
+		<!--- Validate users settings - user --->
+		<cfif not structKeyExists(srvconf.settings.users,"admin")>
+		   <cfthrow message="Invalid settings, user info!">
 		</cfif>
 		
-		<cfloop item="key" collection="#xmlData.settings#">
-		   <cfif len(trim(xmlData.settings[key].xmlText))>
-			  <cfset srvconf.settings[key] = xmlData.settings[key].xmlText>
-		   </cfif>
-		</cfloop>
-		<!--- users settings - user --->
-		<cfset srvconf.settings.users.admin = structNew()>
-		<cfif not structKeyExists(xmlData.settings.users,"admin")>
-		   <cfthrow message="Invalid settings XML file!">
+		<!--- Validate LDAP settings - prod --->
+		<cfif not structKeyExists(srvconf.settings,"ldap")>
+		   <cfthrow message="Invalid settings, LDAP!">
 		</cfif>
 		
-		<cfloop item="key" collection="#xmlData.settings.users.admin#">
-		   <cfif len(trim(xmlData.settings.users.admin[key].xmlText))>
-			  <cfif xmlData.settings.users.admin[key].XmlName EQ "pass">
-				<cfset srvconf.settings.users.admin[key] = Hash(xmlData.settings.users.admin[key].xmlText,'MD5')>
-			  <cfelse>
-				<cfset srvconf.settings.users.admin[key] = xmlData.settings.users.admin[key].xmlText>
-			  </cfif>
-		   </cfif>
-		</cfloop>
-		
-		<!--- database settings - prod --->
-		<cfset srvconf.settings.ldap = structNew()>
-		<cfif not structKeyExists(xmlData.settings,"ldap")>
-		   <cfthrow message="Invalid settings XML file!">
+		<!--- Validate Database settings - prod --->
+		<cfif not structKeyExists(srvconf.settings.database,"prod")>
+		   <cfthrow message="Invalid settings, Database!">
 		</cfif>
 		
-		<cfloop item="key" collection="#xmlData.settings.ldap#">
-		   <cfif len(trim(xmlData.settings.ldap[key].xmlText))>
-			  <cfset srvconf.settings.ldap[key] = xmlData.settings.ldap[key].xmlText>
-		   </cfif>
-		</cfloop>
-		
-		<!--- database settings - prod --->
-		<cfset srvconf.settings.database.prod = structNew()>
-		<cfif not structKeyExists(xmlData.settings.database,"prod")>
-		   <cfthrow message="Invalid settings XML file!">
+		<!--- Validate Mail server settings --->
+		<cfif not structKeyExists(srvconf.settings,"mailserver")>
+		   <cfthrow message="Invalid settings, SMTP!">
 		</cfif>
-		
-		<cfloop item="key" collection="#xmlData.settings.database.prod#">
-		   <cfif len(trim(xmlData.settings.database.prod[key].xmlText))>
-			  <cfset srvconf.settings.database.prod[key] = xmlData.settings.database.prod[key].xmlText>
-		   </cfif>
-		</cfloop>
-		
-		<!--- mail server settings --->
-		<cfset srvconf.settings.mailserver = structNew()>
-		<cfif not structKeyExists(xmlData.settings,"mailserver")>
-		   <cfthrow message="Invalid settings XML file!">
-		</cfif>
-		
-		<cfloop item="key" collection="#xmlData.settings.mailserver#">
-		   <cfif len(trim(xmlData.settings.mailserver[key].xmlText))>
-			  <cfset srvconf.settings.mailserver[key] = xmlData.settings.mailserver[key].xmlText>
-		   </cfif>
-		</cfloop>
         
         <cftry> 
-        <!--- <cfset StructAppend(server.mpsettings,srvconf.settings)> --->
-        <cfset server.mpsettings = srvconf>
-        
-        <!--- Create Datasource --->
-		<cfif Datasourceisvalid("mpds")>
-			<cfset rmDS = Datasourcedelete("mpds")>
-		</cfif>
-		<cfset DataSourceCreate( "mpds", srvconf.settings.database.prod )>
-        <cfcatch type="any"> 
-			<cfthrow message="Error trying to create datasource.">
-        </cfcatch> 
+            <!--- Create Datasource --->
+            <cfif Datasourceisvalid("mpds")>
+                <cfset rmDS = Datasourcedelete("mpds")>
+            </cfif>
+            
+            <cfset DataSourceCreate( "mpds", srvconf.settings.database.prod )>
+            <cfset srvconf.settings.database.prod.password = Hash(srvconf.settings.database.prod.password,'MD5')>
+            
+            <cfcatch type="any"> 
+                <cfthrow message="Error trying to create datasource.">
+            </cfcatch> 
         </cftry>
+        
+        <!--- Assign settings to server settings scope --->
+        <cfset server.mpsettings = srvconf>
   </cffunction> 
 </cfcomponent> 

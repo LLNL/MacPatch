@@ -33,8 +33,6 @@
 
 #define SWUAD_PLIST			@"/Library/Preferences/gov.llnl.swuad.plist"
 #define ASUS_PLIST			@"/Library/Preferences/com.apple.SoftwareUpdate.plist"
-#define WSURLPATH			@"Services/index.cfm"
-
 
 @implementation MPJson
 @synthesize l_jsonURL;
@@ -63,7 +61,7 @@
 	if ([[[sm g_Defaults] objectForKey:@"MPServerUseSSL"] boolValue] == YES) {
 		prefix = @"https";
 	}
-	[self setL_jsonURL:[NSString stringWithFormat:@"%@://%@:%@/%@",prefix,[[sm g_Defaults] objectForKey:@"MPServerAddress"],[[sm g_Defaults] objectForKey:@"MPServerPort"],WSURLPATH]];
+	[self setL_jsonURL:[NSString stringWithFormat:@"%@://%@:%@/Services/MPServerService.cfc",prefix,[[sm g_Defaults] objectForKey:@"MPServerAddress"],[[sm g_Defaults] objectForKey:@"MPServerPort"]]];
 	logit(lcl_vDebug,@"JSON URL: %@",l_jsonURL);
 }
 
@@ -134,7 +132,6 @@
 		goto done;	
 	}
 	NSString *jDataSigned = @"NA";
-	//[jData writeToFile:@"/private/tmp/JSON105.txt" atomically:NO];
 	logit(lcl_vError,@"[request][URL]: %@",l_jsonURL);
 	
 	ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:l_jsonURL]];

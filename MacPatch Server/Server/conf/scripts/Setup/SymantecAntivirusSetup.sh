@@ -12,7 +12,7 @@ clear
 # Variables
 MP_SRV_BASE="/Library/MacPatch/Server"
 MP_SRV_CONF="${MP_SRV_BASE}/conf"
-MP_DEFAULT_PORT="2601"
+MP_DEFAULT_PORT="3601"
 
 function checkHostConfig () {
 	if [ "`whoami`" != "root" ] ; then   # If not root user,
@@ -51,6 +51,9 @@ function configAVSync ()
 	fi
 	
 	if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist ]; then
+		if [ -f /Library/LaunchDaemons/gov.llnl.mpavdl.plist ]; then
+			rm /Library/LaunchDaemons/gov.llnl.mpavdl.plist
+		fi
 		ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist /Library/LaunchDaemons/gov.llnl.mpavdl.plist
 	fi
 	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist

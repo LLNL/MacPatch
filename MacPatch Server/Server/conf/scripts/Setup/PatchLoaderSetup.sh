@@ -12,7 +12,7 @@ clear
 # Variables
 MP_SRV_BASE="/Library/MacPatch/Server"
 MP_SRV_CONF="${MP_SRV_BASE}/conf"
-MP_DEFAULT_PORT="2601"
+MP_DEFAULT_PORT="3601"
 
 function checkHostConfig () {
 	if [ "`whoami`" != "root" ] ; then   # If not root user,
@@ -43,7 +43,7 @@ checkHostConfig
 # -----------------------------------
 
 mp_server_name=`hostname -f`
-mp_server_port="2601"
+mp_server_port="$MP_DEFAULT_PORT"
 mp_server_ssl="N"
 read -p "MacPatch Server Name: [$mp_server_name]: " -e t1
 if [ -n "$t1" ]; then
@@ -65,6 +65,9 @@ if [ -n "$t1" ]; then
 fi
 
 if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist ]; then
+	if [ -f /Library/LaunchDaemons/gov.llnl.mploader.plist ]; then
+		rm /Library/LaunchDaemons/gov.llnl.mploader.plist
+	fi
 	ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist /Library/LaunchDaemons/gov.llnl.mploader.plist
 fi
 chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist

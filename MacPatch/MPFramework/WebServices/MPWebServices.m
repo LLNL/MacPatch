@@ -29,11 +29,6 @@
 #import "JSONKit.h"
 
 
-
-#define WS_BASE_URI     @"/Services/MPWSClient.cfc"
-
-
-
 @interface MPWebServices ()
 
 @property (retain) NSString *_cuuid;
@@ -86,7 +81,7 @@
 	NSDictionary *jsonResult = nil;
 	
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=getAsusCatalogs&clientID=%@&osminor=%@",WS_BASE_URI,self._cuuid,self._osver];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=getAsusCatalogs&clientID=%@&osminor=%@",WS_CLIENT_FILE,self._cuuid,self._osver];
     qldebug(@"JSON URL: %@",urlString);
 	
 	// Make Request
@@ -136,6 +131,7 @@ done:
         NSString *preJData = [self getPatchGroupCacheFileDataForGroup];
         if ([preJData isEqualToString:@"ERROR"] == NO) {
             @try {
+                qlinfo(@"Using patch group cache data.");
                 jsonResult = [preJData objectFromJSONString];
                 return jsonResult;
             }
@@ -146,7 +142,7 @@ done:
     }
 	
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetPatchGroupPatches&PatchGroup=%@",WS_BASE_URI,[_defaults objectForKey:@"PatchGroup"]];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetPatchGroupPatches&PatchGroup=%@",WS_CLIENT_FILE,[_defaults objectForKey:@"PatchGroup"]];
 	qldebug(@"JSON URL: %@",urlString);
 	
 	// Make request
@@ -213,6 +209,7 @@ done:
             {
                 if ([[PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]] objectForKey:@"hash"]) {
                     PatchGroupHash = [[PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]] objectForKey:@"hash"];
+                    qlinfo(@"[isPatchGroupHashValid]: Hash = %@",PatchGroupHash);
                 }
             }
         }
@@ -220,7 +217,7 @@ done:
 
 
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetIsHashValidForPatchGroup&PatchGroup=%@Hash=%@",WS_BASE_URI,[_defaults objectForKey:@"PatchGroup"],PatchGroupHash];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetIsHashValidForPatchGroup&PatchGroup=%@&Hash=%@",WS_CLIENT_FILE,[_defaults objectForKey:@"PatchGroup"],PatchGroupHash];
 	qldebug(@"JSON URL: %@",urlString);
 
 	// Make request
@@ -248,10 +245,13 @@ done:
     {
         // Result key is 1 = Yes or 0 = No
         deserializedData = [requestData objectFromJSONString];
+        qldebug(@"[GetIsHashValidForPatchGroup]: %@",deserializedData);
         if ([deserializedData objectForKey:@"result"]) {
             if ([[deserializedData objectForKey:@"result"] integerValue] == 1) {
+                qlinfo(@"Patch group hash is valid.");
                 return YES;
             } else {
+                qlinfo(@"Patch group hash is not valid.");
                 return NO;
             }
         }
@@ -264,6 +264,7 @@ done:
     }
 
 done:
+    qlinfo(@"Patch group hash is not valid.");
 	return NO;
 }
 
@@ -291,6 +292,7 @@ done:
 
     [PatchGroupInfo setObject:[mpc getHashFromStringForType:jData type:@"MD5"] forKey:@"hash"];
     [PatchGroupInfo setObject:jData forKey:@"data"];
+    qlinfo(@"Write patch group hash and data to filesystem.");
     [PatchGroupCacheFileData setObject:PatchGroupInfo forKey:[_defaults objectForKey:@"PatchGroup"]];
     [PatchGroupCacheFileData writeToFile:PatchGroupCacheFile atomically:YES];
 }
@@ -345,7 +347,7 @@ done:
     }
 
     // Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=PostPatchesFound&ClientID=%@&type=%@&jsonData=%@",WS_BASE_URI,_cuuid,scanType,jData];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=PostPatchesFound&ClientID=%@&type=%@&jsonData=%@",WS_CLIENT_FILE,_cuuid,scanType,jData];
 	qldebug(@"JSON URL: %@",urlString);
 
     NSString        *requestData;
@@ -402,7 +404,7 @@ done:
 	NSDictionary        *jsonResult = nil;
 
     // Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=PostInstalledPatch&ClientID=%@&patch=%@&patchType=%@",WS_BASE_URI,_cuuid,aPatch,aPatchType];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=PostInstalledPatch&ClientID=%@&patch=%@&patchType=%@",WS_CLIENT_FILE,_cuuid,aPatch,aPatchType];
 	qldebug(@"JSON URL: %@",urlString);
 
     NSString        *requestData;
@@ -465,7 +467,7 @@ done:
 	}
 
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetScanList&clientID=%@&state=%@",WS_BASE_URI,_cuuid,patchState];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetScanList&clientID=%@&state=%@",WS_CLIENT_FILE,_cuuid,patchState];
 	qldebug(@"JSON URL: %@",urlString);
 
 	// Make request
@@ -574,7 +576,7 @@ done:
 	}
 
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetAVDefsDate&clientID=%@&avAgent=SAV&theArch=%@",WS_BASE_URI,_cuuid,_theArch];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetAVDefsDate&clientID=%@&avAgent=SAV&theArch=%@",WS_CLIENT_FILE,_cuuid,_theArch];
 	qldebug(@"JSON URL: %@",urlString);
 
 	// Make request
@@ -621,7 +623,7 @@ done:
 	}
 
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetAVDefsFile&clientID=%@&avAgent=SAV&theArch=%@",WS_BASE_URI,_cuuid,_theArch];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetAVDefsFile&clientID=%@&avAgent=SAV&theArch=%@",WS_CLIENT_FILE,_cuuid,_theArch];
 	qldebug(@"JSON URL: %@",urlString);
 
 	// Make request
@@ -665,7 +667,7 @@ done:
 	NSDictionary        *jsonResult = nil;
 
     // Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetAgentUpdates&clientID=%@&agentVersion=%@&agentBuild=%@",WS_BASE_URI,_cuuid,curAppVersion,curBuildVersion];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetAgentUpdates&clientID=%@&agentVersion=%@&agentBuild=%@",WS_CLIENT_FILE,_cuuid,curAppVersion,curBuildVersion];
 	qldebug(@"JSON URL: %@",urlString);
 
     NSDictionary *userInfoDict;
@@ -720,7 +722,7 @@ done:
 	NSDictionary        *jsonResult = nil;
 
     // Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetAgentUpdaterUpdates&clientID=%@&agentUp2DateVer=%@",WS_BASE_URI,_cuuid,curAppVersion];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetAgentUpdaterUpdates&clientID=%@&agentUp2DateVer=%@",WS_CLIENT_FILE,_cuuid,curAppVersion];
 	qldebug(@"JSON URL: %@",urlString);
 
     NSDictionary *userInfoDict;
@@ -774,7 +776,7 @@ done:
     BOOL result = NO;
 
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=PostDataMgrXML",WS_BASE_URI];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=PostDataMgrXML",WS_CLIENT_FILE];
 	qldebug(@"JSON URL: %@",urlString);
 
 	// Make request
@@ -834,7 +836,7 @@ done:
     BOOL result = NO;
 
 	// Create JSON Request URL
-    NSString *urlString = [NSString stringWithFormat:@"%@?method=PostSavAVDefs",WS_BASE_URI];
+    NSString *urlString = [NSString stringWithFormat:@"%@?method=PostSavAVDefs",WS_SERVER_FILE];
 	qldebug(@"JSON URL: %@",urlString);
 
 	// Make request
@@ -982,7 +984,7 @@ done:
     }
 
     // Make Request
-    requestData = [asiNet synchronousRequestForURLWithFormData:[NSString stringWithFormat:@"%@?method=%@",WS_BASE_URI,aMethod] form:aDict error:&error];
+    requestData = [asiNet synchronousRequestForURLWithFormData:[NSString stringWithFormat:@"%@?method=%@",WS_CLIENT_FILE,aMethod] form:aDict error:&error];
     if (error) {
         qlerror(@"%@",[error localizedDescription]);
         if (err != NULL) {

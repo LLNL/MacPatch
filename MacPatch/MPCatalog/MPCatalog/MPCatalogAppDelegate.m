@@ -336,12 +336,7 @@
 	
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc addObserver:self selector:@selector(installOutputFromProxy:) name:@"installSoftwareNote" object:nil];
-	
-	// If scan on launch is true
-	if ([d boolForKey:@"enableScanOnLaunch"]) {
-		//killTaskThread = NO;
-		//[self scanForPatches:nil];
-	}	
+
     
     [self setTableColEdit:YES];
     
@@ -356,7 +351,6 @@
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
 {
-	//[self setLoggingState:NO];
     return YES;
 }
 
@@ -423,20 +417,22 @@
 
 - (void)populateSoftwareGroupsPopupButton
 {
-    @autoreleasepool {
+    @autoreleasepool
+    {
         [swDistGroupsButton removeAllItems];
 
         NSString *gUrl;
-        if ([_defaults objectForKey:@"SWDistGroupState"]) {
-            gUrl = [NSString stringWithFormat:@"/Services/MPWSControllerCocoa.cfc?method=GetSWDistGroups&state=%@",[[_defaults objectForKey:@"SWDistGroupState"] stringValue]];
+        if ([[mpServerConnection mpDefaults] objectForKey:@"SWDistGroupState"]) {
+            gUrl = [NSString stringWithFormat:@"%@?method=GetSWDistGroups&state=%@",WS_CLIENT_FILE,[[[mpServerConnection mpDefaults] objectForKey:@"SWDistGroupState"] stringValue]];
         } else {
-            gUrl = @"/Services/MPWSControllerCocoa.cfc?method=GetSWDistGroups";
+            gUrl = [NSString stringWithFormat:@"%@?method=GetSWDistGroups",WS_CLIENT_FILE];
         }
         
         NSError *error = nil;
         NSString *result;
         MPASINet *asiNet = [[MPASINet alloc] init];
         result = [asiNet synchronousRequestForURL:gUrl error:&error];
+        NSLog(@"%@",result);
         if (error) {
             qlerror(@"%@",[error description]);
             [swDistGroupsButton addItemWithTitle:[_defaults objectForKey:@"SWDistGroup"]];
@@ -450,12 +446,12 @@
                     [swDistGroupsButton addItemWithTitle:[n objectForKey:@"Name"]];
                 }
                 
-                if ([[swDistGroupsButton itemTitles] containsObject:[_defaults objectForKey:@"SWDistGroup"]]) {
-                    [swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:[_defaults objectForKey:@"SWDistGroup"]]];
+                if ([[swDistGroupsButton itemTitles] containsObject:[[mpServerConnection mpDefaults] objectForKey:@"SWDistGroup"]]) {
+                    [swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:[[mpServerConnection mpDefaults] objectForKey:@"SWDistGroup"]]];
                 }
                 
             } else {
-                [swDistGroupsButton addItemWithTitle:[_defaults objectForKey:@"SWDistGroup"]];
+                [swDistGroupsButton addItemWithTitle:[[mpServerConnection mpDefaults] objectForKey:@"SWDistGroup"]];
             }
         }
         
@@ -529,7 +525,7 @@
         
         // Create Download URL
         [mpServerConnection refreshServerObject];
-        NSString *_url = [NSString stringWithFormat:@"%@://%@:%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,mpServerConnection.HTTP_HOST_PORT,[d valueForKeyPath:@"Software.sw_url"]];
+        NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,[d valueForKeyPath:@"Software.sw_url"]];
         logit(lcl_vInfo,@"Download software from: %@",_url);
         
         BOOL isDir;
@@ -820,7 +816,7 @@
                     
                     // Create Download URL
                     [mpServerConnection refreshServerObject];
-                    NSString *_url = [NSString stringWithFormat:@"%@://%@:%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,mpServerConnection.HTTP_HOST_PORT,[d valueForKeyPath:@"Software.sw_url"]];
+                    NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,[d valueForKeyPath:@"Software.sw_url"]];
                     logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
                     
                     [progressBar setDoubleValue:0.0];
@@ -1093,6 +1089,13 @@
         [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
         [tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 	}
+}
+
+- (IBAction)refreshSoftwareDistGroups:(id)sender
+{
+    [mpServerConnection refreshDefaults];
+    NSLog(@"%@",[mpServerConnection mpDefaults]);
+    [self performSelectorInBackground:@selector(populateSoftwareGroupsPopupButton) withObject:nil];
 }
 
 #pragma mark Class Methods

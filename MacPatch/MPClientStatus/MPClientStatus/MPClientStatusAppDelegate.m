@@ -139,7 +139,6 @@
 
 -(void)dealloc
 {
-	[soap release];
 	[defaults release];
 	[asus release];
 	[mpAppUsage release];
@@ -261,6 +260,8 @@ done:
 	
 	NSDictionary *mpVerDict = [NSDictionary dictionaryWithContentsOfFile:AGENT_VER_PLIST];
 	MPNSTask *mpm = [[MPNSTask alloc] init];
+
+    logit(lcl_vDebug,@"mpVerDict: %@", mpVerDict);
 	
 	NSString *verInfo = [NSString stringWithFormat:@"Version: %@\nBuild: %@\nClient ID: %@",
 						 [mpVerDict objectForKey:@"version"],

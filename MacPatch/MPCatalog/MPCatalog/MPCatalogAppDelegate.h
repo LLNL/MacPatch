@@ -110,6 +110,7 @@
 - (IBAction)checkboxChanged:(id)sender;
 - (IBAction)removeSoftware:(id)sender;
 - (IBAction)refreshSoftware:(id)sender;
+- (IBAction)refreshSoftwareDistGroups:(id)sender;
 - (IBAction)cancelSoftware:(id)sender;
 
 // Test Actions

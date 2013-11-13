@@ -47,20 +47,6 @@
 				<cfreturn _res>
 			</cfif>
 			
-			<!--- Old Way
-			<cfset _copyRequest = copyToHistory(xOS)>
-			<cfif _copyRequest.errorCode NEQ "0">
-				<cfset elog("Error[#_copyRequest.errorCode#]: #_copyRequest.errorMessage#")>
-				<cfreturn _copyRequest>
-			</cfif>	
-			
-			<cfset _delRequest = deleteFromTable(xOS)>
-			<cfif _delRequest.errorCode NEQ "0">
-				<cfset elog("Error[#_delRequest.errorCode#]: #_delRequest.errorMessage#")>
-				<cfreturn _delRequest>
-			</cfif>
-			--->	
-			
 			<cfloop array="#l_data['DATA']#" index="iArr">
 				<cfif ArrayLen(iArr) EQ ArrayLen(xCols)>
 					

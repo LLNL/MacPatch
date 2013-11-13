@@ -30,10 +30,6 @@
 #undef  ql_component
 #define ql_component lcl_cMPASUSCatalogs
 
-#define ASUS_PLIST			@"/Library/Preferences/com.apple.SoftwareUpdate.plist"
-#define WS_CONTROLLER_FILE	@"MPWSControllerCocoa.cfc"
-
-
 @implementation MPASUSCatalogs
 
 -(id)initWithServerConnection:(MPServerConnection *)aSrvObj
@@ -71,13 +67,13 @@
 	NSString *result = @"EMPTY";
 	
 	NSFileManager *fileManager = [NSFileManager defaultManager];
-	if ([fileManager fileExistsAtPath:ASUS_PLIST]) {
-		NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:ASUS_PLIST];
+	if ([fileManager fileExistsAtPath:ASUS_PLIST_PATH]) {
+		NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:ASUS_PLIST_PATH];
 		if ([dict objectForKey:@"CatalogURL"]) {
 			result = [NSString stringWithFormat:@"%@",[dict objectForKey:@"CatalogURL"]];
 		}
 	} else {
-		qlerror(@"%@ is missing, can not read value.",ASUS_PLIST);
+		qlerror(@"%@ is missing, can not read value.",ASUS_PLIST_PATH);
 	}
 	
 	return result;
@@ -153,7 +149,7 @@ done:
 - (BOOL)writeCatalogURL:(NSString *)aCatalogURL
 {
 	BOOL result = TRUE;
-	NSMutableDictionary *tmpDefaults = [NSMutableDictionary dictionaryWithContentsOfFile:ASUS_PLIST];
+	NSMutableDictionary *tmpDefaults = [NSMutableDictionary dictionaryWithContentsOfFile:ASUS_PLIST_PATH];
 	if (aCatalogURL) {
 		[tmpDefaults setObject:aCatalogURL forKey:@"CatalogURL"];
 	} else {
@@ -163,7 +159,7 @@ done:
 	}
 	
 	@try {
-		[tmpDefaults writeToFile:ASUS_PLIST atomically:YES];
+		[tmpDefaults writeToFile:ASUS_PLIST_PATH atomically:YES];
 	}
 	@catch ( NSException *e ) {
 		qlerror(@"Error unable to write new config.");

@@ -75,6 +75,9 @@ int main (int argc, char * argv[])
             {"type"                 ,required_argument	,0, 't'},
 			{"Audit"                ,no_argument		,0, 'A'},
 			{"cuuid"                ,no_argument		,0, 'c'},
+            // Software Dist
+            {"installSWUsingGID"    ,required_argument	,0, 'g'},
+            {"installSWUsingSID"    ,required_argument	,0, 'd'},
             // Output
 			{"Echo"					,no_argument		,0, 'e'},
 			{"Verbose"				,no_argument		,0, 'V'},

@@ -82,10 +82,14 @@
         <cfargument name="aScriptName" required="no">
         <cfargument name="aPathInfo" required="no">
         
-        <cfscript> 
-			inet = CreateObject("java", "java.net.InetAddress");
-			inet = inet.getLocalHost();
-		</cfscript> 
+        <cfscript>
+            try {
+                inet = CreateObject("java", "java.net.InetAddress");
+                inet = inet.getLocalHost();
+            } catch (any e) {
+                inet = "localhost";
+            }
+        </cfscript>
         <cftry>
             <cfquery datasource="mpds" name="qGet">
                 Insert Into ws_log_jobs (cdate, event_type, event, host, scriptName, pathInfo, serverName, serverType, serverHost)
