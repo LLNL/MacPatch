@@ -60,9 +60,9 @@ if [ -n "$t1" ]; then
 		read -p "MacPatch Port [$MP_DEFAULT_PORT]: " mp_server_port
 		mp_server_port=${server_port:-$MP_DEFAULT_PORT}
 	fi
-	
-	defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mp.patchloader 'MPServerPort' "$mp_server_port"
 fi
+
+defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mp.patchloader 'MPServerPort' "$mp_server_port"
 
 if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist ]; then
 	if [ -f /Library/LaunchDaemons/gov.llnl.mploader.plist ]; then

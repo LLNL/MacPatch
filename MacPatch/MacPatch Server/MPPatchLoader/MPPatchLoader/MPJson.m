@@ -61,7 +61,7 @@
 	if ([[[sm g_Defaults] objectForKey:@"MPServerUseSSL"] boolValue] == YES) {
 		prefix = @"https";
 	}
-	[self setL_jsonURL:[NSString stringWithFormat:@"%@://%@:%@/Services/MPServerService.cfc",prefix,[[sm g_Defaults] objectForKey:@"MPServerAddress"],[[sm g_Defaults] objectForKey:@"MPServerPort"]]];
+	[self setL_jsonURL:[NSString stringWithFormat:@"%@://%@:%@/Service/MPServerService.cfc",prefix,[[sm g_Defaults] objectForKey:@"MPServerAddress"],[[sm g_Defaults] objectForKey:@"MPServerPort"]]];
 	logit(lcl_vDebug,@"JSON URL: %@",l_jsonURL);
 }
 
