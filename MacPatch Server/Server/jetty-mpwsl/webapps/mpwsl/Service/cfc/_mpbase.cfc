@@ -2,8 +2,12 @@
 	
 	<cfset this.ds = "mpds">
 	<cfset this.sqlregex = "(SELECT\s[\w\*\)\(\,\s]+\sFROM\s[\w]+)|(UPDATE\s[\w]+\sSET\s[\w\,\'\=]+)|(INSERT\sINTO\s[\d\w]+[\s\w\d\)\(\,]*\sVALUES\s\([\d\w\'\,\)]+)|(DELETE\sFROM\s[\d\w\'\=]+)|(DROP\sTABLE\s[\d\w\'\=]+)">
+	<cfset this.logTable = "ws_log">
 	
 	<cffunction name="init" access="public" output="no" returntype="mpbase">
+		<cfargument name="aLogTable" required="no" default="ws_log">
+
+		<cfset this.logTable = arguments.aLogTable>
 		<cfreturn this>
 	</cffunction>
 
@@ -24,7 +28,7 @@
 		</cfscript>
 
     	<cfquery datasource="#this.ds#" name="qGet">
-            Insert Into ws_log (cdate, event_type, event, host, scriptName, pathInfo, serverName, serverType, serverHost)
+            Insert Into #this.logTable# (cdate, event_type, event, host, scriptName, pathInfo, serverName, serverType, serverHost)
             Values (#CreateODBCDateTime(now())#, <cfqueryparam value="#aEventType#">, <cfqueryparam value="#aEvent#">, <cfqueryparam value="#CGI.REMOTE_HOST#">, <cfqueryparam value="#CGI.SCRIPT_NAME#">, <cfqueryparam value="#CGI.PATH_TRANSLATED#">,<cfqueryparam value="#CGI.SERVER_NAME#">,<cfqueryparam value="#CGI.SERVER_SOFTWARE#">, <cfqueryparam value="#inet#">)
         </cfquery>
     </cffunction>

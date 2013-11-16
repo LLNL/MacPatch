@@ -14,6 +14,9 @@
     <cfset this.logTable = "ws_clt_logs">
 
 	<cffunction name="init" returntype="MPClientService" output="no">
+        <cfargument name="aTableLog" required="no" default="ws_clt_logs">
+
+        <cfset this.logTable = arguments.aTableLog>
 		<cfreturn this>
 	</cffunction>
 

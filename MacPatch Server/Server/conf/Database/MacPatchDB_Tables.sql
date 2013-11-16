@@ -2,7 +2,7 @@
   MacPatch Database Schema
 	All Tables
 	Version 2.2.0
-	Rev 3
+	Rev 4
 */
 
 SET NAMES utf8;
@@ -96,7 +96,7 @@ CREATE TABLE `apple_patches_mp_additions` (
   `severity` varchar(20) DEFAULT 'High',
   `severity_int` int(2) DEFAULT '3',
   `patch_state` varchar(10) DEFAULT 'Create',
-  `patch_install_weight` int(2) unsigned DEFAULT '51',
+  `patch_install_weight` int(2) unsigned DEFAULT '60',
   `patch_reboot` int(1) unsigned DEFAULT '0',
   `osver_support` varchar(10) DEFAULT 'NA',
   PRIMARY KEY (`rid`),
@@ -713,7 +713,7 @@ CREATE TABLE `mp_patches` (
   `patch_name` varchar(100) NOT NULL,
   `patch_ver` varchar(20) NOT NULL,
   `patch_vendor` varchar(255) DEFAULT 'NA',
-  `patch_install_weight` int(2) unsigned DEFAULT '50',
+  `patch_install_weight` int(2) unsigned DEFAULT '30',
   `description` varchar(255) DEFAULT NULL,
   `description_url` varchar(255) DEFAULT NULL,
   `patch_severity` varchar(10) NOT NULL,
@@ -1510,6 +1510,7 @@ CREATE TABLE `savav_info` (
 
 -- ----------------------------
 --  Table structure for `ws_log`
+--  Depricated in 2.2.x
 -- ----------------------------
 DROP TABLE IF EXISTS `ws_log`;
 CREATE TABLE `ws_log` (
@@ -1527,6 +1528,66 @@ CREATE TABLE `ws_log` (
   UNIQUE KEY `rid_idx` (`rid`),
   KEY `ws_idx` (`event_type`,`cdate`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `ws_adm_logs`
+-- ----------------------------
+DROP TABLE IF EXISTS `ws_adm_logs`;
+CREATE TABLE `ws_adm_logs` (
+  `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cdate` datetime DEFAULT NULL,
+  `event_type` varchar(25) NOT NULL,
+  `event` mediumtext NOT NULL,
+  `host` varchar(255) NOT NULL,
+  `scriptName` varchar(100) DEFAULT NULL,
+  `pathInfo` varchar(255) DEFAULT NULL,
+  `serverName` varchar(100) DEFAULT NULL,
+  `serverType` varchar(100) DEFAULT NULL,
+  `serverHost` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`rid`),
+  UNIQUE KEY `rid_idx` (`rid`),
+  KEY `ws_idx` (`event_type`,`cdate`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `ws_clt_logs`
+-- ----------------------------
+DROP TABLE IF EXISTS `ws_clt_logs`;
+CREATE TABLE `ws_clt_logs` (
+  `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cdate` datetime DEFAULT NULL,
+  `event_type` varchar(25) NOT NULL,
+  `event` mediumtext NOT NULL,
+  `host` varchar(255) NOT NULL,
+  `scriptName` varchar(100) DEFAULT NULL,
+  `pathInfo` varchar(255) DEFAULT NULL,
+  `serverName` varchar(100) DEFAULT NULL,
+  `serverType` varchar(100) DEFAULT NULL,
+  `serverHost` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`rid`),
+  UNIQUE KEY `rid_idx` (`rid`),
+  KEY `ws_idx` (`event_type`,`cdate`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `ws_srv_logs`
+-- ----------------------------
+DROP TABLE IF EXISTS `ws_log`;
+CREATE TABLE `ws_srv_logs` (
+  `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cdate` datetime DEFAULT NULL,
+  `event_type` varchar(25) NOT NULL,
+  `event` mediumtext NOT NULL,
+  `host` varchar(255) NOT NULL,
+  `scriptName` varchar(100) DEFAULT NULL,
+  `pathInfo` varchar(255) DEFAULT NULL,
+  `serverName` varchar(100) DEFAULT NULL,
+  `serverType` varchar(100) DEFAULT NULL,
+  `serverHost` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`rid`),
+  UNIQUE KEY `rid_idx` (`rid`),
+  KEY `ws_idx` (`event_type`,`cdate`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `ws_log_jobs`

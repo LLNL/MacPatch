@@ -75,7 +75,7 @@
         <cfset response[ "errorMsg" ] = "" />
         <cfset response[ "result" ] = "" />
 
-        <cfset aObj = CreateObject( "component", "cfc.patch_loader" ) />
+        <cfset aObj = CreateObject( "component", "cfc.patch_loader" ).init(this.logTable) />
         <cfset res = aObj._apple(arguments.data, arguments.type) />
         
         <cfset response[ "errorNo" ] = res.errorCode />
