@@ -168,7 +168,13 @@
 - (BOOL)setUpMySQLConnection:(MysqlServer *)server error:(NSError **)err
 {
     @try {
+        _dbConnection = nil;
         _dbConnection = [MysqlConnection connectToServer:server];
+        if (!_dbConnection) {
+            qlerror(@"Error, unable to create connection to database.");
+            qlerror(@"%@, %@, %@",[server host],[server user],[server schema]);
+            return NO;
+        }
         [_dbConnection disableTransactions];
         [self setDbServer:server];
     }

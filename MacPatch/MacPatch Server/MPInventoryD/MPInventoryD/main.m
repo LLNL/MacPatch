@@ -33,7 +33,7 @@
 #import "MysqlFetch.h"
 #import "MPDataMgr.h"
 
-#define APPVERSION	@"1.2.0"
+#define APPVERSION	@"1.3.1"
 #define APPNAME		@"MPInventoryD"
 #define CONFFILE    @"/Library/MacPatch/Server/conf/etc/siteconfig.xml"
 
