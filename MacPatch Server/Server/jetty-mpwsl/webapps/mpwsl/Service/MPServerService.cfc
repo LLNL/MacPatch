@@ -67,6 +67,8 @@
     <cffunction name="mp_patch_loader" access="remote" returnType="struct" returnFormat="json" output="false">
         <cfargument name="data">
         <cfargument name="type">
+
+        <cfset l = logit("Error",arguments.type)>
     
         <cfset response = {} />
         <cfset response[ "errorNo" ] = "0" />
@@ -74,7 +76,7 @@
         <cfset response[ "result" ] = "" />
 
         <cfset aObj = CreateObject( "component", "cfc.patch_loader" ) />
-        <cfset res = aObj._base(arguments.data, arguments.type) />
+        <cfset res = aObj._apple(arguments.data, arguments.type) />
         
         <cfset response[ "errorNo" ] = res.errorCode />
         <cfset response[ "errorMsg" ] = res.errorMessage />

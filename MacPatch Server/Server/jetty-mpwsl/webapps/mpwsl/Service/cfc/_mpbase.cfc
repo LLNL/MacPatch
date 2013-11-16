@@ -275,7 +275,7 @@
 				SHOW COLUMNS FROM #arguments.aTbl#
 			</cfquery>	
 		<cfcatch>
-				<cfset <cfset lg = logit("Error, #cfcatch.message#")>
+				<cfset lg = logit("Error", "#cfcatch.message#")>
 				<cfset _res.errorCode = "1">
 				<cfset _res.errorMessage = "#cfcatch.message#">
 				<cfreturn _res>
@@ -323,7 +323,7 @@
 				</cfloop>
 			</cfquery>
 		<cfcatch>
-				<cfset <cfset lg = logit("Error, #cfcatch#")>
+				<cfset lg = logit("Error", "#cfcatch#")>
 				<cfset _res.errorCode = "1">
 				<cfset _res.errorMessage = "#cfcatch#">
 		</cfcatch>

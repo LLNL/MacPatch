@@ -9,7 +9,6 @@
 		
 		<cfset var l_data = "">
 		<cfset var l_result = "0">
-		<cfset ilog("#arguments.type#: #arguments.data#")>
 		
 		<cfset var _res = StructNew()>
 		<cfset _res.errorCode = "0">
@@ -19,7 +18,7 @@
 		<cfif arguments.type EQ "JSON">
 			<cfif isJson(arguments.data) EQ false>
 				<!--- Log issue --->
-				<cfset elog("Not JSON Data.")>
+				<cfset elogit("Not JSON Data.")>
 				<cfset _res.errorCode = "1">
 				<cfset _res.errorMessage = "Not JSON Data.">
 				<cfset _res.result = false>
@@ -33,33 +32,19 @@
 			
 			<!--- Check for valid lengths --->
 			<cfif ArrayLen(xCols) EQ 0>
-				<cfset elog("No columns defined, length = 0.")>
+				<cfset elogit("No columns defined, length = 0.")>
 				<cfset _res.errorCode = "1">
 				<cfset _res.errorMessage = "No columns defined, length = 0.">
 				<cfset _res.result = false>
 				<cfreturn _res>	
 			</cfif>
 			<cfif ArrayLen(xData) EQ 0>
-				<cfset elog("No data defined, length = 0.")>
+				<cfset elogit("No data defined, length = 0.")>
 				<cfset _res.errorCode = "1">
 				<cfset _res.errorMessage = "No data defined, length = 0.">
 				<cfset _res.result = false>
 				<cfreturn _res>
 			</cfif>
-			
-			<!--- Old Way
-			<cfset _copyRequest = copyToHistory(xOS)>
-			<cfif _copyRequest.errorCode NEQ "0">
-				<cfset elog("Error[#_copyRequest.errorCode#]: #_copyRequest.errorMessage#")>
-				<cfreturn _copyRequest>
-			</cfif>	
-			
-			<cfset _delRequest = deleteFromTable(xOS)>
-			<cfif _delRequest.errorCode NEQ "0">
-				<cfset elog("Error[#_delRequest.errorCode#]: #_delRequest.errorMessage#")>
-				<cfreturn _delRequest>
-			</cfif>
-			--->	
 			
 			<cfloop array="#l_data['DATA']#" index="iArr">
 				<cfif ArrayLen(iArr) EQ ArrayLen(xCols)>
@@ -67,7 +52,6 @@
 					<cfset l_row = #genRow(xCols,iArr)#>
 					<cflog file="patch_loader" type="Information" application="no" text="rowInsert">
 					<cfset _ires = rowInsert(xCols,iArr,mainTable)>
-					<cfset ilog("Insert record for #l_row.akey#. Result[#_ires.error#]: #_ires.errorMessage#")>
 					<cfif #_ires.error# NEQ "0">
 						<cfset l_result = #l_result# + 1>
 					</cfif>
@@ -128,7 +112,7 @@
 		<cfset _res.errorMessage = "">
 		<cfset _res.qresult = QueryNew("rid")>
 		
-		<cfif isSimpleValue(arguments.aTbl) AND refindnocase(sqlregex, arguments.aTbl)>
+		<cfif isSimpleValue(arguments.aTbl) AND refindnocase(this.sqlregex, arguments.aTbl)>
 			<cfset _res.error = "1">
 			<cfset _res.errorMessage = "Error: Table(#arguments.aTbl#) is not valid.">
 			<cfreturn _res> 
@@ -136,7 +120,7 @@
 		
 		<!--- Check Structure of Data for Insert/Update --->
 		<cfloop array="#arguments.aCols#" index="i">
-			<cfif isSimpleValue(i) AND refindnocase(sqlregex,i)>
+			<cfif isSimpleValue(i) AND refindnocase(this.sqlregex,i)>
 				<cfset _res.error = "1">
 				<cfset _res.errorMessage = "Error: Column (#i#) is not valid. Row insert will not occure.">
 				<cfreturn _res>
@@ -164,7 +148,7 @@
 			<cfif _rowExists EQ False>
 				<cflog file="patch_loader" type="Information" application="no" text="Do Insert">
 			
-				<cfquery name="qInsert" datasource="#mpDBSource#" result="qRes">
+				<cfquery name="qInsert" datasource="#this.ds#" result="qRes">
 					INSERT INTO #arguments.aTbl# ( #ArrayToList(arguments.aCols,",")# )
 					Values (
 					<cfqueryparam value="#arguments.aVals[1]#">
@@ -177,7 +161,7 @@
 				</cfquery>
 				
 				<!--- Insert Additional MP Data --->
-				<cfquery name="qInsertAlt" datasource="#mpDBSource#" result="qResAlt">
+				<cfquery name="qInsertAlt" datasource="#this.ds#" result="qResAlt">
 					INSERT INTO #mainTableAdditions# ( version, supatchname )
 					Values (<cfqueryparam value="#_PatchVersionVal#">,<cfqueryparam value="#_SUPatchNameVal#">)
 				</cfquery>
@@ -202,17 +186,17 @@
 		<cfset _res.result = true>
 		
 		<cftry>
-		<cfquery name="qCopyToHistory" datasource="#mpDBSource#">
+		<cfquery name="qCopyToHistory" datasource="#this.ds#">
 			Select * from apple_patches_real Limit 1
 		</cfquery>
 		<cfset tblCols = #ArrayToList(qCopyToHistory.getColumnNames(),",")#>
 		<cfset tblCols = ListDeleteAt(tblCols,ListContainsNoCase(tblCols,"rid"),",")>	
 			
-		<cfquery name="qCopyToHistory" datasource="#mpDBSource#">
+		<cfquery name="qCopyToHistory" datasource="#this.ds#">
 			INSERT INTO #mainTableHst# (#tblCols#) (SELECT #tblCols# FROM #mainTable# Where osver_support = <cfqueryparam value="#arguments.osver#">)
 		</cfquery>
 		<cfcatch>
-			<cfset elog("Error [qCopyToHistory]: #cfcatch.message#")>
+			<cfset elogit("Error [qCopyToHistory]: #cfcatch.message#")>
 			<cfset _res.errorCode = "1">
 			<cfset _res.errorMessage = "[qCopyToHistory]: #cfcatch.message# #cfcatch.Detail#">
 			<cfset _res.result = false>
@@ -227,17 +211,15 @@
 		<cfargument name="aField">
 		<cfargument name="aFieldValue">
 
-    	<cfquery datasource="#mpDBSource#" name="qGet">
+    	<cfquery datasource="#this.ds#" name="qGet">
             Select #arguments.aField#
             From #arguments.aTable#
             Where #arguments.aField# = <cfqueryparam value="#arguments.aFieldValue#">
         </cfquery>
 		
         <cfif qGet.RecordCount EQ 0>
-			<cfset elog("existsInTable was false for #arguments.aField#=#arguments.aFieldValue#")>
         	<cfreturn False>
         <cfelse>
-			<cfset elog("existsInTable was true for #arguments.aField#=#arguments.aFieldValue#")>
         	<cfreturn True>
         </cfif>
 	</cffunction>
@@ -246,17 +228,15 @@
 	<cffunction name="existsInAltTable" access="private" returntype="any" output="no">
 		<cfargument name="theKey">
 
-    	<cfquery datasource="#mpDBSource#" name="qGet" >
+    	<cfquery datasource="#this.ds#" name="qGet" >
             Select akey
             From #mainTableAlt#
             Where akey = <cfqueryparam value="#arguments.theKey#">
         </cfquery>
 		
         <cfif qGet.RecordCount EQ 0>
-			<cfset elog("existsInAltTable was false for #arguments.theKey#")>
         	<cfreturn False>
         <cfelse>
-			<cfset elog("existsInAltTable was true for #arguments.theKey#")>
         	<cfreturn True>
         </cfif>
 	</cffunction>
@@ -268,7 +248,7 @@
         <cfargument name="theSUPatchName">
         <cfargument name="thePatchVersion">
 
-    	<cfquery datasource="#mpDBSource#" name="qGet" >
+    	<cfquery datasource="#this.ds#" name="qGet" >
             Select akey
             From #mainTableAlt#
             Where akey = <cfqueryparam value="#arguments.theKey#">
@@ -278,10 +258,8 @@
         </cfquery>
 		
         <cfif qGet.RecordCount EQ 0>
-			<cfset elog("existsInAltTable was false for #arguments.theKey#")>
         	<cfreturn False>
         <cfelse>
-			<cfset elog("existsInAltTable was true for #arguments.theKey#")>
         	<cfreturn True>
         </cfif>
 	</cffunction>
@@ -295,11 +273,11 @@
 		<cfset _res.result = true>
 		
 		<cftry>
-		<cfquery name="qDeleteFromTable" datasource="#mpDBSource#">
+		<cfquery name="qDeleteFromTable" datasource="#this.ds#">
 			Delete from #mainTable# Where osver_support = <cfqueryparam value="#arguments.osver#">
 		</cfquery>
 		<cfcatch>
-			<cfset elog("Error [qDeleteFromTable]: #cfcatch.message#")>
+			<cfset elogit("Error [qDeleteFromTable]: #cfcatch.message#")>
 			<cfset _res.errorCode = "1">
 			<cfset _res.errorMessage = "[qDeleteFromTable]: #cfcatch.message#">
 			<cfset _res.result = false>
