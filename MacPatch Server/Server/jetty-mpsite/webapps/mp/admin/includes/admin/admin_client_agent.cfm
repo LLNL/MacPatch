@@ -39,6 +39,9 @@
 		window.open(url,'_self') ;
 	}
 </script>
+<style type="text/css">
+    .xAltRow { background-color: #F0F8FF; background-image: none; }
+</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
@@ -64,6 +67,7 @@
 				  {name:'mdate', index:'mdate', width:70, editrules:{readonly:true}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i:s' }}
 				],
 				altRows:true,
+				altclass:'xAltRow',
 				pager: jQuery('#agent_pager'), //The div we have specified, tells jqGrid where to put the pager
 				rowNum:10, //Number of records we want to show per page
 				rowList:[5,10,15,20,25], //Row List, to allow user to select how many rows they want to see per page
@@ -91,24 +95,21 @@
 						</cfif>
 					} 
 				},
-				onSelectRow: function(id){
-					if(id && id!==lastsel0){
-						var xyz = $("#agent").getDataIDs().indexOf(lastsel0);
-						if (xyz%2 != 0)
-						{
-						  $('#'+lastsel0).addClass('ui-priority-secondary');	
-						} 							 
-
-					  $('#agent').jqGrid('restoreRow',lastsel0);
-					  
+				onSelectRow: function(id)
+				{
+					if(id && id!==lastsel0)
+					{
+					  lastsel0=id;
 					}
-					$('#'+id).removeClass('ui-priority-secondary');
-					
-					$('#agent').editRow(id, true, undefined, function(res) { 
+				},
+				ondblClickRow: function(id) 
+				{
+				    <cfif session.IsAdmin IS true>
+					$('#agent').editRow(id, true, undefined, function(res) {
 					    // res is the response object from the $.ajax call
-					    $("#agent").trigger("reloadGrid"); 
+					    $("#agent").trigger("reloadGrid");
 					});
-					lastsel0 = id;
+					</cfif>
 				},
 				jsonReader: {
 					total: "total",
@@ -146,6 +147,7 @@
 				  {name:'attribute_condition', index:'attribute_condition', width:60, editable:true, edittype:"select", editoptions:{value:"AND:AND;OR:OR;None:None"}}
 				],
 				altRows:true,
+				altclass:'xAltRow',
 				pager: jQuery('#agentFilterPager'), //The div we have specified, tells jqGrid where to put the pager
 				rowNum:10, //Number of records we want to show per page
 				rowList:[5,10,15,20,25], //Row List, to allow user to select how many rows they want to see per page
@@ -164,12 +166,21 @@
 				editurl:"includes/admin/admin_client_agent.cfc?method=editClientAgentFilters",//Not used right now.
 				toolbar:[false,"top"],//Shows the toolbar at the top. I will decide if I need to put anything in there later.
 				//The JSON reader. This defines what the JSON data returned from the CFC should look like
-				onSelectRow: function(id){
-					$('#agentFilter').editRow(id, true, undefined, function(res) { 
+				onSelectRow: function(id)
+				{
+					if(id && id!==lastCFilterSel)
+					{
+					  lastCFilterSel=id;
+					}
+				},
+				ondblClickRow: function(id) 
+				{
+				    <cfif session.IsAdmin IS true>
+					$('#agentFilter').editRow(id, true, undefined, function(res) {
 					    // res is the response object from the $.ajax call
-					    $("#agentFilter").trigger("reloadGrid"); 
+					    $("#agentFilter").trigger("reloadGrid");
 					});
-					lastCFilterSel = id;
+					</cfif>
 				},
 				jsonReader: {
 					total: "total",

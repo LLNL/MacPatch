@@ -20,9 +20,9 @@
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
 				colNames:['','Server', 'Port', 'Use SSL', 'Use SSL Auth', 'Is Master', 'Is Proxy', 'Active'],
 				colModel :[
-				  {name:'rid',index:'rid', width:70, align:"center", sortable:false, hidden:true},
-				  {name:'server', index:'server', width:200, editable:true, editoptions:{size:70}},
-				  {name:'port', index:'port', width:100, editable:true, formoptions:{align: 'left'}},
+				  {name:'rid',index:'rid', width:1, align:"center", sortable:false, hidden:true},
+				  {name:'server', index:'server', width:160, editable:true, editoptions:{size:70}},
+				  {name:'port', index:'port', width:60, editable:true, formoptions:{align: 'left'}},
 				  {name:'useSSL', index:'useSSL', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}},
 				  {name:'useSSLAuth', index:'useSSLAuth', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}},
 				  {name:'isMaster', index:'isMaster', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}},
@@ -55,12 +55,21 @@
 						jQuery("#list").setRowData(ids[i],{rid:sync})
 					}
 				},
-				onSelectRow: function(id){
-					$('#list').editRow(id, true, undefined, function(res) { 
+				onSelectRow: function(id)
+				{
+					if(id && id!==lastsel)
+					{
+					  lastsel=id;
+					}
+				},
+				ondblClickRow: function(id) 
+				{
+				    <cfif session.IsAdmin IS true>
+					$('#list').editRow(id, true, undefined, function(res) {
 					    // res is the response object from the $.ajax call
-					    $("#list").trigger("reloadGrid"); 
+					    $("#list").trigger("reloadGrid");
 					});
-					lastsel = id;
+					</cfif>
 				},
 				jsonReader: {
 					total: "total",

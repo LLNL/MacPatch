@@ -44,45 +44,47 @@
 		window.open(url,'_self') ;
 	}
 </script>
+<style type="text/css">
+    .xAltRow { background-color: #F0F8FF; background-image: none; }
+</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
 			var lastsel=-1;
-			$("#list").jqGrid(
+			var mygrid = $("#list").jqGrid(
 			{
-				url:'./includes/available_patches_mp.cfc?method=getMPPatches', //CFC that will return the users
-				datatype: 'json', //We specify that the datatype we will be using will be JSON
-				colNames:['','','Patch Name', 'Version', 'Bundle ID', 'Severity', 'Reboot', 'State', 'Release Date', 'Create Date'],
+				url:'./includes/available_patches_mp.cfc?method=getMPPatches',
+				datatype: 'json',
+				colNames:['','','Patch Name', 'Version', 'Bundle ID', 'Severity', 'Reboot', 'State', 'Release Date'],
 				colModel :[ 
-				  {name:'puuid',index:'puuid', width:20, align:"center", sortable:false, resizable:false},
-				  {name:'pkg_url',index:'pkg_url', width:20, align:"center", sortable:false, resizable:false},
-				  {name:'patch_name', index:'patch_name', width:120}, 
-				  {name:'patch_ver', index:'patch_ver', width:70, sorttype:'float'},
-				  {name:'bundle_id', index:'bundle_id', width:110, align:"left"},
-				  {name:'patch_severity', index:'patch_severity', width:44, align:"center"}, 
-				  {name:'patch_reboot', index:'patch_reboot', width:40, align:"center"}, 
+				  {name:'puuid',index:'puuid', width:20, align:"center", sortable:false, resizable:false, search:false},
+				  {name:'pkg_url',index:'pkg_url', width:20, align:"center", sortable:false, resizable:false, search:false},
+				  {name:'patch_name', index:'patch_name', width:120,editable:true}, 
+				  {name:'patch_ver', index:'patch_ver', width:40, sorttype:'float',editable:true},
+				  {name:'bundle_id', index:'bundle_id', width:90, align:"left"},
+				  {name:'patch_severity', index:'patch_severity', width:44, align:"center", editable:true, edittype:"select", editoptions:{value:"High:High; Medium:Medium; Low:Low; Unknown:Unknown"}}, 
+				  {name:'patch_reboot', index:'patch_reboot', width:40, align:"center", editable:true, edittype:"select", editoptions:{value:"No:No;Yes:Yes"}}, 
 				  {name:'patch_state', index:'patch_state', width:50, align:"center", editable:true, edittype:"select", editoptions:{value:"Production:Production;QA:QA;Create:Create;Disabled:Disabled"}},
-				  {name:'mdate', index:'mdate', width:70, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d' }},
-				  {name:'cdate', index:'cdate', width:70, align:"center", hidden: true, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d' }}
+				  {name:'mdate', index:'mdate', width:70, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d' }}
 				],
 				altRows:true,
-				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager
-				rowNum:20, //Number of records we want to show per page
-				rowList:[10,20,30,50,100], //Row List, to allow user to select how many rows they want to see per page
-				sortorder: "desc", //Default sort order
-				sortname: "cdate", //Default sort column
-				viewrecords: true, //Shows the nice message on the pager
-				imgpath: '/', //Image path for prev/next etc images
-				caption: 'Custom Patches', //Grid Name
-				height:'auto', //I like auto, so there is no blank space between. Using a fixed height can mean either a scrollbar or a blank space before the pager
+				altclass:'xAltRow',
+				pager: jQuery('#pager'),
+				rowNum:20,
+				rowList:[10,20,30,50,100],
+				sortorder: "desc",
+				sortname: "cdate",
+				viewrecords: true,
+				imgpath: '/',
+				caption: 'Custom Patches',
+				height:'auto',
 				recordtext: "View {0} - {1} of {2} Records",
 				pgtext: "Page {0} of {1}",
 				pginput:true,
 				width:980,
 				hidegrid:false,
-				editurl:"includes/available_patches_mp.cfc?method=addEditMPPatch",//Not used right now.
-				toolbar:[false,"top"],//Shows the toolbar at the top. I will decide if I need to put anything in there later.
-				//The JSON reader. This defines what the JSON data returned from the CFC should look like
+				editurl:"includes/available_patches_mp.cfc?method=addEditMPPatch",
+				toolbar:[false,"top"],
 				loadComplete: function(){ 
 					var ids = jQuery("#list").getDataIDs(); 
 					for(var i=0;i<ids.length;i++){ 
@@ -97,25 +99,20 @@
 						jQuery("#list").setRowData(ids[i],{puuid:edit,pkg_url:dl}) 
 					} 
 				}, 
-				onSelectRow: function(id){
-					/* This section of code fixes the highlight issues, with altRows */
-					if(id && id!==lastsel){
-						var xyz = $("#list").getDataIDs().indexOf(lastsel);
-						if (xyz%2 != 0)
-						{
-						  $('#'+lastsel).addClass('ui-priority-secondary');	
-						} 							 
-
-					  $('#list').jqGrid('restoreRow',lastsel);
+				onSelectRow: function(id)
+				{
+					if(id && id!==lastsel)
+					{
 					  lastsel=id;
 					}
-					$('#'+id).removeClass('ui-priority-secondary');
-					
-					<cfif session.IsAdmin IS true>
+				},
+				ondblClickRow: function(id) 
+				{
+				    <cfif session.IsAdmin IS true>
 					var patchID = $("#list").getDataIDs().indexOf(lastsel);
 					var patchIDVal = jQuery("#list").getCell(patchID,2);
-					$('#list').editRow(id, true, undefined, function(res) {
-					    // res is the response object from the $.ajax call
+					$('#list').editRow(id, true, undefined, function(res) 
+					{
 					    $("#list").trigger("reloadGrid");
 					});
 					</cfif>
@@ -128,11 +125,16 @@
 					userdata: "userdata",
 					cell: "",
 					id: "0"
-					}
 				}
-			);
-			<cfif session.IsAdmin IS true>
-			$("#list").jqGrid('navGrid',"#pager",{edit:true,add:false,del:true},{closeOnEscape:true})
+			});
+			<cfif session.IsAdmin IS true>	
+			$("#list").jqGrid('navGrid',"#pager",{edit:true,add:false,del:true},
+				{}, // default settings for edit
+				{}, // default settings for add
+				{}, // delete
+				{ sopt:['cn','bw','eq','ne','lt','gt','ew'], closeOnEscape: true, multipleSearch: true, closeAfterSearch: true }, // search options
+				{closeOnEscape:true}
+				)
 			.navButtonAdd('#pager',{
 			   caption:"", 
 			   buttonicon:"ui-icon-plus", 
@@ -150,7 +152,18 @@
 			   }, 
 			   position:"last"
 			});
+			<cfelse>
+			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false},
+				{}, // default settings for edit
+				{}, // default settings for add
+				{}, // delete
+				{ sopt:['cn','bw','eq','ne','lt','gt','ew'], closeOnEscape: true, multipleSearch: true, closeAfterSearch: true }, // search options
+				{closeOnEscape:true}
+				);
 			</cfif>
+			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
+			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
+			mygrid[0].toggleToolbar();
 		}
 	);
 </script>

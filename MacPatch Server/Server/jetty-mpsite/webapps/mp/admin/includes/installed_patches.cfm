@@ -1,4 +1,6 @@
-
+<style type="text/css">
+    .xAltRow { background-color: #F0F8FF; background-image: none; }
+</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
@@ -17,6 +19,7 @@
 				],
 				emptyrecords: "No records to view",
 				altRows:true,
+				altclass:'xAltRow',
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager
 				rowNum:30, //Number of records we want to show per page
 				rowList:[10,20,30,50,100], //Row List, to allow user to select how many rows they want to see per page
@@ -53,6 +56,7 @@
 			);
 			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
 			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
+			
 		}
 	);
 </script>

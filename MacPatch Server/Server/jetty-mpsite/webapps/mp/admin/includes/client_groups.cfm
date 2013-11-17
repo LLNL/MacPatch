@@ -39,9 +39,9 @@
 	</cfloop>
 	
 	<cfsavecontent variable="jsCols">
-	colModel :[<cfoutput>{name:'#colDataStruct[1]['name']#',index:'#colDataStruct[1]['name']#', width:#colDataStruct[1]['width']#, align:"#colDataStruct[1]['align']#", sortable:false, resizable:false},</cfoutput>
+	colModel :[<cfoutput>{name:'#colDataStruct[1]['name']#',index:'#colDataStruct[1]['name']#', width:#colDataStruct[1]['width']#, align:"#colDataStruct[1]['align']#", sortable:false, resizable:false, search:false},</cfoutput>
 			<cfloop index="x" from="2" to="#arrayLen(colDataStruct)#"><cfoutput>
-			{name:'#colDataStruct[x]['name']#',index:'#colDataStruct[x]['name']#', width:#colDataStruct[x]['width']#, align:"#colDataStruct[x]['align']#", hidden:#colDataStruct[x]['hidden']# #isDateCol(colDataStruct[x]['name'])#}<cfif x NEQ arrayLen(colDataStruct)>,</cfif></cfoutput></cfloop>
+			{name:'#colDataStruct[x]['name']#',index:'#colDataStruct[x]['name']#', width:#colDataStruct[x]['width']#, align:"#colDataStruct[x]['align']#", hidden:#colDataStruct[x]['hidden']# #isDateCol(colDataStruct[x]['name'])#, #iif(colDataStruct[x]['name'] EQ 'defsDate',DE('search:false'),DE('search:true'))#}<cfif x NEQ arrayLen(colDataStruct)>,</cfif></cfoutput></cfloop>
 	]			
 	</cfsavecontent>
 	<cfreturn jsCols>
@@ -74,6 +74,7 @@
 			<width>100</width>
 			<align>left</align>
 			<hidden>false</hidden>
+			<search>true</search>
 		</column><cfset i = i + 1>
 		</cfloop>
 	   </columns>
@@ -329,7 +330,7 @@ function dateDifference(strDate1,strDate2){
 	$(document).ready(function()
 		{
 			var lastsel = -1;
-			$("#list").jqGrid(
+			var mygrid = $("#list").jqGrid(
 			{
 				url:'./includes/client_groups.cfc?method=getClientsForGroup&clientgroup=<cfoutput>#ClientGroupName#</cfoutput>', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
@@ -464,6 +465,9 @@ function dateDifference(strDate1,strDate2){
 					window.location.href = './includes/client_groups_export.cfm?clientgroup=<cfoutput>#ClientGroupName#</cfoutput>';
 				}
 			});
+			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
+			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
+			mygrid[0].toggleToolbar();
 		}
 	);	
 </script>

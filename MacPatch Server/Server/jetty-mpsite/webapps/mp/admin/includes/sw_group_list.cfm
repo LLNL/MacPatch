@@ -4,6 +4,9 @@
 		window.open(url,'_self') ;
 	}
 </script>
+<style type="text/css">
+    .xAltRow { background-color: #F0F8FF; background-image: none; }
+</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
@@ -26,6 +29,7 @@
 				  {name:'mdate', index:'mdate', width:80, align:"left", editable: false, edittype:'text', editoptions: {readonly: 'readonly'}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}
 				],
 				altRows:true,
+				altclass:'xAltRow',
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager
 				rowNum:20, //Number of records we want to show per page
 				rowList:[10,20,30,50,100], //Row List, to allow user to select how many rows they want to see per page
@@ -56,22 +60,15 @@
 						jQuery("#list").setRowData(ids[i],{gid:edit})
 					}
 				},
-				onSelectRow: function(id){
-					/* This section of code fixes the highlight issues, with altRows */
-					if(id && id!==lastsel){
-						var xyz = $("#list").getDataIDs().indexOf(lastsel);
-						if (xyz%2 != 0)
-						{
-						  $('#'+lastsel).addClass('ui-priority-secondary');
-						}
-
-					  $('#list').jqGrid('restoreRow',lastsel);
+				onSelectRow: function(id)
+				{
+					if(id && id!==lastsel)
+					{
 					  lastsel=id;
 					}
-					$('#'+id).removeClass('ui-priority-secondary');
-					
 				},
-				ondblClickRow: function(id) {
+				ondblClickRow: function(id) 
+				{
 				    <cfif session.IsAdmin IS true>
 					var stateID = $("#list").getDataIDs().indexOf(lastsel);
 					var stateIDVal = jQuery("#list").getCell(stateID,2);

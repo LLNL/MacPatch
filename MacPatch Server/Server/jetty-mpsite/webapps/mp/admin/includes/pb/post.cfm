@@ -86,7 +86,7 @@
         <cfqueryparam value="#description_url#" cfsqltype="cf_sql_varchar">, '#patch_severity#', '#patch_state#', '#cve_id#', #cDate#, #cDate#, '#active#',
         <cfqueryparam value="#pkg_name#" cfsqltype="cf_sql_varchar">, <cfqueryparam value="#md5Hash#" cfsqltype="cf_sql_varchar">, '#theFilePath#', <cfqueryparam value="#pkg_url#" cfsqltype="cf_sql_varchar">, <cfqueryparam value="#pkg_sizeK#" cfsqltype="cf_sql_varchar">, '#patch_reboot#',<cfqueryparam value="#pkg_preinstall#" cfsqltype="CF_SQL_LONGVARCHAR">,
 		<cfqueryparam value="#pkg_postinstall#" cfsqltype="CF_SQL_LONGVARCHAR">,<cfqueryparam value="#pkg_env_var#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#patch_install_weight#">
+		<cfqueryparam value="#patchInstallWeight#">
     )
 </cfquery>
 

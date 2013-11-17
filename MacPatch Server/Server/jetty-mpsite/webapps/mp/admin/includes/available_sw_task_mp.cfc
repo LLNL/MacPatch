@@ -40,25 +40,15 @@
         </cftry>
 
 		<cfset records = qSelSW>
-
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
-			<cfset arrSW[i] = [#rid#, #tuuid#, #name#, #primary_suuid#, #iif(active IS 1,DE("Yes"),DE("No"))#, #Ucase(sw_task_type)#, #sw_start_datetime#, #sw_end_datetime#, #mdate#, #cdate#] >
+			<cfset arrSW[i] = [#rid#, #tuuid#, #name#, #primary_suuid#, #iif(active IS 1,DE("Yes"),DE("No"))#, #Ucase(sw_task_type)#, #sw_start_datetime#, #sw_end_datetime#, #mdate#] >
 			<cfset i = i + 1>
 		</cfloop>
 
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
 
@@ -73,8 +63,18 @@
 		<cfset var userdata = "">
 
 		<cfif oper EQ "edit">
-			<cfset strMsgType = "Edit">
-			<cfset strMsg = "Notice, MP edit.">
+			<cftry>
+				<cfquery name="editRecord" datasource="#session.dbsource#" result="res">
+					UPDATE mp_software_task
+					SET	 name = <cfqueryparam value="#Arguments.name#">,
+	 					 active = <cfqueryparam value="#Arguments.active#">
+					WHERE rid = <cfqueryparam value="#arguments.id#">
+				</cfquery>
+                <cfcatch type="any">			
+					<cfset strMsgType = "Error">
+					<cfset strMsg = "There was an issue with the Edit. An Error Report has been submitted to Support.">					
+				</cfcatch>		
+			</cftry>
 		<cfelseif oper EQ "add">
 			<cfset strMsgType = "Add">
 			<cfset strMsg = "Notice, MP add.">

@@ -79,8 +79,20 @@
 		<cfset var userdata = "">
         
 		<cfif oper EQ "edit">
-			<cfset strMsgType = "Edit">
-			<cfset strMsg = "Notice, MP edit."> 
+			<cftry>
+				<cfquery name="editRecord" datasource="#session.dbsource#" result="res">
+					UPDATE mp_software
+					SET	 sName = <cfqueryparam value="#Arguments.sName#">,
+	 					 sVersion = <cfqueryparam value="#Arguments.sVersion#">,
+	 					 sReboot = <cfqueryparam value="#Arguments.sReboot#">,
+						 sState = <cfqueryparam value="#Arguments.sState#">
+					WHERE suuid = <cfqueryparam value="#arguments.id#">
+				</cfquery>
+                <cfcatch type="any">			
+					<cfset strMsgType = "Error">
+					<cfset strMsg = "There was an issue with the Edit. An Error Report has been submitted to Support.">					
+				</cfcatch>		
+			</cftry>
 		<cfelseif oper EQ "add">
 			<cfset strMsgType = "Add">
 			<cfset strMsg = "Notice, MP add."> 
