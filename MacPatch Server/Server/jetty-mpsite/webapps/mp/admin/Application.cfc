@@ -74,7 +74,11 @@
 		<cfelse>
 			<cfset StructDelete(session,"loggedin")>
 			<cfset session.error = "Incorrect username or password">
-			<cfset location("https://#cgi.HTTP_HOST#/")>
+            <cfif _AppSettings.j2eeType EQ "JETTY">
+                <cfset location("https://#cgi.HTTP_HOST#/")>
+            <cfelse>
+                <cfset location("..")>
+            </cfif>   
 		</cfif>
         
         <cfinvoke component="root.Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
