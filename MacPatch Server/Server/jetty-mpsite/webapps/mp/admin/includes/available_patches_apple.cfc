@@ -24,11 +24,11 @@
 		
 		<cftry>
 			<cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-				select Distinct ap.akey, ap.supatchname, ap.postdate, ap.title, ap.version, ap.restartaction, GROUP_CONCAT(ap.osver_support) as osver_support, apr.patch_state,
+				select Distinct ap.akey, ap.supatchname, ap.postdate, ap.title, ap.version, apr.patch_reboot as restartaction, GROUP_CONCAT(ap.osver_support) as osver_support, apr.patch_state,
 				CASE WHEN EXISTS
 				( SELECT 1
 					FROM mp_apple_patch_criteria apc
-					WHERE apc.puuid = ap.akey)
+					WHERE apc.puuid = ap.supatchname)
 				THEN "Yes" ELSE "No"
 				END AS hasCriteria
 	   			From apple_patches ap

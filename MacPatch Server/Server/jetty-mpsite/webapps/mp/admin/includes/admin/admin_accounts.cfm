@@ -82,9 +82,9 @@ function checkPassword(form)
 					}
 				}
 			);
-			
-			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:true})
 			<cfif session.IsAdmin IS true>
+			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:true})
+			
 			.navButtonAdd('#pager',{
 			   caption:"", 
 			   buttonicon:"ui-icon-plus", 
@@ -93,7 +93,6 @@ function checkPassword(form)
 				 load('./index.cfm?adm_mp_accounts&action=<cfoutput>#encrypt('add',session.usrKey,'AES/CBC/PKCS5Padding','base64')#</cfoutput>');
 			   }
 			})
-			</cfif>
 			.navButtonAdd('#pager',{
 			   caption:"", 
 			   buttonicon:"ui-icon-pencil", 
@@ -107,9 +106,10 @@ function checkPassword(form)
 			   }, 
 			   position:"last"
 			});
-			
-		}
-	);
+			<cfelse>
+				$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false});
+			</cfif>
+		});
 </script>
 <table id="list" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="pager"></div>
