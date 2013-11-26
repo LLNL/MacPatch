@@ -33,7 +33,7 @@
 #import "MysqlFetch.h"
 #import "MPDataMgr.h"
 
-#define APPVERSION	@"1.3.1"
+#define APPVERSION	@"1.3.2"
 #define APPNAME		@"MPInventoryD"
 #define CONFFILE    @"/Library/MacPatch/Server/conf/etc/siteconfig.xml"
 
@@ -263,6 +263,18 @@ int main(int argc, char * argv[])
         MysqlConnection *testConn;
         @try {
             testConn = [MysqlConnection connectToServer:mServer];
+            while (testConn == nil)
+            {
+                qlerror(@"Error, connection to the database returned nil. Wait 30 seconds and try again.");
+                sleep(30);
+                conf = [pConf parseConfFile:_configPath];
+                [mServer setHost:[conf objectForKey:@"dbHost"]];
+                [mServer setPort:[[conf objectForKey:@"dbPort"] intValue]];
+                [mServer setUser:[conf objectForKey:@"dbUsr"]];
+                [mServer setPassword:[conf objectForKey:@"dbPass"]];
+                [mServer setSchema:[conf objectForKey:@"dbName"]];
+                testConn = [MysqlConnection connectToServer:mServer];
+            }
             [testConn disableTransactions];
         }
         @catch (NSException *exception) {
