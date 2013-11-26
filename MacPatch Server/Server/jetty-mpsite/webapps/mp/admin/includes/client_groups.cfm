@@ -51,7 +51,7 @@
 	<cfargument name="colName" required="yes">
 	
 	<cfif arguments.colName EQ "cdate" OR arguments.colName EQ "mdate" OR arguments.colName EQ "sdate" OR arguments.colName EQ "date"> 
-		<cfreturn ",formatter: 'date', formatoptions: {srcformat:'F, d Y H:i:s', newformat: 'Y-m-d H:i:s' }">
+		<cfreturn ",formatter: 'date', formatoptions: {srcformat:'ISO8601Long', newformat: 'Y-m-d H:i:s' }">
 	</cfif>
 	<cfreturn "">
 </cffunction>
