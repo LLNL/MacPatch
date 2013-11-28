@@ -27,14 +27,7 @@
 		8FA5D1A4144F9B24000FD0F5 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1A3144F9B24000FD0F5 /* NSData+Base64.m */; };
 		8FA5D1A91450D03C000FD0F5 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1A81450D03C000FD0F5 /* NSFileManager+DirectoryLocations.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8FA5D1AD1450DBEB000FD0F5 /* NSString+Hash.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1AC1450DBEB000FD0F5 /* NSString+Hash.m */; };
-		8FA5D1C11450F05A000FD0F5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA5D1C01450F05A000FD0F5 /* Cocoa.framework */; };
-		8FA5D1CB1450F05A000FD0F5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8FA5D1C91450F05A000FD0F5 /* InfoPlist.strings */; };
-		8FA5D1CE1450F05A000FD0F5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1CD1450F05A000FD0F5 /* main.m */; };
-		8FA5D1D41450F05A000FD0F5 /* MPPatchLoaderConfAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1D31450F05A000FD0F5 /* MPPatchLoaderConfAppDelegate.m */; };
-		8FA5D1D71450F05A000FD0F5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FA5D1D51450F05A000FD0F5 /* MainMenu.xib */; };
 		8FA5D1E91451C6B4000FD0F5 /* MPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1E81451C6B4000FD0F5 /* MPManager.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		8FA5D1EE145214C4000FD0F5 /* MPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1E81451C6B4000FD0F5 /* MPManager.m */; };
-		8FA5D1EF145214CA000FD0F5 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1A81450D03C000FD0F5 /* NSFileManager+DirectoryLocations.m */; };
 		8FF8BF9D1447B95000F79F74 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BF9C1447B95000F79F74 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8FF8BFB11447B95E00F79F74 /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BFA61447B95E00F79F74 /* lcl.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8FF8BFB21447B95E00F79F74 /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BFAE1447B95E00F79F74 /* LCLLogFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -97,18 +90,10 @@
 		8FA5D1A81450D03C000FD0F5 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		8FA5D1AB1450DBEB000FD0F5 /* NSString+Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Hash.h"; sourceTree = "<group>"; };
 		8FA5D1AC1450DBEB000FD0F5 /* NSString+Hash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hash.m"; sourceTree = "<group>"; };
-		8FA5D1BE1450F05A000FD0F5 /* MPPatchLoaderConf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPPatchLoaderConf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FA5D1C01450F05A000FD0F5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8FA5D1C31450F05A000FD0F5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		8FA5D1C41450F05A000FD0F5 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		8FA5D1C51450F05A000FD0F5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		8FA5D1C81450F05A000FD0F5 /* MPPatchLoaderConf-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MPPatchLoaderConf-Info.plist"; sourceTree = "<group>"; };
-		8FA5D1CA1450F05A000FD0F5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		8FA5D1CC1450F05A000FD0F5 /* MPPatchLoaderConf-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MPPatchLoaderConf-Prefix.pch"; sourceTree = "<group>"; };
-		8FA5D1CD1450F05A000FD0F5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		8FA5D1D21450F05A000FD0F5 /* MPPatchLoaderConfAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPPatchLoaderConfAppDelegate.h; sourceTree = "<group>"; };
-		8FA5D1D31450F05A000FD0F5 /* MPPatchLoaderConfAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPPatchLoaderConfAppDelegate.m; sourceTree = "<group>"; };
-		8FA5D1D61450F05A000FD0F5 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		8FA5D1E71451C6B4000FD0F5 /* MPManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPManager.h; sourceTree = "<group>"; };
 		8FA5D1E81451C6B4000FD0F5 /* MPManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPManager.m; sourceTree = "<group>"; };
 		8FF8BF9B1447B95000F79F74 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
@@ -140,14 +125,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8FA5D1BB1450F05A000FD0F5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8FA5D1C11450F05A000FD0F5 /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -173,7 +150,6 @@
 			isa = PBXGroup;
 			children = (
 				8F991EAC1444A42400AF9DE2 /* MPPatchLoader */,
-				8FA5D1C61450F05A000FD0F5 /* MPPatchLoaderConf */,
 				8F991EA91444A42400AF9DE2 /* Frameworks */,
 				8F991EA71444A42400AF9DE2 /* Products */,
 			);
@@ -183,7 +159,6 @@
 			isa = PBXGroup;
 			children = (
 				8F991EA61444A42400AF9DE2 /* MPPatchLoader */,
-				8FA5D1BE1450F05A000FD0F5 /* MPPatchLoaderConf.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -291,28 +266,6 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		8FA5D1C61450F05A000FD0F5 /* MPPatchLoaderConf */ = {
-			isa = PBXGroup;
-			children = (
-				8FA5D1D21450F05A000FD0F5 /* MPPatchLoaderConfAppDelegate.h */,
-				8FA5D1D31450F05A000FD0F5 /* MPPatchLoaderConfAppDelegate.m */,
-				8FA5D1D51450F05A000FD0F5 /* MainMenu.xib */,
-				8FA5D1C71450F05A000FD0F5 /* Supporting Files */,
-			);
-			path = MPPatchLoaderConf;
-			sourceTree = "<group>";
-		};
-		8FA5D1C71450F05A000FD0F5 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				8FA5D1C81450F05A000FD0F5 /* MPPatchLoaderConf-Info.plist */,
-				8FA5D1C91450F05A000FD0F5 /* InfoPlist.strings */,
-				8FA5D1CC1450F05A000FD0F5 /* MPPatchLoaderConf-Prefix.pch */,
-				8FA5D1CD1450F05A000FD0F5 /* main.m */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		8FF8BF9A1447B95000F79F74 /* JSONKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -376,23 +329,6 @@
 			productReference = 8F991EA61444A42400AF9DE2 /* MPPatchLoader */;
 			productType = "com.apple.product-type.tool";
 		};
-		8FA5D1BD1450F05A000FD0F5 /* MPPatchLoaderConf */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8FA5D1D81450F05A000FD0F5 /* Build configuration list for PBXNativeTarget "MPPatchLoaderConf" */;
-			buildPhases = (
-				8FA5D1BA1450F05A000FD0F5 /* Sources */,
-				8FA5D1BB1450F05A000FD0F5 /* Frameworks */,
-				8FA5D1BC1450F05A000FD0F5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = MPPatchLoaderConf;
-			productName = MPPatchLoaderConf;
-			productReference = 8FA5D1BE1450F05A000FD0F5 /* MPPatchLoaderConf.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -414,22 +350,9 @@
 			projectRoot = "";
 			targets = (
 				8F991EA51444A42400AF9DE2 /* MPPatchLoader */,
-				8FA5D1BD1450F05A000FD0F5 /* MPPatchLoaderConf */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		8FA5D1BC1450F05A000FD0F5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8FA5D1CB1450F05A000FD0F5 /* InfoPlist.strings in Resources */,
-				8FA5D1D71450F05A000FD0F5 /* MainMenu.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8F991EA21444A42400AF9DE2 /* Sources */ = {
@@ -459,37 +382,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8FA5D1BA1450F05A000FD0F5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8FA5D1CE1450F05A000FD0F5 /* main.m in Sources */,
-				8FA5D1D41450F05A000FD0F5 /* MPPatchLoaderConfAppDelegate.m in Sources */,
-				8FA5D1EE145214C4000FD0F5 /* MPManager.m in Sources */,
-				8FA5D1EF145214CA000FD0F5 /* NSFileManager+DirectoryLocations.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		8FA5D1C91450F05A000FD0F5 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8FA5D1CA1450F05A000FD0F5 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		8FA5D1D51450F05A000FD0F5 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8FA5D1D61450F05A000FD0F5 /* en */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		8F991EB21444A42400AF9DE2 /* Debug */ = {
@@ -560,36 +453,6 @@
 			};
 			name = Release;
 		};
-		8FA5D1D91450F05A000FD0F5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "MPPatchLoaderConf/MPPatchLoaderConf-Prefix.pch";
-				INFOPLIST_FILE = "MPPatchLoaderConf/MPPatchLoaderConf-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		8FA5D1DA1450F05A000FD0F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "MPPatchLoaderConf/MPPatchLoaderConf-Prefix.pch";
-				INFOPLIST_FILE = "MPPatchLoaderConf/MPPatchLoaderConf-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -607,15 +470,6 @@
 			buildConfigurations = (
 				8F991EB51444A42400AF9DE2 /* Debug */,
 				8F991EB61444A42400AF9DE2 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8FA5D1D81450F05A000FD0F5 /* Build configuration list for PBXNativeTarget "MPPatchLoaderConf" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8FA5D1D91450F05A000FD0F5 /* Debug */,
-				8FA5D1DA1450F05A000FD0F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
