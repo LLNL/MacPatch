@@ -30,7 +30,8 @@
 #import "lcl.h"
 #import "MPManager.h"
 #import "RegexKitLite.h"
-
+#import "MPApplePatch.h"
+#import "NSString+Helper.h"
 
 
 // Alt URL
@@ -38,6 +39,7 @@
 #define SUCATALOG_106	@"index-leopard-snowleopard.merged-1.sucatalog"
 #define SUCATALOG_107	@"index-lion-snowleopard-leopard.merged-1.sucatalog"
 #define SUCATALOG_108   @"index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog"
+#define SUCATALOG_109   @"index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog"
 #define SAMPLEDIST		@"[NEED SERVER ADDRESS]/content/downloads/22/18/061-7116/DWK9NtpsggcpsQ9VKZpNP49qv6bRNHgZp2/061-7116.English.dist"
 
 
@@ -55,184 +57,214 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
 
 - (NSString *)downloadSUContent:(NSString *)aASUSURL catalog:(NSString *)aCatalogURL osver:(NSString *)aOSVer
 {
-	NSString *l_osVer = NULL;
-	NSString *l_asusURL = NULL;
-	l_osVer = aOSVer;
-	l_asusURL = [NSString stringWithFormat:@"%@/%@",[[sm g_Defaults] objectForKey:@"ASUSServer"],aCatalogURL];
+	NSString *l_asusURL = [NSString stringWithFormat:@"%@/%@",[[sm g_Defaults] objectForKey:@"ASUSServer"],aCatalogURL];
 
-	NSError *error = nil;
+    NSError *error = nil;
 	NSString *result = nil;
 	result = [self readSUCatalogURLAsString:l_asusURL error:&error];
 	if (error) {
 		logit(lcl_vError,@"%@",[error localizedDescription]);
 		return NULL;
 	}
-	
+
+    // Create a proper PLIST from the SoftwareUpdate catalog URL result
 	NSString *errorDesc = nil;
 	NSPropertyListFormat format;
-	NSDictionary *sucatalogPlist = [NSPropertyListSerialization propertyListFromData:[result dataUsingEncoding:NSUTF8StringEncoding] 
+	NSDictionary *suCatalogPlist = [NSPropertyListSerialization propertyListFromData:[result dataUsingEncoding:NSUTF8StringEncoding]
 																	mutabilityOption:NSPropertyListImmutable
 																			  format:&format
 																	errorDescription:&errorDesc];
-	
-	
 
-	NSMutableDictionary *l_prods = [NSMutableDictionary dictionaryWithDictionary:[sucatalogPlist objectForKey:@"Products"]];
-	logit(lcl_vInfo,@"Patch entires found %lu for %@",[[l_prods allKeys] count],aOSVer);
-	
-	NSDictionary *curPatch;
+    // Create a dictionary containing all of the Products (Patches) from the plist
+    NSMutableDictionary *patches = [NSMutableDictionary dictionaryWithDictionary:[suCatalogPlist objectForKey:@"Products"]];
+	logit(lcl_vInfo,@"Patch entires found %lu for %@",[[patches allKeys] count],aOSVer);
+
+    NSDictionary *curPatch;
 	NSDictionary *smdPlist = nil;
 	NSDictionary *distData = nil;
-	NSMutableDictionary *l_patch = nil;
-	NSString *descStr = nil;
+
+    MPApplePatch *aPatch;
+
 	NSData *descData = nil;
-	NSMutableArray *newProds = [[NSMutableArray alloc] init];
-	NSDateFormatter *dformat = [[NSDateFormatter alloc] init];
-	[dformat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-	for (id aKey in [l_prods allKeys]) {
+	NSMutableArray *_products = [[NSMutableArray alloc] init];
+	NSDateFormatter *dateformat = [[NSDateFormatter alloc] init];
+	[dateformat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+
+    for (id aKey in [patches allKeys])
+    {
 		curPatch = nil;
-		curPatch = [l_prods objectForKey:aKey];
-		
-		l_patch = [[NSMutableDictionary alloc] init];
-		[l_patch setObject:aKey forKey:@"akey"];
+		curPatch = [patches objectForKey:aKey];
+
+        aPatch = [[MPApplePatch alloc] init];
+        [aPatch setAkey:aKey];
+        [aPatch setOsver:aOSVer];
+        [aPatch setPatchname:aKey];
+
+        // Set ServerMetadataURL
         if ([curPatch objectForKey:@"ServerMetadataURL"]) {
-            [l_patch setObject:[curPatch objectForKey:@"ServerMetadataURL"] forKey:@"ServerMetadataURL"];
-        } else {
-            [l_patch setObject:@"" forKey:@"ServerMetadataURL"];
+            [aPatch setServerMetadataURL:[curPatch objectForKey:@"ServerMetadataURL"]];
         }
-		
-		[l_patch setObject:[dformat stringFromDate:[curPatch objectForKey:@"PostDate"]] forKey:@"postdate"];
-		[l_patch setObject:l_osVer forKey:@"osver"];
-		[l_patch setObject:aKey forKey:@"patchname"];
-		
-		if ([[curPatch objectForKey:@"Distributions"] objectForKey:@"English"]) {
-			[l_patch setObject:[[curPatch objectForKey:@"Distributions"] objectForKey:@"English"] forKey:@"Distribution"];	
-		} else if ([[curPatch objectForKey:@"Distributions"] objectForKey:@"en"]) {
-			[l_patch setObject:[[curPatch objectForKey:@"Distributions"] objectForKey:@"en"] forKey:@"Distribution"];
-		}
-		
-		smdPlist = [self readSMDFile:[curPatch objectForKey:@"ServerMetadataURL"] error:NULL];
-		if (smdPlist != nil) {
-			if ([smdPlist objectForKey:@"CFBundleShortVersionString"]) {
-				[l_patch setObject:[smdPlist objectForKey:@"CFBundleShortVersionString"] forKey:@"CFBundleShortVersionString"];
-			} else {
-				[l_patch setObject:@"0.1" forKey:@"CFBundleShortVersionString"];
+
+        // Set PostDate
+        if ([curPatch objectForKey:@"PostDate"]) {
+            [aPatch setPostdate:[dateformat stringFromDate:[curPatch objectForKey:@"PostDate"]]];
+        }
+
+        // Set Distributions for English
+        if ([curPatch objectForKey:@"Distributions"]) {
+            if ([[curPatch objectForKey:@"Distributions"] objectForKey:@"English"]) {
+                [aPatch setDistribution:[[curPatch objectForKey:@"Distributions"] objectForKey:@"English"]];
+            } else if ([[curPatch objectForKey:@"Distributions"] objectForKey:@"en"]) {
+                [aPatch setDistribution:[[curPatch objectForKey:@"Distributions"] objectForKey:@"en"]];
+            }
+        }
+
+        // Read SMD file
+        error = nil;
+        smdPlist = nil;
+        smdPlist = [self readSMDFile:[curPatch objectForKey:@"ServerMetadataURL"] error:&error];
+        if (error) {
+            // Skip, no data
+            logit(lcl_vWarning,@"Patch %@, content was not found. Skipping %@",aKey,aKey);
+            aPatch = nil;
+            continue;
+        }
+
+        if (smdPlist)
+        {
+            // Set Patch Version
+            if ([smdPlist objectForKey:@"CFBundleShortVersionString"]) {
+                [aPatch setCFBundleShortVersionString:[smdPlist objectForKey:@"CFBundleShortVersionString"]];
 			}
-			if ([smdPlist objectForKey:@"IFPkgFlagRestartAction"]) {
-				[l_patch setObject:[smdPlist objectForKey:@"IFPkgFlagRestartAction"] forKey:@"IFPkgFlagRestartAction"];
-			} else {
-				[l_patch setObject:@"RequireRestart" forKey:@"IFPkgFlagRestartAction"];
+
+            // Set Reboot
+            if ([smdPlist objectForKey:@"IFPkgFlagRestartAction"]) {
+                [aPatch setIFPkgFlagRestartAction:[smdPlist objectForKey:@"IFPkgFlagRestartAction"]];
 			}
-			if ([[smdPlist objectForKey:@"localization"] objectForKey:@"English"]) {
-				if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"description"]) {
-					descData = [[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"description"];
-					descStr = [descData base64EncodedString];
-					[l_patch setObject:descStr forKey:@"description"];
-				}	
-				if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"title"])
-					[l_patch setObject:[[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"title"] forKey:@"title"];
-			} else if ([[smdPlist objectForKey:@"localization"] objectForKey:@"en"]) {				
-				if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"description"]) {
-					descData = [[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"description"];
-					descStr = [descData base64EncodedString];
-					[l_patch setObject:descStr forKey:@"description"];
-				}	
-				if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"title"])
-					[l_patch setObject:[[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"title"] forKey:@"title"];
-			}
-		} else {
-			logit(lcl_vWarning,@"Patch %@, content was not found. Skipping %@",aKey,aKey);
-			[l_patch release];
-			l_patch = nil;
-			continue;
-		}
-		
-		[l_patch setObject:[NSString stringWithFormat:@"%@-%@",aKey,[l_patch objectForKey:@"CFBundleShortVersionString"]] forKey:@"supatchname"];
-		
-		distData = [self readDistFile:[l_patch objectForKey:@"Distribution"] error:NULL];
-		if ([[distData objectForKey:@"suPatchName"] isEqual:NULL] == NO) {
-			if ([distData objectForKey:@"suPatchName"]) {
-				[l_patch setObject:[distData objectForKey:@"suPatchName"] forKey:@"patchname"];
-                // If Blank of 0.1 do another check ...
-                if ([[l_patch objectForKey:@"CFBundleShortVersionString"] isEqualToString:@""]) {
-                    [l_patch setObject:[distData objectForKey:@"altVersion"] forKey:@"CFBundleShortVersionString"];
-                    [l_patch setObject:[NSString stringWithFormat:@"%@-%@",[distData objectForKey:@"suPatchName"],[l_patch objectForKey:@"CFBundleShortVersionString"]] forKey:@"supatchname"];
-                } else if ([[l_patch objectForKey:@"CFBundleShortVersionString"] isEqualToString:@"0.1"]) {
-                    [l_patch setObject:[distData objectForKey:@"altVersion"] forKey:@"CFBundleShortVersionString"];
-                    [l_patch setObject:[NSString stringWithFormat:@"%@-%@",[distData objectForKey:@"suPatchName"],[l_patch objectForKey:@"CFBundleShortVersionString"]] forKey:@"supatchname"];
+
+            // Set Description & title from localization for English
+            if ([smdPlist objectForKey:@"localization"])
+            {
+                if ([[smdPlist objectForKey:@"localization"] objectForKey:@"English"]) {
+                    if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"description"]) {
+                        descData = [[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"description"];
+                        [aPatch setDescription:[descData base64EncodedString]];
+                    }
+                    if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"title"]) {
+                        [aPatch setTitle:[[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"title"]];
+                    }
+                } else if ([[smdPlist objectForKey:@"localization"] objectForKey:@"en"]) {
+                    if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"description"]) {
+                        descData = [[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"description"];
+                        [aPatch setDescription:[descData base64EncodedString]];
+                    }
+                    if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"title"]) {
+                        [aPatch setTitle:[[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"title"]];
+                    }
                 }
-                
-                [l_patch setObject:[NSString stringWithFormat:@"%@-%@",[distData objectForKey:@"suPatchName"],[l_patch objectForKey:@"CFBundleShortVersionString"]] forKey:@"supatchname"];
-			} else if ([[l_patch objectForKey:@"ServerMetadataURL"] rangeOfString:@"_PrinterSupport.smd"].location != NSNotFound) {
-				[l_patch setObject:aKey forKey:@"patchname"];
-				[l_patch setObject:[NSString stringWithFormat:@"%@-%@",aKey,[l_patch objectForKey:@"CFBundleShortVersionString"]] forKey:@"supatchname"];
-			}
-				
-			// Set Reboot Override
-			if ([[distData objectForKey:@"altReboot"] isEqual:NULL] == NO)
-				if ([[distData objectForKey:@"altReboot"] isEqualToString:[l_patch objectForKey:@"IFPkgFlagRestartAction"]] == NO)
-					[l_patch setObject:@"RequireRestart" forKey:@"IFPkgFlagRestartAction"];
-				
-		}
-		
-		[l_patch removeObjectForKey:@"ServerMetadataURL"];
-		[l_patch removeObjectForKey:@"Distribution"];
-		[newProds addObject:l_patch];
-		[l_patch release];
-		l_patch = nil;
+            }
+        } else {
+            // Skip, no data
+            logit(lcl_vWarning,@"Patch %@, content was not found. Skipping %@",aKey,aKey);
+            aPatch = nil;
+            continue;
+        }
+
+        // Set suPatchName name and version
+        [aPatch setSupatchname:[NSString stringWithFormat:@"%@-%@",aKey,[aPatch CFBundleShortVersionString]]];
+
+        // Read Dist Data
+        error = nil;
+        distData = nil;
+        distData = [self readDistFile:[aPatch Distribution] error:&error];
+        if (error) {
+            // Skip, no data
+            logit(lcl_vWarning,@"[ReadDistFile]Patch %@, content was not found. Skipping %@",aKey,aKey);
+            aPatch = nil;
+            continue;
+        }
+        if (distData)
+        {
+            if ([distData objectForKey:@"suPatchName"]) {
+                [aPatch setPatchname:[distData objectForKey:@"suPatchName"]];
+                if ([[aPatch CFBundleShortVersionString] isEqualToString:@""] || [[aPatch CFBundleShortVersionString] isEqualToString:@"0.1"]) {
+                    if ([distData objectForKey:@"altVersion"]) {
+                        [aPatch setCFBundleShortVersionString:[distData objectForKey:@"altVersion"]];
+                    }
+                }
+
+                [aPatch setSupatchname:[NSString stringWithFormat:@"%@-%@",[distData objectForKey:@"suPatchName"],[aPatch CFBundleShortVersionString]]];
+            }
+
+            if ([distData objectForKey:@"altReboot"]) {
+                if ([[distData objectForKey:@"altReboot"] isEqualToString:[aPatch IFPkgFlagRestartAction]] == NO) {
+                    [aPatch setIFPkgFlagRestartAction:[distData objectForKey:@"altReboot"]];
+                }
+            }
+        }
+
+        // Remove the ServerMetadataURL & Distribution values, not needed anymore
+        [aPatch setServerMetadataURL:@""];
+        [aPatch setDistribution:@""];
+
+        // Add Patch as a Dictionary to the Array
+        [_products addObject:[aPatch patchAsDictionary]];
+        aPatch = nil;
 	}
-	
-	logit(lcl_vInfo,@"Patches to add: %d",(int)[newProds count]);
-	NSString *fileNamePath = [NSString stringWithFormat:@"/tmp/suPatches_%@.plist",l_osVer]; 
-	[newProds writeToFile:fileNamePath atomically:YES];
-	[newProds release];
-	newProds = nil;
-	
+
+    logit(lcl_vInfo,@"Patches to add: %d",(int)[_products count]);
+	NSString *fileNamePath = [NSString stringWithFormat:@"/tmp/suPatches_%@.plist",aOSVer];
+	[_products writeToFile:fileNamePath atomically:YES];
+	_products = nil;
+
 	return fileNamePath;
 }
+
 - (NSString *)readSUCatalogURLAsString:(NSString *)catalogURL error:(NSError **)err
 {	
 	NSString *result = NULL;
-	NSAutoreleasePool *inPool = [[NSAutoreleasePool alloc] init];
-	
-	[[NSURLCache sharedURLCache] setMemoryCapacity:0];
-	[[NSURLCache sharedURLCache] setDiskCapacity:0];  
-	 
-    NSError *error = nil;
-    NSString *fileContents = [[[NSString alloc] initWithContentsOfURL:[NSURL URLWithString:catalogURL]
-															 encoding:NSUTF8StringEncoding error:&error] autorelease];
-	NSDictionary *userInfoDict;
-	if (error) {
-		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
-		if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp.patchloader" code:[error code] userInfo:userInfoDict];
-		logit(lcl_vError,@"%@",[error localizedDescription]);
-		goto done;
-	} else {
-		result = [fileContents retain];
-	}
-	
-    [inPool drain];
+    @autoreleasepool
+    {
+        [[NSURLCache sharedURLCache] setMemoryCapacity:0];
+        [[NSURLCache sharedURLCache] setDiskCapacity:0];
 
-done:
-	return result;
+        NSError *error = nil;
+        NSString *fileContents = [[NSString alloc] initWithContentsOfURL:[NSURL URLWithString:catalogURL]
+                                                                 encoding:NSUTF8StringEncoding error:&error];
+        NSDictionary *userInfoDict;
+        if (error) {
+            userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
+            if (err != NULL) {
+                *err = [NSError errorWithDomain:@"gov.llnl.mp.patchloader" code:[error code] userInfo:userInfoDict];
+            } else {
+                logit(lcl_vError,@"%@",[error localizedDescription]);
+            }
+        } else {
+            result = fileContents;
+        }
+
+        return result;
+    }
 }
 
 - (NSDictionary *)readSMDFile:(NSString *)smdURL  error:(NSError **)err
 {
 	NSDictionary *result = nil;
-	
+	NSDictionary *userInfoDict;
+
 	NSError *error = nil;
 	NSString *requestString = NULL;
 	requestString = [self readSUCatalogURLAsString:smdURL error:&error];
 	if (error) {
-		logit(lcl_vError,@"%@",[error localizedDescription]);
+        userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
+		if (err != NULL) {
+            *err = [NSError errorWithDomain:@"gov.llnl.mp.patchloader" code:[error code] userInfo:userInfoDict];
+        } else {
+            logit(lcl_vError,@"%@",[error localizedDescription]);
+        }
 		goto done;
 	}
 	
@@ -242,7 +274,7 @@ done:
 													   options:NSPropertyListImmutable 
 														format:&format 
 														 error:&error];
-	NSDictionary *userInfoDict;
+
 	if (error) {
 		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
 		if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp.patchloader" code:[error code] userInfo:userInfoDict];
@@ -259,7 +291,7 @@ done:
 	// Define empty result
 	[resTmpDict setValue:NULL forKey:@"suPatchName"];
 	[resTmpDict setValue:NULL forKey:@"altReboot"];
-    [resTmpDict setValue:@"0.1" forKey:@"altVersion"];
+    [resTmpDict setValue:NULL forKey:@"altVersion"];
 	
 	
 	NSDictionary *result = [NSDictionary dictionaryWithDictionary:resTmpDict];
@@ -271,8 +303,7 @@ done:
 		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
 		if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp.patchloader" code:[error code] userInfo:userInfoDict];
 		logit(lcl_vError,@"%@",[error localizedDescription]);
-		[resTmpDict release];
-		goto done;
+		return result;
 	}
 	
 	// Parse the XML Result
@@ -284,9 +315,7 @@ done:
 		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
 		if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp.patchloader" code:[error code] userInfo:userInfoDict];
 		logit(lcl_vError,@"%@",[error localizedDescription]);
-		[distXML release];
-		[resTmpDict release];
-		goto done;
+		return result;
 	}
 	
 	// Search for "Choice XML Node containing id=su and suDisabledGroupID attributes
@@ -296,31 +325,30 @@ done:
 		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
 		if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp.patchloader" code:[error code] userInfo:userInfoDict];
 		logit(lcl_vError,@"%@",[error localizedDescription]);
-		[distXML release];
-		[resTmpDict release];
 		goto done;
 	}
 	
 	// Parse the results to get the patch name and alt renboot
 	if ([qrySUPatchName count] == 1) {
 		NSXMLElement *element = [qrySUPatchName objectAtIndex:0];
-		[resTmpDict setValue:[[element attributeForName:@"suDisabledGroupID"] stringValue] forKey:@"suPatchName"];
-		if ([element attributeForName:@"onConclusion"]) {
-			if ([[[element attributeForName:@"onConclusion"] stringValue] isEqualToString:@"RequireRestart"]) {
-				[resTmpDict setValue:@"RequireRestart" forKey:@"altReboot"];
-			}
-		}
+        NSString *elementXML = [[qrySUPatchName objectAtIndex:0] XMLString];
+
+        [resTmpDict setValue:[[element attributeForName:@"suDisabledGroupID"] stringValue] forKey:@"suPatchName"];
+        if ([elementXML containsString:@"onConclusion" ignoringCase:YES]) {
+            if ([elementXML containsString:@"RequireRestart" ignoringCase:YES] || [elementXML containsString:@"RequireShutdown" ignoringCase:YES]) {
+                [resTmpDict setValue:@"RequireRestart" forKey:@"altReboot"];
+            }
+        }
+
         NSString *altVerString = [self readSUVERS:qrySUPatchName distData:requestString];
         [resTmpDict setValue:altVerString forKey:@"altVersion"];
         
 	} else {
 		// Log Error 	
 	}
-	[distXML release];
 	distXML = nil;
 	
 	result = [NSDictionary dictionaryWithDictionary:resTmpDict];
-	[resTmpDict release];
 	resTmpDict = nil;
 	
 done:
@@ -348,71 +376,6 @@ done:
         suVersData = @"0.1";
     }
     return suVersData;
-}
-
-#pragma mark -
-#pragma mark Test Methods
-
-- (void)testReadDist
-{
-	NSMutableDictionary *res = [[NSMutableDictionary alloc] init];
-	// Define empty result
-	[res setValue:NULL forKey:@"suPatchName"];
-	[res setValue:@"NoRestart" forKey:@"altReboot"];
-	
-	NSError *error = nil;
-	NSString *resultData = nil;
-	resultData = [self readSUCatalogURLAsString:SAMPLEDIST error:&error];
-	if (error) {
-		NSLog(@"%@",[error localizedDescription]);
-		[res release];
-		return;
-	}
-	
-	// Parse the XML Result
-	error = nil;
-	NSXMLDocument *distXML = [[NSXMLDocument alloc] initWithData:[resultData dataUsingEncoding:NSUTF8StringEncoding] options:NSXMLDocumentXMLKind error:&error];
-	if (error) {
-		NSLog(@"%@",[error localizedDescription]);
-		[distXML release];
-		[res release];
-		return;
-	}
-	
-	// Search for "Choice XML Node containing id=su and suDisabledGroupID attributes
-	error = nil;
-	NSArray *qrySUPatchName = [distXML nodesForXPath:@"//choice[@id='su' and @suDisabledGroupID]" error:&error];
-	if (error) {
-		NSLog(@"%@",[error localizedDescription]);
-		[distXML release];
-		[res release];
-		return;
-	}
-	
-	// Parse the results to get the patch name and alt renboot
-	if ([qrySUPatchName count] == 1) {
-		NSXMLElement *element = [qrySUPatchName objectAtIndex:0];
-		[res setValue:[[element attributeForName:@"suDisabledGroupID"] stringValue] forKey:@"suPatchName"];
-		if ([element attributeForName:@"onConclusion"]) {
-			if ([[[element attributeForName:@"onConclusion"] stringValue] isEqualToString:@"RequireRestart"]) {
-				[res setValue:@"RequireRestart" forKey:@"altReboot"];
-			} else {
-				[res setValue:@"NoRestart" forKey:@"altReboot"];
-			}
-		} else {
-			[res setValue:@"NoRestart" forKey:@"altReboot"];
-		}
-	} else {
-		// Log Error 	
-	}
-	[distXML release];
-	distXML = nil;
-	
-	NSDictionary *result = [NSDictionary dictionaryWithDictionary:res];
-	[res release];
-	res = nil;
-
-	NSLog(@"Result = %@",result);
 }
 
 @end

@@ -31,7 +31,7 @@
 	MPManager *sm;
 }
 
-@property (nonatomic, retain) NSArray *products;
+@property (nonatomic, strong) NSArray *products;
 
 - (NSString *)downloadSUContent:(NSString *)aASUSURL catalog:(NSString *)aCatalogURL osver:(NSString *)aOSVer;
 - (NSString *)readSUCatalogURLAsString:(NSString *)catalogURL error:(NSError **)err;
@@ -39,6 +39,4 @@
 - (NSDictionary *)readDistFile:(NSString *)distURL  error:(NSError **)err;
 - (NSString  *)readSUVERS:(NSArray *)nodesForXPath distData:(NSString *)aDistData;
 
-// Tests
-- (void)testReadDist;
 @end

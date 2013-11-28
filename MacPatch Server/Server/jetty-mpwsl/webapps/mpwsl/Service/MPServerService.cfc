@@ -14,6 +14,7 @@
     <cfset this.logTable = "ws_srv_logs">
 
 	<cffunction name="init" returntype="MPServerService" output="no">
+    
 		<cfreturn this>
 	</cffunction>
 

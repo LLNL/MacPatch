@@ -65,10 +65,6 @@
 	logit(lcl_vDebug,@"JSON URL: %@",l_jsonURL);
 }
 
-- (void)dealloc
-{	
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark JSON Methods
@@ -93,8 +89,8 @@
 	BOOL jPostResult = NO;
 	NSDictionary *jPostResultDict = nil;
 	
-	NSMutableArray		*resultsData	= [[[NSMutableArray alloc] init] autorelease];
-	NSMutableDictionary *resultDict		= [[[NSMutableDictionary alloc] init] autorelease];
+	NSMutableArray		*resultsData	= [[NSMutableArray alloc] init];
+	NSMutableDictionary *resultDict		= [[NSMutableDictionary alloc] init];
 	NSArray				*xCols = nil;
 	// Get Data As Array
 	if ([aData isKindOfClass:[NSDictionary class]]) {
@@ -129,10 +125,10 @@
 	
 	if (l_err) {
 		logit(lcl_vError,@"%@ %@",[l_err localizedDescription],[l_err localizedFailureReason]);
-		goto done;	
+		return nil;
 	}
 	NSString *jDataSigned = @"NA";
-	logit(lcl_vError,@"[request][URL]: %@",l_jsonURL);
+	logit(lcl_vDebug,@"[request][URL]: %@",l_jsonURL);
 	
 	ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:l_jsonURL]];
     [request setTimeOutSeconds:300];
@@ -143,9 +139,6 @@
 	[request setPostValue:jDataSigned forKey:@"signature"];
 	[request setValidatesSecureCertificate:NO];	
 	[request startSynchronous];
-	
-	//NSData *requestData;
-	//requestData = [request rawResponseData];
 	
 	NSString *requestString;
 	requestString = [request responseString];
@@ -163,11 +156,9 @@
 		goto done;
 	}
 	
-	//if (requestData) {
 	if (requestString) {
 		error = nil;
 		JSONDecoder *jkDecoder = [JSONDecoder decoder];
-		//jPostResultDict = [jkDecoder objectWithData:requestData error:&error];
 		jPostResultDict = [jkDecoder objectWithData:[requestString dataUsingEncoding:NSUTF8StringEncoding] error:&error];
 		if (error) {
 			userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];

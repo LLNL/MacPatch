@@ -1,7 +1,15 @@
-<cfcomponent name="client_checkin" extends="_mpbase">
+<cfcomponent name="patch_loader" extends="_mpbase">
 	
 	<cfparam name="mainTable" default="apple_patches">
 	<cfparam name="mainTableAdditions" default="apple_patches_mp_additions">
+    <cfset this.logTable = "ws_srv_logs">
+    
+    <cffunction name="init" returntype="patch_loader" output="no">
+    	<cfargument name="aLogTable" required="no" default="ws_log">
+
+		<cfset this.logTable = arguments.aLogTable>
+		<cfreturn this>
+	</cffunction>
 
 	<cffunction name="_apple" access="public" returntype="any" output="no">
 		<cfargument name="data" hint="Encoded Data">

@@ -2,7 +2,7 @@
   MacPatch Database Schema
 	All Tables
 	Version 2.2.0
-	Rev 4
+	Rev 5
 */
 
 SET NAMES utf8;
@@ -100,6 +100,7 @@ CREATE TABLE `apple_patches_mp_additions` (
   `patch_reboot` int(1) unsigned DEFAULT '0',
   `osver_support` varchar(10) DEFAULT 'NA',
   PRIMARY KEY (`rid`),
+  UNIQUE KEY `idx_patch_unique` (`version`,`supatchname`),
   KEY `idx_apple_patches` (`supatchname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
@@ -1572,7 +1573,7 @@ CREATE TABLE `ws_clt_logs` (
 -- ----------------------------
 --  Table structure for `ws_srv_logs`
 -- ----------------------------
-DROP TABLE IF EXISTS `ws_log`;
+DROP TABLE IF EXISTS `ws_srv_logs`;
 CREATE TABLE `ws_srv_logs` (
   `rid` bigint(20) NOT NULL AUTO_INCREMENT,
   `cdate` datetime DEFAULT NULL,

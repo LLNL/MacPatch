@@ -1,5 +1,5 @@
 //
-//  MPJson.h
+//  NSString+Helper.h
 /*
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -23,23 +23,23 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
-@class MPManager;
+@interface NSString (StringHelper)
 
-@interface MPJson : NSObject {
-	MPManager	*sm;	
-@private
-	BOOL		useSSL;
-	NSString	*l_jsonURL;
-}
-@property (nonatomic, strong) NSString *l_jsonURL;
+- (NSString *)trim;
+- (NSString *)midStartAt:(int)aStart end:(int)aEnd;
+- (BOOL)containsString:(NSString *)aString;
+- (BOOL)containsString:(NSString *)aString ignoringCase:(BOOL)flag;
 
--(id)initWithJSONURL:(NSString *)aJsonURL;
--(void)buildJsonURL;
++ (NSString *)versionStringForApplication:(NSString *)appPath;
+- (NSString *)replace:(NSString *)aSubString replaceString:(NSString *)aReplaceString;
+- (NSString *)replaceAll:(NSString *)aSubString replaceString:(NSString *)aReplaceString;
 
-// Methods
-- (BOOL)postJSONDataForMethod:(NSString *)aMethod data:(NSDictionary *)aData error:(NSError **)err;
-- (BOOL)postJSONDataForMethodWithExtraKeyAndValue:(NSString *)aMethod key:(NSString *)aKey value:(NSString *)aVal data:(id)aData error:(NSError **)err;
+- (NSString *)urlEncode;
 
+- (NSArray *)componentsSeparatedByString:(NSString *)aSeperator escapeString:(NSString *)aEscString;
+
+- (BOOL)stringToBoolValue;
+- (NSString *)validXMLString;
 @end
