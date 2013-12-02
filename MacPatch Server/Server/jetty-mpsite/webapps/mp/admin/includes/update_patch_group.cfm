@@ -47,12 +47,12 @@
 	</cfloop>
     
     <cfset _d = RemovePatchGroupData(form.group_id)>
+    <!--- JSON 2.2.x --->
     <cfset _x = xObj.GetPatchGroupPatches(form.group_id)>
-    <cfset _a = AddPatchGroupData(form.group_id,_x)>
-    <!--- Proxy Update 
-	<cfobject component="mpp_actions" name="mpp">
-	<cfinvoke component="#mpp#" method="postProxyData" returnvariable="result">
-	--->
+    <!--- SOAP < 2.1.1 --->
+    <cfset _y = xObj.GetPatchGroupPatchesExtended(form.group_id)>
+    <cfset _a = AddPatchGroupData(form.group_id,_x,'JSON')>
+    <cfset _b = AddPatchGroupData(form.group_id,_y,'SOAP')>
 </cfif>
 
 <cffunction name="RemovePatchGroupData" returntype="any" output="no">
@@ -72,12 +72,13 @@
 <cffunction name="AddPatchGroupData" returntype="any" output="no">
 	<cfargument name="PatchGroupID">
     <cfargument name="PatchGroupData">
+    <cfargument name="PatchGroupDataType">
 
 	<cftry>
     	<cfset _hash = hash(#arguments.PatchGroupData#, "MD5")>
 		<cfquery datasource="#session.dbsource#" name="qPut">
 			Insert Into mp_patch_group_data (pid, hash, data, data_type)
-			Values ('#arguments.PatchGroupID#', '#_hash#', '#arguments.PatchGroupData#', 'JSON') 
+			Values ('#arguments.PatchGroupID#', '#_hash#', '#arguments.PatchGroupData#', '#arguments.PatchGroupDataType#') 
 		</cfquery>
     <cfcatch></cfcatch>
     </cftry>
