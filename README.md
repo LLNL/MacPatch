@@ -17,6 +17,16 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 * End-User Self Patch
 * Software Catalog
 
+## Version 2.2.0
+
+MacPatch 2.2.0 is primarily an update to 2.1.1.x.
+
+###What's New
+
+- Mac OS X 10.9 support
+- Tomcat support to replace Jetty
+- Client side performance improvments
+
 ## System Requirements
 
 ###Client
@@ -35,10 +45,16 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 If your using JAVA 1.7, Oracle did not include the "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7". Apparently they are needed for any stronger keys then 128-bit keys. You can get the Unlimited Strength bundles from the Oracle site ([http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)). 
 Installing them is as “simple” as dumping them to the "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home/jre/lib/security/" directory.#####Server (TCP) Ports Used:
 ######Default
-80, 443, 2600, 2601, 2602
+80, 443, 2600, 3601, 4601
 ######Configurable
-2600, 2601, 2602
+2600, 3601, 4601
 
+## Install and Setup
+To get MacPatch up and running first clone the project and review the "MacPatch – Server Install.pdf" file in the docs folder.
+
+```
+mkdir -p /Library/MacPatch/tmpcd /Library/MacPatch/tmpgit clone https://github.com/SMSG-MAC-DEV/MacPatch.git 
+```
 
 ## License
 
