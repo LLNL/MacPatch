@@ -42,7 +42,8 @@ Installing them is as “simple” as dumping them to the "/System/Library/Frame
 ## Install and Setup
 To get MacPatch up and running first clone the project and review the "MacPatch – Server Install.pdf" file in the docs folder.
 
-```\# mkdir -p /Library/MacPatch/tmp\# cd /Library/MacPatch/tmp\# git clone https://github.com/SMSG-MAC-DEV/MacPatch.git 
+```
+mkdir -p /Library/MacPatch/tmpcd /Library/MacPatch/tmpgit clone https://github.com/SMSG-MAC-DEV/MacPatch.git 
 ```
 
 ## License
