@@ -53,6 +53,18 @@
     <cfset _y = xObj.GetPatchGroupPatchesExtended(form.group_id)>
     <cfset _a = AddPatchGroupData(form.group_id,_x,'JSON')>
     <cfset _b = AddPatchGroupData(form.group_id,_y,'SOAP')>
+    
+    <cfquery datasource="#session.dbsource#" name="qServers">
+		Select server From mp_servers
+	</cfquery>
+    
+    <!--- This will be updated in MacPatch 3.0 --->
+    <!--- The port and URL will be changed and will come from the DB --->
+    <!--- This is a bandaid for now --->
+    <cfoutput query="qServers">
+    	<cfhttp url="http://#server#:3601/tasks/resetCache.cfm" method="get" result="result" charset="utf-8"> 
+    </cfoutput>
+    
 </cfif>
 
 <cffunction name="RemovePatchGroupData" returntype="any" output="no">

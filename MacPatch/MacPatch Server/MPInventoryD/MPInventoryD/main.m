@@ -336,6 +336,15 @@ int main(int argc, char * argv[])
                             MPDataMgr *dataMgr = [[MPDataMgr alloc] initWithMySQLServer:mServer error:&myErr];
                             if (myErr) {
                                 qlerror(@"%@",[myErr description]);
+
+                                sleep(10);
+                                conf = [pConf parseConfFile:_configPath];
+                                [mServer setHost:[conf objectForKey:@"dbHost"]];
+                                [mServer setPort:[[conf objectForKey:@"dbPort"] intValue]];
+                                [mServer setUser:[conf objectForKey:@"dbUsr"]];
+                                [mServer setPassword:[conf objectForKey:@"dbPass"]];
+                                [mServer setSchema:[conf objectForKey:@"dbName"]];
+
                                 continue;
                             }
                             if ([dataMgr pasreXMLDocFromPath:[afile path]]) {
