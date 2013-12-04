@@ -17,6 +17,16 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 * End-User Self Patch
 * Software Catalog
 
+## Version 2.2.0
+
+MacPatch 2.2.0 is primarily an update to 2.1.1.x.
+
+###What's New
+
+- Mac OS X 10.9 support
+- Tomcat support to replace Jetty
+- Client side performance improvments
+
 ## System Requirements
 
 ###Client
