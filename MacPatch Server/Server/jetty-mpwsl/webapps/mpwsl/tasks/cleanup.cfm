@@ -12,7 +12,7 @@
 	<!--- Get DataBase Tables, and filter them --->
 	<cffunction name="getDBTables" output="no" returntype="any">
         <cftry>
-        <cfquery datasource="mpds" name="qGet" cachedwithin="#CreateTimeSpan(0, 0, 10, 0)#">
+        <cfquery datasource="mpds" name="qGet" cachedwithin="#CreateTimeSpan(0, 1, 0, 0)#">
             SELECT DISTINCT TABLE_NAME 
             FROM INFORMATION_SCHEMA.TABLES 
             WHERE table_schema='MacPatchDB'
@@ -67,7 +67,7 @@
 		<cfoutput>Removing #arguments.id#<br></cfoutput>
 		<cftry>
 			<cfquery name="getClientInfo" datasource="mpds">
-	            Select * From mp_clients
+	            Select cuuid From mp_clients
 	            Where cuuid = '#Arguments.id#'
 	        </cfquery>
 	        <cfif getClientInfo.RecordCount LTE 0>
@@ -106,10 +106,14 @@
         <cfargument name="aScriptName" required="no">
         <cfargument name="aPathInfo" required="no">
         
-        <cfscript> 
-			inet = CreateObject("java", "java.net.InetAddress");
-			inet = inet.getLocalHost();
-		</cfscript> 
+        <cfscript>
+            try {
+                inet = CreateObject("java", "java.net.InetAddress");
+                inet = inet.getLocalHost();
+            } catch (any e) {
+                inet = "localhost";
+            }
+        </cfscript>
         <cftry>
             <cfquery datasource="mpds" name="qGet">
                 Insert Into ws_log_jobs (cdate, event_type, event, host, scriptName, pathInfo, serverName, serverType, serverHost)
@@ -136,8 +140,7 @@
 	<cfset log = logit("TASK",#CGI.REMOTE_HOST#,"Setting days to #url.days#")>
     <cfquery name="getClientInfo" datasource="mpds">
         Select cuuid, mdate, hostname From mp_clients
-        Where 
-        mdate <= (now() - interval #url.days# day)
+        Where  mdate <= (now() - interval #url.days# day)
     </cfquery>
     
     <cfset rmListID = ValueList(getClientInfo.cuuid)>

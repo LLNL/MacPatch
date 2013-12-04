@@ -53,6 +53,12 @@
     return [self initWithServerConnection:_srvObj];
 }
 
+- (id)initWithDefaults:(NSDictionary *)aDefaults
+{
+    MPServerConnection *_srvObj = [[[MPServerConnection alloc] initWithDefaults:aDefaults] autorelease];
+    return [self initWithServerConnection:_srvObj];
+}
+
 - (id)initWithServerConnection:(MPServerConnection *)aSrvObj
 {
     self = [super init];
@@ -320,6 +326,66 @@ done:
         }
     }
     
+done:
+	return responseString;
+}
+
+- (NSString *)startSynchronousRequestWithFormData:(NSString *)aBaseURL method:(NSString *)aMethod form:(NSDictionary *)aFormData error:(NSError **)err
+{
+    NSString        *responseString = @"NA";
+    NSDictionary    *userInfoDict;
+    // Get Method Name from the URL
+
+
+    // Now we need top parse the URL for just the base URL
+    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:aBaseURL]];
+    if (self.useClientCertAuth) {
+        SecIdentityRef identity = NULL;
+        if ([self authIdentity:&identity]) {
+            [request setClientCertificateIdentity:identity];
+            [request setValidatesSecureCertificate:NO];
+        } else {
+            // Error
+            goto done;
+        }
+    } else {
+        [request setValidatesSecureCertificate:self.validatesSecureCertificate];
+    }
+
+	[request setUserAgent:@"MacPatchAgent"];
+	[request setPostValue:aMethod forKey:@"method"];
+    for (id item in [aFormData allKeys]) {
+        [request setPostValue:[aFormData objectForKey:item] forKey:item];
+    }
+    [request setShouldAttemptPersistentConnection:NO];
+	[request startSynchronous];
+
+	responseString = [request responseString];
+	qldebug(@"POST Result:%@",responseString);
+
+	NSError *error = [request error];
+	if (error) {
+		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
+		if (err != NULL) {
+            *err = [NSError errorWithDomain:@"gov.llnl.mpjson" code:[error code]  userInfo:userInfoDict];
+        } else {
+            qlerror(@"%@",[error localizedDescription]);
+            qlerror(@"%@",aBaseURL);
+        }
+	}
+
+    if ([request responseStatusCode] != 200) {
+        userInfoDict = [NSDictionary dictionaryWithObject:[request responseStatusMessage] forKey:NSLocalizedDescriptionKey];
+		if (err != NULL) {
+            *err = [NSError errorWithDomain:@"gov.llnl.mpjson" code:[request responseStatusCode]  userInfo:userInfoDict];
+            qlerror(@"%@",[request responseStatusMessage]);
+            qlerror(@"%@",aBaseURL);
+        } else {
+            qlerror(@"%@",[request responseStatusMessage]);
+            qlerror(@"%@",aBaseURL);
+        }
+    }
+
 done:
 	return responseString;
 }

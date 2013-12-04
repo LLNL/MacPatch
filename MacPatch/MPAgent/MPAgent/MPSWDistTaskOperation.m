@@ -150,6 +150,7 @@
     
     // Check to see if there is anything to install
     if (mandatoryInstllTasks == nil || [mandatoryInstllTasks count] <= 0) {
+        logit(lcl_vInfo,@"No mandatory software tasks to install.");
         return;
     }
     MPSWInstaller  *mpCatalogD;
@@ -183,7 +184,8 @@
         }
         
         // Create Download URL
-        NSString *_url = [NSString stringWithFormat:@"%@://%@:%@/mp-content%@",[hostConnectInfo objectForKey:@"HTTP_PREFIX"],[hostConnectInfo objectForKey:@"HTTP_HOST"],[hostConnectInfo objectForKey:@"HTTP_HOST_PORT"],[d valueForKeyPath:@"Software.sw_url"]];
+        //NSString *_url = [NSString stringWithFormat:@"%@://%@:%@/mp-content%@",[hostConnectInfo objectForKey:@"HTTP_PREFIX"],[hostConnectInfo objectForKey:@"HTTP_HOST"],[hostConnectInfo objectForKey:@"HTTP_HOST_PORT"],[d valueForKeyPath:@"Software.sw_url"]];
+        NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",[hostConnectInfo objectForKey:@"HTTP_PREFIX"],[hostConnectInfo objectForKey:@"HTTP_HOST"],[d valueForKeyPath:@"Software.sw_url"]];
         logit(lcl_vInfo,@"Download software from: %@",_url);
         
         BOOL isDir;
@@ -312,7 +314,8 @@
     if (content) 
     {
         /* If there is content */
-        [content writeToFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"] atomically:NO];
+        //[content writeToFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"] atomically:NO];
+        [NSKeyedArchiver archiveRootObject:content toFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
         _a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
         for (id item in _a) 
         {

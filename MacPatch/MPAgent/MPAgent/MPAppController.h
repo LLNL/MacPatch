@@ -62,5 +62,6 @@
 - (void)runAVInfoScan;
 - (void)runAVInfoScanAndDefsUpdate;
 - (void)scanAndUpdateAgentUpdater;
+- (void)runSWDistScanAndInstall;
 
 @end

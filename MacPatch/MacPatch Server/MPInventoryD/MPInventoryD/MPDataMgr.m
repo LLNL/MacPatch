@@ -167,15 +167,29 @@
 
 - (BOOL)setUpMySQLConnection:(MysqlServer *)server error:(NSError **)err
 {
+    NSError *iError = nil;
+
     @try {
+        _dbConnection = nil;
         _dbConnection = [MysqlConnection connectToServer:server];
+        if (!_dbConnection) {
+            qlerror(@"Error, unable to create connection to database.");
+            qlerror(@"%@, %@, %@",[server host],[server user],[server schema]);
+
+            iError = [NSError errorWithDomain:@"setUpMySQLConnection" code:1
+                                              userInfo:[NSDictionary dictionaryWithObject:@"Unable to create connection to database." forKey:NSLocalizedDescriptionKey]];
+            if (err != NULL) {
+                *err = iError;
+            }
+            return NO;
+        }
         [_dbConnection disableTransactions];
         [self setDbServer:server];
     }
     @catch (NSException *exception) {
         qlerror(@"%@",exception);
-        NSError *iError = [NSError errorWithDomain:@"setUpMySQLConnection"
-                                              code:1
+        qlerror(@"%@, %@, %@",[server host],[server user],[server schema]);
+        iError = [NSError errorWithDomain:@"setUpMySQLConnection" code:2
                                           userInfo:[NSDictionary dictionaryWithObject:exception forKey:NSLocalizedDescriptionKey]];
         if (err != NULL) {
             *err = iError;
@@ -198,14 +212,15 @@
                          "WHERE table_schema = '%@' AND " \
                          "table_type = 'BASE TABLE'",self.dbServer.schema];
     @try {
-        MysqlFetch *fetch = [MysqlFetch fetchWithCommand:sqlText onConnection:self.dbConnection];
+        MysqlFetch *fetch = [MysqlFetch fetchWithCommand:sqlText onConnection:_dbConnection];
         tables = [[NSMutableArray alloc] init];
         for (NSDictionary *userRow in fetch.results)
         {
             [tables addObject:[userRow objectForKey:@"table_name"]];
         }
     }
-    @catch (NSException *exception) {
+    @catch (NSException *exception)
+    {
         qlerror(@"%@",exception);
         result = NO;
     }

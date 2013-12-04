@@ -29,6 +29,22 @@
 		</cfcase>
 		<cfcase value="addScheduledTask,0">
 			<cftry>
+				<cfif ISDefined("args.actionVarName")>
+					<cfif ListLen(args.actionVarName,",") GT 1>
+						<cfset xURL = ListGetAt(args.actionVarName,1) &"="& ListGetAt(args.actionVar,1)>
+						<cfloop index="x" from="2" to="#ListLen(args.actionVarName,",")#">
+							<cfset xURL = "#xURL#&#ListGetAt(args.actionVarName,x)#=#ListGetAt(args.actionVar,x)#">
+						</cfloop>
+					<cfelseif ListLen(args.actionVarName,",") EQ 1>
+						<cfset xURL = ListGetAt(args.actionVarName,1) &"="& ListGetAt(args.actionVar,1)>
+					<cfelse>
+						<cfset xURL = "">
+					</cfif>
+		
+					<cfset theURL = "#args.URL#?#xURL#">
+				<cfelse>
+					<cfset theURL = "#args.URL#">
+				</cfif>	
 				<cfschedule action="UPDATE"
 							task="#args.TASKNAME#?#form.actionVarName#=#form.actionVar#"
 							URL="#args.URL#"
@@ -40,7 +56,7 @@
 							publish="NO"
 							path=""
 							file=""
-							REQUESTTIMEOUT="120"
+							REQUESTTIMEOUT="1200"
 							operation="HTTPRequest">
 				<cfcatch type="any">
 					<cfset session.message.text = CFCATCH.Message />

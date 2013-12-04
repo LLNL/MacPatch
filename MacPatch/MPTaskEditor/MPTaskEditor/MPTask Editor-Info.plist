@@ -27,7 +27,7 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2013 Lawrence Livremore National Laboratory. All rights reserved.</string>
 	<key>MPInfo</key>
-	<string>MacPatch 2.1.0 Client Software</string>
+	<string>MacPatch 2.2.0 Client Software</string>
 	<key>NSMainNibFile</key>
 	<string>MPTaskEditor_MainMenu</string>
 	<key>NSPrincipalClass</key>

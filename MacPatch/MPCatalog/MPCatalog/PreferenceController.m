@@ -120,7 +120,7 @@
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
-        proxy = [[connection rootProxy] retain];
+        proxy = [connection rootProxy];
         
         [[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(connectionDown:)
@@ -142,7 +142,6 @@
 	
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [connection invalidate];
-    [proxy release];
     proxy = nil;
 	
 }

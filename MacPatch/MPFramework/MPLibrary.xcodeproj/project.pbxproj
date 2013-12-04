@@ -31,7 +31,6 @@
 		8F4B1E0116DD1D6400E15A9E /* MPInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F051CF4146847B100510AF7 /* MPInstaller.m */; };
 		8F4B1E0216DD1D6400E15A9E /* MPJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FED87F7146314E800709F8E /* MPJson.m */; };
 		8F4B1E0316DD1D6400E15A9E /* MPDataMgr.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAEF650145F187C006284B2 /* MPDataMgr.m */; };
-		8F4B1E0416DD1D6400E15A9E /* MPSoap.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAEF652145F187C006284B2 /* MPSoap.m */; };
 		8F4B1E0516DD1D6400E15A9E /* MPWebServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F87427216308AD2007BA7DB /* MPWebServices.m */; };
 		8F4B1E0616DD1D6400E15A9E /* NSString+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB77A7140C315B00D86586 /* NSString+Helper.m */; };
 		8F4B1E0716DD1D6400E15A9E /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F018297147839CF0013EDE0 /* NSFileManager+DirectoryLocations.m */; };
@@ -72,7 +71,6 @@
 		8F4B1E2A16DD1D8C00E15A9E /* MPInstaller.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F051CF3146847B100510AF7 /* MPInstaller.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E2B16DD1D8C00E15A9E /* MPJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FED87F6146314E800709F8E /* MPJson.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E2C16DD1D8C00E15A9E /* MPDataMgr.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAEF64F145F187C006284B2 /* MPDataMgr.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F4B1E2D16DD1D8C00E15A9E /* MPSoap.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAEF651145F187C006284B2 /* MPSoap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E2E16DD1D8C00E15A9E /* MPWebServices.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F87427116308AD2007BA7DB /* MPWebServices.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E2F16DD1D8C00E15A9E /* NSString+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB77A6140C315B00D86586 /* NSString+Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E3016DD1D8C00E15A9E /* NSFileManager+DirectoryLocations.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F018296147839CF0013EDE0 /* NSFileManager+DirectoryLocations.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -105,8 +103,6 @@
 		8F4B1EC016DD5FB400E15A9E /* NSString+Hash.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1EBC16DD5FB400E15A9E /* NSString+Hash.m */; };
 		8F4B1EC416DD5FDD00E15A9E /* NSFileManager+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1EC116DD5FDD00E15A9E /* NSFileManager+Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1EC616DD5FDD00E15A9E /* NSFileManager+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1EC216DD5FDD00E15A9E /* NSFileManager+Helper.m */; };
-		8F4B1ECA16DD759900E15A9E /* SoapServices.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1EC716DD759900E15A9E /* SoapServices.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F4B1ECC16DD759900E15A9E /* SoapServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1EC816DD759900E15A9E /* SoapServices.m */; };
 		8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2616DE639100E15A9E /* NSDate+Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1F2D16DE639100E15A9E /* NSDate+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2716DE639100E15A9E /* NSDate+Helper.m */; };
 		8F4B1F2F16DE639100E15A9E /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2816DE639100E15A9E /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -127,6 +123,10 @@
 		8FE560D216DE899B00BB7600 /* MPSWInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE560CE16DE899B00BB7600 /* MPSWInstaller.m */; };
 		8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE560D316DE932900BB7600 /* MPAgentController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8FE560D816DE932900BB7600 /* MPAgentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE560D416DE932900BB7600 /* MPAgentController.m */; };
+		8FEC938717CBFEFB00AA9C1C /* MPApplePatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEC938517CBFEFB00AA9C1C /* MPApplePatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FEC938817CBFEFB00AA9C1C /* MPApplePatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938617CBFEFB00AA9C1C /* MPApplePatch.m */; };
+		8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEC938917CBFF0F00AA9C1C /* MPCustomPatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FEC938C17CBFF0F00AA9C1C /* MPCustomPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -147,8 +147,6 @@
 		8F4B1EBC16DD5FB400E15A9E /* NSString+Hash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hash.m"; sourceTree = "<group>"; };
 		8F4B1EC116DD5FDD00E15A9E /* NSFileManager+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Helper.h"; sourceTree = "<group>"; };
 		8F4B1EC216DD5FDD00E15A9E /* NSFileManager+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Helper.m"; sourceTree = "<group>"; };
-		8F4B1EC716DD759900E15A9E /* SoapServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoapServices.h; sourceTree = "<group>"; };
-		8F4B1EC816DD759900E15A9E /* SoapServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoapServices.m; sourceTree = "<group>"; };
 		8F4B1F2616DE639100E15A9E /* NSDate+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Helper.h"; sourceTree = "<group>"; };
 		8F4B1F2716DE639100E15A9E /* NSDate+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Helper.m"; sourceTree = "<group>"; };
 		8F4B1F2816DE639100E15A9E /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
@@ -185,8 +183,6 @@
 		8FAEF641145F1774006284B2 /* MPScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPScript.m; sourceTree = "<group>"; };
 		8FAEF64F145F187C006284B2 /* MPDataMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDataMgr.h; sourceTree = "<group>"; };
 		8FAEF650145F187C006284B2 /* MPDataMgr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDataMgr.m; sourceTree = "<group>"; };
-		8FAEF651145F187C006284B2 /* MPSoap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSoap.h; sourceTree = "<group>"; };
-		8FAEF652145F187C006284B2 /* MPSoap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSoap.m; sourceTree = "<group>"; };
 		8FAEF65E145F1922006284B2 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		8FAEF65F145F1922006284B2 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		8FAEF669145F19AD006284B2 /* NSData-Base64Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData-Base64Extensions.h"; sourceTree = "<group>"; };
@@ -229,6 +225,10 @@
 		8FE560CE16DE899B00BB7600 /* MPSWInstaller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSWInstaller.m; sourceTree = "<group>"; };
 		8FE560D316DE932900BB7600 /* MPAgentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentController.h; sourceTree = "<group>"; };
 		8FE560D416DE932900BB7600 /* MPAgentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentController.m; sourceTree = "<group>"; };
+		8FEC938517CBFEFB00AA9C1C /* MPApplePatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPApplePatch.h; sourceTree = "<group>"; };
+		8FEC938617CBFEFB00AA9C1C /* MPApplePatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPApplePatch.m; sourceTree = "<group>"; };
+		8FEC938917CBFF0F00AA9C1C /* MPCustomPatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCustomPatch.h; sourceTree = "<group>"; };
+		8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCustomPatch.m; sourceTree = "<group>"; };
 		8FED87EE146216EF00709F8E /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		8FED87EF146216EF00709F8E /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		8FED87F6146314E800709F8E /* MPJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPJson.h; sourceTree = "<group>"; };
@@ -384,6 +384,10 @@
 				8FAEF641145F1774006284B2 /* MPScript.m */,
 				8F051CF3146847B100510AF7 /* MPInstaller.h */,
 				8F051CF4146847B100510AF7 /* MPInstaller.m */,
+				8FEC938517CBFEFB00AA9C1C /* MPApplePatch.h */,
+				8FEC938617CBFEFB00AA9C1C /* MPApplePatch.m */,
+				8FEC938917CBFF0F00AA9C1C /* MPCustomPatch.h */,
+				8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */,
 			);
 			path = "MPPatch+Scanner";
 			sourceTree = "<group>";
@@ -395,10 +399,6 @@
 				8FED87F7146314E800709F8E /* MPJson.m */,
 				8FAEF64F145F187C006284B2 /* MPDataMgr.h */,
 				8FAEF650145F187C006284B2 /* MPDataMgr.m */,
-				8FAEF651145F187C006284B2 /* MPSoap.h */,
-				8FAEF652145F187C006284B2 /* MPSoap.m */,
-				8F4B1EC716DD759900E15A9E /* SoapServices.h */,
-				8F4B1EC816DD759900E15A9E /* SoapServices.m */,
 				8F87427116308AD2007BA7DB /* MPWebServices.h */,
 				8F87427216308AD2007BA7DB /* MPWebServices.m */,
 			);
@@ -584,7 +584,6 @@
 				8F4B1E2A16DD1D8C00E15A9E /* MPInstaller.h in Headers */,
 				8F4B1E2B16DD1D8C00E15A9E /* MPJson.h in Headers */,
 				8F4B1E2C16DD1D8C00E15A9E /* MPDataMgr.h in Headers */,
-				8F4B1E2D16DD1D8C00E15A9E /* MPSoap.h in Headers */,
 				8F4B1E2E16DD1D8C00E15A9E /* MPWebServices.h in Headers */,
 				8F4B1E2F16DD1D8C00E15A9E /* NSString+Helper.h in Headers */,
 				8F4B1E3016DD1D8C00E15A9E /* NSFileManager+DirectoryLocations.h in Headers */,
@@ -615,11 +614,12 @@
 				8F4B1EA816DD267B00E15A9E /* lcl.h in Headers */,
 				8F4B1EBE16DD5FB400E15A9E /* NSString+Hash.h in Headers */,
 				8F4B1EC416DD5FDD00E15A9E /* NSFileManager+Helper.h in Headers */,
-				8F4B1ECA16DD759900E15A9E /* SoapServices.h in Headers */,
 				8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */,
 				8F4B1F2F16DE639100E15A9E /* NSData+Base64.h in Headers */,
 				8F4B1F3716DE64DA00E15A9E /* MPSWTasks.h in Headers */,
 				8F00CD0517610F1D008CC39E /* MPCodeSign.h in Headers */,
+				8FEC938717CBFEFB00AA9C1C /* MPApplePatch.h in Headers */,
+				8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */,
 				8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */,
 				8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */,
 			);
@@ -652,7 +652,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "MPLibrary" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -718,7 +718,6 @@
 				8F4B1E0116DD1D6400E15A9E /* MPInstaller.m in Sources */,
 				8F4B1E0216DD1D6400E15A9E /* MPJson.m in Sources */,
 				8F4B1E0316DD1D6400E15A9E /* MPDataMgr.m in Sources */,
-				8F4B1E0416DD1D6400E15A9E /* MPSoap.m in Sources */,
 				8F4B1E0516DD1D6400E15A9E /* MPWebServices.m in Sources */,
 				8F4B1E0616DD1D6400E15A9E /* NSString+Helper.m in Sources */,
 				8F4B1E0716DD1D6400E15A9E /* NSFileManager+DirectoryLocations.m in Sources */,
@@ -739,13 +738,14 @@
 				8F4B1E1616DD1D6400E15A9E /* RegexKitLite.m in Sources */,
 				8F4B1EC016DD5FB400E15A9E /* NSString+Hash.m in Sources */,
 				8F4B1EC616DD5FDD00E15A9E /* NSFileManager+Helper.m in Sources */,
-				8F4B1ECC16DD759900E15A9E /* SoapServices.m in Sources */,
 				8F4B1F2D16DE639100E15A9E /* NSDate+Helper.m in Sources */,
 				8F4B1F3116DE639100E15A9E /* NSData+Base64.m in Sources */,
 				8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */,
 				8FE560D216DE899B00BB7600 /* MPSWInstaller.m in Sources */,
 				8FE560D816DE932900BB7600 /* MPAgentController.m in Sources */,
 				8F00CD0617610F1D008CC39E /* MPCodeSign.m in Sources */,
+				8FEC938817CBFEFB00AA9C1C /* MPApplePatch.m in Sources */,
+				8FEC938C17CBFF0F00AA9C1C /* MPCustomPatch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -755,21 +755,25 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Library/Frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -777,16 +781,20 @@
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Library/Frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
@@ -799,7 +807,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -809,6 +816,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1.0.0;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -828,6 +836,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = MacPatch;
 				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -835,7 +844,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -845,6 +853,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -859,6 +868,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = MacPatch;
 				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};

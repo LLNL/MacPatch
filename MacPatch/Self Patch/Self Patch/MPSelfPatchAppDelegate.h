@@ -26,7 +26,7 @@
 #import <Cocoa/Cocoa.h>
 #import "MPWorkerProtocol.h"
 
-@class MPDefaults, MPAsus, MPSoap;
+@class MPDefaults, MPAsus;
 @class PrefsController;
 @class MPServerConnection;
 
@@ -56,7 +56,6 @@
 	NSThread            *runTaskThread;
 	BOOL                killTaskThread;
 	MPAsus              *asus;
-	MPSoap              *soap;
 	
 	NSString            *mpHost;
 	NSString            *mpHostPort;
@@ -88,7 +87,6 @@
 - (void)scanForNotificationFinished:(NSNotification *)notification;
 
 // Misc
-- (NSDictionary *)getClientPatchState;
 - (BOOL)checkPatchPreAndPostForRebootRequired:(NSArray *)aDictArray;
 - (void)postInstallToWebService:(NSString *)aPatch type:(NSString *)aType;
 - (void)updateTableAndArrayController:(int)objectAtIntex status:(int)aStatusImage;

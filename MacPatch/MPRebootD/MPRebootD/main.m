@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-#define APPVERSION "2.0"
+#define APPVERSION "2.1.0"
 
 void usage(void);
 
@@ -75,13 +75,14 @@ int main (int argc, char * argv[]) {
 				usage();
 		}
 	}
+    
 	if (optind < argc) {
-		while (optind < argc)
-			argv[optind++];
-		
-		usage();
-		exit(0);
-	}
+        while (optind < argc) {
+            printf ("Invalid argument %s ", argv[optind++]);
+        }
+        usage();
+        exit(0);
+    }
 	
 	[MPLog setupLogging:@"/Library/MacPatch/Client/Logs/MPRBWatcher.log" level:lcl_vDebug];
 	

@@ -28,10 +28,14 @@
 @interface MPRebootController : NSObject
 {
     NSDictionary *file_attr;
+    NSArray *watchFiles;
 }
 
 - (NSDictionary *)file_attr;
 - (void)setFile_attr:(NSDictionary *)aFile_attr;
+
+- (NSArray *)watchFiles;
+- (void)setWatchFiles:(NSArray *)aWatchFiles;
 
 - (void)openRebootApp:(int)aType;
 

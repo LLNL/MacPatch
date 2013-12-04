@@ -56,7 +56,7 @@
 		<cfset i = 1>
 		<cfset var l_app_ver = "NA">  
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
-			<cfset arrUsers[i] = [#rid#, #agent_ver#,  #osver#, #version#, #build#, #framework#, #pkg_name#, #pkg_url#, #pkg_hash#, #state#, #IIF(active EQ 1,DE("Yes"),DE("No"))#, #SQLDateTime(cdate)#, #SQLDateTime(mdate)#]>
+			<cfset arrUsers[i] = [#rid#, #agent_ver#,  #osver#, #version#, #build#, #framework#, #pkg_name#, #pkg_url#, #pkg_hash#, #state#, #IIF(active EQ 1,DE("Yes"),DE("No"))#, #cdate#, #mdate#]>
 			<cfset i = i + 1>			
 		</cfloop>
 		
@@ -127,10 +127,9 @@
                 </cfoutput>
                 
                 <cfif _pCount EQ 2>
-					<!--- Update Agent Config Plist
+					<!--- Update Agent Config Plist --->
 					<cfset caObj = CreateObject("component","agent_config").init(session.dbsource)>
 					<cfset caObj.updatePackageConfig(_pid)>
-					--->
                     
                 	<!--- Move Main Installer Into Production --->
                     <cfset _mainPkg = #pkgBaseLoc# & "/MPClientInstall.pkg.zip">
@@ -175,10 +174,8 @@
 			</cftry>
 		</cfif>
         
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-		
 		<cfreturn strReturn>
 	</cffunction>
 <!--- Agent Filters Section --->
@@ -312,10 +309,8 @@
 			</cftry>
 		</cfif>
         
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-		
 		<cfreturn strReturn>
 	</cffunction>	
     
@@ -359,11 +354,5 @@
 		</cfscript>
 		<cfreturn searchVal>
 	</cffunction>
-		
-	<cffunction name="SQLDateTime" access="public" returntype="any" output="no">
-    	<cfargument name="date" required="yes" default="" hint="Date Object">
-        
-        <cfset newDateObj=DateFormat(Arguments.date,"yyyy-mm-dd") & " " & TimeFormat(Arguments.date,"HH:mm:ss") & " ">
-        <cfreturn newDateObj>
-    </cffunction>
+	
 </cfcomponent>	

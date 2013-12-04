@@ -27,7 +27,9 @@
 
 @interface MPFileVaultInfo : NSObject
 {
-    
+    NSString *status;
+    NSString *users;
+    NSError *error;
 }
 
 @property (nonatomic, assign, readonly) int state;

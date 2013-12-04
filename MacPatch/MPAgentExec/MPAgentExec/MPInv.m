@@ -30,14 +30,24 @@
 #import "CHDiskInfo.h"
 #import "MPUsersAndGroups.h"
 #import "MPFileVaultInfo.h"
+#import <CommonCrypto/CommonDigest.h>
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
 #define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault"
 #define kTasksPlist             @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
+#define kInvHashData            @"/Library/MacPatch/Client/Data/.gov.llnl.mp.inv.data.plist"
 
 #define LIBXML_SCHEMAS_ENABLED
 #include <libxml/xmlschemastypes.h>
+
+@interface MPInv ()
+
+- (NSString *)hashForArray:(NSArray *)aArray;
+- (BOOL)hasInvDataChanged:(NSString *)aInvType hash:(NSString *)aHash;
+- (void)writeInvDataHashToFile:(NSString *)aInvType hash:(NSString *)aHash;
+
+@end
 
 @implementation MPInv
 
@@ -52,7 +62,6 @@
 	if (self) {
 		[self setCUUID:[MPSystemInfo clientUUID]];
 		mpServerConnection = [[MPServerConnection alloc] init];
-        mpSoap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
 	}	
 	return self;
 }
@@ -61,7 +70,6 @@
 {    
 	[invResults autorelease];
     [cUUID autorelease];
-    [mpSoap release];
 	[super dealloc];
 }
 
@@ -142,6 +150,7 @@
 	NSDictionary *item;
 	NSString *dataMgrXML;
 	NSArray *tmpArr = nil;
+    NSString *invCollectionHash;
 	
 	for (i=0;i<[resultsArray count];i++)
 	{
@@ -149,7 +158,7 @@
 		if ([fm fileExistsAtPath:[item objectForKey:@"file"]]) {
 			// Get Array Object, then gen DataMgr String
 			if ([[item objectForKey:@"type"] isEqual:@"SPHardwareDataType"] ) {
-				tmpArr = [self parseHardwareOverview:[item objectForKey:@"file"]];	
+				tmpArr = [self parseHardwareOverview:[item objectForKey:@"file"]];
 			} else if ([[item objectForKey:@"type"] isEqual:@"SPSoftwareDataType"]) {
 				tmpArr = [self parseSystemOverviewData:[item objectForKey:@"file"]];
 			} else if ([[item objectForKey:@"type"] isEqual:@"SPNetworkDataType"]) {
@@ -175,8 +184,16 @@
 			} else if ([[item objectForKey:@"type"] isEqual:@"FileVault"]) {
 				tmpArr = [self parseFileVaultInfo];
 			}
-			
+
+
 			if (tmpArr) {
+                // Gen a hash for the inv results, if it has not changed dont post it.
+                invCollectionHash = [self hashForArray:tmpArr];
+                if ([self hasInvDataChanged:[item objectForKey:@"type"] hash:invCollectionHash] == NO) {
+                    logit(lcl_vInfo,@"Results for %@ have not changed. No need to post.",[item objectForKey:@"type"]);
+                    continue;
+                }
+
 				dataMgrXML = [dataMgr GenXMLForDataMgr:tmpArr
 											   dbTable:[item objectForKey:@"wstype"] 
 										 dbTablePrefix:@"mpi_" 
@@ -187,6 +204,7 @@
 				
 				if ([self sendResultsToWebService:dataMgrXML]) {
 					logit(lcl_vInfo,@"Results for %@ posted.",[item objectForKey:@"wstype"]);
+                    [self writeInvDataHashToFile:[item objectForKey:@"type"] hash:invCollectionHash];
 				} else {
 					logit(lcl_vError,@"Results for %@ not posted.",[item objectForKey:@"wstype"]);
 				}
@@ -209,47 +227,26 @@
 - (BOOL)sendResultsToWebService:(NSString *)aDataMgrXML
 {
 	BOOL result = NO;
-	MPDataMgr	*dataMgr	= [[MPDataMgr alloc] init];
-	
-	// Encode to base64 and send to web service	
+
+	// Encode to base64 and send to web service
 	NSString	*cleanXMLString = [aDataMgrXML validXMLString];
 	NSString	*xmlB64String	= [[cleanXMLString dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
 	if (!xmlB64String) {
 		logit(lcl_vError,@"Unable to encode xml data.");
-		[dataMgr release];
-		dataMgr = nil;
-		return result;	
+		return result;
 	}
-	NSDictionary	*msgParams	= [NSDictionary dictionaryWithObject:xmlB64String forKey:@"encodedXML"];
-	NSString		*message	= [mpSoap createBasicSOAPMessage:@"ProcessXML" argDictionary:msgParams];
-	if (!message) {
-		logit(lcl_vError,@"Soap message was nil.");
-		[dataMgr release];
-		dataMgr = nil;
-		return result;	
-	}
-	
-	NSError *err = nil;
-	NSData *soapResult = [mpSoap invoke:message isBase64:NO error:&err];
-	NSString *ws = [[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding];
-	sleep(2); // Quick Sleep "-|
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-	} else {
-		if ([ws isEqualTo:@"1"] == TRUE || [ws isEqualTo:@"true"] == TRUE) {
-			logit(lcl_vInfo,@"Results posted to webservice.");
-			result = YES;
-		} else {
-			logit(lcl_vError,@"Results posted to webservice returned false.");
-			result = NO;
-		}
-	}
-	[ws release];
-	ws = nil;
-	
-	[dataMgr release];
-	dataMgr = nil;
-	
+
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    result = [mpws postDataMgrXML:xmlB64String error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"Results posted to webservice returned false.");
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    } else {
+        logit(lcl_vInfo,@"Results posted to webservice.");
+        result = YES;
+    }
+
 	return result;
 }
 
@@ -444,6 +441,60 @@
     xmlMemoryDump();
 
 	return isValid;
+}
+
+- (NSString *)hashForArray:(NSArray *)aArray
+{
+    NSString *err = nil;
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:aArray format:NSPropertyListBinaryFormat_v1_0 errorDescription:&err];
+    if (err) {
+        return @"ERROR";
+    }
+
+	unsigned char outputData[CC_MD5_DIGEST_LENGTH];
+	CC_MD5([data bytes], (CC_LONG)[data length], outputData);
+
+	NSMutableString *hashStr = [NSMutableString string];
+	int i = 0;
+	for (i = 0; i < CC_MD5_DIGEST_LENGTH; ++i)
+    {
+		[hashStr appendFormat:@"%02x", outputData[i]];
+    }
+
+	return (NSString *)hashStr;
+}
+
+- (BOOL)hasInvDataChanged:(NSString *)aInvType hash:(NSString *)aHash
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSMutableDictionary *invData = [NSMutableDictionary dictionary];
+    if ([fm fileExistsAtPath:kInvHashData]) {
+        invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
+        if ([invData objectForKey:aInvType]) {
+            if ([[[invData objectForKey:aInvType] lowercaseString] isEqualToString:[aHash lowercaseString]]) {
+                return NO;
+            } else {
+                return YES;
+            }
+        } else {
+            return YES;
+        }
+    } else {
+        return YES;
+    }
+}
+
+- (void)writeInvDataHashToFile:(NSString *)aInvType hash:(NSString *)aHash
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSMutableDictionary *invData = [NSMutableDictionary dictionary];
+    if ([fm fileExistsAtPath:kInvHashData])
+    {
+        invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
+    }
+
+    [invData setObject:aHash forKey:aInvType];
+    [invData writeToFile:kInvHashData atomically:YES];
 }
 
 #pragma mark -

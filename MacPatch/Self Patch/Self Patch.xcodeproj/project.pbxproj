@@ -10,6 +10,7 @@
 		7258911C179F6BE50058FF64 /* exclamation.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7258911B179F6BE50058FF64 /* exclamation.tif */; };
 		7258911E179F6BF60058FF64 /* running.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7258911D179F6BF60058FF64 /* running.tiff */; };
 		8F1592041767B64B006BE1E0 /* empty.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F1592031767B64B006BE1E0 /* empty.tif */; };
+		8F779399181EDB8D008FA072 /* LogOutReq.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F779398181EDB8D008FA072 /* LogOutReq.tif */; };
 		8FA9ADF91767B6930055506B /* RestartReq.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9ADF81767B6930055506B /* RestartReq.tif */; };
 		8FA9ADFB1767B6A00055506B /* Installcomplete.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9ADFA1767B6A00055506B /* Installcomplete.tif */; };
 		8FD890AB16DFEDB700A870A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD890AA16DFEDB700A870A3 /* Cocoa.framework */; };
@@ -36,6 +37,7 @@
 		7258911B179F6BE50058FF64 /* exclamation.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = exclamation.tif; sourceTree = "<group>"; };
 		7258911D179F6BF60058FF64 /* running.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = running.tiff; sourceTree = "<group>"; };
 		8F1592031767B64B006BE1E0 /* empty.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = empty.tif; sourceTree = "<group>"; };
+		8F779398181EDB8D008FA072 /* LogOutReq.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LogOutReq.tif; sourceTree = "<group>"; };
 		8FA9ADF81767B6930055506B /* RestartReq.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RestartReq.tif; sourceTree = "<group>"; };
 		8FA9ADFA1767B6A00055506B /* Installcomplete.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Installcomplete.tif; sourceTree = "<group>"; };
 		8FD890A716DFEDB700A870A3 /* Self Patch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Self Patch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -164,6 +166,7 @@
 		8FD890FD16E5253D00A870A3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8F779398181EDB8D008FA072 /* LogOutReq.tif */,
 				7258911D179F6BF60058FF64 /* running.tiff */,
 				8FA9ADF81767B6930055506B /* RestartReq.tif */,
 				8F1592031767B64B006BE1E0 /* empty.tif */,
@@ -202,7 +205,7 @@
 		8FD8909F16DFEDB700A870A3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = LLNL;
 			};
 			buildConfigurationList = 8FD890A216DFEDB700A870A3 /* Build configuration list for PBXProject "Self Patch" */;
@@ -233,6 +236,7 @@
 				8FD890FC16E5253600A870A3 /* MPSelfPatchV2.icns in Resources */,
 				8F1592041767B64B006BE1E0 /* empty.tif in Resources */,
 				8FA9ADF91767B6930055506B /* RestartReq.tif in Resources */,
+				8F779399181EDB8D008FA072 /* LogOutReq.tif in Resources */,
 				8FA9ADFB1767B6A00055506B /* Installcomplete.tif in Resources */,
 				7258911C179F6BE50058FF64 /* exclamation.tif in Resources */,
 				7258911E179F6BF60058FF64 /* running.tiff in Resources */,
@@ -271,7 +275,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -300,7 +303,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
 			};
 			name = Debug;
@@ -309,7 +312,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -331,7 +333,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
 			};
 			name = Release;
@@ -343,10 +345,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Self Patch/Self Patch-Prefix.pch";
 				INFOPLIST_FILE = "Self Patch/Self Patch-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -360,10 +359,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Self Patch/Self Patch-Prefix.pch";
 				INFOPLIST_FILE = "Self Patch/Self Patch-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

@@ -21,12 +21,15 @@
 
 #import "NSFileManager+DirectoryLocations.h"
 
+#undef  ql_component
+#define ql_component lcl_cMain
+
 enum
 {
 	DirectoryLocationErrorNoPathFound,
 	DirectoryLocationErrorFileExistsAtLocation
 };
-	
+
 NSString * const DirectoryLocationDomain = @"DirectoryLocationDomain";
 
 @implementation NSFileManager (DirectoryLocations)
@@ -50,10 +53,25 @@ NSString * const DirectoryLocationDomain = @"DirectoryLocationDomain";
 // returns the path to the directory (if path found and exists), nil otherwise
 //
 - (NSString *)findOrCreateDirectory:(NSSearchPathDirectory)searchPathDirectory
-	inDomain:(NSSearchPathDomainMask)domainMask
-	appendPathComponent:(NSString *)appendComponent
-	error:(NSError **)errorOut
+                           inDomain:(NSSearchPathDomainMask)domainMask
+                appendPathComponent:(NSString *)appendComponent
+                              error:(NSError **)errorOut
 {
+    return [self findOrCreateDirectory:searchPathDirectory
+                              inDomain:domainMask
+                   appendPathComponent:appendComponent directoryAttributes:nil
+                                 error:errorOut];
+}
+
+// MacPatch Addition
+// Extended origional to include directory create attributes
+- (NSString *)findOrCreateDirectory:(NSSearchPathDirectory)searchPathDirectory
+                           inDomain:(NSSearchPathDomainMask)domainMask
+                appendPathComponent:(NSString *)appendComponent
+                directoryAttributes:(NSDictionary *)attributes
+                              error:(NSError **)errorOut
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
 	//
 	// Search for the path
 	//
@@ -63,13 +81,13 @@ NSString * const DirectoryLocationDomain = @"DirectoryLocationDomain";
 		if (errorOut)
 		{
 			NSDictionary *userInfo =
-				[NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedStringFromTable(@"No path found for directory in domain.",@"Errors",nil),
-					NSLocalizedDescriptionKey,[NSNumber numberWithInteger:searchPathDirectory],@"NSSearchPathDirectory",[NSNumber numberWithInteger:domainMask],@"NSSearchPathDomainMask",nil];
+            [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedStringFromTable(@"No path found for directory in domain.",@"Errors",nil),
+             NSLocalizedDescriptionKey,[NSNumber numberWithInteger:searchPathDirectory],@"NSSearchPathDirectory",[NSNumber numberWithInteger:domainMask],@"NSSearchPathDomainMask",nil];
 			*errorOut = [NSError errorWithDomain:DirectoryLocationDomain code:DirectoryLocationErrorNoPathFound userInfo:userInfo];
 		}
 		return nil;
 	}
-	
+
 	//
 	// Normally only need the first path returned
 	//
@@ -80,20 +98,52 @@ NSString * const DirectoryLocationDomain = @"DirectoryLocationDomain";
 	//
 	if (appendComponent)
 	{
-		resolvedPath = [resolvedPath
-			stringByAppendingPathComponent:appendComponent];
+		resolvedPath = [resolvedPath stringByAppendingPathComponent:appendComponent];
 	}
-	
+
+    if (attributes) {
+        NSError *fErr = nil;
+        // Is the App Support Dir Contains permissions to be set
+        // Verify them, if they dont match. Delete the dir and let it recreate
+        // with the correct ones. Or change permissions :-)
+        /*
+         if ([fm fileExistsAtPath:resolvedPath]) {
+         if (![self isDirectoryPermissionsEqual:resolvedPath permissions:[NSNumber numberWithShort:0777]]) {
+         if (![resolvedPath isEqualToString:@"/"]) {
+         [NSTask launchedTaskWithLaunchPath:@"/bin/rm" arguments:[NSArray arrayWithObject:@"-r",resolvedPath, nil]];
+         }
+         }
+         }
+         */
+        // Change all items in App Support Dir to the required permissions
+        if ([fm fileExistsAtPath:resolvedPath]) {
+            if (![self isDirectoryPermissionsEqual:resolvedPath permissions:[attributes valueForKey:NSFilePosixPermissions]])
+            {
+                [fm setAttributes:attributes ofItemAtPath:resolvedPath error:&fErr];
+                if (fErr) {
+                    qlerror(@"Error, %@",fErr.localizedDescription);
+                }
+
+                NSArray *contents = [fm contentsOfDirectoryAtPath:resolvedPath error:NULL];
+                NSString* fullPath = nil;
+                for (NSString *node in contents)
+                {
+                    fullPath = [NSString stringWithFormat:@"%@%@",resolvedPath,node];
+                    [fm setAttributes:attributes ofItemAtPath:fullPath error:nil];
+                }
+            }
+        }
+    }
+
 	//
 	// Create the path if it doesn't exist
 	//
 	NSError *error = nil;
-	BOOL success = [self
-		createDirectoryAtPath:resolvedPath
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	if (!success) 
+	BOOL success = [self createDirectoryAtPath:resolvedPath
+                   withIntermediateDirectories:YES
+                                    attributes:attributes
+                                         error:&error];
+	if (!success)
 	{
 		if (errorOut)
 		{
@@ -101,7 +151,7 @@ NSString * const DirectoryLocationDomain = @"DirectoryLocationDomain";
 		}
 		return nil;
 	}
-	
+
 	//
 	// If we've made it this far, we have a success
 	//
@@ -124,8 +174,15 @@ NSString * const DirectoryLocationDomain = @"DirectoryLocationDomain";
 }
 
 - (NSString *)applicationSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask
-{	
-	NSString *executableName;
+{
+	return [self applicationSupportDirectoryForDomain:aDomainMask directoryAttributes:nil];
+}
+
+// MacPatch Addition
+// Extended origional to include directory create attributes
+- (NSString *)applicationSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask directoryAttributes:(NSDictionary *)attributes
+{
+    NSString *executableName;
 	if ([[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleExecutable"]) {
 		executableName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleExecutable"];
 	} else if ([[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleExecutablePath"]) {
@@ -133,13 +190,33 @@ NSString * const DirectoryLocationDomain = @"DirectoryLocationDomain";
 	} else {
 		executableName = @"NA";
 	}
-	NSError *error;
-	NSString *result = [self findOrCreateDirectory:NSApplicationSupportDirectory inDomain:aDomainMask appendPathComponent:executableName error:&error];
+
+    NSLog(@"attributes: %@",attributes);
+
+	NSError *error = nil;
+    NSString *result;
+	result = [self findOrCreateDirectory:NSApplicationSupportDirectory inDomain:aDomainMask appendPathComponent:executableName directoryAttributes:attributes error:&error];
+    if (error) {
+        NSLog(@"%@", error);
+    }
 	if (!result)
 	{
-		qlerror(@"Unable to find or create application support directory:\n%@", error);
+		NSLog(@"Unable to find or create application support directory:\n%@", error);
 	}
 	return result;
+}
+
+// MacPatch Addition
+- (BOOL)isDirectoryPermissionsEqual:(NSString *)path permissions:(NSNumber *)perms
+{
+    BOOL result = NO;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSDictionary *fileAttributes = [fm attributesOfItemAtPath:path error:NULL];
+    NSNumber *curPosixPermissions = [fileAttributes valueForKey:NSFilePosixPermissions];
+    if ([perms isEqualToNumber:curPosixPermissions]) {
+        result = YES;
+    }
+    return result;
 }
 
 @end

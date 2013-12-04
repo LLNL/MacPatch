@@ -112,11 +112,12 @@ int main (int argc, char * argv[])
 	}
 	
 	if (optind < argc) {
-		while (optind < argc)
-			argv[optind++];
-		usage();
-		exit(0);
-	}
+        while (optind < argc) {
+            printf ("Invalid argument %s ", argv[optind++]);
+        }
+        usage();
+        exit(0);
+    }
 	
 	// Make sure the user is root or is using sudo
 	if (getuid()) {

@@ -11,10 +11,14 @@
 //-->
 </script>
 <!--- Get Connected Server --->
-<cfscript> 
-	inet = CreateObject("java", "java.net.InetAddress");
-	inet = inet.getLocalHost();
-</cfscript> 
+<cfscript>
+	try {
+		inet = CreateObject("java", "java.net.InetAddress");
+		inet = inet.getLocalHost();
+	} catch (any e) {
+		inet = "localhost";
+	}
+</cfscript>
 <br>
 <p>
 	<font size="+3" color="#000011">

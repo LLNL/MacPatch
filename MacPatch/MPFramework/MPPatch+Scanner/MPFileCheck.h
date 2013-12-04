@@ -51,4 +51,6 @@
 -(BOOL)checkFileHash:(NSString *)localFilePath fileHash:(NSString *)hash;
 -(BOOL)checkFileHash:(NSString *)localFilePath fileHash:(NSString *)hash hashType:(NSString *)type;
 
+- (BOOL)checkPlistKeyValue:(NSString *)localFilePath key:(NSString *)aKey value:(NSString *)aVal operator:(NSString *)aOp;
+
 @end

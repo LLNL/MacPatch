@@ -113,6 +113,18 @@ else
 		INT=`expr $INT + 1`
 	done
 fi
+# ******************************************************************
+# Install Auth Plugin **********************************************
+#
+if [ -d "/Library/MacPatch/Client/MPAuthPlugin.bundle" ]; then
+	mv "/Library/MacPatch/Client/MPAuthPlugin.bundle" "/System/Library/CoreServices/SecurityAgentPlugins/"
+	chown -R root:wheel "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
+	chmod -R 0755 "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
+	if [ -f "/Library/MacPatch/Client/MPAuthPluginTool" ]; then
+		/Library/MacPatch/Client/MPAuthPluginTool -a 
+	fi
+fi
+
 
 # ******************************************************************
 # Quick Clean Up from older release ********************************

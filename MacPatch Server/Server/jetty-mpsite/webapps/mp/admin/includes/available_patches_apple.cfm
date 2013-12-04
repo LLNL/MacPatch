@@ -1,6 +1,6 @@
 <script type="text/javascript">
 	function loadContent(param, id) {
-		$("#dialog").load("./includes/available_patches_apple_description.cfm?pid="+id);
+		$("#dialog").load("./includes/available_patches_apple_description.cfm?id="+id);
 		$("#dialog").dialog(
 		 	{
 			bgiframe: false,
@@ -18,18 +18,21 @@
 		window.open(url,'_self') ;
 	}
 </script>
+<style type="text/css">
+    .xAltRow { background-color: #F0F8FF; background-image: none; }
+</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
 			var lastsel = -1;
-			$("#list").jqGrid(
+			var mygrid = $("#list").jqGrid(
 			{
 				url:'./includes/available_patches_apple.cfc?method=getMPApplePatches', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
 				colNames:['', '', 'Patch', 'Version', 'Title', 'Reboot', 'Supported OS', 'Criteria', 'Patch State', 'Release Date'],
 				colModel :[
-				  {name:'akeyE',index:'akeyE', width:18, align:"center", sortable:false, resizable:false},
-				  {name:'akey',index:'akey', width:18, align:"center", sortable:false, resizable:false},
+				  {name:'akeyE',index:'akeyE', width:18, align:"center", sortable:false, resizable:false, search:false},
+				  {name:'akey',index:'akey', width:18, align:"center", sortable:false, resizable:false, search:false},
 				  {name:'supatchname', index:'supatchname', width:160},
 				  {name:'version', index:'version', width:50, sorttype:'float'},
 				  {name:'title', index:'title', width:160, align:"left"},
@@ -37,11 +40,12 @@
 				  {name:'osver_support', index:'osver_support', width:80, align:"left", hidden: true},
 				  {name:'hasCriteria', index:'hasCriteria', width:40, align:"center"},
 				  {name:'patch_state', index:'patch_state', width:50, align:"left", editable:true, edittype:"select", editoptions:{value:"Production:Production;QA:QA;Create:Create;Disabled:Disabled"}},
-				  {name:'postdate', index:'postdate', width:70, align:"center"}
+				  {name:'postdate', index:'postdate', width:70, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d' }}
 				],
 				altRows:true,
+				altclass:'xAltRow',
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager
-				rowNum:30, //Number of records we want to show per page
+				rowNum:20, //Number of records we want to show per page
 				rowList:[10,20,30,50,100], //Row List, to allow user to select how many rows they want to see per page
 				sortorder: "desc", //Default sort order
 				sortname: "postdate", //Default sort column
@@ -49,7 +53,7 @@
 				imgpath: '/', //Image path for prev/next etc images
 				caption: 'Apple Patches', //Grid Name
 				height:'auto', //I like auto, so there is no blank space between. Using a fixed height can mean either a scrollbar or a blank space before the pager
-				recordtext: "View {0}-{1} of {2} Records",
+				recordtext: "View {0} - {1} of {2} Records",
 				pgtext: "Page {0} of {1}",
 				pginput:true,
 				width:980,
@@ -57,7 +61,8 @@
 				editurl:"./includes/available_patches_apple.cfc?method=addEditMPApplePatches",//Not used right now.
 				toolbar:[false,"top"],//Shows the toolbar at the top. I will decide if I need to put anything in there later.
 				//The JSON reader. This defines what the JSON data returned from the CFC should look like
-				loadComplete: function(){
+				loadComplete: function()
+				{
 					var ids = jQuery("#list").getDataIDs();
 					for(var i=0;i<ids.length;i++){
 						var cl = ids[i];
@@ -72,20 +77,16 @@
 						jQuery("#list").setRowData(ids[i],{akeyE:edit,akey:info})
 					}
 				},
-				onSelectRow: function(id){
-					if(id && id!==lastsel){
-						var xyz = $("#list").getDataIDs().indexOf(lastsel);
-						if (xyz%2 != 0)
-						{
-						  $('#'+lastsel).addClass('ui-priority-secondary');
-						}
-
-					  $('#list').jqGrid('restoreRow',lastsel);
-
+				onSelectRow: function(id)
+				{
+					if(id && id!==lastsel)
+					{
+					  lastsel=id;
 					}
-					$('#'+id).removeClass('ui-priority-secondary');
-
-					<cfif session.IsAdmin IS true>
+				},
+				ondblClickRow: function(id) 
+				{
+				    <cfif session.IsAdmin IS true>
 					var suPatchNameID = $("#list").getDataIDs().indexOf(lastsel);
 					var suPatchNameIDVal = jQuery("#list").getCell(suPatchNameID,2);
 					$('#list').editRow(id, true, undefined, function(res) {
@@ -93,8 +94,6 @@
 					    $("#list").trigger("reloadGrid");
 					});
 					</cfif>
-					
-					lastsel = id;
 				},
 				jsonReader: {
 					total: "total",
@@ -107,10 +106,49 @@
 					}
 				}
 			);
-			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false});
+
+			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false},
+				{}, // default settings for edit
+				{}, // default settings for add
+				{}, // delete
+				{ sopt:['cn','bw','eq','ne','lt','gt','ew'], closeOnEscape: true, multipleSearch: true, closeAfterSearch: true }, // search options
+				{closeOnEscape:true}
+				)
+			<cfif session.IsAdmin IS true>	
+			.navButtonAdd('#pager',{
+				caption:"ALL: Create to QA", 
+				buttonicon:"ui-icon-gear", 
+				title:"Add New Patch",
+				onClickButton: function()
+				{ 
+					$.get( "./includes/available_patches_apple.cfc?method=CreateToQA", function( data ) {
+				  		$( ".result" ).html( data );
+				  		$("#list").trigger("reloadGrid");
+					});
+				}
+			})
+			.navButtonAdd('#pager',{
+				caption:"ALL: QA to Prod", 
+			   	buttonicon:"ui-icon-gear", 
+			   	title:"Duplicate Patch",
+			   	onClickButton: function(){ 
+					$.get( "./includes/available_patches_apple.cfc?method=QAToProd", function( data ) {
+				  		$( ".result" ).html( data );
+				  		$("#list").trigger("reloadGrid");
+					});
+				}, 
+			   	position:"last"
+			})
+			</cfif>
+			;
+			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
+			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
+			mygrid[0].toggleToolbar();
 		}
 	);
 </script>
+<div align="center">
 <table id="list" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="pager" style="text-align:center;font-size:11px;"></div>
+</div>
 <div id="dialog" title="Detailed Patch Information" style="text-align:left;" class="ui-dialog-titlebar"></div>

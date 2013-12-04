@@ -4,6 +4,9 @@
 		window.open(url,'_self') ;
 	}
 </script>
+<style type="text/css">
+    .xAltRow { background-color: #F0F8FF; background-image: none; }
+</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
@@ -12,19 +15,21 @@
 			{
 				url:'./includes/sw_group_list.cfc?method=getMPSoftwareGroups', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
-				colNames:['Tasks', 'Name', 'Description', 'Owner', 'Modify Date'],
+				colNames:['', 'Name', 'Description', 'Owner', 'State', 'Modify Date'],
 				colModel :[
-				  {name:'gid',index:'gid', width:30, align:"center", sortable:false, resizable:false},
-				  {name:'gName',index:'gName', width:150, align:"left", editable: true, edittype:'text'},
-				  {name:'gDescription',index:'gDescription', width:200, align:"left", editable: true, edittype:'text'},
+				  {name:'gid',index:'gid', width:22, align:"center", sortable:false, resizable:false},
+				  {name:'gName',index:'gName', width:120, align:"left", editable: true, edittype:'text'},
+				  {name:'gDescription',index:'gDescription', width:180, align:"left", editable: true, edittype:'text'},
 				  <cfif session.IsAdmin IS true>
 				  {name:'owner', index:'owner', width:100, align:"left", editable: true, edittype:'text'},
 				  <cfelse>
 				  {name:'owner', index:'owner', width:100, align:"left", editable: true, edittype:'text', editoptions: {readonly: 'readonly'}},
 				  </cfif>
-				  {name:'mdate', index:'mdate', width:120, align:"left", editable: true, edittype:'text', editoptions: {readonly: 'readonly'}}
+				  {name:'state',index:'state', width:56, align:"left", editable: true, editable:true, edittype:"select", editoptions:{value:"1:Production;2:QA;0:Disabled"}},
+				  {name:'mdate', index:'mdate', width:80, align:"left", editable: false, edittype:'text', editoptions: {readonly: 'readonly'}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}
 				],
 				altRows:true,
+				altclass:'xAltRow',
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager
 				rowNum:20, //Number of records we want to show per page
 				rowList:[10,20,30,50,100], //Row List, to allow user to select how many rows they want to see per page
@@ -48,26 +53,30 @@
 						var cl = ids[i];
 						var xl = jQuery("#list").getCell(ids[i],'gid'); // get tuuid
 						<cfif session.IsAdmin IS true>
-						edit = "<input type='image' style='padding-left:4px;' onclick=load('./index.cfm?adm_sw_group_edit="+xl+"'); src='./_assets/images/jqGrid/edit_16.png'>";
+						edit = "<input type='image' style='padding-left:0px;' onclick=load('./index.cfm?adm_sw_group_edit="+xl+"'); src='./_assets/images/jqGrid/edit_16.png'>";
 						<cfelse>
 						edit = "<input type='image' style='padding-left:4px;' onclick=load('./index.cfm?adm_sw_group_edit="+xl+"'); src='./_assets/images/jqGrid/info_16.png'>";
 						</cfif>
 						jQuery("#list").setRowData(ids[i],{gid:edit})
 					}
 				},
-				onSelectRow: function(id){
-					/* This section of code fixes the highlight issues, with altRows */
-					if(id && id!==lastsel){
-						var xyz = $("#list").getDataIDs().indexOf(lastsel);
-						if (xyz%2 != 0)
-						{
-						  $('#'+lastsel).addClass('ui-priority-secondary');
-						}
-
-					  $('#list').jqGrid('restoreRow',lastsel);
+				onSelectRow: function(id)
+				{
+					if(id && id!==lastsel)
+					{
 					  lastsel=id;
 					}
-					$('#'+id).removeClass('ui-priority-secondary');
+				},
+				ondblClickRow: function(id) 
+				{
+				    <cfif session.IsAdmin IS true>
+					var stateID = $("#list").getDataIDs().indexOf(lastsel);
+					var stateIDVal = jQuery("#list").getCell(stateID,2);
+					$('#list').editRow(id, true, undefined, function(res) {
+					    // res is the response object from the $.ajax call
+					    $("#list").trigger("reloadGrid");
+					});
+					</cfif>
 				},
 				jsonReader: {
 					total: "total",
@@ -108,7 +117,7 @@
 	);
 </script>
 <div align="center">
-<table id="list" cellpadding="0" cellspacing="0"></table>
+<table id="list" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="pager" style="text-align:center;font-size:11px;"></div>
 </div>
 <div id="dialog" title="Detailed Task Information" style="text-align:left;" class="ui-dialog-titlebar"></div>

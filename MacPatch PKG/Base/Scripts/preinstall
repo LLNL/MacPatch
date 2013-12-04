@@ -83,6 +83,11 @@ if [ -f "/Library/LaunchDaemons/gov.llnl.mp.worker.plist" ]; then
 	rm /Library/LaunchDaemons/gov.llnl.mp.worker.plist
 fi	
 
+# Framework
+if [ -d "/Library/Frameworks/MPFramework.framework" ]; then	
+	rm -rf "/Library/Frameworks/MPFramework.framework"
+fi	
+
 if [ -d "$MPClientDir" ]; then
 	echo "Removing $MPClientDir"
 	rm -rf "$MPClientDir"

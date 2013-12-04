@@ -66,6 +66,7 @@
 	
 	return returnVal;
 }
+
 - (IBAction)openPlists:(id)sender
 {	
 	if ([self scanForPlists]) {
@@ -75,18 +76,21 @@
 		[NSApp presentError:[NSError errorWithDomain:@"No MacPatch Plist files found!" code:1 userInfo:nil]];
 	}
 }
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
 	[self openPlists:self];
 	[window center];
 	unsavedChanges = NO;
 }
+
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
 {
 	return YES;
 }
+
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
-	
 	if ([dataManager selectionIndex] == NSNotFound) {
 		[intervalDate setTitle:@""];
 		[intervalText setStringValue:@""];
@@ -107,13 +111,11 @@
 		}
 		[intervalStart selectItemWithTitle:[[formatParts objectAtIndex:0] uppercaseString]];
 		[intervalText setStringValue:[formatParts lastObject]];
-	}		
-	
+	}
 }
 
 - (BOOL)populateInterfaceFromPlist:(NSDictionary *)plist
 {
-	//taskFilesArray = [NSArray arrayWithObject:plist];
 	if (usingAltTaskFile) {
 		window.title = MP_ALT_TASKS_PLIST;
 	} else {
@@ -127,10 +129,11 @@
 
 	return YES;
 }
+
 - (IBAction)updateTableRow:(id)sender
 {
-	//NSLog(@"Boom");
-	if ([[intervalStart titleOfSelectedItem] isEqualTo:@"RECURRING"] ){
+	if ([[intervalStart titleOfSelectedItem] isEqualTo:@"RECURRING"] )
+    {
 		[intervalDate setEnabled:YES];
 	} else {
 		[intervalDate setTitle:@""];
@@ -138,23 +141,18 @@
 	}
 	
 	NSString *updateString = nil;
-	if ([intervalDate isEnabled]) {
-		updateString = [NSString stringWithFormat:@"%@@%@@%@",
-							  [intervalStart titleOfSelectedItem]
-							  ,[intervalDate titleOfSelectedItem]
-							  ,[intervalText stringValue]];
+	if ([intervalDate isEnabled])
+    {
+		updateString = [NSString stringWithFormat:@"%@@%@@%@",[intervalStart titleOfSelectedItem],[intervalDate titleOfSelectedItem],[intervalText stringValue]];
 	} else {
-		updateString = [NSString stringWithFormat:@"%@@%@",							  
-						[intervalStart titleOfSelectedItem]
-						,[intervalText stringValue]];
+		updateString = [NSString stringWithFormat:@"%@@%@",[intervalStart titleOfSelectedItem],[intervalText stringValue]];
 	}
-	NSLog(@"Updating row to %@", updateString);
+
 	int intRow = (int)[dataManager selectionIndex];
 	NSMutableDictionary *boom = [[dataManager arrangedObjects] objectAtIndex:intRow];
 	[boom setObject:updateString forKey:@"interval"];
-	
-	//[[dataManager selection] setObject:updateString forKey:@"interval"];
 }
+
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
 	unsavedChanges = YES; 
@@ -162,9 +160,9 @@
 	[saveButton setTitle:@"Editing..."];
 	return YES;
 }
+
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
 {
-	NSLog(@"Done Editing...");
 	[saveButton setTitle:@"Save"];
 	[saveButton setEnabled:YES];
 	return YES;
@@ -172,16 +170,18 @@
 
 - (BOOL)windowShouldClose:(id)sender
 {
-	if (unsavedChanges) {
+	if (unsavedChanges)
+    {
 		NSAlert *saveBeforeQuitAlert;
 			saveBeforeQuitAlert = [NSAlert alertWithMessageText:@"Save before quitting?"
 							defaultButton:@"Save and Quit" 
 						  alternateButton:@"Quit" 
 							  otherButton:@"Cancel" 
-				informativeTextWithFormat:@"If you quit now, unsaved changes will be lost."
-			 ];
+				informativeTextWithFormat:@"If you quit now, unsaved changes will be lost."];
+
 		int saveChoice = (int)[saveBeforeQuitAlert runModal];
-		if (saveChoice == NSAlertDefaultReturn) {
+		if (saveChoice == NSAlertDefaultReturn)
+        {
 			[self savePlist:self];
 			return YES;
 		} else if (saveChoice == NSAlertAlternateReturn) {
@@ -193,22 +193,8 @@
 	return YES;
 }
 
-
-//- (void)textDidBeginEditing:(NSNotification *)aNotification
-//{
-//	NSLog(@"Editing...");
-//	[saveButton setEnabled:NO];
-//	[saveButton setTitle:@"Editing..."];
-//}
-//- (void)textDidEndEditing:(NSNotification *)aNotification
-//{
-//	NSLog(@"Done Editing...");
-//	[saveButton setTitle:@"Save"];
-//	[saveButton setEnabled:YES];
-//}
 - (IBAction)savePlist:(id)sender
 {
-	
 	[window endEditingFor:[window firstResponder]];
 	//First, we write the plist somewhere we can touch
 	NSString *tempFile = @"/var/tmp/mpplist.plist";
@@ -283,21 +269,7 @@
 	} while (0);
 	
 	AuthorizationFree (myAuthorizationRef, kAuthorizationFlagDefaults);    // 10
-	
-	//if (myStatus) printf("Status: %ld\n", myStatus);
-	
-	/*if ((myStatus && myStatus != userDidCancel) || !myStatus) {
-		NSAlert *authSuccess = [NSAlert alertWithMessageText:@"Plist written!" 
-											   defaultButton:@"OK" 
-											 alternateButton:nil 
-												 otherButton:nil 
-								   informativeTextWithFormat:@"MacPatch should see the changes now."];
-		[authSuccess runModal];
-	}*/
 	unsavedChanges = NO;
-	
-	
-	
 }
 
 

@@ -937,16 +937,12 @@ done:
     
 	NSArray *result = nil;
     [mpServerConnection refreshServerObject];
-    
-	MPSoap *soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
+
 	MPPatchScan *patchScanObj = [[MPPatchScan alloc] initWithServerConnection:mpServerConnection];
     
     [patchScanObj setUseDistributedNotification:YES];
-	result = [NSArray arrayWithArray:[patchScanObj scanForPatches:soap]];
-	
-	[soap release];
+	result = [NSArray arrayWithArray:[patchScanObj scanForPatches]];
 	[patchScanObj release];
-    
 	return result;
 }
 

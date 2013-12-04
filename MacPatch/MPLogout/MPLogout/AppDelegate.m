@@ -51,7 +51,6 @@
 - (void)dealloc 
 {
 	[catObj release];
-	[mps release];
 	
 	[installStatusText autorelease];
     [installStatusOutput autorelease];
@@ -130,8 +129,7 @@
 	
 	[progressBar setUsesThreadedAnimation:YES];
 	[progressBar startAnimation:nil];
-    
-	mps = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:WS_NAMESPACE];
+
 	catObj = [[MPASUSCatalogs alloc] initWithServerConnection:mpServerConnection];
 	
 	[NSThread detachNewThreadSelector:@selector(runSwuai) toTarget:self withObject:nil];
@@ -187,11 +185,16 @@
 	NSMutableDictionary *tmpDict;
 	
 	MPAsus		*asus		= [[MPAsus alloc] initWithServerConnection:mpServerConnection];
-	MPSoap		*soap		= [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:WS_NAMESPACE];
 	
 	// Get Patch Group Patches
 	logit(lcl_vInfo,@"Getting approved patch list for client.");
-	NSDictionary *patchGroupPatches = [asus getPatchGroupPatches:[mpServerConnection.mpDefaults objectForKey:@"PatchGroup"] encode:YES];
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+	NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+		goto done;
+    }
 	if (!patchGroupPatches) {
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
 		logit(lcl_vDebug,@"%@",patchGroupPatches);
@@ -242,7 +245,7 @@
 							}
 							
 							[tmpDict setObject:@"Apple" forKey:@"type"];
-							
+							[tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
 							logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
 							[approvedUpdatesArray addObject:tmpDict];
 							[tmpDict release];
@@ -265,7 +268,7 @@
 												 name: @"ScanForNotificationFinished"
 											   object: nil];
 	
-	NSMutableArray *customPatchesArray = [NSMutableArray arrayWithArray:[patchScanObj scanForPatches:soap]];
+	NSMutableArray *customPatchesArray = [NSMutableArray arrayWithArray:[patchScanObj scanForPatches]];
 	
 	logit(lcl_vDebug,@"Custom Patches Needed: %@",customPatchesArray);
 	logit(lcl_vDebug,@"Approved Custom Patches: %@",approvedCustomPatches);
@@ -287,7 +290,9 @@
 				[tmpDict setObject:approvedPatch forKey:@"patches"];
 				[tmpDict setObject:[customPatch objectForKey:@"patch_id"] forKey:@"patch_id"];
 				[tmpDict setObject:@"Third" forKey:@"type"];
-				
+                [tmpDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
+                [tmpDict setObject:[approvedPatch objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
+
 				logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
 				[approvedUpdatesArray addObject:tmpDict];
 				[tmpDict release];
@@ -300,8 +305,7 @@
 	[patchScanObj release];
 	
 done:	
-	
-	[soap release];
+
 	[asus release];
 	return [approvedUpdatesArray autorelease];
 }
@@ -492,10 +496,13 @@ done:
 		approvedUpdatesArray = [self scanHostForPatches];	
 	}
 	
-	
+    // Sort Array
+    NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"patch_install_weight" ascending:YES];
+    approvedUpdatesArray = [approvedUpdatesArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:desc]];
+
 	// If no items in array, lets bail...
 	if ([approvedUpdatesArray count] == 0 ) {
-		logit(lcl_vInfo,@"No Apple updates found.");
+		logit(lcl_vInfo,@"No approved updates found.");
 		[statusText setStringValue:@"No updates found and needed."];
 		[self RebootDialog];
 		return;
@@ -846,66 +853,21 @@ done:
 
 - (void)postInstallToWebService:(NSString *)aPatch type:(NSString *)aType
 {
-	NSString *cuuid = [MPSystemInfo clientUUID];
-	cuuid = [NSString stringWithString:[cuuid trim]];
-	
-	MPDefaults *defaults = [[MPDefaults alloc] init];
-	MPSoap *soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:WS_NAMESPACE];
-	NSData *soapResult;
-	// First we need to post the installed patch
-	NSArray *patchInstalledArray;
-	patchInstalledArray = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:aPatch,@"patch",aType,@"type",nil]];
-	
-	MPDataMgr *dataMgr = [[MPDataMgr alloc] init];
-	NSString *resXML = [NSString stringWithString:[dataMgr GenXMLForDataMgr:patchInstalledArray dbTable:@"installed_patches" 
-															  dbTablePrefix:@"mp_"
-															  dbFieldPrefix:@""
-															   updateFields:@"cuuid,patch"]];
-	
-	NSString *xmlBase64String = [[resXML dataUsingEncoding: NSASCIIStringEncoding] encodeBase64WithNewlines:NO]; 
-	NSString *message = [soap createSOAPMessage:@"ProcessXML" argName:@"encodedXML" argType:@"string" argValue:xmlBase64String];
-	
-	NSError *err = nil;
-	soapResult = [soap invoke:message isBase64:NO error:&err];
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-	}
-	NSString *ws1 = [[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding];
-	
-	// Now we need to update the client patch tables and remove the entry.
-	// datamgr can not do this since it's a different table
-	NSDictionary *soapMsgData = [NSDictionary dictionaryWithObjectsAndKeys:aPatch,@"patch",aType,@"type",cuuid,@"cuuid",nil];
-	logit(lcl_vDebug,@"UpdateInstalledPatches Dict: %@",soapMsgData);
-	
-	
-	message = [soap createBasicSOAPMessage:@"UpdateInstalledPatches" argDictionary:soapMsgData];
-	err = nil;
-	soapResult = [soap invoke:message isBase64:NO error:&err];
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-	}
-	NSString *ws2 = [[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding];
-	
-	if ([ws1 isEqualTo:@"1"] == TRUE || [ws1 isEqualTo:@"true"] == TRUE) {
-		logit(lcl_vInfo,@"Patch (%@) install result was posted to webservice.",aPatch);
-	} else {
-		logit(lcl_vError,@"Patch (%@) install result was not posted to webservice.",aPatch);
-	}
-	if ([ws2 isEqualTo:@"1"] == YES  || [ws2 isEqualTo:@"true"] == TRUE) {
-		logit(lcl_vInfo,@"Client patch state for (%@) was posted to webservice.",aPatch);
-	} else {
-		logit(lcl_vError,@"Client patch state for (%@) was not posted to webservice.",aPatch);
-	}
-    
-	
-	// We should queue this in case we fail.
-	
-	//Release Objects
-	[ws2 release];
-	[ws1 release];
-	[dataMgr release];
-	[soap release];
-	[defaults release];
+    BOOL result = NO;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    result = [mpws postPatchInstallResultsToWebService:aPatch patchType:aType error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    } else {
+        if (result == TRUE) {
+            logit(lcl_vInfo,@"Patch (%@) install result was posted to webservice.",aPatch);
+        } else {
+            logit(lcl_vError,@"Patch (%@) install result was not posted to webservice.",aPatch);
+        }
+    }
+
+    return;
 }
 
 #pragma mark -
@@ -987,24 +949,6 @@ done:
 	[self removeLogOutHook];
 	[self restartLocalSystem];
 	exit(0);
-}
-
-- (void)sendBasicSOAP:(NSString *)aMethod content:(NSDictionary *)aDict
-{
-	NSError *err = nil;
-	NSString *message = [mps createBasicSOAPMessage:aMethod argDictionary:aDict];
-	NSData *result = [mps invoke:message isBase64:NO error:&err];	
-	
-	NSString *ws = [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
-	logit(lcl_vInfo,@"WS Results: %@",ws);
-	
-	if ([ws isEqualTo:@"1"] == TRUE || [ws isEqualTo:@"true"] == TRUE) {
-		logit(lcl_vInfo,@"Install results posted to webservice.");
-	} else {
-		logit(lcl_vError,@"Install results posted to webservice returned false.");
-	}
-	
-	[ws release];
 }
 
 - (void)appendStatusString:(NSString *)aStr

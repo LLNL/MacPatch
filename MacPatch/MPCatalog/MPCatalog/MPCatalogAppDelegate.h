@@ -32,9 +32,9 @@
 @class SWDistInfoController;
 @class MPServerConnection;
 
-@interface MPCatalogAppDelegate : NSObject <NSApplicationDelegate,MPDLWrapperController,MPWorkerClient, NSTabViewDelegate> 
+@interface MPCatalogAppDelegate : NSObject <NSApplicationDelegate,MPDLWrapperController, MPWorkerClient, NSTabViewDelegate>
 {
-    NSWindow *window;
+    NSWindow *__unsafe_unretained window;
 	
 	IBOutlet NSTableView			*tableView;
 	IBOutlet NSArrayController		*arrayController;
@@ -76,32 +76,32 @@
     NSString                *swDistCurrentTitle;
 }
 
-@property (assign) IBOutlet NSWindow *window;
-@property (nonatomic, retain) IBOutlet NSTableView			*tableView;
-@property (nonatomic, retain) IBOutlet NSArrayController	*arrayController;
-@property (nonatomic, retain) IBOutlet NSTextField			*statusTextTitle;
-@property (nonatomic, retain) IBOutlet NSTextField			*statusTextStatus;
-@property (nonatomic, retain) IBOutlet NSProgressIndicator	*progressBar;
-@property (nonatomic, retain) IBOutlet NSToolbarItem		*installButton;
-@property (nonatomic, retain) IBOutlet NSToolbarItem		*removeButton;
-@property (nonatomic, retain) IBOutlet NSToolbarItem		*cancelButton;
-@property (nonatomic, retain) IBOutlet NSToolbarItem		*refreshButton;
-@property (nonatomic, retain) IBOutlet NSToolbarItem		*infoButton;
-@property (nonatomic, retain) IBOutlet NSPopUpButton		*swDistGroupsButton;
-@property (nonatomic, retain)          NSOperationQueue     *queue;
-@property (nonatomic, retain)          NSMutableArray       *selectedItems;
-@property (nonatomic, retain)          NSArray              *swDistGroupsArray;
+@property (unsafe_unretained) IBOutlet NSWindow *window;
+@property (nonatomic, strong) IBOutlet NSTableView			*tableView;
+@property (nonatomic, strong) IBOutlet NSArrayController	*arrayController;
+@property (nonatomic, strong) IBOutlet NSTextField			*statusTextTitle;
+@property (nonatomic, strong) IBOutlet NSTextField			*statusTextStatus;
+@property (nonatomic, strong) IBOutlet NSProgressIndicator	*progressBar;
+@property (nonatomic, strong) IBOutlet NSToolbarItem		*installButton;
+@property (nonatomic, strong) IBOutlet NSToolbarItem		*removeButton;
+@property (nonatomic, strong) IBOutlet NSToolbarItem		*cancelButton;
+@property (nonatomic, strong) IBOutlet NSToolbarItem		*refreshButton;
+@property (nonatomic, strong) IBOutlet NSToolbarItem		*infoButton;
+@property (nonatomic, strong) IBOutlet NSPopUpButton		*swDistGroupsButton;
+@property (nonatomic, strong)          NSOperationQueue     *queue;
+@property (nonatomic, strong)          NSMutableArray       *selectedItems;
+@property (nonatomic, strong)          NSArray              *swDistGroupsArray;
 
-@property (nonatomic, retain) IBOutlet NSPanel              *rebootPanel;
-@property (nonatomic, retain) IBOutlet NSPanel              *swDistInfoPanel;
+@property (nonatomic, strong) IBOutlet NSPanel              *rebootPanel;
+@property (nonatomic, strong) IBOutlet NSPanel              *swDistInfoPanel;
 
 @property (nonatomic, assign) BOOL                          cancelInstalls;
-@property (nonatomic, retain)          NSDictionary         *_defaults;
-@property (nonatomic, retain) IBOutlet NSTableColumn        *_selectionColumn;
+@property (nonatomic, strong)          NSDictionary         *_defaults;
+@property (nonatomic, strong) IBOutlet NSTableColumn        *_selectionColumn;
 @property (nonatomic, assign) BOOL                          tableColEdit;
-@property (nonatomic, retain)          NSURL                *mp_SOFTWARE_DATA_DIR;
-@property (nonatomic, retain)          NSDictionary         *swDistInfoPanelDict;
-@property (nonatomic, retain)          NSString             *swDistCurrentTitle;
+@property (nonatomic, strong)          NSURL                *mp_SOFTWARE_DATA_DIR;
+@property (nonatomic, strong)          NSDictionary         *swDistInfoPanelDict;
+@property (nonatomic, strong)          NSString             *swDistCurrentTitle;
 
 - (IBAction)showRebootPanel:(id)sender;
 - (IBAction)showPreferencePanel:(id)sender;
@@ -110,6 +110,7 @@
 - (IBAction)checkboxChanged:(id)sender;
 - (IBAction)removeSoftware:(id)sender;
 - (IBAction)refreshSoftware:(id)sender;
+- (IBAction)refreshSoftwareDistGroups:(id)sender;
 - (IBAction)cancelSoftware:(id)sender;
 
 // Test Actions

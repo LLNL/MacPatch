@@ -54,7 +54,9 @@
                         <ul>
                         	<li class="yuimenuitem"><a href="#" class="yuimenuitemlabel"><b>- Packages -</b></a></li>
 							<li class="yuimenuitem"><a href="index.cfm?adm_sw_dist_list" class="yuimenuitemlabel">List</a></li>
+							<cfif IsDefined("session.IsAdmin") AND #session.IsAdmin# IS true>
 							<li class="yuimenuitem"><a href="index.cfm?adm_sw_dist_new" class="yuimenuitemlabel">Create</a></li>
+							</cfif>
 						</ul>
                     </div>
                 </div>

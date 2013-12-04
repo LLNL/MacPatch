@@ -29,7 +29,7 @@
 #import "TaskWrapper.h"
 
 @class MPServerConnection;
-@class MPSoap, MPDefaults, MPASUSCatalogs;
+@class MPDefaults, MPASUSCatalogs;
 
 
 @interface AppDelegate : NSObject <TaskWrapperController> 
@@ -69,7 +69,6 @@
 	
 	BOOL killTasks;
 	
-	MPSoap *mps;
 	MPASUSCatalogs *catObj;
 	MPInstallTask *mpiTask;
 	
@@ -110,7 +109,6 @@
 - (void)restartLocalSystem;
 - (void)removeLogOutHook;
 - (void)RebootDialog;
-- (void)sendBasicSOAP:(NSString *)aMethod content:(NSDictionary *)aDict;
 
 - (void)setupDrawer;
 - (void)openDrawer:(id)sender;

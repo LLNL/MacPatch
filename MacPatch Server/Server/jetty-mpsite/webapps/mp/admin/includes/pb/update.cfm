@@ -113,6 +113,9 @@
         <cfif IsDefined("pkg_sizeK") AND isEmpty(pkg_sizeK)>
         	,pkg_size = <cfqueryparam value="#pkg_sizeK#">
         </cfif>
+		<cfif IsDefined("Form.patchInstallWeight") AND isEmpty(Form.patchInstallWeight)>
+        	,patch_install_weight = <cfqueryparam value="#form.patchInstallWeight#">
+        </cfif>
         <cfif IsDefined("Form.patch_reboot") AND isEmpty(Form.patch_reboot)>
         	,patch_reboot = <cfqueryparam value="#form.patch_reboot#">
         </cfif>

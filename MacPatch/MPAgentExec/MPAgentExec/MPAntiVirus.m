@@ -47,7 +47,6 @@
 		avApp = nil;
         mpServerConnection = aSrvObj;
 		[self setL_Defaults:mpServerConnection.mpDefaults];
-		soapService = [[SoapServices alloc] initWithServerConnection:mpServerConnection];
 	}
 	return self;
 }
@@ -59,133 +58,84 @@
     [avAppInfo autorelease];
     [avDefsDate autorelease];
     [l_Defaults autorelease];
-	[soapService release];
 	[super dealloc];
 }
 
 -(void)scanDefs
 {
-	// Look for a Supported AV App, if not bail.
-	NSDictionary *_avAppInfo = [self getAvAppInfo];
-	if (_avAppInfo == nil) {
-		logit(lcl_vInfo,@"No AV software was found, nothing to post.");
-		return;
-	}
-	
-	NSMutableDictionary *_avInfoToPost = [[NSMutableDictionary alloc] initWithDictionary:_avAppInfo];
-	
-	// Check for Valid Defs data, else post data, can not update
-	NSString *_localDefsDate = [self getLocalDefsDate];
-	if (_localDefsDate == nil) {
-		logit(lcl_vError,@"No AV Defs software was found, nothing to validate.");
-		[_avInfoToPost setValue:@"NA" forKey:@"DefsDate"];
-		// Post AV to WebService
-		[soapService postBasicSOAPMessageUsingConvertDictionaryToXML:@"AddClientSAVData"
-															 argName:@"theXmlFile"
-														   dictToXml:_avInfoToPost
-														   b64Encode:YES];
-		[_avInfoToPost release];
-		return;
-	}
-	logit(lcl_vInfo, @"Host AV defs date is %@",_localDefsDate);
-	
-	// Get Latest Defs Date from Server
-	NSString *_remoteAvDefsDate = [self getLatestAVDefsDate];
-	if (_remoteAvDefsDate == nil) {
-		[_avInfoToPost release];
-		return;
-	}
-	logit(lcl_vInfo, @"Latest AV defs date is %@",_remoteAvDefsDate);
-	
-	// If Updates are enabled
-	if (([_remoteAvDefsDate intValue] > [_localDefsDate intValue]) && [_localDefsDate intValue] != -1) {
-		logit(lcl_vInfo,@"AV Defs are out of date.")
-	} else {
-		logit(lcl_vDebug, @"AV Defs are current.");
-	}
-	
-	// Post AV to WebService
-	[_avInfoToPost setValue:_localDefsDate forKey:@"DefsDate"];
-	[soapService postBasicSOAPMessageUsingConvertDictionaryToXML:@"AddClientSAVData"
-														 argName:@"theXmlFile"
-													   dictToXml:_avInfoToPost
-													   b64Encode:YES];
-	[_avInfoToPost release];
-	return;
+	[self avScanAndUpdate:NO];
 }
 
 -(void)scanAndUpdateDefs
 {
-	// Look for a Supported AV App, if not bail.
+	[self avScanAndUpdate:YES];
+}
+
+- (void)avScanAndUpdate:(BOOL)runUpdate
+{
+    // Look for a Supported AV App, if not bail.
 	NSDictionary *_avAppInfo = [self getAvAppInfo];
 	if (_avAppInfo == nil) {
 		logit(lcl_vInfo,@"No AV software was found, nothing to post.");
-        
-        [soapService postBasicSOAPMessageUsingConvertDictionaryToXML:@"AddClientSAVData"
-															 argName:@"theXmlFile"
-														   dictToXml:_avAppInfo
-														   b64Encode:YES];
-        
 		return;
 	}
-	
+
 	NSMutableDictionary *_avInfoToPost = [[NSMutableDictionary alloc] initWithDictionary:_avAppInfo];
-	
+
 	// Check for Valid Defs data, else post data, can not update
 	NSString *_localDefsDate = [self getLocalDefsDate];
 	if (_localDefsDate == nil) {
 		logit(lcl_vError,@"No AV Defs software was found, nothing to validate.");
 		[_avInfoToPost setValue:@"NA" forKey:@"DefsDate"];
-		// Post AV to WebService
-		[soapService postBasicSOAPMessageUsingConvertDictionaryToXML:@"AddClientSAVData"
-															 argName:@"theXmlFile"
-														   dictToXml:_avInfoToPost
-														   b64Encode:YES];
-		[_avInfoToPost release];
-		return;
-	}
-	logit(lcl_vInfo, @"Host AV defs date: %@",_localDefsDate);
-	
+	} else {
+        logit(lcl_vInfo, @"Host AV defs date is %@",_localDefsDate);
+        [_avInfoToPost setValue:_localDefsDate forKey:@"DefsDate"];
+    }
+
 	// Get Latest Defs Date from Server
 	NSString *_remoteAvDefsDate = [self getLatestAVDefsDate];
-	if (_remoteAvDefsDate == nil) {
-		[_avInfoToPost release];
-		return;
+	if (_remoteAvDefsDate != nil) {
+        logit(lcl_vInfo, @"Latest AV defs date is %@",_remoteAvDefsDate);
+        // If Updates are enabled
+        if (([_remoteAvDefsDate intValue] > [_localDefsDate intValue]) && [_localDefsDate intValue] != -1) {
+            logit(lcl_vInfo,@"AV Defs are out of date.")
+            if (runUpdate == YES)
+            {
+                logit(lcl_vInfo,@"Run the AV Defs update, defs are out of date.")
+                // Install the Software
+                NSString *_avDefsURL = [self getAvUpdateURL];
+                logit(lcl_vDebug,@"AV Defs URL: %@",_avDefsURL);
+                if (_avDefsURL) {
+                    int installResult = -1;
+                    installResult = [self downloadUnzipAndInstall:_avDefsURL];
+                    if (installResult != 0) {
+                        logit(lcl_vError,@"AV Defs were not updated. Please see the install.log file for reason.");
+                    } else {
+                        logit(lcl_vError,@"AV Defs were updated.");
+                        // Get Defs Info and Update The Data to Post
+                        _localDefsDate = [self getLocalDefsDate];
+                        [_avInfoToPost setValue:_localDefsDate forKey:@"DefsDate"];
+                    }
+                }
+            }
+        } else {
+            logit(lcl_vDebug, @"AV Defs are current.");
+        }
 	}
-	logit(lcl_vInfo, @"Latest AV defs date: %@",_remoteAvDefsDate);
 
-	// If Updates are enabled
-	if (([_remoteAvDefsDate intValue] > [_localDefsDate intValue]) && [_localDefsDate intValue] != -1) {
-		logit(lcl_vInfo,@"Run the AV Defs update, defs are out of date.")
-		// Install the Software
-		NSString *_avDefsURL = [self getAvUpdateURL];
-		logit(lcl_vDebug,@"AV Defs URL: %@",_avDefsURL);
-		if (_avDefsURL) {
-			int installResult = -1;
-			installResult = [self downloadUnzipAndInstall:_avDefsURL];
-			if (installResult != 0) {
-				logit(lcl_vError,@"AV Defs were not updated. Please see the install.log file for reason.");
-			} else {
-				logit(lcl_vError,@"AV Defs were updated.");
-			}
-		}
-	} else {
-		logit(lcl_vDebug, @"AV Defs are current.");
-	}
-	
-	// Get Defs Info
-	_localDefsDate = [self getLocalDefsDate];
-	[_avInfoToPost setValue:_localDefsDate forKey:@"DefsDate"];
-	
 	// Post AV to WebService
-	[soapService postBasicSOAPMessageUsingConvertDictionaryToXML:@"AddClientSAVData"
-														 argName:@"theXmlFile"
-													   dictToXml:_avInfoToPost
-													   b64Encode:YES];
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    [mpws postClientAVData:_avInfoToPost error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    }
+
 	[_avInfoToPost release];
 	return;
 }
 
+#pragma mark Collect Data
 -(NSDictionary *)getAvAppInfo
 {
 	NSFileManager *fm = [NSFileManager defaultManager];
@@ -269,38 +219,42 @@
 	return _defsDate;
 }
 
+#pragma mark Download & Update Methods
 -(NSString *)getLatestAVDefsDate
 {
 	NSString *result;
-	NSString *_theArch = @"x86"; 
-	if ([[MPSystemInfo hostArchitectureType] isEqualToString:@"ppc"]) {
-		_theArch = @"ppc";
-	}
-	NSDictionary *soapArgs = [NSDictionary dictionaryWithObject:_theArch forKey:@"theArch"];
-	result = [soapService postBasicSOAPMessage:@"GetSavAvDefsDate" argDictionary:soapArgs];
-	if ([result isEqualToString:@"NA"]) {
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    result = [mpws getLatestAVDefsDate:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+        return nil;
+    }
+
+    if ([result isEqualToString:@"NA"]) {
 		logit(lcl_vError,@"Did not recieve a vaild defs date.");
 		return nil;
 	}
 	return result;
 }
 
-// Download & Update
 -(NSString *)getAvUpdateURL
 {
-	NSString *result;
-	NSString *_theArch = @"x86"; 
-	if ([[MPSystemInfo hostArchitectureType] isEqualToString:@"ppc"]) {
-		_theArch = @"ppc";
-	}
-	NSDictionary *soapArgs = [NSDictionary dictionaryWithObject:_theArch forKey:@"theArch"];
-	result = [soapService postBasicSOAPMessage:@"GetSavAvDefsFile" argDictionary:soapArgs];
-	if ([result isEqualToString:@"NA"]) {
+    NSString *result;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    result = [mpws getAvUpdateURL:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+        return nil;
+    }
+
+    if ([result isEqualToString:@"NA"]) {
 		logit(lcl_vError,@"Did not recieve a vaild defs file.");
 		return nil;
 	}
-	
-	logit(lcl_vDebug,@"[getAvUpdateURL] result: %@",result);
+    
+    logit(lcl_vDebug,@"[getAvUpdateURL] result: %@",result);
 	return result;
 }
 

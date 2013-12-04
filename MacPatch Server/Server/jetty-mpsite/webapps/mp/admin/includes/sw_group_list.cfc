@@ -41,28 +41,22 @@
         </cftry>
 
 		<cfset records = qSelSW>
-
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
-			<cfset arrSW[i] = [#gid#, #gName#, #gDescription#, #owner#, #mdate#] >
+			<cfif state GTE 1>
+				<cfset txtState = IIF(state EQ 2,DE('QA'),DE('Production'))>
+			<cfelse>
+				<cfset txtState = "Disabled">
+			</cfif>
+			<cfset arrSW[i] = [#gid#, #gName#, #gDescription#, #owner#, #txtState#, #mdate#] >
 			<cfset i = i + 1>
 		</cfloop>
 
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
-
 		<cfreturn stcReturn>
 	</cffunction>
 
@@ -80,7 +74,8 @@
 			<cfquery name="updateGroupData" datasource="#session.dbsource#">
 				Update mp_software_groups
 				Set gName = <cfqueryparam value="#Arguments.gName#">,
-				gDescription = <cfqueryparam value="#Arguments.gDescription#">
+				gDescription = <cfqueryparam value="#Arguments.gDescription#">,
+				state = <cfqueryparam value="#Arguments.state#">
 				where gid = <cfqueryparam value="#Arguments.id#">
 			</cfquery>
 			<cfif session.IsAdmin IS true>
@@ -165,28 +160,17 @@
         </cftry>
 
 		<cfset records = qSelSW>
-
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
 			<cfset arrSW[i] = [#sw_task_id#, #gid#, #name#, #iif(active IS 0,DE("Yes"),DE("No"))#, #Ucase(sw_task_type)#] >
 			<cfset i = i + 1>
 		</cfloop>
 
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
-
 		<cfreturn stcReturn>
 	</cffunction>
 
@@ -220,49 +204,6 @@
 		<cfreturn strReturn>
 	</cffunction>
 
-    <cffunction name="buildSearchString" access="private" hint="Returns the Search Opeator based on Short Form Value">
-		<cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
-	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
-	    <cfargument name="searchString" required="no" default="" hint="Search Text">
-
-			<cfset var searchVal = "">
-
-			<cfscript>
-				switch(Arguments.searchOper)
-				{
-					case "eq":
-						searchVal = "#Arguments.searchField# = '#Arguments.searchString#'";
-						break;
-					case "ne":
-						searchVal = "#Arguments.searchField# <> '#Arguments.searchString#'";
-						break;
-					case "lt":
-						searchVal = "#Arguments.searchField# < '#Arguments.searchString#'";
-						break;
-					case "le":
-						searchVal = "#Arguments.searchField# <= '#Arguments.searchString#'";
-						break;
-					case "gt":
-						searchVal = "#Arguments.searchField# > '#Arguments.searchString#'";
-						break;
-					case "ge":
-						searchVal = "#Arguments.searchField# >= '#Arguments.searchString#'";
-						break;
-					case "bw":
-						searchVal = "#Arguments.searchField# LIKE '#Arguments.searchString#%'";
-						break;
-					case "ew":
-						//Purposefully breaking ends with operator (no leading ')
-						searchVal = "#Arguments.searchField# LIKE %#Arguments.searchString#'";
-						break;
-					case "cn":
-						searchVal = "#Arguments.searchField# LIKE '%#Arguments.searchString#%'";
-						break;
-				}
-			</cfscript>
-			<cfreturn searchVal>
-	</cffunction>
-
 	<cffunction name="getCustomDataTasks" access="remote" returnformat="json">
 		<cfargument name="page" required="no" default="1" hint="Page user is on">
 	    <cfargument name="rows" required="no" default="10" hint="Number of Rows to display per page">
@@ -287,8 +228,13 @@
         </cfif>
         <cftry>
             <cfquery name="qSelSW" datasource="#session.dbsource#" result="res">
-				Select Distinct mpst.*, '0' as selected
-				from mp_software_task mpst
+				Select Distinct *, '0' as selected
+				from mp_software_task
+				<cfif blnSearch>
+                WHERE
+                    #PreserveSingleQuotes(strSearch)#
+                </cfif>
+                ORDER BY #sidx# #sord#
             </cfquery>
 
             <cfcatch type="any">
@@ -299,28 +245,17 @@
         </cftry>
 
 		<cfset records = qSelSW>
-
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
 			<cfset arrSW[i] = [#tuuid#, #getSelectedState(tuuid)#, #name#, #IIF(active EQ 0,DE('No'),DE('Yes'))#, #sw_task_type#, #sw_start_datetime#, #sw_end_datetime#]>
 			<cfset i = i + 1>
 		</cfloop>
 
-		<!--- Calculate the Total Number of Pages for your records. --->
-		<cfset totalPages = Ceiling(qSelSW.recordcount/arguments.rows)>
-		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#qSelSW.recordcount#,rows=#arrSW#}>
-
+		<cfset totalPages = Ceiling(records.recordcount/arguments.rows)>
+		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#records.RecordCount#,rows=#arrSW#}>
 		<cfreturn stcReturn>
 	</cffunction>
 
@@ -564,11 +499,50 @@
 		<cfargument name="TaskID">
 
 		<cfset criteria = {} />
-		<!---
-		<cfset criteria[ "suuid" ] = #arguments.order# />
-		<cfset criteria[ "order" ] = #arguments.data# />
-		--->
 		<cfreturn criteria>
+	</cffunction>
+	
+	 <cffunction name="buildSearchString" access="private" hint="Returns the Search Opeator based on Short Form Value">
+		<cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
+	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
+	    <cfargument name="searchString" required="no" default="" hint="Search Text">
+
+			<cfset var searchVal = "">
+
+			<cfscript>
+				switch(Arguments.searchOper)
+				{
+					case "eq":
+						searchVal = "#Arguments.searchField# = '#Arguments.searchString#'";
+						break;
+					case "ne":
+						searchVal = "#Arguments.searchField# <> '#Arguments.searchString#'";
+						break;
+					case "lt":
+						searchVal = "#Arguments.searchField# < '#Arguments.searchString#'";
+						break;
+					case "le":
+						searchVal = "#Arguments.searchField# <= '#Arguments.searchString#'";
+						break;
+					case "gt":
+						searchVal = "#Arguments.searchField# > '#Arguments.searchString#'";
+						break;
+					case "ge":
+						searchVal = "#Arguments.searchField# >= '#Arguments.searchString#'";
+						break;
+					case "bw":
+						searchVal = "#Arguments.searchField# LIKE '#Arguments.searchString#%'";
+						break;
+					case "ew":
+						//Purposefully breaking ends with operator (no leading ')
+						searchVal = "#Arguments.searchField# LIKE %#Arguments.searchString#'";
+						break;
+					case "cn":
+						searchVal = "#Arguments.searchField# LIKE '%#Arguments.searchString#%'";
+						break;
+				}
+			</cfscript>
+			<cfreturn searchVal>
 	</cffunction>
 
 </cfcomponent>

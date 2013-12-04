@@ -1,8 +1,14 @@
 <cfcomponent>
 	<cffunction name="getAppSettings" access="public" returntype="struct">
     
+    	<cfset var j2eeType = "JETTY">
     	<cfset jvmObj = CreateObject("java","java.lang.System").getProperties() />
-        <cfset _localConf = "#jvmObj.jetty.home#/app_conf/siteconfig.xml">
+        <cfif IsDefined("jvmObj.catalina.base")>
+        	<cfset j2eeType = "TOMCAT">
+			<cfset _localConf = "#jvmObj.catalina.base#/app_conf/siteconfig.xml">
+		<cfelseif IsDefined("jvmObj.jetty.home")>
+			<cfset _localConf = "#jvmObj.jetty.home#/app_conf/siteconfig.xml">
+		</cfif>
         
 		<cfif fileExists(_localConf)>
         	<cfset _confFile = #_localConf#>
@@ -19,6 +25,9 @@
         <cfif not structKeyExists(xmlData,"settings")>
            <cfreturn appConf.settings>
         </cfif>
+        
+        <!--- Set J2EE Server type --->
+        <cfset appConf.settings.j2eeType = #j2eeType#>
         
         <cfloop item="key" collection="#xmlData.settings#">
            <cfif len(trim(xmlData.settings[key].xmlText))>
@@ -56,6 +65,24 @@
             </cfloop>
         </cfif>
         
+        <!--- Database settings - prod --->
+		<cfset appConf.settings.database.prod = structNew()>
+        <cfif structKeyExists(xmlData.settings,"database")>
+			<cfif not structKeyExists(xmlData.settings.database,"prod")>
+               <cfthrow message="Invalid settings XML file!">
+               <cfset appConf.settings.database.prod.enabled = "NO"> 
+            <cfelse>
+            	<cfset appConf.settings.database.prod.enabled = "YES">  
+            	<cfloop item="key" collection="#xmlData.settings.database.prod#">
+					<cfif len(trim(xmlData.settings.database.prod[key].xmlText))>
+                        <cfset appConf.settings.database.prod[key] = xmlData.settings.database.prod[key].xmlText>
+                    </cfif>
+                </cfloop>   
+            </cfif>
+        <cfelse>
+        	<cfset appConf.settings.database.prod.enabled = "NO">    
+        </cfif>
+        
         <!--- mail server settings --->
 		<cfset srvconf.settings.mailserver = structNew()>
         <cfif not structKeyExists(xmlData.settings,"mailserver")>
@@ -70,5 +97,22 @@
         </cfif>
 
         <cfreturn appConf.settings>	
+	</cffunction>
+    
+    <cffunction name="setupDB" access="public" returntype="struct">
+        <cfargument name="config" required="yes">
+        
+        <cftry> 
+          <!--- Create Datasource --->
+          <cfif Datasourceisvalid("mpds")>
+              <cfset rmDS = Datasourcedelete("mpds")>
+          </cfif>
+          <cfset DataSourceCreate( "mpds", arguments.config.database.prod )>
+        
+          <cfcatch type="any"> 
+              <cfthrow message="Error trying to create datasource.">
+          </cfcatch> 
+        </cftry>
+        
 	</cffunction>
 </cfcomponent>

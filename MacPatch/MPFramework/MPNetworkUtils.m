@@ -44,9 +44,6 @@
 #define DEFAULT_TIMEOUT 3
 static int isalive(struct sockaddr_in scanaddr);
 
-static NSString *SOAP_CONTROLLER_FILE = @"MPWSControllerCocoa.cfc";
-static NSString *JSON_CONTROLLER_FILE = @"Services/MPWSControllerCocoa.cfc";
-
 @interface MPNetworkUtils()
 
 @end
@@ -196,7 +193,7 @@ static int isalive(struct sockaddr_in scanaddr)
 	*/
 	
 	@try {
-		NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@:%d/MPWSControllerCocoa.cfc?method=WSLTest",aHTTP,aHost,aPort]];
+		NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@:%d%@?method=WSLTest",aHTTP,aHost,aPort,WS_CLIENT_FILE]];
         qldebug(@"isServerReachable url: %@",url);
 		ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
 		[request setValidatesSecureCertificate:NO];
@@ -311,9 +308,8 @@ done:
 	[_res setObject:HTTP_PREFIX forKey:@"HTTP_PREFIX" defaultObject:@"http"];
 	[_res setObject:aHOST forKey:@"HTTP_HOST" defaultObject:@"127.0.0.1"];
 	[_res setObject:aPORT forKey:@"HTTP_HOST_PORT" defaultObject:@"2600"];	
-	[_res setObject:aPORT forKey:@"HTTP_HOST_REACHABLE" defaultObject:[NSNumber numberWithBool:mpHostIsReachable]];	
-	[_res setObject:[NSString stringWithFormat:@"%@://%@:%@/%@",HTTP_PREFIX,aHOST,aPORT,SOAP_CONTROLLER_FILE] forKey:@"MP_SOAP_URL"];
-	[_res setObject:[NSString stringWithFormat:@"%@://%@:%@/%@",HTTP_PREFIX,aHOST,aPORT,JSON_CONTROLLER_FILE] forKey:@"MP_JSON_URL"];
+	[_res setObject:aPORT forKey:@"HTTP_HOST_REACHABLE" defaultObject:[NSNumber numberWithBool:mpHostIsReachable]];
+	[_res setObject:[NSString stringWithFormat:@"%@://%@:%@%@",HTTP_PREFIX,aHOST,aPORT,WS_CLIENT_FILE] forKey:@"MP_JSON_URL"];
 	[_res setObject:[NSString stringWithFormat:@"%@://%@:%@",HTTP_PREFIX,aHOST,aPORT] forKey:@"MP_JSON_URL_PLAIN"];
 	
 	if (!aDefaults) {
@@ -381,9 +377,8 @@ done:
 	[_res setObject:HTTP_PREFIX forKey:@"HTTP_PREFIX" defaultObject:@"http"];
 	[_res setObject:aHOST forKey:@"HTTP_HOST" defaultObject:@"127.0.0.1"];
 	[_res setObject:aPORT forKey:@"HTTP_HOST_PORT" defaultObject:@"2600"];	
-	[_res setObject:aPORT forKey:@"HTTP_HOST_REACHABLE" defaultObject:[NSNumber numberWithBool:mpHostIsReachable]];	
-	[_res setObject:[NSString stringWithFormat:@"%@://%@:%@/%@",HTTP_PREFIX,aHOST,aPORT,SOAP_CONTROLLER_FILE] forKey:@"MP_SOAP_URL"];
-	[_res setObject:[NSString stringWithFormat:@"%@://%@:%@/%@",HTTP_PREFIX,aHOST,aPORT,JSON_CONTROLLER_FILE] forKey:@"MP_JSON_URL"];
+	[_res setObject:aPORT forKey:@"HTTP_HOST_REACHABLE" defaultObject:[NSNumber numberWithBool:mpHostIsReachable]];
+	[_res setObject:[NSString stringWithFormat:@"%@://%@:%@%@",HTTP_PREFIX,aHOST,aPORT,WS_CLIENT_FILE] forKey:@"MP_JSON_URL"];
 	[_res setObject:[NSString stringWithFormat:@"%@://%@:%@",HTTP_PREFIX,aHOST,aPORT] forKey:@"MP_JSON_URL_PLAIN"];
 	NSDictionary *result = [NSDictionary dictionaryWithDictionary:_res];
 	qldebug(@"mpHostConfig=%@",result);

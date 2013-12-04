@@ -33,7 +33,7 @@
 #import "MysqlFetch.h"
 #import "MPDataMgr.h"
 
-#define APPVERSION	@"1.2.0"
+#define APPVERSION	@"1.3.2"
 #define APPNAME		@"MPInventoryD"
 #define CONFFILE    @"/Library/MacPatch/Server/conf/etc/siteconfig.xml"
 
@@ -232,7 +232,14 @@ int main(int argc, char * argv[])
             exit(1);
         }
         if (![fm fileExistsAtPath:_filesPath]) {
-            qlerror(@"%@ dir not found.",_filesPath);
+            NSError *fErr = nil;
+            if (![fm createDirectoryAtPath:_filesPath withIntermediateDirectories:YES attributes:nil error:&fErr]){
+                qlerror(@"Failed to create %@.",_filesPath);
+                if (fErr) {
+                    qlerror(@"%@",fErr.localizedDescription);
+                }
+            }
+            qlerror(@"%@ dir not found. Exiting app.",_filesPath);
             exit(1);
         }
         
@@ -256,6 +263,18 @@ int main(int argc, char * argv[])
         MysqlConnection *testConn;
         @try {
             testConn = [MysqlConnection connectToServer:mServer];
+            while (testConn == nil)
+            {
+                qlerror(@"Error, connection to the database returned nil. Wait 30 seconds and try again.");
+                sleep(30);
+                conf = [pConf parseConfFile:_configPath];
+                [mServer setHost:[conf objectForKey:@"dbHost"]];
+                [mServer setPort:[[conf objectForKey:@"dbPort"] intValue]];
+                [mServer setUser:[conf objectForKey:@"dbUsr"]];
+                [mServer setPassword:[conf objectForKey:@"dbPass"]];
+                [mServer setSchema:[conf objectForKey:@"dbName"]];
+                testConn = [MysqlConnection connectToServer:mServer];
+            }
             [testConn disableTransactions];
         }
         @catch (NSException *exception) {
@@ -317,6 +336,15 @@ int main(int argc, char * argv[])
                             MPDataMgr *dataMgr = [[MPDataMgr alloc] initWithMySQLServer:mServer error:&myErr];
                             if (myErr) {
                                 qlerror(@"%@",[myErr description]);
+
+                                sleep(10);
+                                conf = [pConf parseConfFile:_configPath];
+                                [mServer setHost:[conf objectForKey:@"dbHost"]];
+                                [mServer setPort:[[conf objectForKey:@"dbPort"] intValue]];
+                                [mServer setUser:[conf objectForKey:@"dbUsr"]];
+                                [mServer setPassword:[conf objectForKey:@"dbPass"]];
+                                [mServer setSchema:[conf objectForKey:@"dbName"]];
+
                                 continue;
                             }
                             if ([dataMgr pasreXMLDocFromPath:[afile path]]) {

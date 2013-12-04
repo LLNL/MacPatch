@@ -13,12 +13,16 @@
 
 <!--- Define form.vars for non required fields --->
 <cfparam name="form.patch_severity" default="Low">
+<cfparam name="form.patchInstallWeight" default="51">
+<cfparam name="form.patch_reboot" default="0">
 
 <!--- Update the Main Record --->
 <cftry>
 <cfquery name="qInsert1" datasource="#session.dbsource#" result="res">
 	Update	apple_patches_mp_additions
-    Set		severity = <cfqueryparam value="#form.patch_severity#">
+    Set		severity = <cfqueryparam value="#form.patch_severity#">,
+			patch_install_weight = <cfqueryparam value="#form.patchInstallWeight#">,
+			patch_reboot = <cfqueryparam value="#form.patch_reboot#">
     Where	supatchname = <cfqueryparam value="#form.akey#">
 </cfquery>
 <cfcatch type="any">
@@ -62,7 +66,12 @@
                 puuid, supatchname, type, type_action, type_data, type_order
             )
             Values (
-                <cfqueryparam value="#form.akey#">, <cfqueryparam value="#form.supatchname#">, <cfqueryparam value="#Evaluate("TYPE_"&nid)#">, <cfqueryparam value="#Evaluate("TYPE_ACTION"&nid)#">, <cfqueryparam value="#Evaluate(ntitle&"_"&nid)#" cfsqltype="CF_SQL_LONGVARCHAR">, <cfqueryparam value="#order#">
+                <cfqueryparam value="#form.akey#">, 
+				<cfqueryparam value="#form.supatchname#">, 
+				<cfqueryparam value="#Evaluate("TYPE_"&nid)#">, 
+				<cfqueryparam value="#Evaluate("TYPE_ACTION"&nid)#">, 
+				<cfqueryparam value="#Evaluate(ntitle&"_"&nid)#" cfsqltype="CF_SQL_LONGVARCHAR">, 
+				<cfqueryparam value="#order#">
             )
         </cfquery>
 		<cfcatch type="any">

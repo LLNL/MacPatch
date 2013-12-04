@@ -1,3 +1,7 @@
+<!---	Notes:
+        This file is included with MacPatch 2.2.0 release, only for older client support.
+        This file will be removed in the next release.
+--->
 <cfcomponent name="client_checkin" extends="_mpbase">
 	
 	<cfparam name="mainTable" default="apple_patches">
@@ -46,20 +50,6 @@
 				<cfset _res.result = false>
 				<cfreturn _res>
 			</cfif>
-			
-			<!--- Old Way
-			<cfset _copyRequest = copyToHistory(xOS)>
-			<cfif _copyRequest.errorCode NEQ "0">
-				<cfset elog("Error[#_copyRequest.errorCode#]: #_copyRequest.errorMessage#")>
-				<cfreturn _copyRequest>
-			</cfif>	
-			
-			<cfset _delRequest = deleteFromTable(xOS)>
-			<cfif _delRequest.errorCode NEQ "0">
-				<cfset elog("Error[#_delRequest.errorCode#]: #_delRequest.errorMessage#")>
-				<cfreturn _delRequest>
-			</cfif>
-			--->	
 			
 			<cfloop array="#l_data['DATA']#" index="iArr">
 				<cfif ArrayLen(iArr) EQ ArrayLen(xCols)>

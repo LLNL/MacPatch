@@ -118,7 +118,7 @@ NSLock *lock;
 		[agentDict setObject:[clientVer objectForKey:@"version"] forKey:@"client_version"];
 		[agentDict setObject:@"false" forKey:@"needsreboot"];
 		
-		if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.NeedsReboot"]) {
+		if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
 			[agentDict setObject:@"true" forKey:@"needsreboot"];	
 		}
 	}
@@ -181,7 +181,7 @@ NSLock *lock;
 	NSAutoreleasePool *taskpool = [NSAutoreleasePool new];
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *invAppPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPInventory"];
+	NSString *invAppPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
 	if (![fm fileExistsAtPath:invAppPath]) {
 		logit(lcl_vError,@"Unable to find MPInventory app to collect inventory data.");
 		[taskpool drain];

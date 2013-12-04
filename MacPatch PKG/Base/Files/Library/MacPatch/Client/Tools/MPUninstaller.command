@@ -1,6 +1,6 @@
 #!/bin/sh
 
-Version="1.5"
+Version="1.6"
 mpBaseDir="/Library/MacPatch"
 mpClientDir="${mpBaseDir}/Client"
 mpUpdateDir="${mpBaseDir}/Updater"
@@ -168,6 +168,12 @@ if [ -d $mpBaseDir ]; then
 		fi	
 	fi
 	
+	# Remove Auth Plugin 
+	if [ -f "/Library/MacPatch/Client/MPAuthPluginTool" ]; then
+		/Library/MacPatch/Client/MPAuthPluginTool -d
+		existsAndDelete "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
+	fi
+	
 	# Remove LaunchAgents plists
 	existsAndDelete "/Library/LaunchAgents/gov.llnl.mpRBWatcher.plist"
 	existsAndDelete "/Library/LaunchAgents/gov.llnl.mp.status.plist"
@@ -188,6 +194,9 @@ if [ -d $mpBaseDir ]; then
 	
 	# Delete Client Data
 	existsAndDelete "/Library/Application Support/MPClientStatus"
+	
+	# Older Framework
+	existsAndDelete "/Library/Frameworks/MPFramework.framework"
 	
 	# Delete Receipts Files
 	echo "Delete Receipts"

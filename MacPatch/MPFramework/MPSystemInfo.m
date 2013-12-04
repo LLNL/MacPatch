@@ -259,7 +259,7 @@ done:
 
 + (BOOL)hostNeedsReboot
 {
-	if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.NeedsReboot"] == TRUE) {
+	if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"] == TRUE) {
 		return YES;
 	} else {
         return NO;

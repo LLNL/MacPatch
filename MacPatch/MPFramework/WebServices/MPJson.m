@@ -34,8 +34,6 @@
 #undef  ql_component
 #define ql_component            lcl_cMPJson
 
-#define	JSONURI                 @"/Services/index.cfm"
-
 @interface MPJson()
 
 @end
@@ -70,7 +68,7 @@
 		[self setL_Host:mpServerConnection.HTTP_HOST];
 		[self setL_Port:mpServerConnection.HTTP_HOST_PORT];
 		[self setMpHostIsReachable:[mpServerConnection.HTTP_HOST_REACHABLE boolValue]];
-		[self setL_jsonURL:[NSString stringWithFormat:@"%@%@",mpServerConnection.MP_JSON_URL_PLAIN,JSONURI]];
+		[self setL_jsonURL:mpServerConnection.MP_JSON_URL];
         [self setL_jsonURLPlain:[NSString stringWithFormat:@"%@/Services",mpServerConnection.MP_JSON_URL_PLAIN]];
     }
     return self;
@@ -95,7 +93,7 @@
 	NSDictionary *jsonResult = nil;
 	
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"/Services/MPWSControllerCocoa.cfc?method=getAsusCatalogs&clientID=%@&osminor=%@",l_cuuid,aOSVer];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=getAsusCatalogs&clientID=%@&osminor=%@",WS_CLIENT_FILE,l_cuuid,aOSVer];
     qldebug(@"JSON URL: %@",urlString);
 	
 	// Make Request
@@ -140,7 +138,7 @@ done:
 	NSDictionary *jsonResult = nil;
 	
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"/Services/MPWSControllerCocoa.cfc?method=GetPatchGroupPatches&PatchGroup=%@",[l_defaults objectForKey:@"PatchGroup"]];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetPatchGroupPatches&PatchGroup=%@",WS_CLIENT_FILE,[l_defaults objectForKey:@"PatchGroup"]];
 	qldebug(@"JSON URL: %@",urlString);
 	
 	// Make Request

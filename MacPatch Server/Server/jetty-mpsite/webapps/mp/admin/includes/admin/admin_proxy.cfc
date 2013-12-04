@@ -125,10 +125,8 @@
 			</cftry>
 		</cfif>
         
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-		
 		<cfreturn strReturn>
 	</cffunction>
     

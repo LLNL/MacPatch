@@ -26,7 +26,7 @@
 #import <Cocoa/Cocoa.h>
 #import "MPWorkerProtocol.h"
 
-@class MPDefaults, MPAsus, MPSoap, MPAppUsage, ASIHTTPRequest;
+@class MPDefaults, MPAsus, MPAppUsage, ASIHTTPRequest;
 @class MPServerConnection;
 
 @interface MPClientStatusAppDelegate : NSObject <MPWorkerClient>
@@ -68,7 +68,6 @@
 @private
 	MPDefaults *defaults;
 	MPAsus *asus;
-	MPSoap *soap;
 	MPAppUsage *mpAppUsage;
     MPServerConnection *mpServerConnection;
 }

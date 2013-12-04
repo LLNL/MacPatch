@@ -4,8 +4,8 @@
 		$("#dialog").dialog(
 		 	{
 			bgiframe: false,
-			height: 300,
-			width: 600,
+			height: 500,
+			width: 700,
 			modal: true
 			}
 		); 
@@ -44,11 +44,11 @@ Created By: #qGetName.user_id#<br>
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
 				colNames:['','Patch', 'Title', 'Type', 'PostDate'],
 				colModel :[ 
-				  {name:'rid', index:'rid', width:20, align:"center", sortable:false},
+				  {name:'rid', index:'rid', width:20, align:"center", sortable:false, search : false},
 				  {name:'name', index:'name', width:140}, 
 				  {name:'title', index:'title', width:200, sorttype:'float'},
 				  {name:'type', index:'type', width:50, align:"center"}, 
-				  {name:'postdate', index:'postdate', width:70, align:"center"}
+				  {name:'postdate', index:'postdate', width:70, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d' }}
 				],
 				emptyrecords: "No records to view",
 				altRows:true,
@@ -61,15 +61,11 @@ Created By: #qGetName.user_id#<br>
 				imgpath: '/', //Image path for prev/next etc images
 				//caption: 'Patch Group Patches', //Grid Name
 				height:'auto', //I like auto, so there is no blank space between. Using a fixed height can mean either a scrollbar or a blank space before the pager
-				recordtext: "View {0} Ð {1} of {2} Records",
+				recordtext: "View {0} - {1} of {2} Records",
 				pgtext: "Page {0} of {1}",
 				pginput:true,
 				width:980,
 				editurl:"includes/patch_group_show.cfc?method=addEditgetPatchGroupPatches",//Not used right now.
-				//toppager:false,
-				//hidegrid:false,
-				//toolbar:[false,"top"],//Shows the toolbar at the top. I will decide if I need to put anything in there later.
-				//The JSON reader. This defines what the JSON data returned from the CFC should look like
 				loadComplete: function(){ 
 					var ids = jQuery("#list").getDataIDs(); 
 					for(var i=0;i<ids.length;i++){ 
@@ -98,7 +94,6 @@ Created By: #qGetName.user_id#<br>
 			);
 			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
 			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true}); 
-			$("#list").jqGrid('toggleToolbar'); 
 		}
 	);
 </script>

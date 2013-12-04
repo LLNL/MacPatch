@@ -1,0 +1,242 @@
+TMPProxyFileSync
+v5
+r1
+cCheck dependencies
+cProcessPCH /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-acdgwszaabdfqxgijzefgxbcfbsd/MPProxyFileSync-Prefix.pch.pth MPProxyFileSync/MPProxyFileSync-Prefix.pch normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
+cProcessPCH /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch.pth MPProxyFileSync/MPProxyFileSync-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/main.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxySyncController.o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxySyncController.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/FileMD5Hash.o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/FileMD5Hash.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
+cLd /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync normal i386
+cGenerateDSYMFile /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync.dSYM /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
+c0000000051C8F8A500000000000000AA
+t1372125349
+s170
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework/Cocoa
+c00000000506081C200000000000025C8
+t1348501954
+s9672
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation
+c0000000051659C08000000000008163C
+t1365613576
+s529980
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/CoreServices.framework/CoreServices
+c00000000506081C3000000000000962C
+t1348501955
+s38444
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Foundation.framework/Foundation
+c0000000051659C0800000000000C4BAC
+t1365613576
+s805804
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
+c00000000506081C300000000000015F7
+t1348501955
+s5623
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework/IOKit
+c0000000051659C08000000000003E9B8
+t1365613576
+s256440
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Security.framework/Security
+c0000000051659C08000000000006ECF4
+t1365613576
+s453876
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration
+c0000000051659C08000000000002F69C
+t1365613576
+s194204
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libcrypto.dylib
+c00000000506081C400000000000641BC
+t1348501956
+s410044
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libcurl.dylib
+c00000000506081C4000000000000D274
+t1348501956
+s53876
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libicucore.dylib
+c0000000051659C0900000000000F613C
+t1365613577
+s1007932
+
+N/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libz.dylib
+c00000000506081C50000000000004714
+t1348501957
+s18196
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/../../../../../../Users/heizer1/Developer/Xcode/DerivedData/MacPatch-cmbgqfcqvhpcwsfxvtbnpxcdjsop/Build/Products/Debug/libMacPatch.a
+c000000005245CABA00000000002EB368
+t1380305594
+s3060584
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/FileMD5Hash.c
+c000000004E9605110000000000000E8A
+t1318454545
+s3722
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxyFileSync-Prefix.pch
+c00000000524DD57C0000000000000369
+t1380832636
+s873
+i<Foundation/Foundation.h>
+i"MacPatch.h"
+i"lcl.h"
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxySyncController.m
+c00000000524DC6EE0000000000002DC2
+t1380828910
+s11714
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/main.m
+c00000000524DD5310000000000000176
+t1380832561
+s374
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/FileMD5Hash.o
+t2
+s0
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxyFileSync.LinkFileList
+c00000000524DD74400000000000001BF
+t1380833092
+s447
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxySyncController.o
+t2
+s0
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.o
+t2
+s0
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync
+t2
+s0
+
+N/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync.dSYM
+t2
+s0
+
+N/Users/heizer1/Developer/Xcode/include/MacPatch.h
+c00000000524DC7070000000000000A2A
+t1380828935
+s2602
+
+N/Users/heizer1/Developer/Xcode/include/lcl.h
+c00000000524DC70700000000000026E2
+t1380828935
+s9954
+
+N/var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-acdgwszaabdfqxgijzefgxbcfbsd/MPProxyFileSync-Prefix.pch.pth
+t2
+s0
+
+N/var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch.pth
+t2
+s0
+
+CCheck dependencies
+r0
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependenciesd4604ac40efeb741^2f8b89c40efeb741^---0#1#0#--18"Check dependencies36"9F576373-B236-4B09-8BA8-75DF88A779DA-
+
+CCompileC build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/FileMD5Hash.o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/FileMD5Hash.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
+s402525892.606979
+e402525893.059710
+r1
+xCompileC
+xbuild/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/FileMD5Hash.o
+x/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/FileMD5Hash.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection93"Compile /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/FileMD5Hash.c03789bc40efeb741^06490fc50efeb741^---0#0#0#-19%DVTDocumentLocation2@101"file://localhost/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/FileMD5Hash.c0000000000000000^2796"CompileC build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/FileMD5Hash.o MPProxyFileSync/FileMD5Hash.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler    cd /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync    setenv LANG en_US.US-ASCII    "/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -x c -arch i386 -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -isysroot "/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk" -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -mmacosx-version-min=10.8 -g -fvisibility=hidden -Wno-sign-conversion -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/MPProxyFileSync.hmap -I/Users/heizer1/Developer/Xcode/include -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/include "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources/i386 -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources -F/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release -include /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-acdgwszaabdfqxgijzefgxbcfbsd/MPProxyFileSync-Prefix.pch -MMD -MT dependencies -MF /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/FileMD5Hash.d --serialize-diagnostics /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/FileMD5Hash.dia -c /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/FileMD5Hash.c -o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/FileMD5Hash.o36"4B94C1B7-2983-4347-B55C-B984BE2017CE-
+
+CCompileC build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxySyncController.o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxySyncController.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s402525892.581981
+e402525892.595995
+r0
+xCompileC
+xbuild/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxySyncController.o
+x/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxySyncController.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+oerror: -fobjc-arc is not supported on platforms using the legacy runtime
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection103"Compile /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxySyncController.m6e1895c40efeb741^079598c40efeb741^-204"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@130"Command /Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-402525892#18446744073709551615#0#-2#--20"Clang LLVM 1.0 Error--0#0#0#-19%DVTDocumentLocation3@111"file://localhost/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxySyncController.m0000000000000000^3072"CompileC build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxySyncController.o MPProxyFileSync/MPProxySyncController.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync    setenv LANG en_US.US-ASCII    "/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -x objective-c -arch i386 -fmessage-length=0 -std=gnu99 -fobjc-arc -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-implicit-atomic-properties -Wno-receiver-is-weak -Wduplicate-method-match -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -isysroot "/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk" -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.8 -g -fvisibility=hidden -Wno-sign-conversion -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/MPProxyFileSync.hmap -I/Users/heizer1/Developer/Xcode/include -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/include "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources/i386 -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources -F/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release -include /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch -MMD -MT dependencies -MF /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxySyncController.d --serialize-diagnostics /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxySyncController.dia -c /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxySyncController.m -o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxySyncController.o36"B407BA0E-D363-4F9D-BF7B-88B1BD6F5D3A-
+
+CCompileC build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/main.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s402525892.581968
+e402525892.596013
+r0
+xCompileC
+xbuild/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.o
+x/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/main.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+oerror: -fobjc-arc is not supported on platforms using the legacy runtime
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection86"Compile /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/main.me71795c40efeb741^899698c40efeb741^-204"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@130"Command /Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-402525892#18446744073709551615#0#-2#--20"Clang LLVM 1.0 Error--0#0#0#-19%DVTDocumentLocation3@94"file://localhost/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/main.m0000000000000000^2970"CompileC build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.o MPProxyFileSync/main.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync    setenv LANG en_US.US-ASCII    "/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -x objective-c -arch i386 -fmessage-length=0 -std=gnu99 -fobjc-arc -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-implicit-atomic-properties -Wno-receiver-is-weak -Wduplicate-method-match -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -isysroot "/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk" -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.8 -g -fvisibility=hidden -Wno-sign-conversion -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/MPProxyFileSync.hmap -I/Users/heizer1/Developer/Xcode/include -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/include "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources/i386 -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources -F/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release -include /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch -MMD -MT dependencies -MF /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.d --serialize-diagnostics /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.dia -c /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/main.m -o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.o36"3356C728-1DE0-4CEA-9359-12DD36E599DD-
+
+CGenerateDSYMFile /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync.dSYM /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync
+s402525893.101550
+e402525893.120551
+r0
+xGenerateDSYMFile
+x/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync.dSYM
+x/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync
+oerror: unable to open executable '/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync'
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection99"Generate /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync.dSYM01151ac50efeb741^2bdc1ec50efeb741^-120"error: unable to open executable '/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync'1(21%IDEActivityLogMessage2@120"error: unable to open executable '/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync'-402525893#18446744073709551615#0#-2#-23%DVTTextDocumentLocation3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#14"Dsymutil Error--0#0#0#-19%DVTDocumentLocation4@106"file://localhost/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync.dSYM000000000080d041^433"GenerateDSYMFile build/Release/MPProxyFileSync.dSYM build/Release/MPProxyFileSync    cd /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync    "/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil" /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync -o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync.dSYM36"76856B47-DA1A-4210-A711-D35A52BBEB25-
+
+CLd /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync normal i386
+s402525893.065989
+e402525893.095099
+r0
+xLd
+x/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync
+xnormal
+xi386
+old: file not found: /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.o
+oclang: error: linker command failed with exit code 1 (use -v to see invocation)
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection90"Link /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync77f710c50efeb741^365818c50efeb741^-241"ld: file not found: /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.oclang: error: linker command failed with exit code 1 (use -v to see invocation)2(21%IDEActivityLogMessage2@156"File not found: /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/main.o-402525893#0#161#-0#-23%DVTTextDocumentLocation3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#31"Apple Mach-O Linker (ld) Notice--2@65"Linker command failed with exit code 1 (use -v to see invocation)-402525893#161#80#-2#-3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#30"Apple Mach-O Linker (ld) Error--0#0#0#--1163"Ld build/Release/MPProxyFileSync normal i386    cd /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync    setenv MACOSX_DEPLOYMENT_TARGET 10.8    "/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -arch i386 -isysroot "/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk" -L/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release -L/Users/heizer1/Developer/Xcode/DerivedData/MacPatch-cmbgqfcqvhpcwsfxvtbnpxcdjsop/Build/Products/Debug -F/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release -filelist /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/Objects-normal/i386/MPProxyFileSync.LinkFileList -mmacosx-version-min=10.8 -all_load -ObjC -fobjc-arc -fobjc-link-runtime -framework Security -framework SystemConfiguration -framework CoreServices -framework IOKit -framework CoreFoundation -framework Foundation -framework Cocoa -licucore -lcurl -lcrypto -lz -lMacPatch -o /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/MPProxyFileSync36"BE9009D7-F831-43DE-AB2C-BA7A610F7F1D-
+
+CProcessPCH /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-acdgwszaabdfqxgijzefgxbcfbsd/MPProxyFileSync-Prefix.pch.pth MPProxyFileSync/MPProxyFileSync-Prefix.pch normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
+s402525892.545885
+e402525892.600081
+r1
+xProcessPCH
+x/var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-acdgwszaabdfqxgijzefgxbcfbsd/MPProxyFileSync-Prefix.pch.pth
+xMPProxyFileSync/MPProxyFileSync-Prefix.pch
+xnormal
+xi386
+xc
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection53"Precompile MPProxyFileSync/MPProxyFileSync-Prefix.pch85e98bc40efeb741^849e99c40efeb741^---0#0#0#-19%DVTDocumentLocation2@114"file://localhost/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxyFileSync-Prefix.pch0000000000000000^2823"ProcessPCH /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-acdgwszaabdfqxgijzefgxbcfbsd/MPProxyFileSync-Prefix.pch.pth MPProxyFileSync/MPProxyFileSync-Prefix.pch normal i386 c com.apple.compilers.llvm.clang.1_0.compiler    cd /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync    setenv LANG en_US.US-ASCII    "/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -x c-header -arch i386 -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -isysroot "/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk" -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -mmacosx-version-min=10.8 -g -fvisibility=hidden -Wno-sign-conversion -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/MPProxyFileSync.hmap -I/Users/heizer1/Developer/Xcode/include -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/include "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources/i386 -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources -F/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release --serialize-diagnostics /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-acdgwszaabdfqxgijzefgxbcfbsd/MPProxyFileSync-Prefix.pch.dia -c /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxyFileSync-Prefix.pch -o /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-acdgwszaabdfqxgijzefgxbcfbsd/MPProxyFileSync-Prefix.pch.pth -MMD -MT dependencies -MF /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-acdgwszaabdfqxgijzefgxbcfbsd/MPProxyFileSync-Prefix.pch.d36"5A0F8710-4E7E-413F-BD43-06D3BF63FF9A-
+
+CProcessPCH /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch.pth MPProxyFileSync/MPProxyFileSync-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s402525892.545961
+e402525892.575362
+r0
+xProcessPCH
+x/var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch.pth
+xMPProxyFileSync/MPProxyFileSync-Prefix.pch
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+oerror: -fobjc-arc is not supported on platforms using the legacy runtime
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection53"Precompile MPProxyFileSync/MPProxyFileSync-Prefix.pch3eea8bc40efeb741^9c5193c40efeb741^-204"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@130"Command /Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-402525892#18446744073709551615#0#-2#--20"Clang LLVM 1.0 Error--0#0#0#-19%DVTDocumentLocation3@114"file://localhost/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxyFileSync-Prefix.pch0000000000000000^3039"ProcessPCH /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch.pth MPProxyFileSync/MPProxyFileSync-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync    setenv LANG en_US.US-ASCII    "/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -x objective-c-header -arch i386 -fmessage-length=0 -std=gnu99 -fobjc-arc -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-implicit-atomic-properties -Wno-receiver-is-weak -Wduplicate-method-match -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -isysroot "/Applications/Xcode 4.6.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk" -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.8 -g -fvisibility=hidden -Wno-sign-conversion -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/MPProxyFileSync.hmap -I/Users/heizer1/Developer/Xcode/include -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release/include "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" "-I/Applications/Xcode 4.6.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include" -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources/i386 -I/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/MPProxyFileSync.build/Release/MPProxyFileSync.build/DerivedSources -F/Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/build/Release --serialize-diagnostics /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch.dia -c /Library/MacPatch/tmp/MacPatch/MacPatch/MPProxyFileSync/MPProxyFileSync/MPProxyFileSync-Prefix.pch -o /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch.pth -MMD -MT dependencies -MF /var/folders/51/n5p61kr161qdmx5j6ppqyj20001c3q/C/com.apple.Xcode.45175/SharedPrecompiledHeaders/MPProxyFileSync-Prefix-bvfglgxljydibsdxrbjtfzjtcqgi/MPProxyFileSync-Prefix.pch.d36"2DE458CD-E718-4542-AC83-4DC2A2413B5F-
+

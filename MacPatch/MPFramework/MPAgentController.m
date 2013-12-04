@@ -27,7 +27,6 @@
 #import "MacPatch.h"
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "Constants.h"
-#import "SoapServices.h"
 #include <sys/reboot.h>
 
 @interface MPAgentController ()
@@ -58,7 +57,6 @@
         [self set_defaults:mpServerConnection.mpDefaults];
 		[self set_cuuid:[MPSystemInfo clientUUID]];
         mpAsus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
-        mpSoap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
         mpDataMgr = [[MPDataMgr alloc] init];
 		[self setILoadMode:NO];
 		[self setForceRun:NO];
@@ -82,7 +80,6 @@
         [self set_defaults:mpServerConnection.mpDefaults];
 		[self set_cuuid:[MPSystemInfo clientUUID]];
         mpAsus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
-        mpSoap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
         mpDataMgr = [[MPDataMgr alloc] init];
 		[self setILoadMode:NO];
 		[self setForceRun:NO];
@@ -95,9 +92,7 @@
 - (void)dealloc
 {
     [mpAsus release];
-    [mpSoap release];
     [mpDataMgr release];
-    
     [super dealloc];
 }
 
@@ -155,11 +150,19 @@
 	NSMutableDictionary *tmpDict;
 	
 	// Get Patch Group Patches
-	NSDictionary *patchGroupPatches = [mpAsus getPatchGroupPatches:[_defaults objectForKey:@"PatchGroup"] encode:YES];
+    NSError *wsErr = nil;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+	NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit. %@",wsErr.localizedDescription);
+		goto done;
+    }
+
 	if (!patchGroupPatches) {
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
 		goto done;
 	}
+
     NSArray *approvedApplePatches = nil;
     NSArray *approvedCustomPatches = nil;
     if ((aFilter == 0) || (aFilter == 1)) {
@@ -194,26 +197,7 @@
                                        deleteCol:@"cuuid"
                                   deleteColValue:[MPSystemInfo clientUUID]];
         
-        
-        // Encode to base64 and send to web service	
-        NSString *xmlBase64String = [[dataMgrXML dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
-        NSDictionary *msgArgs = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[MPSystemInfo clientUUID],xmlBase64String,nil] 
-                                                            forKeys:[NSArray arrayWithObjects:@"cuuid",@"encodedXML",nil]];
-        NSString *message = [mpSoap createBasicSOAPMessage:@"DataMgrXML" argDictionary:msgArgs];
-        
-        NSError *p_err = nil;
-        NSData *soapResult = [mpSoap invoke:message isBase64:NO error:&p_err];
-        if (p_err) {
-            logit(lcl_vError,@"%@",[p_err localizedDescription]);
-        } else {
-            NSString *ws = [[[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding] autorelease];
-            if ([ws isEqualTo:@"1"] == TRUE || [ws isEqualTo:@"true"] == TRUE) {
-                logit(lcl_vInfo,@"Scan results posted to webservice.");
-            } else {
-                logit(lcl_vError,@"Scan results posted to webservice returned false.");
-            }
-        }
-        
+
         // Process patches
         if (!applePatchesArray) {
             logit(lcl_vInfo,@"The scan results for ASUS scan were nil.");
@@ -315,7 +299,6 @@ done:
     
     if ([fm isWritableFileAtPath:[_approvedPatchesFile stringByDeletingLastPathComponent]]) {
         logit(lcl_vDebug,@"Writing approved patches to %@",_approvedPatchesFile);
-        //[approvedUpdatesArray writeToFile:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] atomically:YES];
         [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
     } else {
         logit(lcl_vError,@"Unable to write approved patches file %@. Patch file will not be used.",_approvedPatchesFile);
@@ -331,14 +314,23 @@ done:
 {
 	NSMutableArray      *approvedUpdatesArray = [[NSMutableArray alloc] init];
 	NSMutableDictionary *tmpDict;
-	
-	// Get Patch Group Patches
-	NSDictionary *patchGroupPatches = [mpAsus getPatchGroupPatches:[_defaults objectForKey:@"PatchGroup"] encode:YES];
+
+    // Get Patch Group Patches
+    NSError *wsErr = nil;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+	NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit. %@",wsErr.localizedDescription);
+		[approvedUpdatesArray release];
+		return;
+    }
+
 	if (!patchGroupPatches) {
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
         [approvedUpdatesArray release];
 		return;
 	}
+
     NSArray *approvedCustomPatches = nil;
     approvedCustomPatches = [patchGroupPatches objectForKey:@"CustomUpdates"]; 
  
@@ -347,8 +339,7 @@ done:
     NSMutableArray *customPatchesArray = (NSMutableArray *)[mpAsus scanForCustomUpdateUsingBundleID:aBundleID];
     
     logit(lcl_vDebug,@"Custom Patches Needed: %@",customPatchesArray);
-    //logit(lcl_vDebug,@"Approved Custom Patches: %@",approvedCustomPatches);
-    
+
     // Filter List of Patches containing only the approved patches
     NSDictionary *customPatch, *approvedPatch;
     logit(lcl_vInfo,@"Building approved patch list...");
@@ -471,7 +462,6 @@ done:
 	MPCrypto			*_crypto;
     MPInstaller         *mpInstaller = nil;
     MPScript            *mpScript = nil;
-    SoapServices        *soapService = [[SoapServices alloc] init];
     NSDictionary		*patch;
 	NSDictionary		*currPatchToInstallDict;
 	NSArray				*patchPatchesArray;
@@ -672,7 +662,13 @@ done:
                 // Instal is complete, post result to web service
                 
                 @try {
-                    [soapService postInstallResultsToWebService:[patch objectForKey:@"patch_id"] type:@"third"];
+                    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+                    NSError *wsErr = nil;
+                    [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
+                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
+                    if (wsErr) {
+                        logit(lcl_vError,@"%@", wsErr.localizedDescription);
+                    }
                 }
                 @catch (NSException *e) {
                     logit(lcl_vError,@"%@", e);
@@ -789,8 +785,15 @@ done:
             }
             
             // Post the results to web service
-            @try {
-                [soapService postInstallResultsToWebService:[patch objectForKey:@"patch"] type:@"apple"];
+            @try
+            {
+                MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+                NSError *wsErr = nil;
+                [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch"] patchType:@"apple" error:&wsErr];
+                logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
+                if (wsErr) {
+                    logit(lcl_vError,@"%@", wsErr.localizedDescription);
+                }
             }
             @catch (NSException *e) {
                 logit(lcl_vError,@"%@", e);
@@ -832,16 +835,16 @@ done:
 	
 	if (launchRebootWindow > 0) {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
-		[mpInstaller setLogoutHook];
+        // 10.9
+        //[mpInstaller setLogoutHook];
 		
+		NSString *_rbFile = @"/private/tmp/.MPAuthRun";
 		NSString *_rbText = @"reboot";
-		[_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot"
-				  atomically:YES 
-					encoding:NSUTF8StringEncoding 
-					   error:NULL];
-		
+        // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
+		// [_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+		[_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
-		[fm setAttributes:_fileAttr ofItemAtPath:@"/Users/Shared/.mpReboot/.needsReboot" error:NULL];			
+		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
 	} 
 
 done:	
@@ -915,7 +918,6 @@ done:
 	MPCrypto			*_crypto;
     MPInstaller         *mpInstaller = nil;
     MPScript            *mpScript = nil;
-    SoapServices        *soapService = [[SoapServices alloc] init];
     NSDictionary		*patch;
 	NSDictionary		*currPatchToInstallDict;
 	NSArray				*patchPatchesArray;
@@ -1110,8 +1112,16 @@ done:
                 }
                 // *****************************
                 // Instal is complete, post result to web service
-                @try {
-                    [soapService postInstallResultsToWebService:[patch objectForKey:@"patch_id"] type:@"third"];
+                @try
+                {
+                    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+                    NSError *wsErr = nil;
+                    [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
+                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
+                    if (wsErr) {
+                        logit(lcl_vError,@"%@", wsErr.localizedDescription);
+                    }
+
                 }
                 @catch (NSException *e) {
                     logit(lcl_vError,@"%@", e);
@@ -1155,17 +1165,16 @@ done:
 	
 	if (launchRebootWindow > 0) {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
-        mpInstaller = [[[MPInstaller alloc] init] autorelease];
-		[mpInstaller setLogoutHook];
+        //mpInstaller = [[[MPInstaller alloc] init] autorelease];
+		//[mpInstaller setLogoutHook];
 		
+		NSString *_rbFile = @"/private/tmp/.MPAuthRun";
 		NSString *_rbText = @"reboot";
-		[_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot"
-				  atomically:YES 
-					encoding:NSUTF8StringEncoding 
-					   error:NULL];
-		
+        // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
+		// [_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+		[_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
-		[fm setAttributes:_fileAttr ofItemAtPath:@"/Users/Shared/.mpReboot/.needsReboot" error:NULL];			
+		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
 	} 
     
 done:

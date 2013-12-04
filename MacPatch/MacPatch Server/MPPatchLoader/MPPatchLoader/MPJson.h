@@ -33,7 +33,7 @@
 	BOOL		useSSL;
 	NSString	*l_jsonURL;
 }
-@property (nonatomic, retain) NSString *l_jsonURL;
+@property (nonatomic, strong) NSString *l_jsonURL;
 
 -(id)initWithJSONURL:(NSString *)aJsonURL;
 -(void)buildJsonURL;

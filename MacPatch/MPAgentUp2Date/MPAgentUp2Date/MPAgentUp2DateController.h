@@ -27,7 +27,6 @@
 
 @class MPServerConnection;
 @class MPAsus;
-@class MPSoap;
 @class MPDataMgr;
 
 @interface MPAgentUp2DateController : NSObject 
@@ -40,7 +39,6 @@
     
     MPDefaults      *mpDefaults;
     MPAsus          *mpAsus;
-    MPSoap          *mpSoap;
     MPDataMgr       *mpDataMgr;
 }
 

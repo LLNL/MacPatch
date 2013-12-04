@@ -44,8 +44,5 @@
 - (BOOL)populateInterfaceFromPlist:(NSDictionary *)plist;
 - (IBAction)updateTableRow:(id)sender;
 - (IBAction)openPlists:(id)sender;
-//- (void)textDidBeginEditing:(NSNotification *)aNotification;
-//- (void)textDidEndEditing:(NSNotification *)aNotification;
-
 
 @end

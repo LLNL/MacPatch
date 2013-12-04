@@ -36,7 +36,7 @@
 <cffunction name="onRequestStart">
 	<cfargument name="uri" required="true"/>
     
-
+	<!--- Error Page --->
 	<cferror type="exception" template="/admin/error/error.cfm" exception="any">
 
 	<!---
@@ -74,11 +74,19 @@
 		<cfelse>
 			<cfset StructDelete(session,"loggedin")>
 			<cfset session.error = "Incorrect username or password">
-			<cfset location("https://#cgi.HTTP_HOST#/")>
+            <cfif _AppSettings.j2eeType EQ "JETTY">
+                <cfset location("https://#cgi.HTTP_HOST#/")>
+            <cfelse>
+                <cfset location("..")>
+            </cfif>   
 		</cfif>
         
-		<cfset session.cflocFix = "https://#cgi.HTTP_HOST#">
-        <cfinvoke component="Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
+        <cfinvoke component="root.Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
+        <cfif _AppSettings.j2eeType EQ "JETTY">
+			<cfset session.cflocFix = "https://#cgi.HTTP_HOST#">
+		<cfelse>
+        	<cfset session.cflocFix = "">
+		</cfif>                        
     	<cfset application.settings = _AppSettings>
         <cfset application.settings.users.admin.pass = "">
         
@@ -110,7 +118,7 @@
 	<cfargument name="username" required="true"/>
 	<cfargument name="password" required="true" />
 
-	<cfinvoke component="Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
+	<cfinvoke component="root.Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
     <cfset _usr = #_AppSettings.users.admin.name#>
     <cfset _pas = #hash(arguments.password,"MD5")#>
 
@@ -146,10 +154,8 @@
 	<cfset var qry = true>
     <cftry>
         <cfquery name="qry" datasource="mpds">
-            select
-                *
-            from
-                mp_adm_users
+            select *
+            from mp_adm_users
             where
                 user_id	= <cfqueryparam value="#LCase(arguments.username)#" />
                 and user_pass = <cfqueryparam value="#hash(arguments.password,'MD5')#" />

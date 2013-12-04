@@ -178,6 +178,27 @@ done:
         // Test for +, which means greater than 
         if ([[reqOSVerArray objectAtIndex:i] containsString:@"+"] == TRUE) 
         {
+            allowOSOctets = [[NSArray alloc] initWithArray:[[reqOSVerArray objectAtIndex:i] componentsSeparatedByString:@"."]];
+            for (int y = 0; y < [allowOSOctets count]; y++)
+            {
+                if ([[allowOSOctets objectAtIndex:y] containsString:@"+"] == TRUE) {
+                    if ([[curOSVerArray objectAtIndex:y] intValue] >= [[allowOSOctets objectAtIndex:y] intValue]) {
+                        osTypePass = TRUE;
+                        goto done;
+                    }
+                } else {
+                    if ([[curOSVerArray objectAtIndex:y] intValue] == [[allowOSOctets objectAtIndex:y] intValue]) {
+                        continue;
+                    } else if ([[curOSVerArray objectAtIndex:y] intValue] < [[allowOSOctets objectAtIndex:y] intValue]) {
+                        osTypePass = FALSE;
+                        goto done;
+                    } else {
+                        osTypePass = TRUE;
+                        goto done;
+                    }
+                }
+            }
+            /* Old Way ... did not work :-)
 			allowOSOctets = [[NSArray alloc] initWithArray:[[reqOSVerArray objectAtIndex:i] componentsSeparatedByString:@"."]];
             // If the Major OS Version is greater than just pass it...
             if ([[curOSVerArray objectAtIndex:0] containsString:@"+"] == TRUE) {
@@ -204,6 +225,7 @@ done:
                     }
                 }
             }
+             */
         }
 		if ([[reqOSVerArray objectAtIndex:i] containsString:@"*"] == TRUE)
 		{	

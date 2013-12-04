@@ -78,13 +78,15 @@
 	Insert Into mp_patches (
     	puuid, bundle_id, patch_name, patch_ver, patch_vendor, description,
         description_url, patch_severity, patch_state, cve_id, cdate, mdate, active,
-        pkg_name, pkg_hash, pkg_path, pkg_url, pkg_size, patch_reboot, pkg_preinstall, pkg_postinstall, pkg_env_var
+        pkg_name, pkg_hash, pkg_path, pkg_url, pkg_size, patch_reboot, pkg_preinstall, pkg_postinstall, pkg_env_var,
+		patch_install_weight
     )
     Values (
         '#new_puuid#', '#bundle_id#', '#patch_name#', '#patch_ver#', <cfqueryparam value="#patch_vendor#">, <cfqueryparam value="#description#" cfsqltype="cf_sql_varchar">,
         <cfqueryparam value="#description_url#" cfsqltype="cf_sql_varchar">, '#patch_severity#', '#patch_state#', '#cve_id#', #cDate#, #cDate#, '#active#',
         <cfqueryparam value="#pkg_name#" cfsqltype="cf_sql_varchar">, <cfqueryparam value="#md5Hash#" cfsqltype="cf_sql_varchar">, '#theFilePath#', <cfqueryparam value="#pkg_url#" cfsqltype="cf_sql_varchar">, <cfqueryparam value="#pkg_sizeK#" cfsqltype="cf_sql_varchar">, '#patch_reboot#',<cfqueryparam value="#pkg_preinstall#" cfsqltype="CF_SQL_LONGVARCHAR">,
-		<cfqueryparam value="#pkg_postinstall#" cfsqltype="CF_SQL_LONGVARCHAR">,<cfqueryparam value="#pkg_env_var#" cfsqltype="cf_sql_varchar">
+		<cfqueryparam value="#pkg_postinstall#" cfsqltype="CF_SQL_LONGVARCHAR">,<cfqueryparam value="#pkg_env_var#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#patchInstallWeight#">
     )
 </cfquery>
 

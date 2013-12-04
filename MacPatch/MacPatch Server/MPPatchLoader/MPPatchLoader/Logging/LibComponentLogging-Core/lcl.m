@@ -3,7 +3,7 @@
 // lcl.m -- LibComponentLogging
 //
 //
-// Copyright (c) 2008-2010 Arne Harren <ah@0xc0.de>
+// Copyright (c) 2008-2011 Arne Harren <ah@0xc0.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ _lcl_level_narrow_t _lcl_component_level[_lcl_component_t_count];
 // Log component identifiers, indexed by log component.
 const char * const _lcl_component_identifier[] = {
 #   define  _lcl_component(_identifier, _header, _name)                        \
-    #_identifier,
+#_identifier,
 #   include "lcl_config_components.h"
 #   undef   _lcl_component
 };
@@ -41,7 +41,7 @@ const char * const _lcl_component_identifier[] = {
 // Log component headers, indexed by log component.
 const char * const _lcl_component_header[] = {
 #   define  _lcl_component(_identifier, _header, _name)                        \
-    _header,
+_header,
 #   include "lcl_config_components.h"
 #   undef   _lcl_component
 };
@@ -49,7 +49,7 @@ const char * const _lcl_component_header[] = {
 // Log component names, indexed by log component.
 const char * const _lcl_component_name[] = {
 #   define  _lcl_component(_identifier, _header, _name)                        \
-    _name,
+_name,
 #   include "lcl_config_components.h"
 #   undef   _lcl_component
 };
@@ -97,10 +97,10 @@ const char * const _lcl_level_name[] = {
 // Version.
 #define __lcl_version_to_string( _text) __lcl_version_to_string0(_text)
 #define __lcl_version_to_string0(_text) #_text
-const char * const _lcl_version = __lcl_version_to_string(_LCL_VERSION_MAJOR) 
-                              "." __lcl_version_to_string(_LCL_VERSION_MINOR)
-                              "." __lcl_version_to_string(_LCL_VERSION_BUILD)
-                              ""  _LCL_VERSION_SUFFIX;
+const char * const _lcl_version = __lcl_version_to_string(_LCL_VERSION_MAJOR)
+"." __lcl_version_to_string(_LCL_VERSION_MINOR)
+"." __lcl_version_to_string(_LCL_VERSION_BUILD)
+""  _LCL_VERSION_SUFFIX;
 
 // Configures the given log level for the given log component.
 uint32_t lcl_configure_by_component(_lcl_component_t component, _lcl_level_t level) {
@@ -108,13 +108,13 @@ uint32_t lcl_configure_by_component(_lcl_component_t component, _lcl_level_t lev
     if (level > _lcl_level_t_last) {
         level = _lcl_level_t_last;
     }
-    
+
     // configure the component
     if (component <= _lcl_component_t_last) {
         _lcl_component_level[component] = level;
         return 1;
     }
-    
+
     return 0;
 }
 
@@ -126,12 +126,12 @@ static uint32_t _lcl_configure_by_text(uint32_t count, const char * const *texts
     if (text == NULL || text[0] == '\0') {
         return 0;
     }
-    
+
     // unsupported level, clip to last level
     if (level > _lcl_level_t_last) {
         level = _lcl_level_t_last;
     }
-    
+
     // configure the components
     uint32_t num_configured = 0;
     size_t text_len = strlen(text);

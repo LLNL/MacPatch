@@ -5,81 +5,53 @@
 	    <cfargument name="sidx" required="no" default="" hint="Sort Column">
 	    <cfargument name="sord" required="no" default="ASC" hint="Sort Order">
 	    <cfargument name="nd" required="no" default="0">
-	    <cfargument name="_search" required="no" default="false" hint="Whether search is performed by user on data grid">
-	    <cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
-	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
-	    <cfargument name="searchString" required="no" default="" hint="Search Text">
+	    <cfargument name="_search" required="no" default="false">
+	    <cfargument name="filters" required="no" default="">
 		
 		<cfset var arrUsers = ArrayNew(1)>
 		<cfset var strMsg = "">
 		<cfset var strMsgType = "Success">
 		<cfset var records = "">
-		<cfset var blnSearch = false>
+		<cfset var blnSearch = Arguments._search>
 		<cfset var strSearch = "">	
-        
-		<cfif Arguments._search>
-			<cfset strSearch = buildSearchString(Arguments.searchField,Arguments.searchOper,Arguments.searchString)>
-			<cfset blnSearch = true>
-			<cftry>
-				<cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-					select puuid, patch_name, patch_ver, bundle_id, patch_severity, patch_reboot, patch_state, mdate, cdate
-					From mp_patches
-					WHERE 
-						#PreserveSingleQuotes(strSearch)#
-				</cfquery>
-				
-                <cfcatch type="any">
-					<cfset blnSearch = false>					
-					<cfset strMsgType = "Error">
-					<cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">					
-				</cfcatch>		
-			</cftry>
-		<cfelse>
-            <cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-                select puuid, patch_name, patch_ver, bundle_id, patch_severity, patch_reboot, patch_state, mdate, cdate
+		
+		<cfif Arguments.filters NEQ "" AND blnSearch>
+			<cfset stcSearch = DeserializeJSON(Arguments.filters)>
+            <cfif isDefined("stcSearch.groupOp")>
+            	<cfset strSearch = buildSearch(stcSearch)>
+            </cfif>            
+        </cfif>
+		
+		<cftry>
+			<cfquery name="selUsers" datasource="#session.dbsource#" result="res">
+				select puuid, pkg_url, patch_name, patch_ver, bundle_id, patch_severity, patch_reboot, patch_state, mdate, cdate
 				From mp_patches
-                Where 0=0
-    
-                <cfif blnSearch>
-                    AND 
-                        #PreserveSingleQuotes(strSearch)#
-                </cfif>
-                ORDER BY #sidx# #sord#				
-            </cfquery>
-		</cfif>
+				<cfif blnSearch AND strSearch NEQ "">
+                    #PreserveSingleQuotes(strSearch)#
+            	</cfif>
+				
+				ORDER BY #sidx# #sord#
+			</cfquery>
+			
+            <cfcatch type="any">
+				<cfset blnSearch = false>					
+				<cfset strMsgType = "Error">
+				<cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">					
+			</cfcatch>		
+		</cftry>
         
 		<cfset records = selUsers>
-		
-		<!--- Calculate the Start Position for the loop query.
-		So, if you are on 1st page and want to display 4 rows per page, for first page you start at: (1-1)*4+1 = 1.
-		If you go to page 2, you start at (2-)1*4+1 = 5  --->
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
-		
-		<!--- Calculate the end row for the query. So on the first page you go from row 1 to row 4. --->
 		<cfset end = (start-1) + arguments.rows>
-		
-		<!--- When building the array --->
 		<cfset i = 1>
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
-			<!--- Array that will be passed back needed by jqGrid JSON implementation --->
-			<cfset arrUsers[i] = [#puuid#, #patch_name#, #patch_ver#, #bundle_id#, #patch_severity#, #patch_reboot#, #patch_state#, #DateFormat(mdate, 'medium')#, #DateFormat(cdate, 'medium')#] >
+			<cfset arrUsers[i] = [#puuid#, #pkg_url#, #patch_name#, #patch_ver#, #bundle_id#, #patch_severity#, #patch_reboot#, #patch_state#, #mdate#] >
 			<cfset i = i + 1>			
 		</cfloop>
-		
-		<!--- Calculate the Total Number of Pages for your records. --->
 		<cfset totalPages = Ceiling(selUsers.recordcount/arguments.rows)>
-		
-		<!--- The JSON return. 
-			Total - Total Number of Pages we will have calculated above
-			Page - Current page user is on
-			Records - Total number of records
-			rows = our data 
-		--->
 		<cfset stcReturn = {total=#totalPages#,page=#Arguments.page#,records=#selUsers.recordcount#,rows=#arrUsers#}>
-		
 		<cfreturn stcReturn>
-		
 	</cffunction>
      
     <cffunction name="addEditMPPatch" access="remote" hint="Add or Edit" returnformat="json" output="no">
@@ -90,8 +62,22 @@
 		<cfset var userdata = "">
         
 		<cfif oper EQ "edit">
-			<cfset strMsgType = "Edit">
-			<cfset strMsg = "Notice, MP edit."> 
+			<cftry>
+				<cfquery name="editRecord" datasource="#session.dbsource#" result="res">
+					UPDATE mp_patches
+					SET patch_name = <cfqueryparam value="#Arguments.patch_name#">,
+						patch_ver = <cfqueryparam value="#Arguments.patch_ver#">,
+						patch_severity = <cfqueryparam value="#Arguments.patch_severity#">,
+						patch_reboot = <cfqueryparam value="#Arguments.patch_reboot#">,
+						patch_state = <cfqueryparam value="#Arguments.patch_state#">
+					WHERE
+						puuid = <cfqueryparam value="#arguments.id#">
+				</cfquery>
+                <cfcatch type="any">			
+					<cfset strMsgType = "Error">
+					<cfset strMsg = "There was an issue with the Edit. An Error Report has been submitted to Support.">					
+				</cfcatch>		
+			</cftry>
 		<cfelseif oper EQ "add">
 			<cfset strMsgType = "Add">
 			<cfset strMsg = "Notice, MP add."> 
@@ -100,10 +86,8 @@
             <cfreturn strReturn>
 		</cfif>
         
-		<!--- We just need to pass back some user data for display purposes --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
-		
 		<cfreturn strReturn>
 	</cffunction>
     
@@ -138,6 +122,86 @@
 		
 		<cfreturn strReturn>
 		
+	</cffunction>
+	
+	<cffunction name="buildSearch" access="private" hint="Build our Search Parameters">
+		<cfargument name="stcSearch" required="true">
+		
+		<!--- strOp will be either AND or OR based on user selection --->
+		<cfset var strGrpOp = stcSearch.groupOp>
+		<cfset var arrFilter = stcSearch.rules>
+		<cfset var strSearch = "">
+		<cfset var strSearchVal = "">
+		
+		<!--- Loop over array of passed in search filter rules to build our query string --->
+		<cfloop array="#arrFilter#" index="arrIndex">
+			<cfset strField = arrIndex["field"]>
+			<cfset strOp = arrIndex["op"]>
+			<cfset strValue = arrIndex["data"]>
+			
+			<cfset strSearchVal = buildSearchArgument(strField,strOp,strValue)>
+			
+			<cfif strSearchVal NEQ "">
+				<cfif strSearch EQ "">
+					<cfset strSearch = "HAVING (#PreserveSingleQuotes(strSearchVal)#)">
+				<cfelse>
+					<cfset strSearch = strSearch & "#strGrpOp# (#PreserveSingleQuotes(strSearchVal)#)">				
+				</cfif>
+			</cfif>
+			
+		</cfloop>
+		
+		<cfreturn strSearch>
+				
+	</cffunction>
+	
+	<cffunction name="buildSearchArgument" access="private" hint="Build our Search Argument based on parameters">
+		<cfargument name="strField" required="true" hint="The Field which will be searched on">
+		<cfargument name="strOp" required="true" hint="Operator for the search criteria">
+		<cfargument name="strValue" required="true" hint="Value that will be searched for">
+		
+		<cfset var searchVal = "">
+		
+		<cfif Arguments.strValue EQ "">
+			<cfreturn "">
+		</cfif>
+		
+		<cfscript>
+			switch(Arguments.strOp)
+			{
+				case "eq":
+					//ID is numeric so we will check for that
+					if(Arguments.strField EQ "id")
+					{
+						searchVal = "#Arguments.strField# = #Arguments.strValue#";
+					}else{
+						searchVal = "#Arguments.strField# = '#Arguments.strValue#'";
+					}
+					break;				
+				case "lt":
+					searchVal = "#Arguments.strField# < #Arguments.strValue#";
+					break;
+				case "le":
+					searchVal = "#Arguments.strField# <= #Arguments.strValue#";
+					break;
+				case "gt":
+					searchVal = "#Arguments.strField# > #Arguments.strValue#";
+					break;
+				case "ge":
+					searchVal = "#Arguments.strField# >= #Arguments.strValue#";
+					break;
+				case "bw":
+					searchVal = "#Arguments.strField# LIKE '#Arguments.strValue#%'";
+					break;
+				case "ew":					
+					searchVal = "#Arguments.strField# LIKE '%#Arguments.strValue#'";
+					break;
+				case "cn":
+					searchVal = "#Arguments.strField# LIKE '%#Arguments.strValue#%'";
+					break;
+			}			
+		</cfscript>
+		<cfreturn searchVal>
 	</cffunction>
     
     <cffunction name="buildSearchString" access="private" hint="Returns the Search Opeator based on Short Form Value">
@@ -181,8 +245,6 @@
 				}	
 			
 			</cfscript>
-			
 			<cfreturn searchVal>
-		
 	</cffunction>
 </cfcomponent>	

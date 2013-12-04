@@ -29,7 +29,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class MPSoap;
 @class MPNetworkUtils;
 @class MPServerConnection;
 
@@ -44,8 +43,6 @@
 	NSString		*patchGroup;
 	BOOL			allowClient;
 	BOOL			allowServer;
-	
-	MPSoap			*soapObj;
 	
 	// Run Install task
 	NSPipe *install_pipe;
@@ -65,8 +62,6 @@
 - (NSString *)readCatalogURLFromPlist;
 - (BOOL)writeCatalogURL:(NSString *)CatalogURL;
 
-- (NSArray *)getAppleSoftwareUpdates;
-
 - (NSArray *)scanForCustomUpdates;
 - (NSArray *)scanForCustomUpdateUsingBundleID:(NSString *)aBundleID;
 
@@ -82,8 +77,6 @@
 - (NSArray *)installResultsToDictArray:(NSArray *)aInstalledPatches type:(NSString *)aType;
 
 // Third Party Updates Installs
-- (NSDictionary *)getPatchGroupPatches:(NSString *)aPatchGroup encode:(BOOL)aEncode;
-
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err;
 -(int)installPkg:(NSString *)pkgPath error:(NSError **)err;
 -(int)installPkg:(NSString *)pkgPath target:(NSString *)aTarget error:(NSError **)err;

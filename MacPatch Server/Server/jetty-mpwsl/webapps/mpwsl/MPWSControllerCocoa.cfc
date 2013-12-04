@@ -5,6 +5,8 @@
 		MacPatch Version 2.1.0
 --->
 <!---	Notes:
+        This file is included with MacPatch 2.2.0 release, only for older client support.
+        This file will be removed in the next release.
 --->
 <!--- **************************************************************************************** --->
 <cfcomponent>
@@ -36,8 +38,12 @@
         <cfargument name="aPathInfo" required="no">
 
         <cfscript>
-			inet = CreateObject("java", "java.net.InetAddress");
-			inet = inet.getLocalHost();
+			try {
+				inet = CreateObject("java", "java.net.InetAddress");
+				inet = inet.getLocalHost();
+			} catch (any e) {
+				inet = "localhost";
+			}
 		</cfscript>
 
     	<cfquery datasource="#this.ds#" name="qGet">
@@ -70,6 +76,7 @@
 <!--- #################################################### --->
 <!--- GetClientPatchState 								   --->
 <!--- This Needs to be updated to test againts client patch group --->
+<!--- No Caching                                           --->
 <!--- #################################################### --->
 	<cffunction name="ClientPatchStatus" access="remote" returntype="any" output="no">
         <cfargument name="cuuid" required="yes">
@@ -144,7 +151,7 @@
     	
         <cfset _data = "">
         <cftry>
-        	<cfquery datasource="#this.ds#" name="qGetGroupID">
+        	<cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,30,0)#">
                 Select id from mp_patch_group
                 Where name = <cfqueryparam value="#arguments.PatchGroup#">
             </cfquery>
@@ -167,7 +174,7 @@
         </cftry>
         
         <cftry>
-        	<cfquery datasource="#this.ds#" name="qGetGroupData">
+        	<cfquery datasource="#this.ds#" name="qGetGroupData" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
                 Select data from mp_patch_group_data
                 Where pid = <cfqueryparam value="#qGetGroupID.id#">
             </cfquery>
@@ -243,7 +250,7 @@
 		
         <cfif arguments.type EQ "Apple">
             <cfquery datasource="#this.ds#" name="qGet">
-                Select * From mp_client_patches_apple
+                Select patch From mp_client_patches_apple
                 Where patch = <cfqueryparam value="#arguments.patch#">
                 AND
                 cuuid = <cfqueryparam value="#Trim(arguments.cuuid)#">
@@ -257,7 +264,7 @@
         </cfif>
         <cfif arguments.type EQ "Third">
             <cfquery datasource="#this.ds#" name="qGet">
-                Select * From mp_client_patches_third
+                Select patch_id From mp_client_patches_third
                 Where patch_id = <cfqueryparam value="#arguments.patch#">
                 AND
                 cuuid = <cfqueryparam value="#Trim(arguments.cuuid)#">
@@ -281,8 +288,8 @@
 			<cfreturn arguments.patch>
 		<cfelse>
 			<cftry>
-				<cfquery datasource="#this.ds#" name="qGet">
-                	Select * From mp_patches
+				<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
+                	Select patch_name, patch_ver From mp_patches
                 	Where puuid = <cfqueryparam value="#arguments.patch#">
             	</cfquery>
 				<cfset result = "#qGet.patch_name#-#qGet.patch_ver#">
@@ -381,7 +388,7 @@
         <cfargument name="osminor" required="yes" type="string">
 
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetCatalogs" result="res1">
+            <cfquery datasource="#this.ds#" name="qGetCatalogs" result="res1" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
                 select catalog_url, proxy
                 from mp_asus_catalogs
                 Where os_minor = <cfqueryparam value="#arguments.osminor#">
@@ -416,7 +423,7 @@
         <cfargument name="osminor" required="yes" type="string">
 
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetCatalogs" result="res1">
+            <cfquery datasource="#this.ds#" name="qGetCatalogs" result="res1" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
                 select catalog_url, proxy
                 from mp_asus_catalogs
                 Where os_minor = <cfqueryparam value="#arguments.osminor#">
@@ -552,95 +559,6 @@
         </cfif>
 		
 		<cfreturn false>
-		<!---
-        <cfset var arrDelNodes = XmlSearch(xmldoc,"//tables/removerows") />
-        <cfif ArrayLen(arrDelNodes) GTE 1>
-            <cfif #IsXmlNode(xmldoc.tables.removerows)#>
-                <cfset aTable = #xmldoc.tables.removerows.XmlAttributes.table#>
-
-                <cfset bCol = #xmldoc.tables.remove.XmlAttributes.column#>
-                <cfset bColVal = #xmldoc.tables.remove.XmlAttributes.valueEQ#>
-
-                <cfset aCol = #xmldoc.tables.removerows.XmlAttributes.column#>
-                <cfset aColVal = #xmldoc.tables.removerows.XmlAttributes.value#>
-
-
-                <cfquery datasource="#this.ds#" name="qDel" result="res">
-                    Delete from #aTable#
-                    Where
-                    #bCol# = <cfqueryparam value="#bColVal#">
-                    AND
-                    #aCol# = <cfqueryparam value="#aColVal#">
-                </cfquery>
-                <cfreturn True>
-            <cfelse>
-                <cfreturn False>
-            </cfif>
-        </cfif>
-
-        <cfset var arrNodes = XmlSearch(xmldoc,"//tables/remove") />
-        <cfif ArrayLen(arrNodes) GTE 1>
-            <cfif #IsXmlNode(xmldoc.tables.remove)#>
-                <cfset aTable = #xmldoc.tables.data.XmlAttributes.table#>
-                <cfset aCuuid = "NA">
-                <cfif isDefined("xmldoc.tables.data.row[1].field[1].XmlAttributes.name")>
-                	<cfif #xmldoc.tables.data.row[1].field[1].XmlAttributes.name# EQ "cuuid">
-                    	<cfset aCuuid = #xmldoc.tables.data.row[1].field[1].XmlAttributes.value#>
-                	</cfif>
-                </cfif>
-                <cfset aCol = #xmldoc.tables.remove.XmlAttributes.column#>
-                <cfset aColVal = #xmldoc.tables.remove.XmlAttributes.valueEQ#>
-                <cftry>
-                    <cfquery datasource="#this.ds#" name="qDel" result="res">
-                        Delete from #aTable#
-                        Where cuuid = <cfqueryparam value="#aCuuid#">
-                        <cfif #aCol# NEQ "cuuid">
-                        AND
-                        #aCol# = <cfqueryparam value="#aColVal#">
-                        </cfif>
-                    </cfquery>
-
-                    <cfcatch type="any">
-                    	<cflog type="Error" file="PROCESSXML" text="#cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#">
-                    </cfcatch>
-                </cftry>
-            </cfif>
-        </cfif>
-        <!--- Clean Up XML Doc to send theough DataMgr --->
-        <cfif StructKeyexists(xmlDoc.tables,"remove")>
-        	<cfset StructDelete(xmlDoc.tables,"remove")>
-		</cfif>
-        <cfif StructKeyexists(xmlDoc.tables,"removerows")>
-        	<cfset StructDelete(xmlDoc.tables,"removerows")>
-        </cfif>
-        <cftry>
-			<cfset StructDelete(xmlDoc.tables.data.XmlAttributes,"onexists")>
-        	<cfset StructDelete(xmlDoc.tables.data.XmlAttributes,"checkFields")>
-            <cfcatch type="any">
-                <cflog type="Error" file="PROCESSXML" text="#cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#">
-            </cfcatch>
-        </cftry>
-        <cfset theXML = ToString(xmlDoc)>
-
-        <cftry>
-            <cfset DataMgrObj = CreateObject("component","com.sebtools.DataMgr_MYSQL").init(this.ds)>
-	    	<!--- <cfset DataMgrObj.startLogging("dataMgrlogs")> --->
-            <cfset DataMgrObj.loadXml(theXML,true,true)>
-
-            <cfcatch type="any">
-            	<cflog type="Error" file="PROCESSXML" text="[DataMgr] #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#">
-                <cfinvoke component="ws_logger" method="LogEvent">
-                    <cfinvokeargument name="aEventType" value="Error">
-                    <cfinvokeargument name="aHost" value="#CGI.REMOTE_HOST#">
-                    <cfinvokeargument name="aEvent" value="[ProcessXML]: #cfcatch.Message# -- #cfcatch.Detail#, #cfcatch.ExtendedInfo#">
-                </cfinvoke>
-                <cfreturn False>
-            </cfcatch>
-        </cftry>
-
-        <cfset DataMgrObj = "">
-        <cfreturn True>
-		--->
     </cffunction>
 
 <!--- #################################################### --->
@@ -704,77 +622,6 @@
                 </cftry>
             <!--- </cfif> --->
         </cfif>
-		<!---
-        <cfset var arrDelNodes = XmlSearch(xmldoc,"//tables/removerows") />
-        <cfif ArrayLen(arrDelNodes) GTE 1>
-            <cfif #IsXmlNode(xmldoc.tables.removerows)#>
-                <cfset aTable = #xmldoc.tables.removerows.XmlAttributes.table#>
-
-                <cfset bCol = #xmldoc.tables.remove.XmlAttributes.column#>
-                <cfset bColVal = #xmldoc.tables.remove.XmlAttributes.valueEQ#>
-
-                <cfset aCol = #xmldoc.tables.removerows.XmlAttributes.column#>
-                <cfset aColVal = #xmldoc.tables.removerows.XmlAttributes.value#>
-
-                <cfquery datasource="#this.ds#" name="qDel" result="res">
-                    Delete from #aTable#
-                    Where
-                    #bCol# = <cfqueryparam value="#bColVal#">
-                    AND
-                    #aCol# = <cfqueryparam value="#aColVal#">
-                </cfquery>
-                <cfreturn True>
-            <cfelse>
-                <cfreturn False>
-            </cfif>
-        </cfif>
-
-        <cfset var arrNodes = XmlSearch(xmldoc,"//tables/remove") />
-        <cfset var arrDataNodes = XmlSearch(xmldoc,"//tables/data") />
-        <cfif ArrayLen(arrNodes) GTE 1>
-            <cfif #IsXmlNode(xmldoc.tables.remove)#>
-                <cfset aTable = #xmldoc.tables.data.XmlAttributes.table#>
-                <cfset aCol = #xmldoc.tables.remove.XmlAttributes.column#>
-                <cfset aColVal = #xmldoc.tables.remove.XmlAttributes.valueEQ#>
-                <cftry>
-                    <cfquery datasource="#this.ds#" name="qDel" result="res">
-                        Delete from #aTable#
-                        Where cuuid = <cfqueryparam value="#arguments.cuuid#">
-                        AND
-                        #aCol# = <cfqueryparam value="#aColVal#">
-                    </cfquery>
-                    <cfset var cleanXML = XmlSearch(xmldoc,"//tables/remove") />
-                    <cfset XmlDeleteNodes(xmldoc,cleanXML) />
-                    <cfset theXML = ToString(xmlDoc)>
-
-                    <cfcatch type="any">
-                        <cfset cleanXML = XmlSearch(xmldoc,"//tables/remove") />
-                        <cfset XmlDeleteNodes(xmldoc,cleanXML) />
-                        <cfset theXML = ToString(xmlDoc)>
-                    </cfcatch>
-                </cftry>
-            </cfif>
-        </cfif>
-
-        <cftry>
-            <cfset DataMgrObj = CreateObject("component","com.sebtools.DataMgr_MYSQL").init(this.ds)>
-	    	<!--- <cfset DataMgrObj.startLogging("dataMgrlogs")> --->
-            <cfset DataMgrObj.loadXml(theXML,true,true)>
-
-            <cfcatch type="any">
-            	<!--- <cflog type="Error" file="DEV_PROCESSXML_COCOA" text="DataMgrObj: #cfcatch.Message# -- #cfcatch.Detail# -- #theXML#"> --->
-                <cfinvoke component="ws_logger" method="LogEvent">
-                    <cfinvokeargument name="aEventType" value="Error">
-                    <cfinvokeargument name="aHost" value="#CGI.REMOTE_HOST#">
-                    <cfinvokeargument name="aEvent" value="[ProcessXML]: #cfcatch.Message# -- #cfcatch.Detail#, #cfcatch.ExtendedInfo#">
-                </cfinvoke>
-                <cfreturn False>
-            </cfcatch>
-        </cftry>
-
-        <cfset DataMgrObj = "">
-        <cfreturn True>
-		--->
     </cffunction>
 
 <!--- #################################################### --->
@@ -818,7 +665,7 @@
     <cffunction name="GetScanCriteria" access="public" returntype="query" output="no">
     	<cfargument name="id" required="yes">
     	<cftry>
-            <cfquery datasource="#this.ds#" name="qGetPatchCriteria">
+            <cfquery datasource="#this.ds#" name="qGetPatchCriteria" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
                 select *
                 from mp_patches_criteria
             	Where puuid = '#arguments.id#'
@@ -845,7 +692,7 @@
     	<cfargument name="theKey">
         <cfargument name="thePName">
 
-    	<cfquery datasource="#this.ds#" name="qGet">
+    	<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
             Select akey, patchname
             From apple_patches
             Where akey = <cfqueryparam value="#theKey#"> AND patchname = <cfqueryparam value="#thePName#">
@@ -1081,7 +928,7 @@
 
         <!--- Query the table to see if we need a update or a insert --->
         <cfquery datasource="#this.ds#" name="qGet">
-            Select * From savav_info
+            Select cuuid From savav_info
             Where cuuid = <cfqueryparam value="#trim(l_CUUID)#">
         </cfquery>
 
@@ -1166,7 +1013,7 @@
 		<!--- This Function Adds the Patches Collected from a local Software Update Server --->
 		<cfargument name="theArch">
 
-        <cfquery datasource="#this.ds#" name="qGet">
+        <cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
         	Select file from savav_defs
             Where arch = <cfqueryparam value="#Trim(arguments.theArch)#">
             AND current = 'YES'
@@ -1191,13 +1038,12 @@
 		<cfargument name="agentFramework">
 
 		<cftry>
-            <cfquery datasource="#this.ds#" name="qGetLatestVersion" maxrows="1">
+            <cfquery datasource="#this.ds#" name="qGetLatestVersion" maxrows="1" cachedwithin="#CreateTimeSpan(0,6,0,0)#">
             	Select agent_ver as agent_version, version, framework as agent_framework, build as agent_build,
                 pkg_Hash, pkg_Url, puuid, pkg_name, osver
                 From mp_client_agents
                 Where type = 'app'
-                AND
-                active = '1'
+                AND active = '1'
                 ORDER BY
                 INET_ATON(SUBSTRING_INDEX(CONCAT(agent_ver,'.0.0.0.0.0'),'.',6)) DESC,
 				INET_ATON(SUBSTRING_INDEX(CONCAT(build,'.0.0.0.0.0'),'.',6)) DESC
@@ -1243,7 +1089,7 @@
 	        	<cfset count = 0>
 	        <cfelse>
 	        	<!--- CUUID is found --->
-	            <cfquery datasource="#this.ds#" name="qGetClientGroup">
+	            <cfquery datasource="#this.ds#" name="qGetClientGroup" cachedwithin="#CreateTimeSpan(0,2,0,0)#">
 	            	Select cuuid, ipaddr, hostname, Domain, ostype, osver
 	                From mp_clients_view
 	                Where cuuid = <cfqueryparam value="#arguments.cuuid#">
@@ -1304,13 +1150,12 @@
         <cfargument name="cuuid">
 
 		<cftry>
-            <cfquery datasource="#this.ds#" name="qGetLatestVersion">
+            <cfquery datasource="#this.ds#" name="qGetLatestVersion" cachedwithin="#CreateTimeSpan(0,6,0,0)#">
             	Select agent_ver as agent_version, version, framework as agent_framework, build as agent_build,
                 pkg_Hash, pkg_Url, puuid, pkg_name, osver
                 From mp_client_agents
                 Where type = 'update'
-                AND
-                active = '1'
+                AND active = '1'
                 ORDER BY
                 INET_ATON(SUBSTRING_INDEX(CONCAT(agent_ver,'.0.0.0.0.0'),'.',6)) DESC,
 				INET_ATON(SUBSTRING_INDEX(CONCAT(build,'.0.0.0.0.0'),'.',6)) DESC
@@ -1343,7 +1188,7 @@
 	        	<cfset count = 0>
 	        <cfelse>
 	        	<!--- CUUID is found --->
-	            <cfquery datasource="#this.ds#" name="qGetClientGroup">
+	            <cfquery datasource="#this.ds#" name="qGetClientGroup" cachedwithin="#CreateTimeSpan(0,2,0,0)#">
 	            	Select cuuid, ipaddr, hostname, Domain, ostype, osver
 	                From mp_clients_view
 	                Where cuuid = <cfqueryparam value="#arguments.cuuid#">
@@ -1436,8 +1281,9 @@
 	<cffunction name="SelfUpdateFilter" access="public" returntype="string" output="no">
 		<cfargument name="aType">
 		<cftry>
-			<cfquery datasource="#this.ds#" name="qGet">
-				Select * From mp_client_agents_filters
+			<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,2,0,0)#">
+				Select attribute, attribute_oper, attribute_filter, attribute_condition
+                From mp_client_agents_filters
 				Where type = <cfqueryparam value="#arguments.aType#">
 				Order By rid ASC
 			</cfquery>
@@ -1463,65 +1309,4 @@
 
 		<cfreturn result>
 	</cffunction>
-	
-<!--- Start SWUPD WebServices Methods --->
-<!--- Start Misc Functions --->
-	<!--- --------------------------------------------------------------------------------------- ---
-        Blog Entry:
-        Deleting XML Node Arrays From A ColdFusion XML Document
-        Code Snippet:        2
-        Author:
-        Ben Nadel / Kinky Solutions
-        Link:
-        http://www.bennadel.com/index.cfm?dax=blog:1236.view
-        Date Posted:
-        May 23, 2008 at 8:21 AM
-    ---- --------------------------------------------------------------------------------------- --->
-
-   <cffunction name="XmlDeleteNodes" access="public" returntype="void" output="false" hint="I remove a node or an array of nodes from the given XML document.">
-        <!--- Define arugments. --->
-        <cfargument name="XmlDocument" type="any" required="true" hint="I am a ColdFusion XML document object." />
-        <cfargument name="Nodes" type="any" required="false" hint="I am the node or an array of nodes being removed from the given document." />
-
-        <!--- Define the local scope. --->
-        <cfset var LOCAL = StructNew() />
-        <cfif NOT IsArray( ARGUMENTS.Nodes )>
-            <cfset LOCAL.Node = ARGUMENTS.Nodes />
-            <cfset ARGUMENTS.Nodes = ArrayNew(1) />
-            <cfset ARGUMENTS.Nodes = LOCAL.Node />
-        </cfif>
-
-        <cfloop index="LOCAL.NodeIndex" from="#ArrayLen( ARGUMENTS.Nodes )#" to="1" step="-1">
-            <!--- Get a node short-hand. --->
-            <cfset LOCAL.Node = ARGUMENTS.Nodes[ LOCAL.NodeIndex ] />
-            <cfif StructKeyExists( LOCAL.Node, "XmlChildren" )>
-                <!--- Set delet flag. --->
-                <cfset LOCAL.Node.XmlAttributes[ "delete-me-flag" ] = "true" />
-            <cfelse>
-                <cfset ArrayDeleteAt(ARGUMENTS.Nodes,LOCAL.NodeIndex) />
-            </cfif>
-        </cfloop>
-
-        <cfloop index="LOCAL.Node" array="#ARGUMENTS.Nodes#">
-            <!--- Get the parent node. --->
-            <cfset LOCAL.ParentNodes = XmlSearch( LOCAL.Node, "../" ) />
-
-            <cfif (ArrayLen( LOCAL.ParentNodes ) AND StructKeyExists( LOCAL.ParentNodes[ 1 ], "XmlChildren" ))>
-                <!--- Get the parent node short-hand. --->
-                <cfset LOCAL.ParentNode = LOCAL.ParentNodes[ 1 ] />
-                <cfloop index="LOCAL.NodeIndex" from="#ArrayLen( LOCAL.ParentNode.XmlChildren )#" to="1" step="-1">
-                    <!--- Get the current node shorthand. --->
-                    <cfset LOCAL.Node = LOCAL.ParentNode.XmlChildren[ LOCAL.NodeIndex ] />
-                    <cfif StructKeyExists( LOCAL.Node.XmlAttributes, "delete-me-flag" )>
-                        <!--- Delete this node from parent. --->
-                        <cfset ArrayDeleteAt(LOCAL.ParentNode.XmlChildren,LOCAL.NodeIndex) />
-                        <cfset StructDelete(LOCAL.Node.XmlAttributes,"delete-me-flag") />
-                    </cfif>
-                </cfloop>
-            </cfif>
-        </cfloop>
-
-        <!--- Return out. --->
-        <cfreturn />
-    </cffunction>
 </cfcomponent>

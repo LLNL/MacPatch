@@ -1,8 +1,8 @@
 /*
 	MacPatch Database Schema
 	Main Views
-	Version 2.1.1.1
-	Mod Date: 7/11/2013
+	Version 2.2.0.1
+	Rev 2
 */
 
 SET NAMES utf8;
@@ -27,10 +27,16 @@ DROP VIEW IF EXISTS `mp_clients_view`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_clients_view` AS select `mp_clients`.`cuuid` AS `cuuid`,`mp_clients`.`serialNo` AS `serialNo`,`mp_clients`.`hostname` AS `hostname`,`mp_clients`.`computername` AS `computername`,`mp_clients`.`ipaddr` AS `ipaddr`,`mp_clients`.`macaddr` AS `macaddr`,`mp_clients`.`osver` AS `osver`,`mp_clients`.`ostype` AS `ostype`,`mp_clients`.`consoleUser` AS `consoleUser`,`mp_clients`.`needsreboot` AS `needsreboot`,`mp_clients`.`agent_version` AS `agent_version`,`mp_clients`.`client_version` AS `client_version`,`mp_clients`.`mdate` AS `mdate`,`mp_clients`.`cdate` AS `cdate`,`mp_clients_plist`.`EnableASUS` AS `EnableASUS`,`mp_clients_plist`.`MPDLTimeout` AS `MPDLTimeout`,`mp_clients_plist`.`AllowClient` AS `AllowClient`,`mp_clients_plist`.`MPServerSSL` AS `MPServerSSL`,`mp_clients_plist`.`Domain` AS `Domain`,`mp_clients_plist`.`Name` AS `Name`,`mp_clients_plist`.`MPInstallTimeout` AS `MPInstallTimeout`,`mp_clients_plist`.`MPServerDLLimit` AS `MPServerDLLimit`,`mp_clients_plist`.`PatchGroup` AS `PatchGroup`,`mp_clients_plist`.`MPProxyEnabled` AS `MPProxyEnabled`,`mp_clients_plist`.`Description` AS `Description`,`mp_clients_plist`.`MPDLConTimeout` AS `MPDLConTimeout`,`mp_clients_plist`.`MPProxyServerPort` AS `MPProxyServerPort`,`mp_clients_plist`.`MPProxyServerAddress` AS `MPProxyServerAddress`,`mp_clients_plist`.`AllowServer` AS `AllowServer`,`mp_clients_plist`.`MPServerAddress` AS `MPServerAddress`,`mp_clients_plist`.`MPServerPort` AS `MPServerPort`,`mp_clients_plist`.`MPServerTimeout` AS `MPServerTimeout`,`mp_clients_plist`.`Reboot` AS `Reboot`,`mp_clients_plist`.`DialogText` AS `DialogText`,`mp_clients_plist`.`PatchState` AS `PatchState` from (`mp_clients` left join `mp_clients_plist` on((`mp_clients`.`cuuid` = `mp_clients_plist`.`cuuid`)));
 
 -- ----------------------------
+--  View structure for `mp_clients_extended_view`
+-- ----------------------------
+DROP VIEW IF EXISTS `mp_clients_extended_view`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_clients_extended_view` AS select `mp_clients`.`cuuid` AS `cuuid`,`mp_clients`.`serialNo` AS `serialNo`,`mp_clients`.`hostname` AS `hostname`,`mp_clients`.`computername` AS `computername`,`mp_clients`.`ipaddr` AS `ipaddr`,`mp_clients`.`macaddr` AS `macaddr`,`mp_clients`.`osver` AS `osver`,`mp_clients`.`ostype` AS `ostype`,`mp_clients`.`consoleUser` AS `consoleUser`,`mp_clients`.`needsreboot` AS `needsreboot`,`mp_clients`.`agent_version` AS `agent_version`,`mp_clients`.`client_version` AS `client_version`,`mp_clients`.`agent_build` AS `agent_build`,`mp_clients`.`mdate` AS `mdate`,`mp_clients_plist`.`AllowClient` AS `AllowClient`,`mp_clients_plist`.`AllowServer` AS `AllowServer`,`mp_clients_plist`.`Name` AS `Name`,`mp_clients_plist`.`Description` AS `Description`,`mp_clients_plist`.`Domain` AS `Domain`,`mp_clients_plist`.`PatchGroup` AS `PatchGroup`,`mp_clients_plist`.`PatchState` AS `PatchState`,`mp_clients_plist`.`MPProxyEnabled` AS `MPProxyEnabled`,`mp_clients_plist`.`MPProxyServerPort` AS `MPProxyServerPort`,`mp_clients_plist`.`MPProxyServerAddress` AS `MPProxyServerAddress`,`mp_clients_plist`.`MPServerSSL` AS `MPServerSSL`,`mp_clients_plist`.`MPServerAddress` AS `MPServerAddress`,`mp_clients_plist`.`MPServerPort` AS `MPServerPort`,`mp_clients_plist`.`Reboot` AS `Reboot`,`sav`.`defsDate` AS `AVDefsDate`,`hw`.`mpa_Model_Name` AS `Model_Name`,`hw`.`mpa_Model_Identifier` AS `Model_Identifier` from (((`mp_clients` left join `mp_clients_plist` on((`mp_clients`.`cuuid` = `mp_clients_plist`.`cuuid`))) left join `savav_info` `sav` on((`mp_clients`.`cuuid` = `sav`.`cuuid`))) left join `mpi_SPHardwareOverview` `hw` on((`mp_clients`.`cuuid` = `hw`.`cuuid`)));
+
+-- ----------------------------
 --  View structure for `combined_patches_view`
 -- ----------------------------
 DROP VIEW IF EXISTS `combined_patches_view`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `combined_patches_view` AS select distinct `ap`.`akey` AS `id`,`ap`.`patchname` AS `name`,`ap`.`version` AS `version`,`ap`.`postdate` AS `postdate`,`ap`.`title` AS `title`,(case when (`ap`.`restartaction` = _latin1'NoRestart') then _latin1'No' when (`ap`.`restartaction` = _latin1'RequireRestart') then _latin1'Yes' end) AS `reboot`,_latin1'Apple' AS `type`,`ap`.`supatchname` AS `suname`,1 AS `active`,`apa`.`severity` AS `severity`,`apa`.`patch_state` AS `patch_state`,0 AS `size` from (`apple_patches_mp_additions` `apa` left join `apple_patches` `ap` on((`ap`.`supatchname` = `apa`.`supatchname`))) union all select `mp_patches`.`puuid` AS `id`,`mp_patches`.`patch_name` AS `name`,`mp_patches`.`patch_ver` AS `version`,`mp_patches`.`cdate` AS `postdate`,`mp_patches`.`description` AS `title`,`mp_patches`.`patch_reboot` AS `reboot`,_latin1'Third' AS `type`,concat(`mp_patches`.`patch_name`,_latin1'-',`mp_patches`.`patch_ver`) AS `suname`,`mp_patches`.`active` AS `active`,`mp_patches`.`patch_severity` AS `severity`,`mp_patches`.`patch_state` AS `patch_state`,`mp_patches`.`pkg_size` AS `size` from `mp_patches`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `combined_patches_view` AS select distinct `ap`.`akey` AS `id`,`ap`.`patchname` AS `name`,`ap`.`version` AS `version`,`ap`.`postdate` AS `postdate`,`ap`.`title` AS `title`,(case when (`ap`.`restartaction` = _latin1'NoRestart') then _latin1'No' when (`ap`.`restartaction` = _latin1'RequireRestart') then _latin1'Yes' end) AS `reboot`,_latin1'Apple' AS `type`,`ap`.`supatchname` AS `suname`,1 AS `active`,`apa`.`severity` AS `severity`,`apa`.`patch_state` AS `patch_state`,`apa`.`patch_install_weight` AS `patch_install_weight`,`apa`.`patch_reboot` AS `patch_reboot_override`,0 AS `size` from (`apple_patches_mp_additions` `apa` left join `apple_patches` `ap` on((`ap`.`supatchname` = `apa`.`supatchname`))) union all select `mp_patches`.`puuid` AS `id`,`mp_patches`.`patch_name` AS `name`,`mp_patches`.`patch_ver` AS `version`,`mp_patches`.`cdate` AS `postdate`,`mp_patches`.`description` AS `title`,`mp_patches`.`patch_reboot` AS `reboot`,_latin1'Third' AS `type`,concat(`mp_patches`.`patch_name`,_latin1'-',`mp_patches`.`patch_ver`) AS `suname`,`mp_patches`.`active` AS `active`,`mp_patches`.`patch_severity` AS `severity`,`mp_patches`.`patch_state` AS `patch_state`,`mp_patches`.`patch_install_weight` AS `patch_install_weight`,(case when (`mp_patches`.`patch_reboot` = _latin1'Yes') then _latin1'1' when (`mp_patches`.`patch_reboot` = _latin1'No') then _latin1'0' end) AS `patch_reboot_override`,`mp_patches`.`pkg_size` AS `size` from `mp_patches`;
 
 -- ----------------------------
 --  View structure for `mp_client_patch_status_prequery_view`
@@ -85,12 +91,6 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_patchgroup_patches_view
 -- ----------------------------
 DROP VIEW IF EXISTS `new_patches_14day`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `new_patches_14day` AS select `apple_patches`.`patchname` AS `patchname`,`apple_patches`.`title` AS `title`,`apple_patches`.`version` AS `version`,`apple_patches`.`postdate` AS `postdate`,`apple_patches`.`restartaction` AS `restartaction` from `apple_patches` where (`apple_patches`.`postdate` >= (now() - interval 14 day));
-
--- ----------------------------
---  View structure for `patchlist`
--- ----------------------------
--- DROP VIEW IF EXISTS `patchlist`;
--- CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `patchlist` AS select distinct `p`.`patch` AS `patch`,`p`.`description` AS `description`,substr(`p`.`osver`,1,4) AS `osver`,`p`.`reboot` AS `reboot`,`p`.`recommended` AS `recommended`,`ap`.`postdate` AS `postdate` from (`patches` `p` join `apple_patches` `ap` on((`p`.`patch` = `ap`.`supatchname`)));
 
 -- ----------------------------
 --  View structure for `savav_client_info`

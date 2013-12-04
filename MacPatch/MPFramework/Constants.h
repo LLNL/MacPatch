@@ -36,8 +36,8 @@ extern NSString * const AGENT_PREFS_PLIST;
 extern NSString * const AGENT_FRAMEWORK_PATH;
 extern NSString * const APP_PREFS_PLIST;
 
-extern NSString * const WS_NAMESPACE;
-extern NSString * const WS_CONTROLLER_FILE;
+extern NSString * const WS_CLIENT_FILE;
+extern NSString * const WS_SERVER_FILE;
 
 extern NSString * const ASUS_BIN_PATH;
 extern NSString * const ASUS_APP_PATH;

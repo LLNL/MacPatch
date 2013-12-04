@@ -4,7 +4,7 @@
 # MacPatch Start/Stop Services Script
 # MacPatch Version 2.1.x
 #
-# Script Ver. 1.1.0
+# Script Ver. 1.2.0
 #
 #-----------------------------------------
 clear
@@ -38,7 +38,7 @@ function arrayContains () {
 
 function isValidService () 
 {
-	array=("gov.llnl.mpavdl.plist" "gov.llnl.mploader.plist" "gov.llnl.mp.site.plist" "gov.llnl.mp.wsl.plist" "gov.llnl.mp.invd.plist" "gov.llnl.mp.httpd.plist")
+	array=("gov.llnl.mp.wsl.plist" "gov.llnl.mp.invd.plist" "gov.llnl.mp.site.plist" "gov.llnl.mploader.plist" "gov.llnl.mpavdl.plist" "gov.llnl.mp.httpd.plist")
 	arrayContains $1 "${array[@]}"
 	return $?
 }
@@ -107,8 +107,18 @@ if [ "$action" == "load" ]; then
 	dseditgroup -o edit -a _www -t user _appserverusr
 
 	chown -R root:admin /Library/MacPatch/Server
-	chown -R 79:70 /Library/MacPatch/Server/jetty-mpwsl
-	chown -R 79:70 /Library/MacPatch/Server/jetty-mpsite
+	if [ -d /Library/MacPatch/Server/jetty-mpwsl ]; then
+		chown -R 79:70 /Library/MacPatch/Server/jetty-mpwsl
+	fi
+	if [ -d /Library/MacPatch/Server/jetty-mpwsl ]; then
+		chown -R 79:70 /Library/MacPatch/Server/jetty-mpsite
+	fi
+	if [ -d /Library/MacPatch/Server/tomcat-mpsite ]; then
+		chown -R 79:70 /Library/MacPatch/Server/tomcat-mpsite
+	fi
+	if [ -d /Library/MacPatch/Server/tomcat-mpws ]; then
+		chown -R 79:70 /Library/MacPatch/Server/tomcat-mpws
+	fi
 	chown -R 79:70 /Library/MacPatch/Server/Logs
 	chown -R 79:70 /Library/MacPatch/Content/Web
 	chmod 0775 /Library/MacPatch/Server

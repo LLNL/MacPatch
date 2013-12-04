@@ -225,18 +225,9 @@ static BOOL gDone = false;
 {
 	return YES;
 }
-/*
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)app 
-{
-    [[proxy connectionForProxy] invalidate];
-    [self cleanup];
-	
-    return (NSTerminateNow);
-}
-*/
+
 -(void)dealloc
 {
-	[soap release];
 	[asus release];
     [mpServerConnection release];
     [self cleanup];
@@ -649,7 +640,7 @@ done:
 	[spStatusText setStringValue:@""];
 	if ([[arrayController arrangedObjects] count] >= 1) {
 		[arrayController removeObjects:[arrayController arrangedObjects]];
-		[tableView reloadData];
+		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	}
 	
 	[window	makeKeyAndOrderFront:sender];
@@ -696,7 +687,7 @@ done:
     NSError *customScanError = nil;
     
 	[arrayController removeObjects:[arrayController arrangedObjects]];
-	[tableView reloadData];
+	[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	
 	[spUpdateButton setEnabled:NO];
 	[spStatusProgress startAnimation:self];
@@ -712,7 +703,6 @@ done:
 	
     [mpServerConnection refreshServerObject];
 	asus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
-	soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:WS_NAMESPACE];
 	
 	if (killTaskThread == YES) {
 		[spStatusText setStringValue:@"Canceling request..."];
@@ -721,7 +711,13 @@ done:
 	
 	// Get Patch Group Patches
 	[spStatusText setStringValue:@"Getting approved patch list for client."];
-	NSDictionary *patchGroupPatches = [asus getPatchGroupPatches:[mpServerConnection.mpDefaults objectForKey:@"PatchGroup"] encode:YES];
+    MPWebServices *mpws;
+    mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    }
 	if (!patchGroupPatches) {
 		NSRunAlertPanel(@"Communications Error", @"There was a issue getting the approved patches for the patch group, scan will exit.", @"OK", nil,nil);
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
@@ -771,22 +767,16 @@ done:
 	
 	// Encode to base64 and send to web service	
 	NSString *xmlBase64String   = [[dataMgrXML dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
-	NSDictionary	*msgArgs	= [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[MPSystemInfo clientUUID],xmlBase64String,nil] 
-														forKeys:[NSArray arrayWithObjects:@"cuuid",@"encodedXML",nil]];
-	NSString		*message	= [soap createBasicSOAPMessage:@"DataMgrXML" argDictionary:msgArgs];
-	NSError         *p_err      = nil;
-	NSData          *soapResult = [soap invoke:message isBase64:NO error:&p_err];
-	if (p_err) {
-		logit(lcl_vError,@"%@",[p_err localizedDescription]);
-	} else {
-		NSString *ws = [[[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding] autorelease];
-		if ([ws isEqualTo:@"1"] == TRUE || [ws isEqualTo:@"true"] == TRUE) {
-			logit(lcl_vInfo,@"Scan results posted to webservice.");
-		} else {
-			logit(lcl_vError,@"Scan results posted to webservice returned false.");
-		}
-	}
-	
+    mpws = [[[MPWebServices alloc] init] autorelease];
+    wsErr = nil;
+    [mpws postDataMgrXML:xmlBase64String error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"Scan results posted to webservice returned false.");
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    } else {
+        logit(lcl_vInfo,@"Scan results posted to webservice.");
+    }
+
 	if (killTaskThread == YES) {
 		[spStatusText setStringValue:@"Canceling request..."];
 		goto done;
@@ -951,8 +941,7 @@ done:
         
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:approvedUpdatesArray];	
-		[tableView reloadData];
-		[tableView deselectAll:self];
+		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	}
 	
 done:	
@@ -983,7 +972,6 @@ done:
 	[spCancelButton setEnabled:NO];
 	
 	[approvedUpdatesArray release];
-	[soap release];
 	[asus release];
 	
 	[pool drain];
@@ -1064,7 +1052,6 @@ done:
 					
 					// Update table view to show whats installing
 					[self updateTableAndArrayController:i status:0];
-					[tableView reloadData];
 					
 					// We have a currPatchToInstallDict to work with
 					logit(lcl_vInfo,@"Start install for patch %@ from %@",[currPatchToInstallDict objectForKey:@"url"],[patch objectForKey:@"patch"]);
@@ -1085,7 +1072,6 @@ done:
 							[spStatusText display];
 							
 							[self updateTableAndArrayController:i status:2];
-							[tableView reloadData];
 							break;
 						}
 						[spStatusText setStringValue:[NSString stringWithFormat:@"Patch download completed."]];
@@ -1095,7 +1081,6 @@ done:
 					@catch (NSException *e) {
 						logit(lcl_vError,@"%@", e);
 						[self updateTableAndArrayController:i status:2];
-						[tableView reloadData];
 						break;
 					}
 					
@@ -1114,7 +1099,6 @@ done:
 						[spStatusText display];
 						logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
 						[self updateTableAndArrayController:i status:2];
-						[tableView reloadData];
 						continue;
 					}
 					
@@ -1130,7 +1114,6 @@ done:
 						[spStatusText display];
 						logit(lcl_vError,@"Error decompressing a patch, skipping %@. Err Message:%@",[patch objectForKey:@"patch"],[err localizedDescription]);
 						[self updateTableAndArrayController:i status:2];
-						[tableView reloadData];
 						break;
 					}
 					[spStatusText setStringValue:[NSString stringWithFormat:@"Patch has been uncompressed."]];
@@ -1148,7 +1131,6 @@ done:
 						{
 							logit(lcl_vError,@"Error (%d) running pre-install script.",(int)installResult);
 							[self updateTableAndArrayController:i status:2];
-							[tableView reloadData];
 							break;
 						}
 					}
@@ -1175,7 +1157,6 @@ done:
 								[spStatusText display];
 								logit(lcl_vError,@"Error installing package, error code %d.",installResult);
 								[self updateTableAndArrayController:i status:2];
-								[tableView reloadData];
 								hadErr = YES;
 								break;
 							} else {
@@ -1191,7 +1172,6 @@ done:
 						logit(lcl_vError,@"%@", e);
 						logit(lcl_vError,@"Error attempting to install patch, skipping %@. Err Message:%@",[patch objectForKey:@"patch"],[err localizedDescription]);
 						[self updateTableAndArrayController:i status:2];
-						[tableView reloadData];
 						break;
 					}
 					if (hadErr) {
@@ -1224,7 +1204,6 @@ done:
 				    [spStatusText display];	 
                     
 					[self updateTableAndArrayController:i status:1];
-					[tableView reloadData];
 					
 				} // End patchArray To install
 			} else if ([[patch objectForKey:@"type"] isEqualTo:@"Apple"]) {
@@ -1239,9 +1218,6 @@ done:
 				
 				// Update the table view to show we are in the install process
 				[self updateTableAndArrayController:i status:0];
-				[tableView reloadData];
-				
-				
 				
 				if ([[patch objectForKey:@"hasCriteria"] boolValue] == NO || ![patch objectForKey:@"hasCriteria"]) {
 					
@@ -1319,7 +1295,6 @@ done:
 					[spStatusText display];	 
 					logit(lcl_vError,@"Error installing update, error code %d.",installResult);
 					[self updateTableAndArrayController:i status:2];
-					[tableView reloadData];
 					continue;
 				} else {
 					[spStatusText setStringValue:[NSString stringWithFormat:@"%@ was installed successfully.",[patch objectForKey:@"patch"]]];
@@ -1338,7 +1313,6 @@ done:
 					[spStatusText display];	 
 					
 					[self updateTableAndArrayController:i status:1];
-					[tableView reloadData];
 				}
 			} else {
 				continue;
@@ -1348,7 +1322,6 @@ done:
 			logit(lcl_vInfo,@"%@(%@) requires a reboot, this patch will be installed on logout.",[patch objectForKey:@"patch"],[patch objectForKey:@"version"]);
 			launchRebootWindow++;
 			[self updateTableAndArrayController:i status:3];
-			[tableView reloadData];
 			continue;
 		}
 	} //End patchesToInstallArray For Loop
@@ -1356,7 +1329,7 @@ done:
 	[spStatusText setStringValue:@"Completed."];
 	[spScanAndPatchButton setEnabled:YES];
 	[spStatusProgress stopAnimation:nil];
-	[tableView reloadData];
+    [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	
 	// Open the Reboot App
 	if (launchRebootWindow > 0) {
@@ -1389,7 +1362,6 @@ done:
 	NSPredicate		*selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
 	NSMutableArray	*patches				  = [NSMutableArray arrayWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
 	
-	//NSMutableArray *patches = [NSMutableArray arrayWithArray:[arrayController arrangedObjects]];
 	NSMutableDictionary *patch = [[NSMutableDictionary alloc] initWithDictionary:[patches objectAtIndex:idx]];
 	if (aStatusImage == 0) {
 		[patch setObject:[NSImage imageNamed:@"NSRemoveTemplate"] forKey:@"statusImage"];
@@ -1405,9 +1377,8 @@ done:
 	}
 	[patches replaceObjectAtIndex:idx withObject:patch];
 	[arrayController setContent:patches];
-	[tableView deselectAll:nil];
-	[tableView reloadData];
-	
+	[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+	[tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 	[patch release];
 }
 
@@ -1428,56 +1399,21 @@ done:
 
 - (void)postInstallToWebService:(NSString *)aPatch type:(NSString *)aType
 {
-	NSString *cuuid = [MPSystemInfo clientUUID];
-	soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:WS_NAMESPACE];
-	NSData *soapResult;
-	// First we need to post the installed patch
-	NSArray *patchInstalledArray;
-	patchInstalledArray = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:aPatch,@"patch",aType,@"type",nil]];
-	
-	MPDataMgr *dataMgr = [[MPDataMgr alloc] init];
-	NSString *resXML = [NSString stringWithString:[dataMgr GenXMLForDataMgr:patchInstalledArray dbTable:@"installed_patches" 
-															  dbTablePrefix:@"mp_"
-															  dbFieldPrefix:@""
-															   updateFields:@"cuuid,patch"]];
-	
-	NSString *xmlBase64String = [[resXML dataUsingEncoding: NSASCIIStringEncoding] encodeBase64WithNewlines:NO]; 
-	NSString *message = [soap createSOAPMessage:@"ProcessXML" argName:@"encodedXML" argType:@"string" argValue:xmlBase64String];
-	
-	NSError *err = nil;
-	soapResult = [soap invoke:message isBase64:NO error:&err];
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-	}
-	NSString *ws1 = [[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding];
-	
-	// Now we need to update the client patch tables and remove the entry.
-	// datamgr can not do this since it's a different table
-	NSDictionary *soapMsgData = [NSDictionary dictionaryWithObjectsAndKeys:aPatch,@"patch",aType,@"type",cuuid,@"cuuid",nil];
-	message = [soap createBasicSOAPMessage:@"UpdateInstalledPatches" argDictionary:soapMsgData];
-	err = nil;
-	soapResult = [soap invoke:message isBase64:NO error:&err];
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-	}
-	NSString *ws2 = [[NSString alloc] initWithData:soapResult encoding:NSUTF8StringEncoding];
-	
-	if ([ws1 isEqualTo:@"1"] == TRUE || [ws1 isEqualTo:@"true"] == TRUE) {
-		logit(lcl_vInfo,@"Patch (%@) install result was posted to webservice.",aPatch);
-	} else {
-		logit(lcl_vError,@"Patch (%@) install result was not posted to webservice.",aPatch);
-	}
-	if ([ws2 isEqualTo:@"0"] == YES  || [ws2 isEqualTo:@"false"] == TRUE) {
-		logit(lcl_vError,@"Client patch state for (%@) was not posted to webservice.",aPatch);
-	}
-	
-	// We should queue this in case we fail.
-	
-	//Release Objects
-	[ws2 release];
-	[ws1 release];
-	[dataMgr release];
-	[soap release];
+    BOOL result = NO;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    NSError *wsErr = nil;
+    result = [mpws postPatchInstallResultsToWebService:aPatch patchType:aType error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+    } else {
+        if (result == TRUE) {
+            logit(lcl_vInfo,@"Patch (%@) install result was posted to webservice.",aPatch);
+        } else {
+            logit(lcl_vError,@"Patch (%@) install result was not posted to webservice.",aPatch);
+        }
+    }
+
+    return;
 }
 
 - (IBAction)showLogInConsole:(id)sender
@@ -1507,36 +1443,6 @@ done:
 		prefsController = [[PrefsController alloc] init];
 	
 	[prefsController showWindow:self];
-}
-
-#pragma mark -
-#pragma mark Misc
-- (NSDictionary *)getClientPatchState
-{	
-	NSDictionary *patchStateData = NULL;
-	soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:WS_NAMESPACE];
-	
-	// Get the patch group patches
-	NSString *message = [soap createSOAPMessage:@"ClientPatchStatus" argName:@"cuuid" argType:@"string" argValue:[MPSystemInfo clientUUID]];
-	NSError *err = nil;
-	NSData *result = [soap invoke:message isBase64:NO error:&err];
-	if (err) {
-		logit(lcl_vError,@"%@",[err localizedDescription]);
-		goto done;
-	}
-	
-	
-	NSString *returnPlistXML = [[[NSString alloc] initWithData:result encoding:NSASCIIStringEncoding] autorelease];	
-	@try {
-		patchStateData = [returnPlistXML propertyList];
-	}
-	@catch (NSException * e) {
-		logit(lcl_vError,@"Problem parsing return plist data. %@, %@",[e reason],[e userInfo]);
-	}
-	
-done:	
-	[soap release];
-	return (NSDictionary *)patchStateData;
 }
 
 #pragma mark Notifications

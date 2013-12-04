@@ -33,7 +33,6 @@
 @property (nonatomic, readwrite, retain) NSString *HTTP_HOST;
 @property (nonatomic, readwrite, retain) NSString *HTTP_HOST_PORT;
 @property (nonatomic, readwrite, retain) NSString *HTTP_HOST_REACHABLE;
-@property (nonatomic, readwrite, retain) NSString *MP_SOAP_URL;
 @property (nonatomic, readwrite, retain) NSString *MP_JSON_URL;
 @property (nonatomic, readwrite, retain) NSString *MP_JSON_URL_PLAIN;
 @property (nonatomic, readwrite, retain) NSDictionary *mpConnection;
@@ -50,7 +49,6 @@
 @synthesize HTTP_HOST;
 @synthesize HTTP_HOST_PORT;
 @synthesize HTTP_HOST_REACHABLE;
-@synthesize MP_SOAP_URL;
 @synthesize MP_JSON_URL;
 @synthesize MP_JSON_URL_PLAIN;
 @synthesize mpConnection;
@@ -61,7 +59,23 @@
     self = [super init];
     if (self) 
     {
+        MPDefaults *mpd = [[MPDefaults alloc] init];
+        [self setMpDefaults:[mpd defaults]];
         [self createServerObject];
+        [mpd release];
+    }
+    return self;
+}
+
+- (id)initWithDefaults:(NSDictionary *)aDefaults
+{
+    self = [super init];
+    if (self)
+    {
+        MPDefaults *mpd = [[MPDefaults alloc] initWithDictionary:aDefaults];
+        [self setMpDefaults:[mpd defaults]];
+        [self createServerObject];
+        [mpd release];
     }
     return self;
 }
@@ -80,9 +94,8 @@
 
 - (void)createServerObject
 {
-    MPDefaults *mpd = [[MPDefaults alloc] init];
-    MPNetworkUtils *mpn = [[MPNetworkUtils alloc] init];
-    NSDictionary *netHostInfo = [mpn mpHostConfig];
+    MPNetworkUtils *mpn = [[MPNetworkUtils alloc] initWithDefaults:mpDefaults];
+    NSDictionary *netHostInfo = [mpn mpHostConfig:mpDefaults];
     NSMutableDictionary *tmpInfo = [[NSMutableDictionary alloc] init];
     [tmpInfo setObject:[netHostInfo objectForKey:@"HTTP_PREFIX"] forKey:@"HTTP_PREFIX"];
     [self setHTTP_PREFIX:[netHostInfo objectForKey:@"HTTP_PREFIX"]];
@@ -92,23 +105,26 @@
     [self setHTTP_HOST_PORT:[netHostInfo objectForKey:@"HTTP_HOST_PORT"]];
     [tmpInfo setObject:[netHostInfo objectForKey:@"HTTP_HOST_REACHABLE"] forKey:@"HTTP_HOST_REACHABLE"];
     [self setHTTP_HOST_REACHABLE:[netHostInfo objectForKey:@"HTTP_HOST_REACHABLE"]];
-    [tmpInfo setObject:[netHostInfo objectForKey:@"MP_SOAP_URL"] forKey:@"MP_SOAP_URL"];
-    [self setMP_SOAP_URL:[netHostInfo objectForKey:@"MP_SOAP_URL"]];
     [tmpInfo setObject:[netHostInfo objectForKey:@"MP_JSON_URL"] forKey:@"MP_JSON_URL"];
     [self setMP_JSON_URL:[netHostInfo objectForKey:@"MP_JSON_URL"]];
     [tmpInfo setObject:[netHostInfo objectForKey:@"MP_JSON_URL_PLAIN"] forKey:@"MP_JSON_URL_PLAIN"];
     [self setMP_JSON_URL_PLAIN:[netHostInfo objectForKey:@"MP_JSON_URL_PLAIN"]];
     [self setMpConnection:[NSDictionary dictionaryWithDictionary:tmpInfo]];
-    [self setMpDefaults:[mpd defaults]];
-    [mpd release];
+
     [mpn release];
-    //[tmpInfo release];
 }
 
 - (int)refreshServerObject
 {
     [self createServerObject];
     return 0;
+}
+
+- (void)refreshDefaults
+{
+    MPDefaults *mpd = [[MPDefaults alloc] init];
+    [self setMpDefaults:[mpd defaults]];
+    [mpd release];
 }
 
 

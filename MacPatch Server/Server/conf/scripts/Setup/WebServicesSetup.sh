@@ -2,9 +2,10 @@
 
 #-----------------------------------------
 # MacPatch Web Services Server Setup Script
-# MacPatch Version 2.1.x
+# MacPatch Version 2.2.x
+# Tomcat Support, port changed
 #
-# Script Ver. 1.0.1
+# Script Ver. 1.0.0
 #
 #-----------------------------------------
 clear
@@ -13,7 +14,7 @@ clear
 MP_SRV_BASE="/Library/MacPatch/Server"
 MP_SRV_CONF="${MP_SRV_BASE}/conf"
 HTTPD_CONF="${MP_SRV_BASE}/Apache2/conf/extra/httpd-vhosts.conf"
-MP_DEFAULT_PORT="2601"
+MP_DEFAULT_PORT="3601"
 
 function checkHostConfig () {
 	if [ "`whoami`" != "root" ] ; then   # If not root user,
@@ -45,30 +46,56 @@ checkHostConfig
 server_name=`hostname -f`
 read -p "MacPatch Hostname [$server_name]: " server_name
 server_name=${server_name:-`hostname -f`}
-read -p "MacPatch Port [$MP_DEFAULT_PORT]: " server_port
-server_port=${server_port:-$MP_DEFAULT_PORT}
 
 server_route=`echo $server_name | awk -F . '{print $1}'` 
 server_route="$server_route-site1"
 
-BalancerMember_STR="BalancerMember http://$server_name:$server_port route=$server_route loadfactor=50"
+BalancerMember_STR="BalancerMember http://$server_name:$MP_DEFAULT_PORT route=$server_route loadfactor=50"
 
 echo "Writing config to httpd.conf..."
 ServerHstString=`echo $BalancerMember_STR | sed 's#\/#\\\/#g'`
 sed -i '' '/\t*#WslBalanceStart/,/\t*#WslBalanceStop/{;/\t*#/!s/.*/'"$ServerHstString"'/;}' "${HTTPD_CONF}"
 perl -i -p -e 's/@@/\n/g' "${HTTPD_CONF}"
 
-echo "Writing configuration data to jetty file ..."
-sed -i '' "s/\[MP_PORT\]/$server_port/g" "${MP_SRV_BASE}/jetty-mpwsl/etc/jetty.xml"
+if [ -d /Library/MacPatch/Server/tomcat-mpws ]; then
+	if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.tcwsl.plist ]; then
+		if [ -f /Library/LaunchDaemons/gov.llnl.mp.wsl.plist ]; then
+			rm /Library/LaunchDaemons/gov.llnl.mp.wsl.plist
+		fi
+		ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.tcwsl.plist /Library/LaunchDaemons/gov.llnl.mp.wsl.plist
+	fi
+	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.tcwsl.plist
+	chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.tcwsl.plist
 
-if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.wsl.plist ]; then
-	ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.wsl.plist /Library/LaunchDaemons/gov.llnl.mp.wsl.plist
-fi
-chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.wsl.plist
-chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.wsl.plist
+	# Invenotry Daemon 
+	if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.tcinvd.plist ]; then
+		if [ -f /Library/LaunchDaemons/gov.llnl.mp.invd.plist ]; then
+				rm /Library/LaunchDaemons/gov.llnl.mp.invd.plist
+			fi
+		ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.tcinvd.plist /Library/LaunchDaemons/gov.llnl.mp.invd.plist
+	fi
+	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.tcinvd.plist
+	chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.tcinvd.plist
+else
+	echo "Writing configuration data to jetty file ..."
+	sed -i '' "s/\[MP_PORT\]/$MP_DEFAULT_PORT/g" "${MP_SRV_BASE}/jetty-mpwsl/etc/jetty.xml"
 
-if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.invd.plist ]; then
-	ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.invd.plist /Library/LaunchDaemons/gov.llnl.mp.invd.plist
+	if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.wsl.plist ]; then
+		if [ -f /Library/LaunchDaemons/gov.llnl.mp.wsl.plist ]; then
+			rm /Library/LaunchDaemons/gov.llnl.mp.wsl.plist
+		fi
+		ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.wsl.plist /Library/LaunchDaemons/gov.llnl.mp.wsl.plist
+	fi
+	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.wsl.plist
+	chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.wsl.plist	
+
+	# Invenotry Daemon 
+	if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.invd.plist ]; then
+		if [ -f /Library/LaunchDaemons/gov.llnl.mp.invd.plist ]; then
+				rm /Library/LaunchDaemons/gov.llnl.mp.invd.plist
+			fi
+		ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.invd.plist /Library/LaunchDaemons/gov.llnl.mp.invd.plist
+	fi
+	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.invd.plist
+	chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.invd.plist
 fi
-chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.invd.plist
-chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.invd.plist

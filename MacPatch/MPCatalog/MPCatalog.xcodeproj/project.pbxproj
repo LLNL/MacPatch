@@ -15,7 +15,7 @@
 		8FD88FF416DFDDC700A870A3 /* SWDistInfoController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88FF016DFDDC700A870A3 /* SWDistInfoController.xib */; };
 		8FD88FF516DFDDC700A870A3 /* MPCatalogV2.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88FF116DFDDC700A870A3 /* MPCatalogV2.icns */; };
 		8FD8900316DFDDE600A870A3 /* MPCatalogAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88FFA16DFDDE500A870A3 /* MPCatalogAppDelegate.m */; };
-		8FD8900416DFDDE600A870A3 /* MPCatalog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88FFC16DFDDE500A870A3 /* MPCatalog.m */; };
+		8FD8900416DFDDE600A870A3 /* MPCatalog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88FFC16DFDDE500A870A3 /* MPCatalog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8FD8900516DFDDE600A870A3 /* MPDLWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88FFE16DFDDE500A870A3 /* MPDLWrapper.m */; };
 		8FD8900616DFDDE600A870A3 /* PreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8900016DFDDE600A870A3 /* PreferenceController.m */; };
 		8FD8900716DFDDE600A870A3 /* SWDistInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8900216DFDDE600A870A3 /* SWDistInfoController.m */; };
@@ -29,7 +29,7 @@
 		8FD8901916DFDE2E00A870A3 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8900F16DFDE2D00A870A3 /* libcrypto.dylib */; };
 		8FD8901A16DFDE2E00A870A3 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8901016DFDE2D00A870A3 /* libz.dylib */; };
 		8FD8901B16DFDE2E00A870A3 /* libMacPatch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8901116DFDE2D00A870A3 /* libMacPatch.a */; };
-		8FD8901E16DFE0C400A870A3 /* EventToSend.c in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8901D16DFE0C400A870A3 /* EventToSend.c */; };
+		8FD8901E16DFE0C400A870A3 /* EventToSend.c in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8901D16DFE0C400A870A3 /* EventToSend.c */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8FD8902F16DFE14300A870A3 /* app_install.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8902016DFE14300A870A3 /* app_install.png */; };
 		8FD8903016DFE14300A870A3 /* app_remove.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8902116DFE14300A870A3 /* app_remove.png */; };
 		8FD8903116DFE14300A870A3 /* Installcomplete.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8902216DFE14300A870A3 /* Installcomplete.tif */; };
@@ -254,7 +254,7 @@
 		8FD88FBF16DFDD9200A870A3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = LLNL;
 			};
 			buildConfigurationList = 8FD88FC216DFDD9200A870A3 /* Build configuration list for PBXProject "MPCatalog" */;
@@ -337,7 +337,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -365,7 +364,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -373,7 +372,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -394,7 +392,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -402,15 +400,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPCatalog/MPCatalog-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				INFOPLIST_FILE = "MPCatalog/MPCatalog-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = 10.6.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
 				WRAPPER_EXTENSION = app;
@@ -421,15 +418,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPCatalog/MPCatalog-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				INFOPLIST_FILE = "MPCatalog/MPCatalog-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = 10.6.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
 				WRAPPER_EXTENSION = app;

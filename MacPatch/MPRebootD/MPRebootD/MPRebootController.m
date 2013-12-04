@@ -25,10 +25,12 @@
 
 #import "MPRebootController.h"
 
-#define WATCH_PATH			@"/Users/Shared/.mpReboot"
-#define WATCH_PATH_FILE		@".needsReboot"
-#define MP_REBOOT			@"/Library/MacPatch/Client/MPReboot.app"
-#define MP_REBOOT_ALT		@"/Library/MacPatch/Client/MPReboot.app/Contents/MacOS/MPReboot"
+#define WATCH_PATH              @"/Users/Shared"
+#define WATCH_PATH_FILE         @".needsReboot"
+#define WATCH_PATH_ALT			@"/private/tmp"
+#define WATCH_PATH_FILE_ALT		@".MPAuthRun"
+#define MP_REBOOT               @"/Library/MacPatch/Client/MPReboot.app"
+#define MP_REBOOT_ALT           @"/Library/MacPatch/Client/MPReboot.app/Contents/MacOS/MPReboot"
 
 @implementation MPRebootController
 
@@ -45,10 +47,26 @@
     }
 }
 
+- (NSArray *)watchFiles
+{
+    return [[watchFiles retain] autorelease];
+}
+
+- (void)setWatchFiles:(NSArray *)aWatchFiles
+{
+    if (watchFiles != aWatchFiles) {
+        [watchFiles release];
+        watchFiles = [aWatchFiles copy];
+    }
+}
+
 -(id)init
 {
 	self = [super init];
-    
+
+    NSArray *a = [NSArray arrayWithObjects:[WATCH_PATH stringByAppendingPathComponent:WATCH_PATH_FILE],[WATCH_PATH_ALT stringByAppendingPathComponent:WATCH_PATH_FILE_ALT], nil];
+    [self setWatchFiles:a];
+
 	// Create the watch Path Dir
 	NSFileManager *fm = [NSFileManager defaultManager];
 	[self setFile_attr:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil]];
@@ -123,6 +141,25 @@
 		logit(lcl_vInfo,@"%@ is missing or is not a directory. Now creating directory.",WATCH_PATH);
 		[[NSFileManager defaultManager] createDirectoryAtPath:WATCH_PATH withIntermediateDirectories:YES attributes:file_attr error:NULL];
 	}
+
+    for (NSString *wp in self.watchFiles)
+    {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:wp] == TRUE)
+        {
+            // This is left in to remove older reboot files
+            NSString *fileContents = [NSString stringWithContentsOfFile:wp encoding:NSUTF8StringEncoding error:NULL];
+            NSRange textRange =[fileContents rangeOfString:@"swReboot"];
+            if(textRange.location != NSNotFound) {
+                [[NSFileManager defaultManager] removeItemAtPath:wp error:NULL];
+            }
+
+            logit(lcl_vInfo,@"Opening reboot application. %@ was found.",wp);
+            [self openRebootApp:1];
+            break;
+        }
+    }
+
+    /* Pre Mac OS X 10.9 Changes
 	if ([[NSFileManager defaultManager] fileExistsAtPath:[NSString pathWithComponents:[NSArray arrayWithObjects:WATCH_PATH,WATCH_PATH_FILE,nil]]] == TRUE) {
 		logit(lcl_vInfo,@"Opening reboot application. %@ was found.",[NSString pathWithComponents:[NSArray arrayWithObjects:WATCH_PATH,WATCH_PATH_FILE,nil]]);
         NSString *fileContents;
@@ -135,6 +172,7 @@
             [self openRebootApp:1];
         }
 	}
+     */
 }
 
 @end

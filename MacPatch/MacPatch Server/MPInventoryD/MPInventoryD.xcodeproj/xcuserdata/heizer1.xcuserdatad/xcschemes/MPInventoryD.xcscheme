@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0460"
+   LastUpgradeVersion = "0500"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-c /Library/MacPatch/Server/conf/etc/siteconfig.xml -f /Users/heizer1/ZDevTest/Files -V"
+            argument = "-c /Users/heizer1/Desktop/files_conf/siteconfig.xml  -f  /Users/heizer1/Desktop/files -V"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

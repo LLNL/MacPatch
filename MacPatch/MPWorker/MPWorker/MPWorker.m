@@ -26,6 +26,7 @@
 #import "MPWorker.h"
 #import "MPAgentController.h"
 #import "MacPatch.h"
+#import "NSFileManager+DirectoryLocations.h"
 #import <AppKit/AppKit.h>
 
 enum {
@@ -130,17 +131,39 @@ typedef NSUInteger MPPostDataType;
 		[self setTaskIsRunning:NO];
         [self setTaskTimedOut:NO];
         fm = [NSFileManager defaultManager];
+
         // Set Data Directory
+        NSError *err = nil;
         NSURL *appSupportDir = [[fm URLsForDirectory:NSApplicationSupportDirectory inDomains:NSSystemDomainMask] objectAtIndex:0];
         NSURL *appSupportMPDir = [appSupportDir URLByAppendingPathComponent:@"MacPatch"];
+        NSDictionary *attributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithShort:0777] forKey:NSFilePosixPermissions];
+
         [self setMp_SOFTWARE_DATA_DIR:[appSupportMPDir URLByAppendingPathComponent:@"SW_Data"]];
         if ([fm fileExistsAtPath:[mp_SOFTWARE_DATA_DIR path]] == NO) {
-            NSError *err = nil;
-            NSDictionary *attributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithShort:0777] forKey:NSFilePosixPermissions];
             [fm createDirectoryAtPath:[mp_SOFTWARE_DATA_DIR path] withIntermediateDirectories:YES attributes:attributes error:&err];
             if (err) {
                 logit(lcl_vError,@"%@",[err description]);
             }
+        } else {
+
+            [fm setAttributes:attributes ofItemAtPath:[mp_SOFTWARE_DATA_DIR path] error:&err];
+            if (err) {
+                logit(lcl_vError,@"%@",[err description]);
+            }
+
+            NSDirectoryEnumerator *dirEnum = [fm enumeratorAtPath:[mp_SOFTWARE_DATA_DIR path]];
+            NSString *file;
+            while (file = [dirEnum nextObject])
+            {
+                err = nil;
+                [fm setAttributes:attributes ofItemAtPath:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:file] error:&err];
+                if (err) {
+                    logit(lcl_vError,@"%@",[err description]);
+                }
+            }
+
+
+
         }
     }
     
@@ -882,6 +905,13 @@ done:
     
     return NO;
 }
+
+// Proxy Method
+- (NSString *)createAppSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask directoryAttributes:(in bycopy NSDictionary *)attributes
+{
+    return [[NSFileManager defaultManager] applicationSupportDirectoryForDomain:aDomainMask directoryAttributes:attributes];
+}
+
 #pragma softwareupdate
 // Proxy Method
 - (void)disableSoftwareUpdateScheduleViaHelper
@@ -1018,14 +1048,11 @@ done:
     
 	NSArray *result = nil;
     [mpServerConnection refreshServerObject];
-    
-	MPSoap *soap = [[MPSoap alloc] initWithURL:[NSURL URLWithString:mpServerConnection.MP_SOAP_URL] nameSpace:@"http://MPWSController.cfc"];
+
 	MPPatchScan *patchScanObj = [[MPPatchScan alloc] initWithServerConnection:mpServerConnection];
     [patchScanObj setDelegate:self];
     [patchScanObj setUseDistributedNotification:YES];
-	result = [NSArray arrayWithArray:[patchScanObj scanForPatches:soap]];
-	
-	[soap release];
+	result = [NSArray arrayWithArray:[patchScanObj scanForPatches]];
 	[patchScanObj release];
     
 	return result;
@@ -1323,6 +1350,33 @@ done:
     
     return 0;
 }
+
+// Proxy Method
+- (int)createDirAtPathWithIntermediateDirectoriesViaHelper:(in bycopy NSString *)path intermediateDirectories:(BOOL)withDirs attributes:(NSDictionary *)attrs
+{
+    NSError *err = nil;
+    BOOL isDir;
+    BOOL exists = [fm fileExistsAtPath:path isDirectory:&isDir];
+    if (exists) {
+        /* file exists */
+        if (isDir) {
+            /* file is a directory */
+            return 0;
+        }  else {
+            logit(lcl_vError,@"Directory at path(%@) already exists, but is not a directory.",path);
+            return 1;
+        }
+    } else {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:withDirs attributes:attrs error:&err];
+        if (err) {
+            logit(lcl_vError,@"Error creating directory at path(%@). %@",path,[err description]);
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 // Proxy Method
 - (int)writeDataToFileViaHelper:(id)data toFile:(NSString *)aFile
 {
@@ -1384,5 +1438,59 @@ done:
 	
 	return @"N";
 }
+
+#pragma mark Inventory
+
+- (int)collectInventoryData
+{
+    [self setTaskIsRunning:YES];
+	[self setTaskTimedOut:NO];
+
+	int taskResult = -1;
+
+    if (swTask) {
+        swTask = nil;
+    }
+    swTask = [[NSTask alloc] init];
+    NSPipe *aPipe = [NSPipe pipe];
+
+	[swTask setStandardOutput:aPipe];
+	[swTask setStandardError:aPipe];
+
+    NSArray *appArgs;
+    appArgs = [NSArray arrayWithObjects:@"-t", @"All", @"--INVNote", nil];
+    [swTask setLaunchPath:AGENT_EXEC];
+    [swTask setArguments:appArgs];
+	[swTask launch];
+
+	NSString		*tmpStr;
+    NSMutableData	*data = [[NSMutableData alloc] init];
+    NSData			*dataChunk = nil;
+    NSException		*error = nil;
+
+	while( (dataChunk = [[aPipe fileHandleForReading] availableDataOrError:&error]) && [dataChunk length] && error == nil)
+	{
+        tmpStr = [[NSString alloc] initWithData:dataChunk encoding:NSUTF8StringEncoding];
+		[data appendData:dataChunk];
+		tmpStr = nil;
+	}
+
+	[[aPipe fileHandleForReading] closeFile];
+    if([data length] && error == nil)
+    {
+        if ([swTask terminationStatus] == 0) {
+            taskResult = 0;
+        } else {
+            taskResult = 1;
+        }
+    } else {
+		logit(lcl_vError,@"Install returned error. Code:[%d]",[swTask terminationStatus]);
+		taskResult = 1;
+	}
+
+	[self setTaskIsRunning:NO];
+    return taskResult;
+}
+
 
 @end

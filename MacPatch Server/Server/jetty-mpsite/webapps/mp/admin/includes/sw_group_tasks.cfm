@@ -64,9 +64,9 @@
 				  formatoptions:{disabled:<cfif session.IsAdmin IS true>false<cfelse>true</cfif>}},
 				  {name:'name',index:'name', width:200, align:"left"},
 				  {name:'active',index:'active', width:100, align:"left"},
-				  {name:'task_type', index:'task_type', width:100, align:"left"},
-				  {name:'task_start', index:'task_start', width:120, align:"left"},
-				  {name:'task_end', index:'task_end', width:120, align:"left"}
+				  {name:'sw_task_type', index:'sw_task_type', width:100, align:"left"},
+				  {name:'sw_start_datetime', index:'sw_start_datetime', width:120, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
+				  {name:'sw_end_datetime', index:'sw_end_datetime', width:120, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}
 				],
 				altRows:true,
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager
@@ -173,7 +173,7 @@
 	);
 </script>
 <div align="center">
-<table id="list" cellpadding="0" cellspacing="0"></table>
+<table id="list" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="pager" style="text-align:center;font-size:11px;"></div>
 </div>
 <div id="TaskInfoDialog" title="Detailed Task Information" style="text-align:left;" class="ui-dialog-titlebar"></div>

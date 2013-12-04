@@ -70,7 +70,11 @@ table.colGridEdit td {
 	border-color: grey;
 }
 </style>
+<!---
 <script src="./_assets/js/jquery/jquery.tablednd_0_5.js" type="text/javascript"></script>
+--->
+<script src="./_assets/js/jquery/addons/jquery.tablednd.js" type="text/javascript"></script>
+
 <script type="text/javascript">
 $(document).ready(function() {
     // Initialise the table

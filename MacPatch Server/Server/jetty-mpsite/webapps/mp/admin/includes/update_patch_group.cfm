@@ -47,12 +47,24 @@
 	</cfloop>
     
     <cfset _d = RemovePatchGroupData(form.group_id)>
-    <cfset _x = xObj.GetPatchGroupPatchesExtended(form.group_id)>
-    <cfset _a = AddPatchGroupData(form.group_id,_x)>
-    <!--- Proxy Update 
-	<cfobject component="mpp_actions" name="mpp">
-	<cfinvoke component="#mpp#" method="postProxyData" returnvariable="result">
-	--->
+    <!--- JSON 2.2.x --->
+    <cfset _x = xObj.GetPatchGroupPatches(form.group_id)>
+    <!--- SOAP < 2.1.1 --->
+    <cfset _y = xObj.GetPatchGroupPatchesExtended(form.group_id)>
+    <cfset _a = AddPatchGroupData(form.group_id,_x,'JSON')>
+    <cfset _b = AddPatchGroupData(form.group_id,_y,'SOAP')>
+    
+    <cfquery datasource="#session.dbsource#" name="qServers">
+		Select server From mp_servers
+	</cfquery>
+    
+    <!--- This will be updated in MacPatch 3.0 --->
+    <!--- The port and URL will be changed and will come from the DB --->
+    <!--- This is a bandaid for now --->
+    <cfoutput query="qServers">
+    	<cfhttp url="http://#server#:3601/tasks/resetCache.cfm" method="get" result="result" charset="utf-8"> 
+    </cfoutput>
+    
 </cfif>
 
 <cffunction name="RemovePatchGroupData" returntype="any" output="no">
@@ -72,12 +84,13 @@
 <cffunction name="AddPatchGroupData" returntype="any" output="no">
 	<cfargument name="PatchGroupID">
     <cfargument name="PatchGroupData">
+    <cfargument name="PatchGroupDataType">
 
 	<cftry>
     	<cfset _hash = hash(#arguments.PatchGroupData#, "MD5")>
 		<cfquery datasource="#session.dbsource#" name="qPut">
-			Insert Into mp_patch_group_data (pid, hash, data)
-			Values ('#arguments.PatchGroupID#', '#_hash#', '#arguments.PatchGroupData#') 
+			Insert Into mp_patch_group_data (pid, hash, data, data_type)
+			Values ('#arguments.PatchGroupID#', '#_hash#', '#arguments.PatchGroupData#', '#arguments.PatchGroupDataType#') 
 		</cfquery>
     <cfcatch></cfcatch>
     </cftry>

@@ -31,7 +31,6 @@
     NSString *HTTP_HOST;
     NSString *HTTP_HOST_PORT;
     NSString *HTTP_HOST_REACHABLE;
-    NSString *MP_SOAP_URL;
     NSString *MP_JSON_URL;
     NSString *MP_JSON_URL_PLAIN;
     NSDictionary *mpConnection;
@@ -42,13 +41,14 @@
 @property (nonatomic, readonly, retain) NSString *HTTP_HOST;
 @property (nonatomic, readonly, retain) NSString *HTTP_HOST_PORT;
 @property (nonatomic, readonly, retain) NSString *HTTP_HOST_REACHABLE;
-@property (nonatomic, readonly, retain) NSString *MP_SOAP_URL;
 @property (nonatomic, readonly, retain) NSString *MP_JSON_URL;
 @property (nonatomic, readonly, retain) NSString *MP_JSON_URL_PLAIN;
 @property (nonatomic, readonly, retain) NSDictionary *mpConnection;
 @property (nonatomic, readonly, retain) NSDictionary *mpDefaults;
 
+- (id)initWithDefaults:(NSDictionary *)aDefaults;
 - (id)initWithNilServerObj;
 - (int)refreshServerObject;
+- (void)refreshDefaults;
 
 @end

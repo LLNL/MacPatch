@@ -32,7 +32,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"1.2.0"
+#define APPVERSION	@"1.5.0"
 #define APPNAME		@"MPAgentExec"
 
 void usage(void);
@@ -75,6 +75,9 @@ int main (int argc, char * argv[])
             {"type"                 ,required_argument	,0, 't'},
 			{"Audit"                ,no_argument		,0, 'A'},
 			{"cuuid"                ,no_argument		,0, 'c'},
+            // Software Dist
+            {"installSWUsingGID"    ,required_argument	,0, 'g'},
+            {"installSWUsingSID"    ,required_argument	,0, 'd'},
             // Output
 			{"Echo"					,no_argument		,0, 'e'},
 			{"Verbose"				,no_argument		,0, 'V'},
@@ -166,13 +169,14 @@ int main (int argc, char * argv[])
 				usage();
 		}
 	}
-	
-	if (optind < argc) {
-		while (optind < argc)
-			argv[optind++];
-		usage();
-		exit(0);
-	}
+
+    if (optind < argc) {
+        while (optind < argc) {
+            printf ("Invalid argument %s ", argv[optind++]);
+        }
+        usage();
+        exit(0);
+    }
 	
 	// Make sure the user is root or is using sudo
 	if (getuid()) {
