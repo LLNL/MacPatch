@@ -57,12 +57,6 @@ static OSStatus mechanismCreate(AuthorizationPluginRef inPlugin,
                                 AuthorizationMechanismId mechanismId,
                                 AuthorizationMechanismRef *outMechanism)
 {
-    /*
-    if (!file_exists("/private/tmp/.MPAuthRun")) {
-        return 0;
-    }
-     */
-
     const PluginRef *plugin = (const PluginRef *)inPlugin;
     MechanismRef *mechanism = calloc(1, sizeof(MechanismRef));
 
@@ -90,12 +84,6 @@ static OSStatus mechanismInvoke(AuthorizationMechanismRef inMechanism)
 {
     MechanismRef *mechanism = (MechanismRef *)inMechanism;
     OSStatus status;
-
-    /*
-    if (!file_exists("/private/tmp/.MPAuthRun")) {
-        return 0;
-    }
-     */
 
     switch (mechanism->mechanismId)
     {
