@@ -373,7 +373,7 @@ table.genTable td
 			<tr><td>AllowServer:</td><td><input type="text" name="p_AllowServer" size="40" maxlength="255" value="#configData.AllowServer.value#"></td><td>Enforced: #SelectFormOption(configData.AllowServer.enforced)#</td><td style="padding-left:60px;">Patch Mac OS X Server Software</td></tr>			
 			<tr><td>Description:</td><td><input type="text" name="p_Description" size="40" maxlength="255" value="#configData.Description.value#"></td><td>Enforced: #SelectFormOption(configData.Description.enforced)#</td><td style="padding-left:60px;">Description Text</td></tr>
 			<tr><td>Domain:</td><td><input type="text" name="p_Domain" size="40" maxlength="255" value="#configData.Domain.value#"></td><td>Enforced: #SelectFormOption(configData.Domain.enforced)#</td><td style="padding-left:60px;">Client Group Name</td></tr>
-			<tr><td>CheckSignatures:</td><td><input type="text" name="p_CheckSignatures" size="40" maxlength="255" value="#configData.CheckSignatures.value#"></td><td>Enforced: #SelectFormOption(configData.CheckSignatures.enforced)#</td><td style="padding-left:60px;">CheckSignatures</td></tr>
+			<tr><td>CheckSignatures:</td><td><input type="text" name="p_CheckSignatures" size="40" maxlength="255" value="#IIF(IsDefined("configData.CheckSignatures"),Evaluate(DE("configData.CheckSignatures.value")),DE(''))#"></td><td>Enforced: #SelectFormOption(IIF(IsDefined("configData.CheckSignatures"),Evaluate(DE("configData.CheckSignatures.enforced")),DE('')))#</td><td style="padding-left:60px;">CheckSignatures</td></tr>
             <tr><td>PatchGroup:</td><td><input type="text" name="p_PatchGroup" size="40" maxlength="255" value="#configData.PatchGroup.value#"></td><td>Enforced: #SelectFormOption(configData.PatchGroup.enforced)#</td><td style="padding-left:60px;">Patch Group Name</td></tr>
 			<tr><td>Reboot:</td><td><input type="text" name="p_Reboot" size="40" maxlength="255" value="#configData.Reboot.value#"></td><td>Enforced: #SelectFormOption(configData.Reboot.enforced)#</td><td style="padding-left:60px;">Allow reboot with no users logged in.</td></tr>
 			<tr><td>SWDistGroup:</td><td><input type="text" name="p_SWDistGroup" size="40" maxlength="255" value="#configData.SWDistGroup.value#"></td><td>Enforced: #SelectFormOption(configData.SWDistGroup.enforced)#</td><td style="padding-left:60px;">Default Software Distirbution Group</td></tr>
@@ -479,14 +479,25 @@ table.genTable td
 	<!--- Define arguments. --->
 	<cfargument name="fieldName" type="string" required="true" />
 	
-	<cfsavecontent variable="editConfigSelect">
-		<cfoutput>
-		<select name="enforced">
-				<option value="1" #IIF(arguments.fieldName EQ 1 ,DE('selected'),DE(''))#>Yes</option>
-				<option value="0" #IIF(arguments.fieldName EQ 0 ,DE('selected'),DE(''))#>No</option>
-		</select>
-		</cfoutput>
-	</cfsavecontent>
+	<cftry>
+		<cfsavecontent variable="editConfigSelect">
+			<cfoutput>
+			<select name="enforced">
+					<option value="1" #IIF(arguments.fieldName EQ 1 ,DE('selected'),DE(''))#>Yes</option>
+					<option value="0" #IIF(arguments.fieldName EQ 0 ,DE('selected'),DE(''))#>No</option>
+			</select>
+			</cfoutput>
+		</cfsavecontent>
+	<cfcatch>
+		<cfsavecontent variable="editConfigSelect">
+			<cfoutput>
+			<select name="enforced">
+					<option value="1" >Yes</option>
+					<option value="0" selected>No</option>
+			</select>
+			</cfoutput>
+		</cfsavecontent>
+	</cfcatch>
+	</cftry>
 	<cfreturn editConfigSelect>
 </cffunction>
-
