@@ -174,6 +174,7 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 - (void)writeLogoutHook
 {
     // MP 2.2.0 & Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
+    NSFileManager *fm = [NSFileManager defaultManager];
     NSString *_rbFile = @"/private/tmp/.MPAuthRun";
     NSString *_rbText = @"reboot";
     [_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];

@@ -862,12 +862,9 @@ done:
 	if (launchRebootWindow > 0) {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
         // 10.9
-        //[mpInstaller setLogoutHook];
-
         NSString *_rbFile = @"/private/tmp/.MPAuthRun";
 		NSString *_rbText = @"reboot";
         // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
-		// [_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		[_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
 		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
@@ -1187,16 +1184,13 @@ done:
 		}
 	}
 	
-	if (launchRebootWindow > 0) {
+	if (launchRebootWindow > 0)
+    {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
         // 10.9 support
-        //mpInstaller = [[[MPInstaller alloc] init] autorelease];
-		//[mpInstaller setLogoutHook];
-
         NSString *_rbFile = @"/private/tmp/.MPAuthRun";
 		NSString *_rbText = @"reboot";
         // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
-		// [_rbText writeToFile:@"/Users/Shared/.mpReboot/.needsReboot" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		[_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
 		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];

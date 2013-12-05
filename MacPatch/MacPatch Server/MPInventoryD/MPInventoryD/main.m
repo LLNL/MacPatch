@@ -5,19 +5,19 @@
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
  Written by Charles Heizer <heizer1 at llnl.gov>.
  LLNL-CODE-636469 All rights reserved.
- 
+
  This file is part of MacPatch, a program for installing and patching
  software.
- 
+
  MacPatch is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License (as published by the Free
  Software Foundation) version 2, dated June 1991.
- 
+
  MacPatch is distributed in the hope that it will be useful, but WITHOUT ANY
  WARRANTY; without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE. See the terms and conditions of the GNU General Public
  License for more details.
- 
+
  You should have received a copy of the GNU General Public License along
  with MacPatch; if not, write to the Free Software Foundation, Inc.,
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -31,9 +31,9 @@
 #import "MysqlServer.h"
 #import "MysqlConnection.h"
 #import "MysqlFetch.h"
-#import "MPDataMgr.h"
+#import "MPInventory.h"
 
-#define APPVERSION	@"1.3.2"
+#define APPVERSION	@"2.0.0"
 #define APPNAME		@"MPInventoryD"
 #define CONFFILE    @"/Library/MacPatch/Server/conf/etc/siteconfig.xml"
 
@@ -45,6 +45,7 @@ void usage(void);
 @interface ParseConf : NSObject
 
 - (NSDictionary *)parseConfFile:(NSString *)aConfFile;
+- (MysqlServer *)returnServerInstanceFromConfig:(NSString *)aConfFile;
 
 @end
 
@@ -55,18 +56,18 @@ void usage(void);
     NSError *err = nil;
     NSXMLDocument *confxXmlDoc = [[NSXMLDocument alloc] initWithContentsOfURL:[NSURL fileURLWithPath:aConfFile] options:(NSXMLNodePreserveWhitespace|NSXMLNodePreserveCDATA) error:NULL];
     NSArray *cNodes = [confxXmlDoc nodesForXPath:@"//settings/database/prod/*" error:&err];
-    
+
     if ([cNodes count] <= 0) {
         qlinfo(@"Nothing found ...");
         return nil;
     }
-    
+
     NSString *dbHost = NULL;
     NSString *dbPort = NULL;
     NSString *dbUsr = NULL;
     NSString *dbPass = NULL;
     NSString *dbName = NULL;
-    
+
     for (NSXMLNode *n in cNodes)
     {
         if ([[n name] isEqualToString:@"hoststring"]) {
@@ -83,16 +84,35 @@ void usage(void);
     }
     NSMutableDictionary *tmpDict = [[NSMutableDictionary alloc] init];
     NSDictionary *conf;
-    
+
     [tmpDict setObject:dbHost forKey:@"dbHost"];
     [tmpDict setObject:dbPort forKey:@"dbPort"];
     [tmpDict setObject:dbUsr forKey:@"dbUsr"];
     [tmpDict setObject:dbPass forKey:@"dbPass"];
     [tmpDict setObject:dbName forKey:@"dbName"];
-    
+
     conf = [NSDictionary dictionaryWithDictionary:tmpDict];
     return conf;
 }
+
+- (MysqlServer *)returnServerInstanceFromConfig:(NSString *)aConfFile
+{
+    NSDictionary *conf = [self parseConfFile:aConfFile];
+    if (!conf) {
+        qlerror(@"Could not read siteconfig.");
+        return nil;
+    }
+
+    // Create Server Obj
+    MysqlServer *mServer = [[MysqlServer alloc] init];
+    [mServer setHost:[conf objectForKey:@"dbHost"]];
+    [mServer setPort:[[conf objectForKey:@"dbPort"] intValue]];
+    [mServer setUser:[conf objectForKey:@"dbUsr"]];
+    [mServer setPassword:[conf objectForKey:@"dbPass"]];
+    [mServer setSchema:[conf objectForKey:@"dbName"]];
+    return mServer;
+}
+
 @end
 
 int main(int argc, char * argv[])
@@ -105,10 +125,10 @@ int main(int argc, char * argv[])
         BOOL traceLogging = NO;
         BOOL verboseLogging = NO;
         BOOL keepProcessedFiles = NO;
-        
+
         NSString *_configPath;
         NSString *_filesPath;
-        
+
         // Setup argument processing
         int c;
         while (1)
@@ -129,11 +149,11 @@ int main(int argc, char * argv[])
             // getopt_long stores the option index here.
             int option_index = 0;
             c = getopt_long (argc, argv, "c:f:DTeVvh", long_options, &option_index);
-            
+
             // Detect the end of the options.
             if (c == -1)
                 break;
-            
+
             switch (c)
             {
                 case 'c':
@@ -149,10 +169,10 @@ int main(int argc, char * argv[])
                     break;
                 case 'D':
                     verboseLogging = YES;
-                    break;	
+                    break;
                 case 'T':
                     traceLogging = YES;
-                    break;		
+                    break;
                 case 'e':
                     echoToConsole = YES;
                     break;
@@ -170,7 +190,7 @@ int main(int argc, char * argv[])
                     break;
             }
         }
-        
+
         if (reqOpts != 2) {
             usage();
             exit(0);
@@ -181,22 +201,22 @@ int main(int argc, char * argv[])
             usage();
             exit(0);
         }
-        
+
         // Make sure the user is root or is using sudo
         if (getuid()) {
             printf("You must be root to run this app. Try using sudo.\n");
 #if DEBUG
             printf("Running as debug...\n");
-#else		
+#else
             //exit(0);
-#endif		
+#endif
         }
-        
+
         NSFileManager *fm = [NSFileManager defaultManager];
-        
+
         // Setup Logging
         NSString *_logFile = @"/Library/MacPatch/Server/Logs/MPInventoryD.log";
-        
+
         BOOL isDir;
         if ([fm fileExistsAtPath:[_logFile stringByDeletingLastPathComponent] isDirectory:&isDir]) {
             if (isDir == NO) {
@@ -206,8 +226,8 @@ int main(int argc, char * argv[])
         } else {
             [fm createDirectoryAtPath:[_logFile stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:NULL];
         }
-        
-        
+
+
         [LCLLogFile setPath:_logFile];
         [LCLLogFile setAppendsToExistingLogFile:YES];
         lcl_configure_by_name("*", lcl_vDebug);
@@ -223,8 +243,8 @@ int main(int argc, char * argv[])
             }
             logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
         }
-        
-        
+
+
 
         // Validate Paths
         if (![fm fileExistsAtPath:_configPath]) {
@@ -242,23 +262,11 @@ int main(int argc, char * argv[])
             qlerror(@"%@ dir not found. Exiting app.",_filesPath);
             exit(1);
         }
-        
+
         ParseConf *pConf = [[ParseConf alloc] init];
-        NSDictionary *conf = [pConf parseConfFile:_configPath];
-        if (!conf) {
-            qlerror(@"Could not read siteconfig.");
-            exit(1);
-        }
-        
-        // Create Server Obj
-        MysqlServer *mServer = [[MysqlServer alloc] init];
-        [mServer setHost:[conf objectForKey:@"dbHost"]];
-        [mServer setPort:[[conf objectForKey:@"dbPort"] intValue]];
-        [mServer setUser:[conf objectForKey:@"dbUsr"]];
-        [mServer setPassword:[conf objectForKey:@"dbPass"]];
-        [mServer setSchema:[conf objectForKey:@"dbName"]];
+        MysqlServer *mServer = [pConf returnServerInstanceFromConfig:_configPath];
         qldebug(@"%@",[mServer description]);
-        
+
         // Create Test Connection, to verify all is working
         MysqlConnection *testConn;
         @try {
@@ -267,12 +275,7 @@ int main(int argc, char * argv[])
             {
                 qlerror(@"Error, connection to the database returned nil. Wait 30 seconds and try again.");
                 sleep(30);
-                conf = [pConf parseConfFile:_configPath];
-                [mServer setHost:[conf objectForKey:@"dbHost"]];
-                [mServer setPort:[[conf objectForKey:@"dbPort"] intValue]];
-                [mServer setUser:[conf objectForKey:@"dbUsr"]];
-                [mServer setPassword:[conf objectForKey:@"dbPass"]];
-                [mServer setSchema:[conf objectForKey:@"dbName"]];
+                mServer = [pConf returnServerInstanceFromConfig:_configPath];
                 testConn = [MysqlConnection connectToServer:mServer];
             }
             [testConn disableTransactions];
@@ -281,7 +284,7 @@ int main(int argc, char * argv[])
             qlerror(@"%@",exception);
             exit(1);
         }
-        
+
         // Test the Connection with a quick query
         NSString *sqlText = [NSString stringWithFormat:@"SELECT table_name FROM information_schema.tables WHERE table_schema = '%@'",mServer.schema];
         @try {
@@ -289,17 +292,14 @@ int main(int argc, char * argv[])
             if (fetch.results.count <= 0) {
                 qlerror(@"No results found.");
                 exit(1);
-            }            
+            }
+            testConn = nil;
         }
         @catch (NSException *exception) {
             qlerror(@"%@",exception);
             exit(1);
         }
-        
-        
-        NSString *errDir = [[_filesPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"Errors"];
-        NSString *keepDir = [[_filesPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"Processed"];
-        
+
         BOOL isRunning = YES;
         while (isRunning)
         {
@@ -312,62 +312,27 @@ int main(int argc, char * argv[])
                                                                                         options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles
                                                                                           error:&myErr];
                 NSArray *files = [dirContents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"pathExtension IN %@", extensions]];
-                
-                if ([files count] > 0) {
+                if ([files count] > 0)
+                {
                     qlinfo(@"%ld file(s) to process",[files count]);
+                    @try {
+                        ParseConf *_conf = [[ParseConf alloc] init];
+                        MysqlServer *myServer = [_conf returnServerInstanceFromConfig:_configPath];
 
-                    // Date and time format for results
-                    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-                    [dateFormat setDateFormat:@"yyyy-MM-dd"];
-                    NSDateFormatter *timeFormat = [[NSDateFormatter alloc] init];
-                    [timeFormat setDateFormat:@"HH-mm-ss"];
-                    
-                    NSDate *now = [[NSDate alloc] init];
-                    NSString *nDate = [dateFormat stringFromDate:now];
-                    NSString *nTime = [timeFormat stringFromDate:now];
-                    NSString *curProcessDateTime = [NSString stringWithFormat:@"%@_%@",nDate,nTime];
-                    
-                    // Parse the files
-                    for (id afile in files)
-                    {
-                        @autoreleasepool
-                        {
-                            myErr = nil;
-                            MPDataMgr *dataMgr = [[MPDataMgr alloc] initWithMySQLServer:mServer error:&myErr];
-                            if (myErr) {
-                                qlerror(@"%@",[myErr description]);
+                        MPInventory *inv = [[MPInventory alloc] init];
+                        [inv setFiles:files];
+                        [inv setFilesBaseDir:_filesPath];
+                        [inv setMyServer:myServer];
+                        if ([inv processFiles] == NO) {
+                            qlerror(@"Process files returned false...");
+                        }
+                    }
+                    @catch (NSException *exception) {
+                        qlerror(@"%@",exception);
+                        exit(1);
+                    }
 
-                                sleep(10);
-                                conf = [pConf parseConfFile:_configPath];
-                                [mServer setHost:[conf objectForKey:@"dbHost"]];
-                                [mServer setPort:[[conf objectForKey:@"dbPort"] intValue]];
-                                [mServer setUser:[conf objectForKey:@"dbUsr"]];
-                                [mServer setPassword:[conf objectForKey:@"dbPass"]];
-                                [mServer setSchema:[conf objectForKey:@"dbName"]];
-
-                                continue;
-                            }
-                            if ([dataMgr pasreXMLDocFromPath:[afile path]]) {
-                                qldebug(@"Processed: %@",afile);
-                                if (keepProcessedFiles)
-                                {
-                                    if (![fm fileExistsAtPath:[keepDir stringByAppendingPathComponent:curProcessDateTime]]) {
-                                        [fm createDirectoryAtPath:[keepDir stringByAppendingPathComponent:curProcessDateTime] withIntermediateDirectories:YES attributes:nil error:NULL];
-                                    }
-                                    [fm moveItemAtPath:[afile path] toPath:[[keepDir stringByAppendingPathComponent:curProcessDateTime] stringByAppendingPathComponent:[afile lastPathComponent]] error:NULL];
-                                } else {
-                                    [fm removeItemAtPath:[afile path] error:NULL];
-                                }
-                            } else {
-                                qlerror(@"Processing Error: %@",afile);
-                                if (![fm fileExistsAtPath:[errDir stringByAppendingPathComponent:curProcessDateTime]]) {
-                                    [fm createDirectoryAtPath:[errDir stringByAppendingPathComponent:curProcessDateTime] withIntermediateDirectories:YES attributes:nil error:NULL];
-                                }
-                                [fm moveItemAtPath:[afile path] toPath:[[errDir stringByAppendingPathComponent:curProcessDateTime] stringByAppendingPathComponent:[afile lastPathComponent]] error:NULL];
-                            }
-                        } // Autorelease
-                    } // Files Loop
-                } // File Count
+                }
             } // Autorelease
             sleep(3);
         }

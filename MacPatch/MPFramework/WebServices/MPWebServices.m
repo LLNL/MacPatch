@@ -1001,7 +1001,7 @@ done:
             if ([[deserializedData objectForKey:@"errorno"] isEqualTo:@"0"])
             {
                 // If results return code is 0, then populate results
-                results = [NSDictionary dictionaryWithDictionary:deserializedData];
+                results = [NSMutableDictionary dictionaryWithDictionary:deserializedData];
             } else {
                 // Return code is not 0, set results value and generate error
                 [results setObject:[deserializedData objectForKey:@"errorno"] forKey:@"errorno"];

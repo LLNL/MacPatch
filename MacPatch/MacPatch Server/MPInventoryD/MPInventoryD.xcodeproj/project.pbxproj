@@ -31,6 +31,7 @@
 		8F89F86F1651881F0040DA18 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F89F86E1651881F0040DA18 /* Foundation.framework */; };
 		8F89F8721651881F0040DA18 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F89F8711651881F0040DA18 /* main.m */; };
 		8F89F8761651881F0040DA18 /* MPInventoryD.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F89F8751651881F0040DA18 /* MPInventoryD.1 */; };
+		8FFE12AD1850095B00044E37 /* MPInventory.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFE12AC1850095B00044E37 /* MPInventory.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -175,6 +176,8 @@
 		8F89F8711651881F0040DA18 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8F89F8741651881F0040DA18 /* MPInventoryD-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MPInventoryD-Prefix.pch"; sourceTree = "<group>"; };
 		8F89F8751651881F0040DA18 /* MPInventoryD.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MPInventoryD.1; sourceTree = "<group>"; };
+		8FFE12AB1850095B00044E37 /* MPInventory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPInventory.h; sourceTree = "<group>"; };
+		8FFE12AC1850095B00044E37 /* MPInventory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPInventory.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -423,6 +426,8 @@
 			isa = PBXGroup;
 			children = (
 				8F89F8711651881F0040DA18 /* main.m */,
+				8FFE12AB1850095B00044E37 /* MPInventory.h */,
+				8FFE12AC1850095B00044E37 /* MPInventory.m */,
 				8F0EC0FB16641375007DD9DD /* DBField.h */,
 				8F0EC0FC16641375007DD9DD /* DBField.m */,
 				8F0EC0FD16641375007DD9DD /* MPDataMgr.h */,
@@ -515,6 +520,7 @@
 				8F0EC17B16641396007DD9DD /* MysqlUpdate.m in Sources */,
 				8F0EC17C16641396007DD9DD /* NSString_MysqlEscape.m in Sources */,
 				8F0EC198166419F6007DD9DD /* MySQLTableColumn.m in Sources */,
+				8FFE12AD1850095B00044E37 /* MPInventory.m in Sources */,
 				8F25E23B1665185C00EFEDDE /* lcl.m in Sources */,
 				8F25E23C1665185C00EFEDDE /* LCLLogFile.m in Sources */,
 			);
