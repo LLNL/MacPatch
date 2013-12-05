@@ -31,8 +31,8 @@
 				  {name:'baseline_id',index:'baseline_id', width:36, align:"center", sortable:false, resizable:false},	
 				  {name:'name', index:'name', width:200, editable:true, edittype:'text'}, 
 				  {name:'description', index:'description', width:200, editable:true, edittype:'text'}, 
-				  {name:'cdate', index:'cdate', width:100, editable:true, edittype:'text',editoptions: {readonly: 'readonly'}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
-				  {name:'mdate', index:'mdate', width:100, editable:true, edittype:'text',editoptions: {readonly: 'readonly'}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}, 
+				  {name:'cdate', index:'cdate', width:100, editable:true, edittype:'text',editoptions: {readonly: 'readonly'}},
+				  {name:'mdate', index:'mdate', width:100, editable:true, edittype:'text',editoptions: {readonly: 'readonly'}}, 
 				  {name:'state', index:'state', width:100, editable:true, edittype:'select', editoptions:{value:{1:'Production',2:'QA',0:'Inactive'}}}
 				],
 				altRows:true,

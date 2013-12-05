@@ -24,7 +24,7 @@
 
 		<cfquery name="selUsers" datasource="#session.dbsource#">
 			Select mip.cuuid as cuuid, mip.date as idate, mip.patch as a_patch, mip.type, mcv.Domain, mcv.PatchGroup, mcv.hostname, mpp.patch_name as t_patch,
-          	IF(UCASE(mip.type) = 'THIRD',  CONCAT(mpp.patch_name, '-', mpp.patch_ver), mip.patch) as patch
+          	IF(mip.type_int = 1,  CONCAT(mpp.patch_name, '-', mpp.patch_ver), mip.patch) as patch
           	FROM mp_installed_patches mip
           	LEFT JOIN mp_clients_view mcv ON (mip.cuuid = mcv.cuuid)
           	LEFT JOIN mp_patches mpp ON (mip.patch = mpp.puuid)
@@ -42,7 +42,7 @@
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
             <cfif #cuuid# NEQ "">
-				<cfset arrUsers[i] = [#i#, #cuuid#, #patch#, #hostname#, #domain#, #idate#]>
+				<cfset arrUsers[i] = [#i#, #cuuid#, #patch#, #hostname#, #domain#, #DateTimeFormat( idate, "yyyy-MM-dd HH:mm:ss" )#]>
                 <cfset i = i + 1>
             </cfif>			
 		</cfloop>

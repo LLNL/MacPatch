@@ -51,7 +51,7 @@
 			<cfelse>
 				<cfset txtState = "Disabled">
 			</cfif>
-			<cfset arrSW[i] = [#gid#, #gName#, #gDescription#, #owner#, #txtState#, #mdate#] >
+			<cfset arrSW[i] = [#gid#, #gName#, #gDescription#, #owner#, #txtState#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#] >
 			<cfset i = i + 1>
 		</cfloop>
 

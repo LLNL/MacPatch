@@ -159,7 +159,7 @@
 				  {name:'address', index:'address', width:200, editable:true},
 				  {name:'port', index:'port', width:120, editable:true},
 				  {name:'description', index:'description', width:200, editable:true},
-				  {name:'mdate', index:'mdate', width:200, editrules:{readonly:true}, formatter: 'date', formatoptions: {srcformat:'F, d Y H:i:s', newformat: 'Y-m-d H:i:s' }}
+				  {name:'mdate', index:'mdate', width:200, editrules:{readonly:true}}
 				],
 				altRows:true,
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager

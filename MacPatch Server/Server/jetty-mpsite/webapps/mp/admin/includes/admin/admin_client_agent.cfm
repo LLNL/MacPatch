@@ -63,8 +63,8 @@
 				  {name:'pkg_hash', index:'pkg_hash', width:100, editrules:{readonly:true}},
 				  {name:'state', index:'state', width:40, editrules:{readonly:true}, hidden: true },
 				  {name:'active', index:'active', width:50, editable:true, edittype:"select", editoptions:{value:"0:No;1:Yes"}},
-				  {name:'cdate', index:'cdate', width:70, editrules:{readonly:true}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i:s' }},
-				  {name:'mdate', index:'mdate', width:70, editrules:{readonly:true}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i:s' }}
+				  {name:'cdate', index:'cdate', width:70, editrules:{readonly:true}},
+				  {name:'mdate', index:'mdate', width:70, editrules:{readonly:true}}
 				],
 				altRows:true,
 				altclass:'xAltRow',

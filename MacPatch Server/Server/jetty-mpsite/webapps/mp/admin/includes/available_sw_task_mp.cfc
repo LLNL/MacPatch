@@ -45,7 +45,7 @@
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
-			<cfset arrSW[i] = [#rid#, #tuuid#, #name#, #primary_suuid#, #iif(active IS 1,DE("Yes"),DE("No"))#, #Ucase(sw_task_type)#, #sw_start_datetime#, #sw_end_datetime#, #mdate#] >
+			<cfset arrSW[i] = [#rid#, #tuuid#, #name#, #primary_suuid#, #iif(active IS 1,DE("Yes"),DE("No"))#, #Ucase(sw_task_type)#, #DateTimeFormat( sw_start_datetime, "yyyy-MM-dd HH:mm:ss" )#, #DateTimeFormat( sw_end_datetime, "yyyy-MM-dd HH:mm:ss" )#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#] >
 			<cfset i = i + 1>
 		</cfloop>
 

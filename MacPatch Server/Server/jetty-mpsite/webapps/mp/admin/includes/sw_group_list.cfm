@@ -26,7 +26,7 @@
 				  {name:'owner', index:'owner', width:100, align:"left", editable: true, edittype:'text', editoptions: {readonly: 'readonly'}},
 				  </cfif>
 				  {name:'state',index:'state', width:56, align:"left", editable: true, editable:true, edittype:"select", editoptions:{value:"1:Production;2:QA;0:Disabled"}},
-				  {name:'mdate', index:'mdate', width:80, align:"left", editable: false, edittype:'text', editoptions: {readonly: 'readonly'}, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}
+				  {name:'mdate', index:'mdate', width:80, align:"left", editable: false, edittype:'text', editoptions: {readonly: 'readonly'}}
 				],
 				altRows:true,
 				altclass:'xAltRow',

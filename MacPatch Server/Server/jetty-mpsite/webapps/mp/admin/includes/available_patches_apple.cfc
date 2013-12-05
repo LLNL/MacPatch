@@ -54,7 +54,7 @@
 		<cfset i = 1>
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
-			<cfset arrUsers[i] = [#supatchname#, #supatchname#, #supatchname#, #version#, #title#, #iif(restartaction EQ "NoRestart",DE("No"),DE("Yes"))#, #osver_support#, #hasCriteria#, #patch_state#, #postdate#]>
+			<cfset arrUsers[i] = [#supatchname#, #supatchname#, #supatchname#, #version#, #title#, #iif(restartaction EQ "NoRestart",DE("No"),DE("Yes"))#, #osver_support#, #hasCriteria#, #patch_state#, #DateTimeFormat( postdate, "yyyy-MM-dd HH:mm:ss" )#]>
 			<cfset i = i + 1>			
 		</cfloop>
 

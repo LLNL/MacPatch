@@ -105,7 +105,7 @@
 			<cfset _dataArr = ArrayNew(1)>
 			<cfloop list="#arguments.orderedCols#" index="col" delimiters=",">
             	<cfif col EQ "cdate" OR col EQ "mdate" OR col EQ "sdate" OR col EQ "date"> 
-					<cfset _dts = #DateFormat(evaluate(col), "mm/dd/yyyy")# & " " & #TimeFormat(evaluate(col), "HH:mm:ss")#>
+					<cfset _dts = #DateTimeFormat( evaluate(col), "yyyy-MM-dd HH:mm:ss" )#>
 					<cfset x = ArrayAppend(_dataArr,_dts)>
 				<cfelse>
 					<cfset _x = ArrayAppend(_dataArr,evaluate(col))>

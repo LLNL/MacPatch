@@ -23,9 +23,9 @@
 				  {name:'primary_suuid',index:'primary_suuid', width:30, align:"center", hidden: true},
 				  {name:'active', index:'active', width:50, align:"left",editable:true, edittype:"select", editoptions:{value:"0:No;1:Yes"}},
 				  {name:'sw_task_type', index:'sw_task_type', width:60, align:"left"},
-				  {name:'sw_start_datetime', index:'sw_start_datetime', width:90, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
-				  {name:'sw_end_datetime', index:'sw_end_datetime', width:90, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
-				  {name:'mdate', index:'mdate', width:90, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i:s' }}
+				  {name:'sw_start_datetime', index:'sw_start_datetime', width:90, align:"left"},
+				  {name:'sw_end_datetime', index:'sw_end_datetime', width:90, align:"left"},
+				  {name:'mdate', index:'mdate', width:90, align:"left"}
 				],
 				altRows:true,
 				altclass:'xAltRow',

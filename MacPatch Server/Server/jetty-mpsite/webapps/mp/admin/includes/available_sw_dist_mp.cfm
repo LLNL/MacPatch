@@ -38,8 +38,8 @@
 				  {name:'sReboot', index:'sReboot', width:20, align:"left", editable:true, edittype:"select", editoptions:{value:"0:No;1:Yes"}},
 				  {name:'sState', index:'sState', width:40, align:"left", editable:true, edittype:"select", editoptions:{value:"2:Production;1:QA;0:Create;3:Disabled"}}, 
 				  {name:'sw_Type', index:'sw_Type', width:40, align:"left"}, 
-				  {name:'mdate', index:'mdate', width:80, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
-				  {name:'cdate', index:'cdate', width:10, align:"center", hidden: true, formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}
+				  {name:'mdate', index:'mdate', width:80, align:"center"},
+				  {name:'cdate', index:'cdate', width:10, align:"center"}
 				],
 				altRows:true,
 				altclass:'xAltRow',

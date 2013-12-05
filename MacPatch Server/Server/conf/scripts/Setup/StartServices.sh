@@ -4,7 +4,7 @@
 # MacPatch Start/Stop Services Script
 # MacPatch Version 2.1.x
 #
-# Script Ver. 1.2.0
+# Script Ver. 1.2.1
 #
 #-----------------------------------------
 clear
@@ -134,27 +134,6 @@ fi
 # Start or Stop Services
 # -----------------------------------
 
-if [ -e "/Library/LaunchDaemons/gov.llnl.mpavdl.plist" ] && ([[ "$service" == "All" || "$service" == "gov.llnl.mpavdl.plist" ]])
-then
-		echo "Starting MacPatch Symantec Antivirus Sync..."
-		echo "launchctl $action -w /Library/LaunchDaemons/gov.llnl.mpavdl.plist"
-		if [ "$dryrun" == "0" ]; then
-			launchctl $action -w /Library/LaunchDaemons/gov.llnl.mpavdl.plist
-			sleep 3
-		fi		
-fi
-
-if [ -e "/Library/LaunchDaemons/gov.llnl.mploader.plist" ] && ([[ "$service" == "All" || "$service" == "gov.llnl.mploader.plist" ]])
-then
-		echo "Starting MacPatch SoftwareUpdate Server Helper..."
-		echo "launchctl $action -w /Library/LaunchDaemons/gov.llnl.mploader.plist"
-		if [ "$dryrun" == "0" ]; then
-			launchctl $action -w /Library/LaunchDaemons/gov.llnl.mploader.plist
-			sleep 3
-		fi
-fi
-
-
 if [ -e "/Library/LaunchDaemons/gov.llnl.mp.site.plist" ] && ([[ "$service" == "All" || "$service" == "gov.llnl.mp.site.plist" ]])
 then
 		echo "Starting MacPatch Admin Console App..."
@@ -189,6 +168,26 @@ then
 		echo "launchctl $action -w /Library/LaunchDaemons/gov.llnl.mp.invd.plist"
 		if [ "$dryrun" == "0" ]; then
 			launchctl $action -w /Library/LaunchDaemons/gov.llnl.mp.invd.plist
+			sleep 3
+		fi
+fi
+
+if [ -e "/Library/LaunchDaemons/gov.llnl.mpavdl.plist" ] && ([[ "$service" == "All" || "$service" == "gov.llnl.mpavdl.plist" ]])
+then
+		echo "Starting MacPatch Symantec Antivirus Sync..."
+		echo "launchctl $action -w /Library/LaunchDaemons/gov.llnl.mpavdl.plist"
+		if [ "$dryrun" == "0" ]; then
+			launchctl $action -w /Library/LaunchDaemons/gov.llnl.mpavdl.plist
+			sleep 3
+		fi		
+fi
+
+if [ -e "/Library/LaunchDaemons/gov.llnl.mploader.plist" ] && ([[ "$service" == "All" || "$service" == "gov.llnl.mploader.plist" ]])
+then
+		echo "Starting MacPatch SoftwareUpdate Server Helper..."
+		echo "launchctl $action -w /Library/LaunchDaemons/gov.llnl.mploader.plist"
+		if [ "$dryrun" == "0" ]; then
+			launchctl $action -w /Library/LaunchDaemons/gov.llnl.mploader.plist
 			sleep 3
 		fi
 fi

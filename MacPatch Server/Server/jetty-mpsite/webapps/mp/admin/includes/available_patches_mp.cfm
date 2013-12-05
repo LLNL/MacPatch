@@ -65,7 +65,7 @@
 				  {name:'patch_severity', index:'patch_severity', width:44, align:"center", editable:true, edittype:"select", editoptions:{value:"High:High; Medium:Medium; Low:Low; Unknown:Unknown"}}, 
 				  {name:'patch_reboot', index:'patch_reboot', width:40, align:"center", editable:true, edittype:"select", editoptions:{value:"No:No;Yes:Yes"}}, 
 				  {name:'patch_state', index:'patch_state', width:50, align:"center", editable:true, edittype:"select", editoptions:{value:"Production:Production;QA:QA;Create:Create;Disabled:Disabled"}},
-				  {name:'mdate', index:'mdate', width:70, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d' }}
+				  {name:'mdate', index:'mdate', width:70, align:"center"}
 				],
 				altRows:true,
 				altclass:'xAltRow',
