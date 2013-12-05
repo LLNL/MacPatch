@@ -170,17 +170,12 @@
 #pragma mark Reboot Methods
 - (void)setLogoutHook
 {
-	NSString *theFile = @"/Library/MacPatch/Client/MPLogout.app/Contents/MacOS/MPLogout";
-	NSString *thePlist = @"/var/root/Library/Preferences/com.apple.loginwindow.plist";
-	NSDictionary *dict =[NSDictionary dictionaryWithObjectsAndKeys:theFile, @"LogoutHook",nil];
-	
-	NSFileManager *fileManager = [NSFileManager defaultManager];
-	if ([fileManager fileExistsAtPath:theFile]) {
-		[dict writeToFile:thePlist atomically:YES];	
-		logit(lcl_vInfo,@"Logout hook has been set. Updates will get installed on logout.");
-	} else {
-		logit(lcl_vError,@"MPLogout is missing, no install will occure on logout.");
-	}
+    // MP 2.2.0 & Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
+    NSString *_rbFile = @"/private/tmp/.MPAuthRun";
+    NSString *_rbText = @"reboot";
+    [_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
+    [fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
 }
 
 

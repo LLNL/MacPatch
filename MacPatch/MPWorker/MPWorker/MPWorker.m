@@ -1300,14 +1300,12 @@ done:
 // Proxy Method
 - (void)setLogoutHookViaHelper
 {
-	NSString *thePlist = @"/var/root/Library/Preferences/com.apple.loginwindow.plist";
-	NSDictionary *dict =[NSDictionary dictionaryWithObjectsAndKeys:MPLOGOUT_BIN_PATH, @"LogoutHook",nil];
-	
-	if ([fm fileExistsAtPath:MPLOGOUT_BIN_PATH]) {
-		[dict writeToFile:thePlist atomically:YES];
-	} else {
-		logit(lcl_vError,@"MPLogout is missing, no install will occure on logout.");
-	}
+    // This has been changed in MacPatch 2.2.0
+    NSString *_rbFile = @"/private/tmp/.MPAuthRun";
+    NSString *_rbText = @"reboot";
+    [_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
+    [fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
 }
 // Proxy Method
 - (int)setPermissionsForFileViaHelper:(in bycopy NSString *)aFile posixPerms:(unsigned long)posixPermissions
