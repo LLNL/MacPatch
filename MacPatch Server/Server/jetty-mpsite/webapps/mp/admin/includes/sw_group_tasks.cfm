@@ -65,8 +65,8 @@
 				  {name:'name',index:'name', width:200, align:"left"},
 				  {name:'active',index:'active', width:100, align:"left"},
 				  {name:'sw_task_type', index:'sw_task_type', width:100, align:"left"},
-				  {name:'sw_start_datetime', index:'sw_start_datetime', width:120, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }},
-				  {name:'sw_end_datetime', index:'sw_end_datetime', width:120, align:"left", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d H:i' }}
+				  {name:'sw_start_datetime', index:'sw_start_datetime', width:120, align:"left"},
+				  {name:'sw_end_datetime', index:'sw_end_datetime', width:120, align:"left"}
 				],
 				altRows:true,
 				pager: jQuery('#pager'), //The div we have specified, tells jqGrid where to put the pager

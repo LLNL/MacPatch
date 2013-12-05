@@ -49,7 +49,7 @@
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
             <cfif #id# NEQ "">
-				<cfset arrUsers[i] = [#id#, #name#, #title#, #type#, #postdate#]>
+				<cfset arrUsers[i] = [#id#, #name#, #title#, #type#, #DateTimeFormat( postdate, "yyyy-MM-dd HH:mm:ss" )#]>
                 <cfset i = i + 1>
             </cfif>			
 		</cfloop>

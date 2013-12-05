@@ -30,10 +30,8 @@
 	</cfquery>
     
     <cfquery datasource="#session.dbsource#" name="qUpdate">
-		Update
-			mp_patch_group
-        Set
-        	type = '#form.type#'    
+		Update mp_patch_group
+        Set type = '#form.type#'    
 		Where id = '#form.group_id#'
 	</cfquery>
 	
@@ -74,8 +72,7 @@
 	<cfquery datasource="#session.dbsource#" name="qDelete">
 		Delete
 		From mp_patch_group_data
-		Where 
-			pid = '#arguments.PatchGroupID#'
+		Where pid = '#arguments.PatchGroupID#'
 	</cfquery>
     <cfcatch></cfcatch>
     </cftry>

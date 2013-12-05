@@ -46,7 +46,7 @@
 		<cfset i = 1>
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
-			<cfset arrUsers[i] = [#puuid#, #pkg_url#, #patch_name#, #patch_ver#, #bundle_id#, #patch_severity#, #patch_reboot#, #patch_state#, #mdate#] >
+			<cfset arrUsers[i] = [#puuid#, #pkg_url#, #patch_name#, #patch_ver#, #bundle_id#, #patch_severity#, #patch_reboot#, #patch_state#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#] >
 			<cfset i = i + 1>			
 		</cfloop>
 		<cfset totalPages = Ceiling(selUsers.recordcount/arguments.rows)>

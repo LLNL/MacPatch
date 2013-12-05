@@ -40,7 +40,7 @@
 				  {name:'osver_support', index:'osver_support', width:80, align:"left", hidden: true},
 				  {name:'hasCriteria', index:'hasCriteria', width:40, align:"center"},
 				  {name:'patch_state', index:'patch_state', width:50, align:"left", editable:true, edittype:"select", editoptions:{value:"Production:Production;QA:QA;Create:Create;Disabled:Disabled"}},
-				  {name:'postdate', index:'postdate', width:70, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d' }}
+				  {name:'postdate', index:'postdate', width:70, align:"center"}
 				],
 				altRows:true,
 				altclass:'xAltRow',

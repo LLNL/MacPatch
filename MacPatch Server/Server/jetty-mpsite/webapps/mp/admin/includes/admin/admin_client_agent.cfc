@@ -56,7 +56,7 @@
 		<cfset i = 1>
 		<cfset var l_app_ver = "NA">  
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
-			<cfset arrUsers[i] = [#rid#, #agent_ver#,  #osver#, #version#, #build#, #framework#, #pkg_name#, #pkg_url#, #pkg_hash#, #state#, #IIF(active EQ 1,DE("Yes"),DE("No"))#, #cdate#, #mdate#]>
+			<cfset arrUsers[i] = [#rid#, #agent_ver#,  #osver#, #version#, #build#, #framework#, #pkg_name#, #pkg_url#, #pkg_hash#, #state#, #IIF(active EQ 1,DE("Yes"),DE("No"))#, #DateTimeFormat( cdate, "yyyy-MM-dd HH:mm:ss" )#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#]>
 			<cfset i = i + 1>			
 		</cfloop>
 		

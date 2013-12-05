@@ -177,6 +177,7 @@
         	<cfquery datasource="#this.ds#" name="qGetGroupData" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
                 Select data from mp_patch_group_data
                 Where pid = <cfqueryparam value="#qGetGroupID.id#">
+                AND data_type = 'SOAP'
             </cfquery>
             <cfif qGetGroupID.RecordCount NEQ 1>
             	<cfinvoke component="ws_logger" method="LogEvent">

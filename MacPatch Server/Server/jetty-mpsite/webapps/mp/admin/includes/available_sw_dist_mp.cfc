@@ -62,7 +62,7 @@
             <cfelseif sState EQ 3>
             	<cfset _state = "Disabled">
             </cfif>
-			<cfset arrSW[i] = [#suuid#, #sw_url#, #sName#, #sVersion#, #IIF(sReboot EQ 0,DE("No"),DE("Yes"))#, #_state#, #sw_Type#, #mdate#, #cdate#] >
+			<cfset arrSW[i] = [#suuid#, #sw_url#, #sName#, #sVersion#, #IIF(sReboot EQ 0,DE("No"),DE("Yes"))#, #_state#, #sw_Type#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#, #DateTimeFormat( cdate, "yyyy-MM-dd HH:mm:ss" )#] >
 			<cfset i = i + 1>			
 		</cfloop>
 		

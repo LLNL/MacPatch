@@ -67,7 +67,7 @@
 			</CFCASE>
 			</CFSWITCH>
 
-			<cfset arrUsers[i] = [#baseline_id#, #name#, #description#, #cdate#, #mdate#, #l_state#]>
+			<cfset arrUsers[i] = [#baseline_id#, #name#, #description#, #DateTimeFormat( cdate, "yyyy-MM-dd HH:mm:ss" )#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#, #l_state#]>
 			<cfset i = i + 1>			
 		</cfloop>
 

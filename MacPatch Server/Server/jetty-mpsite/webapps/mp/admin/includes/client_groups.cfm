@@ -41,20 +41,23 @@
 	<cfsavecontent variable="jsCols">
 	colModel :[<cfoutput>{name:'#colDataStruct[1]['name']#',index:'#colDataStruct[1]['name']#', width:#colDataStruct[1]['width']#, align:"#colDataStruct[1]['align']#", sortable:false, resizable:false, search:false},</cfoutput>
 			<cfloop index="x" from="2" to="#arrayLen(colDataStruct)#"><cfoutput>
-			{name:'#colDataStruct[x]['name']#',index:'#colDataStruct[x]['name']#', width:#colDataStruct[x]['width']#, align:"#colDataStruct[x]['align']#", hidden:#colDataStruct[x]['hidden']# #isDateCol(colDataStruct[x]['name'])#, #iif(colDataStruct[x]['name'] EQ 'defsDate',DE('search:false'),DE('search:true'))#}<cfif x NEQ arrayLen(colDataStruct)>,</cfif></cfoutput></cfloop>
+			{name:'#colDataStruct[x]['name']#',index:'#colDataStruct[x]['name']#', width:#colDataStruct[x]['width']#, align:"#colDataStruct[x]['align']#", hidden:#colDataStruct[x]['hidden']#, #iif(colDataStruct[x]['name'] EQ 'defsDate',DE('search:false'),DE('search:true'))#}<cfif x NEQ arrayLen(colDataStruct)>,</cfif></cfoutput></cfloop>
 	]			
 	</cfsavecontent>
 	<cfreturn jsCols>
 </cffunction>
 
+<!--- Changed, mixed results
 <cffunction name="isDateCol" access="public" returntype="any">
 	<cfargument name="colName" required="yes">
 	
+    <cfreturn "">
 	<cfif arguments.colName EQ "cdate" OR arguments.colName EQ "mdate" OR arguments.colName EQ "sdate" OR arguments.colName EQ "date"> 
 		<cfreturn ",formatter: 'date', formatoptions: {srcformat:'ISO8601Long', newformat: 'Y-m-d H:i:s' }">
 	</cfif>
 	<cfreturn "">
 </cffunction>
+--->
 
 <cffunction name="genColModelForTable" access="public" returntype="any">
 	<cfargument name="cols" required="yes">

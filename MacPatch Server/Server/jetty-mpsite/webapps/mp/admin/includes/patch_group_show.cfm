@@ -48,7 +48,7 @@ Created By: #qGetName.user_id#<br>
 				  {name:'name', index:'name', width:140}, 
 				  {name:'title', index:'title', width:200, sorttype:'float'},
 				  {name:'type', index:'type', width:50, align:"center"}, 
-				  {name:'postdate', index:'postdate', width:70, align:"center", formatter: 'date', formatoptions: {srcformat:"F, d Y H:i:s", newformat: 'Y-m-d' }}
+				  {name:'postdate', index:'postdate', width:70, align:"center"}
 				],
 				emptyrecords: "No records to view",
 				altRows:true,

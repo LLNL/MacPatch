@@ -53,7 +53,7 @@
 		<cfset i = 1>
 
 		<cfloop query="selUsers" startrow="#start#" endrow="#end#">
-			<cfset arrUsers[i] = [#rid#, #address#, #port#, #description#, #mdate#]>
+			<cfset arrUsers[i] = [#rid#, #address#, #port#, #description#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#]>
 			<cfset i = i + 1>			
 		</cfloop>
 		
