@@ -5,19 +5,19 @@
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
  Written by Charles Heizer <heizer1 at llnl.gov>.
  LLNL-CODE-636469 All rights reserved.
- 
+
  This file is part of MacPatch, a program for installing and patching
  software.
- 
+
  MacPatch is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License (as published by the Free
  Software Foundation) version 2, dated June 1991.
- 
+
  MacPatch is distributed in the hope that it will be useful, but WITHOUT ANY
  WARRANTY; without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE. See the terms and conditions of the GNU General Public
  License for more details.
- 
+
  You should have received a copy of the GNU General Public License along
  with MacPatch; if not, write to the Free Software Foundation, Inc.,
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -39,8 +39,6 @@
 
 @interface MPDataMgr ()
 
-@property(retain) MysqlConnection *dbConnection;
-
 @property(retain, readwrite) NSString *tableName;
 @property(retain, readwrite) NSDictionary *removeData;
 @property(retain, readwrite) NSArray *tableFields;
@@ -50,12 +48,9 @@
 @property(retain, readwrite) NSString *onExists;
 @property(nonatomic, assign) int didDeleteAll;
 // DataBase
-@property(retain) MysqlServer *dbServer;
 @property(retain) NSArray *dbTables;
 
 // DataBase Methods
-- (MysqlServer *)setUpMySQLServer;
-- (BOOL)setUpMySQLConnection:(MysqlServer *)server error:(NSError **)err;
 - (BOOL)getDBTables;
 - (NSArray *)getDBTableStructure:(NSString *)aTableName;
 - (BOOL)tableExists:(NSString *)aTableName;
@@ -77,64 +72,17 @@
 
 @implementation MPDataMgr
 
-- (id)initWithMySQLServer:(MysqlServer *)aServer error:(NSError *__autoreleasing *)error
-{
-    self = [super init];
-    NSError *err = nil;
-    [self setUpMySQLConnection:aServer error:&err];
-    if (err) {
-        if (error != NULL) {
-            *error = err;
-        }
-        qlerror(@"%@",[err description]);
-    }
-    [self getDBTables];
-    return self;
-}
+@synthesize myConnection;
+@synthesize myServer;
 
-- (id)initWithXMLStringAndDB:(NSString *)XMLString server:(MysqlServer *)aServer error:(NSError *__autoreleasing *)error
+- (id)initWithMySQLServerConnection:(MysqlConnection *)connection server:(MysqlServer *)server
 {
     self = [super init];
-    NSError *err = nil;
-    _xmlDoc = [[NSXMLDocument alloc] initWithXMLString:XMLString options:(NSXMLNodePreserveWhitespace|NSXMLNodePreserveCDATA) error:&err];
-    if (err) {
-        if (error != NULL) {
-            *error = err;
-        }
-        qlerror(@"%@",[err description]);
+    if (self) {
+        [self setMyConnection:connection];
+        [self setMyServer:server];
+        [self getDBTables];
     }
-    err = nil;
-    [self setUpMySQLConnection:aServer error:&err];
-    if (err) {
-        if (error != NULL) {
-            *error = err;
-        }
-        qlerror(@"%@",[err description]);
-    }
-    [self getDBTables];
-    return self;
-}
-
-- (id)initWithXMLString:(NSString *)XMLString error:(NSError *__autoreleasing *)error
-{
-    self = [super init];
-    NSError *err = nil;
-    _xmlDoc = [[NSXMLDocument alloc] initWithXMLString:XMLString options:(NSXMLNodePreserveWhitespace|NSXMLNodePreserveCDATA) error:&err];
-    if (err) {
-        if (error != NULL) {
-            *error = err;
-        }
-        qlerror(@"%@",[err description]);
-    }
-    err = nil;
-    [self setUpMySQLConnection:[self setUpMySQLServer] error:&err];
-    if (err) {
-        if (error != NULL) {
-            *error = err;
-        }
-        qlerror(@"%@",[err description]);
-    }
-    [self getDBTables];
     return self;
 }
 
@@ -152,53 +100,7 @@
     return self;
 }
 
-#pragma mark - DataBase 
-
-- (MysqlServer *)setUpMySQLServer
-{
-    MysqlServer *server = [[MysqlServer alloc] init];
-    [server setHost:@"127.0.0.1"];
-    [server setUser:@"mpdbadm"];
-    [server setPassword:@""];
-    [server setSchema:@"MacPatchDB"];
-    [self setDbServer:server];
-    return server;
-}
-
-- (BOOL)setUpMySQLConnection:(MysqlServer *)server error:(NSError **)err
-{
-    NSError *iError = nil;
-
-    @try {
-        _dbConnection = nil;
-        _dbConnection = [MysqlConnection connectToServer:server];
-        if (!_dbConnection) {
-            qlerror(@"Error, unable to create connection to database.");
-            qlerror(@"%@, %@, %@",[server host],[server user],[server schema]);
-
-            iError = [NSError errorWithDomain:@"setUpMySQLConnection" code:1
-                                              userInfo:[NSDictionary dictionaryWithObject:@"Unable to create connection to database." forKey:NSLocalizedDescriptionKey]];
-            if (err != NULL) {
-                *err = iError;
-            }
-            return NO;
-        }
-        [_dbConnection disableTransactions];
-        [self setDbServer:server];
-    }
-    @catch (NSException *exception) {
-        qlerror(@"%@",exception);
-        qlerror(@"%@, %@, %@",[server host],[server user],[server schema]);
-        iError = [NSError errorWithDomain:@"setUpMySQLConnection" code:2
-                                          userInfo:[NSDictionary dictionaryWithObject:exception forKey:NSLocalizedDescriptionKey]];
-        if (err != NULL) {
-            *err = iError;
-        }
-        return NO;
-    }
-    
-    return YES;
-}
+#pragma mark - DataBase
 
 - (BOOL)getDBTables
 {
@@ -210,9 +112,9 @@
     NSString *sqlText = [NSString stringWithFormat:@"SELECT table_name " \
                          "FROM information_schema.tables " \
                          "WHERE table_schema = '%@' AND " \
-                         "table_type = 'BASE TABLE'",self.dbServer.schema];
+                         "table_type = 'BASE TABLE'",myServer.schema];
     @try {
-        MysqlFetch *fetch = [MysqlFetch fetchWithCommand:sqlText onConnection:_dbConnection];
+        MysqlFetch *fetch = [MysqlFetch fetchWithCommand:sqlText onConnection:myConnection];
         tables = [[NSMutableArray alloc] init];
         for (NSDictionary *userRow in fetch.results)
         {
@@ -233,15 +135,15 @@
     NSArray *result = nil;
     NSMutableArray *cols = [[NSMutableArray alloc] init];
     MySQLTableColumn *col;
-    
+
     NSString *sqlText = [NSString stringWithFormat:@"DESCRIBE %@;",aTableName];
-    MysqlFetch *fetch = [MysqlFetch fetchWithCommand:sqlText onConnection:self.dbConnection];
+    MysqlFetch *fetch = [MysqlFetch fetchWithCommand:sqlText onConnection:myConnection];
     for (NSDictionary *row in fetch.results)
     {
         col = [[MySQLTableColumn alloc] initWithFetchResults:row];
         [cols addObject:col];
     }
-    
+
     result = [NSArray arrayWithArray:cols];
     return result;
 }
@@ -278,7 +180,7 @@
         }
         MysqlFetch *fetch;
         @try {
-             fetch = [MysqlFetch fetchWithCommand:sql onConnection:self.dbConnection];
+            fetch = [MysqlFetch fetchWithCommand:sql onConnection:myConnection];
         }
         @catch (NSException *exception) {
             qlerror(@"%@",exception);
@@ -308,7 +210,7 @@
                 [sql appendFormat:@"(20) %@ ", field.dataTypeExt];
             } else {
                 [sql appendFormat:@"(%@) %@ ",field.length, field.dataTypeExt];
-            }   
+            }
         }
         if ([field.allowNull isEqualToString:@"NOT NULL"]) {
             [sql appendFormat:@"%@ ",field.allowNull];
@@ -326,9 +228,9 @@
     }
     [sql appendFormat:@"PRIMARY KEY (%@),",[pKey componentsJoinedByString:@","]];
     [sql appendString:@"INDEX pri_idx (cuuid, date))"];
-    
+
     @try {
-        MysqlExecute *exe = [MysqlExecute sqlExecuteWithConnection:self.dbConnection];
+        MysqlExecute *exe = [MysqlExecute sqlExecuteWithConnection:myConnection];
         [exe executeSQL:sql];
     }
     @catch (NSException *exception)
@@ -339,11 +241,11 @@
                                               userInfo:[NSDictionary dictionaryWithObject:exception forKey:NSLocalizedDescriptionKey]];
             *err = iError;
         }
-        
+
         qlerror(@"%@",exception);
         return NO;
     }
-    
+
     return YES;
 }
 
@@ -361,9 +263,9 @@
     if ([aField.defaultValue isEqualToString:@""] == NO) {
         [sql appendFormat:@"DEFAULT '%@' ",aField.defaultValue];
     }
-    
+
     @try {
-        MysqlExecute *exe = [MysqlExecute sqlExecuteWithConnection:self.dbConnection];
+        MysqlExecute *exe = [MysqlExecute sqlExecuteWithConnection:myConnection];
         [exe executeSQL:sql];
         qltrace(@"%@",sql);
     }
@@ -375,11 +277,11 @@
                                               userInfo:[NSDictionary dictionaryWithObject:exception forKey:NSLocalizedDescriptionKey]];
             *err = iError;
         }
-        
+
         qlerror(@"%@",exception);
         return NO;
     }
-    
+
     return YES;
 }
 
@@ -397,9 +299,9 @@
     if ([aField.defaultValue isEqualToString:@""] == NO) {
         [sql appendFormat:@"DEFAULT '%@' ",aField.defaultValue];
     }
-    
+
     @try {
-        MysqlExecute *exe = [MysqlExecute sqlExecuteWithConnection:self.dbConnection];
+        MysqlExecute *exe = [MysqlExecute sqlExecuteWithConnection:myConnection];
         [exe executeSQL:sql];
     }
     @catch (NSException *exception)
@@ -410,11 +312,11 @@
                                               userInfo:[NSDictionary dictionaryWithObject:exception forKey:NSLocalizedDescriptionKey]];
             *err = iError;
         }
-        
+
         qlerror(@"%@",exception);
         return NO;
     }
-    
+
     qltrace(@"[alterSQLChangeFieldInTable][SQL]: %@",sql);
     return YES;
 }
@@ -422,7 +324,7 @@
 - (NSString *)getDataType:(NSString *)aType
 {
     NSString *_dataType = nil;
-    
+
     if ([aType isEqualToString:@"CF_SQL_BIGINT"]) {
         _dataType = @"bigint";
     } else if ([aType isEqualToString:@"CF_SQL_BIT"]) {
@@ -462,11 +364,11 @@
     } else {
         _dataType = @"varchar";
     }
-    
+
     return _dataType;
 }
 
-#pragma mark - XML 
+#pragma mark - XML
 
 - (BOOL)pasreXMLDocFromPath:(NSString *)xmlDocPath
 {
@@ -483,14 +385,14 @@
         qlerror(@"%@",[err description]);
         return FALSE;
     }
-    
+
     return [self pasreXMLDoc];
 }
 
 - (BOOL)pasreXMLDoc
 {
     BOOL l_CreateTable = NO;
-    
+
     if (!_xmlDoc) {
         return NO;
     }
@@ -511,7 +413,7 @@
         return NO;
     }
     [self setTableName:lTableName];
-    
+
     // **************************
     // Does Table Exist
     if (![self tableExists:lTableName])
@@ -519,7 +421,7 @@
         qlerror(@"Table %@ Does Not Exist",lTableName);
         l_CreateTable = YES;
     }
-    
+
     // **************************
     // Data to remove prior to insert
     err = nil;
@@ -528,13 +430,13 @@
     if (!err) {
         if ([rm_nodes count] >= 1) {
             removeDataKeyPair = [NSDictionary dictionaryWithObject:[[[rm_nodes objectAtIndex:0] attributeForName:@"valueEQ"] stringValue]
-                                                        forKey:[[[rm_nodes objectAtIndex:0] attributeForName:@"column"] stringValue]];
+                                                            forKey:[[[rm_nodes objectAtIndex:0] attributeForName:@"column"] stringValue]];
         }
     } else {
         qlerror(@"%@",[err description]);
     }
     [self setRemoveData:removeDataKeyPair];
-    
+
     // **************************
     // Get Table Fields
     NSArray *fd_nodes = [_xmlDoc nodesForXPath:@"//table/field" error:&err];
@@ -546,7 +448,7 @@
         {
             field = [[DBField alloc] init];
             if ([e attributeForName:@"ColumnName"])
-            {    
+            {
                 [field setName:[self cleanColumnName:[[e attributeForName:@"ColumnName"] stringValue]]];
                 [fieldNamesArray addObject:[self cleanColumnName:[[e attributeForName:@"ColumnName"] stringValue]]];
             }
@@ -584,7 +486,7 @@
         }
     }
     [self setTableFieldNames:(NSArray *)fieldNamesArray];
-    
+
     // **************************
     // Row Data Action
     err = nil;
@@ -601,7 +503,7 @@
     } else {
         qlerror(@"%@",[err description]);
     }
-    
+
     // **************************
     // Get Row Data
     NSArray *rw_nodes = [_xmlDoc nodesForXPath:@"//data/row" error:&err];
@@ -622,7 +524,7 @@
                         break;
                     }
                 }
-                
+
                 if (hasObj >= 1) {
                     [r setObject:[[c objectAtIndex:1] stringValue] forKey:[[c objectAtIndex:0] stringValue]];
                 } else {
@@ -633,10 +535,10 @@
         [rowsArray addObject:r];
     }
     [self setTableRows:rowsArray];
-    
+
     // ****************************************************
     // Process Data
-    
+
     // **************************
     // Create Table
     if (l_CreateTable == YES) {
@@ -653,14 +555,14 @@
             return NO;
         }
     }
-    
+
     // **************************
     // Remove Data
     _didDeleteAll = -1;
     if (removeDataKeyPair != nil) {
         @try {
             qldebug(@"Removing existing records for '%@'",[removeDataKeyPair objectForKey:[[removeDataKeyPair allKeys] objectAtIndex:0]]);
-            MysqlDelete *delete = [MysqlDelete deleteWithConnection:self.dbConnection];
+            MysqlDelete *delete = [MysqlDelete deleteWithConnection:myConnection];
             delete.tableName=self.tableName;
             delete.qualifier=[NSString stringWithFormat:@"%@ = '%@'",[[removeDataKeyPair allKeys] objectAtIndex:0],[removeDataKeyPair objectForKey:[[removeDataKeyPair allKeys] objectAtIndex:0]]];
             qltrace(@"Delete Qualifier [%@]: %@",self.tableName,delete.qualifier);
@@ -674,17 +576,17 @@
             _didDeleteAll = 1;
         }
     }
-    
+
     // **************************
     // Insert/Update Data
     if (self.tableRows.count > 1000) {
-        //[self.dbConnection enableTransactions];
+        //[myConnection enableTransactions];
     }
     for (NSDictionary *row in self.tableRows)
     {
         if (_didDeleteAll == 0) {
             @try {
-                MysqlInsert *insert = [MysqlInsert insertWithConnection:self.dbConnection];
+                MysqlInsert *insert = [MysqlInsert insertWithConnection:myConnection];
                 insert.table=self.tableName;
                 insert.rowData=[self cleanRowOfDuplicates:row];
                 [insert execute];
@@ -705,8 +607,8 @@
                             }
                         }
                     }
-                    
-                    MysqlUpdate *update = [MysqlUpdate updateWithConnection:self.dbConnection];
+
+                    MysqlUpdate *update = [MysqlUpdate updateWithConnection:myConnection];
                     update.table=self.tableName;
                     update.rowData=row;
                     update.qualifier=upQualifier;
@@ -717,7 +619,7 @@
                 }
             } else if ([self.onExists isEqualToString:@"remove"]) {
                 @try {
-                    
+
                     // Create Remove Qualifier
                     NSMutableString *rmQualifier = [[NSMutableString alloc] init];
                     [rmQualifier appendString:@"AND 0=0"];
@@ -728,8 +630,8 @@
                             }
                         }
                     }
-                    
-                    MysqlInsert *insert = [MysqlInsert insertWithConnection:self.dbConnection];
+
+                    MysqlInsert *insert = [MysqlInsert insertWithConnection:myConnection];
                     insert.table=self.tableName;
                     insert.rowData=row;
                     [insert execute];
@@ -739,7 +641,7 @@
                 }
             } else if ([self.onExists isEqualToString:@"insert"]) {
                 @try {
-                    MysqlInsert *insert = [MysqlInsert insertWithConnection:self.dbConnection];
+                    MysqlInsert *insert = [MysqlInsert insertWithConnection:myConnection];
                     insert.table=self.tableName;
                     insert.rowData=row;
                     [insert execute];
@@ -751,7 +653,7 @@
         } else {
             // Insert Record
             @try {
-                MysqlInsert *insert = [MysqlInsert insertWithConnection:self.dbConnection];
+                MysqlInsert *insert = [MysqlInsert insertWithConnection:myConnection];
                 insert.table=self.tableName;
                 insert.rowData=row;
                 [insert execute];
@@ -762,13 +664,13 @@
         }
         if (self.tableRows.count > 1000)
         {
-            //[self.dbConnection commitTransaction];
-            //[self.dbConnection disableTransactions];
+            //[myConnection commitTransaction];
+            //[myConnection disableTransactions];
         }
-        
-        
+
+
     }
-    
+
     return YES;
 }
 
@@ -776,11 +678,11 @@
 {
     NSMutableArray *tAltAdd;
     NSMutableArray *tAltMod;
-    
+
     int intResult = 0;
     NSError *iErr = nil;
     NSArray *tableFields = [self getDBTableStructure:self.tableName];
-    
+
     // Add Missing Fields
     tAltAdd = [NSMutableArray arrayWithArray:[self findColumnsToAddToTable:xmlTableFields dbTable:tableFields]];
     if (tAltAdd != nil) {
@@ -797,7 +699,7 @@
             }
         }
     }
-    
+
     // Modify/Change Fields
     tAltMod = [NSMutableArray arrayWithArray:[self findColumnsToUpdateInTable:xmlTableFields dbTable:tableFields]];
     if (tAltMod != nil) {
@@ -814,7 +716,7 @@
             }
         }
     }
-    
+
     return YES;
 }
 
@@ -825,14 +727,14 @@
     for (MySQLTableColumn *col in dbTableCols) {
         [colNames addObject:[col.Field lowercaseString]];
     }
-    
+
     for (DBField *field in xmlTableCols) {
         if ([colNames containsObject:[field.name lowercaseString]] == NO) {
             qldebug(@"%@ is missing from table.",field.name);
             [colsToAdd addObject:field];
         }
     }
-    
+
     return (NSArray *)colsToAdd;
 }
 
@@ -904,7 +806,7 @@
         if (aCount == 1) {
             [colsToMod addObject:xmlField];
         }
-        
+
     }
     if ([colsToMod count] > 0) {
         qlinfo(@"Items to fix %ld",[colsToMod count]);
@@ -922,7 +824,7 @@
     } else {
         return NO;
     }
-    
+
     return NO;
 }
 

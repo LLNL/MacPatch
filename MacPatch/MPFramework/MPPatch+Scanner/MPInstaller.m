@@ -175,7 +175,7 @@
     NSString *_rbText = @"reboot";
     [_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
-    [fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
+    [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
 }
 
 

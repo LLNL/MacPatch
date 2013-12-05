@@ -1,6 +1,6 @@
 //
-//  MPAuthView.h
-//  MPAuthPlugin
+//  MPInventory.h
+//  MPInventoryD
 //
 /*
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
@@ -25,11 +25,17 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
-@interface MPAuthView : NSView
-{
-    NSImage	*backgroundImage;
-}
+@class MysqlServer;
+
+@interface MPInventory : NSObject
+
+@property (nonatomic, assign) NSArray *files;
+@property (nonatomic, assign) NSString *filesBaseDir;
+@property (nonatomic, assign) MysqlServer *myServer;
+@property (nonatomic, assign) BOOL keepProcessedFiles;
+
+- (BOOL)processFiles;
 
 @end
