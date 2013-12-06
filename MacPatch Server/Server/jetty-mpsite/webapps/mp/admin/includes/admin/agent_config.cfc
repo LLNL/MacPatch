@@ -305,18 +305,22 @@
 	        variable = "flattenResult"
 	        timeout = "15">
 	    </cfexecute>
-		<!--- Compress the inner pkg --->	
+		<!--- Compress the inner pkg --->
+		<cflog application="yes" text="[processPackage]: --zip #pkgPath# #pkgPathZip#">
 		<cfexecute 
 			name = "/usr/bin/ditto"
-			arguments = "-c -k #pkgPath# #pkgPathZip#"
+			arguments = "-c -k #tmpDir#/#arguments.mainPkg# #pkgPathZip#"
 			variable = "aBaseZipResult"
 			timeout = "15">
 		</cfexecute>
 		
 		<cfset pkgHash = getSHA1Hash(pkgPathZip)>
+        <cflog application="yes" text="[processPackage][hash]: #pkgPathZip# #pkgHash#">
 		
 		<cfset pType = "NA">
 		<cfset pType = #IIF(FindNoCase("base",arguments.mainPkg) GTE 1,DE('app'),DE('update'))#>
+        
+        <cflog application="yes" text="[processPackage]: update mp_client_agents set pkg_hash = '#pkgHash#' Where puuid = '#arguments.gCUUID#' AND type = '#ptype#'">
 		<cftry>
 			<cfquery datasource="mpds" name="qAddUpdate">
 				update mp_client_agents 
