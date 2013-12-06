@@ -520,6 +520,52 @@
         <cfif #IsXmlNode(xmldoc.tables.table)#>
             <cfif findNoCase("mpi_", xmldoc.tables.table.XmlAttributes.name) NEQ 0 OR findNoCase("mp_", xmldoc.tables.table.XmlAttributes.name) NEQ 0>
                 <cftry>
+					<!--- Clean Up XML Doc to send theough DataMgr --->
+	                <cfif findNoCase("mp_client_patches_", xmldoc.tables.table.XmlAttributes.name) EQ 1>
+	
+	                    <cfset var arrDelNodes = XmlSearch(xmldoc,"//tables/removerows") />
+	                    <cfif ArrayLen(arrDelNodes) GTE 1>
+	                        <cfif #IsXmlNode(xmldoc.tables.removerows)#>
+	                            <cfset aTable = #xmldoc.tables.removerows.XmlAttributes.table#>
+	
+	                            <cfset bCol = #xmldoc.tables.remove.XmlAttributes.column#>
+	                            <cfset bColVal = #xmldoc.tables.remove.XmlAttributes.valueEQ#>
+	
+	                            <cfset aCol = #xmldoc.tables.removerows.XmlAttributes.column#>
+	                            <cfset aColVal = #xmldoc.tables.removerows.XmlAttributes.value#>
+	
+	
+	                            <cfquery datasource="#this.ds#" name="qDel" result="res">
+	                                Delete from #aTable#
+	                                Where
+	                                #bCol# = <cfqueryparam value="#bColVal#">
+	                                AND
+	                                #aCol# = <cfqueryparam value="#aColVal#">
+	                            </cfquery>
+	                            <cfreturn True>
+	                        <cfelse>
+	                            <cfreturn False>
+	                        </cfif>
+	                    </cfif>
+	
+	                    <cfset var arrNodes = XmlSearch(xmldoc,"//tables/remove") />
+	                    <cfif ArrayLen(arrNodes) GTE 1>
+	                        <cfif #IsXmlNode(xmldoc.tables.remove)#>
+	                            <cfset aTable = #xmldoc.tables.data.XmlAttributes.table#>
+	                            <cfset aCuuid = "NA">
+	                            <cfif isDefined("xmldoc.tables.data.row[1].field[1].XmlAttributes.name")>
+	                                <cfif #xmldoc.tables.data.row[1].field[1].XmlAttributes.name# EQ "cuuid">
+	                                    <cfset aCuuid = #xmldoc.tables.data.row[1].field[1].XmlAttributes.value#>
+	                                </cfif>
+	                            </cfif>
+
+	                            <cfset xmldoc.tables.remove.XmlAttributes.column = "cuuid">
+	                            <cfset xmldoc.tables.remove.XmlAttributes.valueEQ = #aCuuid#>
+	                        </cfif>
+	                    </cfif>
+	                    <cfset theXML = ToString(xmlDoc)>
+	                </cfif>
+					
 					<cfset jvmObj = CreateObject("java","java.lang.System").getProperties() />
 					<!--- Figureout if Jetty Or Tomcat --->
 					<cfif IsDefined("jvmObj.catalina.base")>
@@ -588,29 +634,72 @@
         <!--- Check to see if the table is a mpi table (inventory) --->
         <!--- If it is a mpi_ table, then write out a inventory file --->
         <cfif #IsXmlNode(xmldoc.tables.table)#>
-            <!--- <cfif findNoCase("mpi_", xmldoc.tables.table.XmlAttributes.name) NEQ 0> --->
                 <cftry>
-                <!--- <cfif xmldoc.tables.table.XmlAttributes.name EQ "mpi_SPApplications"> --->
-						<cfset srvRoot = CreateObject("java","java.lang.System").getProperties() />
-                        <cfset dirP = #srvRoot.jetty.home# & "/InvData">
-                        <cfif DirectoryExists(dirP) EQ False>
-                            <cfset tmpD = DirectoryCreate(dirP)>
-                        </cfif>
+					<!--- Clean Up XML Doc to send theough DataMgr --->
+	                <cfif findNoCase("mp_client_patches_", xmldoc.tables.table.XmlAttributes.name) EQ 1>
+	
+	                    <cfset var arrDelNodes = XmlSearch(xmldoc,"//tables/removerows") />
+	                    <cfif ArrayLen(arrDelNodes) GTE 1>
+	                        <cfif #IsXmlNode(xmldoc.tables.removerows)#>
+	                            <cfset aTable = #xmldoc.tables.removerows.XmlAttributes.table#>
+	
+	                            <cfset bCol = #xmldoc.tables.remove.XmlAttributes.column#>
+	                            <cfset bColVal = #xmldoc.tables.remove.XmlAttributes.valueEQ#>
+	
+	                            <cfset aCol = #xmldoc.tables.removerows.XmlAttributes.column#>
+	                            <cfset aColVal = #xmldoc.tables.removerows.XmlAttributes.value#>
+	
+	
+	                            <cfquery datasource="#this.ds#" name="qDel" result="res">
+	                                Delete from #aTable#
+	                                Where
+	                                #bCol# = <cfqueryparam value="#bColVal#">
+	                                AND
+	                                #aCol# = <cfqueryparam value="#aColVal#">
+	                            </cfquery>
+	                            <cfreturn True>
+	                        <cfelse>
+	                            <cfreturn False>
+	                        </cfif>
+	                    </cfif>
+	
+	                    <cfset var arrNodes = XmlSearch(xmldoc,"//tables/remove") />
+	                    <cfif ArrayLen(arrNodes) GTE 1>
+	                        <cfif #IsXmlNode(xmldoc.tables.remove)#>
+	                            <cfset aTable = #xmldoc.tables.data.XmlAttributes.table#>
+	                            <cfset aCuuid = "NA">
+	                            <cfif isDefined("xmldoc.tables.data.row[1].field[1].XmlAttributes.name")>
+	                                <cfif #xmldoc.tables.data.row[1].field[1].XmlAttributes.name# EQ "cuuid">
+	                                    <cfset aCuuid = #xmldoc.tables.data.row[1].field[1].XmlAttributes.value#>
+	                                </cfif>
+	                            </cfif>
 
-                        <cfset dirDebug = #srvRoot.jetty.home# &"/InvData/Debug">
-                        <cfif DirectoryExists(dirDebug) EQ False>
-                            <cfset tmpDebug = DirectoryCreate(dirDebug)>
-                        </cfif>
+	                            <cfset xmldoc.tables.remove.XmlAttributes.column = "cuuid">
+	                            <cfset xmldoc.tables.remove.XmlAttributes.valueEQ = #aCuuid#>
+	                        </cfif>
+	                    </cfif>
+	                    <cfset theXML = ToString(xmlDoc)>
+	                </cfif>
+			
+					<cfset srvRoot = CreateObject("java","java.lang.System").getProperties() />
+                    <cfset dirP = #srvRoot.jetty.home# & "/InvData">
+                    <cfif DirectoryExists(dirP) EQ False>
+                        <cfset tmpD = DirectoryCreate(dirP)>
+                    </cfif>
 
-                        <cfset dirP = #srvRoot.jetty.home# &"/InvData/Files">
-                        <cfif DirectoryExists(dirP) EQ False>
-                            <cfset tmpD = DirectoryCreate(dirP)>
-                        </cfif>
+                    <cfset dirDebug = #srvRoot.jetty.home# &"/InvData/Debug">
+                    <cfif DirectoryExists(dirDebug) EQ False>
+                        <cfset tmpDebug = DirectoryCreate(dirDebug)>
+                    </cfif>
 
-                        <cfset dirF = #dirP# & "/mpi_" & #CreateUuid()# & ".txt">
-                        <cffile action="write" NAMECONFLICT="makeunique" file="#dirF#" output="#theXML#">
-                        <cfreturn true>
-                <!---   </cfif> --->
+                    <cfset dirP = #srvRoot.jetty.home# &"/InvData/Files">
+                    <cfif DirectoryExists(dirP) EQ False>
+                        <cfset tmpD = DirectoryCreate(dirP)>
+                    </cfif>
+
+                    <cfset dirF = #dirP# & "/mpi_" & #CreateUuid()# & ".txt">
+                    <cffile action="write" NAMECONFLICT="makeunique" file="#dirF#" output="#theXML#">
+                    <cfreturn true>
 
                     <cfcatch type="any">
 						<cfinvoke component="ws_logger" method="LogEvent">
