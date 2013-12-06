@@ -1,5 +1,6 @@
 <cfparam name="mainZipFileName" default="MPClientInstall.pkg.zip">
 <cfparam name="infoFileName" default="mpInfo.ini">
+<cfparam name="enableLog" default="false">
 
 <cfif IsDefined("form.AgentPackage") AND form.AgentPackage EQ "Upload">
 	<cfif #form.pkg# gt "">
@@ -23,7 +24,8 @@
 		</cfif>
         
         <cfset pkgName = #clientfilename# />
-		
+        <cfset lg = logit(enableLog,"-------------------------- START --------------------------")>
+		<cfset lg = logit(enableLog,"/usr/bin/ditto -x -k #serverfileuri# #ulTmpPath#")>
 		<!--- Unzip the Main Client Installer --->
 		<cfexecute 
    			name = "/usr/bin/ditto"
@@ -33,6 +35,7 @@
 		</cfexecute>
         
         <!--- Extract Flat Package --->
+        <cfset lg = logit(enableLog,"/usr/sbin/pkgutil --expand #ulTmpPath#/#pkgName# #ulTmpPath#/MPClientInstall")>
         <cfexecute 
 			name = "/usr/sbin/pkgutil"
 			arguments = "--expand #ulTmpPath#/#pkgName# #ulTmpPath#/MPClientInstall"
@@ -40,12 +43,14 @@
 			timeout = "15">
 		</cfexecute>
         
+        <cfset lg = logit(enableLog,"Parse ini file #ulTmpPath#/MPClientInstall/Resources/#infoFileName#")>
 		<cfset iniFile = "#ulTmpPath#/MPClientInstall/Resources/#infoFileName#">
 		<cfset sections = GetProfilesections(iniFile)>
 		<cfset data = structNew()>
 		<cfset pkgs = arrayNew(1)>
 		
 		<!--- Add the Main Client Installer First, to the pks array --->
+		<cfset lg = logit(enableLog,"Add to pkgs array (#mainZipFileName#)")>
 		<cfset _a = #Arrayappend(pkgs,mainZipFileName)#>
 		
 		<!--- Create a Struct of the ini file --->
@@ -54,6 +59,7 @@
 			<cfset aStruct = structNew()>
 			<cfloop index="key" list="#Evaluate("sections." & akey)#">
 				<cfif key EQ "pkg">
+					<cfset lg = logit(enableLog,"Add to pkgs array (#GetFilefrompath(getProfileString(iniFile, akey, key))#.zip)")>
 					<cfset _a = #Arrayappend(pkgs,GetFilefrompath(getProfileString(iniFile, akey, key)) & ".zip")#>
 				</cfif>	
 				<cfset aStruct[key] = getProfileString(iniFile, akey, key)>
@@ -74,9 +80,11 @@
 		
         
 		<!--- Configure Packages for update mechanisim --->
+		<cfset lg = logit(enableLog,"Configure Packages for update mechanisim...")>
 		<cfset results = 0>
 		<cfloop collection="#data#" item="key">
 			<cftry>
+				<cfset lg = logit(enableLog,"processPackage == #pkgName#")>
 				<cfset _i = processPackage(pkgUUID,pkgName,data[key],key,agentPlist.result)>
 				<cfif _i.errorNo NEQ "0">
 					<cfdump var="Error[#_i.errorNo#]:#_i#">
@@ -95,14 +103,18 @@
 		</cfif>
         
 		<!--- Write Config to Main Package --->
+		<cfset lg = logit(enableLog,"Delete #ulTmpPath#/#clientfilename#.zip")>
+		<cfset lg = logit(enableLog,"Delete #ulTmpPath#/#pkgName#")>
 		<cffile action="delete" file="#ulTmpPath#/#clientfilename#.zip">	
         <cffile action="delete" file="#ulTmpPath#/#pkgName#">    
+        <cfset lg = logit(enableLog,"/usr/sbin/pkgutil --flatten #ulTmpPath#/MPClientInstall #ulTmpPath#/#pkgName#")>
         <cfexecute 
 			name = "/usr/sbin/pkgutil"
 			arguments = "--flatten #ulTmpPath#/MPClientInstall #ulTmpPath#/#pkgName#"
 			variable = "flattenResult"
 			timeout = "15">
 		</cfexecute>
+		<cfset lg = logit(enableLog,"/usr/bin/ditto -c -k #ulTmpPath#/#pkgName# #ulTmpPath#/#pkgName#.zip")>
 		<cfexecute 
 			name = "/usr/bin/ditto"
 			arguments = "-c -k #ulTmpPath#/#pkgName# #ulTmpPath#/#pkgName#.zip"
@@ -137,6 +149,7 @@
 	
     	<!--- Clean up the temp Dir --->
 		<cfset rm_File = "#ulTmpPath#">
+		<cfset lg = logit(enableLog,"Remove temp dir #rm_File#")>
 		<cfdirectory action="delete" directory="#rm_File#" recurse="true">
     </cfif>
 
@@ -226,28 +239,35 @@
 	</cfsavecontent>
 	<cfset mpVersion = htmlCompressFormat(mpVerPlist, 2)>
 	
-	<!--- Create Paths --->
-	<cfset pkgPath = tmpDir & "/MPClientInstall/" & pkg>
+	<!--- Create Paths --->	
+	<cfset pkgPath = tmpDir & "/MPClientInstall" & pkg>
+	<cfset lg = logit(enableLog,"pkgPath=#pkgPath#")>
 	<cfset pkgPathZip = tmpDir & "/" & pkgName & ".zip">
+	<cfset lg = logit(enableLog,"pkgPathZip=#pkgPathZip#")>
 	<cfset pkgURLPath = "/mp-content/clients/updates/#arguments.gCUUID#/"& GetFilefrompath(pkgPathZip)>
+	<cfset lg = logit(enableLog,"pkgURLPath=#pkgURLPath#")>
 	
 	<!--- Add Agent Config To Package --->
+	<cfset lg = logit(enableLog,"write #pkgPath#/Scripts/gov.llnl.mpagent.plist")>
 	<cffile action = "write" 
     		file = "#pkgPath#/Scripts/gov.llnl.mpagent.plist" 
     		output = "#arguments.agentConfigPlist#">
+    <cfset lg = logit(enableLog,"write #pkgPath#/Scripts/.mpVersion.plist")> 		
     <cffile action = "write" 
     		file = "#pkgPath#/Scripts/.mpVersion.plist" 
-    		output = "#mpVersion#">        
+    		output = "#mpVersion#">     
+    <cfset lg = logit(enableLog,"/usr/sbin/pkgutil --flatten #pkgPath# #tmpDir#/#pkg#")> 		   
 	<cfexecute 
         name = "/usr/sbin/pkgutil"
-        arguments = "--flatten #pkgPath# #tmpDir#/#pkg#"
+        arguments = "--flatten #pkgPath# #tmpDir##pkg#"
         variable = "flattenResult"
         timeout = "15">
     </cfexecute>
 	<!--- Compress the inner pkg --->	
+	<cfset lg = logit(enableLog,"/usr/bin/ditto -c -k #tmpDir##pkg# #pkgPathZip#")>
 	<cfexecute 
 		name = "/usr/bin/ditto"
-		arguments = "-c -k #pkgPath# #pkgPathZip#"
+		arguments = "-c -k #tmpDir##pkg# #pkgPathZip#"
 		variable = "aBaseZipResult"
 		timeout = "15">
 	</cfexecute>
@@ -637,6 +657,15 @@
 	<cfset sha1 = #ListGetAt(sha1Result,2,"= ")#>
 	
 	<cfreturn sha1>
+</cffunction>
+
+<cffunction name="logit" access="public" output="no">
+    <cfargument name="enable">
+    <cfargument name="StringToLog">
+    
+    <cfif arguments.enable EQ true> 
+		<cflog file="AgentUpload" application="no" text="#arguments.StringToLog#">
+	</cfif>
 </cffunction>
 
 <cfscript>

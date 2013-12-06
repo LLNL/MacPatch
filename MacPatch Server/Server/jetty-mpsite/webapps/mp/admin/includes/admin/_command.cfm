@@ -149,15 +149,22 @@
 						        <cfset efKeyName = "CheckSignatures">
 						    </cfcase>
 						</cfswitch>
-
-						<cfquery datasource="#session.dbsource#" name="qSetDefaultConfigUpdate" result="r">
-							Update mp_agent_config_data
-							Set aKeyValue = <cfqueryparam value="#args[i]#">,
-							enforced = <cfqueryparam value="#listGetAt(args.ENFORCED, x)#">
-							Where aid = <cfqueryparam value="#args.config#">
-							AND aKey = <cfqueryparam value="#efKeyName#">
-						</cfquery>
 						
+						<cfif containsKey(efKeyName,args.config) EQ true>
+							<cfquery datasource="#session.dbsource#" name="qSetDefaultConfigUpdate" result="r">
+								Update mp_agent_config_data
+								Set aKeyValue = <cfqueryparam value="#args[i]#">,
+								enforced = <cfqueryparam value="#listGetAt(args.ENFORCED, x)#">
+								Where aid = <cfqueryparam value="#args.config#">
+								AND aKey = <cfqueryparam value="#efKeyName#">
+							</cfquery>
+						<cfelse>
+							<cfquery datasource="#session.dbsource#" name="qSetDefaultConfigUpdate" result="r">
+								Insert Into mp_agent_config_data (aid,aKey,aKeyValue,enforced)
+								Values(<cfqueryparam value="#args.config#">,<cfqueryparam value="#efKeyName#">,
+								<cfqueryparam value="#args[i]#">,<cfqueryparam value="#listGetAt(args.ENFORCED, x)#">)
+							</cfquery>
+						</cfif>						
 						<cfset x = x + 1>
 					</cfif>
 				</cfloop>
@@ -265,6 +272,28 @@
 	</cfswitch>
 </cfsilent>	
 
+<cffunction name="containsKey" access="public" output="Yes" returntype="any">
+    <cfargument name="key">
+    <cfargument name="configID">
+
+	<cftry>
+		<cfquery datasource="mpds" name="qGetAgentConfigData">
+			Select aKey From mp_agent_config_data
+			Where aid = '#arguments.configID#'
+			AND aKey = '#arguments.configID#'
+		</cfquery>
+		<cfif qGetAgentConfigData.RecordCount GTE 1>
+			<cfreturn True>
+		</cfif>
+		<cfcatch>
+			<cfset result.errorNo = "1">
+			<cfset result.errorMsg = "#cfcatch.Detail# #cfcatch.message#">	
+		</cfcatch>
+	</cftry>
+	
+	<cfreturn False>
+</cffunction>	
+
 <cffunction name="getConfigRevision" access="public" output="Yes" returntype="any">
     <cfargument name="configID">
 	
@@ -296,4 +325,4 @@
 	</cftry>
 	<cfdump var="#result.result#">
 	<cfreturn result>
-</cffunction>	
+</cffunction>
