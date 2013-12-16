@@ -30,9 +30,6 @@
 #import "MPAuthWindow.h"
 #import "MPAuthController.h"
 
-
-#define	MP_LOG                      @"/Library/MacPatch/Client/Logs/MPAuthPlugin.log"
-
 // alignments
 #define kHorizontalCenterCompensationPercent	0.05f
 #define kVerticalCenterCompensationPercent		0.05f
@@ -106,6 +103,8 @@
 
 - (NSImage *)imageForName:(NSString*)iName;
 
+- (void)sendReboot;
+
 @end
 
 @implementation MPAuthWindow
@@ -178,14 +177,20 @@ typedef NSUInteger MPInstallIconStatus;
 
 - (void)countDownToClose
 {
-    for (int i = 0; i < 10;i++)
+    for (int i = 0; i < 5;i++)
     {
         // Message that window is closing
-        statusText.stringValue = [NSString stringWithFormat:@"Closing window in %d seconds...",(10-i)];
+        statusText.stringValue = [NSString stringWithFormat:@"Rebooting system in %d seconds...",(5-i)];
         [statusText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
         sleep(1);
     }
+
+    statusText.stringValue = @"Rebooting System Please Be Patient...";
+    [statusText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
+    
+    [self sendReboot];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"closeWindowNotification" object:self userInfo:nil];
+
 }
 
 - (void)toggleFullScreen
@@ -306,6 +311,32 @@ typedef NSUInteger MPInstallIconStatus;
 }
 
 #pragma mark - Worker Methods
+
+- (void)sendReboot
+{
+    NSError *error = nil;
+	int result = 99;
+	if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            result = 1001;
+        }
+        if (!proxy) {
+            result = 1002;
+            [self cleanup];
+            return;
+        }
+    }
+
+    @try
+	{
+		qldebug(@"[proxy run reboot]");
+		[proxy logoutInstallCompletion:0]; //Just Reboot for now
+    }
+    @catch (NSException *e) {
+        qlerror(@"runSetCatalogURLUsingHelper error: %@", e);
+    }
+}
 
 - (int)setCatalogURL
 {
@@ -600,6 +631,7 @@ done:
 
                             [tmpPatchDict setObject:[self imageForName:@"AppleLogo"] forKey:@"typeImg"];
 							[tmpPatchDict setObject:@"Apple" forKey:@"type"];
+                            [tmpPatchDict setObject:[[approvedApplePatches objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
                             [tmpPatchDict setObject:[self imageForName:@"Empty"] forKey:@"statusImage"];
 							[approvedUpdatesArray addObject:tmpPatchDict];
                             qldebug(@"Apple Patch Dictionary Added: %@",tmpPatchDict);
@@ -637,6 +669,8 @@ done:
                 [tmpPatchDict setObject:[self imageForName:@"MPLogo_64x64"] forKey:@"typeImg"];
                 [tmpPatchDict setObject:[self imageForName:@"Empty"] forKey:@"statusImage"];
                 [tmpPatchDict setObject:@"Third" forKey:@"type"];
+                [tmpPatchDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
+                [tmpPatchDict setObject:[approvedPatch objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
 
 				[approvedUpdatesArray addObject:tmpPatchDict];
                 qldebug(@"Custom Patch Dictionary Added: %@",tmpPatchDict);
@@ -645,6 +679,9 @@ done:
 		}
 	}
 
+    // Sort Array
+    NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"patch_install_weight" ascending:YES];
+    [approvedUpdatesArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
     return (NSArray *)approvedUpdatesArray;
 }
 
@@ -701,6 +738,7 @@ done:
         {
 			[patchesArrayController removeObjects:[patchesArrayController arrangedObjects]];
 			[patchesArrayController addObjects:approvedPatches];
+            qlinfo(@"approvedPatches:\n%@)",approvedPatches);
 			[patchesTableView reloadData];
 			[patchesTableView deselectAll:self];
             [patchesTableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
@@ -744,7 +782,6 @@ done:
                 NSString *infoText = [NSString stringWithFormat:@"Starting install for %@",[patch objectForKey:@"patch"]];
                 [progressText setStringValue:infoText];
                 [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                [NSThread sleepForTimeInterval:1.0];
 
                 // Get all of the patches, main and subs
                 // This is messed up, not sure why I have an array right within an array, needs to be fixed ...later :-)
@@ -776,7 +813,6 @@ done:
                         qlinfo(@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
                         [progressText setStringValue:[NSString stringWithFormat:@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
                         [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                        [NSThread sleepForTimeInterval:1.0];
 
                         //Pre Proxy Config
                         downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[currPatchToInstallDict objectForKey:@"url"]];
@@ -806,8 +842,7 @@ done:
                     // *****************************
                     // Validate hash, before install
                     [progressText setStringValue:[NSString stringWithFormat:@"Validating downloaded patch."]];
-                    [progressText display];
-                    [NSThread sleepForTimeInterval:1.0];
+                    [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 
                     MPCrypto *mpCrypto = [[MPCrypto alloc] init];
                     NSString *fileHash = [mpCrypto md5HashForFile:dlPatchLoc];
@@ -825,8 +860,7 @@ done:
                     // *****************************
                     // Now we need to unzip
                     [progressText setStringValue:[NSString stringWithFormat:@"Uncompressing patch, to begin install."]];
-                    [progressText display];
-                    [NSThread sleepForTimeInterval:1.0];
+                    [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 
                     qlinfo(@"Begin decompression of file, %@",dlPatchLoc);
                     err = nil;
@@ -841,7 +875,6 @@ done:
                     }
                     [progressText setStringValue:[NSString stringWithFormat:@"Patch has been uncompressed."]];
                     [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                    [NSThread sleepForTimeInterval:1.0];
 
                     qlinfo(@"File has been decompressed.");
 
@@ -853,11 +886,6 @@ done:
                         [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
                         NSString *preInstScript = [[currPatchToInstallDict objectForKey:@"preinst"] decodeBase64WithNewLinesReturnString:NO];
                         qldebug(@"preInstScript=%@",preInstScript);
-//#ifdef DEBUG
-//                        [progressText setStringValue:[NSString stringWithFormat:@"Run pre-install script."]];
-//                        [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-//                        [NSThread sleepForTimeInterval:2.0];
-//#else
                         if ([self runScriptViaProxy:preInstScript] != 0 )
                         {
                             qlerror(@"Error (%d) running pre-install script.",(int)installResult);
@@ -865,7 +893,6 @@ done:
                             [patchesTableView reloadData];
                             break;
                         }
-//#endif
                     }
 
                     // *****************************
@@ -884,17 +911,8 @@ done:
                             pkgPath = [NSString stringWithFormat:@"%@/%@",pkgBaseDir,[pkgList objectAtIndex:ii]];
                             [progressText setStringValue:[NSString stringWithFormat:@"Installing %@",[pkgPath lastPathComponent]]];
                             [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                            [NSThread sleepForTimeInterval:2.0];
+
                             qlinfo(@"Start install of %@",pkgPath);
-/*
-#ifdef DEBUG
-                            [NSThread sleepForTimeInterval:2.0];
-                            [progressText setStringValue:[NSString stringWithFormat:@"Install was successful."]];
-                            [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                            [NSThread sleepForTimeInterval:2.0];
-                            qlinfo(@"%@ was installed successfully.",pkgPath);
-#else
- */
                             installResult = [self installPKGViaProxy:pkgPath target:@"/" env:[currPatchToInstallDict objectForKey:@"env"]];
                             if (installResult != 0) {
                                 [progressText setStringValue:[NSString stringWithFormat:@"Error installing patch."]];
@@ -908,7 +926,6 @@ done:
                                 [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
                                 qlinfo(@"%@ was installed successfully.",pkgPath);
                             }
-//#endif
                         } // End Loop
                     }
                     @catch (NSException *e)
@@ -932,20 +949,13 @@ done:
                     {
                         [progressText setStringValue:[NSString stringWithFormat:@"Begin post install script."]];
                         [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                        [NSThread sleepForTimeInterval:2.0];
+
                         NSString *postInstScript = [[currPatchToInstallDict objectForKey:@"postinst"] decodeBase64WithNewLinesReturnString:NO];
-/*                        qldebug(@"postInstScript=%@",postInstScript);
-#ifdef DEBUG
-                        [progressText setStringValue:[NSString stringWithFormat:@"Install was successful."]];
-                        [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                        [NSThread sleepForTimeInterval:2.0];
-#else
- */
+                        qldebug(@"postInstScript=%@",postInstScript);
                         if ([self runScriptViaProxy:postInstScript] != 0 )
                         {
                             break;
                         }
-//#endif
                     }
 
                     // *****************************
@@ -959,7 +969,6 @@ done:
                     }
                     [progressText setStringValue:[NSString stringWithFormat:@"Patch install completed."]];
                     [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                    [NSThread sleepForTimeInterval:2.0];
 
                     [self updateTableAndArrayController:i status:1];
                 } // End patchArray To install
@@ -968,12 +977,8 @@ done:
             {
                 // Process Apple Type Patches
                 infoText = [NSString stringWithFormat:@"Starting install for %@",[patch objectForKey:@"patch"]];
-                qlinfo(@"Apple Dict:%@",patch);
-                qlinfo(@"%@",infoText);
-
                 [progressText setStringValue:infoText];
                 [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                [NSThread sleepForTimeInterval:2.0];
 
                 // Update the table view to show we are in the install process
                 [self updateTableAndArrayController:i status:0];
@@ -981,14 +986,7 @@ done:
                 if ([[patch objectForKey:@"hasCriteria"] boolValue] == NO || ![patch objectForKey:@"hasCriteria"])
                 {
                     qlinfo(@"%@ has no criteria, begining install.",[patch objectForKey:@"patch"]);
-#ifdef DEBUG
-                    [progressText setStringValue:[NSString stringWithFormat:@"Install apple update."]];
-                    [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                    [NSThread sleepForTimeInterval:2.0];
-                    installResult = 0;
-#else
                     installResult = [self installAppleSoftwareUpdateViaProxy:[patch objectForKey:@"patch"]];
-#endif
                 }
                 else
                 {
@@ -1013,9 +1011,6 @@ done:
 
                             [progressText setStringValue:[NSString stringWithFormat:@"Run pre-install criteria."]];
                             [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-#ifdef DEBUG
-                            [NSThread sleepForTimeInterval:2.0];
-#else
                             s_res = [self runScriptViaProxy:scriptText];
                             if (s_res != 0) {
                                 installResult = 1;
@@ -1025,18 +1020,11 @@ done:
                                 qlinfo(@"Pre-install script returned true.");
                             }
                             criteriaDictPre = nil;
-#endif
                         }
                     }
                     // Run the patch install, now that the install has occured.
-#ifdef DEBUG
-                    [progressText setStringValue:[NSString stringWithFormat:@"Install apple update."]];
-                    [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                    [NSThread sleepForTimeInterval:2.0];
-                    installResult = 0;
-#else
                     installResult = [self installAppleSoftwareUpdateViaProxy:[patch objectForKey:@"patch"]];
-#endif
+
                     // If Install retuened anything but 0, the dont run post criteria
                     if (installResult != 0)
                     {
@@ -1053,11 +1041,8 @@ done:
 
                             scriptData = [[criteriaDictPost objectForKey:@"data"] decodeBase64WithNewlines:NO];
                             scriptText = [[NSString alloc] initWithData:scriptData encoding:NSASCIIStringEncoding];
-#ifdef DEBUG
                             [progressText setStringValue:[NSString stringWithFormat:@"Run post-install criteria."]];
                             [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                            [NSThread sleepForTimeInterval:2.0];
-#else
                             s_res = [self runScriptViaProxy:scriptText];
                             if (s_res != 0) {
                                 installResult = 1;
@@ -1067,7 +1052,6 @@ done:
                                 qlinfo(@"Post-install script returned true.");
                             }
                             criteriaDictPost = nil;
-#endif
                         }
                     }
                 }
@@ -1077,7 +1061,6 @@ done:
                 {
                     [progressText setStringValue:[NSString stringWithFormat:@"Error installing update, error code %d.",installResult]];
                     [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                    [NSThread sleepForTimeInterval:2.0];
                     qlerror(@"Error installing update, error code %d.",installResult);
                     [self updateTableAndArrayController:i status:2];
                     continue;
@@ -1086,7 +1069,6 @@ done:
                 {
                     [progressText setStringValue:[NSString stringWithFormat:@"%@ was installed successfully.",[patch objectForKey:@"patch"]]];
                     [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                    [NSThread sleepForTimeInterval:2.0];
                     qlinfo(@"%@ was installed successfully.",[patch objectForKey:@"patch"]);
 
                     // Post the results to web service
@@ -1099,8 +1081,6 @@ done:
 
                     [progressText setStringValue:[NSString stringWithFormat:@"Patch install completed."]];
                     [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-                    [NSThread sleepForTimeInterval:2.0];
-
                     [self updateTableAndArrayController:i status:1];
                 }
             }

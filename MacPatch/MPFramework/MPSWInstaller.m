@@ -1182,11 +1182,16 @@ done:
 - (void)setLogoutHookViaHelper
 {
 	// MP 2.2.0 & Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
-    NSString *_rbFile = @"/private/tmp/.MPAuthRun";
+    NSString *_atFile = @"/private/tmp/.MPAuthRun";
+    NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
     NSString *_rbText = @"reboot";
-    [_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
+    NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
+    [rebootPlist writeToFile:_rbFile atomically:YES];
+    [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
-    [fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
+    [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
+    [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
 }
 // Proxy Method
 - (int)setPermissionsForFileViaHelper:(in bycopy NSString *)aFile posixPerms:(unsigned long)posixPermissions

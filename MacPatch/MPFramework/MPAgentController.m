@@ -837,13 +837,16 @@ done:
     {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
         // 10.9
-		
-		NSString *_rbFile = @"/private/tmp/.MPAuthRun";
+		NSString *_atFile = @"/private/tmp/.MPAuthRun";
+        NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
 		NSString *_rbText = @"reboot";
         // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
-		[_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-		NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
+        NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
+        [rebootPlist writeToFile:_rbFile atomically:YES];
+        [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
 		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
+        [fm setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
 	} 
 
 done:	
@@ -1165,13 +1168,16 @@ done:
 	if (launchRebootWindow > 0)
     {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
-		
-		NSString *_rbFile = @"/private/tmp/.MPAuthRun";
+		NSString *_atFile = @"/private/tmp/.MPAuthRun";
+        NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
 		NSString *_rbText = @"reboot";
         // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
-		[_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-		NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
+        NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
+        [rebootPlist writeToFile:_rbFile atomically:YES];
+        [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
 		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
+        [fm setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
 	} 
     
 done:

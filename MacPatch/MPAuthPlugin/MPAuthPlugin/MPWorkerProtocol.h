@@ -73,4 +73,6 @@
 - (int)setPermissionsForFileViaHelper:(in bycopy NSString *)aFile posixPerms:(unsigned long)posixPermissions;
 - (void)setDebugLogging:(BOOL)aState;
 
+- (void)logoutInstallCompletion:(int)taskAction;
+
 @end

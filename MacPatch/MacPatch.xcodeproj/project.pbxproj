@@ -39,7 +39,6 @@
 				8F68EAE71757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAEB1757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAED1757D4D500982EF9 /* PBXTargetDependency */,
-				8F68EAEF1757D4D500982EF9 /* PBXTargetDependency */,
 				8F68EAF51757D4D500982EF9 /* PBXTargetDependency */,
 			);
 			name = AGENT_BUILD;
@@ -75,7 +74,6 @@
 				8FD890E016E5248800A870A3 /* PBXTargetDependency */,
 				8FD890E416E5248800A870A3 /* PBXTargetDependency */,
 				8FD890E616E5248800A870A3 /* PBXTargetDependency */,
-				8FD890E816E5248800A870A3 /* PBXTargetDependency */,
 				8FD890F016E5248800A870A3 /* PBXTargetDependency */,
 			);
 			name = AGENT_BUILD_DEBUG;
@@ -153,13 +151,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8FD890A616DFEDB700A870A3;
 			remoteInfo = "Self Patch";
-		};
-		8F68EAF01757D4D500982EF9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD88F8E16DFD3FB00A870A3 /* MPLogout.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8FD88F6D16DFD3FB00A870A3;
-			remoteInfo = MPLogout;
 		};
 		8F68EAF21757D4D500982EF9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -308,13 +299,6 @@
 			remoteGlobalIDString = 8FD88F3216DFD26C00A870A3;
 			remoteInfo = MPTaskEditor;
 		};
-		8FD88F9216DFD3FC00A870A3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD88F8E16DFD3FB00A870A3 /* MPLogout.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8FD88F6E16DFD3FB00A870A3;
-			remoteInfo = MPLogout;
-		};
 		8FD88FEB16DFDD9300A870A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FD88FE716DFDD9200A870A3 /* MPCatalog.xcodeproj */;
@@ -370,13 +354,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8FD890A616DFEDB700A870A3;
 			remoteInfo = "Self Patch";
-		};
-		8FD890E716E5248800A870A3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD88F8E16DFD3FB00A870A3 /* MPLogout.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8FD88F6D16DFD3FB00A870A3;
-			remoteInfo = MPLogout;
 		};
 		8FD890E916E5248800A870A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -456,7 +433,6 @@
 		8FD88EC216DFCD0A00A870A3 /* MPWorker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPWorker.xcodeproj; path = MPWorker/MPWorker.xcodeproj; sourceTree = "<group>"; };
 		8FD88F1016DFCF5900A870A3 /* MPReboot.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPReboot.xcodeproj; path = MPReboot/MPReboot.xcodeproj; sourceTree = "<group>"; };
 		8FD88F5216DFD26C00A870A3 /* MPTaskEditor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPTaskEditor.xcodeproj; path = MPTaskEditor/MPTaskEditor.xcodeproj; sourceTree = "<group>"; };
-		8FD88F8E16DFD3FB00A870A3 /* MPLogout.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPLogout.xcodeproj; path = MPLogout/MPLogout.xcodeproj; sourceTree = "<group>"; };
 		8FD88FE716DFDD9200A870A3 /* MPCatalog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPCatalog.xcodeproj; path = MPCatalog/MPCatalog.xcodeproj; sourceTree = "<group>"; };
 		8FD8906716DFE84600A870A3 /* MPClientStatus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPClientStatus.xcodeproj; path = MPClientStatus/MPClientStatus.xcodeproj; sourceTree = "<group>"; };
 		8FD890C716DFEDB700A870A3 /* Self Patch.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Self Patch.xcodeproj"; path = "Self Patch/Self Patch.xcodeproj"; sourceTree = "<group>"; };
@@ -475,11 +451,10 @@
 				8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */,
 				8FE5610516DE9A7A00BB7600 /* MPAgentExec.xcodeproj */,
 				8FD88E2D16DFB40B00A870A3 /* MPAgentUp2Date.xcodeproj */,
-				8FD88E8916DFC59F00A870A3 /* MPRebootD.xcodeproj */,
 				8FD88EC216DFCD0A00A870A3 /* MPWorker.xcodeproj */,
+				8FD88E8916DFC59F00A870A3 /* MPRebootD.xcodeproj */,
 				8FD88F1016DFCF5900A870A3 /* MPReboot.xcodeproj */,
 				8FD88F5216DFD26C00A870A3 /* MPTaskEditor.xcodeproj */,
-				8FD88F8E16DFD3FB00A870A3 /* MPLogout.xcodeproj */,
 				8FD88FE716DFDD9200A870A3 /* MPCatalog.xcodeproj */,
 				8FD8906716DFE84600A870A3 /* MPClientStatus.xcodeproj */,
 				8FD890C716DFEDB700A870A3 /* Self Patch.xcodeproj */,
@@ -572,14 +547,6 @@
 			isa = PBXGroup;
 			children = (
 				8FD88F5716DFD26D00A870A3 /* MPTaskEditor.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		8FD88F8F16DFD3FB00A870A3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8FD88F9316DFD3FC00A870A3 /* MPLogout.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -691,10 +658,6 @@
 					ProjectRef = 8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */;
 				},
 				{
-					ProductGroup = 8FD88F8F16DFD3FB00A870A3 /* Products */;
-					ProjectRef = 8FD88F8E16DFD3FB00A870A3 /* MPLogout.xcodeproj */;
-				},
-				{
 					ProductGroup = 8F90C31E1700AF9D006E36D0 /* Products */;
 					ProjectRef = 8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */;
 				},
@@ -804,13 +767,6 @@
 			remoteRef = 8FD88F5616DFD26D00A870A3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		8FD88F9316DFD3FC00A870A3 /* MPLogout.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = MPLogout.app;
-			remoteRef = 8FD88F9216DFD3FC00A870A3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		8FD88FEC16DFDD9300A870A3 /* MPCatalog.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -901,11 +857,6 @@
 			name = "Self Patch";
 			targetProxy = 8F68EAEE1757D4D500982EF9 /* PBXContainerItemProxy */;
 		};
-		8F68EAEF1757D4D500982EF9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPLogout;
-			targetProxy = 8F68EAF01757D4D500982EF9 /* PBXContainerItemProxy */;
-		};
 		8F68EAF11757D4D500982EF9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MPRebootD;
@@ -990,11 +941,6 @@
 			isa = PBXTargetDependency;
 			name = "Self Patch";
 			targetProxy = 8FD890E516E5248800A870A3 /* PBXContainerItemProxy */;
-		};
-		8FD890E816E5248800A870A3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPLogout;
-			targetProxy = 8FD890E716E5248800A870A3 /* PBXContainerItemProxy */;
 		};
 		8FD890EA16E5248800A870A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

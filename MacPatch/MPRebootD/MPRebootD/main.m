@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-#define APPVERSION "2.1.0"
+#define APPVERSION "2.1.1"
 
 void usage(void);
 
@@ -83,8 +83,8 @@ int main (int argc, char * argv[]) {
         usage();
         exit(0);
     }
-	
-	[MPLog setupLogging:@"/Library/MacPatch/Client/Logs/MPRBWatcher.log" level:lcl_vDebug];
+	NSString *homePath = [@"~/Library/Logs/MPRBWatcher.log" stringByExpandingTildeInPath];
+	[MPLog setupLogging:homePath level:lcl_vDebug];
 	
 	if (verboseLogging) {
 		// enable logging for all components up to level Debug

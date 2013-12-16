@@ -88,6 +88,15 @@ if [ -d "/Library/Frameworks/MPFramework.framework" ]; then
 	rm -rf "/Library/Frameworks/MPFramework.framework"
 fi	
 
+# AuthPlugin
+if [ -d "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle" ]; then	
+	rm -rf "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
+fi	
+
+if [ -f "$MPClientDir/MPAuthPluginTool" ]; then	
+	"$MPClientDir/MPAuthPluginTool" -d
+fi	
+
 if [ -d "$MPClientDir" ]; then
 	echo "Removing $MPClientDir"
 	rm -rf "$MPClientDir"

@@ -17,11 +17,6 @@
                     <cfhttpparam type="formfield" name="type" value="#form.type#">
                 </cfhttp>
 
-				<!---
-				<cflog type="error" file="MPWS_JSON_DEV1" text="#CreateODBCDateTime(now())# -- [data] #form.data#">
-				<cflog type="error" file="MPWS_JSON_DEV1" text="#CreateODBCDateTime(now())# -- [type] #form.type#">
-                --->
-				
                 <cfif cfhttp.responseheader.STATUS_CODE NEQ "200">
                     <cflog type="error" file="#logFile#" text="#CreateODBCDateTime(now())# -- [client_checkin_base][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#">
                     <cfabort>

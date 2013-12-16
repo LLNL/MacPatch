@@ -25,6 +25,9 @@
 
 #import "AppDelegate.h"
 
+NSString * const WATCH_PATH_ALT =			@"/private/tmp";
+NSString * const WATCH_PATH_FILE_ALT =		@".MPRebootRun.plist";
+
 NSString * const kRBPatchTitle = @"Install and Restart";
 NSString * const kRBPatchBody = @"MacPatch needs to finish installing updates that require a reboot. Please save your work and exit all applications before continuing.\n\nTo finish the installation and restart your computer, click Restart.";
 
@@ -112,6 +115,22 @@ NSString * const kRBSWInstallAlertBody = @"Quiting this application will restart
 #else
 	error = SendAppleEventToSystemProcess(kAEReallyLogOut);
 #endif
+    NSError *err = nil;
+    NSString *rebootFilePath = [WATCH_PATH_ALT stringByAppendingPathComponent:WATCH_PATH_FILE_ALT];
+    NSMutableDictionary *rebootFileDict = [NSMutableDictionary dictionaryWithContentsOfFile:rebootFilePath];
+    if (rebootFileDict) {
+        if ([[NSFileManager defaultManager] isWritableFileAtPath:rebootFilePath]) {
+            [rebootFileDict setObject:[NSNumber numberWithBool:NO] forKey:@"reboot"];
+            [rebootFileDict writeToFile:rebootFilePath atomically:NO];
+        } else {
+            NSLog(@"Error, unable to write changes to %@",rebootFilePath);
+        }
+    }
+
+    if (err) {
+        NSLog(@"Error removing %@",rebootFilePath);
+        NSLog(@"%@",err.localizedDescription);
+    }
 	if (error == noErr) {
 		NSLog(@"Computer is going to logout!");
 		[NSApp terminate:self];
@@ -119,8 +138,7 @@ NSString * const kRBSWInstallAlertBody = @"Quiting this application will restart
 	} else {
 		NSLog(@"Computer wouldn't logout: %d", (int)error);
 		[self quitAppAndMakeUserLogout];
-	}	
-	
+	}
 }
 
 - (void)quitAppAndMakeUserLogout

@@ -151,7 +151,7 @@
     	
         <cfset _data = "">
         <cftry>
-        	<cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,30,0)#">
+        	<cfquery datasource="#this.ds#" name="qGetGroupID">
                 Select id from mp_patch_group
                 Where name = <cfqueryparam value="#arguments.PatchGroup#">
             </cfquery>
@@ -174,7 +174,7 @@
         </cftry>
         
         <cftry>
-        	<cfquery datasource="#this.ds#" name="qGetGroupData" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
+        	<cfquery datasource="#this.ds#" name="qGetGroupData">
                 Select data from mp_patch_group_data
                 Where pid = <cfqueryparam value="#qGetGroupID.id#">
                 AND data_type = 'SOAP'
@@ -289,7 +289,7 @@
 			<cfreturn arguments.patch>
 		<cfelse>
 			<cftry>
-				<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
+				<cfquery datasource="#this.ds#" name="qGet">
                 	Select patch_name, patch_ver From mp_patches
                 	Where puuid = <cfqueryparam value="#arguments.patch#">
             	</cfquery>
@@ -389,7 +389,7 @@
         <cfargument name="osminor" required="yes" type="string">
 
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetCatalogs" result="res1" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetCatalogs" result="res1">
                 select catalog_url, proxy
                 from mp_asus_catalogs
                 Where os_minor = <cfqueryparam value="#arguments.osminor#">
@@ -424,7 +424,7 @@
         <cfargument name="osminor" required="yes" type="string">
 
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetCatalogs" result="res1" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetCatalogs" result="res1">
                 select catalog_url, proxy
                 from mp_asus_catalogs
                 Where os_minor = <cfqueryparam value="#arguments.osminor#">
@@ -755,7 +755,7 @@
     <cffunction name="GetScanCriteria" access="public" returntype="query" output="no">
     	<cfargument name="id" required="yes">
     	<cftry>
-            <cfquery datasource="#this.ds#" name="qGetPatchCriteria" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetPatchCriteria">
                 select *
                 from mp_patches_criteria
             	Where puuid = '#arguments.id#'
@@ -782,7 +782,7 @@
     	<cfargument name="theKey">
         <cfargument name="thePName">
 
-    	<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,4,0,0)#">
+    	<cfquery datasource="#this.ds#" name="qGet">
             Select akey, patchname
             From apple_patches
             Where akey = <cfqueryparam value="#theKey#"> AND patchname = <cfqueryparam value="#thePName#">
@@ -1103,7 +1103,7 @@
 		<!--- This Function Adds the Patches Collected from a local Software Update Server --->
 		<cfargument name="theArch">
 
-        <cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+        <cfquery datasource="#this.ds#" name="qGet">
         	Select file from savav_defs
             Where arch = <cfqueryparam value="#Trim(arguments.theArch)#">
             AND current = 'YES'
@@ -1128,7 +1128,7 @@
 		<cfargument name="agentFramework">
 
 		<cftry>
-            <cfquery datasource="#this.ds#" name="qGetLatestVersion" maxrows="1" cachedwithin="#CreateTimeSpan(0,6,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetLatestVersion" maxrows="1">
             	Select agent_ver as agent_version, version, framework as agent_framework, build as agent_build,
                 pkg_Hash, pkg_Url, puuid, pkg_name, osver
                 From mp_client_agents
@@ -1179,7 +1179,7 @@
 	        	<cfset count = 0>
 	        <cfelse>
 	        	<!--- CUUID is found --->
-	            <cfquery datasource="#this.ds#" name="qGetClientGroup" cachedwithin="#CreateTimeSpan(0,2,0,0)#">
+	            <cfquery datasource="#this.ds#" name="qGetClientGroup">
 	            	Select cuuid, ipaddr, hostname, Domain, ostype, osver
 	                From mp_clients_view
 	                Where cuuid = <cfqueryparam value="#arguments.cuuid#">
@@ -1240,7 +1240,7 @@
         <cfargument name="cuuid">
 
 		<cftry>
-            <cfquery datasource="#this.ds#" name="qGetLatestVersion" cachedwithin="#CreateTimeSpan(0,6,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetLatestVersion">
             	Select agent_ver as agent_version, version, framework as agent_framework, build as agent_build,
                 pkg_Hash, pkg_Url, puuid, pkg_name, osver
                 From mp_client_agents
@@ -1278,7 +1278,7 @@
 	        	<cfset count = 0>
 	        <cfelse>
 	        	<!--- CUUID is found --->
-	            <cfquery datasource="#this.ds#" name="qGetClientGroup" cachedwithin="#CreateTimeSpan(0,2,0,0)#">
+	            <cfquery datasource="#this.ds#" name="qGetClientGroup">
 	            	Select cuuid, ipaddr, hostname, Domain, ostype, osver
 	                From mp_clients_view
 	                Where cuuid = <cfqueryparam value="#arguments.cuuid#">
@@ -1371,7 +1371,7 @@
 	<cffunction name="SelfUpdateFilter" access="public" returntype="string" output="no">
 		<cfargument name="aType">
 		<cftry>
-			<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,2,0,0)#">
+			<cfquery datasource="#this.ds#" name="qGet">
 				Select attribute, attribute_oper, attribute_filter, attribute_condition
                 From mp_client_agents_filters
 				Where type = <cfqueryparam value="#arguments.aType#">
