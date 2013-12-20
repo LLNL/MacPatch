@@ -220,7 +220,8 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
+        [self postDataToClient:[NSString stringWithFormat:@"Unzipping file %@.",[zipFile lastPathComponent]] type:kMPProcessStatus];
         logit(lcl_vInfo,@"Unzipping file %@.",zipFile);
         [mpa unzip:zipFile error:&err];
         if (err) {
@@ -237,6 +238,7 @@ typedef NSUInteger MPPostDataType;
         }
         
         // Copy App To Applications
+        [self postDataToClient:[NSString stringWithFormat:@"Running script..."] type:kMPProcessStatus];
         NSString *mountPoint = NULL;
         NSString *mountPointBase = [[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"sw"];
         mountPoint = [mountPointBase stringByAppendingPathComponent:[aSWDict objectForKey:@"id"]];
@@ -259,7 +261,8 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
+        [self postDataToClient:[NSString stringWithFormat:@"Unzipping file %@.",[zipFile lastPathComponent]] type:kMPProcessStatus];
         logit(lcl_vInfo,@"Unzipping file %@.",zipFile);
         [mpa unzip:zipFile error:&err];
         if (err) {
@@ -293,7 +296,8 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
+        [self postDataToClient:[NSString stringWithFormat:@"Unzipping file %@.",[zipFile lastPathComponent]] type:kMPProcessStatus];
         logit(lcl_vInfo,@"Unzipping file %@.",zipFile);
         [mpa unzip:zipFile error:&err];
         if (err) {
@@ -310,6 +314,7 @@ typedef NSUInteger MPPostDataType;
         }
         
         // Copy App To Applications
+        [self postDataToClient:[NSString stringWithFormat:@"Moving file to Applications..."] type:kMPProcessStatus];
         NSString *mountPoint = NULL;
         NSString *mountPointBase = [[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"sw"];
         mountPoint = [mountPointBase stringByAppendingPathComponent:[aSWDict objectForKey:@"id"]];
@@ -333,7 +338,7 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
         int m = -1;
         m = [self mountDMG:[aSWDict valueForKeyPath:@"Software.sw_url"] packageID:[aSWDict objectForKey:@"id"]];
         if (m == 0) {
@@ -366,7 +371,7 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
         int m = -1;
         m = [self mountDMG:[aSWDict valueForKeyPath:@"Software.sw_url"] packageID:[aSWDict objectForKey:@"id"]];
         if (m == 0) {

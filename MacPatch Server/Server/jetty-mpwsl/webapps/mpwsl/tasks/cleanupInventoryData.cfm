@@ -12,7 +12,8 @@
 	<!--- Get DataBase Tables, and filter them --->
 	<cffunction name="getDBTables" output="no" returntype="any">
         <cfargument name="tableNameFilter" default="None" required="no">
-		
+
+		<cfset tablesRaw = "">
 		<cftry>
 	        <cfquery datasource="mpds" name="qGet" cachedwithin="#CreateTimeSpan(0, 0, 10, 0)#">
 	            SELECT DISTINCT TABLE_NAME 
@@ -20,15 +21,15 @@
 	            WHERE table_schema='MacPatchDB'
 	            AND TABLE_TYPE = 'BASE TABLE' 
 	            <cfif arguments.tableNameFilter NEQ "None">
-				AND TABLE_NAME like '%<cfqueryparam value="#arguments.tableNameFilter#">%'
+				AND TABLE_NAME like '%#arguments.tableNameFilter#%'
 				</cfif>
-	        </cfquery> 
+	        </cfquery>
+	        <cfset tablesRaw = ValueList(qGet.TABLE_NAME)>
 	        <cfcatch type="any">
 	            <cfset log = logit("Error",#CGI.REMOTE_HOST#,"[getDBTables]: #cfcatch.Detail# -- #cfcatch.Message# #cfcatch.ExtendedInfo#")>
 	        </cfcatch>
         </cftry>
 		
-        <cfset tablesRaw = ValueList(qGet.TABLE_NAME)>
         <cfreturn #tablesRaw#>
     </cffunction>
 
@@ -118,10 +119,14 @@
 	<cfloop index="table" list="#tables#" delimiters=",">
 		
 		<!--- Get All of the Client ID's for the table --->
-		<cfquery name="selIDs" datasource="mpds">
-	        Select Distinct cuuid From <cfqueryparam value="#table#">
-		</cfquery>
-				
+        <cftry>
+            <cfquery name="selIDs" datasource="mpds">
+                Select Distinct cuuid From #table#
+            </cfquery>
+            <cfcatch>
+            	<cfset selIDs = QueryNew("cuuid")>
+            </cfcatch>
+		</cftry>		
 		<cfif selIDs.RecordCount NEQ 0>
 			<cfset idsToRemove = 0>
 			<cfloop query="selIDs">
