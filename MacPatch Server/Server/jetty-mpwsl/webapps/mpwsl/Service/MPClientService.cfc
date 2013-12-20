@@ -542,7 +542,7 @@
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
             <cfset pid = patchGroupIDFromName(arguments.PatchGroup)>
-            <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 SELECT mdate FROM mp_patch_group_data
                 WHERE pid = <cfqueryparam value="#pid#">
                 AND hash = <cfqueryparam value="#arguments.Hash#">
@@ -612,7 +612,7 @@
     
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
-            <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 Select id from mp_patch_group
                 Where name = <cfqueryparam value="#arguments.PatchGroup#">
             </cfquery>
@@ -631,7 +631,7 @@
         </cftry>
         
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetGroupData" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetGroupData" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 Select data from mp_patch_group_data
                 Where pid = <cfqueryparam value="#qGetGroupID.id#">
                 AND data_type = <cfqueryparam value="#arguments.DataType#">
@@ -719,7 +719,7 @@
         </cftry>
 
 
-        <cfquery datasource="#this.ds#" name="qGetClient" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+        <cfquery datasource="#this.ds#" name="qGetClient" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
             Select cuuid From savav_info
             Where cuuid = <cfqueryparam value="#trim(arguments.clientID)#">
         </cfquery>
@@ -995,7 +995,7 @@
         <cfset response[ "result" ] = {} />
 
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetCatalogs" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetCatalogs" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 select catalog_url, proxy
                 from mp_asus_catalogs
                 Where os_minor = <cfqueryparam value="#arguments.osminor#">
@@ -1051,7 +1051,7 @@
         <cfset _result[ "totalPatchesNeeded" ] = "NA" />
 
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetClientPatchGroup" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetClientPatchGroup" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 select id from mp_patch_group
                 Where name = (  select PatchGroup from mp_clients_view
                                 Where cuuid = <cfqueryparam value="#arguments.clientID#">)
@@ -1136,7 +1136,7 @@
         
         <cftry>
             <cfset gid = softwareGroupID(arguments.GroupName)>
-            <cfquery datasource="#this.ds#" name="qGetGroupTasksData" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetGroupTasksData" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 Select gData From mp_software_tasks_data
                 Where gid = '#gid#'
             </cfquery>
@@ -1165,7 +1165,7 @@
         <cfargument name="GroupName">
 
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetID" cachedwithin="#CreateTimeSpan(0,8,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 Select gid from mp_software_groups
                 Where gName = '#arguments.GroupName#'
             </cfquery>
@@ -1283,7 +1283,7 @@
         <cfargument name="ClientID">
     
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetID" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 Select cuuid from mp_clients
                 Where cuuid = '#arguments.ClientID#'
             </cfquery>

@@ -109,6 +109,9 @@
 - (void)performClientCheckInThread;
 - (BOOL)performClientCheckInMethod;
 
+// Refresh Status
+- (IBAction)refreshClientStatus:(id)sender;
+
 // Checkin Data
 - (NSDictionary *)systemVersionDictionary;
 - (NSDictionary *)getOSInfo;

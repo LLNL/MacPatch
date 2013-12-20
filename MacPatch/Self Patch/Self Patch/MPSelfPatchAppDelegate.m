@@ -30,6 +30,42 @@
 
 static BOOL gDone = false;
 
+@interface FileSizeTransformer : NSValueTransformer
+
++ (Class)transformedValueClass;
++ (BOOL)allowsReverseTransformation;
+- (id)transformedValue:(id)value;
+
+@end
+
+@implementation FileSizeTransformer
++ (Class)transformedValueClass;
+{
+    return [NSString class];
+}
+
++ (BOOL)allowsReverseTransformation;
+{
+    return NO;
+}
+- (id)transformedValue:(id)value;
+{
+    // Data contains "K" remove it to turn it in to a number value
+    double convertedValue = [[value stringByReplacingOccurrencesOfString:@"K" withString:@""] doubleValue];
+    // Data is already at k, other wise set bytes to 0
+    int multiplyFactor = 1;
+
+    NSArray *tokens = [NSArray arrayWithObjects:@"B",@"KB",@"MB",@"GB",@"TB",nil];
+
+    while (convertedValue > 1024) {
+        convertedValue /= 1024;
+        multiplyFactor++;
+    }
+
+    return [NSString stringWithFormat:@"%4.2f %@",convertedValue, [tokens objectAtIndex:multiplyFactor]];
+}
+@end
+
 // Private Methods
 @interface MPSelfPatchAppDelegate ()
 
@@ -837,6 +873,7 @@ done:
 								}	
 							}
 							[tmpDict setObject:@"Apple" forKey:@"type"];
+                            [tmpDict setObject:[[approvedApplePatches objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
 							logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
 							[approvedUpdatesArray addObject:tmpDict];
 							[tmpDict release];
@@ -885,10 +922,9 @@ done:
 				logit(lcl_vInfo,@"Patch %@ approved for update.",[customPatch objectForKey:@"description"]);
 				tmpDict = [[NSMutableDictionary alloc] init];
 				[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:@"select"];
-				//[tmpDict setObject:[[approvedPatch objectForKey:@"patches"] objectForKey:@"size"] forKey:@"size"];
 				for (id item in [approvedPatch objectForKey:@"patches"]) {
 					if ([[item objectForKey:@"type"] isEqualTo:@"1"]) {
-						[tmpDict setObject:[NSString stringWithFormat:@"%@K",[item objectForKey:@"size"]] forKey:@"size"];
+						[tmpDict setObject:[NSString stringWithFormat:@"%@",[item objectForKey:@"size"]] forKey:@"size"];
 						break;
 					}
 				}
@@ -911,6 +947,9 @@ done:
 				[tmpDict setObject:approvedPatch forKey:@"patches"];
 				[tmpDict setObject:[customPatch objectForKey:@"patch_id"] forKey:@"patch_id"];
 				[tmpDict setObject:@"Third" forKey:@"type"];
+                [tmpDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
+                [tmpDict setObject:[approvedPatch objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
+
 				logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
 				[approvedUpdatesArray addObject:tmpDict];
 				[tmpDict release];
@@ -918,7 +957,10 @@ done:
 			}
 		}	
 	}
-	
+
+    NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"patch_install_weight" ascending:YES];
+    [approvedUpdatesArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
+    
 	logit(lcl_vDebug,@"Approved patches to install: %@",approvedUpdatesArray);
 	
 	if (approvedUpdatesArray && [approvedUpdatesArray count] > 0) {

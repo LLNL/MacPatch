@@ -29,6 +29,9 @@
 #import "NSFileManager+DirectoryLocations.h"
 #import <AppKit/AppKit.h>
 
+#include <unistd.h>
+#include <sys/reboot.h>
+
 enum {
     kMPInstallStatus = 0,
     kMPProcessStatus = 1
@@ -127,7 +130,7 @@ typedef NSUInteger MPPostDataType;
 		connections = [[NSMutableArray alloc] init];
         mpServerConnection = [[MPServerConnection alloc] initWithNilServerObj];
         
-		[self setTaskTimeoutValue:900];
+		[self setTaskTimeoutValue:1800];
 		[self setTaskIsRunning:NO];
         [self setTaskTimedOut:NO];
         fm = [NSFileManager defaultManager];
@@ -217,7 +220,8 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
+        [self postDataToClient:[NSString stringWithFormat:@"Unzipping file %@.",[zipFile lastPathComponent]] type:kMPProcessStatus];
         logit(lcl_vInfo,@"Unzipping file %@.",zipFile);
         [mpa unzip:zipFile error:&err];
         if (err) {
@@ -234,6 +238,7 @@ typedef NSUInteger MPPostDataType;
         }
         
         // Copy App To Applications
+        [self postDataToClient:[NSString stringWithFormat:@"Running script..."] type:kMPProcessStatus];
         NSString *mountPoint = NULL;
         NSString *mountPointBase = [[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"sw"];
         mountPoint = [mountPointBase stringByAppendingPathComponent:[aSWDict objectForKey:@"id"]];
@@ -256,7 +261,8 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
+        [self postDataToClient:[NSString stringWithFormat:@"Unzipping file %@.",[zipFile lastPathComponent]] type:kMPProcessStatus];
         logit(lcl_vInfo,@"Unzipping file %@.",zipFile);
         [mpa unzip:zipFile error:&err];
         if (err) {
@@ -290,7 +296,8 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
+        [self postDataToClient:[NSString stringWithFormat:@"Unzipping file %@.",[zipFile lastPathComponent]] type:kMPProcessStatus];
         logit(lcl_vInfo,@"Unzipping file %@.",zipFile);
         [mpa unzip:zipFile error:&err];
         if (err) {
@@ -307,6 +314,7 @@ typedef NSUInteger MPPostDataType;
         }
         
         // Copy App To Applications
+        [self postDataToClient:[NSString stringWithFormat:@"Moving file to Applications..."] type:kMPProcessStatus];
         NSString *mountPoint = NULL;
         NSString *mountPointBase = [[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"sw"];
         mountPoint = [mountPointBase stringByAppendingPathComponent:[aSWDict objectForKey:@"id"]];
@@ -330,7 +338,7 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
         int m = -1;
         m = [self mountDMG:[aSWDict valueForKeyPath:@"Software.sw_url"] packageID:[aSWDict objectForKey:@"id"]];
         if (m == 0) {
@@ -363,7 +371,7 @@ typedef NSUInteger MPPostDataType;
             [mpa release];
             return 1;
         }
-        
+
         int m = -1;
         m = [self mountDMG:[aSWDict valueForKeyPath:@"Software.sw_url"] packageID:[aSWDict objectForKey:@"id"]];
         if (m == 0) {
@@ -1095,7 +1103,7 @@ done:
     NSArray *appArgs;
     // Parse the Environment variables for the install
     if ((int)NSAppKitVersionNumber >= 1187 /* 10.8 */) {
-        appArgs = [NSArray arrayWithObjects:@"-i", approvedUpdate, nil];
+        appArgs = [NSArray arrayWithObjects:@"-v",@"-i", approvedUpdate, nil];
     } else {
         appArgs = [NSArray arrayWithObjects:@"-i", approvedUpdate, nil];
     }
@@ -1123,7 +1131,8 @@ done:
 		taskResult = 1;
         goto done;
 	}
-	
+
+    BOOL            foundDone = NO;
 	NSString		*tmpStr;
     NSMutableData	*data = [[NSMutableData alloc] init];
     NSData			*dataChunk = nil;
@@ -1136,12 +1145,11 @@ done:
 		if ([[tmpStr trim] length] != 0)
         {
             if ([tmpStr containsString:@"PackageKit: Missing bundle path"] == NO) {
-                logit(lcl_vInfo,@"%@",tmpStr);
+                if ([tmpStr containsString:@"Done."] == YES) {
+                    foundDone = YES;
+                }
+                logit(lcl_vDebug,@"%@",tmpStr);
                 [self postDataToClient:tmpStr type:kMPInstallStatus];
-                // Older Post Back
-                NSMutableDictionary *notificationInfo = [NSMutableDictionary dictionary];
-                [notificationInfo setObject:tmpStr forKey:@"iData"];
-                [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"MPDataAvailableNotification" object:nil userInfo:(NSDictionary *)notificationInfo deliverImmediately:YES];
             } else {
                 logit(lcl_vDebug,@"%@",tmpStr);
             }
@@ -1160,18 +1168,24 @@ done:
 		taskResult = 1;
 		goto done;
 	}
-	
-    if([data length] && error == nil)
-    {
-        if ([swTask terminationStatus] == 0) {
-            taskResult = 0;
+
+    // A number of Apple Patches have a termination status other than 0
+    // Using "Done."
+	if (foundDone == YES) {
+        taskResult = 0;
+    } else {
+        if([data length] && error == nil)
+        {
+            if ([swTask terminationStatus] == 0) {
+                taskResult = 0;
+            } else {
+                taskResult = 1;
+            }
         } else {
+            logit(lcl_vError,@"Install returned error. Code:[%d]",[swTask terminationStatus]);
             taskResult = 1;
         }
-    } else {
-		logit(lcl_vError,@"Install returned error. Code:[%d]",[swTask terminationStatus]);
-		taskResult = 1;
-	}
+    }
 	
 done:
 	if(_timeoutTimer) {
@@ -1301,11 +1315,16 @@ done:
 - (void)setLogoutHookViaHelper
 {
     // This has been changed in MacPatch 2.2.0
-    NSString *_rbFile = @"/private/tmp/.MPAuthRun";
+    NSString *_atFile = @"/private/tmp/.MPAuthRun";
+    NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
     NSString *_rbText = @"reboot";
-    [_rbText writeToFile:_rbFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
+    NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
+    [rebootPlist writeToFile:_rbFile atomically:YES];
+    [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
-    [fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
+    [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
+    [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
 }
 // Proxy Method
 - (int)setPermissionsForFileViaHelper:(in bycopy NSString *)aFile posixPerms:(unsigned long)posixPermissions
@@ -1488,6 +1507,33 @@ done:
 
 	[self setTaskIsRunning:NO];
     return taskResult;
+}
+
+#pragma mark AuthPlugin
+- (void)logoutInstallCompletion:(int)taskAction
+{
+#ifdef DEBUG
+    NSLog(@"Reboot would happen ...");
+#else
+    int rb = 0;
+    switch ( taskAction ) {
+        case 0:
+            rb = reboot(RB_AUTOBOOT);
+            NSLog(@"MPAuthPlugin issued a reboot (%d)",rb);
+            if (rb == -1) {
+                // Try Forcing it :-)
+                NSLog(@"Attempting to force reboot...");
+                execve("/sbin/reboot",0,0);
+            }
+            break;
+        case 1:
+            // Code to just do logout
+            break;
+        default:
+            // Code
+            break;
+    }
+#endif
 }
 
 

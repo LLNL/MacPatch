@@ -56,6 +56,7 @@ mkdir ${BUILDROOT}/Combined/Packages
 
 # Create the Base Agent pkg
 pkgbuild --root ${BUILDROOT}/Base/Files/Library \
+--component-plist ${BUILDROOT}/Base/Components.plist \
 --identifier gov.llnl.mp.agent.base \
 --install-location /Library \
 --scripts ${BUILDROOT}/Base/Scripts \

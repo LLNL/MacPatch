@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12F36</string>
+		<string key="IBDocument.SystemVersion">13A603</string>
 		<string key="IBDocument.InterfaceBuilderVersion">4514</string>
-		<string key="IBDocument.AppKitVersion">1187.39</string>
-		<string key="IBDocument.HIToolboxVersion">626.00</string>
+		<string key="IBDocument.AppKitVersion">1265</string>
+		<string key="IBDocument.HIToolboxVersion">695.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">4514</string>
@@ -76,7 +76,7 @@
 										<int key="NSCellFlags2">134217728</int>
 										<string key="NSContents">Cancel</string>
 										<object class="NSFont" key="NSSupport">
-											<string key="NSName">LucidaGrande</string>
+											<string key="NSName">.LucidaGrandeUI</string>
 											<double key="NSSize">12</double>
 											<int key="NSfFlags">2586</int>
 										</object>
@@ -136,6 +136,7 @@
 										</object>
 									</object>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+									<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
 								</object>
 								<object class="NSTextField" id="296688588">
 									<reference key="NSNextResponder" ref="597945063"/>
@@ -169,6 +170,7 @@
 										</object>
 									</object>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+									<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
 								</object>
 								<object class="NSProgressIndicator" id="740055333">
 									<reference key="NSNextResponder" ref="597945063"/>
@@ -197,7 +199,7 @@
 										<int key="NSCellFlags2">71304192</int>
 										<string key="NSContents">10 of 10 patches</string>
 										<object class="NSFont" key="NSSupport" id="375185139">
-											<string key="NSName">LucidaGrande</string>
+											<string key="NSName">.LucidaGrandeUI</string>
 											<double key="NSSize">13</double>
 											<int key="NSfFlags">1044</int>
 										</object>
@@ -207,6 +209,7 @@
 										<reference key="NSTextColor" ref="297189366"/>
 									</object>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+									<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
 								</object>
 								<object class="NSTextField" id="702855813">
 									<reference key="NSNextResponder" ref="597945063"/>
@@ -232,6 +235,7 @@
 										<reference key="NSTextColor" ref="297189366"/>
 									</object>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+									<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
 								</object>
 								<object class="NSProgressIndicator" id="358059210">
 									<reference key="NSNextResponder" ref="597945063"/>
@@ -294,7 +298,7 @@
 													<string key="NSFrameSize">{656, 209}</string>
 													<reference key="NSSuperview" ref="189054"/>
 													<reference key="NSWindow"/>
-													<reference key="NSNextKeyView" ref="784823400"/>
+													<reference key="NSNextKeyView" ref="205275761"/>
 													<string key="NSReuseIdentifierKey">_NS:13</string>
 													<bool key="NSEnabled">YES</bool>
 													<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -309,10 +313,12 @@
 														<string key="NSReuseIdentifierKey">_NS:16</string>
 														<reference key="NSTableView" ref="165040741"/>
 													</object>
-													<object class="_NSCornerView" key="NSCornerView">
-														<nil key="NSNextResponder"/>
+													<object class="_NSCornerView" key="NSCornerView" id="1022938590">
+														<reference key="NSNextResponder" ref="928403830"/>
 														<int key="NSvFlags">-2147483392</int>
 														<string key="NSFrame">{{224, 0}, {16, 17}}</string>
+														<reference key="NSSuperview" ref="928403830"/>
+														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="189054"/>
 														<string key="NSReuseIdentifierKey">_NS:19</string>
 													</object>
@@ -327,7 +333,7 @@
 																<int key="NSCellFlags2">134219776</int>
 																<string key="NSContents"/>
 																<object class="NSFont" key="NSSupport" id="26">
-																	<string key="NSName">LucidaGrande</string>
+																	<string key="NSName">.LucidaGrandeUI</string>
 																	<double key="NSSize">11</double>
 																	<int key="NSfFlags">3100</int>
 																</object>
@@ -401,7 +407,6 @@
 															</object>
 															<int key="NSResizingMask">3</int>
 															<bool key="NSIsResizeable">YES</bool>
-															<bool key="NSIsEditable">YES</bool>
 															<reference key="NSTableView" ref="165040741"/>
 														</object>
 														<object class="NSTableColumn" id="104126489">
@@ -432,7 +437,6 @@
 															</object>
 															<int key="NSResizingMask">3</int>
 															<bool key="NSIsResizeable">YES</bool>
-															<bool key="NSIsEditable">YES</bool>
 															<reference key="NSTableView" ref="165040741"/>
 														</object>
 														<object class="NSTableColumn" id="552270660">
@@ -458,7 +462,6 @@
 															</object>
 															<int key="NSResizingMask">3</int>
 															<bool key="NSIsResizeable">YES</bool>
-															<bool key="NSIsEditable">YES</bool>
 															<reference key="NSTableView" ref="165040741"/>
 														</object>
 														<object class="NSTableColumn" id="203795340">
@@ -485,7 +488,6 @@
 															</object>
 															<int key="NSResizingMask">3</int>
 															<bool key="NSIsResizeable">YES</bool>
-															<bool key="NSIsEditable">YES</bool>
 															<reference key="NSTableView" ref="165040741"/>
 															<object class="NSSortDescriptor" key="NSSortDescriptorPrototype">
 																<string key="NSKey">type</string>
@@ -516,7 +518,6 @@
 															</object>
 															<int key="NSResizingMask">3</int>
 															<bool key="NSIsResizeable">YES</bool>
-															<bool key="NSIsEditable">YES</bool>
 															<reference key="NSTableView" ref="165040741"/>
 														</object>
 													</array>
@@ -553,6 +554,21 @@
 											<reference key="NSBGColor" ref="630941047"/>
 											<int key="NScvFlags">4</int>
 										</object>
+										<object class="NSClipView" id="205275761">
+											<reference key="NSNextResponder" ref="928403830"/>
+											<int key="NSvFlags">2338</int>
+											<array class="NSMutableArray" key="NSSubviews">
+												<reference ref="778328343"/>
+											</array>
+											<string key="NSFrame">{{1, 0}, {656, 17}}</string>
+											<reference key="NSSuperview" ref="928403830"/>
+											<reference key="NSWindow"/>
+											<reference key="NSNextKeyView" ref="778328343"/>
+											<string key="NSReuseIdentifierKey">_NS:15</string>
+											<reference key="NSDocView" ref="778328343"/>
+											<reference key="NSBGColor" ref="630941047"/>
+											<int key="NScvFlags">4</int>
+										</object>
 										<object class="NSScroller" id="784823400">
 											<reference key="NSNextResponder" ref="928403830"/>
 											<int key="NSvFlags">-2147483392</int>
@@ -581,32 +597,19 @@
 											<string key="NSAction">_doScroller:</string>
 											<double key="NSPercent">0.99378881987577639</double>
 										</object>
-										<object class="NSClipView" id="205275761">
-											<reference key="NSNextResponder" ref="928403830"/>
-											<int key="NSvFlags">2304</int>
-											<array class="NSMutableArray" key="NSSubviews">
-												<reference ref="778328343"/>
-											</array>
-											<string key="NSFrame">{{1, 0}, {656, 17}}</string>
-											<reference key="NSSuperview" ref="928403830"/>
-											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="778328343"/>
-											<string key="NSReuseIdentifierKey">_NS:15</string>
-											<reference key="NSDocView" ref="778328343"/>
-											<reference key="NSBGColor" ref="630941047"/>
-											<int key="NScvFlags">4</int>
-										</object>
+										<reference ref="1022938590"/>
 									</array>
 									<string key="NSFrame">{{1, 151}, {658, 227}}</string>
 									<reference key="NSSuperview" ref="597945063"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="205275761"/>
+									<reference key="NSNextKeyView" ref="189054"/>
 									<string key="NSReuseIdentifierKey">_NS:9</string>
 									<int key="NSsFlags">133682</int>
 									<reference key="NSVScroller" ref="784823400"/>
 									<reference key="NSHScroller" ref="404369899"/>
 									<reference key="NSContentView" ref="189054"/>
 									<reference key="NSHeaderClipView" ref="205275761"/>
+									<reference key="NSCornerView" ref="1022938590"/>
 									<bytes key="NSScrollAmts">QSAAAEEgAABBmAAAQZgAAA</bytes>
 									<double key="NSMinMagnification">0.25</double>
 									<double key="NSMaxMagnification">4</double>

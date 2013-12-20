@@ -17,6 +17,36 @@
             endingLineNumber = "230"
             landmarkName = "-scanForPatchesWithFilterWaitAndForce:byPassRunning:"
             landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[MPAgentExecController scanForPatchesWithFilterWaitAndForce:byPassRunning:]"
+                  moduleName = "MPAgentExec"
+                  urlString = "file:///Library/MacPatch/tmp/MacPatch/MacPatch/MPAgentExec/MPAgentExec/MPAgentExecController.m"
+                  timestampString = "408667958.740517"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "230"
+                  endingLineNumber = "230"
+                  offsetFromSymbolStart = "5327">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[MPAgentExecController scanForPatchesWithFilterWaitAndForce:byPassRunning:]"
+                  moduleName = "MPAgentExec"
+                  urlString = "file:///Library/MacPatch/tmp/MacPatch/MacPatch/MPAgentExec/MPAgentExec/MPAgentExecController.m"
+                  timestampString = "408667958.74072"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "230"
+                  endingLineNumber = "230"
+                  offsetFromSymbolStart = "8593">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -482,8 +482,8 @@ done:
 	NSAutoreleasePool *pool = [NSAutoreleasePool new];
 	// Run Once, to show current status
 	[self showLastCheckInMethod];
-	// 600.0
-	NSTimer *timer = [NSTimer timerWithTimeInterval:120.0
+	// 600.0 = 10 Minutes
+	NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
 											 target:self 
 										   selector:@selector(showLastCheckInMethod) 
 										   userInfo:nil 
@@ -563,7 +563,8 @@ done:
 	// Run Once, to show current status
 	[self getClientPatchStatusMethod];
 	// 1800.0
-	NSTimer *timer = [NSTimer timerWithTimeInterval:120.0
+    // 600 = 10min
+	NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
 											 target:self 
 										   selector:@selector(getClientPatchStatusMethod) 
 										   userInfo:nil 
@@ -670,6 +671,11 @@ done:
 		[fileManager removeItemAtPath:l_file error:NULL];
 	} 
 	[pool drain];
+}
+
+- (IBAction)refreshClientStatus:(id)sender
+{
+    [self getClientPatchStatusMethod];
 }
 
 #pragma mark -

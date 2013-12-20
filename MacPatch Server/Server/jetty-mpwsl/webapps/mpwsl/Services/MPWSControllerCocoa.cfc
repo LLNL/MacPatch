@@ -63,7 +63,7 @@
 	<cffunction name="getGroupID" access="private" returntype="any" output="no">
 		<cfargument name="groupName" required="true" />
 
-		<cfquery datasource="#this.ds#" name="qGet" maxrows="1" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+		<cfquery datasource="#this.ds#" name="qGet" maxrows="1" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 			Select gid from mp_software_groups
 			Where gName = <cfqueryparam value="#arguments.groupName#">
 		</cfquery>
@@ -99,7 +99,7 @@
 		</cfif>
 
 		<cftry>
-			<cfquery datasource="#this.ds#" name="qGetListVersion" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+			<cfquery datasource="#this.ds#" name="qGetListVersion" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 				SELECT version
 				FROM mp_server_list
 				WHERE listid = <cfqueryparam value="#arguments.ListID#">
@@ -139,7 +139,7 @@
 		<cfset response[ "result" ] = "" />
 
 		<cftry>
-			<cfquery datasource="#this.ds#" name="qGetHosts" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+			<cfquery datasource="#this.ds#" name="qGetHosts" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 				SELECT ms.*, msl.version, msl.name
 				FROM mp_servers ms
 				LEFT JOIN mp_server_list msl ON ms.listid = msl.listid
@@ -202,7 +202,7 @@
 		<cfset response[ "result" ] = "" />
 
 		<cftry>
-			<cfquery datasource="#this.ds#" name="qGetGroups" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+			<cfquery datasource="#this.ds#" name="qGetGroups" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 				SELECT gName, gDescription
 				FROM mp_software_groups
 				Where state = '#gState#'
@@ -275,7 +275,7 @@
 		<cfset response[ "result" ] = "" />
 	
         <cftry>
-        	<cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+        	<cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 Select id from mp_patch_group
                 Where name = <cfqueryparam value="#arguments.PatchGroup#">
             </cfquery>
@@ -302,7 +302,7 @@
         </cftry>
         
         <cftry>
-        	<cfquery datasource="#this.ds#" name="qGetGroupData" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+        	<cfquery datasource="#this.ds#" name="qGetGroupData" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 Select data from mp_patch_group_data
                 Where pid = <cfqueryparam value="#qGetGroupID.id#">
 				AND data_type = 'JSON'
@@ -347,7 +347,7 @@
 		<cfset response[ "result" ] = {} />
 
 		<cftry>
-			<cfquery datasource="#this.ds#" name="qGetCatalogs" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+			<cfquery datasource="#this.ds#" name="qGetCatalogs" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 select catalog_url, proxy
                 from mp_asus_catalogs
                 Where os_minor = <cfqueryparam value="#arguments.osminor#">
@@ -620,7 +620,7 @@
 			<cfreturn arguments.patch>
 		<cfelse>
 			<cftry>
-				<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+				<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 	Select patch_name, patch_ver From mp_patches
                 	Where puuid = <cfqueryparam value="#arguments.patch#">
             	</cfquery>
@@ -653,7 +653,7 @@
     	<cfargument name="GroupName">
         
         <cfset gid = getSoftwareGroupID(arguments.GroupName)>
-        <cfquery datasource="#this.ds#" name="qGetGroupTasksData" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+        <cfquery datasource="#this.ds#" name="qGetGroupTasksData" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 			Select gData From mp_software_tasks_data
 			Where gid = '#gid#'
 		</cfquery>
@@ -677,7 +677,7 @@
 		<cfargument name="GroupHash">
 		
         <cfset gid = getSoftwareGroupID(arguments.GroupName)>
-        <cfquery datasource="#this.ds#" name="qGetGroupTasksData" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+        <cfquery datasource="#this.ds#" name="qGetGroupTasksData" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 			Select gDataHash From mp_software_tasks_data
 			Where gid = '#gid#'
             AND gDataHash = '#arguments.GroupHash#'
@@ -705,7 +705,7 @@
     	<cfargument name="GroupName">
     	
         <cfset gid = getSoftwareGroupID(arguments.GroupName)>
-        <cfquery datasource="#this.ds#" name="qGetGroupTasksHash" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+        <cfquery datasource="#this.ds#" name="qGetGroupTasksHash" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 			Select gDataHash From mp_software_tasks_data
 			Where gid = '#gid#'
 		</cfquery>
@@ -787,7 +787,7 @@
     <cffunction name="getSoftwareGroupID" access="private" returntype="any" output="no">
 		<cfargument name="GroupName">
 
-		<cfquery datasource="#this.ds#" name="qGetID" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+		<cfquery datasource="#this.ds#" name="qGetID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 			Select gid from mp_software_groups
 			Where gName = '#arguments.GroupName#'
 		</cfquery>
@@ -803,7 +803,7 @@
 	<cffunction name="getSoftwareTaskFromID" access="private" returntype="any" output="no">
 		<cfargument name="TaskID">
 
-		<cfquery datasource="#this.ds#" name="qGetTask" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+		<cfquery datasource="#this.ds#" name="qGetTask" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 			Select name, tuuid, primary_suuid, sw_task_type, sw_task_privs,
 				sw_start_datetime, sw_end_datetime, active
 			From mp_software_task
@@ -822,7 +822,7 @@
 	<cffunction name="getSoftwareDistFromSUUID" access="private" returntype="query" output="no">
 		<cfargument name="suuid">
 
-		<cfquery datasource="#this.ds#" name="qGetTask" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+		<cfquery datasource="#this.ds#" name="qGetTask" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 			Select sName,sVendor,sVendorURL,sVersion,sDescription,sReboot,sw_type,sw_url,sw_hash,sw_pre_install_script
 				,sw_post_install_script,sw_uninstall_script,auto_patch,patch_bundle_id,sState
 			From mp_software
@@ -842,7 +842,7 @@
 	<cffunction name="getSoftwareCriteriaFromSUUID" access="private" returntype="struct" output="no">
 		<cfargument name="suuid">
 
-		<cfquery datasource="#this.ds#" name="qGetCrit" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+		<cfquery datasource="#this.ds#" name="qGetCrit" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 			Select type, type_data
 			From mp_software_criteria
 			Where suuid = '#arguments.suuid#'
@@ -897,7 +897,7 @@
         <cfset response[ "result" ] = {} />
 
 		<cftry>
-            <cfquery datasource="#this.ds#" name="qGetLatestVersion" maxrows="1" cachedwithin="#CreateTimeSpan(0,2,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetLatestVersion" maxrows="1" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
             	Select agent_ver as agent_version, version, framework as agent_framework, build as agent_build,
                 pkg_Hash, pkg_Url, puuid, pkg_name, osver
                 From mp_client_agents
@@ -995,7 +995,7 @@
         <cfargument name="cuuid">
 
 		<cftry>
-            <cfquery datasource="#this.ds#" name="qGetLatestVersion" cachedwithin="#CreateTimeSpan(0,2,0,0)#">
+            <cfquery datasource="#this.ds#" name="qGetLatestVersion" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
             	Select agent_ver as agent_version, version, framework as agent_framework, build as agent_build,
                 pkg_Hash, pkg_Url, puuid, pkg_name, osver
                 From mp_client_agents
@@ -1126,7 +1126,7 @@
 	<cffunction name="SelfUpdateFilter" access="private" returntype="string" output="no">
 		<cfargument name="aType">
 		<cftry>
-			<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+			<cfquery datasource="#this.ds#" name="qGet" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
 				Select attribute, attribute_oper, attribute_filter, attribute_condition
 				From mp_client_agents_filters
 				Where type = <cfqueryparam value="#arguments.aType#">

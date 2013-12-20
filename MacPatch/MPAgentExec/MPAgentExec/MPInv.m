@@ -230,7 +230,7 @@
 
 	// Encode to base64 and send to web service
 	NSString	*cleanXMLString = [aDataMgrXML validXMLString];
-	NSString	*xmlB64String	= [[cleanXMLString dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
+    NSString    *xmlB64String   = [[cleanXMLString dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
 	if (!xmlB64String) {
 		logit(lcl_vError,@"Unable to encode xml data.");
 		return result;

@@ -137,7 +137,7 @@ COUNTRY="NO"
 STATE="State"
 LOCATION="Country"
 
-OPTS=(/C="$COUNTRY"/ST="$STATE"/L="$LOCATION"/O="$ORG"/OU="$DOMAIN"/CN="$USER"/emailAddress="$EMAIL")
+OPTS=(/C="$COUNTRY"/ST="$STATE"/L="$LOCATION"/O="$ORG"/OU="$USER"/CN="$DOMAIN"/emailAddress="$EMAIL")
 
 COMMAND=(openssl req -new -x509 -nodes -days 999 -subj "${OPTS[@]}" -newkey rsa:2048 -keyout server.key -out server.crt)
 

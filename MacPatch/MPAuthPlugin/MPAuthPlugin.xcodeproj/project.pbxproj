@@ -143,7 +143,6 @@
 				8F9AD644182041F60009701B /* MPAuthView.m */,
 				8F9AD640182041D20009701B /* MPAuthWindow.h */,
 				8F9AD641182041D20009701B /* MPAuthWindow.m */,
-				8F9AD648182042330009701B /* MPAuthController.xib */,
 				8FC2523A182078F500055F36 /* MPWorkerProtocol.h */,
 				8FD819EE1824230F008436CD /* MPAuthPluginKeys.h */,
 				8F7793F41820401A008FA072 /* Supporting Files */,
@@ -154,6 +153,7 @@
 		8F7793F41820401A008FA072 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F9AD648182042330009701B /* MPAuthController.xib */,
 				8FD819D9182302D6008436CD /* images */,
 				8F7793F51820401A008FA072 /* MPAuthPlugin-Info.plist */,
 				8F7793F61820401A008FA072 /* InfoPlist.strings */,

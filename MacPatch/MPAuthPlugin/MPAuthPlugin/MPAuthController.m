@@ -35,6 +35,9 @@
 #include <unistd.h>
 #include <sys/reboot.h>
 
+#undef  ql_component
+#define ql_component lcl_cMain
+
 static MPAuthController *mpAuthController = nil;
 static void *lastMechanismRef;
 
@@ -78,7 +81,7 @@ OSStatus finalizeWindow(AuthorizationMechanismRef inMechanism)
 {
 	if ([super init])
 	{
-        [MPLog setupLogging:@"/Library/Logs/MPAuthPlugin.log" level:lcl_vDebug];
+        [MPLog setupLogging:@"/private/var/tmp/MPAuth.log" level:lcl_vDebug];
         lcl_configure_by_name("*", lcl_vDebug);
         logit(lcl_vInfo,@"***** MPAuthPlugin started -- Debug Enabled *****");
 
@@ -102,7 +105,7 @@ OSStatus finalizeWindow(AuthorizationMechanismRef inMechanism)
 
 - (void)awakeFromNib
 {
-    [MPLog setupLogging:@"/Library/Logs/MPAuth.log" level:lcl_vDebug];
+    [MPLog setupLogging:@"/private/var/tmp/MPAuth.log" level:lcl_vDebug];
     lcl_configure_by_name("*", lcl_vDebug);
     qlinfo(@"***** MPAuth started -- Debug Enabled *****");
 
@@ -136,15 +139,19 @@ OSStatus finalizeWindow(AuthorizationMechanismRef inMechanism)
 
 - (void)dismissWindow
 {
-
+/* Moved to worker
 #ifdef DEBUG
     NSLog(@"Reboot would happen ...");
 #else
     int rb = 0;
 	rb = reboot(RB_AUTOBOOT);
     NSLog(@"MPAuthPlugin issued a reboot (%d)",rb);
+    if (rb == -1) {
+        // Try Forcing it :-)
+        execve("/sbin/reboot",0,0);
+    }
 #endif
-
+*/
     // Hide window in either case
     [[self window] orderOut:nil];
 }
