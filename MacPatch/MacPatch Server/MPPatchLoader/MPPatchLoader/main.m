@@ -32,7 +32,7 @@
 #include <getopt.h>
 #import "MPManager.h"
 
-#define APPVERSION			"1.2.0"
+#define APPVERSION			"1.2.1"
 #define APPNAME				@"MPPatchLoader"
 
 void usage(void);

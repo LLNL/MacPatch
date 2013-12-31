@@ -3,6 +3,7 @@
 		MPServerService 
 	 	Database type is MySQL
 		MacPatch Version 2.2.x
+		Rev 2
 --->
 <!---	Notes:
 --->
@@ -94,84 +95,66 @@
         Notes: Replaced AddSavAvDefs
     --->
     <cffunction name="PostSavAvDefs" access="remote" returnType="struct" returnFormat="json" output="false">
-        <cfargument name="theXmlFile">
+        <cfargument name="arch">
+		<cfargument name="data">
+		<cfargument name="token">
 
         <cfset response = {} />
         <cfset response[ "errorNo" ] = "0" />
         <cfset response[ "errorMsg" ] = "" />
         <cfset response[ "result" ] = "" />
 
-        <cfreturn response>
-
-        <!--- To Be Developed
-
-        <cfset var vTheXML = #Trim(arguments.theXmlFile)#>
-        <cfset vTheXML = ToString(ToBinary(vTheXML))>
-
-        <!--- Parse the XML File--->
-        <cftry>
-            <cfset var xmldoc = XmlParse(vTheXML)>
-            <cfcatch type="any">
-                <!--- the message to display --->
-                <cfinvoke component="ws_logger" method="LogEvent">
-                    <cfinvokeargument name="aEventType" value="Error">
-                    <cfinvokeargument name="aHost" value="#CGI.REMOTE_HOST#">
-                    <cfinvokeargument name="aEvent" value="[AddSavAvDefs][XmlParse]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#">
-                </cfinvoke>
-                <cfreturn False>
+		<cfswitch expression="#Trim(arguments.arch)#"> 
+		    <cfcase value="x86"></cfcase> 
+		    <cfcase value="ppc"></cfcase> 
+		    <cfdefaultcase> 
+		        <cfset response[ "errorNo" ] = "1001" />
+		        <cfset response[ "errorMsg" ] = "Invalid Data. (#arguments.arch#) (#data#)" />
+		        <cfreturn response>
+		    </cfdefaultcase> 
+		</cfswitch> 
+		
+		<!--- Variable for ModDate on Insert --->
+		<cfset var vMDate = #CreateODBCDateTime(now())#>
+		
+		<!--- deserialize json data and check the length --->
+		<cfset var jData = deserializejson(arguments.data)>
+		<cfif len(jData) LTE 1>
+			<cfset response[ "errorNo" ] = "1002" />
+		    <cfset response[ "errorMsg" ] = "Invalid Data Length." />
+		    <cfreturn response>
+		</cfif>
+		
+		<!--- Delete the records before insert 
+				This will be changed in the future so that data will be deleted
+				after the new data has been inserted --->
+		<cftry>
+			<cfquery datasource="#this.ds#" name="qPut">
+	            Delete from savav_defs
+				Where arch = <cfqueryparam value="#arguments.arch#">
+	        </cfquery>
+			<cfcatch type="any">
+                <cfset response[ "errorNo" ] = "1003" />
+			    <cfset response[ "errorMsg" ] = "#cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
+			    <cfreturn response>
             </cfcatch>
-        </cftry>
-
-        <cfset var XMLRoot = xmldoc.XmlRoot>
-        <cfset var arrNodes1 = XmlSearch(xmldoc,"//sav/arch[ @type = 'ppc' ]/def") />
-        <cfset var arrNodes2 = XmlSearch(xmldoc,"//sav/arch[ @type = 'x86' ]/def") />
-        <cfset var vMdate = #CreateODBCDateTime(now())#>
-
-        <!--- Check to make sure the XMLSearch has values before clearing the DB --->
-        <cfif #ArrayLen(arrNodes1)# GTE 1 AND #ArrayLen(arrNodes2)# GTE 1>
-            <cfquery datasource="#this.ds#" name="qPut">
-                Delete from savav_defs
-            </cfquery>
-        </cfif>
-
-        <cfoutput>
-        <!--- Loop Over the PPC Defs --->
-            <cftry>
-            <cfloop index="i" from="1" to="#ArrayLen(arrNodes1)#">
-                <cfquery datasource="#this.ds#" name="qPut">
-                    Insert Into savav_defs (arch, file, defdate, current, mdate)
-                    Values ('ppc', <cfqueryparam value="#arrNodes1[i].XmlText#">, <cfqueryparam value="#arrNodes1[i].XmlAttributes.date#">, <cfqueryparam value="#arrNodes1[i].XmlAttributes.current#">, #vMdate#)
-                </cfquery>
-            </cfloop>
-                <cfcatch type = "Database">
-                    <cfinvoke component="ws_logger" method="LogEvent">
-                        <cfinvokeargument name="aEventType" value="Error">
-                        <cfinvokeargument name="aHost" value="#CGI.REMOTE_HOST#">
-                        <cfinvokeargument name="aEvent" value="[AddSavAvDefs][Insert]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#">
-                    </cfinvoke>
-                    <cfreturn False>
-               </cfcatch>
-           </cftry>
-        <!--- Loop Over the x86 Defs --->
-            <cftry>
-            <cfloop index="i" from="1" to="#ArrayLen(arrNodes2)#">
-                <cfquery datasource="#this.ds#" name="qPut">
-                    Insert Into savav_defs (arch, file, defdate, current, mdate)
-                    Values ('x86', <cfqueryparam value="#arrNodes2[i].XmlText#">, <cfqueryparam value="#arrNodes2[i].XmlAttributes.date#">, <cfqueryparam value="#arrNodes2[i].XmlAttributes.current#">, #vMdate#)
-                </cfquery>
-            </cfloop>
+		</cftry>
+		
+		<!--- Insert the new data --->
+		<cftry>
+	        <cfloop index="i" from="1" to="#ArrayLen(jData)#">
+	            <cfquery datasource="#this.ds#" name="qPut">
+	                Insert Into savav_defs (arch, file, defdate, current, mdate)
+	                Values (<cfqueryparam value="#jData[i]['type']#">, <cfqueryparam value="#jData[i]['file']#">, <cfqueryparam value="#jData[i]['date']#">, <cfqueryparam value="#jData[i]['current']#">, #vMDate#)
+	            </cfquery>
+	        </cfloop>
             <cfcatch type = "Database">
-                <cfinvoke component="ws_logger" method="LogEvent">
-                    <cfinvokeargument name="aEventType" value="Error">
-                    <cfinvokeargument name="aHost" value="#CGI.REMOTE_HOST#">
-                    <cfinvokeargument name="aEvent" value="[AddSavAvDefs][Insert]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#">
-                </cfinvoke>
-                <cfreturn False>
-           </cfcatch>
-           </cftry>
-        </cfoutput>
+                <cfset response[ "errorNo" ] = "1004" />
+			    <cfset response[ "errorMsg" ] = "#cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
+			    <cfreturn response>
+			</cfcatch>
+		</cftry>
 
-        <cfreturn True>
-        --->
+        <cfreturn response>
     </cffunction>
 </cfcomponent>

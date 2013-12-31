@@ -26,10 +26,40 @@
 #import "MPManager.h"
 #import <Foundation/Foundation.h>
 
-static MPManager *_instance;
+//static MPManager *_instance;
 
 @implementation MPManager
 
+@synthesize g_Defaults;
+
++ (id)sharedManager
+{
+    static dispatch_once_t pred = 0;
+    __strong static id _sharedObject = nil;
+    dispatch_once(&pred, ^{
+        _sharedObject = [[self alloc] init]; // or some other init method
+    });
+    return _sharedObject;
+}
+
+#pragma mark -
+/*
+- (NSDictionary *)g_Defaults
+{
+    return [[g_Defaults retain] autorelease];
+}
+
+- (void)setG_Defaults:(NSDictionary *)aG_Defaults
+{
+    if (g_Defaults != aG_Defaults) {
+        [g_Defaults release];
+        g_Defaults = [aG_Defaults retain];
+    }
+}
+
+*/
+
+/*
 + (id)sharedManager
 {
 	@synchronized(self) {
@@ -43,7 +73,7 @@ static MPManager *_instance;
 #pragma mark -
 - (NSDictionary *)g_Defaults
 {
-    return [[g_Defaults retain] autorelease]; 
+    return [[g_Defaults retain] autorelease];
 }
 - (void)setG_Defaults:(NSDictionary *)aG_Defaults
 {
@@ -81,4 +111,5 @@ static MPManager *_instance;
 {
     return self;	
 }
+*/
 @end

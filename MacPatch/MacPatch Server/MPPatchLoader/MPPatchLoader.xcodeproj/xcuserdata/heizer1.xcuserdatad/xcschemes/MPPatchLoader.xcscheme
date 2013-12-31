@@ -52,7 +52,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-Vf -c /Library/MacPatch/Server/conf/etc/gov.llnl.mp.patchloader.plist"
+            argument = "-V -c /Users/heizer1/Desktop/mploader.plist -P /tmp/suPatches_10.9.plist"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -22,7 +22,7 @@
 @synthesize IFPkgFlagRestartAction;
 @synthesize ServerMetadataURL;
 @synthesize akey;
-@synthesize description;
+@synthesize patchDescription;
 @synthesize osver;
 @synthesize patchname;
 @synthesize postdate;
@@ -35,11 +35,11 @@
     if (self)
     {
         [self setCFBundleShortVersionString:@"0.1"];
-        [self setDescription:@""];
+        [self setDistribution:@""];
         [self setIFPkgFlagRestartAction:@"NoRestart"];
         [self setServerMetadataURL:@""];
         [self setAkey:@""];
-        [self setDescription:@""];
+        [self setPatchDescription:@""];
         [self setOsver:@""];
         [self setPatchname:@""];
         [self setPostdate:@"1984-01-24 00:00:00"];
@@ -62,7 +62,7 @@
 {
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
     [d setObject:self.CFBundleShortVersionString forKey:@"CFBundleShortVersionString"];
-    [d setObject:self.description forKey:@"description"];
+    [d setObject:self.patchDescription forKey:@"description"];
     [d setObject:self.IFPkgFlagRestartAction forKey:@"IFPkgFlagRestartAction"];
     // Dont include, patch loader does not include these cols
     //[d setObject:self.ServerMetadataURL forKey:@"ServerMetadataURL"];

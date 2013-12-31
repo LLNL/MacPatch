@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		8F5A74ED170374DA001B67AD /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F5A74EC170374DA001B67AD /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F5A74EF17039DC8001B67AD /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5A74EE17039DC8001B67AD /* libicucore.dylib */; };
-		8F6BD7151846A912000FD442 /* MPApplePatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6BD7141846A912000FD442 /* MPApplePatch.m */; };
-		8F6BD7181846CAED000FD442 /* NSString+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6BD7171846CAED000FD442 /* NSString+Helper.m */; };
+		8F6BD7151846A912000FD442 /* MPApplePatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6BD7141846A912000FD442 /* MPApplePatch.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		8F6BD7181846CAED000FD442 /* NSString+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6BD7171846CAED000FD442 /* NSString+Helper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F991EAB1444A42400AF9DE2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F991EAA1444A42400AF9DE2 /* Foundation.framework */; };
-		8F991EAE1444A42400AF9DE2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F991EAD1444A42400AF9DE2 /* main.m */; };
+		8F991EAE1444A42400AF9DE2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F991EAD1444A42400AF9DE2 /* main.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F991ECA1444A6B100AF9DE2 /* ASIDataCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F991EBA1444A6B100AF9DE2 /* ASIDataCompressor.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F991ECB1444A6B100AF9DE2 /* ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F991EBC1444A6B100AF9DE2 /* ASIDataDecompressor.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F991ECC1444A6B100AF9DE2 /* ASIDownloadCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F991EBE1444A6B100AF9DE2 /* ASIDownloadCache.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -23,15 +23,14 @@
 		8F991ED21444A6CD00AF9DE2 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F991ED11444A6CD00AF9DE2 /* CoreServices.framework */; };
 		8F991ED41444A6D300AF9DE2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F991ED31444A6D300AF9DE2 /* libz.dylib */; };
 		8F991ED61444A6DA00AF9DE2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F991ED51444A6DA00AF9DE2 /* SystemConfiguration.framework */; };
-		8F991ED91444A71900AF9DE2 /* SUCatalog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F991ED81444A71900AF9DE2 /* SUCatalog.m */; };
-		8FA5D1A4144F9B24000FD0F5 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1A3144F9B24000FD0F5 /* NSData+Base64.m */; };
+		8F991ED91444A71900AF9DE2 /* SUCatalog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F991ED81444A71900AF9DE2 /* SUCatalog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8FA5D1A91450D03C000FD0F5 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1A81450D03C000FD0F5 /* NSFileManager+DirectoryLocations.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		8FA5D1AD1450DBEB000FD0F5 /* NSString+Hash.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1AC1450DBEB000FD0F5 /* NSString+Hash.m */; };
-		8FA5D1E91451C6B4000FD0F5 /* MPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1E81451C6B4000FD0F5 /* MPManager.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		8FA5D1AD1450DBEB000FD0F5 /* NSString+Hash.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1AC1450DBEB000FD0F5 /* NSString+Hash.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		8FA5D1E91451C6B4000FD0F5 /* MPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5D1E81451C6B4000FD0F5 /* MPManager.m */; };
 		8FF8BF9D1447B95000F79F74 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BF9C1447B95000F79F74 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8FF8BFB11447B95E00F79F74 /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BFA61447B95E00F79F74 /* lcl.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8FF8BFB21447B95E00F79F74 /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BFAE1447B95E00F79F74 /* LCLLogFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		8FF8BFB51447B9B600F79F74 /* MPJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BFB41447B9B600F79F74 /* MPJson.m */; };
+		8FF8BFB51447B9B600F79F74 /* MPJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BFB41447B9B600F79F74 /* MPJson.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -84,8 +83,6 @@
 		8F991ED51444A6DA00AF9DE2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8F991ED71444A71900AF9DE2 /* SUCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUCatalog.h; sourceTree = "<group>"; };
 		8F991ED81444A71900AF9DE2 /* SUCatalog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUCatalog.m; sourceTree = "<group>"; };
-		8FA5D1A2144F9B24000FD0F5 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
-		8FA5D1A3144F9B24000FD0F5 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		8FA5D1A71450D03C000FD0F5 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		8FA5D1A81450D03C000FD0F5 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		8FA5D1AB1450DBEB000FD0F5 /* NSString+Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Hash.h"; sourceTree = "<group>"; };
@@ -246,8 +243,6 @@
 		8FA5D1AA1450DBC9000FD0F5 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				8FA5D1A2144F9B24000FD0F5 /* NSData+Base64.h */,
-				8FA5D1A3144F9B24000FD0F5 /* NSData+Base64.m */,
 				8FA5D1AB1450DBEB000FD0F5 /* NSString+Hash.h */,
 				8FA5D1AC1450DBEB000FD0F5 /* NSString+Hash.m */,
 				8F6BD7161846CAED000FD442 /* NSString+Helper.h */,
@@ -373,7 +368,6 @@
 				8FF8BFB11447B95E00F79F74 /* lcl.m in Sources */,
 				8FF8BFB21447B95E00F79F74 /* LCLLogFile.m in Sources */,
 				8FF8BFB51447B9B600F79F74 /* MPJson.m in Sources */,
-				8FA5D1A4144F9B24000FD0F5 /* NSData+Base64.m in Sources */,
 				8FA5D1A91450D03C000FD0F5 /* NSFileManager+DirectoryLocations.m in Sources */,
 				8FA5D1AD1450DBEB000FD0F5 /* NSString+Hash.m in Sources */,
 				8FA5D1E91451C6B4000FD0F5 /* MPManager.m in Sources */,
@@ -388,7 +382,7 @@
 		8F991EB21444A42400AF9DE2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
@@ -397,23 +391,23 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		8F991EB31444A42400AF9DE2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				SDKROOT = macosx10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -421,7 +415,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -439,7 +433,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

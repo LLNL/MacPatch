@@ -30,8 +30,7 @@
 	NSDictionary *g_Defaults;
 }
 
-- (NSDictionary *)g_Defaults;
-- (void)setG_Defaults:(NSDictionary *)aG_Defaults;
+@property (nonatomic, retain) NSDictionary *g_Defaults;
 
 + (id)sharedManager;
 

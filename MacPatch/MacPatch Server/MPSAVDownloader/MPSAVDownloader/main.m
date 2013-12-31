@@ -32,7 +32,7 @@
 #include <getopt.h>
 
 
-#define APPVERSION	@"2.1"
+#define APPVERSION	@"2.1.1"
 #define APPNAME		@"mpAVDL"
 
 void usage(void);
@@ -198,8 +198,8 @@ int main (int argc, char * argv[]) {
 	logit(lcl_vInfo,@"%@",[av avDefsDict]);
 	
 	// Build an array of files to download
-	NSMutableArray *tmpArr = [NSMutableArray arrayWithArray:[[av avDefsDict] objectForKey:@"ppc"]];
-	[tmpArr addObjectsFromArray:[[av avDefsDict] objectForKey:@"x86"]];
+	NSMutableArray *defsArray = [NSMutableArray arrayWithArray:[[av avDefsDict] objectForKey:@"ppc"]];
+	[defsArray addObjectsFromArray:[[av avDefsDict] objectForKey:@"x86"]];
 	
 	// Create html contents dir
 	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -216,7 +216,7 @@ int main (int argc, char * argv[]) {
 	}
 	
 	
-	NSEnumerator *enumerator = [tmpArr objectEnumerator];
+	NSEnumerator *enumerator = [defsArray objectEnumerator];
 	id anObject;
 	// Loop Through tmpArr
 	while (anObject = [enumerator nextObject]) {
@@ -263,6 +263,26 @@ int main (int argc, char * argv[]) {
         logit(lcl_vInfo,@"AV Defs Data was not posted.");
     }
 
+    // Remove Old Files
+    if (result == YES) {
+        NSArray *allFiles = [[NSFileManager defaultManager] directoryContentsAtPath:[prefs objectForKey:@"avDownloadToFilePath"]];
+        if (allFiles) {
+            for (NSString *file in allFiles)
+            {
+                if ([defsArray containsObject:file]) {
+                    continue;
+                } else {
+                    if ([file hasSuffix:@"zip"])
+                    {
+                        logit(lcl_vInfo,@"Removing old file %@",file);
+                        [[NSFileManager defaultManager] removeFileIfExistsAtPath:[[prefs objectForKey:@"avDownloadToFilePath"] stringByAppendingPathComponent:file]];
+                    }
+                }
+            }
+        }
+    }
+
+    logit(lcl_vInfo,@"AV Defs Downloads completed.");
 	[pool release];
     return 0;
     

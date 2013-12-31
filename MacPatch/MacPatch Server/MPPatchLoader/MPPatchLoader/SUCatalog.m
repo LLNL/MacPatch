@@ -26,12 +26,13 @@
 #import "SUCatalog.h"
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
-#import "NSData+Base64.h"
+//#import "NSData+Base64.h"
 #import "lcl.h"
 #import "MPManager.h"
 #import "RegexKitLite.h"
 #import "MPApplePatch.h"
 #import "NSString+Helper.h"
+#include <Security/Security.h>
 
 
 // Alt URL
@@ -95,9 +96,14 @@
 
     for (id aKey in [patches allKeys])
     {
+        if ([aKey isEqualToString:@"061-4089"]){
+            sleep(1);
+        }
+
+
 		curPatch = nil;
 		curPatch = [patches objectForKey:aKey];
-
+        aPatch = nil;
         aPatch = [[MPApplePatch alloc] init];
         [aPatch setAkey:aKey];
         [aPatch setOsver:aOSVer];
@@ -151,7 +157,10 @@
                 if ([[smdPlist objectForKey:@"localization"] objectForKey:@"English"]) {
                     if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"description"]) {
                         descData = [[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"description"];
-                        [aPatch setDescription:[descData base64EncodedString]];
+                        NSString *descDataStr = [[NSString alloc] initWithData:descData encoding:NSUTF8StringEncoding];
+                        NSData *encodedData = [descDataStr dataUsingEncoding:NSUTF8StringEncoding];
+                        [aPatch setPatchDescription:[encodedData base64Encoding]];
+                        descDataStr = nil;
                     }
                     if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"title"]) {
                         [aPatch setTitle:[[[smdPlist objectForKey:@"localization"] objectForKey:@"English"] objectForKey:@"title"]];
@@ -159,7 +168,10 @@
                 } else if ([[smdPlist objectForKey:@"localization"] objectForKey:@"en"]) {
                     if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"description"]) {
                         descData = [[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"description"];
-                        [aPatch setDescription:[descData base64EncodedString]];
+                        NSString *descDataStr = [[NSString alloc] initWithData:descData encoding:NSUTF8StringEncoding];
+                        NSData *encodedData = [descDataStr dataUsingEncoding:NSUTF8StringEncoding];
+                        [aPatch setPatchDescription:[encodedData base64Encoding]];
+                        descDataStr = nil;
                     }
                     if ([[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"title"]) {
                         [aPatch setTitle:[[[smdPlist objectForKey:@"localization"] objectForKey:@"en"] objectForKey:@"title"]];
@@ -254,6 +266,10 @@
 {
 	NSDictionary *result = nil;
 	NSDictionary *userInfoDict;
+
+    if (smdURL == nil) {
+        return nil;
+    }
 
 	NSError *error = nil;
 	NSString *requestString = NULL;

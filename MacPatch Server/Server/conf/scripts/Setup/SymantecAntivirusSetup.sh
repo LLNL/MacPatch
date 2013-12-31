@@ -36,7 +36,7 @@ function configAVSync ()
 	server_name=`hostname -f`
 	read -p "MacPatch Server Name: [$server_name]: " server_name
 	server_name=${server_name:-`hostname -f`}
-	defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mpavdl 'MPServerAddress' "$server_name"
+	defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mp.AVDefsSync 'MPServerAddress' "$server_name"
 	
 	read -p "Use SSL for MacPatch connection [Y]: " -e t1
 	if [ -n "$t1" ]; then
@@ -47,17 +47,17 @@ function configAVSync ()
 			server_port=${server_port:-$MP_DEFAULT_PORT}
 		fi
 	
-		defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mpavdl 'MPServerPort' "$server_port"
+		defaults write ${MP_SRV_BASE}/conf/etc/gov.llnl.mp.AVDefsSync 'MPServerPort' "$server_port"
 	fi
 	
-	if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist ]; then
-		if [ -f /Library/LaunchDaemons/gov.llnl.mpavdl.plist ]; then
-			rm /Library/LaunchDaemons/gov.llnl.mpavdl.plist
+	if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist ]; then
+		if [ -f /Library/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist ]; then
+			rm /Library/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist
 		fi
-		ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist /Library/LaunchDaemons/gov.llnl.mpavdl.plist
+		ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist /Library/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist
 	fi
-	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist
-	chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mpavdl.plist
+	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist
+	chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist
 
 }
 
