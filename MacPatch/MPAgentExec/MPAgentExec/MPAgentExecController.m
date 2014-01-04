@@ -1304,7 +1304,16 @@ done:
 		logit(lcl_vError,@"Unable to get update data needed.");
 		return;
 	}
-	// Check if update needed
+
+    // Check to make sure the object is the right type
+    // This needs to be fixed in the next version.
+    if (![updateDataRaw isKindOfClass:[NSDictionary class]])
+    {
+        logit(lcl_vError,@"Agent updater info is not available.");
+        return;
+    }
+
+    // Check if update needed
 	if (![updateDataRaw objectForKey:@"updateAvailable"] || [[updateDataRaw objectForKey:@"updateAvailable"] boolValue] == NO) {
 		logit(lcl_vInfo,@"No update needed.");
 		return;

@@ -30,7 +30,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"1.5.0"
+#define APPVERSION	@"1.5.1"
 #define APPNAME		@"MPAgentUp2Date"
 
 void usage(void);

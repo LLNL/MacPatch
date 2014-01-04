@@ -81,8 +81,13 @@
         logit(lcl_vError,@"%@, error code %d (%@)",[wsErr localizedDescription], (int)[wsErr code], [wsErr domain]);
         //	return 0;
     }
-	logit(lcl_vDebug,@"WS Result: %@",updateInfo);
+    if (![updateInfo isKindOfClass:[NSDictionary class]])
+    {
+        logit(lcl_vError,@"Agent updater info is not available.");
+        return 0;
+    }
 
+	logit(lcl_vDebug,@"WS Result: %@",updateInfo);
 	logit(lcl_vInfo,@"Evaluate local versions for updates.");
 	// See if the update is needed
 	int needsUpdate = 0;
