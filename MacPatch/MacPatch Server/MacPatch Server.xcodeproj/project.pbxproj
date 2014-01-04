@@ -13,7 +13,6 @@
 			buildPhases = (
 			);
 			dependencies = (
-				8FD208E116E56AF600F78296 /* PBXTargetDependency */,
 				8FD208E516E56AF600F78296 /* PBXTargetDependency */,
 			);
 			name = SERVER_BUILD_DEBUG;
@@ -25,7 +24,6 @@
 			buildPhases = (
 			);
 			dependencies = (
-				8FDBA6781752C2230017865A /* PBXTargetDependency */,
 				8FDBA67C1752C2230017865A /* PBXTargetDependency */,
 			);
 			name = SERVER_BUILD;
@@ -41,33 +39,12 @@
 			remoteGlobalIDString = 8F89F86A1651881F0040DA18;
 			remoteInfo = MPInventoryD;
 		};
-		8FD208D816E56A8500F78296 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8F991EA61444A42400AF9DE2;
-			remoteInfo = MPPatchLoader;
-		};
-		8FD208E016E56AF600F78296 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F991EA51444A42400AF9DE2;
-			remoteInfo = MPPatchLoader;
-		};
 		8FD208E416E56AF600F78296 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 8F89F8691651881F0040DA18;
 			remoteInfo = MPInventoryD;
-		};
-		8FDBA6791752C2230017865A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F991EA51444A42400AF9DE2;
-			remoteInfo = MPPatchLoader;
 		};
 		8FDBA67D1752C2230017865A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -80,14 +57,12 @@
 
 /* Begin PBXFileReference section */
 		8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPInventoryD.xcodeproj; path = MPInventoryD/MPInventoryD.xcodeproj; sourceTree = "<group>"; };
-		8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPPatchLoader.xcodeproj; path = MPPatchLoader/MPPatchLoader.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		8FD2086816E567AC00F78296 = {
 			isa = PBXGroup;
 			children = (
-				8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */,
 				8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */,
 			);
 			sourceTree = "<group>";
@@ -96,14 +71,6 @@
 			isa = PBXGroup;
 			children = (
 				8FD208D116E56A1200F78296 /* MPInventoryD */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		8FD208D316E56A8500F78296 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8FD208D916E56A8500F78296 /* MPPatchLoader */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -130,10 +97,6 @@
 					ProductGroup = 8FD208CD16E56A1200F78296 /* Products */;
 					ProjectRef = 8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */;
 				},
-				{
-					ProductGroup = 8FD208D316E56A8500F78296 /* Products */;
-					ProjectRef = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -151,30 +114,13 @@
 			remoteRef = 8FD208D016E56A1200F78296 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		8FD208D916E56A8500F78296 /* MPPatchLoader */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = MPPatchLoader;
-			remoteRef = 8FD208D816E56A8500F78296 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXTargetDependency section */
-		8FD208E116E56AF600F78296 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPPatchLoader;
-			targetProxy = 8FD208E016E56AF600F78296 /* PBXContainerItemProxy */;
-		};
 		8FD208E516E56AF600F78296 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MPInventoryD;
 			targetProxy = 8FD208E416E56AF600F78296 /* PBXContainerItemProxy */;
-		};
-		8FDBA6781752C2230017865A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPPatchLoader;
-			targetProxy = 8FDBA6791752C2230017865A /* PBXContainerItemProxy */;
 		};
 		8FDBA67C1752C2230017865A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
