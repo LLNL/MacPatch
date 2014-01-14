@@ -47,21 +47,24 @@
 
 - (id)initWithGroupAndHash:(NSString *)aGroup hash:(NSString *)aHash;
 {
-    if (![super init]) return nil;
-    mpServerConnection = [[MPServerConnection alloc] init];
-    [self setMpHostConfigInfo:[mpServerConnection mpConnection]];
-    
-    
-    if (aGroup) {
-        [self setGroupName:aGroup];
-    } else {
-        if ([mpServerConnection.mpDefaults objectForKey:@"SWDistGroup"]) {
-            [self setGroupName:[mpServerConnection.mpDefaults objectForKey:@"SWDistGroup"]];
+    self = [super init];
+    if (self)
+    {
+        mpServerConnection = [[MPServerConnection alloc] init];
+        [self setMpHostConfigInfo:[mpServerConnection mpConnection]];
+
+
+        if (aGroup) {
+            [self setGroupName:aGroup];
         } else {
-            [self setGroupName:@"NA"];
-        }
-    }    
-    [self setGroupHash:aHash];
+            if ([mpServerConnection.mpDefaults objectForKey:@"SWDistGroup"]) {
+                [self setGroupName:[mpServerConnection.mpDefaults objectForKey:@"SWDistGroup"]];
+            } else {
+                [self setGroupName:@"NA"];
+            }
+        }    
+        [self setGroupHash:aHash];
+    }
     return self;
 }
 

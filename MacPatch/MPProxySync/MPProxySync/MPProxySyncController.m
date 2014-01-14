@@ -59,25 +59,60 @@
 
 - (void)syncContent
 {
+    qlinfo(@"Syncronize patch content...");
     if ([self createBaseContentDirs] == NO)
         return;
 
+    NSString *_url = @"/MPDistribution.cfc?method=getDistributionContentAsJSON";
     NSArray *remoteContent;
-    remoteContent = [self getRemotePatchContent];
+    remoteContent = [self getRemotePatchContentForURL:_url];
     
     int l_noOfPatches = 0;
     l_noOfPatches = (int)[remoteContent count] + 1;
+    [self setLogResult:[NSString stringWithFormat:@"%@\n%d patches to syncronize.",logResult, l_noOfPatches]];
 	qlinfo(@"%d patches to syncronize.",l_noOfPatches);
     
     BOOL dlContent = NO;
     dlContent = [self downloadPatchContent:remoteContent];
-    
+
+    [self setLogResult:[NSString stringWithFormat:@"%@\n%d were syncronized.",logResult, numberOfPatchesSyncronnized]];
     qlinfo(@"%d were syncronized.",numberOfPatchesSyncronnized);
+    [self setLogResult:[NSString stringWithFormat:@"%@\nSyncronize complete.",logResult]];
+    qlinfo(@"Syncronize complete.");
+	[self postSyncResults];
+}
+
+- (void)syncSWContent
+{
+    qlinfo(@"Syncronize software content...");
+    if ([self createBaseContentDirs] == NO)
+        return;
+
+    NSString *_url = @"/MPDistribution.cfc?method=getSWDistributionContentAsJSON";
+    NSArray *remoteContent;
+    remoteContent = [self getRemotePatchContentForURL:_url];
+
+    int l_noOfPatches = 0;
+    l_noOfPatches = (int)[remoteContent count] + 1;
+    [self setLogResult:[NSString stringWithFormat:@"%@\n%d software packages to syncronize.",logResult, l_noOfPatches]];
+	qlinfo(@"%d software packages to syncronize.",l_noOfPatches);
+
+    BOOL dlContent = NO;
+    dlContent = [self downloadPatchContent:remoteContent];
+
+    [self setLogResult:[NSString stringWithFormat:@"%@\n%d were syncronized.",logResult, numberOfPatchesSyncronnized]];
+    qlinfo(@"%d were syncronized.",numberOfPatchesSyncronnized);
+    [self setLogResult:[NSString stringWithFormat:@"%@\nSyncronize complete.",logResult]];
     qlinfo(@"Syncronize complete.");
 	[self postSyncResults];
 }
 
 - (BOOL)createBaseContentDirs
+{
+    return [self createBaseContentDirs:CONTENT_DIR];
+}
+
+- (BOOL)createBaseContentDirs:(NSString *)aDIR
 {
     BOOL result = YES;
     NSDictionary *root_attribs, *web_attribs;
@@ -93,9 +128,10 @@
                                   @"_appserver", NSFileGroupOwnerAccountName,
                                   @"_www", NSFileOwnerAccountName, nil ];
     
-    
+
+
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    NSArray *subPaths = [fileManager subpathsAtPath:CONTENT_DIR];
+    NSArray *subPaths = [fileManager subpathsAtPath:aDIR];
     for (NSString *aPath in subPaths) {
         BOOL isDirectory;
         [fileManager fileExistsAtPath:aPath isDirectory:&isDirectory];
@@ -107,7 +143,6 @@
             } else {
                 [fileManager setAttributes:web_attribs ofItemAtPath:aPath error:&error];
                 if (error) {
-                    //logit(lcl_vError,@"%@",[error localizedDescription]);
 					qlerror(@"%@",[error localizedDescription]);
                     result = NO;
                 }
@@ -117,18 +152,17 @@
     return result;    
 }
 
-- (NSArray *)getRemotePatchContent
+- (NSArray *)getRemotePatchContentForURL:(NSString *)aURL
 {
     NSArray *result = nil;
 
     serverConnection = [[MPServerConnection alloc] initWithDefaults:[prefs defaults]];
     asiNet = [[MPASINet alloc] initWithServerConnection:serverConnection];
 
-    NSString *_url = @"/MPDistribution.cfc?method=getDistributionContentAsJSON";
     NSDictionary    *jsonResult = nil;
     NSString        *requestData;
     NSError         *error = nil;
-    requestData = [asiNet synchronousRequestForURL:_url error:&error];
+    requestData = [asiNet synchronousRequestForURL:aURL error:&error];
 
     if (error) {
 		qlerror(@"%@",[error localizedDescription]);
@@ -158,7 +192,11 @@
     serverConnection = [[MPServerConnection alloc] initWithDefaults:[prefs defaults]];
     asiNet = [[MPASINet alloc] initWithServerConnection:serverConnection];
 
-    NSString *_url = [@"/MPDistribution.cfc?method=postSyncResultsJSON&logType=0&logData=" stringByAppendingString:logResult];
+    NSString *_url = [@"/MPDistribution.cfc?method=postSyncResultsJSON&logType=0&logData=" stringByAppendingString:[logResult stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+
+    qldebug(@"[logResult]: %@",logResult);
+    qldebug(@"[postSyncResults]: %@",_url);
+
     NSDictionary    *jsonResult = nil;
     NSString        *requestData;
     NSError         *error = nil;
@@ -270,10 +308,10 @@
     *err = nil;
     NSString *theURL = [NSString stringWithFormat:@"http://%@/mp-content%@",[l_defaults objectForKey:@"MPServerAddress"],aURL];
     
-    qlinfo(@"Download Patch: %@",theURL);
+    qlinfo(@"Download: %@",theURL);
 	NSString *tempFilePath = [self createTempDirFromURL:theURL];
     
-	qlinfo(@"Download Patch to: %@",tempFilePath);
+	qlinfo(@"Download to: %@",tempFilePath);
 	FILE *dlFile = fopen([tempFilePath UTF8String], "w");
     
     qldebug(@"Encoded URL: %@",[theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]);

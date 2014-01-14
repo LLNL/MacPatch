@@ -389,7 +389,7 @@
         Type: Public/Remote
         Description: Returns the custom patch scan data
     --->
-    <cffunction name="GetScanList" access="remote" returnType="struct" returnFormat="json" output="false">
+    <cffunction name="GetScanList" access="remote" returnType="any" returnFormat="plain" output="false">
         <cfargument name="clientID" required="no" default="0" type="string">
         <cfargument name="state" required="no" default="all" type="string">
         <cfargument name="active" required="no" default="1" type="string">
@@ -416,7 +416,8 @@
 			   <cfset response[ "errorMsg" ] = "#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#" />
 			   <cfset result = response>
 			</cfif>
-	        <cfset result = "#deserializejson(cfhttp.fileContent)#">	
+	        <!---<cfset result = "#deserializejson(cfhttp.fileContent)#">--->
+	        <cfset result = "#cfhttp.fileContent#">
 			
 			<cfcatch>
 				<cflog type="error" file="#this.logFile#" text="#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #cfcatch.message# #cfcatch.detail#">

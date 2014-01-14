@@ -178,18 +178,18 @@ done:
         // Test for +, which means greater than 
         if ([[reqOSVerArray objectAtIndex:i] containsString:@"+"] == TRUE) 
         {
-            allowOSOctets = [[NSArray alloc] initWithArray:[[reqOSVerArray objectAtIndex:i] componentsSeparatedByString:@"."]];
-            for (int y = 0; y < [allowOSOctets count]; y++)
+            NSArray *_allowOctsPlus = [[reqOSVerArray objectAtIndex:i] componentsSeparatedByString:@"."];
+            for (int y = 0; y < [_allowOctsPlus count]; y++)
             {
-                if ([[allowOSOctets objectAtIndex:y] containsString:@"+"] == TRUE) {
-                    if ([[curOSVerArray objectAtIndex:y] intValue] >= [[allowOSOctets objectAtIndex:y] intValue]) {
+                if ([[_allowOctsPlus objectAtIndex:y] containsString:@"+"] == TRUE) {
+                    if ([[curOSVerArray objectAtIndex:y] intValue] >= [[_allowOctsPlus objectAtIndex:y] intValue]) {
                         osTypePass = TRUE;
                         goto done;
                     }
                 } else {
-                    if ([[curOSVerArray objectAtIndex:y] intValue] == [[allowOSOctets objectAtIndex:y] intValue]) {
+                    if ([[curOSVerArray objectAtIndex:y] intValue] == [[_allowOctsPlus objectAtIndex:y] intValue]) {
                         continue;
-                    } else if ([[curOSVerArray objectAtIndex:y] intValue] < [[allowOSOctets objectAtIndex:y] intValue]) {
+                    } else if ([[curOSVerArray objectAtIndex:y] intValue] < [[_allowOctsPlus objectAtIndex:y] intValue]) {
                         osTypePass = FALSE;
                         goto done;
                     } else {
@@ -198,49 +198,20 @@ done:
                     }
                 }
             }
-            /* Old Way ... did not work :-)
-			allowOSOctets = [[NSArray alloc] initWithArray:[[reqOSVerArray objectAtIndex:i] componentsSeparatedByString:@"."]];
-            // If the Major OS Version is greater than just pass it...
-            if ([[curOSVerArray objectAtIndex:0] containsString:@"+"] == TRUE) {
-                if ([[curOSVerArray objectAtIndex:0] intValue] >= [[allowOSOctets objectAtIndex:0] intValue]) {
-                    osTypePass = TRUE;
-                    goto done;
-                }
-            }
-            if ([[curOSVerArray objectAtIndex:1] containsString:@"+"] == TRUE) {
-                if ([[curOSVerArray objectAtIndex:0] intValue] >= [[allowOSOctets objectAtIndex:0] intValue]) {
-                    if ([[curOSVerArray objectAtIndex:1] intValue] >= [[allowOSOctets objectAtIndex:1] intValue]) {
-                        osTypePass = TRUE;
-                        goto done;
-                    }
-                }
-            }
-            if ([[curOSVerArray objectAtIndex:2] containsString:@"+"] == TRUE) {
-                if ([[curOSVerArray objectAtIndex:0] intValue] >= [[allowOSOctets objectAtIndex:0] intValue]) {
-                    if ([[curOSVerArray objectAtIndex:1] intValue] >= [[allowOSOctets objectAtIndex:1] intValue]) {
-                        if ([[curOSVerArray objectAtIndex:2] intValue] >= [[allowOSOctets objectAtIndex:2] intValue]) {
-                            osTypePass = TRUE;
-                            goto done;
-                        }
-                    }
-                }
-            }
-             */
         }
 		if ([[reqOSVerArray objectAtIndex:i] containsString:@"*"] == TRUE)
 		{	
 			osMatchCount = 0;
-			allowOSOctets = [[NSArray alloc] initWithArray:[[reqOSVerArray objectAtIndex:i] componentsSeparatedByString:@"."]];
-			
-			for (int x=0;x<[allowOSOctets count]; x++)
+			NSArray *_allowOctsStar = [[reqOSVerArray objectAtIndex:i] componentsSeparatedByString:@"."];
+            qldebug(@"_allowOctsStar: %@",_allowOctsStar);
+			for (int x=0;x<[_allowOctsStar count]; x++)
 			{	
-				if ([[curOSVerArray objectAtIndex:x] intValue] == [[allowOSOctets objectAtIndex:x] intValue] || [[allowOSOctets objectAtIndex:x] isEqualToString:@"*"] == TRUE)
+				if ([[curOSVerArray objectAtIndex:x] intValue] == [[_allowOctsStar objectAtIndex:x] intValue] || [[_allowOctsStar objectAtIndex:x] isEqualToString:@"*"] == TRUE)
 				{	
 					osMatchCount++;		
 				}
 			}
-			int octets = (int)[allowOSOctets count];
-			[allowOSOctets release];
+			int octets = (int)[_allowOctsStar count];
 			if (osMatchCount == octets)
 			{		
 				osTypePass = TRUE;
@@ -248,8 +219,6 @@ done:
 			} else {
 				qldebug(@"OS octets is %d and matched octets is %d. They must match to pass.",octets,osMatchCount);
 			}
-			
-			
 		}
 	}
 	

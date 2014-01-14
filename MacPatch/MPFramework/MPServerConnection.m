@@ -110,7 +110,7 @@
     [tmpInfo setObject:[netHostInfo objectForKey:@"MP_JSON_URL_PLAIN"] forKey:@"MP_JSON_URL_PLAIN"];
     [self setMP_JSON_URL_PLAIN:[netHostInfo objectForKey:@"MP_JSON_URL_PLAIN"]];
     [self setMpConnection:[NSDictionary dictionaryWithDictionary:tmpInfo]];
-
+    [tmpInfo release];
     [mpn release];
 }
 

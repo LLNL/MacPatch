@@ -186,17 +186,6 @@
         // New way, using the helper daemon
         NSArray *applePatchesArray = nil;
         applePatchesArray = [mpAsus scanForAppleUpdates];
-        
-        // post patches to web service
-        NSString *dataMgrXML;
-        dataMgrXML = [mpDataMgr GenXMLForDataMgr:applePatchesArray
-                                         dbTable:@"client_patches_apple" 
-                                   dbTablePrefix:@"mp_" 
-                                   dbFieldPrefix:@""
-                                    updateFields:@"cuuid,patch"
-                                       deleteCol:@"cuuid"
-                                  deleteColValue:[MPSystemInfo clientUUID]];
-        
 
         // Process patches
         if (!applePatchesArray) {

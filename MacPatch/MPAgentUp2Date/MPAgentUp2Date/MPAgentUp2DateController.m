@@ -79,7 +79,7 @@
     NSDictionary *updateInfo = [mpws getAgentUpdates:[_agentInfo objectForKey:@"agentVersion"] build:[_agentInfo objectForKey:@"agentBuild"] error:&wsErr];
     if (wsErr) {
         logit(lcl_vError,@"%@, error code %d (%@)",[wsErr localizedDescription], (int)[wsErr code], [wsErr domain]);
-        //	return 0;
+        return 0;
     }
     if (![updateInfo isKindOfClass:[NSDictionary class]])
     {
@@ -320,7 +320,9 @@ done:
 	char *result = mkdtemp(tempDirectoryNameCString);
 	if (!result) {
 		// handle directory creation failure
+        free(tempDirectoryNameCString);
 		logit(lcl_vError,@"Error, trying to create tmp directory.");
+        return [@"/private/tmp" stringByAppendingPathComponent:appName];
 	}
 	
 	NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];

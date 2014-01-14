@@ -1,6 +1,29 @@
 #!/usr/bin/env python
 
 '''
+ Copyright (c) 2013, Lawrence Livermore National Security, LLC.
+ Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
+ Written by Charles Heizer <heizer1 at llnl.gov>.
+ LLNL-CODE-636469 All rights reserved.
+ 
+ This file is part of MacPatch, a program for installing and patching
+ software.
+ 
+ MacPatch is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License (as published by the Free
+ Software Foundation) version 2, dated June 1991.
+ 
+ MacPatch is distributed in the hope that it will be useful, but WITHOUT ANY
+ WARRANTY; without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the terms and conditions of the GNU General Public
+ License for more details.
+ 
+ You should have received a copy of the GNU General Public License along
+ with MacPatch; if not, write to the Free Software Foundation, Inc.,
+ 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+'''
+
+'''
 Script : MPAVDefsSync
 Version : 1.0.0
 Description: This script will download the last 3 Symantec AV Defs
@@ -55,6 +78,12 @@ if not os.path.exists(args.plist):
 		print "Unable to open " + args.plist +". File not found."
 		logger.info("Unable to open " + args.plist +". File not found.")
 		sys.exit(1)
+
+
+# Read First Line to check and see if binary and convert
+infile = open(args.plist, 'r')
+if not '<?xml' in infile.readline():
+	os.system('/usr/bin/plutil -convert xml1 ' + args.plist)
 
 # Read the config plist
 avConf = plistlib.readPlist(args.plist)

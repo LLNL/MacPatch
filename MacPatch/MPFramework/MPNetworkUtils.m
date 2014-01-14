@@ -59,8 +59,6 @@ static int isalive(struct sockaddr_in scanaddr)
     fd_set wset;             /* file handle for bloc mode */
     struct timeval timeout;  /* timeout struct for connect() */
     
-    sock = -1;
-    
     sock = socket(AF_INET, SOCK_STREAM, 0);
     
     if( (arg = fcntl(sock, F_GETFL, NULL)) < 0) { 

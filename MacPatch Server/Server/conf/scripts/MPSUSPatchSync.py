@@ -77,6 +77,7 @@ import hashlib
 
 # Define logging for global use
 logger = logging.getLogger('MPSUSPatchSync')
+logFile = "/Library/MacPatch/Server/Logs/MPSUSPatchSync.log"
 
 # Variables That Can be Changed
 ignorePatches = ['MultiLingualVoice'] # List of Patches containing to not include in the results
@@ -310,7 +311,7 @@ def main():
 
     # Setup Logging
     try:
-        hdlr = logging.FileHandler('/Library/MacPatch/Server/Logs/MPSUSPatchSync.log')
+        hdlr = logging.FileHandler(logFile)
         formatter = logging.Formatter('%(asctime)s %(levelname)s --- %(message)s')
         hdlr.setFormatter(formatter)
         logger.addHandler(hdlr) 

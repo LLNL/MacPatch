@@ -411,7 +411,6 @@ done:
     
     // Check to see if we have a patch scan file within the last 15 minutes.
     // If we do, then use the contents of that file and no need to re-scan.
-	
     if ([fm fileExistsAtPath:updateFilePath]) {
         NSError *attributesRetrievalError = nil;
         NSDictionary *attributes = [fm attributesOfItemAtPath:updateFilePath error:&attributesRetrievalError];
@@ -455,6 +454,8 @@ done:
 	logit(lcl_vInfo, @"Validating client install status.");
 	NSString *_osType = nil;
 	_osType = [[MPSystemInfo osVersionInfo] objectForKey:@"ProductName"];
+    logit(lcl_vInfo, @"OS Full Info: (%@)",[MPSystemInfo osVersionInfo]);
+    logit(lcl_vInfo, @"OS Info: (%@)",_osType);
 	if ([_osType isEqualToString:@"Mac OS X"]) {
 		if ([_defaults objectForKey:@"allowClient"]) {
 			if (![[_defaults objectForKey:@"allowClient"] isEqualToString:@"1"]) {

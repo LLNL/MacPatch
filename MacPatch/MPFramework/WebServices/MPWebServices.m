@@ -295,6 +295,11 @@ done:
     qlinfo(@"Write patch group hash and data to filesystem.");
     [PatchGroupCacheFileData setObject:PatchGroupInfo forKey:[_defaults objectForKey:@"PatchGroup"]];
     [PatchGroupCacheFileData writeToFile:PatchGroupCacheFile atomically:YES];
+
+#if !__has_feature(objc_arc)
+    [mpc release];
+#endif
+
 }
 
 - (NSString *)getPatchGroupCacheFileDataForGroup
