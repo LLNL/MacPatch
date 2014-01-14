@@ -79,10 +79,15 @@
     NSDictionary *updateInfo = [mpws getAgentUpdates:[_agentInfo objectForKey:@"agentVersion"] build:[_agentInfo objectForKey:@"agentBuild"] error:&wsErr];
     if (wsErr) {
         logit(lcl_vError,@"%@, error code %d (%@)",[wsErr localizedDescription], (int)[wsErr code], [wsErr domain]);
-        //	return 0;
+        return 0;
     }
-	logit(lcl_vDebug,@"WS Result: %@",updateInfo);
+    if (![updateInfo isKindOfClass:[NSDictionary class]])
+    {
+        logit(lcl_vError,@"Agent updater info is not available.");
+        return 0;
+    }
 
+	logit(lcl_vDebug,@"WS Result: %@",updateInfo);
 	logit(lcl_vInfo,@"Evaluate local versions for updates.");
 	// See if the update is needed
 	int needsUpdate = 0;
@@ -315,7 +320,9 @@ done:
 	char *result = mkdtemp(tempDirectoryNameCString);
 	if (!result) {
 		// handle directory creation failure
+        free(tempDirectoryNameCString);
 		logit(lcl_vError,@"Error, trying to create tmp directory.");
+        return [@"/private/tmp" stringByAppendingPathComponent:appName];
 	}
 	
 	NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];

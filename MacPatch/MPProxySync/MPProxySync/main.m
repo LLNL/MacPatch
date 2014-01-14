@@ -32,8 +32,8 @@
 #include <stdlib.h>
 
 #define APPNAME         @"MPProxySync"
-#define APPVERSION      "1.0.0"
-#define SUPPORT_PATH     @"/Library/Application Support/MPProxySync"
+#define APPVERSION      "1.1.0"
+#define SUPPORT_PATH    @"/Library/Application Support/MPProxySync"
 
 void usage(void);
 
@@ -47,6 +47,8 @@ int main(int argc, char * argv[])
 
         BOOL verboseLogging = NO;
         BOOL echoToConsole = NO;
+        BOOL softwareOnly = NO;
+        BOOL patchOnly = NO;
 
         // Setup argument processing
         int c;
@@ -55,6 +57,8 @@ int main(int argc, char * argv[])
             static struct option long_options[] =
             {
                 {"plist"			,required_argument	,0, 'p'},
+                {"swOnly"			,no_argument		,0, 'S'},
+                {"patchOnly"		,no_argument		,0, 'P'},
                 {"Echo"				,no_argument		,0, 'e'},
                 {"Verbose"			,no_argument		,0, 'V'},
                 {"version"			,no_argument		,0, 'v'},
@@ -63,7 +67,7 @@ int main(int argc, char * argv[])
             };
             // getopt_long stores the option index here.
             int option_index = 0;
-            c = getopt_long (argc, argv, "p:eVvh", long_options, &option_index);
+            c = getopt_long (argc, argv, "p:SPeVvh", long_options, &option_index);
 
             // Detect the end of the options.
             if (c == -1)
@@ -73,6 +77,14 @@ int main(int argc, char * argv[])
             {
                 case 'p':
                     argPlist = [NSString stringWithUTF8String:optarg];
+                    break;
+                case 'S':
+                    softwareOnly = YES;
+                    patchOnly = NO;
+                    break;
+                case 'P':
+                    softwareOnly = NO;
+                    patchOnly = YES;
                     break;
                 case 'V':
                     verboseLogging = YES;
@@ -97,6 +109,9 @@ int main(int argc, char * argv[])
             usage();
             exit(0);
         }
+
+        NSString *_logFile = [NSString stringWithFormat:@"%@/Logs/MPProxySync.log",MP_ROOT_SERVER];
+        [MPLog setupLogging:_logFile level:lcl_vDebug];
 
         if (verboseLogging) {
             // enable logging for all components up to level Debug
@@ -124,8 +139,12 @@ int main(int argc, char * argv[])
         NSDictionary *l_prefs = [NSDictionary dictionaryWithContentsOfFile:argPlist];
         
         MPProxySyncController *mpx = [[MPProxySyncController alloc] initWithDefaults:l_prefs];
-        [mpx syncContent];
-        
+        if (patchOnly == YES || (patchOnly == NO && softwareOnly == NO)) {
+            [mpx syncContent];
+        }
+        if (softwareOnly == YES || (patchOnly == NO && softwareOnly == NO)) {
+            [mpx syncSWContent];
+        }
     }
     return 0;
 }

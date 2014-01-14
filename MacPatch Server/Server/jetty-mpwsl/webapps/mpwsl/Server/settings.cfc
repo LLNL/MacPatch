@@ -93,6 +93,19 @@
                </cfif>
             </cfloop>
         </cfif>
+        
+        <!--- Web Service API Checking --->
+        <cfset srvconf.settings.webservices = structNew()>
+        <cfif not structKeyExists(xmlData.settings,"webservices")>
+            <cfset appConf.settings.webservices.enabled = "NO">
+        <cfelse>
+            <cfset appConf.settings.webservices.enabled = "YES">    
+            <cfloop item="key" collection="#xmlData.settings.webservices#">
+               <cfif len(trim(xmlData.settings.webservices[key].xmlText))>
+                  <cfset appConf.settings.webservices[key] = xmlData.settings.webservices[key].xmlText>
+               </cfif>
+            </cfloop>
+        </cfif>
 
         <cfreturn appConf.settings>	
 	</cffunction>

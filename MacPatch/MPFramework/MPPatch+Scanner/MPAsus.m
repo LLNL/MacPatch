@@ -607,7 +607,6 @@ done:
 -(NSString *)createTempDirFromURL:(NSString *)aURL
 {
 	NSString *tempFilePath;
-	
 	NSString *appName = [[NSProcessInfo processInfo] processName];
 	NSString *tempDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.XXXXXX",appName]];
 	
@@ -617,8 +616,10 @@ done:
 	char *result = mkdtemp(tempDirectoryNameCString);
 	if (!result)
 	{
+        free(tempDirectoryNameCString);
 		// handle directory creation failure
 		qlerror(@"Error, trying to create tmp directory.");
+        return [@"/private/tmp" stringByAppendingPathComponent:appName];
 	}
 	
 	NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];

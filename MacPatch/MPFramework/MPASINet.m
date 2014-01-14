@@ -121,7 +121,11 @@ start:
 		if (t < 5) {
 			t++;
 			srand((unsigned)time(NULL));
-			s = 30 + rand() % 300;
+#ifdef DEBUG
+			s = 5 + rand() % 30;
+#else
+            s = 30 + rand() % 300;
+#endif
 			qlerror(@"Trying again in %d seconds.",s);
 			sleep(s);
 			goto start;
@@ -171,7 +175,11 @@ start:
 		if (t < 5) {
 			t++;
 			srand((unsigned)time(NULL));
-			s = 30 + rand() % 300;
+#ifdef DEBUG
+			s = 5 + rand() % 30;
+#else
+            s = 30 + rand() % 300;
+#endif
 			qlerror(@"Trying again in %d seconds.",s);
 			sleep(s);
 			goto start;

@@ -244,8 +244,6 @@ int main(int argc, char * argv[])
             logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
         }
 
-
-
         // Validate Paths
         if (![fm fileExistsAtPath:_configPath]) {
             qlerror(@"%@ file not found.",_configPath);
@@ -300,29 +298,36 @@ int main(int argc, char * argv[])
             exit(1);
         }
 
+        NSArray *files;
+        NSArray *dirContents;
+        NSArray *extensions = [NSArray arrayWithObjects:@"txt", @"xml", @"mpi", @"mpx", @"mpj", nil];
+        MPInventory *inv;
+
         BOOL isRunning = YES;
         while (isRunning)
         {
             @autoreleasepool
             {
                 NSError *myErr = nil;
-                NSArray *extensions = [NSArray arrayWithObjects:@"txt", @"xml", @"mpi", @"mpx", @"mpj", nil];
-                NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:_filesPath]
+                dirContents = [fm contentsOfDirectoryAtURL:[NSURL fileURLWithPath:_filesPath]
                                                                      includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsRegularFileKey]
                                                                                         options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles
                                                                                           error:&myErr];
-                NSArray *files = [dirContents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"pathExtension IN %@", extensions]];
+                files = [dirContents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"pathExtension IN %@", extensions]];
                 if ([files count] > 0)
                 {
                     qlinfo(@"%ld file(s) to process",[files count]);
                     @try {
-                        ParseConf *_conf = [[ParseConf alloc] init];
-                        MysqlServer *myServer = [_conf returnServerInstanceFromConfig:_configPath];
+                        pConf = nil;
+                        pConf = [[ParseConf alloc] init];
+                        mServer = nil;
+                        mServer = [pConf returnServerInstanceFromConfig:_configPath];
 
-                        MPInventory *inv = [[MPInventory alloc] init];
+                        inv = nil;
+                        inv = [[MPInventory alloc] init];
                         [inv setFiles:files];
                         [inv setFilesBaseDir:_filesPath];
-                        [inv setMyServer:myServer];
+                        [inv setMyServer:mServer];
                         if ([inv processFiles] == NO) {
                             qlerror(@"Process files returned false...");
                         }
@@ -334,7 +339,8 @@ int main(int argc, char * argv[])
 
                 }
             } // Autorelease
-            sleep(3);
+            //sleep(3);
+            [NSThread sleepForTimeInterval:5.0]; // Five Second Sleep
         }
     }
     return 0;

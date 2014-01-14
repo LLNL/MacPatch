@@ -1,6 +1,6 @@
 #!/bin/sh
 
-Version="1.6"
+Version="1.7"
 mpBaseDir="/Library/MacPatch"
 mpClientDir="${mpBaseDir}/Client"
 mpUpdateDir="${mpBaseDir}/Updater"
@@ -151,6 +151,9 @@ if [ -d $mpBaseDir ]; then
 			# 10.5 and lower
 			chroot -u $curUser / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mpRBWatcher.plist
 			sleep 2	
+
+			chroot -u $curUser / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist
+			sleep 2	
 			
 			chroot -u $curUser / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist
 			sleep 2
@@ -159,6 +162,10 @@ if [ -d $mpBaseDir ]; then
 			uPid=`ps -U $curUser -e | grep loginwindow.app | grep -v grep | awk '{ print $1 }'`
 
 			res=`/bin/launchctl bsexec $uPid chroot -u $curUser / launchctl unload /Library/LaunchAgents/gov.llnl.mpRBWatcher.plist`
+			echo "mpRBWatcher=$res"
+			sleep 2
+
+			res=`/bin/launchctl bsexec $uPid chroot -u $curUser / launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist`
 			echo "mpRBWatcher=$res"
 			sleep 2
 
@@ -176,6 +183,7 @@ if [ -d $mpBaseDir ]; then
 	
 	# Remove LaunchAgents plists
 	existsAndDelete "/Library/LaunchAgents/gov.llnl.mpRBWatcher.plist"
+	existsAndDelete "/Library/LaunchAgents/gov.llnl.MPRebootD.plist"
 	existsAndDelete "/Library/LaunchAgents/gov.llnl.mp.status.plist"
 	
 	# Remove LaunchDaemon plists

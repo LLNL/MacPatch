@@ -17,36 +17,38 @@
             endingLineNumber = "230"
             landmarkName = "-scanForPatchesWithFilterWaitAndForce:byPassRunning:"
             landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[MPAgentExecController scanForPatchesWithFilterWaitAndForce:byPassRunning:]"
-                  moduleName = "MPAgentExec"
-                  urlString = "file:///Library/MacPatch/tmp/MacPatch/MacPatch/MPAgentExec/MPAgentExec/MPAgentExecController.m"
-                  timestampString = "408667958.740517"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "230"
-                  endingLineNumber = "230"
-                  offsetFromSymbolStart = "5327">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[MPAgentExecController scanForPatchesWithFilterWaitAndForce:byPassRunning:]"
-                  moduleName = "MPAgentExec"
-                  urlString = "file:///Library/MacPatch/tmp/MacPatch/MacPatch/MPAgentExec/MPAgentExec/MPAgentExecController.m"
-                  timestampString = "408667958.74072"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "230"
-                  endingLineNumber = "230"
-                  offsetFromSymbolStart = "8593">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MacPatch Server/MPPatchLoader/MPPatchLoader/MPJson.m"
+            timestampString = "410377867.340047"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
+            landmarkName = "-postJSONDataForMethodWithExtraKeyAndValue:key:value:data:error:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MPFramework/MPPatch+Scanner/MPOSCheck.m"
+            timestampString = "410742437.138094"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
+            landmarkName = "-checkOSVer:"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -38,7 +38,7 @@
 #define		AUTH_MECH		@"window"
 #define		AUTH_MECH_INDEX	0
 
-#define     APPVERSION      @"1.0.0"
+#define     APPVERSION      @"1.0.1"
 #define     APPNAME         @"MPAuthPluginTool"
 
 void usage(void);
@@ -182,7 +182,8 @@ int main(int argc, char * argv[])
             while (i != arrCount)
             {
                 CFStringRef val = (CFStringRef) CFArrayGetValueAtIndex(newMechanisms, i);
-                if (val == mechansimString) {
+                if (CFStringCompare(val, mechansimString, 0) == kCFCompareEqualTo)
+                {
                     CFArrayRemoveValueAtIndex(newMechanisms, i);
                     break;
                 }

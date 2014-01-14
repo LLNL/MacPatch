@@ -50,8 +50,12 @@
 
 - (id)initWithDefaults:(NSDictionary *)aDictionary;
 - (BOOL)createBaseContentDirs;
+- (BOOL)createBaseContentDirs:(NSString *)aDIR;
+
 - (void)syncContent;
-- (NSArray *)getRemotePatchContent;
+- (void)syncSWContent;
+
+- (NSArray *)getRemotePatchContentForURL:(NSString *)aURL;
 - (BOOL)postSyncResults;
 - (BOOL)downloadPatchContent:(NSArray *)aContent;
 - (BOOL)checkFileHash:(NSString *)aFilePath validHash:(NSString *)aValidHash;

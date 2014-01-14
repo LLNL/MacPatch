@@ -859,6 +859,7 @@
             }
         }
     }
+    aSet = nil;
     return (NSDictionary *)result;
 }
 

@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-c /Users/heizer1/Desktop/files_conf/siteconfig.xml  -f  /Users/heizer1/Desktop/files -V"
+            argument = "-c /Users/heizer1/Desktop/siteconfig.xml  -f  /Users/heizer1/Desktop/Files -V"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -411,7 +411,6 @@ done:
     
     // Check to see if we have a patch scan file within the last 15 minutes.
     // If we do, then use the contents of that file and no need to re-scan.
-	
     if ([fm fileExistsAtPath:updateFilePath]) {
         NSError *attributesRetrievalError = nil;
         NSDictionary *attributes = [fm attributesOfItemAtPath:updateFilePath error:&attributesRetrievalError];
@@ -455,6 +454,8 @@ done:
 	logit(lcl_vInfo, @"Validating client install status.");
 	NSString *_osType = nil;
 	_osType = [[MPSystemInfo osVersionInfo] objectForKey:@"ProductName"];
+    logit(lcl_vInfo, @"OS Full Info: (%@)",[MPSystemInfo osVersionInfo]);
+    logit(lcl_vInfo, @"OS Info: (%@)",_osType);
 	if ([_osType isEqualToString:@"Mac OS X"]) {
 		if ([_defaults objectForKey:@"allowClient"]) {
 			if (![[_defaults objectForKey:@"allowClient"] isEqualToString:@"1"]) {
@@ -1304,7 +1305,16 @@ done:
 		logit(lcl_vError,@"Unable to get update data needed.");
 		return;
 	}
-	// Check if update needed
+
+    // Check to make sure the object is the right type
+    // This needs to be fixed in the next version.
+    if (![updateDataRaw isKindOfClass:[NSDictionary class]])
+    {
+        logit(lcl_vError,@"Agent updater info is not available.");
+        return;
+    }
+
+    // Check if update needed
 	if (![updateDataRaw objectForKey:@"updateAvailable"] || [[updateDataRaw objectForKey:@"updateAvailable"] boolValue] == NO) {
 		logit(lcl_vInfo,@"No update needed.");
 		return;

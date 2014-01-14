@@ -95,6 +95,7 @@
             }
 
             myErr = nil;
+            dataMgr = nil;
             dataMgr = [[MPDataMgr alloc] initWithMySQLServerConnection:myCon server:myServer];
 
             if ([dataMgr pasreXMLDocFromPath:[afile path]])

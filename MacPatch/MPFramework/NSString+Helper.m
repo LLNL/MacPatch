@@ -77,10 +77,21 @@
 	return self;
 }
 
-- (NSString *) replaceAll:(NSString *)aSubString replaceString:(NSString *)aReplaceString
+- (NSString *)replaceAll:(NSString *)aSubString replaceString:(NSString *)aReplaceString
 {
 	NSMutableString *mString = [self mutableCopy];
 	[mString replaceOccurrencesOfString:aSubString withString:aReplaceString options:NSCaseInsensitiveSearch range:(NSRange){0,[mString length]}];
+	NSString *returnString = [NSString stringWithString:mString];
+	[mString release];
+	return returnString;
+}
+
+- (NSString *)replaceAllUsingObjects:(NSArray *)aSubStringObjects replaceString:(NSString *)aReplaceString
+{
+    NSMutableString *mString = [self mutableCopy];
+    for (NSString *obj in aSubStringObjects) {
+        [mString replaceOccurrencesOfString:obj withString:aReplaceString options:NSCaseInsensitiveSearch range:(NSRange){0,[mString length]}];
+    }
 	NSString *returnString = [NSString stringWithString:mString];
 	[mString release];
 	return returnString;
@@ -198,13 +209,19 @@
 		range = [cleanedString rangeOfCharacterFromSet:invalidXMLCharacterSet];
 	}
 	
-	// 
+	//
+    NSArray *cleanFromString = [NSArray arrayWithObjects:@"&quot;",@"&lt;",@"&amp;",@"&gt;",@"&apos;",nil];
+    /*
 	cleanedString = (NSMutableString *)[cleanedString replaceAll:@"&quot;" replaceString:@""];
 	cleanedString = (NSMutableString *)[cleanedString replaceAll:@"&lt;" replaceString:@""];
 	cleanedString = (NSMutableString *)[cleanedString replaceAll:@"&amp;" replaceString:@""];
 	cleanedString = (NSMutableString *)[cleanedString replaceAll:@"&gt;" replaceString:@""];
 	cleanedString = (NSMutableString *)[cleanedString replaceAll:@"&apos;" replaceString:@""];
-	return (NSString *)[cleanedString autorelease];
+     */
+    
+    NSString *cleanString = [cleanedString replaceAllUsingObjects:cleanFromString replaceString:@""];
+    [cleanedString release];
+	return cleanString;
 }
 
 @end

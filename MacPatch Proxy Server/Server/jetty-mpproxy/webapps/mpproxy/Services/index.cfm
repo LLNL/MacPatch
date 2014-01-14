@@ -1,6 +1,6 @@
 <cfparam name="mpDBSource" default="mpds">
 <cfparam name="logFile" default="MPWS_JSON">
-<cfparam name="wsURL" default="https://#server.mp.settings.proxyserver.primaryServer#:#server.mp.settings.proxyserver.primaryServerPort#/mpwsl/Services/index.cfm">
+<cfparam name="wsURL" default="https://#server.mp.settings.proxyserver.primaryServer#:#server.mp.settings.proxyserver.primaryServerPort#/Services/index.cfm">
 <cfsetting enablecfoutputonly="true">
 <cfprocessingdirective SUPPRESSWHITESPACE="true">
 <!--- POST BASED PROCESSING --->

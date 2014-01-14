@@ -13,10 +13,7 @@
 			buildPhases = (
 			);
 			dependencies = (
-				8FD208E116E56AF600F78296 /* PBXTargetDependency */,
-				8FD208E316E56AF600F78296 /* PBXTargetDependency */,
 				8FD208E516E56AF600F78296 /* PBXTargetDependency */,
-				8FD208E716E56AF600F78296 /* PBXTargetDependency */,
 			);
 			name = SERVER_BUILD_DEBUG;
 			productName = SERVER_BUILD_DEBUG;
@@ -27,9 +24,7 @@
 			buildPhases = (
 			);
 			dependencies = (
-				8FDBA6781752C2230017865A /* PBXTargetDependency */,
 				8FDBA67C1752C2230017865A /* PBXTargetDependency */,
-				8FDBA67E1752C2230017865A /* PBXTargetDependency */,
 			);
 			name = SERVER_BUILD;
 			productName = SERVER_BUILD_DEBUG;
@@ -37,47 +32,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXContainerItemProxy section */
-		8FD2089016E5681B00F78296 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD2088C16E5681B00F78296 /* MPSAVDownloader.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8FD2087B16E5681B00F78296;
-			remoteInfo = MPSAVDownloader;
-		};
 		8FD208D016E56A1200F78296 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 8F89F86A1651881F0040DA18;
 			remoteInfo = MPInventoryD;
-		};
-		8FD208D816E56A8500F78296 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8F991EA61444A42400AF9DE2;
-			remoteInfo = MPPatchLoader;
-		};
-		8FD208DA16E56A8500F78296 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8FA5D1BE1450F05A000FD0F5;
-			remoteInfo = MPPatchLoaderConf;
-		};
-		8FD208E016E56AF600F78296 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F991EA51444A42400AF9DE2;
-			remoteInfo = MPPatchLoader;
-		};
-		8FD208E216E56AF600F78296 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8FA5D1BD1450F05A000FD0F5;
-			remoteInfo = MPPatchLoaderConf;
 		};
 		8FD208E416E56AF600F78296 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -86,20 +46,6 @@
 			remoteGlobalIDString = 8F89F8691651881F0040DA18;
 			remoteInfo = MPInventoryD;
 		};
-		8FD208E616E56AF600F78296 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD2088C16E5681B00F78296 /* MPSAVDownloader.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8FD2087A16E5681B00F78296;
-			remoteInfo = MPSAVDownloader;
-		};
-		8FDBA6791752C2230017865A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F991EA51444A42400AF9DE2;
-			remoteInfo = MPPatchLoader;
-		};
 		8FDBA67D1752C2230017865A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */;
@@ -107,52 +53,24 @@
 			remoteGlobalIDString = 8F89F8691651881F0040DA18;
 			remoteInfo = MPInventoryD;
 		};
-		8FDBA67F1752C2230017865A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD2088C16E5681B00F78296 /* MPSAVDownloader.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8FD2087A16E5681B00F78296;
-			remoteInfo = MPSAVDownloader;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8FD2088C16E5681B00F78296 /* MPSAVDownloader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPSAVDownloader.xcodeproj; path = MPSAVDownloader/MPSAVDownloader.xcodeproj; sourceTree = "<group>"; };
 		8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPInventoryD.xcodeproj; path = MPInventoryD/MPInventoryD.xcodeproj; sourceTree = "<group>"; };
-		8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPPatchLoader.xcodeproj; path = MPPatchLoader/MPPatchLoader.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		8FD2086816E567AC00F78296 = {
 			isa = PBXGroup;
 			children = (
-				8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */,
 				8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */,
-				8FD2088C16E5681B00F78296 /* MPSAVDownloader.xcodeproj */,
 			);
-			sourceTree = "<group>";
-		};
-		8FD2088D16E5681B00F78296 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8FD2089116E5681B00F78296 /* MPSAVDownloader */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		8FD208CD16E56A1200F78296 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				8FD208D116E56A1200F78296 /* MPInventoryD */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		8FD208D316E56A8500F78296 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8FD208D916E56A8500F78296 /* MPPatchLoader */,
-				8FD208DB16E56A8500F78296 /* MPPatchLoaderConf.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -179,14 +97,6 @@
 					ProductGroup = 8FD208CD16E56A1200F78296 /* Products */;
 					ProjectRef = 8FD208CC16E56A1200F78296 /* MPInventoryD.xcodeproj */;
 				},
-				{
-					ProductGroup = 8FD208D316E56A8500F78296 /* Products */;
-					ProjectRef = 8FD208D216E56A8500F78296 /* MPPatchLoader.xcodeproj */;
-				},
-				{
-					ProductGroup = 8FD2088D16E5681B00F78296 /* Products */;
-					ProjectRef = 8FD2088C16E5681B00F78296 /* MPSAVDownloader.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -197,13 +107,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		8FD2089116E5681B00F78296 /* MPSAVDownloader */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = MPSAVDownloader;
-			remoteRef = 8FD2089016E5681B00F78296 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		8FD208D116E56A1200F78296 /* MPInventoryD */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -211,57 +114,18 @@
 			remoteRef = 8FD208D016E56A1200F78296 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		8FD208D916E56A8500F78296 /* MPPatchLoader */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = MPPatchLoader;
-			remoteRef = 8FD208D816E56A8500F78296 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8FD208DB16E56A8500F78296 /* MPPatchLoaderConf.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = MPPatchLoaderConf.app;
-			remoteRef = 8FD208DA16E56A8500F78296 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXTargetDependency section */
-		8FD208E116E56AF600F78296 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPPatchLoader;
-			targetProxy = 8FD208E016E56AF600F78296 /* PBXContainerItemProxy */;
-		};
-		8FD208E316E56AF600F78296 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPPatchLoaderConf;
-			targetProxy = 8FD208E216E56AF600F78296 /* PBXContainerItemProxy */;
-		};
 		8FD208E516E56AF600F78296 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MPInventoryD;
 			targetProxy = 8FD208E416E56AF600F78296 /* PBXContainerItemProxy */;
 		};
-		8FD208E716E56AF600F78296 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPSAVDownloader;
-			targetProxy = 8FD208E616E56AF600F78296 /* PBXContainerItemProxy */;
-		};
-		8FDBA6781752C2230017865A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPPatchLoader;
-			targetProxy = 8FDBA6791752C2230017865A /* PBXContainerItemProxy */;
-		};
 		8FDBA67C1752C2230017865A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MPInventoryD;
 			targetProxy = 8FDBA67D1752C2230017865A /* PBXContainerItemProxy */;
-		};
-		8FDBA67E1752C2230017865A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPSAVDownloader;
-			targetProxy = 8FDBA67F1752C2230017865A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
