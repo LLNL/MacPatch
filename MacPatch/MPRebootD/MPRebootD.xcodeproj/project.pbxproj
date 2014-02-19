@@ -37,6 +37,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8F576C4818B5326A008C2C3E /* MPWorkerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPWorkerProtocol.h; sourceTree = "<group>"; };
 		8FD88E7816DFC59F00A870A3 /* MPRebootD */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MPRebootD; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD88E7B16DFC59F00A870A3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8FD88E7E16DFC59F00A870A3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -120,6 +121,7 @@
 				8FD88E7E16DFC59F00A870A3 /* main.m */,
 				8FD88EA316DFC6B200A870A3 /* MPRebootController.h */,
 				8FD88EA416DFC6B200A870A3 /* MPRebootController.m */,
+				8F576C4818B5326A008C2C3E /* MPWorkerProtocol.h */,
 				8FD88E8016DFC59F00A870A3 /* Supporting Files */,
 			);
 			path = MPRebootD;

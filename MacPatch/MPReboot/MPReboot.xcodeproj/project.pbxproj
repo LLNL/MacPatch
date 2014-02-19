@@ -12,7 +12,7 @@
 		8FD88F0016DFCF5900A870A3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88EFF16DFCF5900A870A3 /* main.m */; };
 		8FD88F1A16DFCFB800A870A3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88F1716DFCFB800A870A3 /* AppDelegate.m */; };
 		8FD88F1B16DFCFB800A870A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88F1816DFCFB800A870A3 /* MainMenu.xib */; };
-		8FD88F1C16DFCFB800A870A3 /* MPRebootV2.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88F1916DFCFB800A870A3 /* MPRebootV2.icns */; };
+		8FD88F1C16DFCFB800A870A3 /* MPReboot.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88F1916DFCFB800A870A3 /* MPReboot.icns */; };
 		8FD88F2016DFCFFE00A870A3 /* warn.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88F1E16DFCFFE00A870A3 /* warn.png */; };
 		8FD88F2116DFCFFE00A870A3 /* MacPatchInstalleArtBlack.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88F1F16DFCFFE00A870A3 /* MacPatchInstalleArtBlack.png */; };
 		8FD88F2616DFD04000A870A3 /* EventToSend.c in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88F2516DFD04000A870A3 /* EventToSend.c */; };
@@ -31,7 +31,7 @@
 		8FD88F1616DFCFB800A870A3 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8FD88F1716DFCFB800A870A3 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8FD88F1816DFCFB800A870A3 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
-		8FD88F1916DFCFB800A870A3 /* MPRebootV2.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MPRebootV2.icns; sourceTree = "<group>"; };
+		8FD88F1916DFCFB800A870A3 /* MPReboot.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MPReboot.icns; sourceTree = "<group>"; };
 		8FD88F1E16DFCFFE00A870A3 /* warn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = warn.png; sourceTree = "<group>"; };
 		8FD88F1F16DFCFFE00A870A3 /* MacPatchInstalleArtBlack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MacPatchInstalleArtBlack.png; sourceTree = "<group>"; };
 		8FD88F2216DFD01A00A870A3 /* MPReboot-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MPReboot-Info.plist"; sourceTree = "<group>"; };
@@ -118,7 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				8FD88F1816DFCFB800A870A3 /* MainMenu.xib */,
-				8FD88F1916DFCFB800A870A3 /* MPRebootV2.icns */,
+				8FD88F1916DFCFB800A870A3 /* MPReboot.icns */,
 				8FD88F1E16DFCFFE00A870A3 /* warn.png */,
 				8FD88F1F16DFCFFE00A870A3 /* MacPatchInstalleArtBlack.png */,
 			);
@@ -178,7 +178,7 @@
 			files = (
 				8FD88EFE16DFCF5900A870A3 /* InfoPlist.strings in Resources */,
 				8FD88F1B16DFCFB800A870A3 /* MainMenu.xib in Resources */,
-				8FD88F1C16DFCFB800A870A3 /* MPRebootV2.icns in Resources */,
+				8FD88F1C16DFCFB800A870A3 /* MPReboot.icns in Resources */,
 				8FD88F2016DFCFFE00A870A3 /* warn.png in Resources */,
 				8FD88F2116DFCFFE00A870A3 /* MacPatchInstalleArtBlack.png in Resources */,
 			);

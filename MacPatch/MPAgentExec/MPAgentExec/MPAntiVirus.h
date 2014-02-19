@@ -36,6 +36,8 @@
 	NSDictionary	*l_Defaults;
 	
     MPServerConnection  *mpServerConnection;
+    NSFileManager   *fm;
+    BOOL            isNewerSEPSW;
 }
 
 @property (nonatomic, retain) NSString *avType;
@@ -43,6 +45,7 @@
 @property (nonatomic, retain) NSDictionary *avAppInfo;
 @property (nonatomic, retain) NSString *avDefsDate;
 @property (nonatomic, retain) NSDictionary *l_Defaults;
+@property (nonatomic, assign) BOOL isNewerSEPSW;
 
 - (id)initWithServerConnection:(MPServerConnection *)aSrvObj;
 
@@ -54,10 +57,12 @@
 // Collect
 - (NSDictionary *)getAvAppInfo;
 - (NSString *)getLocalDefsDate;
+- (NSString *)parseNewDefsDateFormat:(NSString *)defsDate;
 
 // Download & Update
 - (NSString *)getLatestAVDefsDate;
 - (NSString *)getAvUpdateURL;
 - (int)downloadUnzipAndInstall:(NSString *)pkgURL;
+- (int)runAVDefsUpdate;
 
 @end

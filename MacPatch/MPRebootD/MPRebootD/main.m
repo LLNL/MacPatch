@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-#define APPVERSION "2.1.1"
+#define APPVERSION "2.1.4"
 
 void usage(void);
 
@@ -90,14 +90,14 @@ int main (int argc, char * argv[]) {
 		// enable logging for all components up to level Debug
 		lcl_configure_by_name("*", lcl_vDebug);
 		[LCLLogFile setMirrorsToStdErr:1];
-		logit(lcl_vInfo,@"***** MPRBWatcher started -- Debug Enabled *****");
+		logit(lcl_vInfo,@"***** MPRBWatcher v%s started -- Debug Enabled *****",APPVERSION);
 	} else {
 		// enable logging for all components up to level Info
 		lcl_configure_by_name("*", lcl_vInfo);
 		if (echoToConsole) {
 			[LCLLogFile setMirrorsToStdErr:1];
         }
-		logit(lcl_vInfo,@"***** MPRBWatcher started *****");
+		logit(lcl_vInfo,@"***** MPRBWatcher v%s started *****",APPVERSION);
 	}
 	
 	MPRebootController *ac = [[MPRebootController alloc] init];

@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">13A603</string>
-		<string key="IBDocument.InterfaceBuilderVersion">4514</string>
+		<string key="IBDocument.SystemVersion">13B42</string>
+		<string key="IBDocument.InterfaceBuilderVersion">5037.3</string>
 		<string key="IBDocument.AppKitVersion">1265</string>
-		<string key="IBDocument.HIToolboxVersion">695.00</string>
+		<string key="IBDocument.HIToolboxVersion">696.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">4514</string>
+			<string key="NS.object.0">5037.3</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSButton</string>
@@ -228,7 +228,7 @@
 							<string key="NSFrame">{{114, 56}, {439, 68}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
+							<reference key="NSNextKeyView" ref="861961178"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="1025508187">
 								<int key="NSCellFlags">67108864</int>
@@ -312,7 +312,7 @@ b21wdXRlciwgY2xpY2sgUmVzdGFydC4gICAgICAgICAgICAgICAgICAgICA</string>
 								<int key="NSCellFlags2">33554432</int>
 								<object class="NSCustomResource" key="NSContents">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">MPRebootV2</string>
+									<string key="NSResourceName">MPReboot</string>
 								</object>
 								<int key="NSAlign">0</int>
 								<int key="NSScale">0</int>
@@ -359,6 +359,7 @@ b21wdXRlciwgY2xpY2sgUmVzdGFydC4gICAgICAgICAgICAgICAgICAgICA</string>
 							<string key="NSFrame">{{460, 13}, {96, 32}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="714457523">
 								<int key="NSCellFlags">67108864</int>
@@ -838,7 +839,7 @@ b21wdXRlciwgY2xpY2sgUmVzdGFydC4gICAgICAgICAgICAgICAgICAgICA</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="MPRebootV2">{512, 512}</string>
+			<string key="MPReboot">{512, 512}</string>
 			<string key="NSMenuCheckmark">{11, 11}</string>
 			<string key="NSMenuMixedState">{10, 3}</string>
 			<string key="warn">{600, 500}</string>

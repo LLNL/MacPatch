@@ -60,6 +60,8 @@ NSString * const kRBSWInstallAlertBody = @"Quiting this application will restart
             // Nothing
         }
     }
+    [self terminateSelfIfAlreadyRunning]; // Prevent multiple open reboot windows
+
 	window.title = @"MacPatch Reboot Notification";
 	[window center];
 	[self set_confirmed:NO];
@@ -180,5 +182,21 @@ NSString * const kRBSWInstallAlertBody = @"Quiting this application will restart
 	[alert release];
 }
 
+- (void)terminateSelfIfAlreadyRunning
+{
+    int found = 0;
+    NSString *bID = [[NSBundle mainBundle] bundleIdentifier];
+    if ([[NSWorkspace sharedWorkspace] respondsToSelector:@selector(runningApplications)]) {
+        for (NSRunningApplication *app in [[NSWorkspace sharedWorkspace] runningApplications]) {
+            if ([bID isEqualToString:[app bundleIdentifier]])
+            {
+                found++;
+            }
+        }
+    }
+    if (found > 1) {
+        exit(0);
+    }
+}
 
 @end

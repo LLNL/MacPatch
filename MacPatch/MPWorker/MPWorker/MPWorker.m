@@ -1367,7 +1367,6 @@ done:
     
     return 0;
 }
-
 // Proxy Method
 - (int)createDirAtPathWithIntermediateDirectoriesViaHelper:(in bycopy NSString *)path intermediateDirectories:(BOOL)withDirs attributes:(NSDictionary *)attrs
 {
@@ -1393,7 +1392,6 @@ done:
 
     return 0;
 }
-
 // Proxy Method
 - (int)writeDataToFileViaHelper:(id)data toFile:(NSString *)aFile
 {
@@ -1405,7 +1403,6 @@ done:
     }
     return 0;
 }
-
 // Proxy Method
 - (int)writeArrayToFileViaHelper:(NSArray *)data toFile:(NSString *)aFile
 {
@@ -1421,7 +1418,6 @@ done:
     }
     return 0;
 }
-
 // Proxy Method
 - (void)setDebugLogging:(BOOL)aState
 {
@@ -1433,7 +1429,6 @@ done:
 		logit(lcl_vInfo,@"Info log level is now enabled.");
 	}
 }
-
 #pragma mark SelfPatch Misc
 - (NSString *)getSizeFromDescription:(NSString *)aDesc
 {
@@ -1536,5 +1531,42 @@ done:
 #endif
 }
 
+#pragma mark MPReboot
+
+#define WATCH_PATH              @"/Users/Shared"
+#define WATCH_PATH_FILE         @".needsReboot"
+#define WATCH_PATH_ALT			@"/private/tmp"
+#define WATCH_PATH_FILE_ALT		@".MPRebootRun.plist"
+
+// Proxy Method
+- (int)cleanUpRebootFileViaHelper
+{
+    qlinfo(@"Running reboot file clean up.");
+    NSString *_rbFile1 = [WATCH_PATH stringByAppendingPathComponent:WATCH_PATH_FILE];
+    NSString *_rbFile2 = [WATCH_PATH_ALT stringByAppendingPathComponent:WATCH_PATH_FILE_ALT];
+    NSError *rmErr;
+
+    if ([fm fileExistsAtPath:_rbFile1])
+    {
+        rmErr = nil;
+        qlinfo(@"Found %@, removing file.",_rbFile1);
+        [fm removeItemAtPath:_rbFile1 error:&rmErr];
+        if (rmErr) {
+            qlinfo(@"Error removing file %@. %@",_rbFile1,rmErr.localizedDescription);
+            return 1;
+        }
+    }
+    if ([fm fileExistsAtPath:_rbFile2])
+    {
+        rmErr = nil;
+        qlinfo(@"Found %@, removing file.",_rbFile2);
+        [fm removeItemAtPath:_rbFile2 error:&rmErr];
+        if (rmErr) {
+            qlinfo(@"Error removing file %@. %@",_rbFile2,rmErr.localizedDescription);
+            return 1;
+        }
+    }
+    return 0;
+}
 
 @end

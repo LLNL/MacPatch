@@ -916,7 +916,7 @@
         <cftry>
             <cfif arguments.type EQ "Apple">
                 <cfquery datasource="#this.ds#" name="qGet">
-                    Select cuuid From mp_client_patches_apple
+                    Select rid,cuuid From mp_client_patches_apple
                     Where patch = <cfqueryparam value="#arguments.patch#">
                     AND cuuid = <cfqueryparam value="#Trim(arguments.cuuid)#">
                 </cfquery>
@@ -929,7 +929,7 @@
             </cfif>
             <cfif arguments.type EQ "Third">
                 <cfquery datasource="#this.ds#" name="qGet">
-                    Select cuuid From mp_client_patches_third
+                    Select rid,cuuid From mp_client_patches_third
                     Where patch_id = <cfqueryparam value="#arguments.patch#">
                     AND cuuid = <cfqueryparam value="#Trim(arguments.cuuid)#">
                 </cfquery>
