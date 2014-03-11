@@ -11,8 +11,8 @@
 	<key>CFBundleName</key>
 	<string>MPWorker</string>
 	<key>CFBundleVersion</key>
-	<string>1.5.1</string>
+	<string>1.6.1</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.5.1</string>
+	<string>1.6.1</string>
 </dict>
 </plist>

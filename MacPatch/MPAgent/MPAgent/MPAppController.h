@@ -31,6 +31,7 @@
 @class InventoryOperation;
 @class PatchScanAndUpdateOperation;
 @class MPSWDistTaskOperation;
+@class Profiles;
 
 @interface MPAppController : NSObject {
     
@@ -44,6 +45,7 @@
 	InventoryOperation *invOp;
 	PatchScanAndUpdateOperation *patchOp;
     MPSWDistTaskOperation *swDistOp;
+    Profiles *profilesOp;
 	
 	BOOL useOperationQueue;
 }
@@ -63,5 +65,6 @@
 - (void)runAVInfoScanAndDefsUpdate;
 - (void)scanAndUpdateAgentUpdater;
 - (void)runSWDistScanAndInstall;
+- (void)runProfilesScanAndInstall;
 
 @end

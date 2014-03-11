@@ -36,6 +36,7 @@
 #import "InventoryOperation.h"
 #import	"PatchScanAndUpdateOperation.h"
 #import "MPSWDistTaskOperation.h"
+#import "Profiles.h"
 
 @implementation MPAppController
 
@@ -90,6 +91,9 @@
             case 8:
 				[self runSWDistScanAndInstall];
 				break;
+            case 9:
+				[self runSWDistScanAndInstall];
+				break;
 			case 99:
 				// Run as daemon
 				[self setUseOperationQueue:YES];
@@ -109,7 +113,6 @@
 	[clientOp release];
     [super dealloc];
 }
-
 
 - (void)runAsDaemon
 {
@@ -219,7 +222,12 @@
 								agentOp = [[AgentScanAndUpdateOperation alloc] init];
 								[queue addOperation:agentOp];
 								[agentOp release], agentOp = nil;
-							} else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPAVCheck"]) {
+							} else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPAVInfo"]) {
+								avOp = [[AntiVirusScanAndUpdateOperation alloc] init];
+								[avOp setScanType:0];
+								[queue addOperation:avOp];
+								[avOp release], avOp = nil;
+                            } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPAVCheck"]) {
 								avOp = [[AntiVirusScanAndUpdateOperation alloc] init];
 								[avOp setScanType:1];
 								[queue addOperation:avOp];
@@ -241,6 +249,10 @@
 								swDistOp = [[MPSWDistTaskOperation alloc] init];
 								[queue addOperation:swDistOp];
 								[swDistOp release], swDistOp = nil;	
+							} else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPProfiles"]) {
+								swDistOp = [[MPSWDistTaskOperation alloc] init];
+								[queue addOperation:swDistOp];
+								[swDistOp release], swDistOp = nil;
 							}
                             
 						} else {
@@ -276,7 +288,18 @@
 
 -(void)runClientCheckIn
 {
-	[MPTaskThread runCheckIn];
+    clientOp = [[ClientCheckInOperation alloc] init];
+    [queue addOperation:clientOp];
+    [clientOp release], clientOp = nil;
+
+    if ([NSThread isMainThread]) {
+        while ([[queue operations] count] > 0) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+    } else {
+        [queue waitUntilAllOperationsAreFinished];
+    }
+
 	exit(0);
 }
 
@@ -332,7 +355,23 @@
 
     exit(0);
 }
-				 
+
+- (void)runProfilesScanAndInstall
+{
+    profilesOp = [[Profiles alloc] init];
+    [queue addOperation:profilesOp];
+    [profilesOp release], profilesOp = nil;
+
+    if ([NSThread isMainThread]) {
+        while ([[queue operations] count] > 0) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+    } else {
+        [queue waitUntilAllOperationsAreFinished];
+    }
+
+    exit(0);
+}
 				 
 
 @end

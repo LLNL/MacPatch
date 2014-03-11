@@ -138,9 +138,11 @@
     }  
     
     [d setObject:aPath forKey:@"VolumePath"];
-    [d setObject:[NSString stringWithFormat:@"%d",(int)(totalSpace/1000)] forKey:@"totalSpaceRaw"];
+    //[d setObject:[NSString stringWithFormat:@"%d",(int)(totalSpace/1000)] forKey:@"totalSpaceRaw"];
+    [d setObject:[NSString stringWithFormat:@"%llu",(long long)totalSpace] forKey:@"totalSpaceRaw"]; // Using Bytes for RAW Value
     [d setObject:[NSString stringWithFormat:@"%d",(int)((totalSpace/1000)/1000)] forKey:@"totalSpaceMB"];
-    [d setObject:[NSString stringWithFormat:@"%d",(int)(totalFreeSpace/1000)]  forKey:@"totalFreeSpaceRaw"];
+    //[d setObject:[NSString stringWithFormat:@"%d",(int)(totalFreeSpace/1000)]  forKey:@"totalFreeSpaceRaw"];
+    [d setObject:[NSString stringWithFormat:@"%llu",(long long)totalFreeSpace]  forKey:@"totalFreeSpaceRaw"]; // Using Bytes for RAW Value
     [d setObject:[NSString stringWithFormat:@"%d",(int)((totalFreeSpace/1000)/1000)] forKey:@"totalFreeSpaceMB"];
     logit(lcl_vDebug,@"volumeSizeInfo: %@",d);
 	

@@ -31,10 +31,12 @@
 #import "MPUsersAndGroups.h"
 #import "MPFileVaultInfo.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "BatteryInfo.h"
+#import "PowerProfile.h"
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
-#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault"
+#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles"
 #define kTasksPlist             @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
 #define kInvHashData            @"/Library/MacPatch/Client/Data/.gov.llnl.mp.inv.data.plist"
 
@@ -75,6 +77,34 @@
 
 #pragma mark -
 
+- (BOOL)hasInvDataInDB
+{
+    BOOL res = NO;
+    NSError *err = nil;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    res = [mpws clientHasInvDataInDB:&err];
+    if (err) {
+        logit(lcl_vError,@"%@",err.localizedDescription);
+        return NO;
+    }
+
+    return res;
+}
+
+- (int)postInvDataState
+{
+    int res = -1;
+    NSError *err = nil;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    res = [mpws postClientHasInvData:&err];
+    if (err) {
+        logit(lcl_vError,@"%@",err.localizedDescription);
+        return 1;
+    }
+
+    return res;
+}
+
 - (int)collectInventoryData
 {
 	return [self collectInventoryDataForType:@"All"];
@@ -98,9 +128,13 @@
 
 - (int)collectInventoryDataForType:(NSString *)aSPType
 {
+    BOOL postCompleteInvData = NO;
 	NSArray *invColTypes;
-	if ([aSPType isEqual:@"All"]) {
-		invColTypes = [kINV_SUPPORTED_TYPES componentsSeparatedByString:@","];
+	if ([aSPType isEqual:@"All"])
+    {
+        // This is gathered incase a client has been deleted and the INV data needs to be repopluated
+        postCompleteInvData = [self hasInvDataInDB];
+        invColTypes = [kINV_SUPPORTED_TYPES componentsSeparatedByString:@","];
 	} else {
 		if ([self validateCollectionType:aSPType] == NO) {
 			logit(lcl_vError,@"Inventory collection type %@ is not supported. Inventory will not run.",aSPType);
@@ -183,6 +217,12 @@
 				tmpArr = [self parseLocalGroups];
 			} else if ([[item objectForKey:@"type"] isEqual:@"FileVault"]) {
 				tmpArr = [self parseFileVaultInfo];
+			} else if ([[item objectForKey:@"type"] isEqual:@"PowerManagment"]) {
+				tmpArr = [self parsePowerManagmentInfo];
+			} else if ([[item objectForKey:@"type"] isEqual:@"BatteryInfo"]) {
+				tmpArr = [self parseBatteryInfo];
+			} else if ([[item objectForKey:@"type"] isEqual:@"ConfigProfiles"]) {
+				tmpArr = [self parseConfigProfilesInfo];
 			}
 
 
@@ -190,8 +230,10 @@
                 // Gen a hash for the inv results, if it has not changed dont post it.
                 invCollectionHash = [self hashForArray:tmpArr];
                 if ([self hasInvDataChanged:[item objectForKey:@"type"] hash:invCollectionHash] == NO) {
-                    logit(lcl_vInfo,@"Results for %@ have not changed. No need to post.",[item objectForKey:@"type"]);
-                    continue;
+                    if (postCompleteInvData == NO) {
+                        logit(lcl_vInfo,@"Results for %@ have not changed. No need to post.",[item objectForKey:@"type"]);
+                        continue;
+                    }
                 }
 
 				dataMgrXML = [dataMgr GenXMLForDataMgr:tmpArr
@@ -218,7 +260,11 @@
 		int x = 0;
 		x = [self collectAuditTypeData];
 	}
-
+    // Post that INV data has been posted
+    if (postCompleteInvData == NO)
+    {
+        [self postInvDataState];
+    }
 	[resultsArray release];
 	[dataMgr release];
 	return 0;
@@ -1360,65 +1406,85 @@ done:
     return res;
 }
 
-- (NSDictionary *)pwrSchema
-{
-    NSMutableDictionary *newDic = [[NSMutableDictionary alloc] init];
-    [newDic setObject:@"" forKey:@"profile_name" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"autopoweroff_delay" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"autopoweroff_enabled" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"darkwakebackgroundtasks" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"disk_sleep_timer" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"display_sleep_timer" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"display_sleep_uses_dim" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"gpuswitch" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"hibernate_file" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"hibernate_mode" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"prioritizenetworkreachabilityoversleep" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"standby_delay" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"standby_enabled" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"system_sleep_timer" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"ttyspreventsleep" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"wake_on_ac_change" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"wake_on_clamshell_open" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"wake_on_lan" defaultObject:@"na"];
-    [newDic setObject:@"" forKey:@"reducebrightness" defaultObject:@"na"];
-    
-    return (NSDictionary *)newDic;
-}
-
 - (NSArray *)parsePowerManagmentInfo
 {
-    NSArray *pwrData = nil;
-    NSMutableArray *_pwrData = [[NSMutableArray alloc] init];
+    NSArray *pwrDataProfiles = nil;
+    NSMutableArray *_pwrDataProfiles = [[NSMutableArray alloc] init];
     NSFileManager *fm = [NSFileManager defaultManager];
 	NSString *pmPlist = @"/Library/Preferences/SystemConfiguration/com.apple.PowerManagement.plist";
-	
+	PowerProfile *profile;
     /* Needs to be completed */
 	if ([fm fileExistsAtPath:pmPlist])
     {
         NSDictionary *pmDataRaw = [NSDictionary dictionaryWithContentsOfFile:pmPlist];
-        if ([pmDataRaw objectForKey:@"Custom Profile"]) {
-            NSDictionary *cProfiles = [pmDataRaw objectForKey:@"Custom Profile"];
-            
-            NSMutableDictionary *dProfile;
-            for (NSString *n in [cProfiles allKeys]) {
-                NSDictionary *d = [cProfiles objectForKey:n];
-                dProfile = [[NSMutableDictionary alloc] initWithDictionary:[self pwrSchema]];
-                // Set Profile Name
-                [dProfile setObject:n forKey:@"profile_name"];
-                // Set All other objects for keys
-                for (NSString *k in [d allKeys]) {
-                    [dProfile setObject:[d valueForKey:k] forKey:[[k lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"_"]];
-                }
-                [_pwrData addObject:dProfile];
+        if ([pmDataRaw objectForKey:@"Custom Profile"])
+        {
+            NSDictionary *customProfiles = [pmDataRaw objectForKey:@"Custom Profile"];
+            for (NSString *key in [customProfiles allKeys])
+            {
+                profile = [[PowerProfile alloc] initWithProfileName:key];
+                [_pwrDataProfiles addObject:[profile parseWithDictionary:[customProfiles objectForKey:key]]];
             }
         }
 	} else {
         logit(lcl_vError, @"File %@ does not exist.",pmPlist);
 	}
     
-    pwrData = [NSArray arrayWithArray:_pwrData];
-    return pwrData;
+    pwrDataProfiles = [NSArray arrayWithArray:_pwrDataProfiles];
+    return pwrDataProfiles;
+}
+
+- (NSArray *)parseBatteryInfo
+{
+    NSArray *invData = nil;
+    NSMutableArray *_invData = [[NSMutableArray alloc] init];
+
+    BatteryInfo *bi = [[BatteryInfo alloc] init];
+    if (bi.hasBatteryInstalled)
+    {
+        [_invData addObject:[bi dictionaryRepresentation]];
+        invData = [NSArray arrayWithArray:_invData];
+    }
+
+    return invData;
+}
+
+- (NSArray *)parseConfigProfilesInfo
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *fileName = [NSString stringWithFormat: @"%.0f.%@", [NSDate timeIntervalSinceReferenceDate] * 1000.0, @"plist"];
+    NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
+
+    // Write Profile Data To Plist
+    NSArray *cmdArgs = [NSArray arrayWithObjects:@"-P",@"-o",filePath, nil];
+    [[NSTask launchedTaskWithLaunchPath:@"/usr/bin/profiles" arguments:cmdArgs] waitUntilExit];
+
+    if (![fm fileExistsAtPath:filePath]) {
+        return nil;
+    }
+
+    NSDictionary *profileDict = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    NSMutableArray *profiles = [[NSMutableArray alloc] init];
+    NSMutableDictionary *profile;
+
+    if ([profileDict objectForKey:@"_computerlevel"])
+    {
+        for (NSDictionary *p in [profileDict objectForKey:@"_computerlevel"])
+        {
+            profile = [[NSMutableDictionary alloc] init];
+            [profile setObject:[p objectForKey:@"ProfileIdentifier"] forKey:@"ProfileIdentifier"];
+            [profile setObject:[p objectForKey:@"ProfileDisplayName"] forKey:@"ProfileDisplayName"];
+            [profile setObject:[p objectForKey:@"ProfileInstallDate"] forKey:@"ProfileInstallDate"];
+            [profile setObject:[p objectForKey:@"ProfileUUID"] forKey:@"ProfileUUID"];
+            [profile setObject:[p objectForKey:@"ProfileVersion"] forKey:@"ProfileVersion"];
+            [profiles addObject:profile];
+        }
+    } else {
+        return nil;
+    }
+    // Quick Clean Up
+    [fm removeItemAtPath:filePath error:NULL];
+    return [NSArray arrayWithArray:profiles];
 }
 
 #pragma mark Helper

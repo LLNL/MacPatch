@@ -31,7 +31,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"1.5.0"
+#define APPVERSION	@"1.6.1"
 #define APPNAME		@"MPAgent"
 
 void usage(void);
@@ -64,6 +64,7 @@ int main (int argc, char * argv[])
 			{"AVUpdate"			,no_argument	    ,0, 'U'},
 			{"AgentUpdater"		,no_argument	    ,0, 'G'},
             {"SWScanUpdate" 	,no_argument	    ,0, 'S'},
+            {"Profile"          ,no_argument	    ,0, 'p'},
 			{"Echo"				,no_argument		,0, 'e'},
 			{"Verbose"			,no_argument		,0, 'V'},
 			{"version"			,no_argument		,0, 'v'},
@@ -72,7 +73,7 @@ int main (int argc, char * argv[])
 		};
 		// getopt_long stores the option index here.
 		int option_index = 0;
-		c = getopt_long (argc, argv, "dqDTcsuiaUGSeVvh", long_options, &option_index);
+		c = getopt_long (argc, argv, "dqDTcsuiaUGSpeVvh", long_options, &option_index);
 		
 		// Detect the end of the options.
 		if (c == -1)
@@ -109,6 +110,9 @@ int main (int argc, char * argv[])
 				break;
             case 'S':
 				a_Type = 8;
+				break;
+            case 'p':
+				a_Type = 9;
 				break;
 			case 'V':
 				verboseLogging = YES;

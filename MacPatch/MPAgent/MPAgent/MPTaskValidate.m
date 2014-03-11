@@ -30,9 +30,11 @@ NSString * const kMPAgentCheck		= @"Every@3600";
 NSString * const kMPVulScan			= @"Recurring@Daily@12:00:00";
 NSString * const kMPVulUpdate		= @"Recurring@Daily@12:10:00";
 NSString * const kMPAVCheck			= @"EVERYRAND@14400";
+NSString * const kMPAVInfo			= @"EVERYRAND@1800";
 NSString * const kMPInvScan			= @"EVERY@21600";
 NSString * const kMPSWDistMan       = @"EVERY@14400";
 NSString * const kMPCMD             = @"EVERY@21600";
+NSString * const kMPProfiles        = @"EVERY@1800";
 NSString * const kStartDate			= @"2011-01-01";
 NSString * const kEndDate			= @"3000-01-01";
 
@@ -197,6 +199,36 @@ NSString * const kEndDate			= @"3000-01-01";
 <key>active</key> \
 <string>1</string> \
 <key>cmd</key> \
+<string>kMPAVInfo</string> \
+<key>cmdalt</key> \
+<string>0</string> \
+<key>description</key> \
+<string>Client Antivirus Info Scan Task</string> \
+<key>enddate</key> \
+<string>3000-01-01</string> \
+<key>id</key> \
+<string>8</string> \
+<key>idrev</key> \
+<string>1</string> \
+<key>idsig</key> \
+<string>0</string> \
+<key>interval</key> \
+<string>EVERYRAND@1800</string> \
+<key>mode</key> \
+<string>0</string> \
+<key>name</key> \
+<string>Client Antivirus Info Scan</string> \
+<key>parent</key> \
+<string>0</string> \
+<key>scope</key> \
+<string>Global</string> \
+<key>startdate</key> \
+<string>2011-01-01</string> \
+</dict> \
+<dict> \
+<key>active</key> \
+<string>1</string> \
+<key>cmd</key> \
 <string>kMPInvScan</string> \
 <key>cmdalt</key> \
 <string>0</string> \
@@ -346,7 +378,8 @@ NSString * const kEndDate			= @"3000-01-01";
 		if ([[_cmd uppercaseString] isEqualToString:@"KMPCHECKIN"] || [[_cmd uppercaseString] isEqualToString:@"KMPAGENTCHECK"] ||
 			[[_cmd uppercaseString] isEqualToString:@"KMPVULSCAN"] || [[_cmd uppercaseString] isEqualToString:@"KMPVULUPDATE"] ||
 			[[_cmd uppercaseString] isEqualToString:@"KMPAVCHECK"] || [[_cmd uppercaseString] isEqualToString:@"KMPINVSCAN"] ||
-			[[_cmd uppercaseString] isEqualToString:@"KMPCMD"] || [[_cmd uppercaseString] isEqualToString:@"KMPSWDISTMAN"]) {
+			[[_cmd uppercaseString] isEqualToString:@"KMPCMD"] || [[_cmd uppercaseString] isEqualToString:@"KMPSWDISTMAN"] ||
+            [[_cmd uppercaseString] isEqualToString:@"KMPAVINFO"]) {
 		} else {
 			return 99;	
 		}
@@ -469,6 +502,8 @@ NSString * const kEndDate			= @"3000-01-01";
 		[_tmp setObject:kMPVulUpdate forKey:@"interval"];
 	} else if ([aCMDName isEqualToString:@"kMPAVCheck"]) {
 		[_tmp setObject:kMPAVCheck forKey:@"interval"];
+    } else if ([aCMDName isEqualToString:@"kMPAVInfo"]) {
+		[_tmp setObject:kMPAVInfo forKey:@"interval"];
 	} else if ([aCMDName isEqualToString:@"kMPInvScan"]) {
 		[_tmp setObject:kMPInvScan forKey:@"interval"];	
 	}

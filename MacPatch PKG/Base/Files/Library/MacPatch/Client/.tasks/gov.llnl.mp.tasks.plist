@@ -108,11 +108,11 @@
 			<key>id</key>
 			<string>4</string>
 			<key>idrev</key>
-			<string>1</string>
+			<string>2</string>
 			<key>idsig</key>
 			<string>0</string>
 			<key>interval</key>
-			<string>Recurring@Daily@12:30:00</string>
+			<string>Recurring@Daily@18:00:00</string>
 			<key>mode</key>
 			<string>0</string>
 			<key>name</key>
@@ -177,6 +177,66 @@
 			<string>0</string>
 			<key>name</key>
 			<string>Client Inventory Scan</string>
+			<key>parent</key>
+			<string>0</string>
+			<key>scope</key>
+			<string>Global</string>
+			<key>startdate</key>
+			<string>2011-01-01</string>
+		</dict>
+		<dict>
+			<key>active</key>
+			<string>1</string>
+			<key>cmd</key>
+			<string>kMPSWDistMan</string>
+			<key>cmdalt</key>
+			<string>0</string>
+			<key>description</key>
+			<string>Check for Mandatory Software</string>
+			<key>enddate</key>
+			<string>3000-01-01</string>
+			<key>id</key>
+			<string>7</string>
+			<key>idrev</key>
+			<string>1</string>
+			<key>idsig</key>
+			<string>0</string>
+			<key>interval</key>
+			<string>Every@14400</string>
+			<key>mode</key>
+			<string>0</string>
+			<key>name</key>
+			<string>Mandatory Software Install</string>
+			<key>parent</key>
+			<string>0</string>
+			<key>scope</key>
+			<string>Global</string>
+			<key>startdate</key>
+			<string>2012-01-01</string>
+		</dict>
+		<dict>
+			<key>active</key>
+			<string>1</string>
+			<key>cmd</key>
+			<string>kMPAVInfo</string>
+			<key>cmdalt</key>
+			<string>0</string>
+			<key>description</key>
+			<string>Client Antivirus Info Scan</string>
+			<key>enddate</key>
+			<string>3000-01-01</string>
+			<key>id</key>
+			<string>8</string>
+			<key>idrev</key>
+			<string>1</string>
+			<key>idsig</key>
+			<string>0</string>
+			<key>interval</key>
+			<string>EVERYRAND@1800</string>
+			<key>mode</key>
+			<string>0</string>
+			<key>name</key>
+			<string>Client Antivirus Info Scan</string>
 			<key>parent</key>
 			<string>0</string>
 			<key>scope</key>

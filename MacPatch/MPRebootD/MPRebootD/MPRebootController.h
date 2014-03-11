@@ -24,11 +24,15 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "MPWorkerProtocol.h"
 
-@interface MPRebootController : NSObject
+@interface MPRebootController : NSObject <MPWorkerClient>
 {
     NSDictionary *file_attr;
     NSArray *watchFiles;
+    
+    // Helper
+	id       proxy;
 }
 
 - (NSDictionary *)file_attr;

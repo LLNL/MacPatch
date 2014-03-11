@@ -502,10 +502,10 @@ done:
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
     qldebug(@"[downloadUpdate] url=%@",aURL);
-    NSString *tmpEncUrl = [aURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	NSString *tempFilePath = [self createTempDirFromURL:tmpEncUrl];
+	NSString *tempFilePath = [self createTempDirFromURL:aURL];
+    qldebug(@"[tempFilePath] url=%@",tempFilePath);
     
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:tmpEncUrl]];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:aURL]];
     [request setTimeOutSeconds:300];
     [request setDownloadDestinationPath:tempFilePath];
     [request setValidatesSecureCertificate:NO];

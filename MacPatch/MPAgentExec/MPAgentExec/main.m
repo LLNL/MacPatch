@@ -32,7 +32,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"1.5.1"
+#define APPVERSION	@"1.7.2"
 #define APPNAME		@"MPAgentExec"
 
 void usage(void);
@@ -280,6 +280,9 @@ void usage(void) {
     printf(" \t\tUsers\n");
     printf(" \t\tGroups\n");
     printf(" \t\tFileVault\n");
+    printf(" \t\tPowerManagment\n");
+    printf(" \t\tBatteryInfo\n");
+    printf(" \t\tConfigProfiles\n");
     printf(" -A \tCollect Audit data.\n\n");
 	printf(" -e \tEcho logging data to console.\n");
 	printf(" -V \tVerbose logging.\n");

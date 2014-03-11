@@ -2,7 +2,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<title>Demo</title>
+	<title>Patch BundleID Picker</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <SCRIPT LANGUAGE="JavaScript">
 		function pick(pgid,pName) {
@@ -24,11 +24,21 @@ div.scroll {
 </style>
 <link rel="stylesheet" href="/admin/_assets/css/main/tablesort.css" type="text/css" />
 <script type="text/javascript" src="/admin/_assets/js/other/tablesort.js"></script>
-<cfquery name="qGet" datasource="#session.dbsource#">
-	Select Distinct patch_name, bundle_id
-    From mp_patches
-    Where active = '1'
-</cfquery>
+<cfsilent>
+	<cfquery name="qGet" datasource="#session.dbsource#">
+		Select patch_name, bundle_id
+	    From mp_patches
+	    Where active = '1'
+		Order by bundle_id, rid ASC
+	</cfquery>
+	
+	<cfset temp = structNew()>
+	<cfoutput query="qGet">
+		<cfset temp[bundle_id] = patch_name>
+	</cfoutput>
+	<cfset distinctList = structKeyList(temp)>
+	<cfset currow = 0>
+</cfsilent>
 <body>
 <h2>Patch Bunlde Picker</h2>
 <table id="swTable" width="90%" cellpadding="0" cellspacing="0" border="0" class="sortable-onload rowstyle-alt colstyle-alt no-arrow">
@@ -40,13 +50,16 @@ div.scroll {
 	</tr>
 	</thead>
 	<tbody>
-	<cfoutput query="qGet">
-	<cfif (currentRow MOD 2 EQ 0)><tr class="alt"><cfelse><tr></cfif>
-		<td>#patch_name#</td>
-		<td>#bundle_id#</td>
-		<td><A HREF="javascript:pick('#bundle_id#','#patch_name#')">Select</A></td>
-	</tr>
-	</cfoutput>
+	<cfloop collection="#temp#" item="p">
+	    <cfoutput>
+		<cfif (currow MOD 2 EQ 0)><tr class="alt"><cfelse><tr></cfif>
+	        <td>#StructFind(temp, p)#</td>
+	        <td>#p#</td>
+	        <td><A HREF="javascript:pick('#StructFind(temp, p)#','#p#')">Select</A></td>
+		</tr>
+		<cfset currow++>
+		</cfoutput>
+	</cfloop>
 	</tbody>
 </table>
 <div class="scroll">

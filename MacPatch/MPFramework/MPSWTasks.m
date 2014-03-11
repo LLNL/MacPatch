@@ -143,7 +143,7 @@ done:
         // First Check to make sure we have the errorno object and then check to 
         // see if the return value is 0, else error.
         if ([jsonResult hasKey:@"errorno"]) {
-            if ([jsonResult objectForKey:@"errorno"] != 0) {
+            if ([[jsonResult objectForKey:@"errorno"] integerValue] != 0) {
                 userInfoDict = [NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Error[%d]: %@",(int)[jsonResult objectForKey:@"errorno"],[jsonResult objectForKey:@"errormsg"]] forKey:NSLocalizedDescriptionKey];
                 if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:(int)[jsonResult objectForKey:@"errorno"]  userInfo:userInfoDict];
                 qlerror(@"%@",[userInfoDict objectForKey:NSLocalizedDescriptionKey]);
@@ -207,7 +207,7 @@ done:
         // First Check to make sure we have the errorno object and then check to 
         // see if the return value is 0, else error.
         if ([jsonResult hasKey:@"errorno"]) {
-            if ([jsonResult objectForKey:@"errorno"] != 0) {
+            if ([[jsonResult objectForKey:@"errorno"] integerValue] != 0) {
                 userInfoDict = [NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Error[%d]: %@",(int)[jsonResult objectForKey:@"errorno"],[jsonResult objectForKey:@"errormsg"]] forKey:NSLocalizedDescriptionKey];
                 if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:(int)[jsonResult objectForKey:@"errorno"]  userInfo:userInfoDict];
                 qlerror(@"%@",[userInfoDict objectForKey:NSLocalizedDescriptionKey]);

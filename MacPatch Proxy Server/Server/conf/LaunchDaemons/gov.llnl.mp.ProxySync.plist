@@ -12,7 +12,11 @@
 		<string>-p</string>
 		<string>/Library/MacPatch/Server/conf/etc/gov.llnl.MPProxySync.plist</string>
 	</array>
+	<key>KeepAlive</key>
+	<true/>
 	<key>StartInterval</key>
 	<integer>1800</integer>
+	<key>SuccessfulExit</key>
+	<false/>
 </dict>
 </plist>

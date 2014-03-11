@@ -65,7 +65,15 @@ NSLock *lock;
 		} else if ([l_cmd isEqualToString:@"kMPInvScan"]) {
 			logit(lcl_vInfo,@"Running client inventory scan.");
 			[self runInventoryCollection];
-			
+
+		} else if ([l_cmd isEqualToString:@"kMPCMD"]) {
+			logit(lcl_vInfo,@"Running custom client command.");
+			//[self ];
+            
+		} else if ([l_cmd isEqualToString:@"kMPProfiles"]) {
+			logit(lcl_vInfo,@"Running client inventory scan.");
+			//[self ];
+
 		} else {
 			// Do nothing, log invalid command
 			logit(lcl_vWarning,@"Invalid command (%@) attempted.",l_cmd);

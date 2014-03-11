@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F2D4F2C188EFFB50008853B /* Profiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D4F2B188EFFB50008853B /* Profiles.m */; };
 		8F4B1EED16DD77BD00E15A9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4B1EEC16DD77BD00E15A9E /* Foundation.framework */; };
 		8F4B1EF016DD77BD00E15A9E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1EEF16DD77BD00E15A9E /* main.m */; };
 		8F4B1EF416DD77BD00E15A9E /* MPAgent.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F4B1EF316DD77BD00E15A9E /* MPAgent.1 */; };
@@ -48,6 +49,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8F2D4F2A188EFFB50008853B /* Profiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profiles.h; sourceTree = "<group>"; };
+		8F2D4F2B188EFFB50008853B /* Profiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profiles.m; sourceTree = "<group>"; };
 		8F4B1EE916DD77BD00E15A9E /* MPAgent */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MPAgent; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F4B1EEC16DD77BD00E15A9E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8F4B1EEF16DD77BD00E15A9E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -202,6 +205,8 @@
 				8F4B1F1416DE634600E15A9E /* PatchScanAndUpdateOperation.m */,
 				8F4B1F1516DE634600E15A9E /* MPSWDistTaskOperation.h */,
 				8F4B1F1616DE634600E15A9E /* MPSWDistTaskOperation.m */,
+				8F2D4F2A188EFFB50008853B /* Profiles.h */,
+				8F2D4F2B188EFFB50008853B /* Profiles.m */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -270,6 +275,7 @@
 				8F4B1F2316DE635200E15A9E /* MPTasks.m in Sources */,
 				8F4B1F2416DE635200E15A9E /* MPTaskThread.m in Sources */,
 				8F4B1F2516DE635200E15A9E /* MPTaskValidate.m in Sources */,
+				8F2D4F2C188EFFB50008853B /* Profiles.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

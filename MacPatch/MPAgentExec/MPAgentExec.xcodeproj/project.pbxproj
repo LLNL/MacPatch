@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		8F5F91EE171C6342001C77D1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5F91ED171C6342001C77D1 /* libxml2.dylib */; };
 		8F6007A3171481FF000F58B6 /* MPFileVaultInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6007A2171481FF000F58B6 /* MPFileVaultInfo.m */; };
+		8F9257BB18871D7B006AFBF6 /* BatteryInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F9257BA18871D7B006AFBF6 /* BatteryInfo.m */; };
+		8F9257C71887461D006AFBF6 /* PowerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F9257C61887461D006AFBF6 /* PowerProfile.m */; };
 		8FD88E5616DFBF7200A870A3 /* MPInv.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88E4D16DFBF7200A870A3 /* MPInv.m */; };
 		8FD88E5716DFBF7200A870A3 /* NSDirectoryServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88E4F16DFBF7200A870A3 /* NSDirectoryServices.m */; };
 		8FD88E5816DFBF7200A870A3 /* CHDisk.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88E5116DFBF7200A870A3 /* CHDisk.m */; };
@@ -55,6 +57,10 @@
 		8F5F91ED171C6342001C77D1 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		8F6007A1171481FF000F58B6 /* MPFileVaultInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPFileVaultInfo.h; sourceTree = "<group>"; };
 		8F6007A2171481FF000F58B6 /* MPFileVaultInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPFileVaultInfo.m; sourceTree = "<group>"; };
+		8F9257B918871D7B006AFBF6 /* BatteryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatteryInfo.h; sourceTree = "<group>"; };
+		8F9257BA18871D7B006AFBF6 /* BatteryInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BatteryInfo.m; sourceTree = "<group>"; };
+		8F9257C51887461D006AFBF6 /* PowerProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerProfile.h; sourceTree = "<group>"; };
+		8F9257C61887461D006AFBF6 /* PowerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PowerProfile.m; sourceTree = "<group>"; };
 		8FD88E4C16DFBF7200A870A3 /* MPInv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPInv.h; sourceTree = "<group>"; };
 		8FD88E4D16DFBF7200A870A3 /* MPInv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPInv.m; sourceTree = "<group>"; };
 		8FD88E4E16DFBF7200A870A3 /* NSDirectoryServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDirectoryServices.h; sourceTree = "<group>"; };
@@ -140,6 +146,10 @@
 				8FD88E5516DFBF7200A870A3 /* MPUsersAndGroups.m */,
 				8F6007A1171481FF000F58B6 /* MPFileVaultInfo.h */,
 				8F6007A2171481FF000F58B6 /* MPFileVaultInfo.m */,
+				8F9257B918871D7B006AFBF6 /* BatteryInfo.h */,
+				8F9257BA18871D7B006AFBF6 /* BatteryInfo.m */,
+				8F9257C51887461D006AFBF6 /* PowerProfile.h */,
+				8F9257C61887461D006AFBF6 /* PowerProfile.m */,
 			);
 			name = Inventory;
 			sourceTree = "<group>";
@@ -285,6 +295,7 @@
 				8FE560FB16DE9A7A00BB7600 /* main.m in Sources */,
 				8FE5611016DE9C8B00BB7600 /* MPAntiVirus.m in Sources */,
 				8FE561B616DEB99600BB7600 /* MPAgentExecController.m in Sources */,
+				8F9257BB18871D7B006AFBF6 /* BatteryInfo.m in Sources */,
 				8FD88E5616DFBF7200A870A3 /* MPInv.m in Sources */,
 				8FD88E5716DFBF7200A870A3 /* NSDirectoryServices.m in Sources */,
 				8FD88E5816DFBF7200A870A3 /* CHDisk.m in Sources */,
@@ -294,6 +305,7 @@
 				8FD88E6516DFC11200A870A3 /* FMDatabaseAdditions.m in Sources */,
 				8FD88E6616DFC11200A870A3 /* FMResultSet.m in Sources */,
 				8F6007A3171481FF000F58B6 /* MPFileVaultInfo.m in Sources */,
+				8F9257C71887461D006AFBF6 /* PowerProfile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

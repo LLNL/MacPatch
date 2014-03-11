@@ -33,6 +33,7 @@
 @synthesize avAppInfo;
 @synthesize avDefsDate;
 @synthesize l_Defaults;
+@synthesize isNewerSEPSW;
 
 -(id)init
 {
@@ -44,7 +45,9 @@
 {
     self = [super init];
 	if (self) {
+        fm = [NSFileManager defaultManager];
 		avApp = nil;
+        [self setIsNewerSEPSW:NO];
         mpServerConnection = aSrvObj;
 		[self setL_Defaults:mpServerConnection.mpDefaults];
 	}
@@ -91,38 +94,69 @@
         logit(lcl_vInfo, @"Host AV defs date is %@",_localDefsDate);
         [_avInfoToPost setValue:_localDefsDate forKey:@"DefsDate"];
     }
+    // Get Latest Defs Date from Server
+    NSString *_remoteAvDefsDate = [self getLatestAVDefsDate];
 
-	// Get Latest Defs Date from Server
-	NSString *_remoteAvDefsDate = [self getLatestAVDefsDate];
-	if (_remoteAvDefsDate != nil) {
-        logit(lcl_vInfo, @"Latest AV defs date is %@",_remoteAvDefsDate);
-        // If Updates are enabled
-        if (([_remoteAvDefsDate intValue] > [_localDefsDate intValue]) && [_localDefsDate intValue] != -1) {
-            logit(lcl_vInfo,@"AV Defs are out of date.")
-            if (runUpdate == YES)
+    if (isNewerSEPSW == YES) {
+        if (_remoteAvDefsDate != nil)
+        {
+            logit(lcl_vInfo, @"Latest AV defs date is %@",_remoteAvDefsDate);
+            NSString *justTheDateString = @"0";
+            @try {
+                NSRange justTheDate = NSMakeRange(0, 8);
+                justTheDateString = [_localDefsDate substringWithRange:justTheDate];
+            }
+            @catch (NSException *exception) {
+                logit(lcl_vError,@"%@",exception);
+            }
+
+            if (([_remoteAvDefsDate intValue] > [justTheDateString intValue]) && [justTheDateString intValue] != -1)
             {
-                logit(lcl_vInfo,@"Run the AV Defs update, defs are out of date.")
-                // Install the Software
-                NSString *_avDefsURL = [self getAvUpdateURL];
-                logit(lcl_vDebug,@"AV Defs URL: %@",_avDefsURL);
-                if (_avDefsURL) {
-                    int installResult = -1;
-                    installResult = [self downloadUnzipAndInstall:_avDefsURL];
-                    if (installResult != 0) {
-                        logit(lcl_vError,@"AV Defs were not updated. Please see the install.log file for reason.");
-                    } else {
-                        logit(lcl_vError,@"AV Defs were updated.");
+                logit(lcl_vInfo,@"AV Defs are out of date.")
+                if (runUpdate == YES)
+                {
+                    int avUpdateRes = -1;
+                    avUpdateRes = [self runAVDefsUpdate];
+                    if (avUpdateRes == 0) {
+                        logit(lcl_vInfo,@"AV Defs were updated.");
                         // Get Defs Info and Update The Data to Post
                         _localDefsDate = [self getLocalDefsDate];
                         [_avInfoToPost setValue:_localDefsDate forKey:@"DefsDate"];
                     }
                 }
             }
-        } else {
-            logit(lcl_vDebug, @"AV Defs are current.");
         }
-	}
-
+    } else {
+        if (_remoteAvDefsDate != nil)
+        {
+            logit(lcl_vInfo, @"Latest AV defs date is %@",_remoteAvDefsDate);
+            // If Updates are enabled
+            if (([_remoteAvDefsDate intValue] > [_localDefsDate intValue]) && [_localDefsDate intValue] != -1) {
+                logit(lcl_vInfo,@"AV Defs are out of date.")
+                if (runUpdate == YES)
+                {
+                    logit(lcl_vInfo,@"Run the AV Defs update, defs are out of date.")
+                    // Install the Software
+                    NSString *_avDefsURL = [self getAvUpdateURL];
+                    logit(lcl_vDebug,@"AV Defs URL: %@",_avDefsURL);
+                    if (_avDefsURL) {
+                        int installResult = -1;
+                        installResult = [self downloadUnzipAndInstall:_avDefsURL];
+                        if (installResult != 0) {
+                            logit(lcl_vError,@"AV Defs were not updated. Please see the install.log file for reason.");
+                        } else {
+                            logit(lcl_vInfo,@"AV Defs were updated.");
+                            // Get Defs Info and Update The Data to Post
+                            _localDefsDate = [self getLocalDefsDate];
+                            [_avInfoToPost setValue:_localDefsDate forKey:@"DefsDate"];
+                        }
+                    }
+                }
+            } else {
+                logit(lcl_vInfo, @"AV Defs are current.");
+            }
+        }
+    }
 	// Post AV to WebService
     MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
     NSError *wsErr = nil;
@@ -138,7 +172,7 @@
 #pragma mark Collect Data
 -(NSDictionary *)getAvAppInfo
 {
-	NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *avApplication;
 	NSArray *avAppArray = [NSArray arrayWithObjects:
 						   @"/Applications/Symantec Solutions/Symantec AntiVirus.app",
 						   @"/Applications/Symantec Solutions/Norton AntiVirus.app",
@@ -150,37 +184,41 @@
 	// Find the 
 	for (NSString *item in avAppArray) {
 		if ([fm fileExistsAtPath:item]) {
-			avApp = [NSString stringWithString:item];
+            logit(lcl_vDebug,@"Found AV app, %@.",item);
+			avApplication = [NSString stringWithString:item];
 			break;
 		}
 	}
 	
-	if (avApp == nil) {
+	if (avApplication == nil) {
 		logit(lcl_vError,@"Unable to find a AV product.");
+        return nil;
 	}
-	NSDictionary *_avAppInfo = [NSDictionary dictionaryWithContentsOfFile:[avApp stringByAppendingPathComponent:@"Contents/Info.plist"]];
+
+	NSDictionary *_avAppInfo = [NSDictionary dictionaryWithContentsOfFile:[avApplication stringByAppendingPathComponent:@"Contents/Info.plist"]];
 	NSMutableDictionary *_tmpAvDict = [[NSMutableDictionary alloc] init];
 	[_tmpAvDict setValue:[MPSystemInfo clientUUID] forKey:@"cuuid"];
-    if (avApp) {
-        [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleExecutable"] forKey:@"CFBundleExecutable"];
-        [_tmpAvDict setValue:avApp forKey:@"NSBundleResolvedPath"];
-        [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleVersion"] forKey:@"CFBundleVersion"];
-        [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleShortVersionString"] forKey:@"CFBundleShortVersionString"];
-    }
+    [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleExecutable"] forKey:@"CFBundleExecutable"];
+    [_tmpAvDict setValue:avApplication forKey:@"NSBundleResolvedPath"];
+    [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleVersion"] forKey:@"CFBundleVersion"];
+    [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleShortVersionString"] forKey:@"CFBundleShortVersionString"];
+
+    [self setAvApp:avApplication];
 	[self setAvAppInfo:_tmpAvDict];
-	
 	return [_tmpAvDict autorelease];
 }
 
 -(NSString *)getLocalDefsDate
 {
-	NSFileManager *fm = [NSFileManager defaultManager];
 	NSString *_avDefsPath = nil;
 	NSArray *avDefsArray = [NSArray arrayWithObjects:
 						   @"/Library/Application Support/Symantec/AntiVirus/Engine/V.GRD",
 						   @"/Library/Application Support/Norton Solutions Support/Norton AntiVirus/Engine/v.grd",
 						   @"/Library/Application Support/Norton Solutions Support/Norton AntiVirus/Engine/V.GRD",
 						   nil];
+
+    NSString *avDefsAltPath = @"/Library/Application Support/Symantec/LiveUpdate/ActiveRegistry/NAV12Defs.plist";
+
 	// Find the 
 	for (NSString *item in avDefsArray) {
 		if ([fm fileExistsAtPath:item]) {
@@ -190,10 +228,43 @@
 		}
 	}
 	
-	if (_avDefsPath == nil) {
+	if (_avDefsPath == nil)
+    {
+        if ([fm fileExistsAtPath:avDefsAltPath]) {
+			logit(lcl_vDebug,@"Reading defs file, %@",avDefsAltPath);
+			NSDictionary *newAVDefsFileData = [NSDictionary dictionaryWithContentsOfFile:avDefsAltPath];
+            if (newAVDefsFileData) {
+                /*
+                 Symantec changed the location of the AV Defs file info as of SEP 12.1.4013
+                 It's now stored in a plist and easier to get, but the date still has to be
+                 parsed.
+                 */
+                [self setIsNewerSEPSW:YES];
+                if ([newAVDefsFileData objectForKey:@"ProductArray"])
+                {
+                    if ([[newAVDefsFileData objectForKey:@"ProductArray"] count] >= 1) {
+                        if ([[[newAVDefsFileData objectForKey:@"ProductArray"] objectAtIndex:0] objectForKey:@"itemSeqData"]) {
+                            NSString *itemSeqData = [[[newAVDefsFileData objectForKey:@"ProductArray"] objectAtIndex:0] objectForKey:@"itemSeqData"];
+                            NSString *newDefsDate = [self parseNewDefsDateFormat:itemSeqData];
+                            [self setAvDefsDate:newDefsDate];
+                            return newDefsDate;
+                        }
+                        if ([[[newAVDefsFileData objectForKey:@"ProductArray"] objectAtIndex:0] objectForKey:@"ItemSeqData"]) {
+                            NSString *itemSeqData = [[[newAVDefsFileData objectForKey:@"ProductArray"] objectAtIndex:0] objectForKey:@"ItemSeqData"];
+                            NSString *newDefsDate = [self parseNewDefsDateFormat:itemSeqData];
+                            [self setAvDefsDate:newDefsDate];
+                            return newDefsDate;
+                        }
+                    }
+                }
+
+            }
+		}
+
 		logit(lcl_vError,@"Unable to find a AV Defs.");
 		return nil;
 	}
+
 	// Read Defs file
 	NSError *err = nil;
 	NSString *_avDefsFileData = [NSString stringWithContentsOfFile:_avDefsPath encoding:NSUTF8StringEncoding error:&err];
@@ -217,6 +288,31 @@
 	}
 	[self setAvDefsDate:[NSString stringWithString:_defsDate]];
 	return _defsDate;
+}
+
+- (NSString *)parseNewDefsDateFormat:(NSString *)defsDate
+{
+    logit(lcl_vDebug,@"Raw Defs Date: %@",defsDate);
+    NSString *result = @"NA";
+    if (defsDate.length >= 6) {
+        NSRange year = NSMakeRange(0, 2);
+        NSString *strYear = [NSString stringWithFormat:@"20%@",[defsDate substringWithRange:year]];
+        NSRange month = NSMakeRange(2, 2);
+        NSString *strMonth = [defsDate substringWithRange:month];
+        NSRange day = NSMakeRange(4, 2);
+        NSString *strDay = [defsDate substringWithRange:day];
+        NSString *strRev = @"0";
+        @try {
+            NSRange rev = NSMakeRange(6, defsDate.length-6);
+            strRev = [defsDate substringWithRange:rev];
+        }
+        @catch (NSException *exception) {
+            logit(lcl_vError,@"%@",exception);
+        }
+        result = [NSString stringWithFormat:@"%@%@%@ r%@",strYear,strMonth,strDay,strRev];
+    }
+    logit(lcl_vDebug,@"Parsed Defs Date: %@",result);
+    return result;
 }
 
 #pragma mark Download & Update Methods
@@ -295,7 +391,7 @@
 		NSString *pkgPath;
 		NSString *pkgBaseDir = [dlPatchLoc stringByDeletingLastPathComponent];						
 		NSPredicate *pkgPredicate = [NSPredicate predicateWithFormat:@"(SELF like [cd] '*.pkg') OR (SELF like [cd] '*.mpkg')"];
-		NSArray *pkgList = [[[NSFileManager defaultManager] directoryContentsAtPath:[dlPatchLoc stringByDeletingLastPathComponent]] filteredArrayUsingPredicate:pkgPredicate];
+		NSArray *pkgList = [[fm directoryContentsAtPath:[dlPatchLoc stringByDeletingLastPathComponent]] filteredArrayUsingPredicate:pkgPredicate];
 		int installResult = -1;
 		MPInstaller *mpi = [[MPInstaller alloc] init];
 		// Install pkg(s)
@@ -314,6 +410,64 @@
 	[mpDefaults release];
 	[mpAsus release];
 	return result;
+}
+
+- (int)runAVDefsUpdate
+{
+    NSString *appPath = @"/Library/Application Support/Symantec/LiveUpdate/LUTool";
+
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath: appPath];
+
+    NSPipe *readPipe = [NSPipe pipe];
+    NSFileHandle *readHandle = [readPipe fileHandleForReading];
+
+    [task setStandardOutput: readPipe];
+    [task setStandardError: readPipe];
+    [task launch];
+
+    NSMutableData *data = [[NSMutableData alloc] init];
+    NSData *readData;
+
+    while ((readData = [readHandle availableData]) && [readData length]) {
+        [data appendData: readData];
+    }
+
+    NSString *strResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+    logit(lcl_vDebug,@"runAVDefsUpdate Output: %@",strResult);
+
+    int taskTerminationStatus = 4;
+
+    @try {
+        taskTerminationStatus = [task terminationStatus];
+    }
+    @catch (NSException *exception) {
+        logit(lcl_vError,@"%@",exception);
+        logit(lcl_vError,@"Setting result to LU error.");
+    }
+
+    int result = -1;
+    switch (taskTerminationStatus)
+    {
+        case 0:
+            logit(lcl_vInfo,@"LU completed successfully with new update.");
+            result = 0;
+            break;
+        case 1:
+            logit(lcl_vInfo,@"LU found nothing new. It did successfully contact the LU server, but found nothing new to update.");
+            result = 0;
+            break;
+        case 4:
+            logit(lcl_vInfo,@"LU failed with error, such as network error.");
+            result = 1;
+            break;
+        default:
+            logit(lcl_vInfo,@"LU failed with error (%d).",[task terminationStatus]);
+            result = 1;
+            break;
+    }
+
+    return result;
 }
 
 @end

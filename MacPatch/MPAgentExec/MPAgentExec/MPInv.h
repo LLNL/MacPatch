@@ -73,6 +73,8 @@
 - (NSArray *)parseLocalGroups;
 - (NSArray *)parseFileVaultInfo;
 - (NSArray *)parsePowerManagmentInfo;
+- (NSArray *)parseBatteryInfo;
+- (NSArray *)parseConfigProfilesInfo;
 
 // Helpers for Directory Data from Daniel
 - (NSDictionary *)stringToDict:(NSString *)theString theDelimiter:(NSString *)theDelimiter;

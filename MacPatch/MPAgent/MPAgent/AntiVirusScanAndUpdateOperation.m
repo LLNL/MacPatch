@@ -31,7 +31,7 @@
 
 - (void)runAVInfoScan;
 - (void)runAVInfoScanAndDefsUpdate;
-
+- (int)runAVDefsUpdate;
 @end
 
 @implementation AntiVirusScanAndUpdateOperation
@@ -157,6 +157,11 @@
 		[mpr release];
 	}	
 	[rPool release];
+}
+
+- (int)runAVDefsUpdate
+{
+    return 0;
 }
 
 @end

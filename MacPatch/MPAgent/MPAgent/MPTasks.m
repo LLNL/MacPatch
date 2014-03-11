@@ -272,6 +272,14 @@
 			} else if ([intervalArray count] == 3) {
 				[tmpDict setObject:@"EVERYRAND@14400" forKey:@"interval"];
 			}
+        } else if ([[tmpDict objectForKey:@"cmd"] isEqualToString:@"kMPAVInfo"]) {
+			if ([intervalArray count] == 2) {
+				if ([intervalArray objectAtIndex:0] == NULL || [intervalArray objectAtIndex:1] == NULL) {
+					[tmpDict setObject:@"EVERYRAND@1800" forKey:@"interval"];
+				}
+			} else if ([intervalArray count] == 3) {
+				[tmpDict setObject:@"EVERYRAND@14400" forKey:@"interval"];
+			}
 		} else if ([[tmpDict objectForKey:@"cmd"] isEqualToString:@"kMPInvScan"]) {
 			if ([intervalArray count] == 2) {
 				if ([intervalArray objectAtIndex:0] == NULL || [intervalArray objectAtIndex:1] == NULL) {
@@ -279,6 +287,14 @@
 				}
 			} else if ([intervalArray count] == 3) {
 				[tmpDict setObject:@"EVERY@21600" forKey:@"interval"];
+			}
+		} else if ([[tmpDict objectForKey:@"cmd"] isEqualToString:@"kMPProfiles"]) {
+			if ([intervalArray count] == 2) {
+				if ([intervalArray objectAtIndex:0] == NULL || [intervalArray objectAtIndex:1] == NULL) {
+					[tmpDict setObject:@"EVERY@1800" forKey:@"interval"];
+				}
+			} else if ([intervalArray count] == 3) {
+				[tmpDict setObject:@"EVERY@1800" forKey:@"interval"];
 			}
 		}
 	} else {

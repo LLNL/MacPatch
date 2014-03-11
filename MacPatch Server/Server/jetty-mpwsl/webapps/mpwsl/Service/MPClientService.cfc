@@ -52,6 +52,37 @@
         
         <cfset l = logit("Error",arguments.aEvent)>
     </cffunction>
+    
+    <cffunction name="responseObj" access="private" returntype="struct" output="no">
+        <cfargument name="resultType" required="yes" default="0" displayname="0=String,1=Struct">
+
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "0" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfif arguments.resultType EQ 0>
+        	<cfset response[ "result" ] = "" />
+        <cfelse>
+        	<cfset response[ "result" ] = {} />    
+		</cfif>
+		<cfset response[ "machineName" ] = "" />
+        <cfset response[ "hostName" ] = "" />
+		
+        <cftry>
+			<cfscript>
+                machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
+                hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
+            </cfscript>
+    
+            <cfset response[ "machineName" ] = "#machineName#" />
+            <cfset response[ "hostName" ] = "#hostaddress#" />
+	
+            <cfcatch type="any">
+                <cfset l = elogit("[responseObj]: #cfcatch.Detail# -- #cfcatch.Message#")>
+            </cfcatch>
+        </cftry>
+        
+        <cfreturn response>
+    </cffunction>
 
 <!--- **************************************************************************************** --->
 <!--- Begin Client WebServices Methods --->
@@ -63,11 +94,9 @@
     --->
     <cffunction name="WSLTest" access="remote" returnType="struct" returnFormat="json" output="false">
     
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
+        <cfset response = responseObj(0) />
         <cfset response[ "result" ] = #CreateODBCDateTime(now())# />
-        
+
         <cfreturn response>
     </cffunction>
 
@@ -78,10 +107,7 @@
     --->
     <cffunction name="clearCache" access="remote" returnType="struct" returnFormat="json" output="false">
     
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
 
         <cftry>
             <cfobjectcache action="CLEAR">
@@ -106,10 +132,7 @@
         <cfargument name="data">
         <cfargument name="type">
     
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
 
         <cfset aObj = CreateObject( "component", "cfc.client_checkin" ) />
         <cfset res = aObj._base(arguments.data, arguments.type) />
@@ -130,10 +153,7 @@
         <cfargument name="data">
         <cfargument name="type">
     
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
 
         <cfset aObj = CreateObject( "component", "cfc.client_checkin" ) />
         <cfset res = aObj._plist(arguments.data, arguments.type) />
@@ -155,10 +175,7 @@
         <cfargument name="clientID">
         <cfargument name="agentUp2DateVer">
         
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = responseObj(1) />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetLatestVersion">
@@ -320,10 +337,7 @@
         <cfargument name="agentVersion" default="0">
         <cfargument name="agentBuild" default="0">
         
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = responseObj(1) />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetLatestVersion" maxrows="1">
@@ -358,7 +372,7 @@
                 </cfif>
             </cfoutput>
         <cfelse>
-            <cfset l = elogit("[GetSelfUpdates][qGetLatestVersion][#arguments.cuuid#]: #cfcatch.Detail# -- #cfcatch.Message#")>
+            <cfset l = elogit("[GetSelfUpdates][qGetLatestVersion][#arguments.clientID#]: #cfcatch.Detail# -- #cfcatch.Message#")>
             <cfset response.errorno = "2">
             <cfset response.errormsg = "[GetAgentUpdates]: Found #qGetLatestVersion.RecordCount# records. Should only find 1.">
             <cfreturn response>
@@ -419,7 +433,7 @@
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGet">
-                Select cuuid, ipaddr, hostname, Domain, ostype, osver
+               Select cuuid, ipaddr, hostname, Domain, ostype, osver, client_version, agent_version, agent_build
                 From mp_clients_view
                 Where cuuid = <cfqueryparam value="#arguments.clientID#">
             </cfquery>
@@ -431,7 +445,7 @@
         </cfcatch>
         </cftry>
 
-        <cfreturn QueryNew("cuuid, ipaddr, hostname, Domain, ostype, osver")>
+        <cfreturn QueryNew("cuuid, ipaddr, hostname, Domain, ostype, osver, client_version, agent_version, agent_build")>
     </cffunction>
 
     <!--- 
@@ -444,10 +458,7 @@
         <cfargument name="avAgent" required="true">
         <cfargument name="theArch" required="false" default="x86">
         
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
         
         <cfif arguments.avAgent NEQ "SEP" AND arguments.avAgent NEQ "SAV">
             <cfset l = elogit("[GetAVDefsDate]: Unknown avAgent config. Schema may de out of date.")>
@@ -489,10 +500,7 @@
         <cfargument name="avAgent" required="true">
         <cfargument name="theArch" required="false" default="x86">
         
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
         
         <cfif arguments.avAgent NEQ "SEP" AND arguments.avAgent NEQ "SAV">
             <cfset l = elogit("[GetAVDefsFile]: Unknown avAgent config. Schema may de out of date.")>
@@ -534,18 +542,16 @@
         <cfargument name="PatchGroup" required="yes">
         <cfargument name="Hash" required="yes" type="string">
     
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
     
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
             <cfset pid = patchGroupIDFromName(arguments.PatchGroup)>
-            <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
+            <cfquery datasource="#this.ds#" name="qGetGroupID">
                 SELECT mdate FROM mp_patch_group_data
                 WHERE pid = <cfqueryparam value="#pid#">
                 AND hash = <cfqueryparam value="#arguments.Hash#">
+                AND data_type = 'JSON'
             </cfquery>
             
             <cfif qGetGroupID.RecordCount EQ 1>
@@ -553,7 +559,7 @@
             <cfelse>    
                 <cfset l = logit("Error","[GetIsHashValidForPatchGroup][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: No group was found for #arguments.PatchGroup#")>
                 <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetIsHashValidForPatchGroup][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: No group was found for #arguments.PatchGroup#" />
+                <cfset response[ "errormsg" ] = "[GetIsHashValidForPatchGroup][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#][#pid#]: No group was found for #arguments.PatchGroup#" />
                 <cfreturn response>
             </cfif>
             
@@ -605,10 +611,7 @@
         <cfargument name="PatchGroup" required="yes">
         <cfargument name="DataType" required="no" default="JSON" type="string">
     
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
     
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
@@ -665,10 +668,7 @@
         <cfargument name="state" required="no" default="all" type="string">
         <cfargument name="active" required="no" default="1" type="string">
         
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
         
         <cfset var jData = "">
         <cftry>
@@ -696,10 +696,7 @@
         <cfargument name="avAgent" required="true">
         <cfargument name="jsonData" required="true">
         
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = responseObj(1) />
 
         <cfif Trim(arguments.avAgent) NEQ "SEP" AND Trim(arguments.avAgent) NEQ "SAV">
             <cfset l = elogit("[PostClientAVData]: Unknown avAgent config. Schema may be out of date.")>
@@ -821,10 +818,7 @@
         <cfargument name="clientID">
         <cfargument name="encodedXML">
         
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
 
         <!--- Clean a bit of the XML char before parsing --->
         <cfset var theXML = ToString(ToBinary(Trim(arguments.encodedXML)))>
@@ -872,10 +866,7 @@
         <cfargument name="patch" required="false" default="0" />
         <cfargument name="patchType" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qAddPatchInstall">
@@ -916,7 +907,7 @@
         <cftry>
             <cfif arguments.type EQ "Apple">
                 <cfquery datasource="#this.ds#" name="qGet">
-                    Select cuuid From mp_client_patches_apple
+                    Select rid,cuuid From mp_client_patches_apple
                     Where patch = <cfqueryparam value="#arguments.patch#">
                     AND cuuid = <cfqueryparam value="#Trim(arguments.cuuid)#">
                 </cfquery>
@@ -929,7 +920,7 @@
             </cfif>
             <cfif arguments.type EQ "Third">
                 <cfquery datasource="#this.ds#" name="qGet">
-                    Select cuuid From mp_client_patches_third
+                    Select rid,cuuid From mp_client_patches_third
                     Where patch_id = <cfqueryparam value="#arguments.patch#">
                     AND cuuid = <cfqueryparam value="#Trim(arguments.cuuid)#">
                 </cfquery>
@@ -989,10 +980,7 @@
         <cfargument name="osminor" required="yes" type="string">
         <cfargument name="clientKey" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = responseObj(1) />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetCatalogs" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
@@ -1042,10 +1030,7 @@
         <cfargument name="clientID" required="false" default="0" />
         <cfargument name="clientKey" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
 
         <cfset _result = {} />
         <cfset _result[ "totalPatchesNeeded" ] = "NA" />
@@ -1091,10 +1076,7 @@
         <cfargument name="clientID" required="false" default="0" />
         <cfargument name="clientKey" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
 
         <cfset _result = {} />
         <cfset _result[ "mdate" ] = "NA" />
@@ -1129,10 +1111,7 @@
     <cffunction name="GetSoftwareTasksForGroup" access="remote" returnType="any" returnFormat="plain" output="false">
         <cfargument name="GroupName">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "1" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = responseObj(1) />
         
         <cftry>
             <cfset gid = softwareGroupID(arguments.GroupName)>
@@ -1200,10 +1179,7 @@
             <cfset l = logit("Error","[GetSWDistGroups]: State arguments was not of numeric value. Setting state to Production.")>
         </cfif>
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = responseObj(0) />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetHosts">
@@ -1246,10 +1222,7 @@
         <cfargument name="ResultString">
         <cfargument name="Action">
         
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = responseObj(1) />
         
         <cfif NOT validClientID(arguments.ClientID)>
             <cfset response[ "errorno" ] = "1000" />
@@ -1283,9 +1256,9 @@
         <cfargument name="ClientID">
     
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
+            <cfquery datasource="#this.ds#" name="qGetID">
                 Select cuuid from mp_clients
-                Where cuuid = '#arguments.ClientID#'
+                Where cuuid = <cfqueryparam value="#arguments.clientID#">
             </cfquery>
 
             <cfif qGetID.RecordCount EQ 1>
@@ -1299,5 +1272,67 @@
         </cfcatch>
         </cftry>
         <cfreturn flase>
+    </cffunction>
+	
+	<!--- 
+        Remote API
+        Type: Public/Remote
+        Description: Returns true/false if client has INV Data
+    --->
+    <cffunction name="clientHasInventoryData" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="false" default="0" />
+
+		<cfset response = responseObj(0) />
+        <cfset response[ "result" ] = 0 />
+
+        <cftry>
+            <cfquery datasource="#this.ds#" name="qHasInv">
+                SELECT cuuid
+                FROM mp_inv_state
+                Where cuuid = <cfqueryparam value="#arguments.clientID#">
+            </cfquery>
+			
+            <cfif qHasInv.RecordCount EQ 1>
+                <cfset response[ "result" ] = 1>
+            <cfelse>
+                <cfset response[ "result" ] = 0>
+            </cfif>
+            
+	        <cfcatch>
+	            <cfset l = elogit("[clientHasInventoryData]: #cfcatch.Detail# -- #cfcatch.Message#")>
+	            <cfset response.errorno = "1">
+	            <cfset response.errormsg = cfcatch.Message>
+	        </cfcatch>
+        </cftry>
+
+        <cfreturn #response#>
+    </cffunction>
+	
+	<!--- 
+        Remote API
+        Type: Public/Remote
+        Description: Returns true/false if client has INV Data
+    --->
+    <cffunction name="postClientHasInventoryData" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="false" default="0" />
+
+        <cfset response = responseObj(0) />
+        <cfset response[ "result" ] = 0 />
+
+        <cftry>
+			<cfif validClientID(arguments.clientID) EQ true>
+	            <cfquery datasource="#this.ds#" name="qSetHasInv">
+	                Insert Into mp_inv_state (cuuid)
+					Values (<cfqueryparam value="#arguments.clientID#">)
+	            </cfquery>
+            </cfif>
+	        <cfcatch>
+	            <cfset l = elogit("[clientHasInventoryData]: #cfcatch.Detail# -- #cfcatch.Message#")>
+	            <cfset response.errorno = "1">
+	            <cfset response.errormsg = cfcatch.Message>
+	        </cfcatch>
+        </cftry>
+
+        <cfreturn #response#>
     </cffunction>
 </cfcomponent>

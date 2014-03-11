@@ -137,6 +137,8 @@
 		if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
 			[agentDict setObject:@"true" forKey:@"needsreboot"];	
 		}
+
+        logit(lcl_vDebug, @"Agent Data: %@",agentDict);
 	}
 	@catch (NSException * e) {
 		logit(lcl_vError,@"[NSException]: %@",e);
@@ -172,6 +174,8 @@
 		MPDefaultsWatcher *mpd = [[[MPDefaultsWatcher alloc] init] autorelease];
 		NSMutableDictionary *mpDefaults = [[[NSMutableDictionary alloc] initWithDictionary:[mpd readConfigPlist]] autorelease];
 		[mpDefaults setObject:[si g_cuuid] forKey:@"cuuid"];
+
+        logit(lcl_vDebug, @"Agent Plist: %@",mpDefaults);
 		
 		err = nil;
 		postResult = [mpj postJSONDataForMethod:@"client_checkin_plist" data:mpDefaults error:&err];

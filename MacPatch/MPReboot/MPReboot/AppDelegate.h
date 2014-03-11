@@ -55,5 +55,6 @@ extern NSString * const kRBSWInstallAlertBody;
 - (IBAction)confirmAppTerminate:(id)sender;
 
 - (void)quitAppAndMakeUserLogout;
+- (void)terminateSelfIfAlreadyRunning;
 
 @end
