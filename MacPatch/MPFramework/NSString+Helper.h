@@ -37,6 +37,7 @@
 - (NSString *)replaceAll:(NSString *)aSubString replaceString:(NSString *)aReplaceString;
 
 - (NSString *)urlEncode;
+- (NSString *)urlEncodeUsingEncoding:(NSStringEncoding)encoding;
 
 - (NSArray *)componentsSeparatedByString:(NSString *)aSeperator escapeString:(NSString *)aEscString;
 

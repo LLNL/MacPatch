@@ -99,8 +99,17 @@
 
 - (NSString *)urlEncode
 {
-	NSString *result=[self stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	return result;
+	return [self urlEncodeUsingEncoding:NSUTF8StringEncoding];
+}
+
+- (NSString *)urlEncodeUsingEncoding:(NSStringEncoding)encoding
+{
+    //(CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
+	return (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL,
+                                                               (CFStringRef)self,
+                                                               NULL,
+                                                               (CFStringRef)@"!*'\"();:@&=+$,?%#[]% ",
+                                                               CFStringConvertNSStringEncodingToEncoding(encoding));
 }
 
 - (NSArray *)componentsSeparatedByString:(NSString *)aSeperator escapeString:(NSString *)aEscString

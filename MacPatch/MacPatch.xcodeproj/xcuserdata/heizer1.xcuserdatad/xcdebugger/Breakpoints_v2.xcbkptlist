@@ -9,22 +9,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MPAgentExec/MPAgentExec/MPAgentExecController.m"
-            timestampString = "400029740.217424"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "230"
-            endingLineNumber = "230"
-            landmarkName = "-scanForPatchesWithFilterWaitAndForce:byPassRunning:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "MacPatch Server/MPPatchLoader/MPPatchLoader/MPJson.m"
             timestampString = "410377867.340047"
             startingColumnNumber = "9223372036854775807"
@@ -32,22 +16,6 @@
             startingLineNumber = "124"
             endingLineNumber = "124"
             landmarkName = "-postJSONDataForMethodWithExtraKeyAndValue:key:value:data:error:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MPFramework/MPSWTasks.m"
-            timestampString = "413223944.536336"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "209"
-            endingLineNumber = "209"
-            landmarkName = "-getSWTasksForGroupFromServer:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -65,50 +33,38 @@
             endingLineNumber = "589"
             landmarkName = "-getClientPatchStatusMethod"
             landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[MPClientStatusAppDelegate getClientPatchStatusMethod]"
-                  moduleName = "MPClientStatus"
-                  urlString = "file:///Library/MacPatch/tmp/MacPatch/MacPatch/MPClientStatus/MPClientStatus/MPClientStatusAppDelegate.m"
-                  timestampString = "414520692.522715"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "589"
-                  endingLineNumber = "589"
-                  offsetFromSymbolStart = "531">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[MPClientStatusAppDelegate getClientPatchStatusMethod]"
-                  moduleName = "MPClientStatus"
-                  urlString = "file:///Library/MacPatch/tmp/MacPatch/MacPatch/MPClientStatus/MPClientStatus/MPClientStatusAppDelegate.m"
-                  timestampString = "414520692.522902"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "589"
-                  endingLineNumber = "589"
-                  offsetFromSymbolStart = "585">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[MPClientStatusAppDelegate getClientPatchStatusMethod]"
-                  moduleName = "MPClientStatus"
-                  urlString = "file:///Library/MacPatch/tmp/MacPatch/MacPatch/MPClientStatus/MPClientStatus/MPClientStatusAppDelegate.m"
-                  timestampString = "414520692.523049"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "589"
-                  endingLineNumber = "589"
-                  offsetFromSymbolStart = "803">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MPAgentExec/MPAgentExec/CHDisk.m"
+            timestampString = "415553738.310749"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
+            landmarkName = "-populateDeviceDataFromDict:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Self Patch/Self Patch/MPSelfPatchAppDelegate.m"
+            timestampString = "415739632.036265"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1110"
+            endingLineNumber = "1110"
+            landmarkName = "-runPatchUpdates"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

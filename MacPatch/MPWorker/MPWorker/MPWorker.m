@@ -98,6 +98,7 @@ typedef NSUInteger MPPostDataType;
 
 - (NSString *)downloadedSWPath:(NSDictionary *)dict;
 - (BOOL)verifyFileHash:(NSString *)aPath knownHash:(NSString *)kHash type:(NSString *)hashType;
+- (void)changeOwnershipOfApp:(NSString *)aApp owner:(NSString *)aOwner group:(NSString *)aGroup;
 
 #pragma mark - MPWorker (Private) - Patching
 
@@ -717,12 +718,14 @@ typedef NSUInteger MPPostDataType;
         } else {
             [fm copyItemAtPath:[aDir stringByAppendingPathComponent:app] toPath:[@"/Applications" stringByAppendingPathComponent:app] error:&err];
         }
-        
+
         if (err) {
             logit(lcl_vError,@"%@",[err description]);
             result = 2;
             break;
         }
+
+        [self changeOwnershipOfApp:[@"/Applications" stringByAppendingPathComponent:app] owner:@"root" group:@"admin"];
     }
     
     return result;
@@ -912,6 +915,41 @@ done:
     }
     
     return NO;
+}
+
+- (void)changeOwnershipOfApp:(NSString *)aApp owner:(NSString *)aOwner group:(NSString *)aGroup
+{
+    NSDictionary *permDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                          aOwner,NSFileOwnerAccountName,
+                          aGroup,NSFileGroupOwnerAccountName,nil];
+
+    NSError *error = nil;
+    [fm setAttributes:permDict ofItemAtPath:aApp error:&error];
+    if(error){
+        qlerror(@"Error settings permission %@",[error description]);
+        return;
+    }
+
+    error = nil;
+    NSArray *aContents = [fm subpathsOfDirectoryAtPath:aApp error:&error];
+    if(error){
+        qlerror(@"Error subpaths of Directory %@.\n%@",aApp,[error description]);
+        return;
+    }
+    if (!aContents) {
+        qlerror(@"No contents found for %@",aApp);
+        return;
+    }
+
+    for (NSString *i in aContents)
+    {
+        error = nil;
+        [[NSFileManager defaultManager] setAttributes:permDict ofItemAtPath:[aApp stringByAppendingPathComponent:i] error:&error];
+        if(error){
+            qlerror(@"Error settings permission %@",[error description]);
+        }
+    }
+
 }
 
 // Proxy Method

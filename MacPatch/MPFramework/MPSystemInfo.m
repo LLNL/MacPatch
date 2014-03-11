@@ -214,21 +214,15 @@ done:
 + (NSDictionary *)osVersionOctets
 {
     NSMutableDictionary *result = [[[NSMutableDictionary alloc] init] autorelease];
-    [result setObject:[NSNumber numberWithInt:10] forKey:@"major"];
-    [result setObject:[NSNumber numberWithInt:0] forKey:@"minor"];
-    [result setObject:[NSNumber numberWithInt:0] forKey:@"revision"];
-    
-    NSDictionary *d = [NSDictionary dictionaryWithDictionary:[MPSystemInfo osVersionInfo]];
-    NSString *osVerString = [d objectForKey:@"ProductVersion"];
-    NSArray *osVerArray = [osVerString componentsSeparatedByString:@"."];
-    if ([osVerArray count] >= 3) {
-        NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
-        [f setNumberStyle:NSNumberFormatterDecimalStyle];
-        [result setObject:[f numberFromString:[osVerArray objectAtIndex:0]] forKey:@"major"];
-        [result setObject:[f numberFromString:[osVerArray objectAtIndex:1]] forKey:@"minor"];
-        [result setObject:[f numberFromString:[osVerArray objectAtIndex:2]] forKey:@"revision"];
-        [f release];
-    }
+
+    SInt32 verMajor=10, verMinor=0, verRev=0;
+    Gestalt(gestaltSystemVersionMajor, &verMajor);
+    Gestalt(gestaltSystemVersionMinor, &verMinor);
+    Gestalt(gestaltSystemVersionBugFix, &verRev);
+
+    [result setObject:[NSNumber numberWithInt:verMajor] forKey:@"major"];
+    [result setObject:[NSNumber numberWithInt:verMinor] forKey:@"minor"];
+    [result setObject:[NSNumber numberWithInt:verRev] forKey:@"revision"];
     
     NSDictionary *octets = [NSDictionary dictionaryWithDictionary:result];
     return octets;

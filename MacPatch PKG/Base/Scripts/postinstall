@@ -2,7 +2,7 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Installer
-# ver 1.5
+# ver 1.6
 # Created By Charles Heizer
 # LLNL
 #
@@ -44,7 +44,7 @@ function setOwnerAndPerms {
 # Set owner & permissions
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.agent.plist
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.worker.plist
-setOwnerAndPerms /Library/LaunchAgents/gov.llnl.mpRBWatcher.plist
+setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPRebootD.plist
 setOwnerAndPerms /Library/LaunchAgents/gov.llnl.mp.status.plist
 
 if [ ! -d "/Library/Application Support/MPClientStatus" ]; then
@@ -155,7 +155,7 @@ sleep 2
 if [ "$cUsr" != "null" ]; then
 	uPid=`ps -aex -o pid,user,comm | grep "loginwindow.app" | grep "$cUsr" | sed 's/^[ \t]*//' | cut -d " " -f 1`
 	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.MPRebootD.plist`
-	echo "mpRBWatcher($uPid)=$res"
+	echo "MPRebootD($uPid)=$res"
 	
 	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.mp.status.plist`
 	echo "mpStatus($uPid)=$res"

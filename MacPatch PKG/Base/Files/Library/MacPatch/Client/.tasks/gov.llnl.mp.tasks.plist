@@ -108,11 +108,11 @@
 			<key>id</key>
 			<string>4</string>
 			<key>idrev</key>
-			<string>1</string>
+			<string>2</string>
 			<key>idsig</key>
 			<string>0</string>
 			<key>interval</key>
-			<string>Recurring@Daily@12:30:00</string>
+			<string>Recurring@Daily@18:00:00</string>
 			<key>mode</key>
 			<string>0</string>
 			<key>name</key>

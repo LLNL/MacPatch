@@ -142,7 +142,7 @@ done:
     }
 	
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetPatchGroupPatches&PatchGroup=%@",WS_CLIENT_FILE,[_defaults objectForKey:@"PatchGroup"]];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetPatchGroupPatches&PatchGroup=%@",WS_CLIENT_FILE,[[_defaults objectForKey:@"PatchGroup"] urlEncode]];
 	qldebug(@"JSON URL: %@",urlString);
 	
 	// Make request
@@ -217,7 +217,7 @@ done:
 
 
 	// Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetIsHashValidForPatchGroup&PatchGroup=%@&Hash=%@",WS_CLIENT_FILE,[_defaults objectForKey:@"PatchGroup"],PatchGroupHash];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetIsHashValidForPatchGroup&PatchGroup=%@&Hash=%@",WS_CLIENT_FILE,[[_defaults objectForKey:@"PatchGroup"] urlEncode],PatchGroupHash];
 	qldebug(@"JSON URL: %@",urlString);
 
 	// Make request
@@ -1027,6 +1027,116 @@ done:
     }
 
     return results;
+}
+
+- (BOOL)clientHasInvDataInDB:(NSError **)err
+{
+    NSString            *requestData;
+	NSDictionary        *jsonResult = nil;
+
+    // Create JSON Request URL
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=clientHasInventoryData&clientID=%@",WS_CLIENT_FILE,_cuuid];
+	qldebug(@"JSON URL: %@",urlString);
+
+    NSDictionary *userInfoDict;
+    NSError *error = nil;
+    if (asiNet) {
+        [asiNet release], asiNet = nil;
+    }
+    asiNet = [[MPASINet alloc] init];
+    requestData = [asiNet synchronousRequestForURL:urlString error:&error];
+
+    if (error) {
+		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
+		if (err != NULL) {
+            *err = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:[error code]  userInfo:userInfoDict];
+        } else {
+            qlerror(@"%@",[error localizedDescription]);
+        }
+		return FALSE;
+	}
+
+    NSDictionary *deserializedData;
+    @try {
+        deserializedData = [requestData objectFromJSONString];
+        if ([[jsonResult objectForKey:@"errorCode"] intValue] == 0)
+        {
+			return [[deserializedData objectForKey:@"result"] boolValue];
+		} else {
+            if (err != NULL)
+            {
+                userInfoDict = [NSDictionary dictionaryWithObject:[jsonResult objectForKey:@"errorMessage"] forKey:NSLocalizedDescriptionKey];
+                *err = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:[[jsonResult objectForKey:@"errorCode"] intValue] userInfo:userInfoDict];
+            } else {
+                qlerror(@"Error[%@]: %@",[jsonResult objectForKey:@"errorCode"],[jsonResult objectForKey:@"errorMessage"]);
+            }
+		}
+    }
+    @catch (NSException *exception) {
+        userInfoDict = [NSDictionary dictionaryWithObject:exception forKey:NSLocalizedDescriptionKey];
+        if (err != NULL) {
+            *err = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:1  userInfo:userInfoDict];
+        } else {
+            qlerror(@"%@",exception);
+        }
+    }
+    
+	return FALSE;
+}
+
+- (int)postClientHasInvData:(NSError **)err
+{
+    NSString            *requestData;
+	NSDictionary        *jsonResult = nil;
+
+    // Create JSON Request URL
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=postClientHasInventoryData&clientID=%@",WS_CLIENT_FILE,_cuuid];
+	qldebug(@"JSON URL: %@",urlString);
+
+    NSDictionary *userInfoDict;
+    NSError *error = nil;
+    if (asiNet) {
+        [asiNet release], asiNet = nil;
+    }
+    asiNet = [[MPASINet alloc] init];
+    requestData = [asiNet synchronousRequestForURL:urlString error:&error];
+
+    if (error) {
+		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
+		if (err != NULL) {
+            *err = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:[error code]  userInfo:userInfoDict];
+        } else {
+            qlerror(@"%@",[error localizedDescription]);
+        }
+		return 1;
+	}
+
+    NSDictionary *deserializedData;
+    @try {
+        deserializedData = [requestData objectFromJSONString];
+        if ([[jsonResult objectForKey:@"errorCode"] intValue] == 0)
+        {
+			return 0;
+		} else {
+            if (err != NULL)
+            {
+                userInfoDict = [NSDictionary dictionaryWithObject:[jsonResult objectForKey:@"errorMessage"] forKey:NSLocalizedDescriptionKey];
+                *err = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:[[jsonResult objectForKey:@"errorCode"] intValue] userInfo:userInfoDict];
+            } else {
+                qlerror(@"Error[%@]: %@",[jsonResult objectForKey:@"errorCode"],[jsonResult objectForKey:@"errorMessage"]);
+            }
+		}
+    }
+    @catch (NSException *exception) {
+        userInfoDict = [NSDictionary dictionaryWithObject:exception forKey:NSLocalizedDescriptionKey];
+        if (err != NULL) {
+            *err = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:1  userInfo:userInfoDict];
+        } else {
+            qlerror(@"%@",exception);
+        }
+    }
+
+	return 1;
 }
 
 @end

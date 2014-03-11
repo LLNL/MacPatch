@@ -192,7 +192,7 @@
     serverConnection = [[MPServerConnection alloc] initWithDefaults:[prefs defaults]];
     asiNet = [[MPASINet alloc] initWithServerConnection:serverConnection];
 
-    NSString *_url = [@"/MPDistribution.cfc?method=postSyncResultsJSON&logType=0&logData=" stringByAppendingString:[logResult stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSString *_url = [@"/MPDistribution.cfc?method=postSyncResultsJSON&logType=0&logData=" stringByAppendingString:[logResult urlEncode]];
 
     qldebug(@"[logResult]: %@",logResult);
     qldebug(@"[postSyncResults]: %@",_url);
@@ -306,7 +306,7 @@
 - (NSString *)downloadPatch:(NSString *)aURL error:(NSError **)err
 {
     *err = nil;
-    NSString *theURL = [NSString stringWithFormat:@"http://%@/mp-content%@",[l_defaults objectForKey:@"MPServerAddress"],aURL];
+    NSString *theURL = [NSString stringWithFormat:@"http://%@/mp-content%@",[l_defaults objectForKey:@"MPServerAddress"],[aURL urlEncode]];
     
     qlinfo(@"Download: %@",theURL);
 	NSString *tempFilePath = [self createTempDirFromURL:theURL];
@@ -314,14 +314,14 @@
 	qlinfo(@"Download to: %@",tempFilePath);
 	FILE *dlFile = fopen([tempFilePath UTF8String], "w");
     
-    qldebug(@"Encoded URL: %@",[theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]);
+    qldebug(@"Encoded URL: %@",[theURL urlEncode]);
 	
 	CURL *curl;
 	CURLcode res;
 	curl = curl_easy_init();
 	if (curl) {
 		// Set Options
-		curl_easy_setopt( curl, CURLOPT_URL, [[theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] cStringUsingEncoding:NSUTF8StringEncoding] ) ;
+		curl_easy_setopt( curl, CURLOPT_URL, [theURL  cStringUsingEncoding:NSUTF8StringEncoding] ) ;
 		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_easy_setopt( curl, CURLOPT_WRITEDATA, dlFile);
 		// Run CURL

@@ -1006,10 +1006,6 @@ done:
 		[spUpdateButton setEnabled:YES];
 	}
     
-    if (!appleScanError || !customScanError) {
-        [self unSetCatalogURL];
-	}
-    
 	[spScanAndPatchButton setEnabled:YES];
 	[spCancelButton setEnabled:NO];
 	
@@ -1030,9 +1026,10 @@ done:
 	[spStatusText setStringValue:@"Begin patching process."];
 	[spStatusText display];
 	
-	if ([self setCatalogURL] != 0)
+	if ([self setCatalogURL] != 0) {
 		logit(lcl_vError,@"There was a issue setting the CatalogURL, Apple updates will not occur.");
-	
+	}
+
 	[mpServerConnection refreshServerObject];
 	MPAsus *mpAsus = [[[MPAsus alloc] initWithServerConnection:mpServerConnection] autorelease];
 	
@@ -1104,7 +1101,7 @@ done:
 						[spStatusText setStringValue:[NSString stringWithFormat:@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
 						[spStatusText display];
 						//Pre Proxy Config
-						downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[currPatchToInstallDict objectForKey:@"url"]];
+						downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[[currPatchToInstallDict objectForKey:@"url"] urlEncode]];
 						logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
 						err = nil;
 						dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];

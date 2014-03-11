@@ -32,6 +32,9 @@
 #define MP_REBOOT               @"/Library/MacPatch/Client/MPReboot.app"
 #define MP_REBOOT_ALT           @"/Library/MacPatch/Client/MPReboot.app/Contents/MacOS/MPReboot"
 
+#undef  ql_component
+#define ql_component lcl_cMain
+
 @interface MPRebootController ()
 
 // Helper
@@ -279,12 +282,6 @@ done:
 
 - (void)watchPathTimerRun:(NSTimer *)timer
 {
-	BOOL isDir;
-	if (([[NSFileManager defaultManager] fileExistsAtPath:WATCH_PATH isDirectory:&isDir] && isDir) == FALSE) {
-		logit(lcl_vInfo,@"%@ is missing or is not a directory. Now creating directory.",WATCH_PATH);
-		[[NSFileManager defaultManager] createDirectoryAtPath:WATCH_PATH withIntermediateDirectories:YES attributes:file_attr error:NULL];
-	}
-
     for (NSString *wp in self.watchFiles)
     {
         if ([[NSFileManager defaultManager] fileExistsAtPath:wp] == TRUE)

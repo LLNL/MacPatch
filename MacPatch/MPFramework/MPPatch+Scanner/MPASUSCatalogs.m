@@ -26,6 +26,7 @@
 #import "MPASUSCatalogs.h"
 #import "MPJson.h"
 #import "MPNetworkUtils.h"
+#import "MPSystemInfo.h"
 
 #undef  ql_component
 #define ql_component lcl_cMPASUSCatalogs
@@ -154,14 +155,29 @@ done:
 		[tmpDefaults setObject:aCatalogURL forKey:@"CatalogURL"];
 	} else {
 		qlerror(@"Unable to set catalog url (%@), using Apple built-in.", aCatalogURL);
-		if ([tmpDefaults objectForKey:@"CatalogURL"])
+		if ([tmpDefaults objectForKey:@"CatalogURL"]) {
 			[tmpDefaults removeObjectForKey:@"CatalogURL"];
+        }
+        return FALSE;
 	}
 	
-	@try {
-		[tmpDefaults writeToFile:ASUS_PLIST_PATH atomically:YES];
+	@try
+    {
+        NSDictionary *osVerInfo = [MPSystemInfo osVersionOctets];
+        if ([[osVerInfo objectForKey:@"minor"] intValue] >= 9)
+        {
+            // For Mac OS X 10.9
+            // [NSTask launchedTaskWithLaunchPath:@"/usr/bin/killall" arguments:[NSArray arrayWithObjects:@"-HUP",@"softwareupdated",nil]];
+            // [NSTask launchedTaskWithLaunchPath:@"/usr/bin/killall" arguments:[NSArray arrayWithObjects:@"-HUP",@"cfprefsd",nil]];
+            [NSTask launchedTaskWithLaunchPath:@"/usr/sbin/softwareupdate" arguments:[NSArray arrayWithObjects:@"--set-catalog",aCatalogURL,nil]];
+        }
+        else
+        {
+            [tmpDefaults writeToFile:ASUS_PLIST_PATH atomically:NO];
+        }
 	}
-	@catch ( NSException *e ) {
+	@catch ( NSException *e )
+    {
 		qlerror(@"Error unable to write new config.");
 		result = FALSE;
 	}

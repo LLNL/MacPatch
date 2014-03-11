@@ -59,4 +59,7 @@
 
 - (BOOL)postJSONDataForMethod:(NSString *)aMethod data:(NSDictionary *)aData error:(NSError **)err;
 - (NSDictionary *)sendRequestUsingMethodAndArgs:(NSString *)aMethod argsDictionary:(NSDictionary *)aDict error:(NSError **)err;
+
+- (BOOL)clientHasInvDataInDB:(NSError **)err;
+- (int)postClientHasInvData:(NSError **)err;
 @end

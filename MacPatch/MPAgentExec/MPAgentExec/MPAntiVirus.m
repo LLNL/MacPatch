@@ -249,6 +249,12 @@
                             [self setAvDefsDate:newDefsDate];
                             return newDefsDate;
                         }
+                        if ([[[newAVDefsFileData objectForKey:@"ProductArray"] objectAtIndex:0] objectForKey:@"ItemSeqData"]) {
+                            NSString *itemSeqData = [[[newAVDefsFileData objectForKey:@"ProductArray"] objectAtIndex:0] objectForKey:@"ItemSeqData"];
+                            NSString *newDefsDate = [self parseNewDefsDateFormat:itemSeqData];
+                            [self setAvDefsDate:newDefsDate];
+                            return newDefsDate;
+                        }
                     }
                 }
 
@@ -430,8 +436,18 @@
     NSString *strResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
     logit(lcl_vDebug,@"runAVDefsUpdate Output: %@",strResult);
 
+    int taskTerminationStatus = 4;
+
+    @try {
+        taskTerminationStatus = [task terminationStatus];
+    }
+    @catch (NSException *exception) {
+        logit(lcl_vError,@"%@",exception);
+        logit(lcl_vError,@"Setting result to LU error.");
+    }
+
     int result = -1;
-    switch ([task terminationStatus])
+    switch (taskTerminationStatus)
     {
         case 0:
             logit(lcl_vInfo,@"LU completed successfully with new update.");

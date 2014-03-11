@@ -77,6 +77,34 @@
 
 #pragma mark -
 
+- (BOOL)hasInvDataInDB
+{
+    BOOL res = NO;
+    NSError *err = nil;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    res = [mpws clientHasInvDataInDB:&err];
+    if (err) {
+        logit(lcl_vError,@"%@",err.localizedDescription);
+        return NO;
+    }
+
+    return res;
+}
+
+- (int)postInvDataState
+{
+    int res = -1;
+    NSError *err = nil;
+    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    res = [mpws postClientHasInvData:&err];
+    if (err) {
+        logit(lcl_vError,@"%@",err.localizedDescription);
+        return 1;
+    }
+
+    return res;
+}
+
 - (int)collectInventoryData
 {
 	return [self collectInventoryDataForType:@"All"];
@@ -100,9 +128,13 @@
 
 - (int)collectInventoryDataForType:(NSString *)aSPType
 {
+    BOOL postCompleteInvData = NO;
 	NSArray *invColTypes;
-	if ([aSPType isEqual:@"All"]) {
-		invColTypes = [kINV_SUPPORTED_TYPES componentsSeparatedByString:@","];
+	if ([aSPType isEqual:@"All"])
+    {
+        // This is gathered incase a client has been deleted and the INV data needs to be repopluated
+        postCompleteInvData = [self hasInvDataInDB];
+        invColTypes = [kINV_SUPPORTED_TYPES componentsSeparatedByString:@","];
 	} else {
 		if ([self validateCollectionType:aSPType] == NO) {
 			logit(lcl_vError,@"Inventory collection type %@ is not supported. Inventory will not run.",aSPType);
@@ -198,8 +230,10 @@
                 // Gen a hash for the inv results, if it has not changed dont post it.
                 invCollectionHash = [self hashForArray:tmpArr];
                 if ([self hasInvDataChanged:[item objectForKey:@"type"] hash:invCollectionHash] == NO) {
-                    logit(lcl_vInfo,@"Results for %@ have not changed. No need to post.",[item objectForKey:@"type"]);
-                    continue;
+                    if (postCompleteInvData == NO) {
+                        logit(lcl_vInfo,@"Results for %@ have not changed. No need to post.",[item objectForKey:@"type"]);
+                        continue;
+                    }
                 }
 
 				dataMgrXML = [dataMgr GenXMLForDataMgr:tmpArr
@@ -226,7 +260,11 @@
 		int x = 0;
 		x = [self collectAuditTypeData];
 	}
-
+    // Post that INV data has been posted
+    if (postCompleteInvData == NO)
+    {
+        [self postInvDataState];
+    }
 	[resultsArray release];
 	[dataMgr release];
 	return 0;

@@ -561,7 +561,7 @@
         
         // Create Download URL
         [mpServerConnection refreshServerObject];
-        NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,[d valueForKeyPath:@"Software.sw_url"]];
+        NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
         logit(lcl_vInfo,@"Download software from: %@",_url);
         
         BOOL isDir;
@@ -579,7 +579,7 @@
         [progressBar setDoubleValue:0.0];
         [progressBar setIndeterminate:NO];
         
-        downloadTask = [[MPDLWrapper alloc] initWithController:self url:[NSURL URLWithString:[_url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+        downloadTask = [[MPDLWrapper alloc] initWithController:self url:[NSURL URLWithString:_url]];
         [self updateArrayControllerWithDictionary:d forActionType:@"download"];
         [downloadTask startDownloadAndSpecifyDownloadDirectory:swLoc];
         
@@ -852,13 +852,13 @@
                     
                     // Create Download URL
                     [mpServerConnection refreshServerObject];
-                    NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,[d valueForKeyPath:@"Software.sw_url"]];
+                    NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
                     logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
                     
                     [progressBar setDoubleValue:0.0];
                     [progressBar setIndeterminate:NO];
                     
-                    downloadTask = [[MPDLWrapper alloc] initWithController:self url:[NSURL URLWithString:[_url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+                    downloadTask = [[MPDLWrapper alloc] initWithController:self url:[NSURL URLWithString:_url]];
                     [self updateArrayControllerWithDictionary:d forActionType:@"download"];
                     [downloadTask startDownloadAndSpecifyDownloadDirectory:swLoc];
                     
@@ -999,10 +999,17 @@
         int _result = 0;
         
         NSString *uninstallScriptEnc, *uninstallScript;
-        
-	for (NSDictionary *d in [arrayController arrangedObjects]) {
-            if ([d objectForKey:@"selected"] && [d objectForKey:@"installed"]) {
-                if (([[d objectForKey:@"selected"] intValue] == 1) && ([[d objectForKey:@"installed"] intValue] == 1)) {
+        NSDictionary *curTaskDict;
+        for (NSDictionary *d in [arrayController arrangedObjects])
+        {
+            if ([d objectForKey:@"selected"] && [d objectForKey:@"installed"])
+            {
+                // This seams like a duplication of work, but updateArrayControllerWithDictionary
+                // is clearing the pointer for d, and since I can not reatin it ...
+                curTaskDict = [NSDictionary dictionaryWithDictionary:d];
+
+                if (([[d objectForKey:@"selected"] intValue] == 1) && ([[d objectForKey:@"installed"] intValue] == 1))
+                {
                     [statusTextStatus setStringValue:[NSString stringWithFormat:@"Uninstalling %@ ...",[d objectForKey:@"name"]]];
                     uninstallScriptEnc = [d valueForKeyPath:@"Software.sw_uninstall"];
                     if ([uninstallScriptEnc length] > 0) {
@@ -1019,7 +1026,7 @@
                         [self updateArrayControllerWithDictionary:d forActionType:@"error"];
                         [statusTextStatus setStringValue:[NSString stringWithFormat:@"Error uninstalling."]];
                     }
-                    [self postUnInstallResults:_result resultText:@"" task:d];
+                    [self postUnInstallResults:_result resultText:@"" task:curTaskDict];
                 }
             }
         }
