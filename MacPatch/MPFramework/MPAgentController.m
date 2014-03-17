@@ -851,7 +851,6 @@ done:
     NSArray *updatesArrayRaw = nil;
     
     // Scan for Patches
-    //[self scanForPatchesWithFilter:2];
     [self scanForPatchUsingBundleID:aPatchBundleID];
     updatesArrayRaw = [NSArray arrayWithArray:approvedPatches];
     // Filter on bundle ID

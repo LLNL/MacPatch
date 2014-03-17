@@ -632,7 +632,8 @@ done:
                     installResult = -1;
                     
                     // Install pkg(s)
-                    for (int ii = 0; ii < [pkgList count]; ii++) {
+                    for (int ii = 0; ii < [pkgList count]; ii++)
+                    {
                         pkgPath = [NSString stringWithFormat:@"%@/%@",pkgBaseDir,[pkgList objectAtIndex:ii]];
                         logit(lcl_vInfo,@"Installing %@",[pkgPath lastPathComponent]);
                         logit(lcl_vInfo,@"Start install of %@",pkgPath);
@@ -707,7 +708,9 @@ done:
             } // End patchArray To install
             // ***************************************************************************************
             // Process Apple Type Patches
-        } else if ([[patch objectForKey:@"type"] isEqualTo:@"Apple"] && (aFilter == 0 || aFilter == 1)) {
+        }
+        else if ([[patch objectForKey:@"type"] isEqualTo:@"Apple"] && (aFilter == 0 || aFilter == 1))
+        {
             //
             // ***************************************************************************************
             
@@ -718,14 +721,15 @@ done:
 				fprintf(stdout, "Begin: %s\n", [[patch objectForKey:@"patch"] cString]);
 			}
             
-            if ([[patch objectForKey:@"hasCriteria"] boolValue] == NO || ![patch objectForKey:@"hasCriteria"]) {
-                
+            if ([[patch objectForKey:@"hasCriteria"] boolValue] == NO || ![patch objectForKey:@"hasCriteria"])
+            {
                 mpInstaller = [[MPInstaller alloc] init];
                 installResult = [mpInstaller installAppleSoftwareUpdate:[patch objectForKey:@"patch"]];
                 [mpInstaller release];
                 mpInstaller = nil;
-                
-            } else {
+            }
+            else
+            {
                 logit(lcl_vInfo,@"%@ has install criteria assigned to it.",[patch objectForKey:@"patch"]);
                 
                 NSDictionary *criteriaDictPre, *criteriaDictPost;
@@ -762,12 +766,7 @@ done:
                 installResult = [mpInstaller installAppleSoftwareUpdate:[patch objectForKey:@"patch"]];
                 [mpInstaller release];
                 mpInstaller = nil;
-				
-				// If the Patch Installed Required a Reboot, flag it
-                if ([[patch objectForKey:@"restart"] stringToBoolValue] == YES) {
-					installedPatchesNeedingReboot++;
-				}
-                
+
                 // If Install retuened anything but 0, the dont run post criteria
                 if (installResult != 0) {
                     logit(lcl_vError,@"The install for %@ returned an error.",[patch objectForKey:@"patch"]);
@@ -801,15 +800,22 @@ done:
             }
             
         instResult:
+
             if (installResult != 0) {
                 logit(lcl_vError,@"Error installing update, error code %d.",installResult);
                 continue;
             } else {
                 logit(lcl_vInfo,@"%@ was installed successfully.",[patch objectForKey:@"patch"]);
             }
-            
+
+            // If the Patch Installed Required a Reboot, flag it
+            if ([[patch objectForKey:@"restart"] stringToBoolValue] == YES) {
+                installedPatchesNeedingReboot++;
+            }
+
             // Post the results to web service
-            @try {
+            @try
+            {
                 MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
                 NSError *wsErr = nil;
                 [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch"] patchType:@"apple" error:&wsErr];
@@ -818,21 +824,26 @@ done:
                     logit(lcl_vError,@"%@", wsErr.localizedDescription);
                 }
             }
-            @catch (NSException *e) {
+            @catch (NSException *e)
+            {
                 logit(lcl_vError,@"%@", e);
             }
 			
-			if (iLoadMode == YES) {
+			if (iLoadMode == YES)
+            {
 				fprintf(stdout, "Completed: %s\n", [[patch objectForKey:@"patch"] cString]);
 			}
+
             logit(lcl_vInfo,@"Patch install completed.");
-        } else {
+        }
+        else
+        {
             continue;
         }
 	} //End patchesToInstallArray For Loop
 	
 	// Update GUI to reflect new installs
-	[[NSFileManager defaultManager] createFileAtPath:[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath]
+	[fm createFileAtPath:[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath]
 											contents:[@"update" dataUsingEncoding:NSASCIIStringEncoding]
 										  attributes:nil];
 	
@@ -840,7 +851,9 @@ done:
     mpInstaller = [[[MPInstaller alloc] init] autorelease];
 	
 	// If any patches that were installed needed a reboot
-	if (installedPatchesNeedingReboot > 0) {
+    logit(lcl_vDebug,@"Number of installed patches needing a reboot %d.", installedPatchesNeedingReboot);
+	if (installedPatchesNeedingReboot > 0)
+    {
         if (iLoadMode == YES) {
 			logit(lcl_vInfo,@"Patches have been installed that require a reboot. Please reboot the systems as soon as possible.");
 			goto done;
@@ -857,10 +870,13 @@ done:
 				}
 				
 			}
-		}
+		} else {
+            logit(lcl_vDebug,@"Console user found.");
+        }
 	}
 	
-	if (launchRebootWindow > 0) {
+	if (launchRebootWindow > 0)
+    {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
         // 10.9
         NSString *_atFile = @"/private/tmp/.MPAuthRun";
@@ -888,7 +904,6 @@ done:
     NSArray *updatesArrayRaw = nil;
     
     // Scan for Patches
-    //[self scanForPatchesWithFilter:2];
     [self scanForPatchUsingBundleID:aPatchBundleID];
     updatesArrayRaw = [NSArray arrayWithArray:approvedPatches];
     // Filter on bundle ID
@@ -1451,25 +1466,81 @@ done:
 	if (forceRun == YES) {
 		return NO;
 	}
-	
+
+    NSDate *cdate; // CDate of File
+    NSDate *cdatePlus; // CDate of file plus 2 hrs
+    NSDate *ndate = [NSDate date]; // Now
+
 	if ([aTaskName isEqualToString:@".mpScanRunning"]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpScanRunning"]) {
-			return YES;
+            cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpScanRunning" error:nil] fileCreationDate];
+            cdatePlus = [cdate dateByAddingTimeInterval:7200];
+            NSComparisonResult result = [ndate compare:cdatePlus];
+            if( result == NSOrderedAscending ) {
+                // cdatePlus is in the future
+                return YES;
+            } else if(result==NSOrderedDescending) {
+                // cdatePlus is in the past
+                logit(lcl_vError, @"Task file /tmp/.mpScanRunning found. File older than 2 hours. Deleting file.");
+                [self removeTaskRunning:@"/tmp/.mpScanRunning"];
+                return NO;
+            }
+            // Both dates are the same
+			return NO;
 		}
 	}
 	if ([aTaskName isEqualToString:@".mpUpdateRunning"]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpUpdateRunning"]) {
-			return YES;
+            cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpUpdateRunning" error:nil] fileCreationDate];
+			cdatePlus = [cdate dateByAddingTimeInterval:7200]; // Add 2 Hours
+            NSComparisonResult result = [ndate compare:cdatePlus];
+            if( result == NSOrderedAscending ) {
+                // cdatePlus is in the future
+                return YES;
+            } else if(result==NSOrderedDescending) {
+                // cdatePlus is in the past
+                logit(lcl_vError, @"Task file /tmp/.mpUpdateRunning found. File older than 2 hours. Deleting file.");
+                [self removeTaskRunning:@"/tmp/.mpUpdateRunning"];
+                return NO;
+            }
+            // Both dates are the same
+			return NO;
 		}
 	}
 	if ([aTaskName isEqualToString:@".mpInventoryRunning"]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpInventoryRunning"]) {
-			return YES;
+            cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpInventoryRunning" error:nil] fileCreationDate];
+			cdatePlus = [cdate dateByAddingTimeInterval:7200]; // Add 2 Hours
+            NSComparisonResult result = [ndate compare:cdatePlus];
+            if( result == NSOrderedAscending ) {
+                // cdatePlus is in the future
+                return YES;
+            } else if(result==NSOrderedDescending) {
+                // cdatePlus is in the past
+                logit(lcl_vError, @"Task file /tmp/.mpInventoryRunning found. File older than 2 hours. Deleting file.");
+                [self removeTaskRunning:@"/tmp/.mpInventoryRunning"];
+                return NO;
+            }
+            // Both dates are the same
+			return NO;
 		}
 	}
 	if ([aTaskName isEqualToString:@".mpAVUpdateRunning"]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpAVUpdateRunning"]) {
-			return YES;
+            cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpAVUpdateRunning" error:nil] fileCreationDate];
+			cdatePlus = [cdate dateByAddingTimeInterval:7200]; // Add 2 Hours
+            NSComparisonResult result = [ndate compare:cdatePlus];
+            if( result == NSOrderedAscending ) {
+                // cdatePlus is in the future
+                return YES;
+            } else if(result==NSOrderedDescending) {
+                // cdatePlus is in the past
+                logit(lcl_vError, @"Task file /tmp/.mpAVUpdateRunning found. File older than 2 hours. Deleting file.");
+                [self removeTaskRunning:@"/tmp/.mpAVUpdateRunning"];
+                return NO;
+            }
+            // Both dates are the same
+			return NO;
 		}
 	}
 	

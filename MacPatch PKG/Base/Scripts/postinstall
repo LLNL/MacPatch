@@ -2,7 +2,7 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Installer
-# ver 1.6
+# ver 1.7
 # Created By Charles Heizer
 # LLNL
 #
@@ -160,6 +160,8 @@ if [ "$cUsr" != "null" ]; then
 	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.mp.status.plist`
 	echo "mpStatus($uPid)=$res"
 fi
+
+/usr/bin/killall MPClientStatus
 
 # Without this, may have a hard time upgrading 
 pkgutil --forget gov.llnl.mp.agent.base
