@@ -558,6 +558,20 @@ CREATE TABLE `mp_installed_patches_new` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
+--  Table structure for `mp_inv_state`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_inv_state`;
+CREATE TABLE `mp_inv_state` (
+  `cuuid` varchar(50) NOT NULL,
+  `cdate` datetime DEFAULT NULL,
+  PRIMARY KEY (`cuuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='New For MacPatch 2.5.x\n';
+delimiter ;;
+CREATE TRIGGER `inv_trig_date` BEFORE INSERT ON `mp_inv_state` FOR EACH ROW set NEW.cdate = now();
+ ;;
+delimiter ;
+
+-- ----------------------------
 --  Table structure for `mp_patch_group`
 -- ----------------------------
 DROP TABLE IF EXISTS `mp_patch_group`;
