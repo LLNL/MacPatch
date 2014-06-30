@@ -155,7 +155,6 @@ NSString * const kRBSWInstallAlertBody = @"Quiting this application will restart
 		[NSApp terminate:self];
 		exit(0);
 	}
-	[alert release];
 }
 
 - (IBAction)confirmAppTerminate:(id)sender
@@ -179,7 +178,6 @@ NSString * const kRBSWInstallAlertBody = @"Quiting this application will restart
 		[self logoutNowButton:nil];
 	}
 	
-	[alert release];
 }
 
 - (void)terminateSelfIfAlreadyRunning

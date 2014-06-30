@@ -39,106 +39,94 @@ void usage(void);
 
 int main (int argc, char * argv[])
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool
+    {
+        int forTasks = 0;
     
-	BOOL echoToConsole = NO;
-	BOOL verboseLogging = NO;
-    int forTasks = 0;
-    
-	NSString *fromFile = NULL;
-	NSString *toFile = NULL;
-	
-	// Setup argument processing
-	int c;
-	while (1)
-	{
-		static struct option long_options[] =
-		{
-			{"Debug"			,no_argument	    ,0, 'D'},
-			{"FromFile"			,required_argument	,0, 'f'},
-			{"ToFile"			,required_argument	,0, 't'},
-            {"FromFile"			,required_argument	,0, 'F'},
-			{"ToFile"			,required_argument	,0, 'T'},
-			{"version"			,no_argument		,0, 'v'},
-			{"help"				,no_argument		,0, 'h'},
-			{0, 0, 0, 0}
-		};
-		// getopt_long stores the option index here.
-		int option_index = 0;
-		c = getopt_long (argc, argv, "Df:t:F:T:vh", long_options, &option_index);
+		NSString *fromFile = NULL;
+		NSString *toFile = NULL;
 		
-		// Detect the end of the options.
-		if (c == -1)
-			break;
-		
-		switch (c)
+		// Setup argument processing
+		int c;
+		while (1)
 		{
-			case 'f':
-				fromFile = [NSString stringWithUTF8String:optarg];
+			static struct option long_options[] =
+			{
+				{"FromFile"			,required_argument	,0, 'f'},
+				{"ToFile"			,required_argument	,0, 't'},
+                {"FromFile"			,required_argument	,0, 'F'},
+				{"ToFile"			,required_argument	,0, 'T'},
+				{"version"			,no_argument		,0, 'v'},
+				{"help"				,no_argument		,0, 'h'},
+				{0, 0, 0, 0}
+			};
+			// getopt_long stores the option index here.
+			int option_index = 0;
+			c = getopt_long (argc, argv, "f:t:F:T:vh", long_options, &option_index);
+			
+			// Detect the end of the options.
+			if (c == -1)
 				break;
-            case 't':
-				toFile = [NSString stringWithUTF8String:optarg];
-				break;
-            case 'F':
-				fromFile = [NSString stringWithUTF8String:optarg];
-                forTasks++;
-				break;
-            case 'T':
-				toFile = [NSString stringWithUTF8String:optarg];
-                forTasks++;
-				break;
-			case 'V':
-				verboseLogging = YES;
-				break;
-			case 'D':
-				verboseLogging = YES;
-				break;
-			case 'e':
-				echoToConsole = YES;
-				break;
-			case 'v':
-				printf("%s\n",[APPVERSION UTF8String]);
-				return 0;
-			case 'h':
-                usage();
-                return 0;
-			case '?':
-                usage();
-                return 0;
-			default:
-				printf("Silly Rabbit, Trix are for Kids!\n");
-				usage();
+			
+			switch (c)
+			{
+				case 'f':
+					fromFile = [NSString stringWithUTF8String:optarg];
+					break;
+                case 't':
+					toFile = [NSString stringWithUTF8String:optarg];
+					break;
+                case 'F':
+					fromFile = [NSString stringWithUTF8String:optarg];
+                    forTasks++;
+					break;
+                case 'T':
+					toFile = [NSString stringWithUTF8String:optarg];
+                    forTasks++;
+					break;
+				case 'v':
+					printf("%s\n",[APPVERSION UTF8String]);
+					return 0;
+				case 'h':
+                    usage();
+                    return 0;
+				case '?':
+                    usage();
+                    return 0;
+				default:
+					printf("Silly Rabbit, Trix are for Kids!\n");
+					usage();
+			}
 		}
-	}
-	
-	if (optind < argc) {
-        while (optind < argc) {
-            printf ("Invalid argument %s ", argv[optind++]);
+		
+		if (optind < argc) {
+            while (optind < argc) {
+                printf ("Invalid argument %s ", argv[optind++]);
+            }
+            usage();
+            exit(0);
         }
-        usage();
-        exit(0);
-    }
-	
-	// Make sure the user is root or is using sudo
-	if (getuid()) {
-		printf("You must be root to run this app. Try using sudo.\n");
-        exit(0);
-	}
+		
+		// Make sure the user is root or is using sudo
+		if (getuid()) {
+			printf("You must be root to run this app. Try using sudo.\n");
+            exit(0);
+		}
     
-	NSFileManager *fm = [NSFileManager defaultManager];
-	if (![fm fileExistsAtPath:fromFile]) {
-		fprintf(stderr,"Error %s file not found.",[fromFile UTF8String]);
-		exit(1);
-	}
+		NSFileManager *fm = [NSFileManager defaultManager];
+		if (![fm fileExistsAtPath:fromFile]) {
+			fprintf(stderr,"Error %s file not found.",[fromFile UTF8String]);
+			exit(1);
+		}
     
-	if (![fm fileExistsAtPath:toFile]) {
-		fprintf(stderr,"Error %s file not found.",[toFile UTF8String]);
-		exit(1);
-	}
-    if (![[toFile lastPathComponent] isEqualTo:@"gov.llnl.mp.tasks.plist"]) {
-		fprintf(stderr,"Error from file must be %s.",[[toFile lastPathComponent] UTF8String]);
-		exit(1);
-	}
+		if (![fm fileExistsAtPath:toFile]) {
+			fprintf(stderr,"Error %s file not found.",[toFile UTF8String]);
+			exit(1);
+		}
+        if (![[toFile lastPathComponent] isEqualTo:@"gov.llnl.mp.tasks.plist"]) {
+			fprintf(stderr,"Error from file must be %s.",[[toFile lastPathComponent] UTF8String]);
+			exit(1);
+		}
     
     NSMutableArray *toFileArray;
     if (forTasks == 2)
@@ -177,11 +165,11 @@ int main (int argc, char * argv[])
                 }
             }
         }
-	}
+		}
     
-	NSDictionary *_updatedTasks = [NSDictionary dictionaryWithObject:toFileArray forKey:@"mpTasks"];
-	[_updatedTasks writeToFile:toFile atomically:YES];
-    [pool drain];
+		NSDictionary *_updatedTasks = [NSDictionary dictionaryWithObject:toFileArray forKey:@"mpTasks"];
+		[_updatedTasks writeToFile:toFile atomically:YES];
+    }
     return 0;
 }
 

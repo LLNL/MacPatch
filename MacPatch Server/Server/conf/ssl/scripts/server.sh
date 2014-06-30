@@ -36,7 +36,7 @@ done
 # Create Certificate Signing Request & Sign
 # ------------------------------------------
 if [ $NOSIGN -eq 0 ]; then
-	if [ ! -d "$BASEDIR/ca/ca.key" ]; then
+	if [ ! -f "$BASEDIR/ca/ca.key" ]; then
 		echo "Must create the CA before you can create the server cert."
 		echo
 		echo "Please run the \"ca.sh\" script."

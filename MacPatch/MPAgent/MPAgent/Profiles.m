@@ -60,17 +60,18 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 	return self;
 }
 
-- (void)dealloc
-{
-	[super dealloc];
-}
 
 - (BOOL) isConcurrent
 {
     return YES;
 }
 
-- (void) finish
+- (void)cancel
+{
+    [self finish];
+}
+
+- (void)finish
 {
     [self willChangeValueForKey:@"isFinished"];
     [self willChangeValueForKey:@"isExecuting"];
@@ -80,7 +81,7 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
     [self didChangeValueForKey:@"isFinished"];
 }
 
-- (void) start
+- (void)start
 {
     if ([self isCancelled]) {
         [self willChangeValueForKey:@"isFinished"];
@@ -166,62 +167,23 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
     }
 }
 
-- (NSArray *)retrieveProfileIDData:(NSError **)aErr
+- (NSArray *)retrieveProfileIDData:(NSError **)err
 {
-    NSString            *requestData;
-	NSDictionary        *jsonResult = nil;
-
-    // Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetProfileIDDataForClient&clientID=%@",WS_CLIENT_FILE,[si g_cuuid]];
-	qldebug(@"JSON URL: %@",urlString);
-
-    NSDictionary *userInfoDict;
+    NSArray *result = nil;
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *error = nil;
-    MPASINet *asiNet = [[MPASINet alloc] init];
-    requestData = [asiNet synchronousRequestForURL:urlString error:&error];
-
-    if (error) {
-		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
-		if (aErr != NULL) {
-            *aErr = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:[error code]  userInfo:userInfoDict];
+    result = [mpws getProfileIDDataForClient:&error];
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
         } else {
-            qlerror(@"%@",[error localizedDescription]);
+            qlerror(@"%@",error.localizedDescription);
         }
-		return nil;
-	}
+        return nil;
+    }
 
-    NSDictionary *deserializedData;
-    @try {
-        deserializedData = [requestData objectFromJSONString];
-        if ([[deserializedData objectForKey:@"errorCode"] intValue] == 0)
-        {
-            if ([deserializedData objectForKey:@"result"])
-            {
-                return [deserializedData objectForKey:@"result"];
-            } else {
-                qlerror(@"Error, no result object found.");
-                qldebug(@"JSON Data: %@",deserializedData);
-            }
-		} else {
-            if (aErr != NULL)
-            {
-                userInfoDict = [NSDictionary dictionaryWithObject:[jsonResult objectForKey:@"errorMessage"] forKey:NSLocalizedDescriptionKey];
-                *aErr = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:[[jsonResult objectForKey:@"errorCode"] intValue] userInfo:userInfoDict];
-            } else {
-                qlerror(@"Error[%@]: %@",[jsonResult objectForKey:@"errorCode"],[jsonResult objectForKey:@"errorMessage"]);
-            }
-		}
-    }
-    @catch (NSException *exception) {
-        userInfoDict = [NSDictionary dictionaryWithObject:exception forKey:NSLocalizedDescriptionKey];
-        if (aErr != NULL) {
-            *aErr = [NSError errorWithDomain:@"gov.llnl.MPWebServices" code:1  userInfo:userInfoDict];
-        } else {
-            qlerror(@"%@",exception);
-        }
-    }
-    
-	return nil;
+    return result;
 }
 
 - (NSArray *)readLocalProfileData

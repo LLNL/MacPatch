@@ -26,12 +26,11 @@
 #import <Cocoa/Cocoa.h>
 #import "MPWorkerProtocol.h"
 
-@class MPDefaults, MPAsus, MPAppUsage, ASIHTTPRequest;
-@class MPServerConnection;
+@class MPDefaults, MPAsus, MPAppUsage;
 
 @interface MPClientStatusAppDelegate : NSObject <MPWorkerClient>
 {
-	NSWindow *window;
+	NSWindow *__unsafe_unretained window;
     
     // Helper
 	id       proxy;
@@ -39,24 +38,24 @@
 	// Status Menu
 	IBOutlet NSMenu *statusMenu;
     NSStatusItem *statusItem;
-	IBOutlet NSMenuItem *checkInStatusMenuItem;
-	IBOutlet NSMenuItem *checkPatchStatusMenuItem;
-	IBOutlet NSMenuItem *selfVersionInfoMenuItem;
-	IBOutlet NSMenuItem *MPVersionInfoMenuItem;
-	IBOutlet NSMenuItem *checkAgentAndUpdateMenuItem;
+	IBOutlet NSMenuItem *__unsafe_unretained checkInStatusMenuItem;
+	IBOutlet NSMenuItem *__unsafe_unretained checkPatchStatusMenuItem;
+	IBOutlet NSMenuItem *__unsafe_unretained selfVersionInfoMenuItem;
+	IBOutlet NSMenuItem *__unsafe_unretained MPVersionInfoMenuItem;
+	IBOutlet NSMenuItem *__unsafe_unretained checkAgentAndUpdateMenuItem;
 	BOOL	openASUS;
 	BOOL	asusAlertOpen;
 	
 	// Client Info
-	NSWindow *clientInfoWindow;
+	NSWindow *__unsafe_unretained clientInfoWindow;
 	IBOutlet NSTextField *clientInfoTextField;
-	NSTableView *clientInfoTableView;
-	NSArrayController *clientArrayController;
+	NSTableView *__unsafe_unretained clientInfoTableView;
+	NSArrayController *__unsafe_unretained clientArrayController;
 	
 	// About Window
-	NSWindow *aboutWindow;
+	NSWindow *__unsafe_unretained aboutWindow;
 	NSWindow *mpClientStatusAboutWindow;
-	IBOutlet NSImageView *appIcon;
+	IBOutlet NSImageView *__unsafe_unretained appIcon;
 	IBOutlet NSTextField *appName;
 	IBOutlet NSTextField *appVersion;
 	
@@ -66,34 +65,31 @@
 	NSMutableData *showLastCheckInResultsData;
 	
 @private
-	MPDefaults *defaults;
-	MPAsus *asus;
 	MPAppUsage *mpAppUsage;
-    MPServerConnection *mpServerConnection;
 }
 
-@property (assign) IBOutlet NSWindow *window;
-@property (assign) IBOutlet NSMenuItem *checkInStatusMenuItem;
-@property (assign) IBOutlet NSMenuItem *checkPatchStatusMenuItem;
-@property (assign) IBOutlet NSMenuItem *selfVersionInfoMenuItem;
-@property (assign) IBOutlet NSMenuItem *MPVersionInfoMenuItem;
-@property (assign) IBOutlet NSMenuItem *checkAgentAndUpdateMenuItem;
+@property (unsafe_unretained) IBOutlet NSWindow *window;
+@property (unsafe_unretained) IBOutlet NSMenuItem *checkInStatusMenuItem;
+@property (unsafe_unretained) IBOutlet NSMenuItem *checkPatchStatusMenuItem;
+@property (unsafe_unretained) IBOutlet NSMenuItem *selfVersionInfoMenuItem;
+@property (unsafe_unretained) IBOutlet NSMenuItem *MPVersionInfoMenuItem;
+@property (unsafe_unretained) IBOutlet NSMenuItem *checkAgentAndUpdateMenuItem;
 @property (nonatomic, assign) BOOL openASUS;
 @property (nonatomic, assign) BOOL asusAlertOpen;
 
 // Client Info
-@property (assign) IBOutlet NSWindow *clientInfoWindow;
-@property (assign) IBOutlet NSTableView *clientInfoTableView;
-@property (assign) IBOutlet NSArrayController *clientArrayController;
+@property (unsafe_unretained) IBOutlet NSWindow *clientInfoWindow;
+@property (unsafe_unretained) IBOutlet NSTableView *clientInfoTableView;
+@property (unsafe_unretained) IBOutlet NSArrayController *clientArrayController;
 
 // About Window
-@property (assign) IBOutlet NSWindow *aboutWindow;
-@property (assign) IBOutlet NSImageView *appIcon;
-@property (nonatomic, retain) IBOutlet NSTextField *appName;
-@property (nonatomic, retain) IBOutlet NSTextField *appVersion;
+@property (unsafe_unretained) IBOutlet NSWindow *aboutWindow;
+@property (unsafe_unretained) IBOutlet NSImageView *appIcon;
+@property (nonatomic, strong) IBOutlet NSTextField *appName;
+@property (nonatomic, strong) IBOutlet NSTextField *appVersion;
 
 // Client CheckIn String
-@property (nonatomic, retain) NSOperationQueue *queue;
+@property (nonatomic, strong) NSOperationQueue *queue;
 
 #pragma mark -
 #pragma mark Methods
@@ -121,15 +117,15 @@
 - (void)showLastCheckIn;
 - (void)showLastCheckInThread;
 - (void)showLastCheckInMethod;
-- (void)lastCheckInDone:(ASIHTTPRequest *)request;
-- (void)lastCheckInFailed:(ASIHTTPRequest *)request;
+//- (void)lastCheckInDone:(ASIHTTPRequest *)request;
+//- (void)lastCheckInFailed:(ASIHTTPRequest *)request;
 
 // Show Patch Status
 - (void)getClientPatchStatus;
 - (void)getClientPatchStatusThread;
 - (void)getClientPatchStatusMethod;
-- (void)clientPatchStatusDone:(ASIHTTPRequest *)request;
-- (void)clientPatchStatusFailed:(ASIHTTPRequest *)request;
+//- (void)clientPatchStatusDone:(ASIHTTPRequest *)request;
+//- (void)clientPatchStatusFailed:(ASIHTTPRequest *)request;
 
 // Patch Status Icon Update, via File
 - (void)updatePatchStatusThread;

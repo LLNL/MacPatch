@@ -31,12 +31,12 @@
 - (BOOL)compareVersionStrings:(NSString *)leftVersion operator:(NSString *)aOp compareTo:(NSString *)rightVersion;
 - (NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err;
 - (NSString *)createTempDirFromURL:(NSString *)aURL;
-- (void)unzip:(NSString *)aZipFilePath error:(NSError **)err;
-- (void)unzip:(NSString *)aZipFilePath targetPath:(NSString *)aTargetPath error:(NSError **)err;
+- (int)unzip:(NSString *)aZipFilePath error:(NSError **)err;
+- (int)unzip:(NSString *)aZipFilePath targetPath:(NSString *)aTargetPath error:(NSError **)err;
 - (NSString *)runTask:(NSString *)aBinPath binArgs:(NSArray *)aArgs error:(NSError **)err;
 - (NSString *)runTask:(NSString *)aBinPath binArgs:(NSArray *)aArgs environment:(NSDictionary *)aEnv error:(NSError **)err;
-- (void)installPkg:(NSString *)pkgPath error:(NSError **)err;
-- (void)installPkg:(NSString *)pkgPath target:(NSString *)aTarget error:(NSError **)err;
+- (int)installPkg:(NSString *)pkgPath error:(NSError **)err;
+- (int)installPkg:(NSString *)pkgPath target:(NSString *)aTarget error:(NSError **)err;
 - (NSString *)installPkgWithResult:(NSString *)pkgPath target:(NSString *)aTarget error:(NSError **)err;
 @end
 
@@ -50,23 +50,17 @@
 - (id)init
 {
     self = [super init];
-    if (self) {
-        
-        mpServerConnection = [[MPServerConnection alloc] init];
+    if (self)
+    {
 		[self set_cuuid:[MPSystemInfo clientUUID]];
 		[self set_updateData:nil];
         [self set_osVerDictionary:[MPSystemInfo osVersionOctets]];
-        mpAsus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
+        mpAsus = [[MPAsus alloc] init];
         mpDataMgr = [[MPDataMgr alloc] init];
     }
     return self;    
 }
 
-- (void)dealloc
-{
-    [mpServerConnection release];
-    [super dealloc];
-}
 
 -(int)scanForUpdate
 {
@@ -74,7 +68,7 @@
 	logit(lcl_vInfo,@"Collecting agent version information.");	
 	NSDictionary *_agentInfo = [self collectVersionInfo];
 
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
     NSDictionary *updateInfo = [mpws getAgentUpdates:[_agentInfo objectForKey:@"agentVersion"] build:[_agentInfo objectForKey:@"agentBuild"] error:&wsErr];
     if (wsErr) {
@@ -123,7 +117,7 @@
 	
 	
 	// Build the download String
-	NSString *_dlURL = [NSString stringWithFormat:@"http://%@%@",mpServerConnection.HTTP_HOST,[[_updateData objectForKey:@"SelfUpdate"] objectForKey:@"pkg_Url"]];
+	NSString *_dlURL = [[_updateData objectForKey:@"SelfUpdate"] objectForKey:@"pkg_Url"];
 	logit(lcl_vInfo,@"Download update package from: %@",_dlURL);
 	
 	// Download the File
@@ -190,7 +184,6 @@
 	}
 	
 	NSDictionary *_appVersions = [NSDictionary dictionaryWithDictionary:tmpDict];
-	[tmpDict release];
 	
 	return _appVersions; 
 }
@@ -284,27 +277,25 @@
 	
 	
 done:
-	[leftFields release];
-	[rightFields release];
+	;
 	return fileVerPass;
 }
 
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
-	NSString *tempFilePath = [self createTempDirFromURL:aURL];
-
-    NSURL *url = [NSURL URLWithString:[aURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request setDownloadDestinationPath:tempFilePath];
-    [request setValidatesSecureCertificate:NO];
-    [request startSynchronous];
-    NSError *error = [request error];
+    NSError *error = nil;
+    NSURLResponse *response;
+    MPNetConfig *mpnc = [[MPNetConfig alloc] init];
+    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArray:[mpnc servers]];
+    NSURLRequest *urlReq = [req buildDownloadRequest:aURL];
+    NSString *res = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
     if (error) {
         logit(lcl_vError,@"Error[%d], trying to download file.",(int)[error code]);
         if (err != NULL)  *err = error;
+        return nil;
     }
 	
-    return tempFilePath;
+    return res;
 }
 
 -(NSString *)createTempDirFromURL:(NSString *)aURL
@@ -332,22 +323,24 @@ done:
 	return tempFilePath;
 }
 
--(void)unzip:(NSString *)aZipFilePath error:(NSError **)err
+- (int)unzip:(NSString *)aZipFilePath error:(NSError **)err
 {
 	NSError *aErr = nil;
 	NSString *parentDir = [aZipFilePath stringByDeletingLastPathComponent];
 	[self unzip:aZipFilePath targetPath:parentDir error:&aErr];
 	if (err != NULL) *err = aErr;
+    return 0;
 }
 
--(void)unzip:(NSString *)aZipFilePath targetPath:(NSString *)aTargetPath error:(NSError **)err
+- (int)unzip:(NSString *)aZipFilePath targetPath:(NSString *)aTargetPath error:(NSError **)err
 {	
 	NSError *aErr = nil;
 	NSString *binFile = @"/usr/bin/ditto";
 	NSArray *binArgs = [NSArray arrayWithObjects:@"-x", @"-k", aZipFilePath, aTargetPath, nil];
 	NSString *result;
 	result = [self runTask:binFile binArgs:binArgs error:&aErr];
-	if (err != NULL) *err = aErr;	
+	if (err != NULL) *err = aErr;
+    return 0;
 }
 
 -(NSString *)runTask:(NSString *)aBinPath binArgs:(NSArray *)aArgs error:(NSError **)err
@@ -387,7 +380,6 @@ done:
 		}
 		
 		NSString *result = [NSString stringWithString:_res];
-		[_res release];
 		return result;
 		
 	} else {
@@ -408,29 +400,30 @@ done:
 			logit(lcl_vError,@"Error, unable to run task.");
 			if (err != NULL) *err = [NSError errorWithDomain:@"RunTask" code:[cmd terminationStatus] userInfo:nil];
 		}
-		[cmd release];
 		
 		NSData *data = [[cmdData fileHandleForReading] readDataToEndOfFile];
-		NSString *l_string = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+		NSString *l_string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 		l_string = [NSString stringWithString:[l_string trim]];
 		
 		return l_string;
 	}	
 }
 
--(void)installPkg:(NSString *)pkgPath error:(NSError **)err
+- (int)installPkg:(NSString *)pkgPath error:(NSError **)err
 {
 	NSError *aErr = nil;
 	[self installPkg:pkgPath target:@"/" error:&aErr];
 	if (err != NULL) *err = aErr;
+    return 0;
 }
 
--(void)installPkg:(NSString *)pkgPath target:(NSString *)aTarget error:(NSError **)err
+- (int)installPkg:(NSString *)pkgPath target:(NSString *)aTarget error:(NSError **)err
 {
 	NSError *aErr = nil;
 	NSString *result;
 	result = [self installPkgWithResult:pkgPath target:aTarget error:&aErr];
 	if (err != NULL) *err = aErr;
+    return 0;
 }
 
 -(NSString *)installPkgWithResult:(NSString *)pkgPath target:(NSString *)aTarget error:(NSError **)err

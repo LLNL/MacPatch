@@ -8,12 +8,6 @@
 	<array>
 		<dict>
 			<key>catalogurl</key>
-			<string>content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog</string>
-			<key>osver</key>
-			<string>10.6</string>
-		</dict>
-		<dict>
-			<key>catalogurl</key>
 			<string>content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog</string>
 			<key>osver</key>
 			<string>10.7</string>

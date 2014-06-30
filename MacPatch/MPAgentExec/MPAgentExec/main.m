@@ -32,222 +32,254 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"1.7.2"
+#define APPVERSION	@"2.0.0"
 #define APPNAME		@"MPAgentExec"
 
 void usage(void);
 
 int main (int argc, char * argv[])
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-    int a_Type = 0;
-	BOOL echoToConsole = NO;
-	BOOL verboseLogging = NO;
-	BOOL isILoadMode = NO;
-	BOOL forceRunTask = NO;
-	int _UpdateType = 0; // 0 All, 1 = Apple, 2 = Third
-    NSString *_updateBundle = nil;
-	NSDictionary *_defaultsOverride = nil;
-	
-    // Inventory
-    NSString *argType = NULL;
-    
-	// Setup argument processing
-	int c;
-	while (1)
-	{
-		static struct option long_options[] =
-		{
-			{"Debug"				,no_argument	    ,0, 'D'},
-			{"Scan"					,no_argument	    ,0, 's'},
-			{"Update"				,no_argument	    ,0, 'u'},
-			{"UpdateFilter"			,required_argument	,0, 'f'},
-            {"UpdateBundle"			,required_argument	,0, 'B'},
-			{"AVInfo"				,no_argument	    ,0, 'a'},
-			{"AVUpdate"				,no_argument	    ,0, 'U'},
-			{"AgentUpdate"			,no_argument		,0, 'G'},
-			{"allowClient"			,no_argument	    ,0, 'C'},
-			{"allowServer"			,no_argument	    ,0, 'S'},
-			{"iload"				,no_argument	    ,0, 'i'},
-			{"FORCERUN"				,no_argument		,0, 'F'},
-            // Inventory
-            {"type"                 ,required_argument	,0, 't'},
-			{"Audit"                ,no_argument		,0, 'A'},
-			{"cuuid"                ,no_argument		,0, 'c'},
-            // Software Dist
-            {"installSWUsingGID"    ,required_argument	,0, 'g'},
-            {"installSWUsingSID"    ,required_argument	,0, 'd'},
-            // Output
-			{"Echo"					,no_argument		,0, 'e'},
-			{"Verbose"				,no_argument		,0, 'V'},
-			{"version"				,no_argument		,0, 'v'},
-			{"help"					,no_argument		,0, 'h'},
-			{0, 0, 0, 0}
-		};
-		// getopt_long stores the option index here.
-		int option_index = 0;
-		c = getopt_long (argc, argv, "Dsuf:B:aUgGCSiFt:AceVvh", long_options, &option_index);
-		
-		// Detect the end of the options.
-		if (c == -1)
-			break;
-		
-		switch (c)
-		{
-			case 's':
-				a_Type = 1;
-				break;
-			case 'u':
-				a_Type = 2;
-				break;
-			case 'f':
-				if ([[NSString stringWithUTF8String:optarg] isEqualTo:@"Apple"]) {
-					_UpdateType = 1;
-				} else if ([[NSString stringWithUTF8String:optarg] isEqualTo:@"Custom"] || [[NSString stringWithUTF8String:optarg] isEqualTo:@"Third"]) {
-					_UpdateType = 2;
-				}
-				break;
-            case 'B':
-				a_Type = 2;
-                _updateBundle = [NSString stringWithUTF8String:optarg];
-				break;
-            case 'a':
-				a_Type = 3;
-				break;
-            case 'U':
-				a_Type = 4;
-				break;
-			case 'G':
-				a_Type = 5;
-				break;
-			case 'C':
-				_defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"allowClient"];
-				break;
-			case 'S':
-				_defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"allowServer"];
-				break;
-            case 't':
-				argType = [NSString stringWithUTF8String:optarg];
-                a_Type = 6;
-				break;
-			case 'A':
-                argType = @"Custom";
-                a_Type = 6;
-				break;
-			case 'c':
-				printf("%s\n",[[MPSystemInfo clientUUID] UTF8String]);
-				return 0;
-			case 'V':
-				verboseLogging = YES;
-				break;
-			case 'D':
-				verboseLogging = YES;
-				break;
-			case 'i':
-				isILoadMode = YES;
-				a_Type = 2;
-				_UpdateType = 0;
-				break;
-			case 'F':
-				forceRunTask = YES;
-				break;
-			case 'e':
-				echoToConsole = YES;
-				break;
-			case 'v':
-				printf("%s\n",[APPVERSION UTF8String]);
-				return 0;
-			case 'h':
-                usage();
-                return 0;
-			case '?':
-                usage();
-                return 0;
-			default:
-				printf("Silly Rabbit, Trix are for Kids!\n");
-				usage();
-		}
-	}
+    @autoreleasepool {
 
-    if (optind < argc) {
-        while (optind < argc) {
-            printf ("Invalid argument %s ", argv[optind++]);
+        int a_Type = 0;
+        BOOL echoToConsole = NO;
+        BOOL verboseLogging = NO;
+        BOOL isILoadMode = NO;
+        BOOL forceRunTask = NO;
+        int _UpdateType = 0; // 0 All, 1 = Apple, 2 = Third
+        NSString *_updateBundle = nil;
+        NSDictionary *_defaultsOverride = nil;
+
+        // Inventory
+        NSString *argType = NULL;
+
+        // Setup argument processing
+        int c;
+        while (1)
+        {
+            static struct option long_options[] =
+            {
+                {"Debug"				,no_argument	    ,0, 'D'},
+                {"Scan"					,no_argument	    ,0, 's'},
+                {"Update"				,no_argument	    ,0, 'u'},
+                {"UpdateFilter"			,required_argument	,0, 'f'},
+                {"UpdateBundle"			,required_argument	,0, 'B'},
+                {"AVInfo"				,no_argument	    ,0, 'a'},
+                {"AVUpdate"				,no_argument	    ,0, 'U'},
+                {"AgentUpdate"			,no_argument		,0, 'G'},
+                {"allowClient"			,no_argument	    ,0, 'C'},
+                {"allowServer"			,no_argument	    ,0, 'S'},
+                {"iload"				,no_argument	    ,0, 'i'},
+                {"FORCERUN"				,no_argument		,0, 'F'},
+                // Inventory
+                {"type"                 ,required_argument	,0, 't'},
+                {"Audit"                ,no_argument		,0, 'A'},
+                {"cuuid"                ,no_argument		,0, 'c'},
+                // Software Dist
+                {"installSWUsingGRP"    ,required_argument	,0, 'g'},
+                {"installSWUsingSID"    ,required_argument	,0, 'd'},
+                {"installSWUsingPLIST"  ,required_argument	,0, 'P'},
+                // Output
+                {"Echo"					,no_argument		,0, 'e'},
+                {"Verbose"				,no_argument		,0, 'V'},
+                {"version"				,no_argument		,0, 'v'},
+                {"help"					,no_argument		,0, 'h'},
+                {0, 0, 0, 0}
+            };
+            // getopt_long stores the option index here.
+            int option_index = 0;
+            c = getopt_long (argc, argv, "Dsuf:B:aUgGCSiFt:Acg:d:P:eVvh", long_options, &option_index);
+
+            // Detect the end of the options.
+            if (c == -1) {
+                break;
+            }
+            switch (c)
+            {
+                    case 's':
+                        a_Type = 1;
+                        break;
+                    case 'u':
+                        a_Type = 2;
+                        break;
+                    case 'f':
+                        if ([[NSString stringWithUTF8String:optarg] isEqualTo:@"Apple"]) {
+                            _UpdateType = 1;
+                        } else if ([[NSString stringWithUTF8String:optarg] isEqualTo:@"Custom"] || [[NSString stringWithUTF8String:optarg] isEqualTo:@"Third"]) {
+                            _UpdateType = 2;
+                        }
+                        break;
+                    case 'B':
+                        a_Type = 2;
+                        _updateBundle = [NSString stringWithUTF8String:optarg];
+                        break;
+                    case 'a':
+                        a_Type = 3;
+                        break;
+                    case 'U':
+                        a_Type = 4;
+                        break;
+                    case 'G':
+                        a_Type = 5;
+                        break;
+                    case 'C':
+                        _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"allowClient"];
+                        break;
+                    case 'S':
+                        _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"allowServer"];
+                        break;
+                    case 't':
+                        argType = [NSString stringWithUTF8String:optarg];
+                        a_Type = 6;
+                        break;
+                    case 'A':
+                        argType = @"Custom";
+                        a_Type = 6;
+                        break;
+                    case 'c':
+                        printf("%s\n",[[MPSystemInfo clientUUID] UTF8String]);
+                        return 0;
+                    case 'V':
+                        verboseLogging = YES;
+                        break;
+                    case 'D':
+                        verboseLogging = YES;
+                        break;
+                    case 'i':
+                        isILoadMode = YES;
+                        a_Type = 2;
+                        _UpdateType = 0;
+                        break;
+                    case 'g':
+                        argType = [NSString stringWithUTF8String:optarg];
+                        a_Type = 7;
+                        break;
+                    case 'd':
+                        argType = [NSString stringWithUTF8String:optarg];
+                        a_Type = 8;
+                        break;
+                    case 'P':
+                        argType = [NSString stringWithUTF8String:optarg];
+                        a_Type = 9;
+                        break;
+                    case 'F':
+                        forceRunTask = YES;
+                        break;
+                    case 'e':
+                        echoToConsole = YES;
+                        break;
+                    case 'v':
+                        printf("%s\n",[APPVERSION UTF8String]);
+                        return 0;
+                    case 'h':
+                        usage();
+                        return 0;
+                    case '?':
+                        usage();
+                        return 0;
+                    default:
+                        printf("Silly Rabbit, Trix are for Kids!\n");
+                        usage();
+                }
         }
-        usage();
-        exit(0);
-    }
-	
-	// Make sure the user is root or is using sudo
-	if (getuid()) {
-		printf("You must be root to run this app. Try using sudo.\n");
+        
+        if (optind < argc) {
+            while (optind < argc) {
+                printf ("Invalid argument %s ", argv[optind++]);
+            }
+            usage();
+            exit(0);
+        }
+
+        // Make sure the user is root or is using sudo
+        if (getuid()) {
+            printf("You must be root to run this app. Try using sudo.\n");
 #ifdef DEBUG
-		printf("Debug mode.\n");
+            printf("Debug mode.\n");
 #else
-		exit(0);
+            exit(0);
 #endif
-	}
-    
-    // Setup Logging
-	NSString *_logFile = [NSString stringWithFormat:@"%@/Logs/MPAgentExec.log",MP_ROOT_CLIENT];
-    [MPLog setupLogging:_logFile level:lcl_vDebug];
-    if (verboseLogging) {
-		lcl_configure_by_name("*", lcl_vDebug);
-		[LCLLogFile setMirrorsToStdErr:YES];
-		logit(lcl_vInfo,@"***** %@ v.%@ started -- Debug Enabled *****", APPNAME, APPVERSION);
-	} else {
-		lcl_configure_by_name("*", lcl_vInfo);
-		if (echoToConsole) {
-			[LCLLogFile setMirrorsToStdErr:YES];
         }
-		logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
-	}
-	
-    // Run Functions
-    MPAgentExecController *controller = [[MPAgentExecController alloc] init];
-	if (_defaultsOverride) {
-		[controller overRideDefaults:_defaultsOverride];
-	}
-	if (forceRunTask == YES) {
-		[controller setForceRun:YES];
-	}
-    if (a_Type == 1) {
-        [controller scanForPatches];
-    } else if (a_Type == 2) {
-		if (isILoadMode == YES) {
-			[controller setILoadMode:YES];
-		}
-        if (_updateBundle) {
-            [controller scanAndUpdateCustomWithPatchBundleID:_updateBundle];
+
+        // Setup Logging
+        NSString *_logFile = [NSString stringWithFormat:@"%@/Logs/MPAgentExec.log",MP_ROOT_CLIENT];
+        [MPLog setupLogging:_logFile level:lcl_vDebug];
+        if (verboseLogging) {
+            lcl_configure_by_name("*", lcl_vDebug);
+            [LCLLogFile setMirrorsToStdErr:YES];
+            logit(lcl_vInfo,@"***** %@ v.%@ started -- Debug Enabled *****", APPNAME, APPVERSION);
         } else {
-            [controller scanForPatchesAndUpdateWithFilter:_UpdateType];
+            lcl_configure_by_name("*", lcl_vInfo);
+            if (echoToConsole) {
+                [LCLLogFile setMirrorsToStdErr:YES];
+            }
+            logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
         }
-	} else if (a_Type == 3) {
-		[controller scanForAVDefs];
-	} else if (a_Type == 4) {
-		[controller scanForAVDefsAndUpdate];
-	} else if (a_Type == 5) {
-		[controller scanAndUpdateAgentUpdater];
-    } else if (a_Type == 6) {
-		int result = NO;
-        MPInv *i = [[[MPInv alloc] init] autorelease];
-        if ([argType isEqual:@"Custom"]) {
-            int x = 0;
-            x = [i collectAuditTypeData];
-        } else if ([argType isEqual:@"All"]) {
-            result = [i collectInventoryData];
-        } else {
-            result = [i collectInventoryDataForType:argType];
+
+        // Run Functions
+        MPAgentExecController *controller = [[MPAgentExecController alloc] init];
+        if (_defaultsOverride) {
+            [controller overRideDefaults:_defaultsOverride];
         }
-	} else {
-		logit(lcl_vError, @"should never have gotten here!");
-	}
-    
-    
-    [controller release];
-	controller = nil;
-	
-    [pool drain];
+        if (forceRunTask == YES) {
+            [controller setForceRun:YES];
+        }
+
+        MPInv *i = [[MPInv alloc] init];
+        int result = NO;
+
+        switch (a_Type) {
+            case 1:
+                [controller scanForPatches];
+                break;
+            case 2:
+                if (isILoadMode == YES) {
+                    [controller setILoadMode:YES];
+                }
+                if (_updateBundle) {
+                    [controller scanAndUpdateCustomWithPatchBundleID:_updateBundle];
+                } else {
+                    [controller scanForPatchesAndUpdateWithFilter:_UpdateType];
+                }
+                break;
+            case 3:
+                [controller scanForAVDefs];
+                break;
+            case 4:
+                [controller scanForAVDefsAndUpdate];
+                break;
+            case 5:
+                [controller scanAndUpdateAgentUpdater];
+                break;
+            case 6:
+                if ([argType isEqual:@"Custom"]) {
+                    int x = 0;
+                    x = [i collectAuditTypeData];
+                } else if ([argType isEqual:@"All"]) {
+                    result = [i collectInventoryData];
+                } else {
+                    result = [i collectInventoryDataForType:argType];
+                }
+                break;
+            case 7:
+                // Install Using SW Group Name ID
+                break;
+            case 8:
+                // Install Using SW Task ID
+                result = [controller installSoftwareTasks:argType];
+                break;
+            case 9:
+                // Install Using PLIST of SW Task ID's
+                result = [controller installSoftwareTasksUsingPLIST:argType];
+                break;
+            default:
+                i = nil;
+                logit(lcl_vError, @"should never have gotten here!");
+                break;
+        }
+
+        controller = nil;
+    }
     return 0;
 }
 
@@ -269,7 +301,8 @@ void usage(void) {
     printf(" \t\tAll\n");
 	printf(" \t\tSPHardwareDataType\n");
 	printf(" \t\tSPSoftwareDataType\n");
-	printf(" \t\tSPNetworkDataType\n");
+	printf(" \t\tSPNetworkDataType (Depricated)\n");
+    printf(" \t\tSINetworkInfo\n");
 	printf(" \t\tSPApplicationsDataType\n");
 	printf(" \t\tSPFrameworksDataType\n");
 	printf(" \t\tDirectoryServices\n");

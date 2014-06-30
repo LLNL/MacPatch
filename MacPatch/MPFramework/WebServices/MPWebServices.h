@@ -25,12 +25,9 @@
 
 #import <Foundation/Foundation.h>
 
-@class MPASINet;
-
 @interface MPWebServices : NSObject
 {
     @private
-    MPASINet *asiNet;
     NSString *_cuuid;
     NSString *_osver;
     NSDictionary *_defaults;
@@ -39,6 +36,9 @@
 -(id)initWithDefaults:(NSDictionary *)aDefaults;
 
 // Methods
+- (NSDictionary *)getMPServerList:(NSError **)err;
+- (NSDictionary *)getMPServerListVersion:(NSString *)aVersion listid:(NSString *)aListID error:(NSError **)err;
+
 - (NSDictionary *)getCatalogURLSForHostOS:(NSError **)err;
 - (NSDictionary *)getPatchGroupContent:(NSError **)err;
 - (BOOL)postPatchScanResultsForType:(NSInteger)aPatchScanType results:(NSDictionary *)resultsDictionary error:(NSError **)err;
@@ -54,12 +54,27 @@
 
 
 - (BOOL)postDataMgrXML:(NSString *)aDataMgrXML error:(NSError **)err;
+- (BOOL)postDataMgrJSON:(NSString *)aDataMgrJSON error:(NSError **)err;
 - (BOOL)postSAVDefsDataXML:(NSString *)aAVXML encoded:(BOOL)aEncoded error:(NSError **)err;
-
-
-- (BOOL)postJSONDataForMethod:(NSString *)aMethod data:(NSDictionary *)aData error:(NSError **)err;
-- (NSDictionary *)sendRequestUsingMethodAndArgs:(NSString *)aMethod argsDictionary:(NSDictionary *)aDict error:(NSError **)err;
 
 - (BOOL)clientHasInvDataInDB:(NSError **)err;
 - (int)postClientHasInvData:(NSError **)err;
+
+- (BOOL)postJSONDataForMethod:(NSString *)aMethod data:(NSDictionary *)aData error:(NSError **)err;
+
+// ClientStatus
+- (id)GetClientPatchStatusCount:(NSError **)err;
+- (id)GetLastCheckIn:(NSError **)err;
+
+// SWDist
+- (id)getSWDistGroups:(NSError **)err;
+- (id)getSWDistGroupsWithState:(NSString *)aState error:(NSError **)err;
+- (NSString *)getHashForSWTaskGroup:(NSString *)aGroupName error:(NSError **)err;
+- (id)getSWTasksForGroup:(NSString *)aGroupName error:(NSError **)err;
+- (int)postSWInstallResults:(NSDictionary *)aParams error:(NSError **)err;
+- (id)getSWTaskForID:(NSString *)aTaskID error:(NSError **)err;
+
+// Profiles
+- (NSArray *)getProfileIDDataForClient:(NSError **)err;
+
 @end

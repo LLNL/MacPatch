@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# MPInventoryD script        
+#
+# chkconfig: 
+# description: 	Start up the MacPatch Inventory processing script.
+
+# Source function library.
+. /etc/init.d/functions
+
+exit 0;
+
+RETVAL=$?
+INV_HOME="/Library/MacPatch/Server/conf/scripts"
+
+case "$1" in
+ start)
+	if [ -f $INV_HOME/MPInvD.py ]; then
+	    	echo $"Starting MacPatch Inventory"
+		$INV_HOME/MPInvD.py
+    	fi
+	;;
+ stop)
+	if [ -f $INV_HOME/MPInvD.py ]; then
+		echo $"Stopping MacPatch Inventory"
+        	$INV_HOME/MPInvD.py
+    	fi
+ 	;;
+ restart)
+	if [ -f $INV_HOME/bin/apachectl ]; then
+		echo $"Restarting MacPatch Inventory"
+        	$INV_HOME/MPInvD.py
+    	fi
+ 	;;
+ *)
+ 	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+
+exit $RETVAL

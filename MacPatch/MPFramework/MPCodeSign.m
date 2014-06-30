@@ -35,7 +35,7 @@
 	NSArray *_fingerPrintBaseArray = [NSArray arrayWithObjects:@"a42b1c000514941e965efa6d9c80df6572ef028f",@"d82b0abf5523dbdb6b605e570ce3a005b7a3f80d",nil];
     
     // Check to see if use code sign validation is enabled
-    MPDefaults *d = [[[MPDefaults alloc] init] autorelease];
+    MPDefaults *d = [[MPDefaults alloc] init];
     if ([[d defaults] objectForKey:@"CheckSignatures"]) {
         if ([[[d defaults] objectForKey:@"CheckSignatures"] boolValue] == NO) {
             return YES;
@@ -54,9 +54,8 @@
 	[task setStandardError:newPipe];
 	[task launch];
 	inData = [readHandle readDataToEndOfFile];
-	tempString = [[[NSString alloc] initWithData:inData encoding:NSASCIIStringEncoding] autorelease];
+	tempString = [[NSString alloc] initWithData:inData encoding:NSASCIIStringEncoding];
 	logit(lcl_vDebug,@"Codesign result:\n%@",tempString);
-	[task release];
     
 	if ([tempString rangeOfString:@"missing or invalid"].length > 0 || [tempString rangeOfString:@"modified"].length > 0 || [tempString rangeOfString:@"CSSMERR_TP_NOT_TRUSTED"].length > 0)
 	{

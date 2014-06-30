@@ -33,10 +33,10 @@
     NSDictionary *consoleUserData;
 }
 
-@property (nonatomic, readonly, retain) NSDictionary *hostNames;
-@property (nonatomic, readonly, retain) NSDictionary *osVersion;
-@property (nonatomic, readonly, retain) NSDictionary *agentData;
-@property (nonatomic, readonly, retain) NSDictionary *consoleUserData;
+@property (nonatomic, readonly, strong) NSDictionary *hostNames;
+@property (nonatomic, readonly, strong) NSDictionary *osVersion;
+@property (nonatomic, readonly, strong) NSDictionary *agentData;
+@property (nonatomic, readonly, strong) NSDictionary *consoleUserData;
 
 - (NSDictionary *)collectClientCheckInData;
 

@@ -29,9 +29,9 @@
 @interface MPFileVaultInfo ()
 
 @property (nonatomic, assign, readwrite) int state;
-@property (nonatomic, retain, readwrite) NSString *status;
-@property (nonatomic, retain, readwrite) NSString *users;
-@property (nonatomic, retain, readwrite) NSError *error;
+@property (nonatomic, strong, readwrite) NSString *status;
+@property (nonatomic, strong, readwrite) NSString *users;
+@property (nonatomic, strong, readwrite) NSError *error;
 
 - (int)currentUserID;
 - (void)runFDESetupCommand:(NSString *)argument;

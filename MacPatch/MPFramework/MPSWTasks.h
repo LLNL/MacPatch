@@ -25,11 +25,10 @@
 
 #import <Foundation/Foundation.h>
 
-@class MPServerConnection;
 
 @interface MPSWTasks : NSObject
 {
-    MPServerConnection *mpServerConnection;
+    NSDictionary *defaults;
     NSString *groupName;
     NSString *groupHash;
 
@@ -37,9 +36,10 @@
     NSDictionary *mpHostConfigInfo;
 }
 
-@property(retain) NSString *groupName;
-@property(retain) NSString *groupHash;
-@property(nonatomic, retain) NSDictionary *mpHostConfigInfo;
+@property(strong) NSDictionary *defaults;
+@property(strong) NSString *groupName;
+@property(strong) NSString *groupHash;
+@property(nonatomic, strong) NSDictionary *mpHostConfigInfo;
 
 - (id)initWithGroupAndHash:(NSString *)aGroup hash:(NSString *)aHash;
 

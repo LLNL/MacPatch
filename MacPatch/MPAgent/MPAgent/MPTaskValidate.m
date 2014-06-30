@@ -310,7 +310,7 @@ NSString * const kEndDate			= @"3000-01-01";
 
 -(BOOL)isValidTimeStringUsingFormatter:(NSString *)aFormat
 {
-	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setDateFormat:aFormat];
 	
 	NSDate *_date = [dateFormatter dateFromString:self];
@@ -349,11 +349,6 @@ NSString * const kEndDate			= @"3000-01-01";
     return self;
 }
 
-- (void)dealloc
-{
-    [defaultTasks autorelease];	
-    [super dealloc];
-}
 
 - (int)validateTask:(NSDictionary *)aTask
 {
@@ -370,19 +365,24 @@ NSString * const kEndDate			= @"3000-01-01";
 		logit(lcl_vError,@"Major error found in tasks file. Replacing current tasks file with default config.");
 		return 1;
 	}
+    NSArray *approvedTasks = [NSArray arrayWithObjects:@"KMPCHECKIN",@"KMPAGENTCHECK",@"KMPVULSCAN",@"KMPVULUPDATE",@"KMPAVCHECK",@"KMPINVSCAN",
+                              @"KMPCMD",@"KMPSWDISTMAN",@"KMPAVINFO",@"KMPSRVLIST",@"KMPPROFILES",@"KMPWSPOST", nil];
 	
 	if (![[aTask allKeys] containsObject:@"startdate"]) return 1;
 	if (![[aTask allKeys] containsObject:@"enddate"]) return 1;
 	if ([[aTask allKeys] containsObject:@"cmd"]) {
-		NSString *_cmd = [NSString stringWithString:[aTask objectForKey:@"cmd"]];
-		if ([[_cmd uppercaseString] isEqualToString:@"KMPCHECKIN"] || [[_cmd uppercaseString] isEqualToString:@"KMPAGENTCHECK"] ||
-			[[_cmd uppercaseString] isEqualToString:@"KMPVULSCAN"] || [[_cmd uppercaseString] isEqualToString:@"KMPVULUPDATE"] ||
-			[[_cmd uppercaseString] isEqualToString:@"KMPAVCHECK"] || [[_cmd uppercaseString] isEqualToString:@"KMPINVSCAN"] ||
-			[[_cmd uppercaseString] isEqualToString:@"KMPCMD"] || [[_cmd uppercaseString] isEqualToString:@"KMPSWDISTMAN"] ||
-            [[_cmd uppercaseString] isEqualToString:@"KMPAVINFO"]) {
-		} else {
-			return 99;	
-		}
+        int found = 0;
+        NSString *_cmd = [NSString stringWithString:[aTask objectForKey:@"cmd"]];
+        for (NSString *_taskName in approvedTasks) {
+            if ([[_cmd uppercaseString] isEqualToString:_taskName]) {
+                found++;
+                break;
+            }
+        }
+        if (found == 0) {
+            // No Task Found
+            return 99;
+        }
 	} else {
 		return 1;
 	}
@@ -448,6 +448,7 @@ NSString * const kEndDate			= @"3000-01-01";
 {
 	return YES;
 }
+
 - (BOOL)validateEndDate:(NSString *)aStringDate
 {
 	NSRange range = NSMakeRange (0, 4); // Get First 4 Chars

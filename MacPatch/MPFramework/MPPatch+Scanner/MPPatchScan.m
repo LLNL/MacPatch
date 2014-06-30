@@ -52,21 +52,13 @@
 
 - (id)init;
 {
-    MPServerConnection *_srvObj = [[[MPServerConnection alloc] init] autorelease];
-	return [self initWithServerConnection:_srvObj];
-}
-
-- (id)initWithServerConnection:(MPServerConnection *)aSrvObj
-{
     self = [super init];
-	if (self) 
+	if (self)
     {
-        mpServerConnection = aSrvObj;
         [self setUseDistributedNotification:NO];
     }
 	return self;
 }
-
 
 -(NSArray *)scanForPatches
 {
@@ -86,7 +78,7 @@
 	NSArray *customPatches;
 	customPatches = [self retrieveCustomPatchScanList];
 	if ([customPatches count] == 0)
-		goto done;
+		return resultArr;
 	
 	// 2. Scan the host
 	NSMutableDictionary *patch;
@@ -121,7 +113,6 @@
                 qlerror("%@\n%@",exception,tmpDict);
             }
 			
-			[patch release];
 			patch = nil;
 		}
 	}
@@ -130,8 +121,8 @@
 
 
     // 3. Post patches needed to web service
-    MPDataMgr *dataMgr = [[[MPDataMgr alloc] init] autorelease];
-	NSString *resXML = [NSString stringWithString:[dataMgr GenXMLForDataMgr:patchesNeeded dbTable:@"client_patches_third"
+    MPDataMgr *dataMgr = [[MPDataMgr alloc] init];
+	NSString *resXML = [NSString stringWithString:[dataMgr GenJSONForDataMgr:patchesNeeded dbTable:@"client_patches_third"
 															  dbTablePrefix:@"mp_"
 															  dbFieldPrefix:@""
 															   updateFields:@"cuuid,patch"
@@ -142,22 +133,19 @@
 
 	qldebug(@"Patch scan info to send to web service:\n%@",resXML);
 	NSString *xmlBase64String = [[resXML dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
-    [mpws postDataMgrXML:xmlBase64String error:&wsErr];
+    [mpws postDataMgrJSON:xmlBase64String error:&wsErr];
     if (wsErr) {
         qlerror(@"%@",wsErr.localizedDescription);
-		goto done;
+    } else {
+        // Notify with completion result
+        notifyInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:(int)[patchesNeeded count]] forKey:@"patchesNeeded"];
     }
 
-	// Notify with completion result
-	notifyInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:(int)[patchesNeeded count]] forKey:@"patchesNeeded"];
-	
-done:
 	[delegate patchScan:self didReciveStatusData:@"Custom patch scan completed."];
 	[self sendNotificationTo:@"ScanForNotificationFinished" userInfo:notifyInfo];
 	resultArr = [NSArray arrayWithArray:patchesNeeded];
-	[patchesNeeded release];
 	return resultArr;
 }
 
@@ -179,7 +167,7 @@ done:
 	NSArray *customPatches;
 	customPatches = [self retrieveCustomPatchScanList];
 	if ([customPatches count] == 0)
-		goto done;
+		return resultArr;
 	
 	// 2. Scan the host
 	NSMutableDictionary *patch;
@@ -219,15 +207,12 @@ done:
                 qlerror("%@",exception);
             }
 			
-			[patch release];
 			patch = nil;
 		}
 	}
 
-done:
     [delegate patchScan:self didReciveStatusData:@"Custom patch scan completed."];
 	resultArr = [NSArray arrayWithArray:patchesNeeded];
-	[patchesNeeded release];
 	return resultArr;
 }
 
@@ -278,7 +263,6 @@ done:
 			} else {
 				qlinfo(@"OSArch=FALSE: %@",[qryArr objectAtIndex:1]);
 			}
-			[mpos release];	 
 		}
 		
 		if ([@"OSType" isEqualToString:[qryArr objectAtIndex:0]]) {
@@ -289,7 +273,6 @@ done:
 			} else {
 				qlinfo(@"OSType=FALSE: %@",[qryArr objectAtIndex:1]);
 			}
-			[mpos release];	 
 		}
 		
 		if ([@"OSVersion" isEqualToString:[qryArr objectAtIndex:0]]) {
@@ -300,14 +283,12 @@ done:
 			} else {
 				qlinfo(@"OSVersion=FALSE: %@",[qryArr objectAtIndex:1]);
 			}
-			[mpos release];	 
 		}
 		
 		if ([@"BundleID" isEqualToString:[qryArr objectAtIndex:0]]) {
 			mpbndl = [[MPBundle alloc] init];
 			if ([qryArr count] != 4) {
 				qlerror(@"Error, not enough args for patch query entry.");
-				[mpbndl release];
 				goto done;
 			}
 			
@@ -323,14 +304,12 @@ done:
 			} else {
 				qlinfo(@"BundleID=FALSE: %@",[qryArr objectAtIndex:1]);
 			}
-			[mpbndl release];	 
 		}
 		
 		if ([@"File" isEqualToString:[qryArr objectAtIndex:0]]) {
 			mpfile = [[MPFileCheck alloc] init];
 			if ([qryArr count] != 4) {
 				qlerror(@"Error, not enough args for patch query entry.");
-				[mpfile release];
 				goto done;	
 			}
 			
@@ -344,14 +323,12 @@ done:
 			} else {
 				qlinfo(@"File=FALSE: %@",[qryArr objectAtIndex:1]);
 			}
-			[mpfile release];	 
 		}
 		
 		if ([@"Script" isEqualToString:[qryArr objectAtIndex:0]]) {
 			mpscript = [[MPScript alloc] init];
 			if ([qryArr count] > 2) {
 				qlerror(@"Error, too many args. Sript will not be run.");
-				[mpscript release];
 				goto done;
 			}
 			
@@ -361,7 +338,6 @@ done:
 			} else {
 				qlinfo(@"SCRIPT=FALSE");
 			}
-			[mpscript release];	 
 		}
 	}
 	
@@ -381,7 +357,7 @@ done:
 -(NSArray *)retrieveCustomPatchScanList
 {
 	NSArray  *scanListArray = NULL;
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
     scanListArray = [mpws getCustomPatchScanList:&wsErr];
     if (wsErr) {

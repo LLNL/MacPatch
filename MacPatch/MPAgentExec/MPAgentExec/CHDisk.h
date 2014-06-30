@@ -33,10 +33,10 @@
     NSDictionary *defaultData;
     NSArray *daKeys;
 }
-@property (nonatomic, retain) NSDictionary *deviceData;
+@property (nonatomic, strong) NSDictionary *deviceData;
 // Private
-@property (nonatomic, retain) NSDictionary *defaultData;
-@property (nonatomic, retain) NSArray *daKeys;
+@property (nonatomic, strong) NSDictionary *defaultData;
+@property (nonatomic, strong) NSArray *daKeys;
 
 - (void)populateDeviceDataFromDict:(NSDictionary *)aDict;
 - (NSDictionary *)volumeSizeInfo:(NSString *)aPath;

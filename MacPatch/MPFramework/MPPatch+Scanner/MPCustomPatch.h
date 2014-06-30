@@ -22,16 +22,16 @@
     NSString * bundleID;
 }
 
-@property (nonatomic, retain) NSString *cuuid;
-@property (nonatomic, retain) NSString *patch;
-@property (nonatomic, retain) NSString *type;
-@property (nonatomic, retain) NSString *description;
-@property (nonatomic, retain) NSString *size;
-@property (nonatomic, retain) NSString *recommended;
-@property (nonatomic, retain) NSString *restart;
-@property (nonatomic, retain) NSString *version;
-@property (nonatomic, retain) NSString *patch_id;
-@property (nonatomic, retain) NSString *bundleID;
+@property (nonatomic, strong) NSString *cuuid;
+@property (nonatomic, strong) NSString *patch;
+@property (nonatomic, strong) NSString *type;
+@property (nonatomic, strong) NSString *description;
+@property (nonatomic, strong) NSString *size;
+@property (nonatomic, strong) NSString *recommended;
+@property (nonatomic, strong) NSString *restart;
+@property (nonatomic, strong) NSString *version;
+@property (nonatomic, strong) NSString *patch_id;
+@property (nonatomic, strong) NSString *bundleID;
 
 - (NSDictionary *)patchAsDictionary;
 

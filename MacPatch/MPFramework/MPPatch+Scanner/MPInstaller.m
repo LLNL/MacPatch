@@ -42,11 +42,11 @@
 	
 	// Define Install Environment Variables
 	NSDictionary *defaultEnvironment = [[NSProcessInfo processInfo] environment];
-	NSMutableDictionary *environment = [[[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment] autorelease];
+	NSMutableDictionary *environment = [[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment];
 	[environment setObject:@"YES" forKey:@"NSUnbufferedIO"];
 	[environment setObject:@"1" forKey:@"COMMAND_LINE_INSTALL"];
 	
-	NSTask *l_task = [[[NSTask alloc] init] autorelease];
+	NSTask *l_task = [[NSTask alloc] init];
 	NSPipe *pipe = [NSPipe pipe];
 	
 	NSData *l_data = nil;
@@ -69,12 +69,11 @@
 		NSMutableDictionary *notificationInfo = [NSMutableDictionary dictionary];
 		[notificationInfo setObject:tmpStr forKey:@"iData"];
 		[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"MPDataAvailableNotification" object:nil userInfo:(NSDictionary *)notificationInfo deliverImmediately:YES];
-		[tmpStr release];
 		tmpStr = nil;
 	}
 	
 	[l_task waitUntilExit];
-	NSString *taskDataString = [[[NSString alloc] initWithData:l_taskData encoding:NSUTF8StringEncoding] autorelease];
+	NSString *taskDataString = [[NSString alloc] initWithData:l_taskData encoding:NSUTF8StringEncoding];
 	logit(lcl_vDebug,@"Install Results: %@",taskDataString);
 	
 	int l_taskResult = [l_task terminationStatus];
@@ -121,7 +120,7 @@
     [task setArguments: appArgs];
 	
 	NSDictionary *defaultEnvironment = [[NSProcessInfo processInfo] environment];
-	NSMutableDictionary *environment = [[[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment] autorelease];
+	NSMutableDictionary *environment = [[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment];
 	[environment setObject:@"YES" forKey:@"NSUnbufferedIO"];
 	[environment setObject:@"1" forKey:@"COMMAND_LINE_INSTALL"];
 	
@@ -163,7 +162,6 @@
 	
 	[self setTaskIsRunning:YES];
 	[task launch];
-	[task release];
 	[fh_task readInBackgroundAndNotify];
 }
 
@@ -194,7 +192,6 @@
         logit(lcl_vDebug,@"%@",incomingText);
 		
         [fh_task readInBackgroundAndNotify];
-        [incomingText release];
         return;
     }
 }
@@ -209,7 +206,7 @@
 	
     if (consoleUserName != NULL)
     {
-		logit(lcl_vInfo,@"%@ is currently logged in.",(NSString *)consoleUserName);
+		logit(lcl_vInfo,@"%@ is currently logged in.",(__bridge NSString *)consoleUserName);
         CFRelease(consoleUserName);
     } else {
 		logit(lcl_vInfo,@"No console user logged in.");
@@ -242,9 +239,5 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void) dealloc
-{
-	[super dealloc];
-}
 
 @end

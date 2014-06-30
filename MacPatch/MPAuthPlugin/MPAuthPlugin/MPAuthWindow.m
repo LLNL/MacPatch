@@ -80,7 +80,7 @@
 
 // Helper
 - (void)connect;
-- (void)connect:(NSError **)err;
+- (int)connect:(NSError **)err;
 - (void)cleanup;
 - (void)connectionDown:(NSNotification *)notification;
 
@@ -141,9 +141,8 @@ typedef NSUInteger MPInstallIconStatus;
 
 - (void)awakeFromNib
 {
-    mpServerConnection = [[MPServerConnection alloc] init];
     fm = [NSFileManager defaultManager];
-
+    mpDefauts = [[MPDefaults alloc] init];
     // Open a connection to the proxy
     [self connect];
 
@@ -267,7 +266,7 @@ typedef NSUInteger MPInstallIconStatus;
     [self connect:NULL];
 }
 
-- (void)connect:(NSError **)err
+- (int)connect:(NSError **)err
 {
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
@@ -295,6 +294,8 @@ typedef NSUInteger MPInstallIconStatus;
         qlerror(@"Could not connect to MPWorker: %@", e);
         [self cleanup];
     }
+
+    return 0;
 }
 
 - (void)cleanup
@@ -591,12 +592,14 @@ done:
 
 - (NSDictionary *)patchGroupPatches
 {
+    NSError *error = nil;
     NSDictionary *patchGroupPatches = nil;
-    MPJson *json = [[MPJson alloc] initWithServerConnection:mpServerConnection cuuid:[MPSystemInfo clientUUID]];
-	// Get Patch Group Patches
+    MPWebServices *mpws = [[MPWebServices alloc] init];
+
+    // Get Patch Group Patches
+    patchGroupPatches = [mpws getPatchGroupContent:&error];
 	qlinfo(@"Getting approved patch list for client.");
-    patchGroupPatches = [json downloadPatchGroupContent:NULL];
-	if (!patchGroupPatches) {
+	if (error) {
 		qlerror(@"There was a issue getting the approved patches for the patch group, scan will exit.");
         return nil;
 	}
@@ -631,7 +634,7 @@ done:
 			// If no items in array, lets bail...
 			if ([approvedApplePatches count] == 0 ) {
 				qlinfo(@"No Patch Group patches found.");
-				qlinfo(@"No apple updates found for \"%@\" patch group.",[mpServerConnection.mpDefaults objectForKey:@"PatchGroup"]);
+				qlinfo(@"No apple updates found for \"%@\" patch group.",[[mpDefauts defaults] objectForKey:@"PatchGroup"]);
 			} else {
 				// Build Approved Patches
 				qlinfo(@"Building approved apple patch list...");
@@ -844,7 +847,7 @@ done:
                         [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 
                         //Pre Proxy Config
-                        downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[currPatchToInstallDict objectForKey:@"url"]];
+                        downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
                         qlinfo(@"Download patch from: %@",downloadURL);
                         err = nil;
                         dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
@@ -1205,7 +1208,7 @@ done:
                                 [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 
                                 //Pre Proxy Config
-                                downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[currPatchToInstallDict objectForKey:@"url"]];
+                                downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
                                 qlinfo(@"Download patch from: %@",downloadURL);
                                 err = nil;
                                 dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];

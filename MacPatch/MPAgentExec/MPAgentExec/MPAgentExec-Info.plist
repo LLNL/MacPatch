@@ -9,10 +9,10 @@
 	<key>CFBundleName</key>
 	<string>MPAgentExec</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.7.2</string>
+	<string>2.0.0</string>
 	<key>CFBundleVersion</key>
-	<string>1.7.2</string>
+	<string>2.0.0</string>
 	<key>MPInfo</key>
-	<string>MacPatch 2.2.0 Client Software</string>
+	<string>MacPatch 2.5.0 Client Software</string>
 </dict>
 </plist>

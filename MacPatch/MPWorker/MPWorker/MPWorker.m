@@ -129,7 +129,6 @@ typedef NSUInteger MPPostDataType;
     if (self = [super init])
     {
 		connections = [[NSMutableArray alloc] init];
-        mpServerConnection = [[MPServerConnection alloc] initWithNilServerObj];
         
 		[self setTaskTimeoutValue:1800];
 		[self setTaskIsRunning:NO];
@@ -971,8 +970,7 @@ done:
 - (int)setCatalogURLViaHelper
 {
     int result = 1;
-    [mpServerConnection refreshServerObject];
-    MPASUSCatalogs *m = [[MPASUSCatalogs alloc] initWithServerConnection:mpServerConnection];
+    MPASUSCatalogs *m = [[MPASUSCatalogs alloc] init];
 	if ([m checkAndSetCatalogURL]) {
 		result = 0;
 	}
@@ -1093,9 +1091,7 @@ done:
     
     
 	NSArray *result = nil;
-    [mpServerConnection refreshServerObject];
-
-	MPPatchScan *patchScanObj = [[MPPatchScan alloc] initWithServerConnection:mpServerConnection];
+	MPPatchScan *patchScanObj = [[MPPatchScan alloc] init];
     [patchScanObj setDelegate:self];
     [patchScanObj setUseDistributedNotification:YES];
 	result = [NSArray arrayWithArray:[patchScanObj scanForPatches]];

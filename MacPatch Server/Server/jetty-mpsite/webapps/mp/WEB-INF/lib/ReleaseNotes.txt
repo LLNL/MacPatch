@@ -1,9 +1,35 @@
 OpenBD Release Notes
 __________________________________
 
-$Date: 2013-08-19 12:02:12 +0000 (Mon, 19 Aug 2013) $
+$Date: 2014-05-20 10:35:56 +0000 (Tue, 20 May 2014) $
 __________________________________
 
+- added markdown() [/WEB-INF/lib/ updated]
+- fixed AmazonWrite()
+- aw2.0 Org updated 1.0.8 [/WEB-INF/lib/ updated]
+
+--- Stable Release 3.0 [30th March 2014]
+- fixed #418: Add NULL values to Csvwrite()
+- fixed #505: cacheGet cachePut does not support native java objects
+- fixed #503: GenerateSecretKey function crashes with DES and no keysize
+- fixed #491: HTTP Proxy System Properties are ignored
+- fixed #474: Manual documentation for queryAddColumn()
+- fixed #520: amazonS3write no longer working as expected
+- Mongo Driver updated 2.12 [/WEB-INF/lib/ updated]
+- aw2.0 Org updated 1.0.8 [/WEB-INF/lib/ updated]
+- fixed CFCAPTCHA
+- fixed SimpleDB INSERT 403 error 
+- fixed #189: bug in application.cfc loginstorage="session" 
+- Mongo connection pooling for multiple datasources on same server
+- removed nirvanix API [service closed October 2013]
+- additional data types for <CFQUERYPARAM>
+- fix for Java 7 compatibility in the QuerySort method.
+- Support for bluedragon.xml to be loaded via http on startup
+- Java7 compatibility [/WEB-INF/lib/ updated]
+  - Apache Tika 1.4 upgraded
+  - Apache Lucene 4.4.0 upgraded 
+  - MySQL Driver 5.1.26 upgraded
+- fixed overriding of hostname verifier in CFHTTP
 - fixed argument count for CreateTime(epoch="")
 - fixed cfscript function returnformat="" bug
 - Upgraded javolution jar to 5.5.1

@@ -31,6 +31,7 @@
 {
 	NSDictionary *defaults;
 	NSURL *mpwsURL;
+    NSString *plist;
 }
 
 - (id)initWithPlist:(NSString *)sPlistPath;
@@ -41,5 +42,6 @@
 
 - (void)readPlist:(NSString *)aPlist;
 - (id)readPlist:(NSString *)aPlist objectForKey:(NSString *)aKey;
+- (NSDictionary *)readDefaults;
 
 @end

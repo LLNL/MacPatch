@@ -39,7 +39,7 @@
 
 // Helper
 - (void)connect;
-- (void)connect:(NSError **)err;
+- (int)connect:(NSError **)err;
 - (void)cleanup;
 - (void)connectionDown:(NSNotification *)notification;
 
@@ -61,7 +61,7 @@
     [connection setReplyTimeout: 1800.0]; //30 min to install
 
     @try {
-        proxy = [[connection rootProxy] retain];
+        proxy = [connection rootProxy];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
 
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
@@ -77,7 +77,7 @@
     }
 }
 
-- (void)connect:(NSError **)err
+- (int)connect:(NSError **)err
 {
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
@@ -86,7 +86,7 @@
     [connection setReplyTimeout: 1800.0]; //30 min to install
 
     @try {
-        proxy = [[connection rootProxy] retain];
+        proxy = [connection rootProxy];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
 
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
@@ -103,6 +103,8 @@
         logit(lcl_vError,@"Could not connect to MPHelper: %@", e);
         [self cleanup];
     }
+
+    return 0;
 }
 
 - (void)cleanup
@@ -111,7 +113,6 @@
     {
         NSConnection *connection = [proxy connectionForProxy];
         [connection invalidate];
-        [proxy release];
         proxy = nil;
     }
 
@@ -156,26 +157,24 @@ done:
 
 - (NSDictionary *)file_attr
 {
-    return [[file_attr retain] autorelease];
+    return file_attr;
 }
 
 - (void)setFile_attr:(NSDictionary *)aFile_attr
 {
     if (file_attr != aFile_attr) {
-        [file_attr release];
         file_attr = [aFile_attr copy];
     }
 }
 
 - (NSArray *)watchFiles
 {
-    return [[watchFiles retain] autorelease];
+    return watchFiles;
 }
 
 - (void)setWatchFiles:(NSArray *)aWatchFiles
 {
     if (watchFiles != aWatchFiles) {
-        [watchFiles release];
         watchFiles = [aWatchFiles copy];
     }
 }
@@ -216,11 +215,6 @@ done:
 	return self;
 }
 
-- (void)dealloc
-{
-    [file_attr release];
-    [super dealloc];
-}
 
 - (void)openRebootApp:(int)aType
 {
@@ -268,16 +262,16 @@ done:
 //the thread starts by sending this message
 - (void)startWatchPathTimerThread
 {
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
-	[NSTimer scheduledTimerWithTimeInterval: 0.5
-									 target: self
-								   selector: @selector(watchPathTimerRun:)
-								   userInfo: nil
-									repeats: YES];
-	
-	[runLoop run];
-	[pool release];
+	@autoreleasepool {
+		NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
+		[NSTimer scheduledTimerWithTimeInterval: 0.5
+										 target: self
+									   selector: @selector(watchPathTimerRun:)
+									   userInfo: nil
+										repeats: YES];
+		
+		[runLoop run];
+	}
 }
 
 - (void)watchPathTimerRun:(NSTimer *)timer

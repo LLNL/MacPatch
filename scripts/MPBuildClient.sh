@@ -14,10 +14,10 @@
 #
 # -------------------------------------------------------------
 
-GITROOT="/Library/MacPatch/tmp/MacPatch"
-BUILDROOT="/Library/MacPatch/tmp/Client"
-BASEPKGVER="2.1.1.0"
-UPDTPKGVER="2.1.1.0"
+GITROOT="/Library/MacPatch/tmp/MacPatch_25"
+BUILDROOT="/Library/MacPatch/tmp/Client_25"
+BASEPKGVER="2.5.0.0"
+UPDTPKGVER="2.5.0.0"
 
 if [ -d "$BUILDROOT" ]; then
 	rm -rf ${BUILDROOT}
@@ -85,6 +85,7 @@ mv ${BUILDROOT}/Combined/MPClientInstall.pkg ${BUILDROOT}/Combined/.MPClientInst
 
 # Copy MacPatch Package Info file for the web service
 cp ${BUILDROOT}/Combined/Resources/mpInfo.ini ${BUILDROOT}/Combined/.MPClientInstall/Resources/mpInfo.ini
+cp ${BUILDROOT}/Combined/Resources/mpInfo.plist ${BUILDROOT}/Combined/.MPClientInstall/Resources/mpInfo.plist
 
 # Re-compress expanded package
 pkgutil --flatten ${BUILDROOT}/Combined/.MPClientInstall ${BUILDROOT}/Combined/MPClientInstall.pkg

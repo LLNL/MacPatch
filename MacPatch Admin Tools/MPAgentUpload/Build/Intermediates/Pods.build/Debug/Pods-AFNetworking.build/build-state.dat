@@ -1,0 +1,578 @@
+TPods-AFNetworking
+v6
+r1
+cCheck dependencies
+cProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperation.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperationManager.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPSessionManager.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFNetworkReachabilityManager.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFSecurityPolicy.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLConnectionOperation.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLRequestSerialization.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLResponseSerialization.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLSessionManager.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking-dummy.o /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-dummy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+cLibtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-AFNetworking.a normal x86_64
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework/Cocoa
+c000000005270507600000000000025C8
+t1383092342
+s9672
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/CoreServices.framework/CoreServices
+c0000000052705077000000000000962C
+t1383092343
+s38444
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Security.framework/Security
+c0000000052705078000000000006ECF4
+t1383092344
+s453876
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration
+c0000000052705078000000000002F69C
+t1383092344
+s194204
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
+c0000000053272E3400000000000000AA
+t1395076660
+s170
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
+c0000000052705079000000000000044C
+t1383092345
+s1100
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
+c0000000053272E2900000000000001DE
+t1395076649
+s478
+
+N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
+c0000000053272E2A0000000000000ADC
+t1395076650
+s2780
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperation.o
+t1397680779
+s49588
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperationManager.o
+t1397680779
+s59752
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPSessionManager.o
+t1397680779
+s70584
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFNetworkReachabilityManager.o
+t1397680779
+s49848
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFSecurityPolicy.o
+t1397680779
+s60436
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLConnectionOperation.o
+t1397680779
+s168736
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLRequestSerialization.o
+t1397680779
+s247964
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLResponseSerialization.o
+t1397680779
+s103732
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLSessionManager.o
+t1397680779
+s226468
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking-dummy.o
+t1397680779
+s4128
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking.LinkFileList
+c00000000534EE8D800000000000005B6
+t1397680344
+s1462
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch.pch
+t1397680779
+s129644
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch.pch
+t1397680779
+s129112
+
+N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-AFNetworking.a
+t1397680779
+s1056544
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.h
+c00000000534EE7460000000000001197
+t1397679942
+s4503
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.m
+c00000000534EE7460000000000001D02
+t1397679942
+s7426
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.h
+c00000000534EE74600000000000048A1
+t1397679942
+s18593
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m
+c00000000534EE74600000000000028C5
+t1397679942
+s10437
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.h
+c00000000534EE7460000000000003895
+t1397679942
+s14485
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.m
+c00000000534EE7460000000000002FCA
+t1397679942
+s12234
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.h
+c00000000534EE7460000000000001D24
+t1397679942
+s7460
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.m
+c00000000534EE7460000000000002525
+t1397679942
+s9509
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h
+c00000000534EE7460000000000001420
+t1397679942
+s5152
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m
+c00000000534EE74600000000000027E9
+t1397679942
+s10217
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.h
+c00000000534EE7460000000000004626
+t1397679942
+s17958
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m
+c00000000534EE7460000000000006A6D
+t1397679942
+s27245
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.h
+c00000000534EE7460000000000004F82
+t1397679942
+s20354
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.m
+c00000000534EE746000000000000B897
+t1397679942
+s47255
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.h
+c00000000534EE7460000000000002843
+t1397679942
+s10307
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m
+c00000000534EE74600000000000061C2
+t1397679942
+s25026
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.h
+c00000000534EE74600000000000070C5
+t1397679942
+s28869
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.m
+c00000000534EE746000000000000A5D8
+t1397679942
+s42456
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-dummy.m
+c00000000534EEA7F000000000000008A
+t1397680767
+s138
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-prefix.pch
+c00000000534EEA7F0000000000000052
+t1397680767
+s82
+
+N/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-environment.h
+c00000000534EEA7F00000000000007B5
+t1397680767
+s1973
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.m
+r0
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m
+r0
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.m
+r0
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.m
+r0
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m
+r0
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m
+r0
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.m
+r0
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m
+r0
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.m
+r0
+
+CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-dummy.m
+r0
+
+CCheck dependencies
+r0
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependencies8eb0f0d822ffb841^b51bf1d822ffb841^---0#1#1#--18"Check dependencies36"99C02CBA-D160-439E-8BA7-BB129C98CF0D-
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperation.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.155261
+e419373579.270670
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperation.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.m
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.h
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection100"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.m274"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperation.o AFNetworking/AFNetworking/AFHTTPRequestOperation.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilerc4cf270b22ffb841^e34f4c0b22ffb841^---0#0#1#-19%DVTDocumentLocation2@99"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.m0000000000000000^3636"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperation.o AFNetworking/AFNetworking/AFHTTPRequestOperation.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperation.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperation.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperation.o36"8539E395-F5EC-4ED7-9DC0-3B1A94A5090E-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperationManager.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.155519
+e419373579.297464
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperationManager.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.h
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection107"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m288"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperationManager.o AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler3ae7270b22ffb841^98e04c0b22ffb841^---0#0#1#-19%DVTDocumentLocation2@106"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m0000000000000000^3678"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperationManager.o AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperationManager.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperationManager.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperationManager.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPRequestOperationManager.o36"6B61E445-CBEF-4144-8840-53ADAE5605C1-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPSessionManager.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.155839
+e419373579.312034
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPSessionManager.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.m
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPRequestOperation.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.h
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection98"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.m270"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPSessionManager.o AFNetworking/AFNetworking/AFHTTPSessionManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilere3fe270b22ffb841^b9e14f0b22ffb841^---0#0#1#-19%DVTDocumentLocation2@97"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.m0000000000000000^3624"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPSessionManager.o AFNetworking/AFNetworking/AFHTTPSessionManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPSessionManager.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPSessionManager.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFHTTPSessionManager.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFHTTPSessionManager.o36"FA8815D5-5847-44E5-9DF3-3C1741D05BA4-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFNetworkReachabilityManager.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.156348
+e419373579.269798
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFNetworkReachabilityManager.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.m
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.h
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection106"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.m286"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFNetworkReachabilityManager.o AFNetworking/AFNetworking/AFNetworkReachabilityManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler3e24280b22ffb841^b91b4c0b22ffb841^---0#0#1#-19%DVTDocumentLocation2@105"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.m0000000000000000^3672"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFNetworkReachabilityManager.o AFNetworking/AFNetworking/AFNetworkReachabilityManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFNetworkReachabilityManager.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFNetworkReachabilityManager.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFNetworkReachabilityManager.o36"1A7C846E-D557-4084-AE0C-5F3BDC66267B-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFSecurityPolicy.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.156752
+e419373579.288644
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFSecurityPolicy.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h
+o/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:62:5: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]
+o    __Require_noErr(SecTrustCreateWithCertificates(tempCertificates, policy, &allowedTrust), _out);
+o    ^
+oIn module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'
+o                                  DEBUG_ASSERT_MESSAGE(                                           \
+o                                  ^
+oIn module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:
+oIn module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'
+o       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)
+o       ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'
+o         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)
+o         ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared here
+oDebugAssert(
+o^
+o/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:65:5: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]
+o    __Require_noErr(SecTrustEvaluate(allowedTrust, &result), _out);
+o    ^
+oIn module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'
+o                                  DEBUG_ASSERT_MESSAGE(                                           \
+o                                  ^
+oIn module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:
+oIn module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'
+o       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)
+o       ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'
+o         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)
+o         ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared here
+oDebugAssert(
+o^
+o/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:92:5: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]
+o    __Require_noErr(SecTrustEvaluate(serverTrust, &result), _out);
+o    ^
+oIn module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'
+o                                  DEBUG_ASSERT_MESSAGE(                                           \
+o                                  ^
+oIn module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:
+oIn module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'
+o       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)
+o       ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'
+o         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)
+o         ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared here
+oDebugAssert(
+o^
+o/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:123:9: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]
+o        __Require_noErr(SecTrustCreateWithCertificates(certificates, policy, &trust), _out);
+o        ^
+oIn module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'
+o                                  DEBUG_ASSERT_MESSAGE(                                           \
+o                                  ^
+oIn module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:
+oIn module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'
+o       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)
+o       ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'
+o         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)
+o         ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared here
+oDebugAssert(
+o^
+o/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:126:9: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]
+o        __Require_noErr(SecTrustEvaluate(trust, &result), _out);
+o        ^
+oIn module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'
+o                                  DEBUG_ASSERT_MESSAGE(                                           \
+o                                  ^
+oIn module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:
+oIn module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'
+o       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)
+o       ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'
+o         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)
+o         ^
+o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared here
+oDebugAssert(
+o^
+o5 warnings generated.
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection94"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m262"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFSecurityPolicy.o AFNetworking/AFNetworking/AFSecurityPolicy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler863a280b22ffb841^e8d94c0b22ffb841^-10715"/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:62:5: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]    __Require_noErr(SecTrustCreateWithCertificates(tempCertificates, policy, &allowedTrust), _out);    ^In module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'                                  DEBUG_ASSERT_MESSAGE(                                           \                                  ^In module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:In module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)       ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)         ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared hereDebugAssert(^/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:65:5: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]    __Require_noErr(SecTrustEvaluate(allowedTrust, &result), _out);    ^In module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'                                  DEBUG_ASSERT_MESSAGE(                                           \                                  ^In module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:In module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)       ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)         ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared hereDebugAssert(^/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:92:5: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]    __Require_noErr(SecTrustEvaluate(serverTrust, &result), _out);    ^In module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'                                  DEBUG_ASSERT_MESSAGE(                                           \                                  ^In module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:In module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)       ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)         ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared hereDebugAssert(^/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:123:9: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]        __Require_noErr(SecTrustCreateWithCertificates(certificates, policy, &trust), _out);        ^In module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'                                  DEBUG_ASSERT_MESSAGE(                                           \                                  ^In module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:In module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)       ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)         ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared hereDebugAssert(^/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:126:9: warning: 'DebugAssert' is deprecated: first deprecated in OS X 10.8 [-Wdeprecated-declarations]        __Require_noErr(SecTrustEvaluate(trust, &result), _out);        ^In module 'Darwin' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m:25:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h:967:7: note: expanded from macro '__Require_noErr'                                  DEBUG_ASSERT_MESSAGE(                                           \                                  ^In module 'Foundation' imported from /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h:23:In module 'CoreServices' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSURLError.h:12:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:206:8: note: expanded from macro 'DEBUG_ASSERT_MESSAGE'       DEBUGASSERTMSG(COMPONENT_SIGNATURE, DEBUG_NO_OPTIONS, componentNameString ": " assertionString, exceptionLabelString, errorString, fileName, lineNumber, value)       ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:190:10: note: expanded from macro 'DEBUGASSERTMSG'         DebugAssert(componentSignature, options, assertionString, exceptionLabelString, errorString, fileName, lineNumber, (void*)value)         ^/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h:347:1: note: 'DebugAssert' declared hereDebugAssert(^5 warnings generated.5(36%IDEClangDiagnosticActivityLogMessage2@58"'DebugAssert' is deprecated: first deprecated in OS X 10.8-419373579#18446744073709551615#0#4(2@37"Expanded from macro '__Require_noErr'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@132"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h0000000000000000^966#6#966#6#39556#0#21"Apple LLVM 5.0 Notice--2@42"Expanded from macro 'DEBUG_ASSERT_MESSAGE'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^205#7#205#7#6772#0#21"Apple LLVM 5.0 Notice--2@36"Expanded from macro 'DEBUGASSERTMSG'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^189#9#189#9#6176#0#21"Apple LLVM 5.0 Notice--2@27"'DebugAssert' declared here-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^346#0#346#0#11226#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@93"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m0000000000000000^61#4#61#4#2411#0#12"Deprecations--2@58"'DebugAssert' is deprecated: first deprecated in OS X 10.8-419373579#18446744073709551615#0#4(2@37"Expanded from macro '__Require_noErr'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@132"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h0000000000000000^966#6#966#6#39556#0#21"Apple LLVM 5.0 Notice--2@42"Expanded from macro 'DEBUG_ASSERT_MESSAGE'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^205#7#205#7#6772#0#21"Apple LLVM 5.0 Notice--2@36"Expanded from macro 'DEBUGASSERTMSG'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^189#9#189#9#6176#0#21"Apple LLVM 5.0 Notice--2@27"'DebugAssert' declared here-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^346#0#346#0#11226#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@93"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m0000000000000000^64#4#64#4#2543#0#12"Deprecations--2@58"'DebugAssert' is deprecated: first deprecated in OS X 10.8-419373579#18446744073709551615#0#4(2@37"Expanded from macro '__Require_noErr'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@132"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h0000000000000000^966#6#966#6#39556#0#21"Apple LLVM 5.0 Notice--2@42"Expanded from macro 'DEBUG_ASSERT_MESSAGE'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^205#7#205#7#6772#0#21"Apple LLVM 5.0 Notice--2@36"Expanded from macro 'DEBUGASSERTMSG'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^189#9#189#9#6176#0#21"Apple LLVM 5.0 Notice--2@27"'DebugAssert' declared here-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^346#0#346#0#11226#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@93"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m0000000000000000^91#4#91#4#3111#0#12"Deprecations--2@58"'DebugAssert' is deprecated: first deprecated in OS X 10.8-419373579#18446744073709551615#0#4(2@37"Expanded from macro '__Require_noErr'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@132"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h0000000000000000^966#6#966#6#39556#0#21"Apple LLVM 5.0 Notice--2@42"Expanded from macro 'DEBUG_ASSERT_MESSAGE'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^205#7#205#7#6772#0#21"Apple LLVM 5.0 Notice--2@36"Expanded from macro 'DEBUGASSERTMSG'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^189#9#189#9#6176#0#21"Apple LLVM 5.0 Notice--2@27"'DebugAssert' declared here-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^346#0#346#0#11226#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@93"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m0000000000000000^122#8#122#8#4484#0#12"Deprecations--2@58"'DebugAssert' is deprecated: first deprecated in OS X 10.8-419373579#18446744073709551615#0#4(2@37"Expanded from macro '__Require_noErr'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@132"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/AssertMacros.h0000000000000000^966#6#966#6#39556#0#21"Apple LLVM 5.0 Notice--2@42"Expanded from macro 'DEBUG_ASSERT_MESSAGE'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^205#7#205#7#6772#0#21"Apple LLVM 5.0 Notice--2@36"Expanded from macro 'DEBUGASSERTMSG'-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^189#9#189#9#6176#0#21"Apple LLVM 5.0 Notice--2@27"'DebugAssert' declared here-419373579#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@206"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers/Debugging.h0000000000000000^346#0#346#0#11226#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@93"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m0000000000000000^125#8#125#8#4621#0#12"Deprecations--0#0#1#-19%DVTDocumentLocation4@93"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m0000000000000000^3600"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFSecurityPolicy.o AFNetworking/AFNetworking/AFSecurityPolicy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFSecurityPolicy.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFSecurityPolicy.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFSecurityPolicy.o36"968AFEA3-3CBA-489A-8E34-2741D34F8FA2-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLConnectionOperation.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.157136
+e419373579.364588
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLConnectionOperation.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection102"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m278"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLConnectionOperation.o AFNetworking/AFNetworking/AFURLConnectionOperation.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilerd26e280b22ffb841^19565d0b22ffb841^---0#0#1#-19%DVTDocumentLocation2@101"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m0000000000000000^3648"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLConnectionOperation.o AFNetworking/AFNetworking/AFURLConnectionOperation.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLConnectionOperation.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLConnectionOperation.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLConnectionOperation.o36"B25C2252-49B2-49EB-802C-00D45249D45C-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLRequestSerialization.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.174657
+e419373579.428468
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLRequestSerialization.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.m
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.h
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection103"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.m280"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLRequestSerialization.o AFNetworking/AFNetworking/AFURLRequestSerialization.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilerbbd02c0b22ffb841^70b26d0b22ffb841^---0#0#1#-19%DVTDocumentLocation2@102"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.m0000000000000000^3654"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLRequestSerialization.o AFNetworking/AFNetworking/AFURLRequestSerialization.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLRequestSerialization.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLRequestSerialization.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLRequestSerialization.o36"5CBB3C90-50C3-49CA-8634-D96432B7E299-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLResponseSerialization.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.249673
+e419373579.406134
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLResponseSerialization.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.h
+o/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m:369:13: warning: implicit declaration of function 'AFErrorOrUnderlyingErrorHasCode' is invalid in C99 [-Wimplicit-function-declaration]
+o        if (AFErrorOrUnderlyingErrorHasCode(*error, NSURLErrorCannotDecodeContentData)) {
+o            ^
+o1 warning generated.
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection104"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m282"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLResponseSerialization.o AFNetworking/AFNetworking/AFURLResponseSerialization.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler450f400b22ffb841^cbf8670b22ffb841^-358"/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m:369:13: warning: implicit declaration of function 'AFErrorOrUnderlyingErrorHasCode' is invalid in C99 [-Wimplicit-function-declaration]        if (AFErrorOrUnderlyingErrorHasCode(*error, NSURLErrorCannotDecodeContentData)) {            ^1 warning generated.1(36%IDEClangDiagnosticActivityLogMessage2@84"Implicit declaration of function 'AFErrorOrUnderlyingErrorHasCode' is invalid in C99-419373579#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@103"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m0000000000000000^368#12#368#12#12985#0#14"Semantic Issue--0#0#1#-19%DVTDocumentLocation4@103"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m0000000000000000^3660"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLResponseSerialization.o AFNetworking/AFNetworking/AFURLResponseSerialization.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLResponseSerialization.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLResponseSerialization.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLResponseSerialization.o36"072E0BD3-D520-4081-91AA-14511A9E8EBA-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLSessionManager.o /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.270132
+e419373579.464606
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLSessionManager.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.m
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLResponseSerialization.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLRequestSerialization.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFSecurityPolicy.h
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFNetworkReachabilityManager.h
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection97"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.m268"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLSessionManager.o AFNetworking/AFNetworking/AFURLSessionManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilere770450b22ffb841^c7f2760b22ffb841^---0#0#1#-19%DVTDocumentLocation2@96"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.m0000000000000000^3618"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLSessionManager.o AFNetworking/AFNetworking/AFURLSessionManager.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLSessionManager.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLSessionManager.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/AFNetworking/AFNetworking/AFURLSessionManager.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/AFURLSessionManager.o36"9634426C-81E6-49E8-8A44-F3BDC52295CA-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking-dummy.o /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-dummy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.271176
+e419373579.335964
+r1
+xCompileC
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking-dummy.o
+x/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-dummy.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-dummy.m
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection75"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-dummy.m250"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking-dummy.o Pods-AFNetworking-dummy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler1fb9450b22ffb841^b70a560b22ffb841^---0#0#1#-19%DVTDocumentLocation2@74"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-dummy.m0000000000000000^3579"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking-dummy.o Pods-AFNetworking-dummy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking-dummy.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking-dummy.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-dummy.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking-dummy.o36"E58B5621-3D8B-4B5C-9178-FBF7EBC90EDF-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CLibtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-AFNetworking.a normal x86_64
+s419373579.465750
+e419373579.475772
+r1
+xLibtool
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-AFNetworking.a
+xnormal
+xx86_64
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection102"Libtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-AFNetworking.a normal x86_64102"Libtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-AFNetworking.a normal x86_644d48770b22ffb841^38f5790b22ffb841^---0#0#1#--826"Libtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-AFNetworking.a normal x86_64    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export MACOSX_DEPLOYMENT_TARGET=10.9    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only x86_64 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -L/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -filelist /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Objects-normal/x86_64/Pods-AFNetworking.LinkFileList -framework Cocoa -framework CoreServices -framework Security -framework SystemConfiguration -o /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-AFNetworking.a36"BF944601-E79A-48E7-86A5-C005205BFB15-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CProcessPCH /Users/heizer1/Developer/Xcode/DerivedData/MPPKGUpload-dhcgexevjbibxzanqoywuypajuts/Index/PrecompiledHeaders/Pods-AFNetworking-prefix-dmbjdzlppptnqwbhycdbzaqkdpgf_ast/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
+r0
+
+CProcessPCH /Users/heizer1/Developer/Xcode/DerivedData/MPPKGUpload-dhcgexevjbibxzanqoywuypajuts/Index/PrecompiledHeaders/Pods-AFNetworking-prefix-egyricxxoeutshgalbdczdvtbjsc_ast/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
+r0
+
+CProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.097992
+e419373579.154654
+r1
+xProcessPCH
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch.pch
+xPods-AFNetworking-prefix.pch
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-prefix.pch
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-environment.h
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection39"Precompile Pods-AFNetworking-prefix.pch272"ProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler9929190b22ffb841^c499270b22ffb841^---0#0#1#-19%DVTDocumentLocation2@77"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-prefix.pch0000000000000000^3501"ProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch.dia -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch.d -c /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-prefix.pch -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-fnzrxdspyfjawzcuiyevwalwvgeo/Pods-AFNetworking-prefix.pch.pch36"F19E9580-C4DB-4F03-AD68-AD9CF4FD1787-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+
+CProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s419373579.098223
+e419373579.143821
+r1
+xProcessPCH
+x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch.pch
+xPods-AFNetworking-prefix.pch
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-prefix.pch
+d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-environment.h
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection39"Precompile Pods-AFNetworking-prefix.pch272"ProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler6136190b22ffb841^96d1240b22ffb841^---0#0#1#-19%DVTDocumentLocation2@77"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-prefix.pch0000000000000000^3490"ProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch.pch Pods-AFNetworking-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/Pods-AFNetworking-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-AFNetworking.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch.dia -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch.d -c /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-AFNetworking-prefix.pch -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-AFNetworking-prefix-hhqpxlbfqiizjvczeiwmrdgyiwvy/Pods-AFNetworking-prefix.pch.pch36"479D9689-8321-4A13-85F2-63B169A8558F-
+b9C6743B5-5585-493E-8213-80F76B5FFDF9
+

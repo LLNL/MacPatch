@@ -371,18 +371,18 @@ static NSString *_LCLLogFile_prefix(const char *identifier_c, uint32_t level,
     
     // create prefix
     NSString *prefix;
-	if (level == 4) {	
-		prefix = [NSString stringWithFormat:@" [%u:%x][%s] %s -- ",
+	//if (level == 4) {
+	//	prefix = [NSString stringWithFormat:@" [%u:%x][%s] %s -- ",
 				  /*    */
-				  /* %u */ _LCLLogFile_processId,
-				  /* %x */ mach_thread_self(),
-				  /* %s */ _lcl_level_header_3[level],
+				  /* %u */ //_LCLLogFile_processId,
+				  /* %x */ //mach_thread_self(),
+				  /* %s */ //_lcl_level_header_3[level],
 				  /*    */
-				  /* %s */ identifier_c
+				  /* %s */ //identifier_c
 				  /* -- */
 				  /*    */
-				  ];
-	} else {
+	//			  ];
+	//} else {
 		prefix = [NSString stringWithFormat:@" [%u:%x][%s] %s%s%s%s%s%s%s -- ",
                         /*    */
                         /* %u */ _LCLLogFile_processId,
@@ -399,7 +399,7 @@ static NSString *_LCLLogFile_prefix(const char *identifier_c, uint32_t level,
                         /* %s */ show_function ? function_c : ""
                         /*    */
                         ];
-    }
+    //}
     return prefix;
 }
 

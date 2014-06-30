@@ -50,17 +50,17 @@
     NSString        *errorMsg;
 }
 
-@property (nonatomic, retain) NSDictionary          *_defaults;
-@property (nonatomic, retain) NSString              *_cuuid;
-@property (nonatomic, retain) NSString              *_appPid;
+@property (nonatomic, strong) NSDictionary          *_defaults;
+@property (nonatomic, strong) NSString              *_cuuid;
+@property (nonatomic, strong) NSString              *_appPid;
 
 @property (nonatomic, assign) BOOL                  iLoadMode;
 @property (nonatomic, assign) BOOL                  forceRun;
 
-@property (nonatomic, retain) NSArray               *approvedPatches;
+@property (nonatomic, strong) NSArray               *approvedPatches;
 
 @property (nonatomic, readonly, assign) int         errorCode;
-@property (nonatomic, readonly, retain) NSString    *errorMsg;
+@property (nonatomic, readonly, strong) NSString    *errorMsg;
 
 - (id)initForBundleUpdate;
 

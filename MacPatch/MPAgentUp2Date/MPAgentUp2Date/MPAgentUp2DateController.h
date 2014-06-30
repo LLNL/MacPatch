@@ -42,10 +42,10 @@
     MPDataMgr       *mpDataMgr;
 }
 
-@property (nonatomic, retain) NSString *_cuuid;
-@property (nonatomic, retain) NSString *_appPid;
-@property (nonatomic, retain) NSDictionary *_updateData;
-@property (nonatomic, retain) NSDictionary *_osVerDictionary;
+@property (nonatomic, strong) NSString *_cuuid;
+@property (nonatomic, strong) NSString *_appPid;
+@property (nonatomic, strong) NSDictionary *_updateData;
+@property (nonatomic, strong) NSDictionary *_osVerDictionary;
 
 - (int)scanForUpdate;
 - (void)scanAndUpdate;

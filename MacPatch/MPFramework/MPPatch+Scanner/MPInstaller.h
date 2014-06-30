@@ -37,7 +37,7 @@
 
 @property BOOL taskIsRunning;
 @property int taskResult;
-@property (retain) NSTask *task;
+@property (strong) NSTask *task;
 
 - (int)installAppleSoftwareUpdate:(NSString *)approvedUpdate;
 

@@ -59,7 +59,6 @@
 - (void)setScriptText:(NSString *)aScriptText
 {
 	if (scriptText != aScriptText) {
-        [scriptText release];
         scriptText = [aScriptText copy];
     }
 }
@@ -74,14 +73,15 @@
     NSString *cleanScript = [aScript stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
 	
 	CFUUIDRef uuid = CFUUIDCreate(NULL);
-	NSString *tmpID = (NSString *)CFUUIDCreateString(NULL, uuid);
+	NSString *tmpID = (NSString *)CFBridgingRelease(CFUUIDCreateString(NULL, uuid));
 	CFRelease(uuid);
 	
 	NSString *tmpFile = [NSTemporaryDirectory() stringByAppendingPathComponent:tmpID];
 	NSError *err = nil;
 	[cleanScript writeToFile:tmpFile atomically:YES encoding:NSStringEncodingConversionAllowLossy error:&err];
 	if (err) {
-		result = FALSE; goto done;
+		result = FALSE;
+        return result;
 	}
 	
 	// Fix line endings
@@ -103,7 +103,7 @@
 	[task waitUntilExit];
 	
 	NSData *data = [file readDataToEndOfFile];
-    NSString *string = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+    NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 	
 	int status = [task terminationStatus];
 	
@@ -121,10 +121,6 @@
 	if (delErr)
 		qlerror(@"Error removing file %@",tmpFile);
 	
-	[task release]; 
-	
-done:
-	[tmpID release];
 	return result;
 }
 
@@ -144,7 +140,6 @@ done:
 		result=YES;
 	}
 	
-	[strData release];
 	return result;
 }
 

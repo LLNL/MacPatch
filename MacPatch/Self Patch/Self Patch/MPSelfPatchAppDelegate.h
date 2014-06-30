@@ -26,9 +26,9 @@
 #import <Cocoa/Cocoa.h>
 #import "MPWorkerProtocol.h"
 
-@class MPDefaults, MPAsus;
+@class MPAsus;
 @class PrefsController;
-@class MPServerConnection;
+@class MPDefaults;
 
 @interface MPSelfPatchAppDelegate : NSObject <MPWorkerClient> 
 {    
@@ -51,7 +51,6 @@
 @private
     
     NSFileManager      *fm;
-    MPServerConnection *mpServerConnection;
     
 	NSThread            *runTaskThread;
 	BOOL                killTaskThread;
@@ -59,6 +58,8 @@
 	
 	NSString            *mpHost;
 	NSString            *mpHostPort;
+    NSDictionary        *defaults;
+    MPDefaults          *mpDefaults;
 	
 }
 
@@ -73,6 +74,7 @@
 
 @property (nonatomic, assign) NSThread *runTaskThread;
 @property (nonatomic, assign) BOOL killTaskThread;
+@property (nonatomic, retain) NSDictionary *defaults;
 
 - (IBAction)scanForPatches:(id)sender;
 - (IBAction)installPatches:(id)sender;

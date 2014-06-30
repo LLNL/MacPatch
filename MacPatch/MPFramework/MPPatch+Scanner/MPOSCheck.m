@@ -81,8 +81,6 @@ fail:
 - (void)setCurOSVerArray:(NSArray *)aCurOSVerArray
 {
     if (curOSVerArray != aCurOSVerArray) {
-        [aCurOSVerArray retain];
-        [curOSVerArray release];
         curOSVerArray = aCurOSVerArray;
     }
 }
@@ -154,7 +152,7 @@ done:
 	if ([osVersString isEqualToString:@"*"] == TRUE)
 	{
 		osTypePass = TRUE; 
-		goto done;
+		return osTypePass;
 	}
 	
 	// else, lets create out array
@@ -162,18 +160,16 @@ done:
 	if ([reqOSVerArray count] <= 0) {
 		qlerror(@"Error: Required OS Version String Check was malformed. Unable to parse.");
 		osTypePass = FALSE; 
-		goto done;
+		return osTypePass;
 	}
-	
-	NSArray *allowOSOctets = NULL;
+
 	int osMatchCount = 0;
-	
 	for(int i = 0; i<[reqOSVerArray count];i++)
 	{
 		if ([[reqOSVerArray objectAtIndex:i] isEqualToString:[curOSVerArray componentsJoinedByString:@"."]] == TRUE)
 		{	
 			osTypePass = TRUE; 
-			goto done;
+			return osTypePass;
 		}
         // Test for +, which means greater than 
         if ([[reqOSVerArray objectAtIndex:i] containsString:@"+"] == TRUE) 
@@ -184,17 +180,17 @@ done:
                 if ([[_allowOctsPlus objectAtIndex:y] containsString:@"+"] == TRUE) {
                     if ([[curOSVerArray objectAtIndex:y] intValue] >= [[_allowOctsPlus objectAtIndex:y] intValue]) {
                         osTypePass = TRUE;
-                        goto done;
+                        return osTypePass;
                     }
                 } else {
                     if ([[curOSVerArray objectAtIndex:y] intValue] == [[_allowOctsPlus objectAtIndex:y] intValue]) {
                         continue;
                     } else if ([[curOSVerArray objectAtIndex:y] intValue] < [[_allowOctsPlus objectAtIndex:y] intValue]) {
                         osTypePass = FALSE;
-                        goto done;
+                        return osTypePass;
                     } else {
                         osTypePass = TRUE;
-                        goto done;
+                        return osTypePass;
                     }
                 }
             }
@@ -215,15 +211,14 @@ done:
 			if (osMatchCount == octets)
 			{		
 				osTypePass = TRUE;
-				goto done;				
+				return osTypePass;
 			} else {
 				qldebug(@"OS octets is %d and matched octets is %d. They must match to pass.",octets,osMatchCount);
 			}
 		}
 	}
-	
-done:
-	return osTypePass;
+
+    return osTypePass;
 }
 
 -(NSDictionary *)getSWVers

@@ -27,8 +27,6 @@
 #import "MPWorkerProtocol.h"
 #import "MPPatchScan.h"
 
-@class MPServerConnection;
-
 @interface MPWorker : NSObject <MPWorkerServer,MPPatchScanDelegate>
 {
     
@@ -36,8 +34,8 @@
     id<MPWorkerClient> _client;
     
 @private
+
     NSFileManager       *fm;
-    MPServerConnection  *mpServerConnection;
     NSMutableArray      *connections;
     NSTask              *swTask;
     NSPipe              *pipe_task;

@@ -2,9 +2,9 @@
 
 #-----------------------------------------
 # MacPatch DataBase and LDAP Setup Script
-# MacPatch Version 2.1.x
+# MacPatch Version 2.5.x
 #
-# Script Ver. 1.0.0
+# Script Ver. 1.0.1
 #
 #-----------------------------------------
 clear
@@ -22,14 +22,7 @@ function checkHostConfig () {
 	   echo
 	   exit 1;
 	fi
-	
-	osVer=`sw_vers -productVersion | cut -d . -f 2`
-	if [ "$osVer" -le "6" ]; then
-		echo "System is not running Mac OS X 10.7 or higher. Setup can not continue."
-		exit 1
-	fi
 }
-
 
 # -----------------------------------
 # Main
@@ -51,6 +44,7 @@ mp_db_name=${mp_db_name:-MacPatchDB}
 read -p "MacPatch Database Server User Name [mpdbadm]: " mp_db_usr
 mp_db_usr=${mp_db_usr:-mpdbadm}
 read -s -p "MacPatch Database Server User Password: " mp_db_pas
+mp_db_pas_ro=`openssl rand -base64 33`
 clear
 echo "Configure MacPatch Login Source..."
 echo " "
@@ -81,17 +75,18 @@ fi
 clear
 echo ""
 echo "Writing configuration data to file ..."
-sed -i '' "s/\[DB-HOST\]/$mp_db_hostname/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-sed -i '' "s/\[DB-NAME\]/$mp_db_name/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-sed -i '' "s/\[DB-PORT\]/$mp_db_port/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-sed -i '' "s/\[DB-USER\]/$mp_db_usr/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-sed -i '' "s/\[DB-PASS\]/$mp_db_pas/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+sed -ie "s/\[DB-HOST\]/$mp_db_hostname/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+sed -ie "s/\[DB-NAME\]/$mp_db_name/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+sed -ie "s/\[DB-PORT\]/$mp_db_port/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+sed -ie "s/\[DB-USER\]/$mp_db_usr/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+sed -ie "s/\[DB-PASS\]/$mp_db_pas/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+sed -ie "s/\[DB-PASS-RO\]/$mp_db_pas_ro/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
 if [ "$use_ldap" == "y" ] || [ "$use_ldap" == "Y" ]; then
-	sed -i '' "s/\[AD-DOMAIN-FQDN\]/$ldap_hostname/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-	sed -i '' "s/\[AD-DOMAIN-PORT\]/$ldap_port/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-	sed -i '' "s/\[AD-SEARCH-BASE\]/$ldap_searchbase/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-	sed -i '' "s/\[AD-DOMAIN-SSL\]/$ldap_ssl/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-	sed -i '' "s/\[AD-LOGIN-ATTR\]/$ldap_lgnattr/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-	sed -i '' "s/\[AD-LOGIN-PRE\]/$ldap_lgnpre/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-	sed -i '' "s/\[AD-LOGIN-SUF\]/$ldap_lgnsuf/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+	sed -ie "s/\[AD-DOMAIN-FQDN\]/$ldap_hostname/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+	sed -ie "s/\[AD-DOMAIN-PORT\]/$ldap_port/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+	sed -ie "s/\[AD-SEARCH-BASE\]/$ldap_searchbase/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+	sed -ie "s/\[AD-DOMAIN-SSL\]/$ldap_ssl/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+	sed -ie "s/\[AD-LOGIN-ATTR\]/$ldap_lgnattr/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+	sed -ie "s/\[AD-LOGIN-PRE\]/$ldap_lgnpre/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+	sed -ie "s/\[AD-LOGIN-SUF\]/$ldap_lgnsuf/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
 fi

@@ -27,7 +27,6 @@
 #import "PreferenceController.h"
 #import "MacPatch.h"
 #import "MPWorkerProtocol.h"
-#import "MPDLWrapper.h"
 #import "EventToSend.h" 
 #import "SWDistInfoController.h"
 
@@ -264,7 +263,8 @@
 
 @implementation MPCatalogAppDelegate
 
-@synthesize _defaults;
+@synthesize mpDefaults;
+@synthesize defaults = _defaults;
 
 @synthesize window;
 @synthesize tableView;
@@ -305,9 +305,8 @@
     fm = [NSFileManager defaultManager];
     queue = [[NSOperationQueue alloc] init];
     selectedItems = [[NSMutableArray alloc] init];
-    
-    // Default Server Connection Object
-    mpServerConnection = [[MPServerConnection alloc] init];
+    mpDefaults = [[MPDefaults alloc] init];
+    [self setDefaults:[mpDefaults defaults]];
     
     // User Defaults 
     NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
@@ -357,10 +356,7 @@
         [[mp_SOFTWARE_DATA_DIR URLByAppendingPathComponent:@"sw"] setResourceValue:[NSNumber numberWithBool:YES] forKey:NSURLIsHiddenKey error:NULL];
     }
     
-    // Get Agent Default Settings
-    [self set_defaults:mpServerConnection.mpDefaults];
-    
-    window.title = [NSString stringWithFormat:@"MP - Software Catalog (%@)",[self._defaults objectForKey:@"SWDistGroup"]];
+    window.title = [NSString stringWithFormat:@"MP - Software Catalog (%@)",[self.defaults objectForKey:@"SWDistGroup"]];
     
     [progressBar setUsesThreadedAnimation:YES];
     [self performSelectorInBackground:@selector(downloadSoftwareContent) withObject:nil];
@@ -457,40 +453,40 @@
     {
         [swDistGroupsButton removeAllItems];
 
-        NSString *gUrl;
-        if ([[mpServerConnection mpDefaults] objectForKey:@"SWDistGroupState"]) {
-            gUrl = [NSString stringWithFormat:@"%@?method=GetSWDistGroups&state=%@",WS_CLIENT_FILE,[[[mpServerConnection mpDefaults] objectForKey:@"SWDistGroupState"] stringValue]];
-        } else {
-            gUrl = [NSString stringWithFormat:@"%@?method=GetSWDistGroups",WS_CLIENT_FILE];
-        }
-        
         NSError *error = nil;
-        NSString *result;
-        MPASINet *asiNet = [[MPASINet alloc] init];
-        result = [asiNet synchronousRequestForURL:gUrl error:&error];
-        NSLog(@"%@",result);
-        if (error) {
-            qlerror(@"%@",[error description]);
-            [swDistGroupsButton addItemWithTitle:[_defaults objectForKey:@"SWDistGroup"]];
+        NSArray *catalogs;
+        MPWebServices *mpws = [[MPWebServices alloc] init];
+        if ([[mpDefaults defaults] objectForKey:@"SWDistGroupState"]) {
+            catalogs = [mpws getSWDistGroupsWithState:[[mpDefaults defaults] objectForKey:@"SWDistGroupState"] error:&error];
         } else {
-            NSDictionary *j = [result objectFromJSONString];
-            
-            if ([[j objectForKey:@"errorno"] isEqualToString:@"0"]) {
-                NSArray *i = [[j objectForKey:@"result"] objectFromJSONString];
-                [self setSwDistGroupsArray:i];
-                for (NSDictionary *n in i) {
-                    [swDistGroupsButton addItemWithTitle:[n objectForKey:@"Name"]];
-                }
-                
-                if ([[swDistGroupsButton itemTitles] containsObject:[[mpServerConnection mpDefaults] objectForKey:@"SWDistGroup"]]) {
-                    [swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:[[mpServerConnection mpDefaults] objectForKey:@"SWDistGroup"]]];
-                }
-                
+            catalogs = [mpws getSWDistGroups:&error];
+        }
+
+        if (error) {
+            logit(lcl_vError,@"%@",error.localizedDescription);
+            if ([[mpDefaults defaults] objectForKey:@"SWDistGroup"]) {
+                [swDistGroupsButton addItemWithTitle:[[mpDefaults defaults] objectForKey:@"SWDistGroup"]];
             } else {
-                [swDistGroupsButton addItemWithTitle:[[mpServerConnection mpDefaults] objectForKey:@"SWDistGroup"]];
+                [swDistGroupsButton addItemWithTitle:@"Missing_SWDistGroup"];
+            }
+            return;
+        }
+        if ([catalogs count] > 0) {
+            [self setSwDistGroupsArray:catalogs];
+            for (NSDictionary *n in catalogs) {
+                [swDistGroupsButton addItemWithTitle:[n objectForKey:@"Name"]];
+            }
+
+            if ([[swDistGroupsButton itemTitles] containsObject:[[mpDefaults defaults] objectForKey:@"SWDistGroup"]]) {
+                [swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:[[mpDefaults defaults] objectForKey:@"SWDistGroup"]]];
+            }
+        } else {
+            if ([[mpDefaults defaults] objectForKey:@"SWDistGroup"]) {
+                [swDistGroupsButton addItemWithTitle:[[mpDefaults defaults] objectForKey:@"SWDistGroup"]];
+            } else {
+                [swDistGroupsButton addItemWithTitle:@"Missing_SWDistGroup"];
             }
         }
-        
         [swDistGroupsButton display];
     }
 }
@@ -560,8 +556,7 @@
         }
         
         // Create Download URL
-        [mpServerConnection refreshServerObject];
-        NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+        NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
         logit(lcl_vInfo,@"Download software from: %@",_url);
         
         BOOL isDir;
@@ -578,14 +573,40 @@
         
         [progressBar setDoubleValue:0.0];
         [progressBar setIndeterminate:NO];
-        
-        downloadTask = [[MPDLWrapper alloc] initWithController:self url:[NSURL URLWithString:_url]];
+
+        // Download Software
+        NSError *dlErr = nil;
+        NSURLResponse *response;
+        MPNetConfig *mpnc = [[MPNetConfig alloc] init];
+        MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
+        NSURLRequest *urlReq = [req buildDownloadRequest:[NSURL URLWithString:_url]];
+        NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
+
+        if (dlErr) {
+            logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+        }
+
         [self updateArrayControllerWithDictionary:d forActionType:@"download"];
-        [downloadTask startDownloadAndSpecifyDownloadDirectory:swLoc];
-        
-        logit(lcl_vDebug,@"returnCode: %d",[downloadTask returnCode]);
+
+        // Create Destination Dir
+        dlErr = nil;
+        if ([fm fileExistsAtPath:swLoc] == NO) {
+            [fm createDirectoryAtPath:swLoc withIntermediateDirectories:YES attributes:nil error:&dlErr];
+            if (dlErr) {
+                logit(lcl_vError,@"Error[%d], trying to create destination directory. %@.",(int)[dlErr code],swLoc);
+            }
+        }
+
+        // Move Downloaded File to Destination
+        dlErr = nil;
+        [fm moveItemAtPath:dlPath toPath:[swLoc stringByAppendingPathComponent:[dlPath lastPathComponent]] error:&dlErr];
+        if (dlErr) {
+            logit(lcl_vError,@"Error[%d], trying to move downloaded file to %@.",(int)[dlErr code],swLoc);
+        }
+
+        logit(lcl_vDebug,@"returnCode: %d",[req errorCode]);
         // Software was downloaded
-        if ([downloadTask returnCode] == 0) 
+        if ([req errorCode] == 0)
         {
             logit(lcl_vDebug,@"Begin install for (%@).",[d objectForKey:@"name"]);
             int result = -1;
@@ -851,22 +872,47 @@
                     }
                     
                     // Create Download URL
-                    [mpServerConnection refreshServerObject];
-                    NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",mpServerConnection.HTTP_PREFIX,mpServerConnection.HTTP_HOST,[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
+                    NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
                     logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
                     
                     [progressBar setDoubleValue:0.0];
                     [progressBar setIndeterminate:NO];
-                    
-                    downloadTask = [[MPDLWrapper alloc] initWithController:self url:[NSURL URLWithString:_url]];
+
+                    NSError *dlErr = nil;
+                    NSURLResponse *response;
+                    MPNetConfig *mpnc = [[MPNetConfig alloc] init];
+                    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
+                    NSURLRequest *urlReq = [req buildDownloadRequest:[NSURL URLWithString:_url]];
+                    NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
+
+                    if (dlErr) {
+                        logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+                    }
+
                     [self updateArrayControllerWithDictionary:d forActionType:@"download"];
-                    [downloadTask startDownloadAndSpecifyDownloadDirectory:swLoc];
-                    
+
+                    // Create Destination Dir
+                    dlErr = nil;
+                    if ([fm fileExistsAtPath:swLoc] == NO) {
+                        [fm createDirectoryAtPath:swLoc withIntermediateDirectories:YES attributes:nil error:&dlErr];
+                        if (dlErr) {
+                            logit(lcl_vError,@"Error[%d], trying to create destination directory. %@.",(int)[dlErr code],swLoc);
+                        }
+                    }
+
+                    // Move Downloaded File to Destination
+                    dlErr = nil;
+                    [fm moveItemAtPath:dlPath toPath:[swLoc stringByAppendingPathComponent:[dlPath lastPathComponent]] error:&dlErr];
+                    if (dlErr) {
+                        logit(lcl_vError,@"Error[%d], trying to move downloaded file to %@.",(int)[dlErr code],swLoc);
+                    }
+
                     if ([self hasCanceledInstall:d]) break;
                     
-                    logit(lcl_vDebug,@"returnCode: %d",[downloadTask returnCode]);
+                    logit(lcl_vDebug,@"returnCode: %d",[req errorCode]);
                     // Software was downloaded
-                    if ([downloadTask returnCode] == 0) 
+                    if ([req errorCode] == 0)
                     {
                         logit(lcl_vDebug,@"Begin install for (%@).",[d objectForKey:@"name"]);
                         int result = -1;
@@ -1048,22 +1094,26 @@
 - (void)appendDownloadProgressPercent:(NSString *)aPercent
 {
 	//[self setStatusDownloadPercent:[NSString stringWithFormat:@"%@%%",aPercent]];
+    NSLog(@"%@",[NSString stringWithFormat:@"%@%%",aPercent]);
     logit(lcl_vDebug,@"%@",[NSString stringWithFormat:@"%@%%",aPercent]);
 }
 
 - (void)downloadStarted
-{	
+{
+    NSLog(@"downloadStarted");
 	[statusTextStatus setStringValue:@"Downloading..."];
 }
 
 - (void)downloadFinished
 {
+    NSLog(@"downloadFinished");
     [statusTextStatus setStringValue:@"Download Complete"];
 	isDownloading = NO;
 }
 
 - (void)downloadError
 {
+    NSLog(@"downloadError");
 	//[cancelButton setEnabled:YES];
     [statusTextStatus setStringValue:@"Download Error"];
 	[progressBar setDoubleValue:0.0];
@@ -1136,8 +1186,6 @@
 
 - (IBAction)refreshSoftwareDistGroups:(id)sender
 {
-    [mpServerConnection refreshDefaults];
-    NSLog(@"%@",[mpServerConnection mpDefaults]);
     [self performSelectorInBackground:@selector(populateSoftwareGroupsPopupButton) withObject:nil];
 }
 
@@ -1234,8 +1282,11 @@
         [NSThread sleepForTimeInterval:2];
         
         MPSWTasks *sw = [[MPSWTasks alloc] init];
-        [sw setGroupName:[[swDistGroupsButton selectedItem] title]];
-        [self setSwDistCurrentTitle:[[swDistGroupsButton selectedItem] title]];
+        if ([swDistGroupsButton selectedItem])
+        {
+            [sw setGroupName:[[swDistGroupsButton selectedItem] title]];
+            [self setSwDistCurrentTitle:[[swDistGroupsButton selectedItem] title]];
+        }
         NSError *err = nil;
         NSDictionary *_tasks = [sw getSWTasksForGroupFromServer:&err];
         window.title = [NSString stringWithFormat:@"MP - Software Catalog (%@)",[sw groupName]];

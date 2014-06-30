@@ -25,11 +25,12 @@
 
 #import "MPUsersAndGroups.h"
 #import <OpenDirectory/OpenDirectory.h>
+#import <OpenDirectory/ODQuery.h>
 
 @interface MPUsersAndGroups ()
 
-@property(nonatomic, retain, readwrite)NSArray *usrAttrs;
-@property(nonatomic, retain, readwrite)NSArray *grpAttrs;
+@property(nonatomic, strong, readwrite)NSArray *usrAttrs;
+@property(nonatomic, strong, readwrite)NSArray *grpAttrs;
 
 - (ODQuery *)queryRecordTypeWithAttributes:(id)inRecordTypeOrList attributes:(id)inReturnAttributeOrList error:(NSError **)error;
 - (NSString *)valueForODAttribute:(ODRecord *)record attribute:(id)inODAttributeValue;
@@ -119,7 +120,7 @@
         [d setObject:[self valueForODAttribute:record attribute:kODAttributeTypeNFSHomeDirectory] forKey:@"HomeDir"];
         [d setObject:[self valueForODAttribute:record attribute:kODAttributeTypeUserShell] forKey:@"UserShell"];
         [result addObject:[NSDictionary dictionaryWithDictionary:d]];
-        [d release], d = nil;
+        d = nil;
     }
     
     return [NSArray arrayWithArray:result];
@@ -154,7 +155,7 @@
         [d setObject:[self valueForODAttribute:record attribute:kODAttributeTypeGroupMembers] forKey:@"GroupMembers"];
         [d setObject:[self valueForODAttribute:record attribute:kODAttributeTypeGroupMembership] forKey:@"GroupMembership"];
         [result addObject:[NSDictionary dictionaryWithDictionary:d]];
-        [d release], d = nil;
+        d = nil;
     }
     
     return [NSArray arrayWithArray:result];

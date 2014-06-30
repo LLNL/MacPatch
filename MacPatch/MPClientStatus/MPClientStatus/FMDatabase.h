@@ -25,7 +25,7 @@
 @property (assign) int busyRetryTimeout;
 @property (assign) BOOL crashOnErrors;
 @property (assign) BOOL logsErrors;
-@property (retain) NSMutableDictionary *cachedStatements;
+@property (strong) NSMutableDictionary *cachedStatements;
 
 
 + (id)databaseWithPath:(NSString*)inPath;
@@ -92,7 +92,7 @@
 }
 
 @property (assign) long useCount;
-@property (retain) NSString *query;
+@property (strong) NSString *query;
 @property (assign) sqlite3_stmt *statement;
 
 - (void)close;

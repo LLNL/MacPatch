@@ -1,8 +1,8 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.2.0
-	Rev 6
+	Version 2.5.0
+	Rev 1
 */
 
 SET NAMES utf8;
@@ -105,6 +105,21 @@ CREATE TABLE `apple_patches_mp_additions` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
+--  Table structure for `mp_adhoc_reports`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_adhoc_reports`;
+CREATE TABLE `mp_adhoc_reports` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `reportData` mediumtext,
+  `owner` varchar(255) DEFAULT NULL,
+  `rights` int(1) DEFAULT NULL,
+  `disabled` int(1) unsigned DEFAULT '0',
+  `disabledDate` datetime DEFAULT NULL,
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COMMENT='New for MacPatch 2.5';
+
+-- ----------------------------
 --  Table structure for `mp_adm_group_users`
 -- ----------------------------
 DROP TABLE IF EXISTS `mp_adm_group_users`;
@@ -112,10 +127,12 @@ CREATE TABLE `mp_adm_group_users` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `group_id` varchar(50) NOT NULL DEFAULT '1',
   `user_id` varchar(100) NOT NULL,
-  `user_type` int(1) DEFAULT NULL,
+  `user_type` int(1) unsigned DEFAULT '0',
   `last_login` datetime NOT NULL DEFAULT '2000-01-01 12:00:00',
   `number_of_logins` int(11) NOT NULL,
   `enabled` int(1) unsigned DEFAULT '1',
+  `authToken1` varchar(50) DEFAULT NULL,
+  `authToken2` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`rid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
@@ -168,6 +185,18 @@ CREATE TABLE `mp_agent_config_data` (
   `enforced` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`rid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `mp_agent_upload`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_agent_upload`;
+CREATE TABLE `mp_agent_upload` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` varchar(255) NOT NULL,
+  `requestID` varchar(50) NOT NULL,
+  `cDate` datetime DEFAULT NULL,
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COMMENT='New for MacPatch 2.5';
 
 -- ----------------------------
 --  Table structure for `mp_apple_patch_criteria`
@@ -227,19 +256,6 @@ CREATE TABLE `mp_baseline` (
   PRIMARY KEY (`rid`,`baseline_id`),
   KEY `b_idx` (`baseline_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
-
--- ----------------------------
---  Table structure for `mp_baseline_dev`
--- ----------------------------
-DROP TABLE IF EXISTS `mp_baseline_dev`;
-CREATE TABLE `mp_baseline_dev` (
-  `rid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `baseline_id` bigint(20) unsigned NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `type` int(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`rid`,`baseline_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_baseline_patches`
@@ -330,6 +346,43 @@ CREATE TRIGGER `add_cdate` BEFORE INSERT ON `mp_client_errors` FOR EACH ROW SET 
 delimiter ;
 
 -- ----------------------------
+--  Table structure for `mp_client_group_clients`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_client_group_clients`;
+CREATE TABLE `mp_client_group_clients` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `cuuid` varchar(50) NOT NULL,
+  `groupID` varchar(50) NOT NULL,
+  PRIMARY KEY (`rid`,`cuuid`,`groupID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New For MacPatch 2.5.x';
+
+-- ----------------------------
+--  Table structure for `mp_client_group_privs`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_client_group_privs`;
+CREATE TABLE `mp_client_group_privs` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `groupID` varchar(255) NOT NULL,
+  `userID` varchar(255) DEFAULT NULL,
+  `isOwner` int(1) unsigned DEFAULT '0',
+  PRIMARY KEY (`rid`,`groupID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New For MacPatch 2.5.x';
+
+-- ----------------------------
+--  Table structure for `mp_client_group_tasks`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_client_group_tasks`;
+CREATE TABLE `mp_client_group_tasks` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `taskID` varchar(50) NOT NULL,
+  `groupID` varchar(50) NOT NULL,
+  `taskType` int(3) DEFAULT '0',
+  `taskForced` int(1) DEFAULT '0',
+  `enabled` int(1) unsigned DEFAULT '0',
+  PRIMARY KEY (`rid`,`taskID`,`groupID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New for MacPatch 2.5.x';
+
+-- ----------------------------
 --  Table structure for `mp_client_patches_apple`
 -- ----------------------------
 DROP TABLE IF EXISTS `mp_client_patches_apple`;
@@ -372,6 +425,44 @@ CREATE TABLE `mp_client_patches_third` (
   UNIQUE KEY `idx_no_dups` (`cuuid`,`type`,`patch_id`),
   KEY `idx_cuuid` (`cuuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `mp_client_register_conf`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_client_register_conf`;
+CREATE TABLE `mp_client_register_conf` (
+  `rid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `autoRegister` int(1) unsigned DEFAULT '0',
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='New for MacPatch 2.5.x';
+
+-- ----------------------------
+--  Table structure for `mp_client_register_keys`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_client_register_keys`;
+CREATE TABLE `mp_client_register_keys` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `active` int(1) DEFAULT NULL,
+  `rKey` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='New for MacPatch 2.5.x';
+
+-- ----------------------------
+--  Table structure for `mp_client_register_log`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_client_register_log`;
+CREATE TABLE `mp_client_register_log` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `cuuid` varchar(50) NOT NULL,
+  `hostname` varchar(255) DEFAULT NULL,
+  `regkey` varchar(255) DEFAULT NULL,
+  `errorno` varchar(5) DEFAULT NULL,
+  `sign_result` mediumtext,
+  `client_cert` text,
+  `client_cert_pass` varchar(255) DEFAULT NULL,
+  `cdate` datetime DEFAULT NULL,
+  PRIMARY KEY (`rid`,`cuuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COMMENT='New for MacPatch 2.5.x';
 
 -- ----------------------------
 --  Table structure for `mp_clients`
@@ -508,16 +599,25 @@ CREATE TABLE `mp_installed_patches` (
   `patch` varchar(255) NOT NULL,
   `patch_name` varchar(255) DEFAULT 'NA',
   `type` varchar(255) NOT NULL,
+  `type_int` int(1) unsigned DEFAULT NULL,
   `server_name` varchar(255) DEFAULT 'NA',
-  `date` timestamp NULL DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`),
-  KEY `idx_cuuid` (`cuuid`),
-  KEY `idx_patch` (`patch`),
-  KEY `idx_type` (`type`),
-  KEY `idx_date` (`date`),
-  KEY `idx_all` (`cuuid`,`date`,`patch`,`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+  KEY `idx_cuuid` (`cuuid`) COMMENT '(null)',
+  KEY `idx_patch` (`patch`) COMMENT '(null)',
+  KEY `idx_type` (`type`) COMMENT '(null)',
+  KEY `idx_date` (`date`) COMMENT '(null)',
+  KEY `idx_all` (`cuuid`,`date`,`patch`,`type`) COMMENT '(null)'
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT 'Updated for 2.5';
+delimiter ;;
+CREATE TRIGGER `typeToIntTrig` BEFORE INSERT ON `mp_installed_patches` FOR EACH ROW IF new.type = 'apple' THEN
+	SET new.type_int = 0;
+ELSE
+	SET new.type_int = 1;
+END IF;
+ ;;
+delimiter ;
 
 -- ----------------------------
 --  Table structure for `mp_installed_patches_errors`
@@ -538,24 +638,25 @@ CREATE TRIGGER `mpipe_cdate` BEFORE INSERT ON `mp_installed_patches_errors` FOR 
 delimiter ;
 
 -- ----------------------------
---  Table structure for `mp_installed_patches_new`
+--  Table structure for `mp_installed_patches_hst`
 -- ----------------------------
-DROP TABLE IF EXISTS `mp_installed_patches_new`;
-CREATE TABLE `mp_installed_patches_new` (
+DROP TABLE IF EXISTS `mp_installed_patches_hst`;
+CREATE TABLE `mp_installed_patches_hst` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
   `patch` varchar(255) NOT NULL,
-  `patch_name` varchar(255) NOT NULL,
+  `patch_name` varchar(255) DEFAULT 'NA',
   `type` varchar(255) NOT NULL,
-  `server_name` varchar(255) DEFAULT NULL,
-  `date` timestamp NULL DEFAULT NULL,
+  `server_name` varchar(255) DEFAULT 'NA',
+  `date` datetime DEFAULT NULL,
+  `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`),
-  KEY `idx_cuuid` (`cuuid`),
-  KEY `idx_patch` (`patch`),
-  KEY `idx_type` (`type`),
-  KEY `idx_date` (`date`),
-  KEY `idx_all` (`cuuid`,`date`,`patch`,`type`,`patch_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+  KEY `idx_cuuid` (`cuuid`) COMMENT '(null)',
+  KEY `idx_patch` (`patch`) COMMENT '(null)',
+  KEY `idx_type` (`type`) COMMENT '(null)',
+  KEY `idx_date` (`date`) COMMENT '(null)',
+  KEY `idx_all` (`cuuid`,`date`,`patch`,`type`) COMMENT '(null)'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New For MacPatch 2.5.x\n';
 
 -- ----------------------------
 --  Table structure for `mp_inv_state`
@@ -570,6 +671,43 @@ delimiter ;;
 CREATE TRIGGER `inv_trig_date` BEFORE INSERT ON `mp_inv_state` FOR EACH ROW set NEW.cdate = now();
  ;;
 delimiter ;
+
+-- ----------------------------
+--  Table structure for `mp_os_config_profiles`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_os_config_profiles`;
+CREATE TABLE `mp_os_config_profiles` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `profileID` varchar(50) NOT NULL,
+  `profileIdentifier` varchar(255) DEFAULT NULL,
+  `profileData` blob,
+  `profileName` varchar(255) DEFAULT NULL,
+  `profileDescription` text,
+  `profileHash` varchar(50) DEFAULT NULL,
+  `profileRev` int(9) unsigned DEFAULT '1',
+  `enabled` int(1) unsigned DEFAULT '0',
+  `uninstallOnRemove` int(1) DEFAULT '1',
+  `cdate` datetime DEFAULT NULL,
+  `mdate` datetime DEFAULT NULL,
+  PRIMARY KEY (`rid`,`profileID`),
+  KEY `profile_idx` (`profileID`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New For MacPatch 2.5.x';
+delimiter ;;
+CREATE TRIGGER `trig_profile_cdate` BEFORE INSERT ON `mp_os_config_profiles` FOR EACH ROW Set New.cdate = NOW(),
+New.mdate = NOW();
+ ;;
+delimiter ;
+
+-- ----------------------------
+--  Table structure for `mp_os_config_profiles_assigned`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_os_config_profiles_assigned`;
+CREATE TABLE `mp_os_config_profiles_assigned` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `profileID` varchar(50) NOT NULL,
+  `groupID` varchar(50) NOT NULL,
+  PRIMARY KEY (`rid`,`profileID`,`groupID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New for MacPatch 2.5.x';
 
 -- ----------------------------
 --  Table structure for `mp_patch_group`
@@ -701,6 +839,22 @@ CREATE TABLE `mp_patches_criteria` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
+--  Table structure for `mp_patches_queries`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_patches_queries`;
+CREATE TABLE `mp_patches_queries` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `puuid` varchar(50) NOT NULL,
+  `pquery` mediumtext,
+  `mdate` datetime DEFAULT NULL,
+  PRIMARY KEY (`rid`,`puuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New MacPatch 2.5.x';
+delimiter ;;
+CREATE TRIGGER `pq_mdate_trig` BEFORE UPDATE ON `mp_patches_queries` FOR EACH ROW SET NEW.mdate = NOW();
+ ;;
+delimiter ;
+
+-- ----------------------------
 --  Table structure for `mp_patches_requisits`
 -- ----------------------------
 DROP TABLE IF EXISTS `mp_patches_requisits`;
@@ -763,6 +917,30 @@ CREATE TRIGGER `proxy_log_date` BEFORE INSERT ON `mp_proxy_logs` FOR EACH ROW Se
 delimiter ;
 
 -- ----------------------------
+--  Table structure for `mp_registration`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_registration`;
+CREATE TABLE `mp_registration` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `rkey` varchar(50) NOT NULL,
+  `validFromDate` datetime DEFAULT '2000-01-01 00:00:00',
+  `validToDate` datetime DEFAULT '3000-01-01 00:00:00',
+  `active` int(1) unsigned DEFAULT '1',
+  `cuuid` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`rid`,`rkey`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='This table is used to for MP Clients registering with a key';
+
+-- ----------------------------
+--  Table structure for `mp_registration_settings`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_registration_settings`;
+CREATE TABLE `mp_registration_settings` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `keyIsRequired` int(1) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
 --  Table structure for `mp_selfupdate_filters`
 -- ----------------------------
 DROP TABLE IF EXISTS `mp_selfupdate_filters`;
@@ -804,20 +982,6 @@ CREATE TABLE `mp_servers` (
   `active` int(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`rid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
-
--- ----------------------------
---  Table structure for `mp_servers_old`
--- ----------------------------
-DROP TABLE IF EXISTS `mp_servers_old`;
-CREATE TABLE `mp_servers_old` (
-  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `server` varchar(255) NOT NULL,
-  `server_port` int(6) unsigned NOT NULL DEFAULT '2601',
-  `type` int(1) NOT NULL DEFAULT '1',
-  `type_order` int(2) NOT NULL DEFAULT '0',
-  `active` int(1) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`rid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_software`
@@ -1042,6 +1206,32 @@ CREATE TABLE `mpi_AppUsage` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
+--  Table structure for `mpi_BatteryInfo`
+-- ----------------------------
+DROP TABLE IF EXISTS `mpi_BatteryInfo`;
+CREATE TABLE `mpi_BatteryInfo` (
+  `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cuuid` varchar(50) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `mdate` datetime DEFAULT NULL,
+  `mpa_cycle_count` varchar(255) DEFAULT NULL,
+  `mpa_voltage_mv` varchar(255) DEFAULT NULL,
+  `mpa_charge_remaining_mah` varchar(255) DEFAULT NULL,
+  `mpa_firmware_version` varchar(255) DEFAULT NULL,
+  `mpa_condition` varchar(255) DEFAULT NULL,
+  `mpa_fully_charged` varchar(255) DEFAULT NULL,
+  `mpa_full_charge_capacity_mah` varchar(255) DEFAULT NULL,
+  `mpa_charging` varchar(255) DEFAULT NULL,
+  `mpa_design_cycle_count` varchar(255) DEFAULT NULL,
+  `mpa_design_charge_capacity_mah` varchar(255) DEFAULT NULL,
+  `mpa_manufacturer` varchar(255) DEFAULT NULL,
+  `mpa_serial_number` varchar(255) DEFAULT NULL,
+  `mpa_devicename` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`rid`),
+  KEY `pri_idx` (`cuuid`,`date`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
 --  Table structure for `mpi_ClientTasks`
 -- ----------------------------
 DROP TABLE IF EXISTS `mpi_ClientTasks`;
@@ -1066,6 +1256,24 @@ CREATE TABLE `mpi_ClientTasks` (
   `mpa_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
   KEY `cuuid` (`cuuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `mpi_ConfigProfiles`
+-- ----------------------------
+DROP TABLE IF EXISTS `mpi_ConfigProfiles`;
+CREATE TABLE `mpi_ConfigProfiles` (
+  `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cuuid` varchar(50) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `mdate` datetime DEFAULT NULL,
+  `mpa_profileidentifier` varchar(255) DEFAULT NULL,
+  `mpa_profileuuid` varchar(255) DEFAULT NULL,
+  `mpa_profileversion` varchar(255) DEFAULT NULL,
+  `mpa_profileinstalldate` varchar(255) DEFAULT NULL,
+  `mpa_profiledisplayname` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`rid`),
+  KEY `pri_idx` (`cuuid`,`date`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -1121,6 +1329,22 @@ CREATE TABLE `mpi_DiskInfo` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
+--  Table structure for `mpi_FileVault`
+-- ----------------------------
+DROP TABLE IF EXISTS `mpi_FileVault`;
+CREATE TABLE `mpi_FileVault` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `cuuid` varchar(50) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `mdate` datetime DEFAULT NULL,
+  `mpa_state` varchar(255) DEFAULT NULL,
+  `mpa_status` varchar(255) DEFAULT NULL,
+  `mpa_users` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`rid`),
+  KEY `pri_idx` (`cuuid`,`date`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
 --  Table structure for `mpi_Groups`
 -- ----------------------------
 DROP TABLE IF EXISTS `mpi_Groups`;
@@ -1160,6 +1384,61 @@ CREATE TABLE `mpi_InternetPlugins` (
   PRIMARY KEY (`rid`),
   KEY `idx_cuuid` (`cuuid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `mpi_PowerManagment`
+-- ----------------------------
+DROP TABLE IF EXISTS `mpi_PowerManagment`;
+CREATE TABLE `mpi_PowerManagment` (
+  `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cuuid` varchar(50) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `mdate` datetime DEFAULT NULL,
+  `mpa_Wake_On_LAN` varchar(255) DEFAULT NULL,
+  `mpa_System_Sleep_Timer` varchar(255) DEFAULT NULL,
+  `mpa_Wake_On_AC_Change` varchar(255) DEFAULT NULL,
+  `mpa_Hibernate_File` varchar(255) DEFAULT NULL,
+  `mpa_AutoPowerOff_Enabled` varchar(255) DEFAULT NULL,
+  `mpa_DarkWakeBackgroundTasks` varchar(255) DEFAULT NULL,
+  `mpa_GPUSwitch` varchar(255) DEFAULT NULL,
+  `mpa_Display_Sleep_Timer` varchar(255) DEFAULT NULL,
+  `mpa_Disk_Sleep_Timer` varchar(255) DEFAULT NULL,
+  `mpa_PrioritizeNetworkReachabilityOverSleep` varchar(255) DEFAULT NULL,
+  `mpa_AutoPowerOff_Delay` varchar(255) DEFAULT NULL,
+  `mpa_Hibernate_Mode` varchar(255) DEFAULT NULL,
+  `mpa_Wake_On_Clamshell_Open` varchar(255) DEFAULT NULL,
+  `mpa_ProfileName` varchar(255) DEFAULT NULL,
+  `mpa_TTYSPreventSleep` varchar(255) DEFAULT NULL,
+  `mpa_Sisplay_Sleep_Uses_Dim` varchar(255) DEFAULT NULL,
+  `mpa_Standby_Enabled` varchar(255) DEFAULT NULL,
+  `mpa_reducebrightness` varchar(255) DEFAULT NULL,
+  `mpa_standby_delay` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`rid`),
+  KEY `pri_idx` (`cuuid`,`date`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `mpi_SINetworkInfo`
+-- ----------------------------
+DROP TABLE IF EXISTS `mpi_SINetworkInfo`;
+CREATE TABLE `mpi_SINetworkInfo` (
+  `mpa_ConfigurationType` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_AllDNSServers` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_IsPrimary` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_PrimaryDNSServer` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_AllIPAddresses` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_RouterAddress` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_InterfaceName` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_HardwareAddress` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_ConfigurationName` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_IsActive` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_PrimaryIPAddress` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_DomainName` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `cuuid` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mdate` datetime DEFAULT NULL,
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 --  Table structure for `mpi_SPApplications`
@@ -1231,31 +1510,34 @@ CREATE TABLE `mpi_SPHardwareOverview` (
   `mpa_Total_Number_of_Cores` varchar(255) DEFAULT NULL,
   `mpa_L2_Cache` varchar(255) DEFAULT NULL,
   `mpa_Memory` varchar(255) DEFAULT NULL,
-  `mpa_Bus_Speed` varchar(255) NULL,
-  `mpa_Boot_ROM_Version` varchar(255) NULL,
-  `mpa_SMC_Version` varchar(255) NULL,
-  `mpa_Serial_Number` varchar(255) NULL,
-  `mpa_Hardware_UUID` varchar(255) NULL,
-  `mpa_Sudden_Motion_Sensor` varchar(255) NULL,
-  `mpa_State` varchar(255) NULL,
-  `mpa_L3_Cache` varchar(255) NULL,
-  `mpa_Processor_Interconnect_Speed` varchar(255) NULL,
-  `mpa_SMC_Version_(processor_tray)` varchar(255) NULL,
-  `mpa_Serial_Number_(processor_tray)` varchar(255) NULL,
+  `mpa_Bus_Speed` varchar(255) DEFAULT NULL,
+  `mpa_Boot_ROM_Version` varchar(255) DEFAULT NULL,
+  `mpa_SMC_Version` varchar(255) DEFAULT NULL,
+  `mpa_Serial_Number` varchar(255) DEFAULT NULL,
+  `mpa_Hardware_UUID` varchar(255) DEFAULT NULL,
+  `mpa_Sudden_Motion_Sensor` varchar(255) DEFAULT NULL,
+  `mpa_State` varchar(255) DEFAULT NULL,
+  `mpa_L3_Cache` varchar(255) DEFAULT NULL,
+  `mpa_Processor_Interconnect_Speed` varchar(255) DEFAULT NULL,
+  `mpa_SMC_Version_(processor_tray)` varchar(255) DEFAULT NULL,
+  `mpa_Serial_Number_(processor_tray)` varchar(255) DEFAULT NULL,
   `mpa_Sales_Order_Number` varchar(255) DEFAULT NULL,
   `mpa_Version` varchar(255) DEFAULT NULL,
-  `mpa_L3_Cache_(per_Processor)` varchar(255) NULL,
+  `mpa_L3_Cache_(per_Processor)` varchar(255) DEFAULT NULL,
   `mpa_LOM_Revision` varchar(255) DEFAULT NULL,
   `mpa_Machine_Name` varchar(255) DEFAULT NULL,
   `mpa_Machine_Model` varchar(255) DEFAULT NULL,
   `mpa_CPU_Type` varchar(255) DEFAULT NULL,
   `mpa_CPU_Speed` varchar(255) DEFAULT NULL,
   `mpa_L3_Cache_(per_CPU)` varchar(255) DEFAULT NULL,
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_L3_Cache_per_Processor` varchar(255) DEFAULT NULL,
+  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_serial_number_processor_tray` varchar(255) DEFAULT NULL,
+  `mpa_l3_cache_per_processor` varchar(255) DEFAULT NULL,
+  `mpa_smc_version_processor_tray` varchar(255) DEFAULT NULL,
+  `mpa_illumination_version` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
-  UNIQUE KEY `idx_cuuid` (`cuuid`),
-  KEY `idx_find` (`rid`,`cuuid`,`date`)
+  UNIQUE KEY `idx_cuuid` (`cuuid`) COMMENT '(null)',
+  KEY `idx_find` (`rid`,`cuuid`,`date`) COMMENT '(null)'
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -1265,43 +1547,43 @@ DROP TABLE IF EXISTS `mpi_SPNetwork`;
 CREATE TABLE `mpi_SPNetwork` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_Name` varchar(255) NULL,
-  `mpa_Type` varchar(255) NULL,
-  `mpa_Hardware` varchar(255) NULL,
-  `mpa_BSD_Device_Name` varchar(255) NULL,
-  `mpa_Has_IP_Assigned` varchar(255) NULL,
-  `mpa_IPv4_Addresses` varchar(255) NULL,
-  `mpa_IPv4_Configuration_Method` varchar(255) NULL,
-  `mpa_IPv4_Interface_Name` varchar(255) NULL,
-  `mpa_IPv4_NetworkSignature` varchar(255) NULL,
-  `mpa_IPv4_Router` varchar(255) NULL,
-  `mpa_IPv4_Subnet_Masks` varchar(255) NULL,
-  `mpa_AppleTalk_Configuration_Method` varchar(255) NULL,
-  `mpa_AppleTalk_Default_Zone` varchar(255) NULL,
-  `mpa_AppleTalk_Interface_Name` varchar(255) NULL,
-  `mpa_AppleTalk_Network_ID` varchar(255) NULL,
-  `mpa_AppleTalk_Node_ID` varchar(255) NULL,
-  `mpa_DNS_Search_Domains` varchar(255) NULL,
-  `mpa_DNS_Server_Addresses` varchar(255) NULL,
-  `mpa_Proxies_Exceptions_List` varchar(255) NULL,
-  `mpa_Proxies_FTP_Passive_Mode` varchar(255) NULL,
-  `mpa_Proxies_HTTP_Proxy_Enabled` varchar(255) NULL,
-  `mpa_Proxies_HTTP_Proxy_Port` varchar(255) NULL,
-  `mpa_Proxies_HTTP_Proxy_Server` varchar(255) NULL,
-  `mpa_Ethernet_MAC_Address` varchar(255) NULL,
-  `mpa_Ethernet_Media_Options` varchar(255) NULL,
-  `mpa_Ethernet_Media_Subtype` varchar(255) NULL,
-  `mpa_IPv4_Network_Signature` varchar(255) NULL,
-  `mpa_Configuration_Method` varchar(255) NULL,
-  `mpa_Proxies_Service_Order` varchar(255) NULL,
+  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_Name` varchar(255) DEFAULT NULL,
+  `mpa_Type` varchar(255) DEFAULT NULL,
+  `mpa_Hardware` varchar(255) DEFAULT NULL,
+  `mpa_BSD_Device_Name` varchar(255) DEFAULT NULL,
+  `mpa_Has_IP_Assigned` varchar(255) DEFAULT NULL,
+  `mpa_IPv4_Addresses` varchar(255) DEFAULT NULL,
+  `mpa_IPv4_Configuration_Method` varchar(255) DEFAULT NULL,
+  `mpa_IPv4_Interface_Name` varchar(255) DEFAULT NULL,
+  `mpa_IPv4_NetworkSignature` varchar(255) DEFAULT NULL,
+  `mpa_IPv4_Router` varchar(255) DEFAULT NULL,
+  `mpa_IPv4_Subnet_Masks` varchar(255) DEFAULT NULL,
+  `mpa_AppleTalk_Configuration_Method` varchar(255) DEFAULT NULL,
+  `mpa_AppleTalk_Default_Zone` varchar(255) DEFAULT NULL,
+  `mpa_AppleTalk_Interface_Name` varchar(255) DEFAULT NULL,
+  `mpa_AppleTalk_Network_ID` varchar(255) DEFAULT NULL,
+  `mpa_AppleTalk_Node_ID` varchar(255) DEFAULT NULL,
+  `mpa_DNS_Search_Domains` varchar(255) DEFAULT NULL,
+  `mpa_DNS_Server_Addresses` varchar(255) DEFAULT NULL,
+  `mpa_Proxies_Exceptions_List` varchar(255) DEFAULT NULL,
+  `mpa_Proxies_FTP_Passive_Mode` varchar(255) DEFAULT NULL,
+  `mpa_Proxies_HTTP_Proxy_Enabled` varchar(255) DEFAULT NULL,
+  `mpa_Proxies_HTTP_Proxy_Port` varchar(255) DEFAULT NULL,
+  `mpa_Proxies_HTTP_Proxy_Server` varchar(255) DEFAULT NULL,
+  `mpa_Ethernet_MAC_Address` varchar(255) DEFAULT NULL,
+  `mpa_Ethernet_Media_Options` varchar(255) DEFAULT NULL,
+  `mpa_Ethernet_Media_Subtype` varchar(255) DEFAULT NULL,
+  `mpa_IPv4_Network_Signature` varchar(255) DEFAULT NULL,
+  `mpa_Configuration_Method` varchar(255) DEFAULT NULL,
+  `mpa_Proxies_Service_Order` varchar(255) DEFAULT NULL,
   `mpa_Proxies_FTP_Proxy_Enabled` varchar(255) DEFAULT NULL,
   `mpa_Proxies_Gopher_Proxy_Enabled` varchar(255) DEFAULT NULL,
   `mpa_Proxies_HTTPS_Proxy_Enabled` varchar(255) DEFAULT NULL,
   `mpa_Proxies_RTSP_Proxy_Enabled` varchar(255) DEFAULT NULL,
   `mpa_Proxies_SOCKS_Proxy_Enabled` varchar(255) DEFAULT NULL,
   `mpa_Ethernet_Hardware_Type` varchar(255) DEFAULT NULL,
-  `mpa_DNS_Domain_Name` varchar(255) NULL,
+  `mpa_DNS_Domain_Name` varchar(255) DEFAULT NULL,
   `mpa_Domain_Name` varchar(255) DEFAULT NULL,
   `mpa_Domain_Name_Servers` varchar(255) DEFAULT NULL,
   `mpa_Lease_Duration_(seconds)` varchar(255) DEFAULT NULL,
@@ -1309,7 +1591,7 @@ CREATE TABLE `mpi_SPNetwork` (
   `mpa_Routers` varchar(255) DEFAULT NULL,
   `mpa_Server_Identifier` varchar(255) DEFAULT NULL,
   `mpa_Subnet_Mask` varchar(255) DEFAULT NULL,
-  `mpa_Media_Subtype` varchar(255) NULL,
+  `mpa_Media_Subtype` varchar(255) DEFAULT NULL,
   `mpa_AppleTalk_Network_Range` varchar(255) DEFAULT NULL,
   `mpa_Proxies_Proxy_Configuration_Method` varchar(255) DEFAULT NULL,
   `mpa_Proxies_ExcludeSimpleHostnames` varchar(255) DEFAULT NULL,
@@ -1361,14 +1643,14 @@ CREATE TABLE `mpi_SPNetwork` (
   `mpa_Proxies_IPv6_Address` varchar(255) DEFAULT NULL,
   `mpa_Ethernet_ipv6_address` varchar(255) DEFAULT NULL,
   `dateInt` int(11) DEFAULT '0',
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_DHCP_Routers` varchar(255) NULL,
-  `mpa_DHCP_Domain_Name_Servers` varchar(255) NULL,
-  `mpa_DHCP_Lease_Duration_seconds` varchar(255) NULL,
-  `mpa_DHCP_Domain_Name` varchar(255) NULL,
-  `mpa_DHCP_Server_Identifier` varchar(255) NULL,
-  `mpa_DHCP_DHCP_Message_Type` varchar(255) NULL,
-  `mpa_DHCP_Subnet_Mask` varchar(255) NULL,
+  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_DHCP_Routers` varchar(255) DEFAULT NULL,
+  `mpa_DHCP_Domain_Name_Servers` varchar(255) DEFAULT NULL,
+  `mpa_DHCP_Lease_Duration_seconds` varchar(255) DEFAULT NULL,
+  `mpa_DHCP_Domain_Name` varchar(255) DEFAULT NULL,
+  `mpa_DHCP_Server_Identifier` varchar(255) DEFAULT NULL,
+  `mpa_DHCP_DHCP_Message_Type` varchar(255) DEFAULT NULL,
+  `mpa_DHCP_Subnet_Mask` varchar(255) DEFAULT NULL,
   `mpa_Subnet_Masks` varchar(255) DEFAULT NULL,
   `mpa_IPv4_ServerAddress` varchar(255) DEFAULT NULL,
   `mpa_IPv4_OverridePrimary` varchar(255) DEFAULT NULL,
@@ -1376,12 +1658,13 @@ CREATE TABLE `mpi_SPNetwork` (
   `mpa_Network_Signature` varchar(255) DEFAULT NULL,
   `mpa_Proxies_Gopher_Proxy_Port` varchar(255) DEFAULT NULL,
   `mpa_Proxies_Gopher_Proxy_Server` varchar(255) DEFAULT NULL,
-  `mpa_IPv4_ARPResolvedIPAddress` varchar(255) NULL,
-  `mpa_IPv4_ARPResolvedHardwareAddress` varchar(255) NULL,
+  `mpa_IPv4_ARPResolvedIPAddress` varchar(255) DEFAULT NULL,
+  `mpa_IPv4_ARPResolvedHardwareAddress` varchar(255) DEFAULT NULL,
   `mpa_DHCP_Service_Order` varchar(255) DEFAULT NULL,
   `mpa_Proxies_BSD_Device_Name` varchar(255) DEFAULT NULL,
+  `mpa_1_puck` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
-  KEY `idx_cuuid` (`cuuid`)
+  KEY `idx_cuuid` (`cuuid`) COMMENT '(null)'
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -1391,21 +1674,22 @@ DROP TABLE IF EXISTS `mpi_SPSystemOverview`;
 CREATE TABLE `mpi_SPSystemOverview` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_Name` varchar(255) NULL,
-  `mpa_System_Version` varchar(255) NULL,
-  `mpa_Kernel_Version` varchar(255) NULL,
-  `mpa_Boot_Volume` varchar(255) NULL,
-  `mpa_Boot_Mode` varchar(255) NULL,
-  `mpa_Computer_Name` varchar(255) NULL,
-  `mpa_User_Name` varchar(255) NULL,
-  `mpa_Time_since_boot` varchar(255) NULL,
-  `mpa_Secure_Virtual_Memory` varchar(255) NULL,
-  `mpa_64-bit_Kernel_and_Extensions` varchar(255) NULL,
+  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_Name` varchar(255) DEFAULT NULL,
+  `mpa_System_Version` varchar(255) DEFAULT NULL,
+  `mpa_Kernel_Version` varchar(255) DEFAULT NULL,
+  `mpa_Boot_Volume` varchar(255) DEFAULT NULL,
+  `mpa_Boot_Mode` varchar(255) DEFAULT NULL,
+  `mpa_Computer_Name` varchar(255) DEFAULT NULL,
+  `mpa_User_Name` varchar(255) DEFAULT NULL,
+  `mpa_Time_since_boot` varchar(255) DEFAULT NULL,
+  `mpa_Secure_Virtual_Memory` varchar(255) DEFAULT NULL,
+  `mpa_64-bit_Kernel_and_Extensions` varchar(255) DEFAULT NULL,
   `mpa_Server_Configuration` varchar(255) DEFAULT NULL,
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_64bit_kernel_and_extensions` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
-  UNIQUE KEY `idx_cuuid` (`cuuid`)
+  UNIQUE KEY `idx_cuuid` (`cuuid`) COMMENT '(null)'
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -1415,20 +1699,20 @@ DROP TABLE IF EXISTS `mpi_Users`;
 CREATE TABLE `mpi_Users` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_FullName` varchar(255) NULL,
-  `mpa_OriginalNodeName` varchar(255) NULL,
-  `mpa_UserID` varchar(255) NULL,
-  `mpa_AuthenticationAuthority` varchar(255) NULL,
-  `mpa_HomeDir` varchar(255) NULL,
-  `mpa_UserShell` varchar(255) NULL,
-  `mpa_UserName` varchar(255) NULL,
-  `mpa_RecordType` varchar(255) NULL,
-  `mpa_GroupID` varchar(255) NULL,
-  `mpa_MetaNodeLocation` varchar(255) NULL,
+  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_FullName` varchar(255) DEFAULT NULL,
+  `mpa_OriginalNodeName` varchar(255) DEFAULT NULL,
+  `mpa_UserID` varchar(255) DEFAULT NULL,
+  `mpa_AuthenticationAuthority` varchar(255) DEFAULT NULL,
+  `mpa_HomeDir` varchar(255) DEFAULT NULL,
+  `mpa_UserShell` varchar(255) DEFAULT NULL,
+  `mpa_UserName` varchar(255) DEFAULT NULL,
+  `mpa_RecordType` varchar(255) DEFAULT NULL,
+  `mpa_GroupID` varchar(255) DEFAULT NULL,
+  `mpa_MetaNodeLocation` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=28440 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `profiles`
@@ -1579,3 +1863,6 @@ CREATE TABLE `ws_log_jobs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+

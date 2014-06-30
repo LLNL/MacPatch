@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8FC41315192571FA00BB394F /* AppLaunchObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC41314192571FA00BB394F /* AppLaunchObject.m */; };
 		8FD8904B16DFE84600A870A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8904A16DFE84600A870A3 /* Cocoa.framework */; };
 		8FD8905516DFE84600A870A3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8905316DFE84600A870A3 /* InfoPlist.strings */; };
 		8FD8905716DFE84600A870A3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8905616DFE84600A870A3 /* main.m */; };
@@ -35,6 +36,8 @@
 
 /* Begin PBXFileReference section */
 		8FA9ADFC177225950055506B /* MPWorkerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPWorkerProtocol.h; sourceTree = "<group>"; };
+		8FC41313192571FA00BB394F /* AppLaunchObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppLaunchObject.h; sourceTree = "<group>"; };
+		8FC41314192571FA00BB394F /* AppLaunchObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppLaunchObject.m; sourceTree = "<group>"; };
 		8FD8904716DFE84600A870A3 /* MPClientStatus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPClientStatus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD8904A16DFE84600A870A3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8FD8904D16DFE84600A870A3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -147,6 +150,8 @@
 				8FD8906E16DFE8B200A870A3 /* MPClientStatusAppDelegate.m */,
 				8FD8906F16DFE8B200A870A3 /* MPAppUsage.h */,
 				8FD8907016DFE8B200A870A3 /* MPAppUsage.m */,
+				8FC41313192571FA00BB394F /* AppLaunchObject.h */,
+				8FC41314192571FA00BB394F /* AppLaunchObject.m */,
 				8FA9ADFC177225950055506B /* MPWorkerProtocol.h */,
 				8FD8909016DFE9B900A870A3 /* FMDB */,
 				8FD8907316DFE8BE00A870A3 /* Resources */,
@@ -265,6 +270,7 @@
 				8FD8907216DFE8B200A870A3 /* MPAppUsage.m in Sources */,
 				8FD8909716DFE9CE00A870A3 /* FMDatabase.m in Sources */,
 				8FD8909816DFE9CE00A870A3 /* FMDatabaseAdditions.m in Sources */,
+				8FC41315192571FA00BB394F /* AppLaunchObject.m in Sources */,
 				8FD8909916DFE9CE00A870A3 /* FMResultSet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -351,6 +357,7 @@
 		8FD8906516DFE84600A870A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPClientStatus/MPClientStatus-Prefix.pch";
@@ -365,6 +372,7 @@
 		8FD8906616DFE84600A870A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPClientStatus/MPClientStatus-Prefix.pch";

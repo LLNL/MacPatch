@@ -5,7 +5,7 @@
 
 BASEDIR="/Library/MacPatch/Server/conf/ssl"
 # Feel free to change C, ST, L
-CERTSUB="/C=US/ST=California/L=Livermore/O=MacPatch/OU=Clients"
+CERTSUB="/C=US/ST=California/L=Livermore/O=MacPatch/OU=Master"
 ADEVCUUID=""
 AHOSTNAME=""
 APASSWORD=""

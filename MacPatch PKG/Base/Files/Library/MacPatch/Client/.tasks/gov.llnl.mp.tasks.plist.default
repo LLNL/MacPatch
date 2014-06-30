@@ -244,6 +244,96 @@
 			<key>startdate</key>
 			<string>2011-01-01</string>
 		</dict>
+		<dict>
+			<key>active</key>
+			<string>1</string>
+			<key>cmd</key>
+			<string>kMPSrvList</string>
+			<key>cmdalt</key>
+			<string>0</string>
+			<key>description</key>
+			<string>Scan and Update Server List</string>
+			<key>enddate</key>
+			<string>3000-01-01</string>
+			<key>id</key>
+			<string>9</string>
+			<key>idrev</key>
+			<string>1</string>
+			<key>idsig</key>
+			<string>0</string>
+			<key>interval</key>
+			<string>EVERYRAND@1800</string>
+			<key>mode</key>
+			<string>0</string>
+			<key>name</key>
+			<string>Scan and Update Server List</string>
+			<key>parent</key>
+			<string>0</string>
+			<key>scope</key>
+			<string>Global</string>
+			<key>startdate</key>
+			<string>2011-01-01</string>
+		</dict>
+		<dict>
+			<key>active</key>
+			<string>1</string>
+			<key>cmd</key>
+			<string>kMPProfiles</string>
+			<key>cmdalt</key>
+			<string>0</string>
+			<key>description</key>
+			<string>Scan and Install Profiles</string>
+			<key>enddate</key>
+			<string>3000-01-01</string>
+			<key>id</key>
+			<string>10</string>
+			<key>idrev</key>
+			<string>1</string>
+			<key>idsig</key>
+			<string>0</string>
+			<key>interval</key>
+			<string>EVERYRAND@3600</string>
+			<key>mode</key>
+			<string>0</string>
+			<key>name</key>
+			<string>Scan and Install Profiles</string>
+			<key>parent</key>
+			<string>0</string>
+			<key>scope</key>
+			<string>Global</string>
+			<key>startdate</key>
+			<string>2011-01-01</string>
+		</dict>
+		<dict>
+			<key>active</key>
+			<string>1</string>
+			<key>cmd</key>
+			<string>kMPWSPost</string>
+			<key>cmdalt</key>
+			<string>0</string>
+			<key>description</key>
+			<string>Re-Post failed post attempts</string>
+			<key>enddate</key>
+			<string>3000-01-01</string>
+			<key>id</key>
+			<string>11</string>
+			<key>idrev</key>
+			<string>1</string>
+			<key>idsig</key>
+			<string>0</string>
+			<key>interval</key>
+			<string>EVERYRAND@7200</string>
+			<key>mode</key>
+			<string>0</string>
+			<key>name</key>
+			<string>Re-Post failed post attempts</string>
+			<key>parent</key>
+			<string>0</string>
+			<key>scope</key>
+			<string>Global</string>
+			<key>startdate</key>
+			<string>2011-01-01</string>
+		</dict>
 	</array>
 </dict>
 </plist>

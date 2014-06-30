@@ -39,7 +39,7 @@
 
 @implementation MPProxySyncController
 
-@synthesize l_defaults;
+@synthesize defaults;
 @synthesize remotePatchContent;
 @synthesize numberOfPatchesSyncronnized;
 @synthesize logResult;
@@ -48,8 +48,8 @@
 {
     self = [super init];
     if (self) {
-        [self setL_defaults:aDictionary];
-        prefs = [[MPDefaults alloc] initWithDictionary:l_defaults];
+        [self setDefaults:aDictionary];
+        prefs = [[MPDefaults alloc] initWithDictionary:self.defaults];
         numberOfPatchesSyncronnized = 0;
 		[self setLogResult:@"***** MPProxySync started *****\n"];
     }
@@ -62,11 +62,15 @@
     qlinfo(@"Syncronize patch content...");
     if ([self createBaseContentDirs] == NO)
         return;
-
-    NSString *_url = @"/MPDistribution.cfc?method=getDistributionContentAsJSON";
+    NSError *error = nil;
     NSArray *remoteContent;
-    remoteContent = [self getRemotePatchContentForURL:_url];
-    
+    remoteContent = [self getRemotePatchContentForMethod:@"getDistributionContentAsJSON" error:&error];
+    if (error) {
+        qlerror(@"%@",error.localizedDescription);
+        qlerror(@"Patch content will not be syncronized.");
+        return;
+    }
+
     int l_noOfPatches = 0;
     l_noOfPatches = (int)[remoteContent count] + 1;
     [self setLogResult:[NSString stringWithFormat:@"%@\n%d patches to syncronize.",logResult, l_noOfPatches]];
@@ -79,7 +83,11 @@
     qlinfo(@"%d were syncronized.",numberOfPatchesSyncronnized);
     [self setLogResult:[NSString stringWithFormat:@"%@\nSyncronize complete.",logResult]];
     qlinfo(@"Syncronize complete.");
-	[self postSyncResults];
+    error = nil;
+	[self postSyncResults:&error];
+    if (error) {
+        qlerror(@"%@",error.localizedDescription);
+    }
 }
 
 - (void)syncSWContent
@@ -88,9 +96,14 @@
     if ([self createBaseContentDirs] == NO)
         return;
 
-    NSString *_url = @"/MPDistribution.cfc?method=getSWDistributionContentAsJSON";
+    NSError *error = nil;
     NSArray *remoteContent;
-    remoteContent = [self getRemotePatchContentForURL:_url];
+    remoteContent = [self getRemotePatchContentForMethod:@"getSWDistributionContentAsJSON" error:&error];
+    if (error) {
+        qlerror(@"%@",error.localizedDescription);
+        qlerror(@"Software content will not be syncronized.");
+        return;
+    }
 
     int l_noOfPatches = 0;
     l_noOfPatches = (int)[remoteContent count] + 1;
@@ -104,7 +117,10 @@
     qlinfo(@"%d were syncronized.",numberOfPatchesSyncronnized);
     [self setLogResult:[NSString stringWithFormat:@"%@\nSyncronize complete.",logResult]];
     qlinfo(@"Syncronize complete.");
-	[self postSyncResults];
+	[self postSyncResults:&error];
+    if (error) {
+        qlerror(@"%@",error.localizedDescription);
+    }
 }
 
 - (BOOL)createBaseContentDirs
@@ -152,6 +168,84 @@
     return result;    
 }
 
+- (NSData *)requestWithMethodAndParams:(NSString *)aMethod params:(NSDictionary *)aParams error:(NSError **)err
+{
+    MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
+
+    NSError *error = nil;
+    NSURLResponse *response;
+    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArray:[mpNetConfig servers]];
+    [req setApiURI:@"/MPDistribution.cfc"];
+    NSURLRequest *urlReq = [req buildGetRequestForWebServiceMethod:aMethod formData:aParams error:&error];
+    error = nil;
+    NSData *res = [req sendSynchronousRequest:urlReq returningResponse:&response error:&error];
+
+    if (error)
+    {
+		if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+
+    return res;
+}
+
+- (NSArray *)getRemotePatchContentForMethod:(NSString *)method error:(NSError **)err
+{
+    // Request
+    NSError *error = nil;
+    NSData *res = [self requestWithMethodAndParams:@"getDistributionContentAsJSON" params:nil error:&error];
+    if (error)
+    {
+		if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+
+    // Parse Main JSON Result
+    // MPJsonResult does all of the error checking on the result
+    MPJsonResult *jres = [[MPJsonResult alloc] init];
+    [jres setJsonData:res];
+    error = nil;
+    id result = [jres returnJsonResult:&error];
+    qldebug(@"JSON Result: %@",result);
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+
+    NSDictionary *jResult;
+    error = nil;
+    jResult = [jres deserializeJSONString:[result objectForKey:@"result"] error:&error];
+    if (error) {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+
+    if ([jResult objectForKey:@"Content"]) {
+        return [NSArray arrayWithArray:[jResult objectForKey:@"Content"]];
+    } else {
+        qlerror(@"Error, Content object not found.");
+        return nil;
+    }
+}
+
+/*
 - (NSArray *)getRemotePatchContentForURL:(NSString *)aURL
 {
     NSArray *result = nil;
@@ -184,47 +278,47 @@
     }
 
     result = [NSArray arrayWithArray:[jsonResult objectForKey:@"Content"]];
+
     return result;
 }
+*/
 
-- (BOOL)postSyncResults
+- (BOOL)postSyncResults:(NSError **)err
 {
-    serverConnection = [[MPServerConnection alloc] initWithDefaults:[prefs defaults]];
-    asiNet = [[MPASINet alloc] initWithServerConnection:serverConnection];
-
-    NSString *_url = [@"/MPDistribution.cfc?method=postSyncResultsJSON&logType=0&logData=" stringByAppendingString:[logResult urlEncode]];
-
-    qldebug(@"[logResult]: %@",logResult);
-    qldebug(@"[postSyncResults]: %@",_url);
-
-    NSDictionary    *jsonResult = nil;
-    NSString        *requestData;
-    NSError         *error = nil;
-    requestData = [asiNet synchronousRequestForURL:_url error:&error];
-
-    if (error) {
-		qlerror(@"%@",[error localizedDescription]);
-		return NO;
-	}
-
-    NSDictionary *deserializedData;
-    @try {
-        deserializedData = [requestData objectFromJSONString];
-        jsonResult = [[deserializedData objectForKey:@"result"] objectFromJSONString];
-        if ([[jsonResult objectForKey:@"errorno"] intValue] == 0)
-        {
-            return YES;
+    // Request
+    NSError *error = nil;
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    [params setObject:@"0" forKey:@"logType"];
+    [params setObject:[logResult urlEncode] forKey:@"logData"];
+    NSData *res = [self requestWithMethodAndParams:@"postSyncResultsJSON" params:(NSDictionary *)params error:&error];
+    if (error)
+    {
+		if (err != NULL) {
+            *err = error;
         } else {
-            qlerror(@"Error[%@]: %@",[jsonResult objectForKey:@"errorno"],[jsonResult objectForKey:@"errormsg"]);
-            return NO;
-		}
-    }
-    @catch (NSException *exception) {
-        qlerror(@"%@",exception);
+            qlerror(@"%@",error.localizedDescription);
+        }
         return NO;
     }
 
-    return NO;
+    // Parse Main JSON Result
+    // MPJsonResult does all of the error checking on the result
+    MPJsonResult *jres = [[MPJsonResult alloc] init];
+    [jres setJsonData:res];
+    error = nil;
+    id result = [jres returnJsonResult:&error];
+    qldebug(@"JSON Result: %@",result);
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return NO;
+    }
+
+    return YES;
 }
 
 - (BOOL)downloadPatchContent:(NSArray *)aContent
@@ -305,8 +399,7 @@
 
 - (NSString *)downloadPatch:(NSString *)aURL error:(NSError **)err
 {
-    *err = nil;
-    NSString *theURL = [NSString stringWithFormat:@"http://%@/mp-content%@",[l_defaults objectForKey:@"MPServerAddress"],[aURL urlEncode]];
+    NSString *theURL = [NSString stringWithFormat:@"http://%@/mp-content%@",[self.defaults objectForKey:@"MPServerAddress"],[aURL urlEncode]];
     
     qlinfo(@"Download: %@",theURL);
 	NSString *tempFilePath = [self createTempDirFromURL:theURL];
@@ -328,14 +421,20 @@
 		res = curl_easy_perform( curl );
 		if (res != 0)
 		{
-			qlerror(@"Error[%d], trying to download file.",res);
-			*err = [NSError errorWithDomain:@"libCurl" code:res userInfo:nil];
+            if (err != NULL) {
+                *err = [NSError errorWithDomain:@"libCurl" code:res userInfo:nil];
+            } else {
+                qlerror(@"Error[%d], trying to download file.",res);
+            }
 		}
 	} else {
-		qlerror(@"Error, trying to init curl lib.");
-		*err = [NSError errorWithDomain:@"libCurl" code:1 userInfo:nil];
+        if (err != NULL) {
+            *err = [NSError errorWithDomain:@"libCurl" code:1 userInfo:nil];
+        } else {
+            qlerror(@"Error, trying to init curl lib.");
+        }
 	}
-	
+
 	// Clean up curl handle and file handle
 	curl_easy_cleanup( curl );
 	fclose(dlFile);

@@ -26,7 +26,6 @@
 #import <Cocoa/Cocoa.h>
 
 @class MPAgent;
-@class MPJson;
 
 @interface Profiles : NSOperation
 {
@@ -37,7 +36,6 @@
 
 	MPAgent *si;
 	NSFileManager *fm;
-	MPJson *mpj;
 }
 
 @property (nonatomic, readonly) BOOL isExecuting;

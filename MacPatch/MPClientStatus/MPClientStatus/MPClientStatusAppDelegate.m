@@ -28,13 +28,14 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "MPAppUsage.h"
 #import "MPWorkerProtocol.h"
+#import "AppLaunchObject.h"
 
 // Private Methods
 @interface MPClientStatusAppDelegate ()
 
 // Helper
 - (void)connect;
-- (void)connect:(NSError **)err;
+- (int)connect:(NSError **)err;
 - (void)cleanup;
 - (void)connectionDown:(NSNotification *)notification;
 
@@ -73,16 +74,12 @@
 
 #pragma mark UI Events
 -(void)awakeFromNib
-{	
-    // Create Server Conn Object
-    mpServerConnection = [[MPServerConnection alloc] initWithNilServerObj];
-    
+{
 	// Turn off Scheduled Software Updates
 	[self setAsusAlertOpen:NO];
-	//[self turnOffSoftwareUpdateSchedule];
     [self disableASUSSchedule];
 	
-	statusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain];
+	statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
 	[statusItem setMenu:statusMenu];
 	[statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
 	[statusItem setHighlightMode:YES];
@@ -118,6 +115,8 @@
 	[dc addObserver:self selector:@selector(notificationReceived:) name:NSWorkspaceWillLaunchApplicationNotification object:[NSWorkspace sharedWorkspace]];
 	// Setup App monitoring
 	mpAppUsage = [[MPAppUsage alloc] init];
+    [mpAppUsage cleanDB]; // Removes Entries Where App Version is NULL
+
 	[dc addObserver:self selector:@selector(appLaunchNotificationReceived:) name:NSWorkspaceWillLaunchApplicationNotification object:[NSWorkspace sharedWorkspace]];
     
 	// Start Last CheckIn Thread, update every 10 min
@@ -137,17 +136,6 @@
 	
 }
 
--(void)dealloc
-{
-	[defaults release];
-	[asus release];
-	[mpAppUsage release];
-	[aboutWindow autorelease];
-    [appIcon autorelease];
-    [appName autorelease];
-    [appVersion autorelease];
-	[super dealloc];
-}
 
 #pragma mark -
 #pragma mark MPWorker
@@ -160,7 +148,7 @@
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
-        proxy = [[connection rootProxy] retain];
+        proxy = [connection rootProxy];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
 		
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
@@ -176,7 +164,7 @@
     }
 }
 
-- (void)connect:(NSError **)err
+- (int)connect:(NSError **)err
 {
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
@@ -185,7 +173,7 @@
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
-        proxy = [[connection rootProxy] retain];
+        proxy = [connection rootProxy];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
 		
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
@@ -202,6 +190,8 @@
         logit(lcl_vError,@"Could not connect to MPHelper: %@", e);
         [self cleanup];
     }
+
+    return 0;
 }
 
 - (void)cleanup
@@ -210,7 +200,6 @@
     {
         NSConnection *connection = [proxy connectionForProxy];
         [connection invalidate];
-        [proxy release];
         proxy = nil;
     }
 	
@@ -259,8 +248,6 @@ done:
 	[clientInfoTableView reloadData];
 	
 	NSDictionary *mpVerDict = [NSDictionary dictionaryWithContentsOfFile:AGENT_VER_PLIST];
-	MPNSTask *mpm = [[MPNSTask alloc] init];
-
     logit(lcl_vDebug,@"mpVerDict: %@", mpVerDict);
 	
 	NSString *verInfo = [NSString stringWithFormat:@"Version: %@\nBuild: %@\nClient ID: %@",
@@ -280,7 +267,6 @@ done:
 		[dict setObject:[[mpSwuadDict allKeys] objectAtIndex:i] forKey:@"property"];
 		[dict setObject:[[mpSwuadDict allValues] objectAtIndex:i] forKey:@"value"];
 		[data addObject:dict];
-		[dict release];
 		dict = nil;
 	}
 	
@@ -293,8 +279,6 @@ done:
 	[clientInfoWindow center];
 	[NSApp arrangeInFront:sender];
 	[NSApp activateIgnoringOtherApps:YES];
-	[data release];
-	[mpm release];
 }
 
 - (IBAction)closeClientInfoWindow:(id)sender
@@ -321,26 +305,25 @@ done:
 
 - (void)performClientCheckInThread
 {
-	NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
 	
-	BOOL didRun = NO;
-	didRun = [self performClientCheckInMethod];
-	
-	NSAlert *alert = [[NSAlert alloc] init];
-	[alert addButtonWithTitle:@"OK"];
-	if (didRun == NO) {
-		[alert setMessageText:@"Error with check-in"];
-		[alert setInformativeText:@"There was a problem checking in with the server. Please review the client status logs for cause."];
-		[alert setAlertStyle:NSCriticalAlertStyle];
-	} else {
-		[alert setMessageText:@"Client check-in"];
-		[alert setInformativeText:@"Client check-in was successful."];
-		[alert setAlertStyle:NSInformationalAlertStyle];
+		BOOL didRun = NO;
+		didRun = [self performClientCheckInMethod];
+		
+		NSAlert *alert = [[NSAlert alloc] init];
+		[alert addButtonWithTitle:@"OK"];
+		if (didRun == NO) {
+			[alert setMessageText:@"Error with check-in"];
+			[alert setInformativeText:@"There was a problem checking in with the server. Please review the client status logs for cause."];
+			[alert setAlertStyle:NSCriticalAlertStyle];
+		} else {
+			[alert setMessageText:@"Client check-in"];
+			[alert setInformativeText:@"Client check-in was successful."];
+			[alert setAlertStyle:NSInformationalAlertStyle];
+		}
+		
+		[alert runModal];
 	}
-	
-	[alert runModal];
-	[alert release];
-	[aPool drain];
 }
 
 // Performs a client checkin 
@@ -349,13 +332,13 @@ done:
 	int y = 0;
 	
 	NSString *_cuuid = [MPSystemInfo clientUUID];
-	NSDictionary *osDict = [[[NSDictionary alloc] initWithDictionary:[self getOSInfo]] autorelease];
+	NSDictionary *osDict = [[NSDictionary alloc] initWithDictionary:[self getOSInfo]];
 	
     NSDictionary *consoleUserDict = [MPSystemInfo consoleUserData];
     NSDictionary *hostNameDict = [MPSystemInfo hostAndComputerNames];
 	NSDictionary *clientVer = [NSDictionary dictionaryWithContentsOfFile:AGENT_VER_PLIST];
     
-	NSMutableDictionary *agentDict = [[[NSMutableDictionary alloc] init] autorelease];
+	NSMutableDictionary *agentDict = [[NSMutableDictionary alloc] init];
 	[agentDict setObject:_cuuid forKey:@"cuuid"];
 	[agentDict setObject:[self getHostSerialNumber] forKey:@"serialno" defaultObject:@"NA"];
 	[agentDict setObject:[hostNameDict objectForKey:@"localHostName"] forKey:@"hostname" defaultObject:@"localhost"];
@@ -373,12 +356,10 @@ done:
 	}
     
 
-	MPJson *mpj = nil;
-    [mpServerConnection refreshServerObject];
-	mpj = [[MPJson alloc] initWithServerConnection:mpServerConnection cuuid:_cuuid];
 	NSError *err = nil;
-	BOOL postResult; 
-	postResult = [mpj postJSONDataForMethod:@"client_checkin_base" data:agentDict error:&err];
+	BOOL postResult;
+    MPWebServices *mpws = [[MPWebServices alloc] init];
+	postResult = [mpws postJSONDataForMethod:@"client_checkin_base" data:agentDict error:&err];
 	if (err) {
 		logit(lcl_vError,@"%@",[err localizedDescription]);
 		y++;
@@ -396,7 +377,7 @@ done:
 	[mpDefaults setObject:_cuuid forKey:@"cuuid"];
     
 	err = nil;
-	postResult = [mpj postJSONDataForMethod:@"client_checkin_plist" data:mpDefaults error:&err];
+	postResult = [mpws postJSONDataForMethod:@"client_checkin_plist" data:mpDefaults error:&err];
 	if (err) {
 		logit(lcl_vError,@"%@",[err localizedDescription]);
 	}	
@@ -406,8 +387,7 @@ done:
 		logit(lcl_vError,@"Running client config checkin, returned false.");
 		y++;
 	}
-    
-	[mpj release];
+
 	[self showLastCheckInMethod];
 	if (y==0) {
 		return YES;
@@ -464,10 +444,12 @@ done:
 	if (serialAsCFString == NULL) {
 		result = @"NA";
 	} else {
-		result = [NSString stringWithFormat:@"%@",(NSString *)serialAsCFString];
+		result = [NSString stringWithFormat:@"%@",(__bridge NSString *)serialAsCFString];
 	}
-	
-	CFRelease(serialAsCFString);
+    
+	if(serialAsCFString) {
+        CFRelease(serialAsCFString);
+    }
 	return result;
 }
 
@@ -479,76 +461,39 @@ done:
 
 - (void)showLastCheckInThread
 {
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
-	// Run Once, to show current status
-	[self showLastCheckInMethod];
-	// 600.0 = 10 Minutes
-	NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
-											 target:self 
-										   selector:@selector(showLastCheckInMethod) 
-										   userInfo:nil 
-											repeats:YES];
-	
-	
-	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];  
-    [[NSRunLoop currentRunLoop] run];
-	
-	[pool drain];
+	@autoreleasepool
+    {
+        // Run Once, to show current status
+		[self showLastCheckInMethod];
+		// 600.0 = 10 Minutes
+		NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
+												 target:self 
+											   selector:@selector(showLastCheckInMethod) 
+											   userInfo:nil 
+												repeats:YES];
+		
+		
+		[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];  
+        [[NSRunLoop currentRunLoop] run];
+	}
 }
 
 - (void)showLastCheckInMethod
 {
-    [mpServerConnection refreshServerObject];
+    @autoreleasepool
+    {
+        NSError *wsErr = nil;
+        MPWebServices *mpws = [[MPWebServices alloc] init];
+        NSDictionary *result = [mpws GetLastCheckIn:&wsErr];
+        if (wsErr) {
+            logit(lcl_vError,@"Web service returned the following error (%d).%@",(int)wsErr.code,wsErr.localizedDescription);
+            return;
+        }
 
-	NSString *_hostString = mpServerConnection.MP_JSON_URL;
-	NSDictionary *_dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"json",@"getLastCheckIn",[MPSystemInfo clientUUID],nil]
-													  forKeys:[NSArray arrayWithObjects:@"dataType",@"method",@"clientID",nil]];
-	NSURL *_url = [NSURL URLWithString:[NSString stringWithFormat:@"%@?%@",_hostString,[_dict urlEncodedString]]];
-	logit(lcl_vDebug,@"Requesting URL: %@",_url);
-    
-	if (![self queue]) {
-		[self setQueue:[[[NSOperationQueue alloc] init] autorelease]];
-	}
-	
-	ASIHTTPRequest *_request = [ASIHTTPRequest requestWithURL:_url];
-	[_request setDelegate:self];
-	[_request setTimeOutSeconds:30];
-	[_request setValidatesSecureCertificate:NO];
-	[_request setDidFinishSelector:@selector(lastCheckInDone:)];
-	[_request setDidFailSelector:@selector(lastCheckInFailed:)];
-	[[self queue] addOperation:_request]; //queue is an NSOperationQueue
-}
-// Notifications
-- (void)lastCheckInDone:(ASIHTTPRequest *)request
-{
-	NSString *response = [request responseString];
-	NSError *err = nil;
-	NSDictionary *_dict = [response objectFromJSONStringWithParseOptions:JKParseOptionNone error:&err];
-	if(err) {
-		logit(lcl_vError,@"%@",[err description]);
-		return;
-	}
-	if ([[_dict objectForKey:@"errorno"] intValue] == 0) {
-		err = nil;
-		NSDictionary *_result = [[_dict objectForKey:@"result"] objectFromJSONStringWithParseOptions:JKParseOptionNone error:&err];
-		if(err) {
-			logit(lcl_vError,@"%@",[err description]);
-			return;
+        if ([result objectForKey:@"mdate"]) {
+			[checkInStatusMenuItem setTitle:[NSString stringWithFormat:@"Last Checkin: %@",[result objectForKey:@"mdate"]]];
 		}
-		logit(lcl_vDebug,@"%@",_result);
-		if ([_result objectForKey:@"mdate"]) {
-			[checkInStatusMenuItem setTitle:[NSString stringWithFormat:@"Last Checkin: %@",[_result objectForKey:@"mdate"]]];
-		}	
-	} else {
-		logit(lcl_vError,@"Web service returned the following error (%d).%@",[[_dict objectForKey:@"errorno"] intValue],[_dict objectForKey:@"errormsg"]);
-	}
-    
-}
-
-- (void)lastCheckInFailed:(ASIHTTPRequest *)request
-{
-	NSError *error = [request error];
-	logit(lcl_vError,@"%@",[error description]);
+    }
 }
 
 #pragma mark Show Patch Status
@@ -559,118 +504,78 @@ done:
 
 - (void)getClientPatchStatusThread
 {
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
+	@autoreleasepool {
 	// Run Once, to show current status
-	[self getClientPatchStatusMethod];
-	// 1800.0
+		[self getClientPatchStatusMethod];
+		// 1800.0
     // 600 = 10min
-	NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
-											 target:self 
-										   selector:@selector(getClientPatchStatusMethod) 
-										   userInfo:nil 
-											repeats:YES];
-	
-	
-	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];  
+		NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
+												 target:self 
+											   selector:@selector(getClientPatchStatusMethod) 
+											   userInfo:nil 
+												repeats:YES];
+		
+		
+		[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];  
     [[NSRunLoop currentRunLoop] run];
 	
-	[pool drain];
+	}
 }
 
 - (void)getClientPatchStatusMethod
 {
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    
-	[mpServerConnection refreshServerObject];
-	NSString *_hostString = mpServerConnection.MP_JSON_URL;
-	NSDictionary *_dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"json",@"getClientPatchStatusCount",[MPSystemInfo clientUUID],nil]
-													  forKeys:[NSArray arrayWithObjects:@"dataType",@"method",@"clientID",nil]];
-	NSURL *_url = [NSURL URLWithString:[NSString stringWithFormat:@"%@?%@",_hostString,[_dict urlEncodedString]]];
-	logit(lcl_vDebug,@"Requesting URL: %@",_url);
-	
-	if (![self queue]) {
-		[self setQueue:[[[NSOperationQueue alloc] init] autorelease]];
-	}
-	
-	ASIHTTPRequest *_request = [ASIHTTPRequest requestWithURL:_url];
-	[_request setDelegate:self];
-	[_request setTimeOutSeconds:30];
-	[_request setValidatesSecureCertificate:NO];
-	[_request setDidFinishSelector:@selector(clientPatchStatusDone:)];
-	[_request setDidFailSelector:@selector(clientPatchStatusFailed:)];
-	[[self queue] addOperation:_request]; //queue is an NSOperationQueue
-	[pool drain];
-}
+    @autoreleasepool
+    {
+        NSError *wsErr = nil;
+        MPWebServices *mpws = [[MPWebServices alloc] init];
+        NSDictionary *result = [mpws GetClientPatchStatusCount:&wsErr];
+        if (wsErr) {
+            logit(lcl_vError,@"Web service returned the following error (%d).%@",(int)wsErr.code,wsErr.localizedDescription);
+            return;
+        }
 
-// Notifications
-- (void)clientPatchStatusDone:(ASIHTTPRequest *)request
-{
-	NSString *response = [request responseString];
-	NSError *err = nil;
-	NSDictionary *_dict = [response objectFromJSONStringWithParseOptions:JKParseOptionNone error:&err];
-    
-	if(err) {
-		logit(lcl_vError,@"%@",[err description]);
-		return;
-	}
-	if ([[_dict objectForKey:@"errorno"] intValue] == 0) {
-		err = nil;
-		NSDictionary *_result = [[_dict objectForKey:@"result"] objectFromJSONStringWithParseOptions:JKParseOptionNone error:&err];
-		if(err) {
-			logit(lcl_vError,@"%@",[err description]);
-			return;
-		}
-		logit(lcl_vDebug,@"%@",_result);
-		if ([_result objectForKey:@"totalPatchesNeeded"]) {
-			
-			NSString *_patchesNeededString = [NSString stringWithFormat:@"Patches needed: %@",[_result objectForKey:@"totalPatchesNeeded"]];
-			
-			if ([[_result objectForKey:@"totalPatchesNeeded"] intValue] == 0) {
+        if ([result objectForKey:@"totalPatchesNeeded"])
+        {
+            NSString *_patchesNeededString = [NSString stringWithFormat:@"Patches needed: %@",[result objectForKey:@"totalPatchesNeeded"]];
+
+			if ([[result objectForKey:@"totalPatchesNeeded"] intValue] == 0) {
 				[statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
 			} else {
 				[statusItem setImage:[NSImage imageNamed:@"mpmenubar_alert2.png"]];
 			}
-            
-			[checkPatchStatusMenuItem setTitle:_patchesNeededString];
-		}	
-	} else {
-		logit(lcl_vError,@"Web service returned the following error (%d).%@",[[_dict objectForKey:@"errorno"] intValue],[_dict objectForKey:@"errormsg"]);
-	}
-}
 
-- (void)clientPatchStatusFailed:(ASIHTTPRequest *)request
-{
-	NSError *error = [request error];
-	logit(lcl_vError,@"%@",[error description]);
+			[checkPatchStatusMenuItem setTitle:_patchesNeededString];
+        }
+    }
 }
 
 - (void)updatePatchStatusThread 
 {
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];  
-	for (;;) {
-		//how do I pass the new value out to the updateLabel method, or reference aMyClassInstance.myVariable?
-		[self performSelectorOnMainThread:@selector(updatePatchStatusMethod) withObject:nil waitUntilDone:NO]; 
-		//the sleeping of the thread is absolutely mandatory and must be worked around.  The whole point of using NSThread is so I can have sleeps
-		[NSThread sleepForTimeInterval:2];
+	@autoreleasepool {  
+		for (;;) {
+			//how do I pass the new value out to the updateLabel method, or reference aMyClassInstance.myVariable?
+			[self performSelectorOnMainThread:@selector(updatePatchStatusMethod) withObject:nil waitUntilDone:NO]; 
+			//the sleeping of the thread is absolutely mandatory and must be worked around.  The whole point of using NSThread is so I can have sleeps
+			[NSThread sleepForTimeInterval:2];
+		}
 	}
-	[pool drain];
 }
 
 - (void)updatePatchStatusMethod
 {
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
-	NSFileManager *fileManager = [NSFileManager defaultManager];
+	@autoreleasepool {
+		NSFileManager *fileManager = [NSFileManager defaultManager];
     
-	NSString *l_file;
-	l_file = [NSString stringWithString:[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath]];
-	
-	if ([fileManager fileExistsAtPath: l_file] == YES)
-	{
-		logit(lcl_vDebug,@"Found file at %@",l_file);
-		[self performSelectorInBackground:@selector(getClientPatchStatusMethod) withObject:nil];
-		[fileManager removeItemAtPath:l_file error:NULL];
-	} 
-	[pool drain];
+		NSString *l_file;
+		l_file = [NSString stringWithString:[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath]];
+		
+		if ([fileManager fileExistsAtPath: l_file] == YES)
+		{
+			logit(lcl_vDebug,@"Found file at %@",l_file);
+			[self performSelectorInBackground:@selector(getClientPatchStatusMethod) withObject:nil];
+			[fileManager removeItemAtPath:l_file error:NULL];
+		} 
+	}
 }
 
 - (IBAction)refreshClientStatus:(id)sender
@@ -773,8 +678,12 @@ done:
 	if ([[aNotification userInfo] objectForKey:@"NSApplicationName"]) {
 		@try {
 			NSBundle *b = [NSBundle bundleWithPath:[[aNotification userInfo] objectForKey:@"NSApplicationPath"]];
-			logit(lcl_vDebug,@"Application launched: %@ %@ %@",[[aNotification userInfo] objectForKey:@"NSApplicationName"],[[aNotification userInfo] objectForKey:@"NSApplicationPath"],[[b infoDictionary] objectForKey:@"CFBundleShortVersionString"]);
-			[mpAppUsage insertLaunchDataForApp:[[aNotification userInfo] objectForKey:@"NSApplicationName"] appPath:[[aNotification userInfo] objectForKey:@"NSApplicationPath"] appVersion:[[b infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[aNotification userInfo]];
+            [userInfo setObject:[[b infoDictionary] objectForKey:@"CFBundleShortVersionString"] forKey:@"CFBundleShortVersionString"];
+            AppLaunchObject *alo = [AppLaunchObject appLaunchObjectWithDictionary:userInfo];
+
+			logit(lcl_vDebug,@"Application launched: %@ %@ %@",[alo appName],[alo appPath],[alo appVersion]);
+			[mpAppUsage insertLaunchDataForApp:[alo appName] appPath:[alo appPath] appVersion:[alo appVersion]];
 		}
 		@catch (NSException *exception) {
 			logit(lcl_vError,@"%@",exception);

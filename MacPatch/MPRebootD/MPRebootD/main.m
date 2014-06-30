@@ -35,9 +35,9 @@
 void usage(void);
 
 int main (int argc, char * argv[]) {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     
-    BOOL verboseLogging = NO;
+        BOOL verboseLogging = NO;
 	BOOL echoToConsole = NO;
 	
 	// Setup argument processing
@@ -75,14 +75,14 @@ int main (int argc, char * argv[]) {
 				usage();
 		}
 	}
-    
+        
 	if (optind < argc) {
-        while (optind < argc) {
-            printf ("Invalid argument %s ", argv[optind++]);
+            while (optind < argc) {
+                printf ("Invalid argument %s ", argv[optind++]);
+            }
+            usage();
+            exit(0);
         }
-        usage();
-        exit(0);
-    }
 	NSString *homePath = [@"~/Library/Logs/MPRebootD.log" stringByExpandingTildeInPath];
 	[MPLog setupLogging:homePath level:lcl_vDebug];
 	
@@ -96,14 +96,15 @@ int main (int argc, char * argv[]) {
 		lcl_configure_by_name("*", lcl_vInfo);
 		if (echoToConsole) {
 			[LCLLogFile setMirrorsToStdErr:1];
-        }
+            }
 		logit(lcl_vInfo,@"***** MPRebootD v%s started *****",APPVERSION);
 	}
 	
 	MPRebootController *ac = [[MPRebootController alloc] init];
-    [[NSRunLoop currentRunLoop] run];
+        logit(lcl_vDebug,@"Watching files in %@",[ac watchFiles]);
+        [[NSRunLoop currentRunLoop] run];
 	
-    [pool drain];
+    }
     return 0;
 }
 

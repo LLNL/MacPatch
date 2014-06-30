@@ -57,7 +57,7 @@
 {
 	NSString *result;
 	NSData *l_data = [self decodeBase64WithNewlines:encodedWithNewlines];
-	result = [[[NSString alloc] initWithData:l_data encoding:NSUTF8StringEncoding] autorelease];
+	result = [[NSString alloc] initWithData:l_data encoding:NSUTF8StringEncoding];
 	return result;
 }
 

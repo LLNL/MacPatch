@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# apache        
+#
+# chkconfig: 2345 90 90
+# description: 	Start up the Apache web server.
+
+# Source function library.
+. /etc/init.d/functions
+
+RETVAL=$?
+APACHE_HOME="/Library/MacPatch/Server/Apache2"
+
+case "$1" in
+start)
+	if [ -f $APACHE_HOME/bin/apachectl ]; then
+		echo $"Starting MacPatch Apache"
+		$APACHE_HOME/bin/apachectl start
+	fi
+	;;
+stop)
+	if [ -f $APACHE_HOME/bin/apachectl ]; then
+		echo $"Stopping MacPatch Apache"
+		$APACHE_HOME/bin/apachectl stop
+	fi
+	;;
+graceful)
+	if [ -f $APACHE_HOME/bin/apachectl ]; then
+		echo $"Graceful MacPatch Apache"
+		$APACHE_HOME/bin/apachectl graceful
+	fi
+	;;
+restart)
+	if [ -f $APACHE_HOME/bin/apachectl ]; then
+		echo $"Restarting MacPatch Apache"
+		$APACHE_HOME/bin/apachectl restart
+	fi
+	;;
+*)
+	echo $"Usage: $0 {start|stop|restart|graceful}"
+	exit 1
+	;;
+esac
+
+exit $RETVAL

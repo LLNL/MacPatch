@@ -32,7 +32,7 @@
 @interface MPAgentController ()
 
 @property (nonatomic, readwrite, assign) int errorCode;
-@property (nonatomic, readwrite, retain) NSString *errorMsg;
+@property (nonatomic, readwrite, strong) NSString *errorMsg;
 
 @end
 
@@ -53,10 +53,10 @@
     self = [super init];
     if (self) {
         fm = [NSFileManager defaultManager];
-        mpServerConnection = [[MPServerConnection alloc] init]; 
-        [self set_defaults:mpServerConnection.mpDefaults];
+        MPDefaults *d = [[MPDefaults alloc] init];
+        [self set_defaults:d.defaults];
 		[self set_cuuid:[MPSystemInfo clientUUID]];
-        mpAsus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
+        mpAsus = [[MPAsus alloc] init];
         mpDataMgr = [[MPDataMgr alloc] init];
 		[self setILoadMode:NO];
 		[self setForceRun:NO];
@@ -76,10 +76,8 @@
     self = [super init];
     if (self) {
         fm = [NSFileManager defaultManager];
-        mpServerConnection = [[MPServerConnection alloc] init]; 
-        [self set_defaults:mpServerConnection.mpDefaults];
 		[self set_cuuid:[MPSystemInfo clientUUID]];
-        mpAsus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
+        mpAsus = [[MPAsus alloc] init];
         mpDataMgr = [[MPDataMgr alloc] init];
 		[self setILoadMode:NO];
 		[self setForceRun:NO];
@@ -89,12 +87,6 @@
     return self;   
 }
 
-- (void)dealloc
-{
-    [mpAsus release];
-    [mpDataMgr release];
-    [super dealloc];
-}
 
 -(void)overRideDefaults:(NSDictionary *)aDict
 {
@@ -148,10 +140,16 @@
     NSString            *_approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
 	NSMutableArray      *approvedUpdatesArray = [[NSMutableArray alloc] init];
 	NSMutableDictionary *tmpDict;
-	
+    NSArray             *approvedApplePatches = nil;
+    NSArray             *approvedCustomPatches = nil;
+    MPASUSCatalogs      *mpCatalog;
+    NSArray             *applePatchesArray = nil;
+    NSMutableArray      *customPatchesArray;
+    NSDictionary        *customPatch, *approvedPatch;
+
 	// Get Patch Group Patches
     NSError *wsErr = nil;
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
 	NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
     if (wsErr) {
         logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit. %@",wsErr.localizedDescription);
@@ -163,8 +161,6 @@
 		goto done;
 	}
 
-    NSArray *approvedApplePatches = nil;
-    NSArray *approvedCustomPatches = nil;
     if ((aFilter == 0) || (aFilter == 1)) {
         approvedApplePatches  = [patchGroupPatches objectForKey:@"AppleUpdates"];
     }    
@@ -176,7 +172,7 @@
     if ((aFilter == 0) || (aFilter == 1)) 
     {
         logit(lcl_vInfo,@"Setting Apple softwareupdate catalog.");
-        MPASUSCatalogs *mpCatalog = [[[MPASUSCatalogs alloc] init] autorelease];
+        mpCatalog = [[MPASUSCatalogs alloc] init];
         if (![mpCatalog checkAndSetCatalogURL]) {
             logit(lcl_vError,@"There was a issue setting the CatalogURL, Apple updates will not occur.");
         }
@@ -184,7 +180,7 @@
         logit(lcl_vInfo,@"Scanning for Apple software updates.");
         
         // New way, using the helper daemon
-        NSArray *applePatchesArray = nil;
+        applePatchesArray = nil;
         applePatchesArray = [mpAsus scanForAppleUpdates];
 
         // Process patches
@@ -231,7 +227,6 @@
                                 [tmpDict setObject:@"Apple" forKey:@"type"];
                                 logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
                                 [approvedUpdatesArray addObject:tmpDict];
-                                [tmpDict release];
                                 break;
                             }
                         }	
@@ -245,13 +240,12 @@
 	if ((aFilter == 0) || (aFilter == 2)) 
     {
         logit(lcl_vInfo,@"Scanning for custom patch vulnerabilities...");
-        NSMutableArray *customPatchesArray = (NSMutableArray *)[mpAsus scanForCustomUpdates];
+        customPatchesArray = (NSMutableArray *)[mpAsus scanForCustomUpdates];
         
         logit(lcl_vDebug,@"Custom Patches Needed: %@",customPatchesArray);
         logit(lcl_vDebug,@"Approved Custom Patches: %@",approvedCustomPatches);
         
         // Filter List of Patches containing only the approved patches
-        NSDictionary *customPatch, *approvedPatch;
         logit(lcl_vInfo,@"Building approved patch list...");
         for (int i=0; i<[customPatchesArray count]; i++) {
             customPatch	= [customPatchesArray objectAtIndex:i];
@@ -271,7 +265,6 @@
                     
                     logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
                     [approvedUpdatesArray addObject:tmpDict];
-                    [tmpDict release];
                     tmpDict = nil;
                     break;
                 }
@@ -294,7 +287,6 @@ done:
     }
 	
 	[self setApprovedPatches:[NSArray arrayWithArray:approvedUpdatesArray]];
-    [approvedUpdatesArray release];
 	[self removeTaskRunning:kMPPatchSCAN];
     logit(lcl_vInfo,@"Patch Scan Completed.");
 }
@@ -306,17 +298,15 @@ done:
 
     // Get Patch Group Patches
     NSError *wsErr = nil;
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
 	NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
     if (wsErr) {
         logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit. %@",wsErr.localizedDescription);
-		[approvedUpdatesArray release];
 		return;
     }
 
 	if (!patchGroupPatches) {
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
-        [approvedUpdatesArray release];
 		return;
 	}
 
@@ -350,7 +340,6 @@ done:
                 
                 logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
                 [approvedUpdatesArray addObject:tmpDict];
-                [tmpDict release];
                 tmpDict = nil;
                 break;
             }
@@ -358,7 +347,6 @@ done:
     }
 
     [self setApprovedPatches:[NSArray arrayWithArray:approvedUpdatesArray]];
-    [approvedUpdatesArray release];
     logit(lcl_vInfo,@"Patch Scan Completed.");
 }
 
@@ -409,12 +397,14 @@ done:
     // Populate Array with Patch Results
 	if (!updatesArray) {
 		logit(lcl_vInfo,@"Updates array is nil");
-		goto done;
+		[self removeTaskRunning:kMPPatchUPDATE];
+        return;
 	}
     if ([updatesArray count] <= 0) {
         logit(lcl_vInfo, @"No approved patches to install.");
         logit(lcl_vDebug,@"updatesArray=%@",updatesArray);
-		goto done;
+		[self removeTaskRunning:kMPPatchUPDATE];
+        return;
     }
 
 	// Check to see if client os type is allowed to perform updates.
@@ -425,8 +415,9 @@ done:
 		if ([_defaults objectForKey:@"allowClient"]) {
 			if (![[_defaults objectForKey:@"allowClient"] isEqualToString:@"1"]) {
 				logit(lcl_vInfo,@"Host is a Mac OS X Client and allowClient property is set to false. No updates will be applied.");
-				goto done;
-			}	
+				[self removeTaskRunning:kMPPatchUPDATE];
+                return;
+			}
 		}
 	}
 
@@ -435,11 +426,13 @@ done:
 		if ([_defaults objectForKey:@"allowServer"]) {
 			if (![[_defaults objectForKey:@"allowServer"] isEqualToString:@"1"]) {
 				logit(lcl_vInfo,@"Host is a Mac OS X Server and allowServer property is set to false. No updates will be applied.");
-				goto done;
-			}	
+				[self removeTaskRunning:kMPPatchUPDATE];
+                return;
+			}
 		} else {
 			logit(lcl_vInfo,@"Host is a Mac OS X Server and allowServer property is not defined. No updates will be applied.");
-			goto done;
+			[self removeTaskRunning:kMPPatchUPDATE];
+            return;
 		}
 	}
 
@@ -526,7 +519,7 @@ done:
                 @try {
                     logit(lcl_vInfo,@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
                     //Pre Proxy Config
-                    downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[currPatchToInstallDict objectForKey:@"url"]];
+                    downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
                     logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
                     err = nil;
                     dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
@@ -546,7 +539,6 @@ done:
                 logit(lcl_vInfo,@"Validating downloaded patch.");
 				_crypto = [[MPCrypto alloc] init];
                 NSString *fileHash = [_crypto md5HashForFile:dlPatchLoc];
-				[_crypto release];
 				_crypto = nil;
                 logit(lcl_vInfo,@"Downloaded file hash: %@ (%@)",fileHash,[currPatchToInstallDict objectForKey:@"hash"]);
                 if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[fileHash uppercaseString]] == NO) {
@@ -577,11 +569,9 @@ done:
                     if ([mpScript runScript:preInstScript] == NO) 
                     {
                         logit(lcl_vError,@"Error[%d] running pre-install script.",installResult);
-                        [mpScript release];
                         mpScript = nil;
                         break;
                     }
-                    [mpScript release];
                     mpScript = nil;
                 }
                 
@@ -639,11 +629,9 @@ done:
                     if ([mpScript runScript:postInstScript] == NO) 
                     {
                         logit(lcl_vError,@"Error[%d] running post-install script.",installResult);
-                        [mpScript release];
                         mpScript = nil;
                         break;
                     }
-                    [mpScript release];
                     mpScript = nil;
                 }
                 
@@ -651,7 +639,7 @@ done:
                 // Instal is complete, post result to web service
                 
                 @try {
-                    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+                    MPWebServices *mpws = [[MPWebServices alloc] init];
                     NSError *wsErr = nil;
                     [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
                     logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
@@ -687,7 +675,6 @@ done:
                 
                 mpInstaller = [[MPInstaller alloc] init];
                 installResult = [mpInstaller installAppleSoftwareUpdate:[patch objectForKey:@"patch"]];
-                [mpInstaller release];
                 mpInstaller = nil;
                 
             } else {
@@ -705,19 +692,17 @@ done:
                     {
                         criteriaDictPre = [[patch objectForKey:@"criteria_pre"] objectAtIndex:i]; 
                         scriptData = [[criteriaDictPre objectForKey:@"data"] decodeBase64WithNewlines:NO];		
-                        scriptText = [[[NSString alloc] initWithData:scriptData encoding:NSASCIIStringEncoding] autorelease];
+                        scriptText = [[NSString alloc] initWithData:scriptData encoding:NSASCIIStringEncoding];
                         
                         mpScript = [[MPScript alloc] init];
                         if ([mpScript runScript:scriptText] == NO) {
                             installResult = 1;
                             logit(lcl_vError,@"Pre-install script returned false for %@. No install will occur.",[patch objectForKey:@"patch"]); 
-                            [mpScript release];
                             mpScript = nil;
                             goto instResult;
                         } else {
                             logit(lcl_vInfo,@"Pre-install script returned true.");
                         }
-                        [mpScript release];
                         mpScript = nil;
                         criteriaDictPre = nil;
                     }
@@ -725,7 +710,6 @@ done:
                 // Run the patch install, now that the install has occured.
                 mpInstaller = [[MPInstaller alloc] init];
                 installResult = [mpInstaller installAppleSoftwareUpdate:[patch objectForKey:@"patch"]];
-                [mpInstaller release];
                 mpInstaller = nil;
 				
 				// If the Patch Installed Required a Reboot, flag it
@@ -746,19 +730,17 @@ done:
                         criteriaDictPost = [[patch objectForKey:@"criteria_post"] objectAtIndex:i];
                         
                         scriptData = [[criteriaDictPost objectForKey:@"data"] decodeBase64WithNewlines:NO];		
-                        scriptText = [[[NSString alloc] initWithData:scriptData encoding:NSASCIIStringEncoding] autorelease];
+                        scriptText = [[NSString alloc] initWithData:scriptData encoding:NSASCIIStringEncoding];
                         
                         mpScript = [[MPScript alloc] init];
                         if ([mpScript runScript:scriptText] == NO) {
                             installResult = 1;
                             logit(lcl_vError,@"Post-install script returned false for %@. No install will occur.",[patch objectForKey:@"patch"]); 
-                            [mpScript release];
                             mpScript = nil;
                             goto instResult;
                         } else {
                             logit(lcl_vInfo,@"Post-install script returned true.");
                         }
-                        [mpScript release];
                         mpScript = nil;
                         criteriaDictPost = nil;
                     }
@@ -776,7 +758,7 @@ done:
             // Post the results to web service
             @try
             {
-                MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+                MPWebServices *mpws = [[MPWebServices alloc] init];
                 NSError *wsErr = nil;
                 [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch"] patchType:@"apple" error:&wsErr];
                 logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
@@ -803,7 +785,7 @@ done:
 										  attributes:nil];
 	
 	// Open the Reboot App
-    mpInstaller = [[[MPInstaller alloc] init] autorelease];
+    mpInstaller = [[MPInstaller alloc] init];
 	
 	// If any patches that were installed needed a reboot
 	if (installedPatchesNeedingReboot > 0) {
@@ -815,7 +797,8 @@ done:
 					rb = reboot(RB_AUTOBOOT);
 				} else {
 					logit(lcl_vInfo,@"Patches have been installed that require a reboot. Please reboot the systems as soon as possible.");
-					goto done;
+					[self removeTaskRunning:kMPPatchUPDATE];
+                    return;
 				}
 				
 			}
@@ -838,7 +821,6 @@ done:
         [fm setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
 	} 
 
-done:	
 	[self removeTaskRunning:kMPPatchUPDATE];
 }
 
@@ -978,7 +960,7 @@ done:
                     logit(lcl_vInfo,@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
                     [self postNotificationTo:@"MPPatchStatusNotification" info:[NSString stringWithFormat:@"Downloading patch %@",[patch objectForKey:@"patch"]] isGlobal:YES];
                     //Pre Proxy Config
-                    downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[currPatchToInstallDict objectForKey:@"url"]];
+                    downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
                     logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
                     err = nil;
                     dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
@@ -998,7 +980,6 @@ done:
                 logit(lcl_vInfo,@"Validating downloaded patch.");
 				_crypto = [[MPCrypto alloc] init];
                 NSString *fileHash = [_crypto md5HashForFile:dlPatchLoc];
-				[_crypto release];
 				_crypto = nil;
                 logit(lcl_vInfo,@"Downloaded file hash: %@ (%@)",fileHash,[currPatchToInstallDict objectForKey:@"hash"]);
                 if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[fileHash uppercaseString]] == NO) {
@@ -1029,12 +1010,10 @@ done:
                     if ([mpScript runScript:preInstScript] == NO) 
                     {
                         logit(lcl_vError,@"Error[%d] running pre-install script.",installResult);
-                        [mpScript release];
                         mpScript = nil;
                         hadError++;
                         break;
                     }
-                    [mpScript release];
                     mpScript = nil;
                 }
                 // *****************************
@@ -1093,18 +1072,16 @@ done:
                     if ([mpScript runScript:postInstScript] == NO) 
                     {
                         logit(lcl_vError,@"Error[%d] running post-install script.",installResult);
-                        [mpScript release];
                         mpScript = nil;
                         break;
                     }
-                    [mpScript release];
                     mpScript = nil;
                 }
                 // *****************************
                 // Instal is complete, post result to web service
                 @try
                 {
-                    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+                    MPWebServices *mpws = [[MPWebServices alloc] init];
                     NSError *wsErr = nil;
                     [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
                     logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
@@ -1292,7 +1269,7 @@ done:
 	
     if (consoleUserName != NULL)
     {
-		logit(lcl_vInfo,@"%@ is currently logged in.",(NSString *)consoleUserName);
+		logit(lcl_vInfo,@"%@ is currently logged in.",(__bridge NSString *)consoleUserName);
         CFRelease(consoleUserName);
     } else {
 		result = NO;

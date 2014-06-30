@@ -35,329 +35,219 @@ NSLock *lock;
 
 + (void)runTask:(id)param
 {
-    NSAutoreleasePool *taskpool = [NSAutoreleasePool new];   
+    @autoreleasepool {   
     
-	@try {
-		NSDictionary *l_task = (NSDictionary *)param;
-		NSString *l_cmd = [l_task objectForKey:@"cmd"];
-		
-		if ([l_cmd isEqualToString:@"kMPCheckIn"]) {
-			logit(lcl_vInfo,@"Running client check in.");
-			[self runCheckIn];
-			logit(lcl_vInfo,@"Running client check in completed.");
+		@try {
+			NSDictionary *l_task = (NSDictionary *)param;
+			NSString *l_cmd = [l_task objectForKey:@"cmd"];
 			
-		} else if ([l_cmd isEqualToString:@"kMPAgentCheck"]) {
-			logit(lcl_vInfo,@"Running agent check.");
-			[self runAgentScanAndUpdate];
-			
-		} else if ([l_cmd isEqualToString:@"kMPVulScan"]) {
-			logit(lcl_vInfo,@"Running client vulnerability scan.");
-			[self runPatchScan];
-			
-		} else if ([l_cmd isEqualToString:@"kMPVulUpdate"]) {
-			logit(lcl_vInfo,@"Running client vulnerability update.");
-			[self runPatchScanAndUpdate];
-			
-		} else if ([l_cmd isEqualToString:@"kMPAVCheck"]) {
-			logit(lcl_vInfo,@"Running client AV scan and update.");
-			[self runAVInfoScanAndDefsUpdate];
-			
-		} else if ([l_cmd isEqualToString:@"kMPInvScan"]) {
-			logit(lcl_vInfo,@"Running client inventory scan.");
-			[self runInventoryCollection];
+			if ([l_cmd isEqualToString:@"kMPCheckIn"]) {
+				logit(lcl_vInfo,@"Running client check in.");
+				[self runCheckIn];
+				logit(lcl_vInfo,@"Running client check in completed.");
+				
+			} else if ([l_cmd isEqualToString:@"kMPAgentCheck"]) {
+				logit(lcl_vInfo,@"Running agent check.");
+				[self runAgentScanAndUpdate];
+				
+			} else if ([l_cmd isEqualToString:@"kMPVulScan"]) {
+				logit(lcl_vInfo,@"Running client vulnerability scan.");
+				[self runPatchScan];
+				
+			} else if ([l_cmd isEqualToString:@"kMPVulUpdate"]) {
+				logit(lcl_vInfo,@"Running client vulnerability update.");
+				[self runPatchScanAndUpdate];
+				
+			} else if ([l_cmd isEqualToString:@"kMPAVCheck"]) {
+				logit(lcl_vInfo,@"Running client AV scan and update.");
+				[self runAVInfoScanAndDefsUpdate];
+				
+			} else if ([l_cmd isEqualToString:@"kMPInvScan"]) {
+				logit(lcl_vInfo,@"Running client inventory scan.");
+				[self runInventoryCollection];
 
-		} else if ([l_cmd isEqualToString:@"kMPCMD"]) {
-			logit(lcl_vInfo,@"Running custom client command.");
-			//[self ];
+			} else if ([l_cmd isEqualToString:@"kMPCMD"]) {
+				logit(lcl_vInfo,@"Running custom client command.");
+				//[self ];
             
-		} else if ([l_cmd isEqualToString:@"kMPProfiles"]) {
-			logit(lcl_vInfo,@"Running client inventory scan.");
-			//[self ];
+			} else if ([l_cmd isEqualToString:@"kMPProfiles"]) {
+				logit(lcl_vInfo,@"Running client inventory scan.");
+				//[self ];
 
-		} else {
-			// Do nothing, log invalid command
-			logit(lcl_vWarning,@"Invalid command (%@) attempted.",l_cmd);
+			} else {
+				// Do nothing, log invalid command
+				logit(lcl_vWarning,@"Invalid command (%@) attempted.",l_cmd);
+			}
 		}
-	}
-	@catch (NSException * e) {
-		logit(lcl_vError,@"Error running task, %@",e);
-	}	
+		@catch (NSException * e) {
+			logit(lcl_vError,@"Error running task, %@",e);
+		}	
     
-    [taskpool drain];
+    }
 }
 
 + (void)runCheckIn
 {
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
-
-    NSFileManager *fm = [NSFileManager defaultManager];
-	NSMutableDictionary *agentDict;
-	MPAgent *si = [MPAgent sharedInstance];
-	
-	@try {
-		NSDictionary *consoleUserDict = [MPSystemInfo consoleUserData];
-        NSDictionary *hostNameDict = [MPSystemInfo hostAndComputerNames];
-        
-		NSDictionary *clientVer = nil;
-		if ([fm fileExistsAtPath:CLIENT_VER_FILE]) {
-			if ([fm isReadableFileAtPath:CLIENT_VER_FILE] == NO ) {
-                [fm setAttributes:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedLong:0664UL] forKey:NSFilePosixPermissions] 
-                     ofItemAtPath:CLIENT_VER_FILE 
-                            error:NULL];
-			}
-			clientVer = [NSDictionary dictionaryWithContentsOfFile:CLIENT_VER_FILE];	
-		} else {
-			clientVer = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"NA",@"NA",@"NA",@"NA",@"NA",@"NA",nil] 
-													forKeys:[NSArray arrayWithObjects:@"version",@"major",@"minor",@"bug",@"build",@"framework",nil]];
-		}
-								   
-		agentDict = [[[NSMutableDictionary alloc] init] autorelease];
-		[agentDict setObject:[si g_cuuid] forKey:@"cuuid"];
-		[agentDict setObject:[si g_serialNo] forKey:@"serialno"];
-		[agentDict setObject:[hostNameDict objectForKey:@"localHostName"] forKey:@"hostname"];
-		[agentDict setObject:[hostNameDict objectForKey:@"localComputerName"] forKey:@"computername"];
-		[agentDict setObject:[consoleUserDict objectForKey:@"consoleUser"] forKey:@"consoleUser"];
-		[agentDict setObject:[MPSystemInfo getIPAddress] forKey:@"ipaddr"];
-		[agentDict setObject:[MPSystemInfo getMacAddressForInterface:@"en0"] forKey:@"macaddr"];
-		[agentDict setObject:[si g_osVer] forKey:@"osver"];
-		[agentDict setObject:[si g_osType] forKey:@"ostype"];
-		[agentDict setObject:[si g_agentVer] forKey:@"agent_version"];
-		[agentDict setObject:[clientVer objectForKey:@"build"] forKey:@"agent_build"];
-		[agentDict setObject:[clientVer objectForKey:@"version"] forKey:@"client_version"];
-		[agentDict setObject:@"false" forKey:@"needsreboot"];
-		
-		if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
-			[agentDict setObject:@"true" forKey:@"needsreboot"];	
-		}
-	}
-	@catch (NSException * e) 
+    @autoreleasepool
     {
-		logit(lcl_vError,@"[NSException]: %@",e);
-		logit(lcl_vError,@"No client checkin data will be posted.");
-		[pool drain];
-		return;
-	}	
-	
-	MPJson *mpj = nil;
-	mpj = [[MPJson alloc] init];
-	NSError *err = nil;
-	BOOL postResult = NO;
-	@try {
-		err = nil;
-		if (mpj) {
-			postResult = [mpj postJSONDataForMethod:@"client_checkin_base" data:agentDict error:&err];
-			if (err) {
-				logit(lcl_vError,@"%@",[err localizedDescription]);
-			}	
-			if (postResult) {
-				logit(lcl_vInfo,@"Running client base checkin, returned true.");
-			} else {
-				logit(lcl_vError,@"Running client base checkin, returned false.");
-			}
-		}
-	}
-	@catch (NSException * e) {
-		logit(lcl_vError,@"[NSException]: %@",e);
-	}
+        NSFileManager *fm = [NSFileManager defaultManager];
+        NSMutableDictionary *agentDict;
+        MPAgent *si = [MPAgent sharedInstance];
+        
+        @try {
+            NSDictionary *consoleUserDict = [MPSystemInfo consoleUserData];
+            NSDictionary *hostNameDict = [MPSystemInfo hostAndComputerNames];
+            
+            NSDictionary *clientVer = nil;
+            if ([fm fileExistsAtPath:CLIENT_VER_FILE]) {
+                if ([fm isReadableFileAtPath:CLIENT_VER_FILE] == NO ) {
+                    [fm setAttributes:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedLong:0664UL] forKey:NSFilePosixPermissions] 
+                         ofItemAtPath:CLIENT_VER_FILE 
+                                error:NULL];
+                }
+                clientVer = [NSDictionary dictionaryWithContentsOfFile:CLIENT_VER_FILE];	
+            } else {
+                clientVer = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"NA",@"NA",@"NA",@"NA",@"NA",@"NA",nil] 
+                                                        forKeys:[NSArray arrayWithObjects:@"version",@"major",@"minor",@"bug",@"build",@"framework",nil]];
+            }
+                                       
+            agentDict = [[NSMutableDictionary alloc] init];
+            [agentDict setObject:[si g_cuuid] forKey:@"cuuid"];
+            [agentDict setObject:[si g_serialNo] forKey:@"serialno"];
+            [agentDict setObject:[hostNameDict objectForKey:@"localHostName"] forKey:@"hostname"];
+            [agentDict setObject:[hostNameDict objectForKey:@"localComputerName"] forKey:@"computername"];
+            [agentDict setObject:[consoleUserDict objectForKey:@"consoleUser"] forKey:@"consoleUser"];
+            [agentDict setObject:[MPSystemInfo getIPAddress] forKey:@"ipaddr"];
+            [agentDict setObject:[MPSystemInfo getMacAddressForInterface:@"en0"] forKey:@"macaddr"];
+            [agentDict setObject:[si g_osVer] forKey:@"osver"];
+            [agentDict setObject:[si g_osType] forKey:@"ostype"];
+            [agentDict setObject:[si g_agentVer] forKey:@"agent_version"];
+            [agentDict setObject:[clientVer objectForKey:@"build"] forKey:@"agent_build"];
+            [agentDict setObject:[clientVer objectForKey:@"version"] forKey:@"client_version"];
+            [agentDict setObject:@"false" forKey:@"needsreboot"];
+            
+            if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
+                [agentDict setObject:@"true" forKey:@"needsreboot"];	
+            }
+        }
+        @catch (NSException * e) 
+        {
+            logit(lcl_vError,@"[NSException]: %@",e);
+            logit(lcl_vError,@"No client checkin data will be posted.");
+            return;
+        }	
 
-	// Read Client Plist Info, and post it...
-	@try {
-		MPDefaultsWatcher *mpd = [[[MPDefaultsWatcher alloc] init] autorelease];
-		NSMutableDictionary *mpDefaults = [[[NSMutableDictionary alloc] initWithDictionary:[mpd readConfigPlist]] autorelease];
-		[mpDefaults setObject:[si g_cuuid] forKey:@"cuuid"];
+        MPWebServices *mpws = [[MPWebServices alloc] init];
+        NSError *err = nil;
+        BOOL postResult = NO;
+        @try {
+            err = nil;
+            postResult = [mpws postJSONDataForMethod:@"client_checkin_base" data:agentDict error:&err];
+            if (err) {
+                logit(lcl_vError,@"%@",[err localizedDescription]);
+            }	
+            if (postResult) {
+                logit(lcl_vInfo,@"Running client base checkin, returned true.");
+            } else {
+                logit(lcl_vError,@"Running client base checkin, returned false.");
+            }
+        }
+        @catch (NSException * e) {
+            logit(lcl_vError,@"[NSException]: %@",e);
+        }
 
-		err = nil;
-		postResult = [mpj postJSONDataForMethod:@"client_checkin_plist" data:mpDefaults error:&err];
-		if (err) {
-			logit(lcl_vError,@"%@",[err localizedDescription]);
-		}	
-		if (postResult) {
-			logit(lcl_vInfo,@"Running client config checkin, returned true.");
-		} else {
-			logit(lcl_vError,@"Running client config checkin, returned false.");
-		}
-	}
-	@catch (NSException * e) {
-		logit(lcl_vError,@"[NSException]: %@",e);
-	}	
-	[mpj release];
-	[pool drain];
+        // Read Client Plist Info, and post it...
+        @try {
+            MPDefaultsWatcher *mpd = [[MPDefaultsWatcher alloc] init];
+            NSMutableDictionary *mpDefaults = [[NSMutableDictionary alloc] initWithDictionary:[mpd readConfigPlist]];
+            [mpDefaults setObject:[si g_cuuid] forKey:@"cuuid"];
+
+            err = nil;
+            postResult = [mpws postJSONDataForMethod:@"client_checkin_plist" data:mpDefaults error:&err];
+            if (err) {
+                logit(lcl_vError,@"%@",[err localizedDescription]);
+            }	
+            if (postResult) {
+                logit(lcl_vInfo,@"Running client config checkin, returned true.");
+            } else {
+                logit(lcl_vError,@"Running client config checkin, returned false.");
+            }
+        }
+        @catch (NSException * e) {
+            logit(lcl_vError,@"[NSException]: %@",e);
+        }
+        
+    }
 }
 
 + (void)runInventoryCollection
 {
-	NSAutoreleasePool *taskpool = [NSAutoreleasePool new];
-	
-	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *invAppPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:invAppPath]) {
-		logit(lcl_vError,@"Unable to find MPInventory app to collect inventory data.");
-		[taskpool drain];
-		return;
-	}
-
-	if (![MPCodeSign checkSignature:invAppPath]) {
-		[taskpool drain];
-		return; // Not a valid signature, bail.
-	}
-	
-	NSError *error = nil;
-	NSString *result;
-	MPNSTask *mpr = [[MPNSTask alloc] init];
-	result = [mpr runTask:invAppPath binArgs:[NSArray arrayWithObjects:@"-t", @"All", nil] error:&error];
-	
-	logit(lcl_vDebug,@"%@",result);
-	logit(lcl_vInfo,@"Inventory collection has been completed.");
-	logit(lcl_vInfo,@"See the MPInventory.log file for more information.");
-	[mpr release];
-	
-	[taskpool drain];
+    [MPTaskThread runExecTaskUsingArgs:[NSArray arrayWithObjects:@"-t", @"All", nil]];
+    logit(lcl_vInfo,@"Inventory collection has been completed.");
+    logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
 }
 
 + (void)runPatchScan 
 {
-	NSAutoreleasePool *taskpool = [[NSAutoreleasePool alloc] init];
-	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:appPath]) {
-		logit(lcl_vError,@"Unable to find MPAgentExec app.");
-		[taskpool drain];
-		return;
-	}
-    
-	if (![MPCodeSign checkSignature:appPath]) {
-		[taskpool drain];
-		return; // Not a valid signature, bail.
-	}
-	
-	NSError *error = nil;
-	NSString *result;
-	MPNSTask *mpr = [[MPNSTask alloc] init];
-	result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-s", nil] error:&error];
-	
-	logit(lcl_vDebug,@"%@",result);
-	logit(lcl_vInfo,@"Vulnerability scan has been completed.");
-	logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
-	[mpr release];
-	[taskpool release];
+    [MPTaskThread runExecTaskUsingArgs:[NSArray arrayWithObject:@"-s"]];
+    logit(lcl_vInfo,@"Vulnerability scan has been completed.");
+    logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
 }
 
 + (void)runPatchScanAndUpdate
 {
-	NSAutoreleasePool *taskpool = [[NSAutoreleasePool alloc] init];
-	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:appPath]) {
-		logit(lcl_vError,@"Unable to find MPAgentExec app.");
-		[taskpool drain];
-		return;
-	}
-
-	if (![MPCodeSign checkSignature:appPath]) {
-		[taskpool drain];
-		return; // Not a valid signature, bail.
-	}
-	
-	NSError *error = nil;
-	NSString *result;
-	MPNSTask *mpr = [[MPNSTask alloc] init];
-	result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-u", nil] error:&error];
-
-	logit(lcl_vDebug,@"%@",result);
-	logit(lcl_vInfo,@"Vulnerability scan & update has been completed.");
-	logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
-	[mpr release];
-	[taskpool release];
+    [MPTaskThread runExecTaskUsingArgs:[NSArray arrayWithObject:@"-u"]];
+    logit(lcl_vInfo,@"Vulnerability scan & update has been completed.");
+    logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
 }
 
 + (void)runAVInfoScan
 {
-	NSAutoreleasePool *taskpool = [[NSAutoreleasePool alloc] init];
-	
-	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:appPath]) {
-		logit(lcl_vError,@"Unable to find MPAgentExec app.");
-		[taskpool drain];
-		return;
-	}
-
-	if (![MPCodeSign checkSignature:appPath]) {
-		[taskpool drain];
-		return; // Not a valid signature, bail.
-	}
-	
-	NSError *error = nil;
-	NSString *result;
-	MPNSTask *mpr = [[MPNSTask alloc] init];
-	result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-a", nil] error:&error];
-	
-	logit(lcl_vDebug,@"%@",result);
-	logit(lcl_vInfo,@"AV info collection has been completed.");
-	logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
-	[mpr release];
-	[taskpool release];
+    [MPTaskThread runExecTaskUsingArgs:[NSArray arrayWithObject:@"-a"]];
+    logit(lcl_vInfo,@"AV info collection has been completed.");
+    logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
 }
 
 + (void)runAVInfoScanAndDefsUpdate
 {
-	NSAutoreleasePool *taskpool = [[NSAutoreleasePool alloc] init];
-	
-	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:appPath]) {
-		logit(lcl_vError,@"Unable to find MPAgentExec app.");
-		[taskpool drain];
-		return;
-	}
-
-	if (![MPCodeSign checkSignature:appPath]) {
-		[taskpool drain];
-		return; // Not a valid signature, bail.
-	}
-	
-	NSError *error = nil;
-	NSString *result;
-	MPNSTask *mpr = [[MPNSTask alloc] init];
-	result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-U", nil] error:&error];
-	
-	logit(lcl_vDebug,@"%@",result);
-	logit(lcl_vInfo,@"AV inventory and defs update has been completed.");
-	logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
-	[mpr release];
-	[taskpool release];
+    [MPTaskThread runExecTaskUsingArgs:[NSArray arrayWithObject:@"-U"]];
+    logit(lcl_vInfo,@"AV inventory and defs update has been completed.");
+    logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
 }
 
 + (void)runAgentScanAndUpdate
 {
-	NSAutoreleasePool *taskpool = [[NSAutoreleasePool alloc] init];
-	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:appPath]) {
-		logit(lcl_vError,@"Unable to find MPAgentExec app.");
-		[taskpool drain];
-		return;
-	}
+    [MPTaskThread runExecTaskUsingArgs:[NSArray arrayWithObject:@"-G"]];
+    logit(lcl_vInfo,@"Update Up2Date has been completed.");
+    logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
+}
 
-	if (![MPCodeSign checkSignature:appPath]) {
-		[taskpool drain];
-		return; // Not a valid signature, bail.
-	}
-	
-	NSError *error = nil;
-	NSString *result;
-	MPNSTask *mpr = [[MPNSTask alloc] init];
-	result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-G", nil] error:&error];
-	
-	if (error) {
-		logit(lcl_vError,@"%@",[error description]);
-	}
++ (void)runExecTaskUsingArgs:(NSArray *)aArgs
+{
+    @autoreleasepool
+    {
+        NSFileManager *fm = [NSFileManager defaultManager];
+        NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
+        if (![fm fileExistsAtPath:appPath]) {
+            logit(lcl_vError,@"Unable to find MPAgentExec app.");
+            return;
+        }
 
-	logit(lcl_vDebug,@"%@",result);
-	logit(lcl_vInfo,@"Update Up2Date has been completed.");
-	logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
-	[mpr release];
-	[taskpool release];
+        if (![MPCodeSign checkSignature:appPath]) {
+            return; // Not a valid signature, bail.
+        }
+
+        NSError *error = nil;
+        NSString *result;
+        MPNSTask *mpr = [[MPNSTask alloc] init];
+        result = [mpr runTask:appPath binArgs:aArgs error:&error];
+
+        if (error) {
+            logit(lcl_vError,@"%@",[error description]);
+        }
+
+        logit(lcl_vDebug,@"%@",result);
+    }
 }
 
 @end

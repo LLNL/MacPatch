@@ -26,9 +26,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface MPDataMgr : NSObject {
-	
-}
+@interface MPDataMgr : NSObject {}
 
 - (NSString *)GenXMLForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable;
 
@@ -50,18 +48,27 @@
 					 deleteCol:(NSString *)aDelCol 
 				deleteColValue:(NSString *)aDelColVal;
 
-- (NSArray *)GenXMLArrayForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable dbTablePrefix:(NSString *)aTablePrefix 
-					 dbFieldPrefix:(NSString *)aFieldPrefix 
-					  updateFields:(NSString *)aUpdateFields 
-						 deleteCol:(NSString *)aDelCol 
-					deleteColValue:(NSString *)aDelColVal
-							 chunk:(int)aChunk;
-/*
- theDict() As Dictionary, dbTable As String, dbTablePrefix as String, dbFieldPrefix as String, 
- updateFields As String, aDelCol As String, aDelColVal As String, chunk As Integer
-*/ 
 
 - (NSXMLElement *)genXMLElement:(NSString *)aName attributes:(NSDictionary *)aDict;
 
+// JSON Classes
+- (NSString *)GenJSONForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable;
 
+- (NSString *)GenJSONForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable
+				 dbTablePrefix:(NSString *)aTablePrefix;
+
+- (NSString *)GenJSONForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable
+				 dbTablePrefix:(NSString *)aTablePrefix
+				 dbFieldPrefix:(NSString *)aFieldPrefix;
+
+- (NSString *)GenJSONForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable
+				 dbTablePrefix:(NSString *)aTablePrefix
+				 dbFieldPrefix:(NSString *)aFieldPrefix
+				  updateFields:(NSString *)aUpdateFields;
+
+- (NSString *)GenJSONForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable dbTablePrefix:(NSString *)aTablePrefix
+				 dbFieldPrefix:(NSString *)aFieldPrefix
+				  updateFields:(NSString *)aUpdateFields
+					 deleteCol:(NSString *)aDelCol
+				deleteColValue:(NSString *)aDelColVal;
 @end

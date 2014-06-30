@@ -61,7 +61,6 @@
 - (void)setBundleID:(NSString *)aBundleID
 {
 	if (bundleID != aBundleID) {
-        [bundleID release];
         bundleID = [aBundleID copy];
     }
 }
@@ -73,7 +72,6 @@
 - (void)setBundleIDName:(NSString *)aBundleIDName
 {
 	if (bundleIDName != aBundleIDName) {
-        [bundleIDName release];
         bundleIDName = [aBundleIDName copy];
     }
 }
@@ -131,7 +129,7 @@ done:
 	if ([vAction isEqualToString:@"EXISTS"] == FALSE && [vAction isEqualToString:@"VERSION"] == FALSE) {
 		qlerror(@"BundleID param was not vaild.");
 		result = FALSE;
-		goto done;
+		return result;
 	}
 	
 	// Find app, refresh  app list & get filePath for bundle ID
@@ -156,10 +154,10 @@ done:
 		
 		if ([[NSFileManager defaultManager] fileExistsAtPath:bIDFilePath] == opr) {
 			result = TRUE;
-			goto done;
+			return result;
 		} else {
 			result = FALSE;
-			goto done;
+			return result;
 		}
 
 	}
@@ -169,7 +167,7 @@ done:
 		if ([[NSFileManager defaultManager] fileExistsAtPath:bIDFilePath] == FALSE) {
 			qlinfo(@"BundleID was not found.");
 			result = FALSE;
-			goto done;
+			return result;
 		} else {
 			NSDictionary *dict = [self getBundleIDInfo:[self bundleID]];
 			NSString	*appVer = [dict objectForKey:@"CFBundleShortVersionString"];
@@ -188,12 +186,11 @@ done:
 			if (appVer) {
 				// Compare the version strings
 				result = [self compareVersion:appVer operator:tmpOpr compareTo:tmpVer];
-				goto done;
+				return result;
 			}	
 		}
 	}
-	
-done:
+
     return result;
 }
 
@@ -207,10 +204,10 @@ done:
 {
 	NSMutableDictionary *resultDictTmp;
 	NSDictionary		*result;
-	NSURL				*appURL;
+	CFURLRef			appURL;
 	
 	OSStatus error = 0;
-	error = LSFindApplicationForInfo(kLSUnknownCreator,(CFStringRef)aBundleID, nil, (FSRef *)nil, (CFURLRef *)&appURL);
+	error = LSFindApplicationForInfo(kLSUnknownCreator,(__bridge CFStringRef)aBundleID, nil, (FSRef *)nil, &appURL);
 	
 	if (error != 0) {
 		qlerror(@"Error trying to get bundle ID \"%@\". Error %d",aBundleID,(int)error);
@@ -218,14 +215,13 @@ done:
 		goto done;
 	} else {
 		NSDictionary *dict;
-		NSBundle *bundle = [NSBundle bundleWithPath:[appURL path]];
+		NSBundle *bundle = [NSBundle bundleWithPath:[(__bridge NSURL*)appURL path]];
 		dict = [bundle infoDictionary];
 		if (dict)
 		{
 			resultDictTmp = [[NSMutableDictionary alloc] initWithDictionary:dict];
-			[resultDictTmp setObject:[appURL path] forKey:@"ApplicationPath"];
+			[resultDictTmp setObject:[(__bridge NSURL*)appURL path] forKey:@"ApplicationPath"];
 			result = [NSDictionary dictionaryWithDictionary:resultDictTmp];
-			[resultDictTmp release];
 			resultDictTmp = nil;
 			goto done;
 		} else {
@@ -329,8 +325,7 @@ done:
 	
 	
 done:
-	[leftFields release];
-	[rightFields release];
+	;
 	return fileVerPass;
 }
 

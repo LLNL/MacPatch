@@ -25,15 +25,11 @@
 
 #import <Cocoa/Cocoa.h>
 @class MPNetworkUtils;
-@class MPServerConnection;
 
 @interface MPASUSCatalogs : NSObject 
 {
     MPNetworkUtils      *mpNetworkUtils;
-    MPServerConnection  *mpServerConnection;
 }
-
--(id)initWithServerConnection:(MPServerConnection *)aSrvObj;
 
 // Methods
 - (NSString *)readCatalogURL;

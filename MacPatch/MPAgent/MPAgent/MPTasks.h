@@ -32,7 +32,7 @@
 	NSString *_taskPlist;
 }
 
-@property (nonatomic, retain) NSString *_taskPlist;
+@property (nonatomic, strong) NSString *_taskPlist;
 
 - (int)validateTasksPlist;
 

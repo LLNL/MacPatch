@@ -210,6 +210,7 @@
 		8F90C31B1700AF9D006E36D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPPrefMigrate/MPPrefMigrate-Prefix.pch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -219,6 +220,7 @@
 		8F90C31C1700AF9D006E36D0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPPrefMigrate/MPPrefMigrate-Prefix.pch";
 				PRODUCT_NAME = "$(TARGET_NAME)";

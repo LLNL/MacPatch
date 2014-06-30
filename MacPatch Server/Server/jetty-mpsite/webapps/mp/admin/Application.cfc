@@ -5,15 +5,20 @@
 	this.name					= "MP_ADMIN";
 	// We wish to enable the session managment
 	this.sessionmanagement 		= true;
+	this.applicationTimeout 	= createTimeSpan( 0, 5, 0, 0 );
 	// Sets the session timeout to be 4 hour; when logged in we will make the timeout 4 hours
-	this.sessiontimeout 		= CreateTimeSpan( 0, 4, 0, 0 );
+	this.sessiontimeout 		= CreateTimeSpan( 0, 5, 0, 0 );
 </cfscript>
+
+<!--- Define the request settings. --->
+<cfsetting showdebugoutput="false" />
 
 <!--- Create mapping for cfc objects --->
 <cfmapping logicalpath="/root" relativepath="/">
+<!---
 <cfmapping logicalpath="/admin" relativepath="/admin">
 <cfmapping logicalpath="/inc" relativepath="/admin/includes">
-
+--->
 <!--- ---------------------------------------------
 	This is where we can set some variables for the application scope
 	http://openbd.org/manual/?/app_application
@@ -36,20 +41,34 @@
 <cffunction name="onRequestStart">
 	<cfargument name="uri" required="true"/>
     
-	<!--- Error Page --->
+    <!--- Is Site using HTTPS --->
+    <cfset isSecure = false>
+    <cfif isDefined("CGI.HTTP_REFERER")>
+		<cfif FindNoCase("https",CGI.HTTP_REFERER) NEQ 0>
+            <cfset isSecure = true>
+        </cfif> 
+    </cfif>
+    <cfif isDefined("CGI.HTTP_ORIGIN")>
+		<cfif FindNoCase("https",CGI.HTTP_ORIGIN) NEQ 0>
+            <cfset isSecure = true>
+        </cfif> 
+    </cfif>
+	<!--- Error Page 
 	<cferror type="exception" template="/admin/error/error.cfm" exception="any">
-
+	--->
+	
 	<!---
 		This tells the browser never to cache the secure pages so people are prevented from going
 		'back' in their browser history to see this page
-		--->
+	--->
 	<cfheader name="Cache-Control" value="no-cache,no-store,must-revalidate">
 	<cfheader name="Pragma" value="no-cache">
 	<cfheader name="Expires" value="Tues, 13 Sep 2000 00:00:00 GMT">
-
+	
 	<cfif StructKeyExists(form, "_user") && StructKeyExists(form, "_pass")>
 		<!---	User is attempting to login at this point; we call one of the login functions	--->
 		<cfif logInUserSimple( form._user, form._pass )>
+        	<cflog file="MPLoginErrorDEV" type="error" application="no" text="logInUserSimple">
 			<cfset session.loggedin = true>
             <cfset session.Username="#form._user#">
             <cfset session.RealName = #session.Username#>
@@ -58,6 +77,7 @@
             <cfset session.cgrp="">
             <cfset session.usrKey=#Generatesecretkey("AES")#>
         <cfelseif logInUserDatabase( form._user, form._pass )> 
+        	<cflog file="MPLoginErrorDEV" type="error" application="no" text="logInUserDatabase">
         	<cfset session.loggedin = true>
             <cfset session.Username="#form._user#">
             <cfset session.IsAdmin=#logInUserGroupRights(form._user,'1')#>
@@ -65,6 +85,7 @@
             <cfset session.cgrp="">
             <cfset session.usrKey=#Generatesecretkey("AES")#>
         <cfelseif logInUserDirectory( form._user, form._pass )> 
+        	<cflog file="MPLoginErrorDEV" type="error" application="no" text="logInUserDirectory">
         	<cfset session.loggedin = true>
             <cfset session.Username="#form._user#">
             <cfset session.IsAdmin=#logInUserGroupRights(form._user,'2')#>
@@ -72,26 +93,30 @@
             <cfset session.cgrp="">
             <cfset session.usrKey=#Generatesecretkey("AES")#>
 		<cfelse>
+        	<cflog file="MPLoginErrorDEV" type="error" application="no" text="else">
 			<cfset StructDelete(session,"loggedin")>
 			<cfset session.error = "Incorrect username or password">
             <cfif _AppSettings.j2eeType EQ "JETTY">
                 <cfset location("https://#cgi.HTTP_HOST#/")>
             <cfelse>
-                <cfset location("..")>
+                <cfset location("/admin")>
             </cfif>   
 		</cfif>
         
         <cfinvoke component="root.Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
-        <cfif _AppSettings.j2eeType EQ "JETTY">
+        <cfif isSecure>
 			<cfset session.cflocFix = "https://#cgi.HTTP_HOST#">
-		<cfelse>
-        	<cfset session.cflocFix = "">
-		</cfif>                        
+        <cfelse>
+        	<cfset session.cflocFix = "http://#cgi.HTTP_HOST#">    
+        </cfif>                        
     	<cfset application.settings = _AppSettings>
         <cfset application.settings.users.admin.pass = "">
-        
+
         <!--- Clear the login form variables, so they dont get re-used --->
         <cfset StructClear(form)>
+        <cfscript>
+        	this.start=now();
+    	</cfscript>
 	</cfif>
 
 	<!---
@@ -100,15 +125,67 @@
 		--->
 	<cfif !StructKeyExists( session, "loggedin" )>
 		<cfset session.error = "Session has expired">
-		<cfset location("..")>
+		<cfset location("/admin")>
 	</cfif>
 
+</cffunction>
+
+<!---
+<cffunction name="onSessionStart">
+    <cflock timeout="5" throwontimeout="No" type="EXCLUSIVE" scope="SESSION">
+        <cfset Application.sessions = Application.sessions + 1>
+    </cflock>
+</cffunction>
+--->
+
+<cffunction name="onSessionEnd" access="public" returntype="void" output="false">
+	<!--- Define arguments. --->
+    <cfargument name="sessionScope" type="any" required="true"/>
+    <cfargument name="applicationScope" type="any" required="true"/>
+
+    <!--- Output the CFID and CFTOKEN values to the log. --->
+    <cffile
+        action="append"
+        file="#getDirectoryFromPath( getCurrentTemplatePath() )#log.cfm"
+        output="ENDED: #arguments.sessionScope.cfid#<br />"
+        />
+        
+    <cfloop item="name" collection="#cookie#">
+        <cfcookie name="#name#" value="" expires="now" />
+    </cfloop>    
+	<cfset StructClear(session)>
+	<cfset session.error = "Session has expired">
+	<cfset location("..")>
+    <!--- Return out. --->
+    <cfreturn />
 </cffunction>
 
 <!--- ----------------------------------------------------------------------
 	Error handeling for the app.
 	--->
-
+    
+<cffunction name="onError">
+    <cfargument name="Exception" required=true/>
+    <cfargument type="String" name="EventName" required=true/>
+    <!--- Log all errors. --->
+    <cflog file="#This.Name#" type="error" text="Event Name: #Eventname#">
+    <cflog file="#This.Name#" type="error" text="Message: #exception.message#">
+    <!--- Some exceptions, including server-side validation errors, do not
+             generate a rootcause structure. --->
+    <cfif isdefined("exception.rootcause")>
+        <cflog file="#This.Name#" type="error" text="Root Cause Message: #exception.rootcause.message#">
+    </cfif>    
+    <!--- Display an error message if there is a page context. --->
+    <cfif NOT (Arguments.EventName EQ "onSessionEnd") OR (Arguments.EventName EQ "onApplicationEnd")>
+        <cfoutput>
+            <h2>An unexpected error occurred.</h2>
+            <p>Please provide the following information to technical support:</p>
+            <p>Error Event: #EventName#</p>
+            <p>Error details:<br>
+            <cfdump var=#exception#></p>
+        </cfoutput>
+    </cfif>
+ </cffunction>
 
 <!--- ----------------------------------------------------------------------
 	A very basic login script that will simply authenticate against some hardcoded
@@ -129,7 +206,6 @@
 	<cfelse>
 		<cfreturn false>
 	</cfif>
-
 </cffunction>
 
 <!--- ----------------------------------------------------------------------
@@ -150,7 +226,7 @@
 <cffunction name="logInUserDatabase" returntype="boolean" access="private">
 	<cfargument name="username" required="true"/>
 	<cfargument name="password" required="true" />
-
+	
 	<cfset var qry = true>
     <cftry>
         <cfquery name="qry" datasource="mpds">
@@ -261,6 +337,5 @@
         	user_id = '#arguments.username#'
     </cfquery>
 </cffunction>
-
 
 </cfcomponent>

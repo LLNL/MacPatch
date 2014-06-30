@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server>
   <system>
-    <buffersize>0</buffersize>
-    <strictarraypassbyreference>false</strictarraypassbyreference>
-    <password>t1skioOH6Fpz</password>
     <licensekey></licensekey>
-    <assert>false</assert>
-    <missingtemplatehandler></missingtemplatehandler>
-    <tempdirectory>/WEB-INF/bluedragon/work/temp</tempdirectory>
-    <deniedips></deniedips>
-    <defaultcharset>UTF-8</defaultcharset>
     <component-cfc>/WEB-INF/bluedragon/component.cfc</component-cfc>
-    <scriptsrc>/bluedragon/scripts</scriptsrc>
-    <formurlcombined>false</formurlcombined>
-    <servercfc>/Server/Server.cfc</servercfc>
-    <legacyformvalidation>false</legacyformvalidation>
-    <scriptprotect>false</scriptprotect>
+    <whitespacecomp>false</whitespacecomp>
     <nativelibdir>/WEB-INF/bin</nativelibdir>
+    <missingtemplatehandler></missingtemplatehandler>
+    <lastfile>E:\OpenBD\openbd\build\j2ee\webapp\WEB-INF\bluedragon\bluedragon.xml.bak.1</lastfile>
     <errorhandler></errorhandler>
-    <functionscopedvariables>false</functionscopedvariables>
-    <allowedips></allowedips>
-    <whitespacecomp>true</whitespacecomp>
+    <buffersize>0</buffersize>
+    <tempdirectory>/WEB-INF/bluedragon/work/temp</tempdirectory>
+    <password>admin</password>
+    <defaultcharset>utf-8</defaultcharset>
+    <lastupdated>20/Aug/2011 13:10.05</lastupdated>
+    <legacyformvalidation>false</legacyformvalidation>
+    <strictarraypassbyreference>false</strictarraypassbyreference>
   </system>
   <file>
     <maxfiles>1000</maxfiles>
@@ -28,8 +22,22 @@
   </file>
   <javacustomtags>
     <classes>/WEB-INF/classes</classes>
+    <mapping name="cfx_javabluedragonhello">
+      <name>cfx_javabluedragonhello</name>
+      <displayname>CFX_JavaBlueDragonHello</displayname>
+      <description>A simple Java CFX tag example</description>
+      <class>com.newatlanta.BlueDragonHello</class>
+    </mapping>
   </javacustomtags>
   <nativecustomtags>
+    <mapping name="cfx_nativebluedragonhello">
+      <function>ProcessTagRequest</function>
+      <keeploaded>true</keeploaded>
+      <name>cfx_nativebluedragonhello</name>
+      <displayname>CFX_NativeBlueDragonHello</displayname>
+      <module>/WEB-INF/customtags/BlueDragonHello.dll</module>
+      <description>A simple C++ CFX tag example</description>
+    </mapping>
   </nativecustomtags>
   <fonts>
     <dirs>C:\Windows\Fonts</dirs>
@@ -38,15 +46,11 @@
     <cache>true</cache>
   </cfquery>
   <cfapplication>
-    <j2eesession>true</j2eesession>
-    <clientglobalupdatesdisabled>true</clientglobalupdatesdisabled>
-    <applicationtimeout>#CreateTimeSpan(2,0,0,0)#</applicationtimeout>
-    <clientpurgeenabled>true</clientpurgeenabled>
-    <sessiontimeout>#CreateTimeSpan(0,6,0,0)#</sessiontimeout>
-    <cf5clientdata>false</cf5clientdata>
-    <clientexpiry>90</clientexpiry>
-    <enabled>true</enabled>
     <clientstorage>cookie</clientstorage>
+    <enabled>true</enabled>
+    <sessiontimeout>#CreateTimeSpan(0,0,20,0)#</sessiontimeout>
+    <applicationtimeout>#CreateTimeSpan(2,0,0,0)#</applicationtimeout>
+    <j2eesession>false</j2eesession>
   </cfapplication>
   <cfmail>
     <interval>240</interval>

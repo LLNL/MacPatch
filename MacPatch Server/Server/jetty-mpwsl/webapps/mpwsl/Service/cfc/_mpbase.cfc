@@ -26,7 +26,9 @@
 				inet = "localhost";
 			}
 		</cfscript>
-
+		
+		<cflog file="_mpbase" type="error" application="no" text="[#aEventType#][#CGI.REMOTE_HOST#]: #aEvent#">
+		
     	<cfquery datasource="#this.ds#" name="qGet">
             Insert Into #this.logTable# (cdate, event_type, event, host, scriptName, pathInfo, serverName, serverType, serverHost)
             Values (#CreateODBCDateTime(now())#, <cfqueryparam value="#aEventType#">, <cfqueryparam value="#aEvent#">, <cfqueryparam value="#CGI.REMOTE_HOST#">, <cfqueryparam value="#CGI.SCRIPT_NAME#">, <cfqueryparam value="#CGI.PATH_TRANSLATED#">,<cfqueryparam value="#CGI.SERVER_NAME#">,<cfqueryparam value="#CGI.SERVER_SOFTWARE#">, <cfqueryparam value="#inet#">)
@@ -140,7 +142,7 @@
 			<cfreturn _res> 
 		</cfif>
 		
-		<cfquery name="qGet" datasource="#this.ds#" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+		<cfquery name="qGet" datasource="#this.ds#">
 			Select rid, rhash from #arguments.aTbl#
 			Where #arguments.aCol# = <cfqueryparam value="#arguments.aVal#"> 
 		</cfquery>
@@ -162,6 +164,7 @@
 		<cfif isSimpleValue(arguments.aTbl) AND refindnocase(this.sqlregex, arguments.aTbl)>
 			<cfset _res.error = "1">
 			<cfset _res.errorMessage = "Error: Table(#arguments.aTbl#) is not valid.">
+			<cflog file="_mpbase" type="error" application="no" text="Error: Table(#arguments.aTbl#) is not valid.">
 			<cfreturn _res> 
 		</cfif>
 		
@@ -169,6 +172,7 @@
 			<cfif isSimpleValue(i) AND refindnocase(this.sqlregex,i)>
 				<cfset _res.error = "1">
 				<cfset _res.errorMessage = "Error: Column (#i#) is not valid. Row insert will not occure.">
+				<cflog file="_mpbase" type="error" application="no" text="Error: Column (#i#) is not valid. Row insert will not occure.">
 				<cfreturn _res>
 			</cfif>
 		</cfloop>
@@ -189,6 +193,7 @@
 		<cfcatch>
 				<cfset _res.error = "1">
 				<cfset _res.errorMessage = "Error: Inserting data, #cfcatch.message# #cfcatch.detail#">
+				<cflog file="_mpbase" type="error" application="no" text="Error: Inserting data, #cfcatch.message# #cfcatch.detail#">
 				<cfreturn _res>
 		</cfcatch>
 		</cftry>

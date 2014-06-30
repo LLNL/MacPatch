@@ -16,6 +16,7 @@ MPBASE="/Library/MacPatch"
 MPSERVERBASE="/Library/MacPatch/Server"
 GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/build/Server"
+SRC_DIR="${MPSERVERBASE}/conf/src"
 TCATSRV=0
 
 if [ -d "$BUILDROOT" ]; then
@@ -69,6 +70,15 @@ find ${BUILDROOT} -name "*.dSYM" -print | xargs -I{} rm -rf {}
 # ------------------
 cp -R ${GITROOT}/MacPatch\ Server/Server ${MPBASE}
 cp -R ${BUILDROOT}/Release/ ${MPSERVERBASE}/bin
+
+# ------------------
+# Setup Tomcat
+# ------------------
+J2EE_SW="apache-tomcat-7.0.54.tar.gz"
+if [ $TCATSRV == 1 ]; then
+	mkdir -p "${MPSERVERBASE}/apache-tomcat"
+	tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/apache-tomcat
+fi
 
 # ------------------
 # Build Apache
