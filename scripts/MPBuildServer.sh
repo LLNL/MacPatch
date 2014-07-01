@@ -19,6 +19,22 @@ BUILDROOT="/Library/MacPatch/tmp/build/Server"
 SRC_DIR="${MPSERVERBASE}/conf/src"
 TCATSRV=0
 
+XOSTYPE=`uname -s`
+USELINUX=false
+USEMACOS=false
+OWNERGRP="79:70"
+
+# Check and set os type
+if [ $XOSTYPE == "Linux" ]; then
+	USELINUX=true
+	OWNERGRP="www-data:www-data"
+elif [ $XOSTYPE == "Darwin" ]; then
+	USEMACOS=true
+else
+  	echo "OS Type $XOSTYPE is not supported. Now exiting."
+  	exit 1; 
+fi
+
 if [ -d "$BUILDROOT" ]; then
 	rm -rf ${BUILDROOT}
 else
@@ -55,27 +71,15 @@ mkdir -p /Library/MacPatch/Server/lib
 mkdir -p /Library/MacPatch/Server/Logs
 
 # ------------------
-# Compile the agent components
-# ------------------
-xcodebuild clean build -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target SERVER_BUILD SYMROOT=${BUILDROOT}
-
-# ------------------
-# Remove the build and symbol files
-# ------------------
-find ${BUILDROOT} -name "*.build" -print | xargs -I{} rm -rf {}
-find ${BUILDROOT} -name "*.dSYM" -print | xargs -I{} rm -rf {}
-
-# ------------------
 # Copy compiled files
 # ------------------
 cp -R ${GITROOT}/MacPatch\ Server/Server ${MPBASE}
-cp -R ${BUILDROOT}/Release/ ${MPSERVERBASE}/bin
 
 # ------------------
 # Setup Tomcat
 # ------------------
 J2EE_SW="apache-tomcat-7.0.54.tar.gz"
-if [ $TCATSRV == 1 ]; then
+if [ $TCATSRV != 1 ]; then
 	mkdir -p "${MPSERVERBASE}/apache-tomcat"
 	tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/apache-tomcat
 fi
@@ -89,19 +93,19 @@ ${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh
 # Link & Set Permissions
 # ------------------
 ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
-chown -R root:admin ${MPSERVERBASE}
+chown -R 79:70 ${MPSERVERBASE}
 if [ $TCATSRV == 0 ]; then
 	rm -rf "${MPSERVERBASE}/apache-tomcat"
 	chmod -R 0775 ${MPSERVERBASE}/jetty-mpsite
-	chown -R 79:70 ${MPSERVERBASE}/jetty-mpsite
+	chown -R $OWNERGRP ${MPSERVERBASE}/jetty-mpsite
 	chmod -R 0775 ${MPSERVERBASE}/jetty-mpwsl
-	chown -R 79:70 ${MPSERVERBASE}/jetty-mpwsl
+	chown -R $OWNERGRP ${MPSERVERBASE}/jetty-mpwsl
 else
 	cp -r ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpws
 	mv ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpsite
 
 	chmod -R 0775 "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
-	chown -R 79:70 "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
+	chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
 	rm -rf  "${MPSERVERBASE}/tomcat-mpws/webapps/ROOT"
 	jar cf "${MPSERVERBASE}/conf/tomcat/mpws/ROOT.war" -C "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl" .
 	#cp -r "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl" "${MPSERVERBASE}/tomcat-mpws/webapps/ROOT"
@@ -114,7 +118,7 @@ else
 	rm -rf "${MPSERVERBASE}/jetty-mpwsl"
 
 	chmod -R 0775 "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
-	chown -R 79:70 "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
+	chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
 	rm -rf "${MPSERVERBASE}/tomcat-mpsite/webapps/ROOT"
 	jar cf "${MPSERVERBASE}/conf/tomcat/mpsite/ROOT.war" -C "${MPSERVERBASE}/jetty-mpsite/webapps/mp" .
 	#cp -r "${MPSERVERBASE}/jetty-mpsite/webapps/mp" "${MPSERVERBASE}/tomcat-mpsite/webapps/ROOT"
@@ -127,12 +131,12 @@ else
 	rm -rf "${MPSERVERBASE}/jetty-mpsite"
 
 	chmod -R 0775 ${MPSERVERBASE}/tomcat-mpws
-	chown -R 79:70 ${MPSERVERBASE}/tomcat-mpws
+	chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpws
 	chmod -R 0775 ${MPSERVERBASE}/tomcat-mpsite
 	chown -R 79:70 ${MPSERVERBASE}/tomcat-mpsite
 fi
 
-chown -R 79:70 ${MPSERVERBASE}/Logs
+chown -R $OWNERGRP ${MPSERVERBASE}/Logs
 chmod 0775 ${MPSERVERBASE}
 
 
@@ -144,4 +148,4 @@ find ${MPSERVERBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
 # ------------------
 # Create Archive
 # ------------------
-ditto -c -k ${MPSERVERBASE} ${MPBASE}/MacPatch_Server.zip
+zip -r ${MPBASE}/MacPatch_Server.zip ${MPSERVERBASE}
