@@ -5,7 +5,7 @@
 # MacPatch Version 2.5.x
 # Tomcat Support, port changed
 #
-# Script Ver. 1.3.0
+# Script Ver. 1.3.1
 #
 #-----------------------------------------
 clear
@@ -63,7 +63,9 @@ perl -i -p -e 's/@@/\n/g' "${HTTPD_CONF}"
 if $USELINUX; then
 	if [ -d /Library/MacPatch/Server/tomcat-mpsite ]; then
 		if [ -f /Library/MacPatch/Server/conf/init.d/MPTomcatSite ]; then
-			rm /etc/init.d/MPTomcatSite
+			if [ -f /etc/init.d/MPTomcatSite ]; then
+				rm /etc/init.d/MPTomcatSite
+			fi
 			chmod +x /Library/MacPatch/Server/conf/init.d/MPTomcatSite
 			ln -s /Library/MacPatch/Server/conf/init.d/MPTomcatSite /etc/init.d/MPTomcatSite
 		else

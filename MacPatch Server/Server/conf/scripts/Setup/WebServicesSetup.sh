@@ -63,13 +63,17 @@ perl -i -p -e 's/@@/\n/g' "${HTTPD_CONF}"
 if $USELINUX; then
 	if [ -d /Library/MacPatch/Server/tomcat-mpws ]; then
 		if [ -f /Library/MacPatch/Server/conf/init.d/MPTomcatWS ]; then
-			rm /etc/init.d/MPTomcatWS
+			if [ -f /etc/init.d/MPTomcatWS ]; then
+				rm /etc/init.d/MPTomcatWS
+			fi
 			chmod +x /Library/MacPatch/Server/conf/init.d/MPTomcatWS
 			ln -s /Library/MacPatch/Server/conf/init.d/MPTomcatWS /etc/init.d/MPTomcatWS
 		fi
 		# Invenotry Daemon 
 		if [ -f /Library/MacPatch/Server/conf/init.d/MPInventoryD ]; then
-			rm /etc/init.d/MPInventoryD
+			if [ -f /etc/init.d/MPTomcatWS ]; then
+				rm /etc/init.d/MPInventoryD
+			fi
 			chmod +x /Library/MacPatch/Server/conf/init.d/MPInventoryD
 			ln -s /Library/MacPatch/Server/conf/init.d/MPInventoryD /etc/init.d/MPInventoryD
 		fi
