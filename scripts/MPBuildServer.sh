@@ -45,7 +45,7 @@ if [ $XOSTYPE == "Linux" ]; then
 	if [ $? -eq 0 ]; then
 		echo "www-data user exists"
 	else
-    		echo "Create user www-data"
+    	echo "Create user www-data"
 		useradd -r -M -s /dev/null -U www-data
 	fi
 elif [ $XOSTYPE == "Darwin" ]; then
@@ -135,7 +135,7 @@ ${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh
 # Link & Set Permissions
 # ------------------
 ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
-chown -R 79:70 ${MPSERVERBASE}
+chown -R $OWNERGRP ${MPSERVERBASE}
 
 if [ $TCATSRV == 0 ]; then
 	rm -rf "${MPSERVERBASE}/apache-tomcat"

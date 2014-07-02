@@ -44,7 +44,7 @@ mp_db_name=${mp_db_name:-MacPatchDB}
 read -p "MacPatch Database Server User Name [mpdbadm]: " mp_db_usr
 mp_db_usr=${mp_db_usr:-mpdbadm}
 read -s -p "MacPatch Database Server User Password: " mp_db_pas
-mp_db_pas_ro=`openssl rand -base64 33`
+mp_db_pas_ro=`openssl rand -base64 15`
 clear
 echo "Configure MacPatch Login Source..."
 echo " "
@@ -80,7 +80,7 @@ sed -ie "s/\[DB-NAME\]/$mp_db_name/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
 sed -ie "s/\[DB-PORT\]/$mp_db_port/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
 sed -ie "s/\[DB-USER\]/$mp_db_usr/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
 sed -ie "s/\[DB-PASS\]/$mp_db_pas/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
-sed -ie "s/\[DB-PASS-RO\]/$mp_db_pas_ro/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
+sed -ie "s/\[DB-PASS-RO\]/${mp_db_pas_ro}/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
 if [ "$use_ldap" == "y" ] || [ "$use_ldap" == "Y" ]; then
 	sed -ie "s/\[AD-DOMAIN-FQDN\]/$ldap_hostname/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
 	sed -ie "s/\[AD-DOMAIN-PORT\]/$ldap_port/g" "${MP_SRV_BASE}/conf/etc/siteconfig.xml"
