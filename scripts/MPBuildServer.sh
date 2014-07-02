@@ -121,8 +121,8 @@ fi
 # Setup Tomcat
 # ------------------
 J2EE_SW="apache-tomcat-7.0.54.tar.gz"
-if [ $TCATSRV != 1 ]; then
-	#mkdir -p "${MPSERVERBASE}/apache-tomcat"
+if [ $TCATSRV == 1 ]; then
+	mkdir -p "${MPSERVERBASE}/apache-tomcat"
 	tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/apache-tomcat
 	chmod +x ${MPSERVERBASE}/apache-tomcat/bin/*
 	rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/docs
