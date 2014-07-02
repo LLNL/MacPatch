@@ -69,7 +69,6 @@ prefs['MPServerAddress'] = server_name
 prefs['MPServerUseSSL'] = server_ssl
 prefs['MPServerPort'] = server_port
 try:
-	print prefs
 	plistlib.writePlist(prefs,theFile)	
 except Exception, e:
 	print("Error: %s" % e)

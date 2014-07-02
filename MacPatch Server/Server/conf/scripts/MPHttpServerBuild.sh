@@ -139,16 +139,19 @@ make install
 
 # Copy MP conf files over
 if $USEMACOS; then
-	cp ${MP_CONF_DIR}/httpd/conf/httpd.conf.mac ${MP_HTTPD_DIR}/conf/httpd.conf
+	#cp ${MP_CONF_DIR}/httpd/conf/httpd.conf.mac ${MP_HTTPD_DIR}/conf/httpd.conf
+	cp ${MP_CONF_DIR}/httpd/conf/httpd.conf ${MP_HTTPD_DIR}/conf/httpd.conf
 fi
 if $USELINUX; then
-	cp ${MP_CONF_DIR}/httpd/conf/httpd.conf.lnx ${MP_HTTPD_DIR}/conf/httpd.conf
+	#cp ${MP_CONF_DIR}/httpd/conf/httpd.conf.lnx ${MP_HTTPD_DIR}/conf/httpd.conf
+	cp ${MP_CONF_DIR}/httpd/conf/httpd.conf ${MP_HTTPD_DIR}/conf/httpd.conf
 fi
 
 cp ${MP_CONF_DIR}/httpd/conf/extra/httpd-default.conf ${MP_HTTPD_DIR}/conf/extra/httpd-default.conf
 
 if $USELINUX; then
-	cp ${MP_CONF_DIR}/httpd/conf/extra/httpd-vhosts.conf.lnx ${MP_HTTPD_DIR}/conf/extra/httpd-vhosts.conf
+	#cp ${MP_CONF_DIR}/httpd/conf/extra/httpd-vhosts.conf.lnx ${MP_HTTPD_DIR}/conf/extra/httpd-vhosts.conf
+	cp ${MP_CONF_DIR}/httpd/conf/extra/httpd-vhosts.conf ${MP_HTTPD_DIR}/conf/extra/httpd-vhosts.conf
 fi
 if $USEMACOS; then
 	cp ${MP_CONF_DIR}/httpd/conf/extra/httpd-vhosts.conf ${MP_HTTPD_DIR}/conf/extra/httpd-vhosts.conf

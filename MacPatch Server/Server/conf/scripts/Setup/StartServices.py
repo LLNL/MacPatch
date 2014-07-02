@@ -34,6 +34,8 @@ import os
 import plistlib
 import platform
 import argparse
+import pwd
+import grp
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
 MP_SRV_CONF = MP_SRV_BASE+"/conf"
@@ -42,6 +44,21 @@ system_name = platform.uname()[1]
 macServices=["gov.llnl.mp.wsl.plist","gov.llnl.mp.invd.plist","gov.llnl.mp.site.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.httpd.plist"]
 lnxServices=["MPApache","MPTomcatSite","MPTomcatWS","MPInventoryD"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader"]
+
+gUID = 79
+gGID = 70
+if os_type == "Linux":
+	try:
+		pw = pwd.getpwnam('www-data')
+		if pw:
+			gUID = pw.pw_uid
+			
+		gw = grp.getgrnam('www-data')
+		if gw:
+			gGID = gw.gr_gid
+			
+	except KeyError:
+		print('User someusr does not exist.')
 
 def repairPermissions():
 	try:
@@ -52,9 +69,9 @@ def repairPermissions():
 		# Change Permissions for Linux & Mac		  
 		for root, dirs, files in os.walk(MP_SRV_BASE):  
 			for momo in dirs:  
-				os.chown(os.path.join(root, momo), 79, 70)
+				os.chown(os.path.join(root, momo), gUID, gGID)
 			for momo in files:
-				os.chown(os.path.join(root, momo), 79, 70)
+				os.chown(os.path.join(root, momo), gUID, gGID)
 	
 		os.chmod("/Library/MacPatch/Server", 0775)
 		os.chmod("/Library/MacPatch/Server/Logs", 0775)
@@ -78,12 +95,13 @@ def linuxLoadServices(service):
 	else:
 		if service in lnxServices:
 			_services = service
-		elif ervice in lnxCronSrvs:
+		elif service in lnxCronSrvs:
 			_servicesC = service
 
 	# Load Init.d Services
 	if _services != None:
 		for srvs in _services:
+			print srvs
 			linuxLoadInitServices(srvs)
 	
 	# Load Cron Services
@@ -102,7 +120,7 @@ def linuxUnLoadServices(service):
 	else:
 		if service in lnxServices:
 			_services = service
-		elif ervice in lnxCronSrvs:
+		elif service in lnxCronSrvs:
 			_servicesC = service
 
 	# Load Init.d Services
@@ -176,48 +194,49 @@ def osxUnLoadServices(service):
    
 
 def main():
-    '''Main command processing'''
-    
-    '''	
+	'''Main command processing'''
+
+	'''	
 	# ----------------------------------	
 	# Script Requires ROOT
 	# ----------------------------------
 	'''
 	if os.geteuid() != 0:
 		exit("\nYou must be an admin user to run this script.\nPlease re-run the script using sudo.\n")
-    
-    parser = argparse.ArgumentParser(description='Process some args.')
-    parser.add_argument('--load', help="Load/Start Services", required=False)
-    parser.add_argument('--unload', help='Unload/Stop Services', required=False)
-    args = parser.parse_args()
-    
-    if args.load == None and args.unload == None:
-    	usage()
-    	exit("\nOne argument load/unload is required.\n")
-    	
-    if args.load != None and args.unload != None:	
-    	usage()
-    	exit("\nOnly one argument load/unload maybe used at a time.\n")
-    	
-    # First Repair permissions
-    repairPermissions()
-    
-    if os_type == 'Darwin':
-    	if args.load != None:
-    		osxLoadServices(args.load)
-    	elif args.unload != None:
-    		osxUnLoadServices(args.load)
-    elif os_type == 'Linux':
-    	if args.load != None:
-    		linuxLoadServices(args.load)
-    	elif args.unload != None:
-    		linuxUnLoadServices(args.load)
-    
+
+	parser = argparse.ArgumentParser(description='Process some args.')
+	parser.add_argument('--load', help="Load/Start Services", required=False)
+	parser.add_argument('--unload', help='Unload/Stop Services', required=False)
+	args = parser.parse_args()
+
+	if args.load == None and args.unload == None:
+		usage()
+		exit("\nOne argument load/unload is required.\n")
+	
+	if args.load != None and args.unload != None:	
+		usage()
+		exit("\nOnly one argument load/unload maybe used at a time.\n")
+	
+	# First Repair permissions
+	repairPermissions()
+
+	if os_type == 'Darwin':
+		if args.load != None:
+			osxLoadServices(args.load)
+		elif args.unload != None:
+			osxUnLoadServices(args.unload)
+	elif os_type == 'Linux':
+		if args.load != None:
+			linuxLoadServices(args.load)
+		elif args.unload != None:
+			linuxUnLoadServices(args.unload)
+
 def usage():
 	print "StartServices.py --load/--unload [All - Service]\n"
 	print "\t--load\t\tLoads a Service or All services with the key word 'All'"
 	print "\t--unload\tUn-Loads a Service or All services with the key word 'All'\n"
 
-        
+
 if __name__ == '__main__':
-    main()    
+	main()
+	
