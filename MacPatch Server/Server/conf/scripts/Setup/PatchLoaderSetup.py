@@ -96,6 +96,6 @@ if OS_TYPE == "Linux":
 
 	
 print "\nPlease note, if you wish to replicate content from your own Apple SoftwareUpdate server"
-print "you will need to edit the ${MP_SRV_BASE}/conf/etc/gov.llnl.mp.patchloader.plist"
+print "you will need to edit the "+MP_SRV_BASE+"/conf/etc/gov.llnl.mp.patchloader.plist"
 print "file. \n"
 
