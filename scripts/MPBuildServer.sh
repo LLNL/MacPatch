@@ -77,8 +77,8 @@ fi
 # Tomcat support is new and going to replace Jetty
 # ------------------------------------
 
-read -p "Use experimental Tomcat config [N]: " TCATSRV
-TCATSRV=${TCATSRV:-0}
+read -p "Use older Jetty J2EE Server [N]: " TCATSRV
+TCATSRV=${TCATSRV:-1}
 
 # ------------------
 # Create Skeleton Dir Structure
