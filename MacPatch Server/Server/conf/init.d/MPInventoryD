@@ -15,25 +15,19 @@ INV_HOME="/Library/MacPatch/Server/conf/scripts"
 
 case "$1" in
  start)
-	if [ -f $INV_HOME/MPInvD.py ]; then
-	    	echo $"Starting MacPatch Inventory"
-		$INV_HOME/MPInvD.py
-    	fi
+	if [ -f $INV_HOME/MPInventoryD.py ]; then
+	    echo $"Starting MacPatch Inventory"
+		$INV_HOME/MPInventoryD.py
+    fi
 	;;
  stop)
-	if [ -f $INV_HOME/MPInvD.py ]; then
+	if [ -f $INV_HOME/MPInventoryD.py ]; then
 		echo $"Stopping MacPatch Inventory"
-        	$INV_HOME/MPInvD.py
-    	fi
- 	;;
- restart)
-	if [ -f $INV_HOME/bin/apachectl ]; then
-		echo $"Restarting MacPatch Inventory"
-        	$INV_HOME/MPInvD.py
-    	fi
+        #$INV_HOME/MPInventoryD.py
+    fi
  	;;
  *)
- 	echo $"Usage: $0 {start|stop|restart}"
+ 	echo $"Usage: $0 {start|stop}"
 	exit 1
 	;;
 esac

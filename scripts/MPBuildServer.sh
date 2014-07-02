@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.0
+# Version: 1.1
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -24,16 +24,40 @@ USELINUX=false
 USEMACOS=false
 OWNERGRP="79:70"
 
+if [ "`whoami`" != "root" ] ; then   # If not root user,
+   # Run this script again as root
+   echo
+   echo "You must be an admin user to run this script."
+   echo "Please re-run the script using sudo."
+   echo
+   exit 1;
+fi
+
+# -----------------------------------
+# OS Check
+# -----------------------------------
+
 # Check and set os type
 if [ $XOSTYPE == "Linux" ]; then
 	USELINUX=true
 	OWNERGRP="www-data:www-data"
+	getent passwd www-data > /dev/null 2&>1
+	if [ $? -eq 0 ]; then
+		echo "www-data user exists"
+	else
+    		echo "Create user www-data"
+		useradd -r -M -s /dev/null -U www-data
+	fi
 elif [ $XOSTYPE == "Darwin" ]; then
 	USEMACOS=true
 else
   	echo "OS Type $XOSTYPE is not supported. Now exiting."
   	exit 1; 
 fi
+
+# -----------------------------------
+# Main
+# -----------------------------------
 
 if [ -d "$BUILDROOT" ]; then
 	rm -rf ${BUILDROOT}
@@ -75,6 +99,24 @@ mkdir -p /Library/MacPatch/Server/Logs
 # ------------------
 cp -R ${GITROOT}/MacPatch\ Server/Server ${MPBASE}
 
+if $USEMACOS; then
+	# ------------------
+	# Compile the agent components
+	# ------------------
+	xcodebuild clean build -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target SERVER_BUILD SYMROOT=${BUILDROOT}
+
+	# ------------------
+	# Remove the build and symbol files
+	# ------------------
+	find ${BUILDROOT} -name "*.build" -print | xargs -I{} rm -rf {}
+	find ${BUILDROOT} -name "*.dSYM" -print | xargs -I{} rm -rf {}
+
+	# ------------------
+	# Copy compiled files
+	# ------------------
+	cp -R ${BUILDROOT}/Release/ ${MPSERVERBASE}/bin
+fi
+
 # ------------------
 # Setup Tomcat
 # ------------------
@@ -94,6 +136,7 @@ ${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh
 # ------------------
 ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
 chown -R 79:70 ${MPSERVERBASE}
+
 if [ $TCATSRV == 0 ]; then
 	rm -rf "${MPSERVERBASE}/apache-tomcat"
 	chmod -R 0775 ${MPSERVERBASE}/jetty-mpsite
@@ -108,7 +151,6 @@ else
 	chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
 	rm -rf  "${MPSERVERBASE}/tomcat-mpws/webapps/ROOT"
 	jar cf "${MPSERVERBASE}/conf/tomcat/mpws/ROOT.war" -C "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl" .
-	#cp -r "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl" "${MPSERVERBASE}/tomcat-mpws/webapps/ROOT"
 	cp "${MPSERVERBASE}/conf/tomcat/mpws/ROOT.war" "${MPSERVERBASE}/tomcat-mpws/webapps"
 	cp "${MPSERVERBASE}/conf/tomcat/mpws/bin/setenv.sh" "${MPSERVERBASE}/tomcat-mpws/bin/setenv.sh"
 	cp "${MPSERVERBASE}/conf/tomcat/mpws/bin/launchdTomcat.sh" "${MPSERVERBASE}/tomcat-mpws/bin/launchdTomcat.sh"
@@ -121,7 +163,6 @@ else
 	chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
 	rm -rf "${MPSERVERBASE}/tomcat-mpsite/webapps/ROOT"
 	jar cf "${MPSERVERBASE}/conf/tomcat/mpsite/ROOT.war" -C "${MPSERVERBASE}/jetty-mpsite/webapps/mp" .
-	#cp -r "${MPSERVERBASE}/jetty-mpsite/webapps/mp" "${MPSERVERBASE}/tomcat-mpsite/webapps/ROOT"
 	cp "${MPSERVERBASE}/conf/tomcat/mpsite/ROOT.war" "${MPSERVERBASE}/tomcat-mpsite/webapps"
 	cp "${MPSERVERBASE}/conf/tomcat/mpsite/bin/setenv.sh" "${MPSERVERBASE}/tomcat-mpsite/bin/setenv.sh"
 	cp "${MPSERVERBASE}/conf/tomcat/mpsite/bin/launchdTomcat.sh" "${MPSERVERBASE}/tomcat-mpsite/bin/launchdTomcat.sh"
