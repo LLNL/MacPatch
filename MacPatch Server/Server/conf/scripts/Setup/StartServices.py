@@ -147,14 +147,20 @@ def linuxLoadCronServices(service):
 	cron = CronTab()
 	
 	if service == "MPPatchLoader":
+		print("Loading MPPatchLoader")
 		job  = cron.new(command='/Library/MacPatch/Server/conf/scripts/MPSUSPatchSync.py --plist /Library/MacPatch/Server/conf/etc/gov.llnl.mp.patchloader.plist')
 		job.set_comment("MPPatchLoader")
 		job.hour.every(8)
+		job.enable()
+		cron.write()
 	
 	if service == "MPAVLoader":
+		print("Loading MPAVLoader")
 		job  = cron.new(command='/Library/MacPatch/Server/conf/scripts/MPAVDefsSync.py --plist /Library/MacPatch/Server/conf/etc/gov.llnl.mpavdl.plist')
 		job.set_comment("MPAVLoader")
-		job.hour.every(8)
+		job.hour.every(7)
+		job.enable()
+		cron.write()
 
 def removeCronJob(comment):
 	from crontab import CronTab
