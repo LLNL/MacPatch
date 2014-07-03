@@ -1,404 +1,0 @@
-TMPPKGUpload
-v6
-r1
-cCheck dependencies
-cPhaseScriptExecution Check\ Pods\ Manifest.lock /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh
-cProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.o /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cLd /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/MacOS/MPPKGUpload normal x86_64
-cCopyStringsFile /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/InfoPlist.strings MPPKGUpload/en.lproj/InfoPlist.strings
-cCpResource MPPKGUpload/en.lproj/Credits.rtf Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/Credits.rtf
-cCompileXIB /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Base.lproj/MainMenu.xib
-cCompileAssetCatalog /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Images.xcassets
-cProcessInfoPlistFile /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Info.plist /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Info.plist
-cPhaseScriptExecution Copy\ Pods\ Resources /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh
-cTouch /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
-c0000000053272E3400000000000000AA
-t1395076660
-s170
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
-c0000000052705079000000000000044C
-t1383092345
-s1100
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
-c0000000053272E2900000000000001DE
-t1395076649
-s478
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Cocoa
-c0000000052705079000000000000253C
-t1383092345
-s9532
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
-c0000000053272E2A0000000000000ADC
-t1395076650
-s2780
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o
-t1397680344
-s56792
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/MPPKGUpload.LinkFileList
-c00000000534EE8D80000000000000107
-t1397680344
-s263
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.o
-t1397680344
-s3376
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh
-c00000000534EE8D80000000000000103
-t1397680344
-s259
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh
-c00000000534EE8D8000000000000002F
-t1397680344
-s47
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/assetcatalog_dependencies.txt
-t1397680345
-s252
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/assetcatalog_generated_info.plist
-t1397680345
-s181
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch.pch
-t1397680344
-s125004
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app
-t1397680344
-s102
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Info.plist
-t1397680345
-s1447
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/MacOS/MPPKGUpload
-t2
-s0
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/PkgInfo
-t1397680345
-s8
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/Base.lproj/MainMenu.nib
-t1397680345
-s41469
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/Credits.rtf
-t1397680344
-s436
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/InfoPlist.strings
-t1397680344
-s92
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods.a
-c00000000534EE8D8000000000010F8D8
-t1397680344
-s1112280
-
-N/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m
-c00000000534EE85A0000000000000C30
-t1397680218
-s3120
-
-N/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Base.lproj/MainMenu.xib
-c00000000534EC579000000000000CE13
-t1397671289
-s52755
-
-N/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Images.xcassets
-c00000000534EC39D0000000000000066
-t1397670813
-s102
-
-N/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Info.plist
-c00000000534EC39D0000000000000464
-t1397670813
-s1124
-
-N/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Prefix.pch
-c00000000534EC39D00000000000000AC
-t1397670813
-s172
-
-N/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/en.lproj/Credits.rtf
-c00000000534EC39D00000000000001B4
-t1397670813
-s436
-
-N/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/en.lproj/InfoPlist.strings
-c00000000534EC39D000000000000002D
-t1397670813
-s45
-
-N/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/main.m
-c00000000534EC39D0000000000000113
-t1397670813
-s275
-
-CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m
-r0
-
-CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/main.m
-r0
-
-CCheck dependencies
-r0
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependenciesf59ebe5820ffb841^c843bf5820ffb841^---0#1#1#--18"Check dependencies36"9CC6C6B8-8DFA-4C77-8132-A7F87C2DFDF1-
-
-CCompileAssetCatalog /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Images.xcassets
-s419373144.960636
-e419373145.702125
-r1
-xCompileAssetCatalog
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources
-x/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Images.xcassets
-o/* com.apple.actool.compilation-results */
-o/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/Assets.car
-o/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/assetcatalog_generated_info.plist
-o
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection103"CompileAssetCatalog Build/Products/Debug/MPPKGUpload.app/Contents/Resources MPPKGUpload/Images.xcassets103"CompileAssetCatalog Build/Products/Debug/MPPKGUpload.app/Contents/Resources MPPKGUpload/Images.xcassets4df4f55820ffb841^72bfb35920ffb841^-281"/* com.apple.actool.compilation-results *//Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/Assets.car/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/assetcatalog_generated_info.plist-0#0#1#-19%DVTDocumentLocation2@72"file:///Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Images.xcassets/0000000000000000^840"CompileAssetCatalog Build/Products/Debug/MPPKGUpload.app/Contents/Resources MPPKGUpload/Images.xcassets    cd /Users/heizer1/Workspace/MPPKGUpload    /Applications/Xcode.app/Contents/Developer/usr/bin/actool --output-format human-readable-text --notices --warnings --export-dependency-info /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/assetcatalog_dependencies.txt --output-partial-info-plist /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/assetcatalog_generated_info.plist --app-icon AppIcon --platform macosx --minimum-deployment-target 10.9 --target-device mac --compile /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Images.xcassets36"7348BBC1-3691-4BC6-9840-F74C0E609875-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s419373144.818642
-e419373144.898879
-r1
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o
-x/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m
-d/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.h
-o/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m:43:19: warning: 'runModalForDirectory:file:' is deprecated: first deprecated in OS X 10.6 [-Wdeprecated-declarations]
-o    if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
-o                  ^
-oIn module 'Cocoa' imported from /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.h:9:
-oIn module 'AppKit' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h:13:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:313:1: note: method 'runModalForDirectory:file:' declared here
-o- (NSInteger)runModalForDirectory:(NSString *)path file:(NSString *)name NS_DEPRECATED_MAC(10_0, 10_6);
-o^
-o/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m:45:35: warning: 'filenames' is deprecated: first deprecated in OS X 10.6 [-Wdeprecated-declarations]
-o        NSArray* files = [openDlg filenames];
-o                                  ^
-oIn module 'Cocoa' imported from /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.h:9:
-oIn module 'AppKit' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h:13:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenPanel.h:43:1: note: method 'filenames' declared here
-o- (NSArray *)filenames NS_DEPRECATED_MAC(10_0, 10_6);
-o^
-o2 warnings generated.
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection70"Compile /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m202"CompileC Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o MPPKGUpload/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilerb9a5d15820ffb841^1422e85820ffb841^-1720"/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m:43:19: warning: 'runModalForDirectory:file:' is deprecated: first deprecated in OS X 10.6 [-Wdeprecated-declarations]    if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )                  ^In module 'Cocoa' imported from /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.h:9:In module 'AppKit' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h:13:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:313:1: note: method 'runModalForDirectory:file:' declared here- (NSInteger)runModalForDirectory:(NSString *)path file:(NSString *)name NS_DEPRECATED_MAC(10_0, 10_6);^/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m:45:35: warning: 'filenames' is deprecated: first deprecated in OS X 10.6 [-Wdeprecated-declarations]        NSArray* files = [openDlg filenames];                                  ^In module 'Cocoa' imported from /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.h:9:In module 'AppKit' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h:13:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenPanel.h:43:1: note: method 'filenames' declared here- (NSArray *)filenames NS_DEPRECATED_MAC(10_0, 10_6);^2 warnings generated.2(36%IDEClangDiagnosticActivityLogMessage2@73"'runModalForDirectory:file:' is deprecated: first deprecated in OS X 10.6-419373144#18446744073709551615#0#1(2@49"Method 'runModalForDirectory:file:' declared here-419373144#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@170"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h0000000000000000^312#0#312#0#16555#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@69"file:///Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m0000000000000000^42#18#42#18#921#0#12"Deprecations--2@56"'filenames' is deprecated: first deprecated in OS X 10.6-419373144#18446744073709551615#0#1(2@32"Method 'filenames' declared here-419373144#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@170"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenPanel.h0000000000000000^42#0#42#0#789#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@69"file:///Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m0000000000000000^44#34#44#34#1012#0#12"Deprecations--0#0#1#-19%DVTDocumentLocation4@69"file:///Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m0000000000000000^3579"CompileC Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o MPPKGUpload/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -isystem/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -isystem/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.dia -c /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/AppDelegate.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o36"9E0BCF24-A697-4E25-B277-B939B61E6CCF-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.o /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s419373144.818919
-e419373144.856295
-r1
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.o
-x/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/main.m
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/main.m
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection63"Compile /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/main.m188"CompileC Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.o MPPKGUpload/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler6fbad15820ffb841^a438db5820ffb841^---0#0#1#-19%DVTDocumentLocation2@62"file:///Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/main.m0000000000000000^3537"CompileC Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.o MPPKGUpload/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -isystem/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -isystem/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.dia -c /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/main.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.o36"CFE731F1-9169-4D2B-BB12-740CBC7DC17D-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CCompileXIB /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Base.lproj/MainMenu.xib
-s419373144.960362
-e419373145.549822
-r1
-xCompileXIB
-x/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Base.lproj/MainMenu.xib
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection82"Compiling /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Base.lproj/MainMenu.xib46"CompileXIB MPPKGUpload/Base.lproj/MainMenu.xib85ebf55820ffb841^98c18c5920ffb841^---0#0#1#-19%DVTDocumentLocation2@79"file:///Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Base.lproj/MainMenu.xib0000000000000000^542"CompileXIB MPPKGUpload/Base.lproj/MainMenu.xib    cd /Users/heizer1/Workspace/MPPKGUpload    export XCODE_DEVELOPER_USR_PATH=/Applications/Xcode.app/Contents/Developer/usr/bin/..    /Applications/Xcode.app/Contents/Developer/usr/bin/ibtool --errors --warnings --notices --minimum-deployment-target 10.9 --output-format human-readable-text --compile /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/Base.lproj/MainMenu.nib /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/Base.lproj/MainMenu.xib36"1E3E7B36-9569-4781-850B-A1D62757A1AF-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CCopyStringsFile /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/InfoPlist.strings MPPKGUpload/en.lproj/InfoPlist.strings
-s419373144.960109
-e419373144.980216
-r1
-xCopyStringsFile
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/InfoPlist.strings
-xMPPKGUpload/en.lproj/InfoPlist.strings
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection43"Copy MPPKGUpload/en.lproj/InfoPlist.strings137"CopyStringsFile Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/InfoPlist.strings MPPKGUpload/en.lproj/InfoPlist.strings13d3f55820ffb841^8140fb5820ffb841^---0#0#1#-19%DVTDocumentLocation2@82"file:///Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/en.lproj/InfoPlist.strings0000000000000000^416"CopyStringsFile Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/InfoPlist.strings MPPKGUpload/en.lproj/InfoPlist.strings    cd /Users/heizer1/Workspace/MPPKGUpload    builtin-copyStrings --validate --inputencoding utf-8 --outputencoding UTF-16 --outdir /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj -- MPPKGUpload/en.lproj/InfoPlist.strings36"6BA991BF-CA4E-4514-8AE3-094D85E1C9DB-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CCpResource MPPKGUpload/en.lproj/Credits.rtf Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/Credits.rtf
-s419373144.960220
-e419373144.961015
-r1
-xCpResource
-xMPPKGUpload/en.lproj/Credits.rtf
-xBuild/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/Credits.rtf
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection81"Copy Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/Credits.rtf120"CpResource MPPKGUpload/en.lproj/Credits.rtf Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/Credits.rtfb6d8f55820ffb841^9c69fa5820ffb841^---0#0#1#-19%DVTDocumentLocation2@120"file:///Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/Credits.rtf00340897deffdf42^449"CpResource MPPKGUpload/en.lproj/Credits.rtf Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj/Credits.rtf    cd /Users/heizer1/Workspace/MPPKGUpload    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/en.lproj/Credits.rtf /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Resources/en.lproj36"695D3EBC-7F3A-4B1F-A8FF-05ECD52889F1-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CLd /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/MacOS/MPPKGUpload normal x86_64
-s419373144.899526
-e419373144.959472
-r0
-xLd
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/MacOS/MPPKGUpload
-xnormal
-xx86_64
-d/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/MPPKGUpload.LinkFileList
-d/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o
-d/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/main.o
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/CoreServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Security.framework/Security
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Cocoa
-d/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods.a
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Foundation
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libobjc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libSystem.dylib
-d/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/lib/darwin/libclang_rt.osx.a
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/IOKit.framework/IOKit
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CFNetwork.framework/CFNetwork
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/IOSurface.framework/IOSurface
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ImageIO.framework/ImageIO
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreData.framework/CoreData
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreText.framework/CoreText
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/ApplicationServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/QuartzCore.framework/QuartzCore
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/DiskArbitration.framework/DiskArbitration
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreVideo.framework/CoreVideo
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/AppKit
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Metadata
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/OSServices.framework/Versions/A/OSServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SearchKit.framework/Versions/A/SearchKit
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/LaunchServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/DictionaryServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcache.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcommonCrypto.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcompiler_rt.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcopyfile.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcorecrypto.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdispatch.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdyld.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libkeymgr.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/liblaunch.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libmacho.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libquarantine.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libremovefile.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_asl.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_blocks.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_c.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_configuration.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_dnssd.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_info.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_kernel.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_m.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_malloc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_network.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_notify.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_platform.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_pthread.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_sandbox.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_stats.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunwind.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libxpc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/ATS
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ColorSync.framework/Versions/A/ColorSync
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/HIServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/LangAnalysis.framework/Versions/A/LangAnalysis
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/PrintCore.framework/Versions/A/PrintCore
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/QD.framework/Versions/A/QD
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesis
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/QuartzCore.framework/Versions/A/Frameworks/CoreImage.framework/Versions/A/CoreImage
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/QuartzCore.framework/Versions/A/Frameworks/ScalableUserInterface.framework/Versions/A/ScalableUserInterface
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGLU.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
-oUndefined symbols for architecture x86_64:
-o  "_AFErrorOrUnderlyingErrorHasCode", referenced from:
-o      -[AFXMLDocumentResponseSerializer responseObjectForResponse:data:error:] in libPods.a(AFURLResponseSerialization.o)
-old: symbol(s) not found for architecture x86_64
-oclang: error: linker command failed with exit code 1 (use -v to see invocation)
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection105"Link /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/MacOS/MPPKGUpload80"Ld Build/Products/Debug/MPPKGUpload.app/Contents/MacOS/MPPKGUpload normal x86_64a853e65820ffb841^10adf55820ffb841^-348"Undefined symbols for architecture x86_64:  "_AFErrorOrUnderlyingErrorHasCode", referenced from:      -[AFXMLDocumentResponseSerializer responseObjectForResponse:data:error:] in libPods.a(AFURLResponseSerialization.o)ld: symbol(s) not found for architecture x86_64clang: error: linker command failed with exit code 1 (use -v to see invocation)4(21%IDEActivityLogMessage2@52""_AFErrorOrUnderlyingErrorHasCode", referenced from:-419373144#43#55#-2#-23%DVTTextDocumentLocation3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#30"Apple Mach-O Linker (ld) Error--2@115"-[AFXMLDocumentResponseSerializer responseObjectForResponse:data:error:] in libPods.a(AFURLResponseSerialization.o)-419373144#98#122#-0#-3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#31"Apple Mach-O Linker (ld) Notice--2@43"Symbol(s) not found for architecture x86_64-419373144#220#48#-0#-3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#31"Apple Mach-O Linker (ld) Notice--2@65"Linker command failed with exit code 1 (use -v to see invocation)-419373144#268#80#-2#-3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#30"Apple Mach-O Linker (ld) Error--0#0#1#--1115"Ld Build/Products/Debug/MPPKGUpload.app/Contents/MacOS/MPPKGUpload normal x86_64    cd /Users/heizer1/Workspace/MPPKGUpload    export MACOSX_DEPLOYMENT_TARGET=10.9    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -L/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -filelist /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/MPPKGUpload.LinkFileList -mmacosx-version-min=10.9 -ObjC -framework CoreServices -framework Security -framework SystemConfiguration -fobjc-arc -fobjc-link-runtime -framework Cocoa -lPods -Xlinker -dependency_info -Xlinker /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Objects-normal/x86_64/MPPKGUpload_dependency_info.dat -o /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/MacOS/MPPKGUpload36"AEB81220-9E29-4BE4-B4AB-1CF648BD3355-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CPhaseScriptExecution Check\ Pods\ Manifest.lock /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh
-s419373144.748771
-e419373144.769237
-r1
-xPhaseScriptExecution
-xCheck Pods Manifest.lock
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection50"Run custom shell script 'Check Pods Manifest.lock'144"PhaseScriptExecution Check\ Pods\ Manifest.lock Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh282dc05820ffb841^94bec85820ffb841^---0#0#1#--338"PhaseScriptExecution Check\ Pods\ Manifest.lock Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh    cd /Users/heizer1/Workspace/MPPKGUpload    /bin/sh -c /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh36"153BCB61-A5E4-49C0-BBD1-6BBC0581B42A-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CPhaseScriptExecution Copy\ Pods\ Resources /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh
-s419373145.704577
-e419373145.786360
-r1
-xPhaseScriptExecution
-xCopy Pods Resources
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh
-obuilding file list ... done
-o
-osent 29 bytes  received 20 bytes  98.00 bytes/sec
-ototal size is 0  speedup is 0.00
-o/* com.apple.actool.compilation-results */
-o
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection45"Run custom shell script 'Copy Pods Resources'139"PhaseScriptExecution Copy\ Pods\ Resources Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.shb5a3b45920ffb841^7b4fc95920ffb841^-156"building file list ... donesent 29 bytes  received 20 bytes  98.00 bytes/sectotal size is 0  speedup is 0.00/* com.apple.actool.compilation-results */4(21%IDEActivityLogMessage2@28"building file list ... done-419373145#0#28#-0#-----2@50"sent 29 bytes  received 20 bytes  98.00 bytes/sec-419373145#29#50#-0#-----2@33"total size is 0  speedup is 0.00-419373145#79#33#-0#-----2@43"/* com.apple.actool.compilation-results */-419373145#112#43#-0#-----0#0#1#--333"PhaseScriptExecution Copy\ Pods\ Resources Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh    cd /Users/heizer1/Workspace/MPPKGUpload    /bin/sh -c /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh36"097D878D-0902-411D-B21E-898DA13557AD-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CProcessInfoPlistFile /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Info.plist /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Info.plist
-s419373145.702560
-e419373145.703816
-r1
-xProcessInfoPlistFile
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Info.plist
-x/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Info.plist
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection79"Process /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Info.plist112"ProcessInfoPlistFile Build/Products/Debug/MPPKGUpload.app/Contents/Info.plist MPPKGUpload/MPPKGUpload-Info.plist9be4b35920ffb841^e02db45920ffb841^---0#0#1#-19%DVTDocumentLocation2@78"file:///Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Info.plist0000000000000000^652"ProcessInfoPlistFile Build/Products/Debug/MPPKGUpload.app/Contents/Info.plist MPPKGUpload/MPPKGUpload-Info.plist    cd /Users/heizer1/Workspace/MPPKGUpload    builtin-infoPlistUtility /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Info.plist -genpkginfo /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/PkgInfo -expandbuildsettings -platform macosx -additionalcontentfile /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/assetcatalog_generated_info.plist -o /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app/Contents/Info.plist36"7A7D4CA3-7630-460D-82B1-8D418959E341-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CProcessPCH /Users/heizer1/Developer/Xcode/DerivedData/MPPKGUpload-dhcgexevjbibxzanqoywuypajuts/Index/PrecompiledHeaders/MPPKGUpload-Prefix-exfrkwaiylxcbdbejiluszsxyalu_ast/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
-r0
-
-CProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s419373144.770232
-e419373144.818069
-r1
-xProcessPCH
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch.pch
-xMPPKGUpload/MPPKGUpload-Prefix.pch
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Prefix.pch
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection45"Precompile MPPKGUpload/MPPKGUpload-Prefix.pch229"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler3d46c55820ffb841^7f6dd15820ffb841^---0#0#1#-19%DVTDocumentLocation2@78"file:///Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Prefix.pch0000000000000000^3510"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/MPPKGUpload-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/MPPKGUpload.build/Debug/MPPKGUpload.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -isystem/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -isystem/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch.dia -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch.d -c /Users/heizer1/Workspace/MPPKGUpload/MPPKGUpload/MPPKGUpload-Prefix.pch -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-cevdxyaqlmzkbpgyxmkqbxnubouf/MPPKGUpload-Prefix.pch.pch36"18EFEF92-E735-42CE-8B91-ED4BE3ECB490-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
-CTouch /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app
-s419373145.786903
-e419373145.790553
-r1
-xTouch
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection79"Touch /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app42"Touch Build/Products/Debug/MPPKGUpload.appc87bc95920ffb841^aa62ca5920ffb841^---0#0#1#--183"Touch Build/Products/Debug/MPPKGUpload.app    cd /Users/heizer1/Workspace/MPPKGUpload    /usr/bin/touch -c /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/MPPKGUpload.app36"1844A5B4-8041-4E58-B590-EFEAEEF8508C-
-b1CD6D1F2-4F19-42D3-B794-93B80B2E2665
-
