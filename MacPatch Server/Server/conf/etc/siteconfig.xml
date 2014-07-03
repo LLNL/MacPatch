@@ -27,7 +27,7 @@
 			<drivername>com.mysql.jdbc.Driver</drivername>
 			<databasename>[DB-NAME]</databasename>
 			<username>[DB-USER]</username>
-			<password>[DB-PASS-RO]</password>
+			<password>[DB-PASS]</password>
 			<maxconnections>500</maxconnections>
 			<logintimeout>30</logintimeout>
 			<connectiontimeout>30</connectiontimeout>

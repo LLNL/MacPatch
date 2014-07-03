@@ -183,6 +183,7 @@
             <p>Error Event: #EventName#</p>
             <p>Error details:<br>
             <cfdump var=#exception#></p>
+            <cfdump var=#application#></p>
         </cfoutput>
     </cfif>
  </cffunction>

@@ -3,18 +3,20 @@
   <system>
     <licensekey></licensekey>
     <component-cfc>/WEB-INF/bluedragon/component.cfc</component-cfc>
-    <whitespacecomp>false</whitespacecomp>
+    <whitespacecomp>true</whitespacecomp>
     <nativelibdir>/WEB-INF/bin</nativelibdir>
     <missingtemplatehandler></missingtemplatehandler>
     <lastfile>E:\OpenBD\openbd\build\j2ee\webapp\WEB-INF\bluedragon\bluedragon.xml.bak.1</lastfile>
     <errorhandler></errorhandler>
     <buffersize>0</buffersize>
     <tempdirectory>/WEB-INF/bluedragon/work/temp</tempdirectory>
-    <password>admin</password>
+    <password>kd482Cp2PtgRXWviak3t</password>
     <defaultcharset>utf-8</defaultcharset>
     <lastupdated>20/Aug/2011 13:10.05</lastupdated>
     <legacyformvalidation>false</legacyformvalidation>
     <strictarraypassbyreference>false</strictarraypassbyreference>
+    <servercfc>/Server/Server.cfc</servercfc>
+    <scriptprotect>true</scriptprotect>
   </system>
   <file>
     <maxfiles>1000</maxfiles>
@@ -48,9 +50,9 @@
   <cfapplication>
     <clientstorage>cookie</clientstorage>
     <enabled>true</enabled>
-    <sessiontimeout>#CreateTimeSpan(0,0,20,0)#</sessiontimeout>
-    <applicationtimeout>#CreateTimeSpan(2,0,0,0)#</applicationtimeout>
-    <j2eesession>false</j2eesession>
+    <sessiontimeout>#CreateTimeSpan(0,5,0,0)#</sessiontimeout>
+    <applicationtimeout>#CreateTimeSpan(0,5,0,0)#</applicationtimeout>
+    <j2eesession>true</j2eesession>
   </cfapplication>
   <cfmail>
     <interval>240</interval>

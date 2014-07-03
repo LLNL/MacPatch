@@ -23,12 +23,6 @@ function checkHostConfig () {
 	   echo
 	   exit 1;
 	fi
-	
-	osVer=`sw_vers -productVersion | cut -d . -f 2`
-	if [ "$osVer" -le "6" ]; then
-		echo "System is not running Mac OS X 10.7 or higher. Setup can not continue."
-		exit 1
-	fi
 }
 
 function configAVSync () 
