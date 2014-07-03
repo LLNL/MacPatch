@@ -1,14 +1,19 @@
 #!/bin/bash
 #
 # MPInventoryD script        
-#
-# chkconfig: 
+### BEGIN INIT INFO
+# Provides:          MPInventoryD
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Should-Start:      $network $time
+# Should-Stop:       $network $time
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
 # description: 	Start up the MacPatch Inventory processing script.
-
+### END INIT INFO
+#
 # Source function library.
-. /etc/init.d/functions
-
-exit 0;
+# . /etc/init.d/functions
 
 RETVAL=$?
 INV_HOME="/Library/MacPatch/Server/conf/scripts"
@@ -17,13 +22,14 @@ case "$1" in
  start)
 	if [ -f $INV_HOME/MPInventoryD.py ]; then
 	    echo $"Starting MacPatch Inventory"
-		$INV_HOME/MPInventoryD.py
+		$INV_HOME/MPInventoryD.py --siteXML /Library/MacPatch/Server/conf/etc/siteconfig.xml --files /Library/MacPatch/Server/tomcat-mpws/InvData/Files/ &
     fi
 	;;
  stop)
 	if [ -f $INV_HOME/MPInventoryD.py ]; then
 		echo $"Stopping MacPatch Inventory"
-        #$INV_HOME/MPInventoryD.py
+		mpPID=`ps -ef | grep MPInventoryD.py | grep -v grep | awk '{ print $2 }'`
+		kill -9 $mpPID
     fi
  	;;
  *)

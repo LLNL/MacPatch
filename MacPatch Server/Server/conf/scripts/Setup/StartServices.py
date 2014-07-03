@@ -101,7 +101,6 @@ def linuxLoadServices(service):
 	# Load Init.d Services
 	if _services != None:
 		for srvs in _services:
-			print srvs
 			linuxLoadInitServices(srvs)
 	
 	# Load Cron Services
