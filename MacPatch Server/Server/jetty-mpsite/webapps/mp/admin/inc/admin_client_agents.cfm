@@ -291,7 +291,7 @@
 </script>
 <div class="dlTitle">
 To upload a new version of the MacPatch agent please download the MacPatch Agent Uploader.<br>
-<a class="btn medium gray">Download</a>
+<a class="btn medium gray" href="/mp-content/tools/MPAgentUploader.app.zip" target="_new">Download</a>
 </div>
 <table id="agent" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="agent_pager"></div>
