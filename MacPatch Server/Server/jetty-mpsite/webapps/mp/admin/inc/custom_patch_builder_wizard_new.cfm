@@ -12,7 +12,7 @@
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 
 
-<cfset isReq="Yes">
+<set isReq="Yes">
 
 <style type="text/css">
 .example {
@@ -34,21 +34,26 @@
 	vertical-align:text-top;
 }
 </style>
+<style type="text/css">
+	#overlay {
+		width:100%;
+    	height:100%;
+		background-color: black;
+		
+		position: fixed;
+		top: 0; right: 0; bottom: 0; left: 0;
+		opacity: 0.6; /* also -moz-opacity, etc. */
+		z-index: 10;
+		display:none; color:#FFFFFF; text-align:center;
+	}
+</style>
 
-
-<!--- Smart Wizard Setup --->
 <script type="text/javascript">
-	$('#form').submit(function() {
-		$('#wait').show();
-		$.post('/somepage.htm', function() {
-			$('#wait').hide();
-		});
-		return false;
-	});
-
-    $().ready(function() {
-        $('.wiz-container').smartWizard();
-        // The actual autocomplete function, you can hook autocomplete up on a field by field basis.
+	$().ready(function() 
+	{
+		$("body").prepend('<div id="overlay" class="ui-widget-overlay" style="z-index: 1001; display: none;"><img src="/admin/images/spinner.gif" height="64" width="64" style="display:block;margin:auto;padding-top:10%;" />Saving...</div>');
+		$('.wiz-container').smartWizard();
+		// The actual autocomplete function, you can hook autocomplete up on a field by field basis.
 		$("#suggest").autocomplete(
 		{
 			source: 'autofill/asproxy.cfm',
@@ -59,7 +64,16 @@
 				$('#suggest').val(ui.item.id);
 			}
 		});
-    }); 
+		
+		$( "#target" ).submit(function( event ) {
+			var pass = true;
+			if(pass == false){
+				return false;
+			}
+			$("#overlay, #PleaseWait").show();
+			return true;
+		});
+	}); 
 </script>
 
 <!--- Picker --->
@@ -117,7 +131,7 @@
   <div style="float:right;" id="2"><input class="btn" id="next" type="button" value="Cancel" onclick="history.go(-1);" /></div>
   <div style="clear:both"></div>
 </div>
-<cfform id="form" name="stepIt" method="post" action="custom_patch_builder_wizard_save.cfm" enctype="multipart/form-data">
+<form id="target" name="stepIt" method="post" action="custom_patch_builder_wizard_save.cfm" enctype="multipart/form-data">
 <div id="smartwizard" class="wiz-container">
     <ul id="wizard-anchor">
         <li><a href="#wizard-1"><h2>Step 1</h2>
@@ -140,7 +154,7 @@
                             Patch Name
                         </div>
                         <div id="center">
-                            <cfinput type="text" name="patch_name" SIZE="50" required="#isReq#" message="Error [patch name]: A patch name is required.">
+                            <input type="text" name="patch_name" SIZE="50" required="#isReq#" message="Error [patch name]: A patch name is required.">
                         </div> 
                         <div id="right">
                         	(e.g. "FireFox") 
@@ -151,7 +165,7 @@
                             Patch Version
                         </div>
                         <div id="center">
-                            <cfinput type="text" name="patch_ver" SIZE="50" required="#isReq#" message="Error [patch version]: A patch version is required.">
+                            <input type="text" name="patch_ver" SIZE="50" required="#isReq#" message="Error [patch version]: A patch version is required.">
                         </div>
                         <div id="right">
                         	(e.g. "3.5.4") 
@@ -160,7 +174,7 @@
 					<div id="row">
 		            	<div id="left"> Patch Vendor </div>
 		              	<div id="center">
-		                	<cfinput type="text" name="patch_vendor" SIZE="50">
+		                	<input type="text" name="patch_vendor" SIZE="50">
 		              	</div>
 		              	<div id="right">&nbsp;</div>
 		            </div>
@@ -178,7 +192,7 @@
                             Patch Info URL 
                         </div>
                         <div id="center">
-                            <cfinput type="text" name="description_url" SIZE="50">
+                            <input type="text" name="description_url" SIZE="50">
                         </div>
                         <div id="right">&nbsp;</div> 
                     </div>
@@ -187,12 +201,12 @@
                             Patch Severity
                         </div>
                         <div id="center">
-                            <cfselect name="patch_severity" size="1" required="yes">
+                            <select name="patch_severity" size="1" required="yes">
                                 <option>High</option>
                                 <option>Medium</option>
                                 <option>Low</option>
                                 <option>Unknown</option>
-                            </cfselect>
+                            </select>
                         </div>    
                         <div id="right">&nbsp;</div>  
                     </div>
@@ -201,11 +215,11 @@
                             Patch State
                         </div>
                         <div id="center">
-                            <cfselect name="patch_state" size="1">
+                            <select name="patch_state" size="1">
                                 <option>Create</option>
                                 <option>QA</option>
                                 <option>Production</option>
-                            </cfselect>
+                            </select>
                         </div>  
                         <div id="right">&nbsp;</div>    
                     </div>
@@ -214,7 +228,7 @@
                             CVE ID
                         </div>
                         <div id="center">
-                            <cfinput type="text" name="cve_id" SIZE="50">
+                            <input type="text" name="cve_id" SIZE="50">
                         </div>
                         <div id="right">&nbsp;</div>  
                     </div>
@@ -238,11 +252,11 @@
                                 OS Type
                             </div>
                             <div id="center">
-                                <cfselect name="req_os_type" size="1">
+                                <select name="req_os_type" size="1">
                                     <option>Mac OS X</option>
                                     <option>Mac OS X Server</option>
                                     <option selected>Mac OS X, Mac OS X Server</option>
-                                </cfselect>
+                                </select>
                             </div>
                             <div id="right">
                                 (e.g. "Mac OS X, Mac OS X Server") 
@@ -253,7 +267,7 @@
                                 OS Version
                             </div>
                             <div id="center">
-                                <cfinput type="text" name="req_os_ver" SIZE="50" required="#isReq#" message="Error [Required OS Version]: A OS version is required." value="*">
+                                <input type="text" name="req_os_ver" SIZE="50" required="#isReq#" message="Error [Required OS Version]: A OS version is required." value="*">
                             </div>
                             <div id="right">
                                 (e.g. "10.4.*,10.5.*") 
@@ -262,11 +276,11 @@
 						<div id="row">
 			              <div id="left"> Architecture Type </div>
 			              <div id="center">
-			                <cfselect name="req_os_arch" size="1">
+			                <select name="req_os_arch" size="1">
 			                <option>PPC</option>
 			                <option>X86</option>
 			                <option selected>PPC, X86</option>
-			                </cfselect>
+			                </select>
 			              </div>
 			              <div id="right">(e.g. "PPC, X86"; Universal)</div>
 			            </div>
@@ -327,7 +341,7 @@
                                 Patch Package
                             </div>
                             <div id="center">
-                                <cfinput type="file" name="mainPatchFile" required="#isReq#" message="Error [Patch File]: A patch package name is required.">
+                                <input type="file" name="mainPatchFile" required="#isReq#" message="Error [Patch File]: A patch package name is required.">
                             </div>
                             <div id="right">(Note: The file must be a zipped pkg or mpkg)</div>  
                     	</div>
@@ -353,10 +367,10 @@
                                 Patch Requires Reboot
                             </div>
                             <div id="center">
-                                <cfselect name="patch_reboot" size="1">
+                                <select name="patch_reboot" size="1">
                                     <option>Yes</option>
                                     <option selected>No</option>
-                                </cfselect>
+                                </select>
                             </div>  
                             <div id="right">&nbsp;</div>    
                         </div>
@@ -384,15 +398,14 @@
                 </div>            
                     <div class="wiz-nav">
                       <input type="hidden" name="active" value="0" SIZE="50">
-                      
                       <input class="back btn" id="back" type="button" value="< Back" />
-                      <input class="btn" id="next" type="submit" value="Save" />
-                      <input class="btn" type="button" id="submitForm" value="Submit" />
+                      <input class="btn" type="submit" id="submitForm" value="Submit" />
                     </div>             
                 </div>
             </div>
 	</div>	
 </p>          
-</cfform>
+</form>
+
 </body>
 </html>
