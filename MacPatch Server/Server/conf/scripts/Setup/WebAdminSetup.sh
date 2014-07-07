@@ -16,6 +16,7 @@ MP_SRV_CONF="${MP_SRV_BASE}/conf"
 HTTPD_CONF="${MP_SRV_BASE}/Apache2/conf/extra/httpd-vhosts.conf"
 MP_DEFAULT_PORT="4601"
 
+DIST='OSX'
 XOSTYPE=`uname -s`
 USELINUX=false
 USEMACOS=false
@@ -23,6 +24,16 @@ OWNERGRP="79:70"
 
 # Check and set os type
 if [ $XOSTYPE == "Linux" ]; then
+
+	if [ -f /etc/redhat-release ] ; then
+		DIST='redhat'
+	elif [ -f /etc/fedora-release ] ; then
+		DIST=`redhat`
+	elif [ -f /etc/lsb-release ] ; then
+		. /etc/lsb-release
+		DIST=$DISTRIB_ID
+	fi
+
 	USELINUX=true
 	OWNERGRP="www-data:www-data"
 elif [ $XOSTYPE == "Darwin" ]; then
@@ -62,12 +73,25 @@ perl -i -p -e 's/@@/\n/g' "${HTTPD_CONF}"
 
 if $USELINUX; then
 	if [ -d /Library/MacPatch/Server/tomcat-mpsite ]; then
-		if [ -f /Library/MacPatch/Server/conf/init.d/MPTomcatSite ]; then
+
+		if [ "$DIST" == "redhat" ]; then
+			SFILE1="/Library/MacPatch/Server/conf/init.d/MPTomcatSite"
+			SUSCP1="systemctl enable MPTomcatSite"
+		elif [ "$DIST" == "Ubuntu" ]; then
+			SFILE1="/Library/MacPatch/Server/conf/init.d/Ubuntu/MPTomcatSite"
+			SUSCP1="update-rc.d MPTomcatSite enable"
+		else
+			echo "Distribution not supported. Startup scripts will not be generated."
+			exit 1
+		fi
+
+		if [ -f "$SFILE1" ]; then
 			if [ -f /etc/init.d/MPTomcatSite ]; then
 				rm /etc/init.d/MPTomcatSite
 			fi
-			chmod +x /Library/MacPatch/Server/conf/init.d/MPTomcatSite
-			ln -s /Library/MacPatch/Server/conf/init.d/MPTomcatSite /etc/init.d/MPTomcatSite
+			chmod +x "$SFILE1"
+			ln -s "$SFILE1" /etc/init.d/MPTomcatSite
+			eval $SUSCP1
 		else
 			echo "ERROR: No Startup Script found for MP Tomcat Site."
 		fi

@@ -2,7 +2,7 @@
 
 #-----------------------------------------
 # MacPatch SAV Defs Sync Setup Script
-# MacPatch Version 2.1.x
+# MacPatch Version 2.5.x
 #
 # Script Ver. 1.0.0
 #
@@ -13,6 +13,32 @@ clear
 MP_SRV_BASE="/Library/MacPatch/Server"
 MP_SRV_CONF="${MP_SRV_BASE}/conf"
 MP_DEFAULT_PORT="3601"
+DIST='OSX'
+XOSTYPE=`uname -s`
+USELINUX=false
+USEMACOS=false
+OWNERGRP="79:70"
+
+# Check and set os type
+if [ $XOSTYPE == "Linux" ]; then
+
+	if [ -f /etc/redhat-release ] ; then
+		DIST='redhat'
+	elif [ -f /etc/fedora-release ] ; then
+		DIST=`redhat`
+	elif [ -f /etc/lsb-release ] ; then
+		. /etc/lsb-release
+		DIST=$DISTRIB_ID
+	fi
+
+	USELINUX=true
+	OWNERGRP="www-data:www-data"
+elif [ $XOSTYPE == "Darwin" ]; then
+	USEMACOS=true
+else
+  	echo "OS Type $XOSTYPE is not supported. Now exiting."
+  	exit 1; 
+fi
 
 function checkHostConfig () {
 	if [ "`whoami`" != "root" ] ; then   # If not root user,

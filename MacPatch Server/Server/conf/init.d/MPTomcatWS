@@ -1,21 +1,13 @@
 #!/bin/bash
 #
-# tomcat7 This shell script takes care of starting and stopping Tomcat
+# MPTomcatWS        
 #
-# chkconfig: - 80 20
-#
-### BEGIN INIT INFO
-# Provides: tomcat7
-# Required-Start: $network $syslog
-# Required-Stop: $network $syslog
-# Default-Start: 2 3 4 5
-# Default-Stop: 0 1 6
-# Description: MacPatch Tomcat Startup Script
-# Short-Description: start and stop tomcat
-### END INIT INFO
- 
-## Source function library.
-#. /etc/rc.d/init.d/functions
+# chkconfig: 2345 95 95
+# description: 	Start up the Apache Tomcat server.
+
+# Source function library.
+. /etc/init.d/functions
+
 if [ -d  "/usr/lib/jvm/default-java" ]; then
 	export JAVA_HOME=/usr/lib/jvm/default-java
 elif [ -d  "/usr/lib/jvm/java" ]; then

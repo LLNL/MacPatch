@@ -38,6 +38,14 @@
 
 <!--- Smart Wizard Setup --->
 <script type="text/javascript">
+	$('#form').submit(function() {
+		$('#wait').show();
+		$.post('/somepage.htm', function() {
+			$('#wait').hide();
+		});
+		return false;
+	});
+
     $().ready(function() {
         $('.wiz-container').smartWizard();
         // The actual autocomplete function, you can hook autocomplete up on a field by field basis.
@@ -109,7 +117,7 @@
   <div style="float:right;" id="2"><input class="btn" id="next" type="button" value="Cancel" onclick="history.go(-1);" /></div>
   <div style="clear:both"></div>
 </div>
-<cfform name="stepIt" method="post" action="custom_patch_builder_wizard_save.cfm" enctype="multipart/form-data">
+<cfform id="form" name="stepIt" method="post" action="custom_patch_builder_wizard_save.cfm" enctype="multipart/form-data">
 <div id="smartwizard" class="wiz-container">
     <ul id="wizard-anchor">
         <li><a href="#wizard-1"><h2>Step 1</h2>
@@ -379,6 +387,7 @@
                       
                       <input class="back btn" id="back" type="button" value="< Back" />
                       <input class="btn" id="next" type="submit" value="Save" />
+                      <input class="btn" type="button" id="submitForm" value="Submit" />
                     </div>             
                 </div>
             </div>

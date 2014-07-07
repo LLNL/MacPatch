@@ -41,13 +41,16 @@ MP_SRV_BASE = "/Library/MacPatch/Server"
 MP_SRV_CONF = MP_SRV_BASE+"/conf"
 os_type = platform.system()
 system_name = platform.uname()[1]
+dist_type = "Mac"
 macServices=["gov.llnl.mp.wsl.plist","gov.llnl.mp.invd.plist","gov.llnl.mp.site.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.httpd.plist"]
 lnxServices=["MPApache","MPTomcatSite","MPTomcatWS","MPInventoryD"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader"]
-
 gUID = 79
 gGID = 70
+
 if os_type == "Linux":
+	# OS is Linux, I need the dist type...
+	dist_type = platform.dist()[0]
 	try:
 		pw = pwd.getpwnam('www-data')
 		if pw:
@@ -158,7 +161,7 @@ def linuxLoadCronServices(service):
 		print("Loading MPAVLoader")
 		job  = cron.new(command='/Library/MacPatch/Server/conf/scripts/MPAVDefsSync.py --plist /Library/MacPatch/Server/conf/etc/gov.llnl.mpavdl.plist')
 		job.set_comment("MPAVLoader")
-		job.hour.every(7)
+		job.hour.every(11)
 		job.enable()
 		cron.write()
 

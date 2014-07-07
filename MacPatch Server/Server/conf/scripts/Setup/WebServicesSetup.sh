@@ -16,6 +16,7 @@ MP_SRV_CONF="${MP_SRV_BASE}/conf"
 HTTPD_CONF="${MP_SRV_BASE}/Apache2/conf/extra/httpd-vhosts.conf"
 MP_DEFAULT_PORT="3601"
 
+DIST='OSX'
 XOSTYPE=`uname -s`
 USELINUX=false
 USEMACOS=false
@@ -23,6 +24,16 @@ OWNERGRP="79:70"
 
 # Check and set os type
 if [ $XOSTYPE == "Linux" ]; then
+
+	if [ -f /etc/redhat-release ] ; then
+		DIST='redhat'
+	elif [ -f /etc/fedora-release ] ; then
+		DIST=`redhat`
+	elif [ -f /etc/lsb-release ] ; then
+		. /etc/lsb-release
+		DIST=$DISTRIB_ID
+	fi
+
 	USELINUX=true
 	OWNERGRP="www-data:www-data"
 elif [ $XOSTYPE == "Darwin" ]; then
@@ -62,20 +73,37 @@ perl -i -p -e 's/@@/\n/g' "${HTTPD_CONF}"
 
 if $USELINUX; then
 	if [ -d /Library/MacPatch/Server/tomcat-mpws ]; then
-		if [ -f /Library/MacPatch/Server/conf/init.d/MPTomcatWS ]; then
+		if [ "$DIST" == "redhat" ]; then
+			SFILE1="/Library/MacPatch/Server/conf/init.d/MPTomcatWS"
+			SFILE2="/Library/MacPatch/Server/conf/init.d/MPInventoryD"
+			SUSCP1="systemctl enable MPTomcatWS"
+			SUSCP2="systemctl enable MPInventoryD"
+		elif [ "$DIST" == "Ubuntu" ]; then
+			SFILE1="/Library/MacPatch/Server/conf/init.d/Ubuntu/MPTomcatWS"
+			SFILE2="/Library/MacPatch/Server/conf/init.d/Ubuntu/MPInventoryD"
+			SUSCP1="update-rc.d MPTomcatWS enable"
+			SUSCP2="update-rc.d MPInventoryD enable"
+		else
+			echo "Distribution not supported. Startup scripts will not be generated."
+			exit 1
+		fi
+
+		if [ -f "$SFILE1" ]; then
 			if [ -f /etc/init.d/MPTomcatWS ]; then
 				rm /etc/init.d/MPTomcatWS
 			fi
-			chmod +x /Library/MacPatch/Server/conf/init.d/MPTomcatWS
-			ln -s /Library/MacPatch/Server/conf/init.d/MPTomcatWS /etc/init.d/MPTomcatWS
+			chmod +x "$SFILE1"
+			ln -s "$SFILE1" /etc/init.d/MPTomcatWS
+			eval $SUSCP1
 		fi
 		# Invenotry Daemon 
-		if [ -f /Library/MacPatch/Server/conf/init.d/MPInventoryD ]; then
-			if [ -f /etc/init.d/MPTomcatWS ]; then
+		if [ -f "$SFILE2" ]; then
+			if [ -f /etc/init.d/MPInventoryD ]; then
 				rm /etc/init.d/MPInventoryD
 			fi
-			chmod +x /Library/MacPatch/Server/conf/init.d/MPInventoryD
-			ln -s /Library/MacPatch/Server/conf/init.d/MPInventoryD /etc/init.d/MPInventoryD
+			chmod +x "$SFILE2"
+			ln -s "$SFILE2" /etc/init.d/MPInventoryD
+			eval $SUSCP2
 		fi
 	fi
 fi
