@@ -1,8 +1,5 @@
 #!/bin/bash
 #
-# tomcat7 This shell script takes care of starting and stopping Tomcat
-#
-# chkconfig: - 80 20
 #
 ### BEGIN INIT INFO
 # Provides: MPTomcatSite

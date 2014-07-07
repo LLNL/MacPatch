@@ -81,8 +81,8 @@ if $USELINUX; then
 		elif [ "$DIST" == "Ubuntu" ]; then
 			SFILE1="/Library/MacPatch/Server/conf/init.d/Ubuntu/MPTomcatWS"
 			SFILE2="/Library/MacPatch/Server/conf/init.d/Ubuntu/MPInventoryD"
-			SUSCP1="update-rc.d MPTomcatWS enable"
-			SUSCP2="update-rc.d MPInventoryD enable"
+			SUSCP1="update-rc.d MPTomcatWS defaults"
+			SUSCP2="update-rc.d MPInventoryD defaults"
 		else
 			echo "Distribution not supported. Startup scripts will not be generated."
 			exit 1

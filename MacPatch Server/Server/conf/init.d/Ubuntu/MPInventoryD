@@ -1,6 +1,5 @@
 #!/bin/bash
-#
-# MPInventoryD script        
+#      
 ### BEGIN INIT INFO
 # Provides:          MPInventoryD
 # Required-Start:    $remote_fs $syslog

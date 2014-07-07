@@ -14,9 +14,20 @@ XOSTYPE=`uname -s`
 USELINUX=false
 USEMACOS=false
 OWNERGRP="79:70"
+DIST='OSX'
 
 # Check and set os type
 if [ $XOSTYPE == "Linux" ]; then
+
+	if [ -f /etc/redhat-release ] ; then
+		DIST='redhat'
+	elif [ -f /etc/fedora-release ] ; then
+		DIST=`redhat`
+	elif [ -f /etc/lsb-release ] ; then
+		. /etc/lsb-release
+		DIST=$DISTRIB_ID
+	fi
+
 	USELINUX=true
 	OWNERGRP="www-data:www-data"
 elif [ $XOSTYPE == "Darwin" ]; then
@@ -212,8 +223,21 @@ if $USEMACOS; then
 fi
 
 if $USELINUX; then
-	if [ -f /Library/MacPatch/Server/conf/init.d/MPApache ]; then
-		chmod +x /Library/MacPatch/Server/conf/init.d/MPApache
-		ln -s /Library/MacPatch/Server/conf/init.d/MPApache /etc/init.d/MPApache
+
+	if [ "$DIST" == "redhat" ]; then
+			SFILE1="/Library/MacPatch/Server/conf/init.d/MPApache"
+			SUSCP1="systemctl enable MPApache"
+		elif [ "$DIST" == "Ubuntu" ]; then
+			SFILE1="/Library/MacPatch/Server/conf/init.d/Ubuntu/MPApache"
+			SUSCP1="update-rc.d MPApache defaults"
+		else
+			echo "Distribution not supported. Startup scripts will not be generated."
+			exit 1
+		fi
+
+	if [ -f "$SFILE1" ]; then
+		chmod +x "$SFILE1"
+		ln -s "$SFILE1" /etc/init.d/MPApache
+		eval $SUSCP1
 	fi
 fi

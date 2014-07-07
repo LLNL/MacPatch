@@ -79,7 +79,7 @@ if $USELINUX; then
 			SUSCP1="systemctl enable MPTomcatSite"
 		elif [ "$DIST" == "Ubuntu" ]; then
 			SFILE1="/Library/MacPatch/Server/conf/init.d/Ubuntu/MPTomcatSite"
-			SUSCP1="update-rc.d MPTomcatSite enable"
+			SUSCP1="update-rc.d MPTomcatSite defaults"
 		else
 			echo "Distribution not supported. Startup scripts will not be generated."
 			exit 1
