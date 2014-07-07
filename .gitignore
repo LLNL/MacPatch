@@ -6,4 +6,4 @@
 DerivedData
 .idea/
 *.hmap 
-_notes/*
+*/_notes/*
