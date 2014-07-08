@@ -1,5 +1,3 @@
-<cfdump var="#CGI#">
-<cfabort>
 <cfscript>
    function isEmpty(str) {
       if(NOT len(trim(str)))

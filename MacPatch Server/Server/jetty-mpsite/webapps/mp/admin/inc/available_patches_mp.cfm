@@ -112,7 +112,7 @@
 						<cfelse>
 						edit = "<input type='image' style='padding-left:4px;' onclick=load('custom_patch_builder_wizard_edit.cfm?patchID="+ids[i]+"'); src='/admin/images/info_16.png'>";
 						</cfif>
-						dl = "<input type='image' style='padding-left:0px;' onclick=downloadURL('/mp-content"+myCellData+"'); src='/admin/images/arrow_down.png'>";
+						dl = "<input type='image' style='padding-left:0px;' onclick=window.open('<cfoutput>#mpServer#</cfoutput>/mp-content"+myCellData+"','_blank'); src='/admin/images/arrow_down.png'>";
 						jQuery("#list").setRowData(ids[i],{puuid:edit,pkg_url:dl}) 
 					} 
 				}, 

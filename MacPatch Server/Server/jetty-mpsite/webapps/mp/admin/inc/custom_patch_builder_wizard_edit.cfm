@@ -1,4 +1,4 @@
-<cfheader name="expires" value="#now()#">
+<cfheader name="expires" value="<cfoutput>#now()#</cfoutput>">
 <cfheader name="pragma" value="no-cache">
 <cfheader name="cache-control" value="no-cache, no-store, must-revalidate">
 
@@ -35,6 +35,17 @@
 	float: right;
 	vertical-align:text-top;
 }
+#overlay {
+	width:100%;
+	height:100%;
+	background-color: black;
+	
+	position: fixed;
+	top: 0; right: 0; bottom: 0; left: 0;
+	opacity: 0.6; /* also -moz-opacity, etc. */
+	z-index: 10;
+	display:none; color:#FFFFFF; text-align:center;
+}
 </style>
 
 <cfset isReq="Yes">
@@ -64,11 +75,20 @@
     Order By type_order Asc
 </cfquery>
 
-
 <script type="text/javascript">
-    $().ready(function() {
-        $('.wiz-container').smartWizard();
-    });
+	$().ready(function() 
+	{
+		$("body").prepend('<div id="overlay" class="ui-widget-overlay" style="z-index: 1001; display: none;"><img src="/admin/images/spinner.gif" height="64" width="64" style="display:block;margin:auto;padding-top:10%;" />Saving...</div>');
+		$('.wiz-container').smartWizard();	
+		$( "#target" ).submit(function( event ) {
+			var pass = true;
+			if(pass == false){
+				return false;
+			}
+			$("#overlay, #PleaseWait").show();
+			return true;
+		});
+	}); 
 </script>
 <!--- Picker --->
 <SCRIPT LANGUAGE="JavaScript">
@@ -150,8 +170,8 @@
   <div style="clear:both"></div>
 </div>
 
-<cfform name="stepIt" method="post" action="#action#" enctype="multipart/form-data">
-  <cfinput type="hidden" name="puuid" value="#url.patchID#">
+<form id="target" name="stepIt" method="post" action="<cfoutput>#action#</cfoutput>" enctype="multipart/form-data">
+  <input type="hidden" name="puuid" value="<cfoutput>#url.patchID#</cfoutput>">
   <div id="smartwizard" class="wiz-container">
     <ul id="wizard-anchor">
       <li><a href="#wizard-1">
@@ -176,21 +196,21 @@
             <div id="row">
               <div id="left"> Patch Name </div>
               <div id="center">
-                <cfinput type="text" name="patch_name" SIZE="50" required="#isReq#" message="Error [patch name]: A patch name is required." value="#selPatch.patch_name#">
+                <input type="text" name="patch_name" SIZE="50" required="#isReq#" message="Error [patch name]: A patch name is required." value="<cfoutput>#selPatch.patch_name#</cfoutput>">
               </div>
               <div id="right"> (e.g. "FireFox") </div>
             </div>
             <div id="row">
               <div id="left"> Patch Version </div>
               <div id="center">
-                <cfinput type="text" name="patch_ver" SIZE="50" required="#isReq#" message="Error [patch version]: A patch version is required." value="#selPatch.patch_ver#">
+                <input type="text" name="patch_ver" SIZE="50" required="#isReq#" message="Error [patch version]: A patch version is required." value="<cfoutput>#selPatch.patch_ver#</cfoutput>">
               </div>
               <div id="right"> (e.g. "3.5.4") </div>
             </div>
 			<div id="row">
               <div id="left"> Patch Vendor </div>
               <div id="center">
-                <cfinput type="text" name="patch_vendor" SIZE="50" value="#selPatch.patch_vendor#">
+                <input type="text" name="patch_vendor" SIZE="50" value="<cfoutput>#selPatch.patch_vendor#</cfoutput>">
               </div>
               <div id="right">&nbsp;</div>
             </div>
@@ -204,39 +224,39 @@
             <div id="row">
               <div id="left"> Patch Info URL </div>
               <div id="center">
-                <cfinput type="text" name="description_url" SIZE="50" value="#selPatch.description_url#">
+                <input type="text" name="description_url" SIZE="50" value="<cfoutput>#selPatch.description_url#</cfoutput>">
               </div>
               <div id="right">&nbsp;</div>
             </div>
             <div id="row">
               <div id="left"> Patch Severity </div>
               <div id="center">
-                <cfselect name="patch_severity" size="1" required="yes">
+                <select name="patch_severity" size="1" required="yes">
                 <option><cfoutput>#selPatch.patch_severity#</cfoutput></option>
                 <option>High</option>
                 <option>Medium</option>
                 <option>Low</option>
                 <option>Unknown</option>
-                </cfselect>
+                </select>
               </div>
               <div id="right">&nbsp;</div>
             </div>
             <div id="row">
               <div id="left"> Patch State </div>
               <div id="center">
-                <cfselect name="patch_state" size="1">
+                <select name="patch_state" size="1">
                 <option><cfoutput>#selPatch.patch_state#</cfoutput></option>
                 <option>Create</option>
                 <option>QA</option>
                 <option>Production</option>
-                </cfselect>
+                </select>
               </div>
               <div id="right">&nbsp;</div>
             </div>
             <div id="row">
               <div id="left"> CVE ID </div>
               <div id="center">
-                <cfinput type="text" name="cve_id" SIZE="50" value="#selPatch.cve_id#">
+                <input type="text" name="cve_id" SIZE="50" value="<cfoutput>#selPatch.cve_id#</cfoutput>">
               </div>
               <div id="right">&nbsp;</div>
             </div>
@@ -262,12 +282,12 @@
 					Select * From selPatchCri
 					Where type = 'OSType'
 				</cfquery>
-				<cfselect name="req_os_type" size="1">
+				<select name="req_os_type" size="1">
                     <option selected><cfoutput>#selPatchCriType.type_data#</cfoutput></option>
 					<option>Mac OS X</option>
                 	<option>Mac OS X Server</option>
                 	<option>Mac OS X, Mac OS X Server</option>
-                </cfselect>
+                </select>
               </div>
               <div id="right"> (e.g. "Mac OS X, Mac OS X Server") </div>
             </div>
@@ -280,7 +300,7 @@
                     <cfset _osver = #selPatchCri.type_data#>
                   </cfif>
                 </cfloop>
-                <cfinput type="text" name="req_os_ver" SIZE="50" required="#isReq#" message="Error [Required OS Version]: A OS version is required." value="#_osver#">
+                <input type="text" name="req_os_ver" SIZE="50" required="#isReq#" message="Error [Required OS Version]: A OS version is required." value="<cfoutput>#_osver#</cfoutput>">
               </div>
               <div id="right"> (e.g. "10.4.*,10.5.*") </div>
             </div>
@@ -291,12 +311,12 @@
 					Select * From selPatchCri
 					Where type = 'OSArch'
 				</cfquery>
-				<cfselect name="req_os_arch" size="1">
+				<select name="req_os_arch" size="1">
                     <option selected><cfoutput>#selPatchCriArch.type_data#</cfoutput></option>
 					<option>PPC</option>
 	                <option>X86</option>
 	                <option>PPC, X86</option>
-                </cfselect>
+                </select>
               </div>
               <div id="right">(e.g. "PPC, X86"; Universal)</div>
             </div>
@@ -320,7 +340,7 @@
                       <option #IIf(selPatchCri.type is "Script", DE("Selected"), DE(""))#>Script</option>
                     </select>
                     &nbsp;
-                    <cftextarea name='reqPatchCriteria_#xi#' id='reqPatchCriteria_#xi#' cols="60" value="#selPatchCri.type_data#" />
+                    <textarea name='reqPatchCriteria_#xi#' id='reqPatchCriteria_#xi#' cols="60" value="#selPatchCri.type_data#"></textarea>
                     &nbsp;
 					<input type='text' name='reqPatchCriteriaOrder_#xi#' value='#xi#' size='3' style='vertical-align:top;'>
 					<span style='vertical-align:top;'>(Order)</span>&nbsp; <a href='##' onClick='removeFormField("##rowreqPatchCriteria#xi#"); return false;'><img src='/admin/images/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'></a></p>
@@ -344,28 +364,28 @@
             <div id="row">
               <div id="left"> Patch Group ID </div>
               <div id="center">
-                <cfinput type="text" name="bundle_id" SIZE="50" required="#isReq#" message="Error [Patch Group ID]: A patch group id is required." value="#selPatch.bundle_id#">
+                <input type="text" name="bundle_id" SIZE="50" required="#isReq#" message="Error [Patch Group ID]: A patch group id is required." value="<cfoutput>#selPatch.bundle_id#</cfoutput>">
               </div>
               <div id="right"> (e.g. org.mozilla.firefox) </div>
             </div>
             <div id="row">
               <div id="left"> PreInstall Script </div>
               <div id="center">
-                <cftextarea name="pkg_preinstall" cols="60" rows="7" value="#selPatch.pkg_preinstall#" />
+                <textarea name="pkg_preinstall" cols="60" rows="7" value="<cfoutput>#selPatch.pkg_preinstall#</cfoutput>"></textarea>
               </div>
               <div id="right"> Note: The return code of "0" is True. </div>
             </div>
             <div id="row">
               <div id="left"> PostInstall Script </div>
               <div id="center">
-                <cftextarea name="pkg_postinstall" cols="60" rows="7" value="#selPatch.pkg_postinstall#" />
+                <textarea name="pkg_postinstall" cols="60" rows="7" value="<cfoutput>#selPatch.pkg_postinstall#</cfoutput>"></textarea>
               </div>
               <div id="right"> Note: The return code of "0" is True. </div>
             </div>
             <div id="row">
               <div id="left"> Patch Package </div>
               <div id="center">
-                <cfinput type="file" name="mainPatchFile" required="no" message="Error [Patch File]: A patch package name is required.">
+                <input type="file" name="mainPatchFile" =message="Error [Patch File]: A patch package name is required.">
                 <br>
                 <div style="font-size:10px;padding:10px;">
                 	<cfoutput>
@@ -381,7 +401,7 @@
 	            </div>
 	            <div id="center">
 		            <cfoutput>
-	                <input type="text" id="env_var" name="pkg_env_var" SIZE="60" value="#selPatch.pkg_env_var#">
+	                <input type="text" id="env_var" name="pkg_env_var" SIZE="60" value="<cfoutput>#selPatch.pkg_env_var#</cfoutput>">
 	                </cfoutput>
 	            </div>
 	            <div id="right">(Example: ATTR=VALUE,ATTR=VALUE)</div>
@@ -397,10 +417,10 @@
             <div id="row">
               <div id="left"> Patch Requires Reboot </div>
               <div id="center">
-                <cfselect name="patch_reboot" size="1"> <cfoutput>
+                <select name="patch_reboot" size="1"> <cfoutput>
                   <option #IIf(selPatch.patch_reboot is "Yes", DE("Selected"), DE(""))#>Yes</option>
                   <option #IIf(selPatch.patch_reboot is "No", DE("Selected"), DE(""))#>No</option>
-                </cfoutput> </cfselect>
+                </cfoutput></select>
               </div>
               <div id="right">&nbsp;</div>
             </div>
@@ -424,11 +444,11 @@
                 <cfoutput>
                   <cfset preStartID = #preStartID# + 1>
                   <p id="rowprePatchPKG#selPatchReq.type_order#" style="margin-top:4px;">
-					<img onClick='removeFormField("##rowprePatchPKG#selPatchReq.type_order#"); return false;' src="/admin/images/cancel.png" style="vertical-align:middle;" height="14" width="14"> <img src='/admin/images/info.png' style='vertical-align:middle;' height='14' width='14' onClick="showList('prePatchPKG:#selPatchCri.type_order#');">
-                    <input type='hidden' size='20' name="prePatchPKG_#selPatchReq.type_order#" id="prePatchPKG#selPatchReq.type_order#" value="#selPatchReq.puuid_ref#">
-                    <input type='text' size='50' name="pNameprePatch:#selPatchReq.type_order#" id="pNameprePatch:#selPatchReq.type_order#" value="#getPatchInfo(selPatchReq.puuid_ref)#">
+					<img onClick='removeFormField("##rowprePatchPKG<cfoutput>#selPatchReq.type_order#</cfoutput>"); return false;' src="/admin/images/cancel.png" style="vertical-align:middle;" height="14" width="14"> <img src='/admin/images/info.png' style='vertical-align:middle;' height='14' width='14' onClick="showList('prePatchPKG:<cfoutput>#selPatchCri.type_order#</cfoutput>');">
+                    <input type='hidden' size='20' name="<cfoutput>prePatchPKG_#selPatchReq.type_order#</cfoutput>" id="<cfoutput>prePatchPKG#selPatchReq.type_order#</cfoutput>" value="<cfoutput>#selPatchReq.puuid_ref#</cfoutput>">
+                    <input type='text' size='50' name="<cfoutput>pNameprePatch:#selPatchReq.type_order#</cfoutput>" id="<cfoutput>pNameprePatch:#selPatchReq.type_order#</cfoutput>" value="<cfoutput>#getPatchInfo(selPatchReq.puuid_ref)#</cfoutput>">
                     &nbsp;
-                    <input type="text" name="prePatchPKGOrder_#selPatchReq.type_order#" value="#selPatchReq.type_order#" size="3">
+                    <input type="text" name="prePatchPKGOrder_<cfoutput>#selPatchReq.type_order#</cfoutput>" value="<cfoutput>#selPatchReq.type_order#</cfoutput>" size="3">
                     (Order)&nbsp; </p>
                   <p>&nbsp;</p>
                 </cfoutput>
@@ -445,11 +465,11 @@
               <cfif #selPatchReq.type# EQ "1">
                 <cfoutput>
                   <p id="rowpostPatchPKG#selPatchReq.type_order#" style="margin-top:4px;">
-					<img onClick='removeFormField("##rowpostPatchPKG#selPatchReq.type_order#"); return false;' src="/admin/images/cancel.png" style="vertical-align:middle;" height="14" width="14"> <img src='/admin/images/info.png' style='vertical-align:middle;' height='14' width='14' onClick="showList('postPatchPKG:#selPatchCri.type_order#');">
-                    <input type='hidden' size='20' name="postPatchPKG_#selPatchReq.type_order#" id="postPatchPKG#selPatchReq.type_order#" value="#selPatchReq.puuid_ref#">
-                    <input type='text' size='50' name="pNamepostPatch:#selPatchReq.type_order#" id="pNamepostPatch:#selPatchReq.type_order#" value="#getPatchInfo(selPatchReq.puuid_ref)#">
+					<img onClick='removeFormField("##rowpostPatchPKG<cfoutput>#selPatchReq.type_order#</cfoutput>"); return false;' src="/admin/images/cancel.png" style="vertical-align:middle;" height="14" width="14"> <img src='/admin/images/info.png' style='vertical-align:middle;' height='14' width='14' onClick="showList('postPatchPKG:<cfoutput>#selPatchCri.type_order#</cfoutput>');">
+                    <input type='hidden' size='20' name="<cfoutput>postPatchPKG_#selPatchReq.type_order#</cfoutput>" id="<cfoutput>postPatchPKG#selPatchReq.type_order#</cfoutput>" value="<cfoutput>#selPatchReq.puuid_ref#</cfoutput>">
+                    <input type='text' size='50' name="<cfoutput>pNamepostPatch:#selPatchReq.type_order#</cfoutput>" id="<cfoutput>pNamepostPatch:#selPatchReq.type_order#</cfoutput>" value="<cfoutput>#getPatchInfo(selPatchReq.puuid_ref)#</cfoutput>">
                     &nbsp;
-                    <input type="text" name="postPatchPKGOrder_#selPatchReq.type_order#" value="#selPatchReq.type_order#" size="3">
+                    <input type="text" name="<cfoutput>postPatchPKGOrder_#selPatchReq.type_order#</cfoutput>" value="<cfoutput>#selPatchReq.type_order#</cfoutput>" size="3">
                     (Order)&nbsp; </p>
                   <p>&nbsp;</p>
                 </cfoutput>
@@ -458,7 +478,7 @@
           </div>
           <hr />
           Make Patch Active
-          <cfinput type="checkbox" name="active" value="1" checked="#iif(selPatch.active is 1,DE('Yes'),DE('No'))#">
+          <input type="checkbox" name="active" value="1" checked="<cfoutput>#iif(selPatch.active is 1,DE('Yes'),DE('No'))#</cfoutput>">
         </div>
         <div class="wiz-nav">
           <div style="text-align:right;"></div>
@@ -470,6 +490,6 @@
       </div>
     </div>
   </div>
-</cfform>
+</form>
 </body>
 </html>
