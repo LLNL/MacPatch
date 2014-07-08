@@ -336,13 +336,16 @@
     </cfoutput>
     </div>
 </cfif>
+
 </body>
 </html>
 <cffunction name="getDBTables" access="private" returntype="any">
-	<CFQUERY NAME="q_Tables" DATASOURCE="#session.dbsource#">
+	<cfset var _db = #application.settings.database.ro#>
+
+	<CFQUERY NAME="q_Tables" DATASOURCE="#_db.dsName#">
         SELECT TABLE_NAME as object_name, TABLE_TYPE as object_type 
         FROM information_schema.`TABLES` 
-        WHERE TABLE_SCHEMA LIKE 'MacPatchDBDev' 
+        WHERE TABLE_SCHEMA LIKE '#_db.databasename#' 
         AND (TABLE_NAME like 'mpi_%' OR TABLE_NAME like 'mp_clients_view') 
     </CFQUERY>
     
@@ -352,13 +355,14 @@
 <cffunction name="getColumnsForTable" access="private" returntype="any">
 	<cfargument name="table" required="yes">
     
+    <cfset var _db = #application.settings.database.ro#>
 	<cfset var colList = "">
     
-    <CFQUERY NAME="q_Columns" DATASOURCE="#session.dbsource#">
+    <CFQUERY NAME="q_Columns" DATASOURCE="#_db.dsName#">
 		<cfoutput>
             SELECT TABLE_NAME, COLUMN_NAME 
             FROM INFORMATION_SCHEMA.COLUMNS 
-            WHERE TABLE_SCHEMA = 'MacPatchDBDev' AND TABLE_NAME = '#arguments.table#'
+            WHERE TABLE_SCHEMA = '#_db.databasename#' AND TABLE_NAME = '#arguments.table#'
         </cfoutput>
 	</CFQUERY>
     

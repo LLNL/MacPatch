@@ -27,8 +27,9 @@
 			{
 				url:'required_patches.cfc?method=getRequiredPatches', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
-				colNames:['Patch', 'Description', 'HostName', 'IP Address', 'Client Group', 'Type', 'Days Needed', 'Date'],
+				colNames:['', 'Patch', 'Description', 'HostName', 'IP Address', 'Client Group', 'Type', 'Days Needed', 'Date'],
 				colModel :[ 
+				  {name:'rNo', index:'patch', width:10, hidden:true},
 				  {name:'patch', index:'patch', width:80},
 				  {name:'description', index:'description', width:120},
 				  {name:'hostname', index:'hostname', width:60},

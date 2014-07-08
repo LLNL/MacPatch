@@ -38,7 +38,7 @@
 
 		<cfloop query="qGet" startrow="#start#" endrow="#end#">
             <cfif #cuuid# NEQ "">
-				<cfset arrResults[i] = [#patch#, #description#, #hostname#, #ipaddr#, #ClientGroup#, #type#, #DaysNeeded#, #DateTimeFormat( date, "yyyy-MM-dd HH:mm:ss" )#]>
+				<cfset arrResults[i] = [#i#, #patch#, #description#, #hostname#, #ipaddr#, #ClientGroup#, #type#, #DaysNeeded#, #DateTimeFormat( date, "yyyy-MM-dd HH:mm:ss" )#]>
                 <cfset i = i + 1>
             </cfif>			
 		</cfloop>
