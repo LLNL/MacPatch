@@ -23,10 +23,6 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 	sudo apt-get install libxml2-dev
 	sudo apt-get install python-pip
 	sudo apt-get install python-mysql.connector 
-	
-Or you can run a Ubuntu Setup Script:
-
-	/Library/MacPatch/Server/conf/scripts/Linux/Ubuntu-Setup.sh
 
 ### RedHat
 
@@ -41,10 +37,6 @@ Or you can run a Ubuntu Setup Script:
 	sudo yum install bzip2-devel
 	sudo yum install python-pip
 	sudo yum install mysql-connector-python
-
-Or you can run a RedHat Setup Script:
-
-	/Library/MacPatch/Server/conf/scripts/Linux/RedHat-Setup.sh
 
 ### Python
 
@@ -63,6 +55,8 @@ Please note, you will be asked if you want to use the Jetty J2EE server. With Ma
 	• sudo git clone https://github.com/SMSG-MAC-DEV/MacPatch.git
 	• sudo /Library/MacPatch/tmp/MacPatch/scripts/MPBuildServer.sh
 	
+**Note:** if you get a Error message "error: server certificate verification failed..." on the **git clone**, a simple fix is to allow the cert using "export GIT_SSL_NO_VERIFY=1"
+
 Once the compile and copy process is completed, the MacPatch server software is now installed and ready to be configured.
 
 ##MySQL Database
