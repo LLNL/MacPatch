@@ -115,12 +115,14 @@ Here you can add pre & post requisite packages. Also, once the patch is created 
 <th>Value</th>
 <th>Query Result</th>
 <th>Example Syntax</th>
+<th>Notes</th>
 </tr>
 <tr>
 <td>Script</td>
 <td>Script Text</td>
 <td>True</td>
 <td>#!/bin/sh ...</td>
+<td>If a @ is used it must be escaped with @</td>
 </tr>
 </table>
 </td>
