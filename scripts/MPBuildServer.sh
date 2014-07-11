@@ -18,6 +18,7 @@ GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/build/Server"
 SRC_DIR="${MPSERVERBASE}/conf/src"
 TCATSRV=0
+J2EE_SW="apache-tomcat-7.0.54.tar.gz"
 
 XOSTYPE=`uname -s`
 USELINUX=false
@@ -120,7 +121,7 @@ fi
 # ------------------
 # Setup Tomcat
 # ------------------
-J2EE_SW="apache-tomcat-7.0.54.tar.gz"
+
 if [ $TCATSRV == 1 ]; then
 	mkdir -p "${MPSERVERBASE}/apache-tomcat"
 	tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/apache-tomcat
@@ -177,7 +178,7 @@ else
 	chmod -R 0775 ${MPSERVERBASE}/tomcat-mpws
 	chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpws
 	chmod -R 0775 ${MPSERVERBASE}/tomcat-mpsite
-	chown -R 79:70 ${MPSERVERBASE}/tomcat-mpsite
+	chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpsite
 fi
 
 chown -R $OWNERGRP ${MPSERVERBASE}/Logs
