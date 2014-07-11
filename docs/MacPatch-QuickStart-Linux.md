@@ -29,6 +29,7 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 ##### YUM
 
 	sudo yum install gcc-c++
+	sudo yum install git
 	sudo yum install openssl-devel
 	sudo java-1.7.0-openjdk-devel
 	sudo yum install libxml2-devel
@@ -37,6 +38,15 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 	sudo yum install bzip2-devel
 	sudo yum install python-pip
 	sudo yum install mysql-connector-python
+
+Note, some configuration may be required to get the mysql repo.
+
+**Example:**
+
+	wget http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
+	sudo yum localinstall mysql-community-release-el6-5.noarch.rpm
+	sudo yum install mysql-connector-python
+	
 
 ### Python
 
