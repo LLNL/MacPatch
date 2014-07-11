@@ -24,7 +24,7 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 	sudo apt-get install python-pip
 	sudo apt-get install python-mysql.connector 
 
-### RedHat
+### RedHat, Fedora, CentOS
 
 ##### YUM
 
@@ -39,14 +39,19 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 	sudo yum install python-pip
 	sudo yum install mysql-connector-python
 
-Note, some configuration may be required to get the mysql repo.
+Note, some configuration may be required to get the mysql and python-pip repo.
 
-**Example:**
+**Example: MySQL**
 
 	wget http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
 	sudo yum localinstall mysql-community-release-el6-5.noarch.rpm
 	sudo yum install mysql-connector-python
 	
+**Example: Python**
+
+	wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+	sudo rpm -Uvh epel-release-6-8.noarch.rpm
+	sudo yum install python-pip
 
 ### Python
 
