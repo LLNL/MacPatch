@@ -1545,6 +1545,109 @@
         </cftry>
         <cfreturn false>
     </cffunction>
+    
+    <!--- New For MacPatch 2.5.x --->
+	<!--- 
+        Remote API
+        Type: Public/Remote
+        Description: Returns Mac OS X OS Profiles for client ID
+    --->
+    <cffunction name="GetProfileIDDataForClient" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="true" default="0" />
+        <cfargument name="clientKey" required="false" default="0" />
+
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "0" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfset response[ "result" ] = {} />
+
+        <cftry>
+			<cfset clientGroup = clientGroupForClient(arguments.clientID)>
+			<cfset clientProfilesList = profileIDListForGroup(clientGroup)>
+            <cfquery datasource="#this.ds#" name="qGetProfiles">
+                select profileID, profileIdentifier, profileRev, profileData, uninstallOnRemove
+                from mp_os_config_profiles
+                Where profileID IN ('#clientProfilesList#')
+				AND enabled = '1'
+            </cfquery>
+            
+            <cfset Profiles = arrayNew(1)>
+
+            <cfoutput query="qGetProfiles">
+				<cfset profile = {} />
+	            <cfset profile[ "id" ] = #profileID# />
+	            <cfset profile[ "profileIdentifier" ] = #profileIdentifier# />
+	            <cfset profile[ "rev" ] = #profileRev# />
+	            <cfset profile[ "data" ] = #BinaryEncode(profileData, 'Base64')# />
+	            <cfset profile[ "remove" ] = #uninstallOnRemove# />
+	            <cfset a = ArrayAppend(Profiles,profile)>
+            </cfoutput>
+
+            <cfset response.result = Profiles>            
+        <cfcatch>
+            <cfset l = elogit("[GetProfileIDDataForClient]: #cfcatch.Detail# -- #cfcatch.Message#")>
+            <cfset response.errorno = "1">
+            <cfset response.errormsg = "#cfcatch.Detail# -- #cfcatch.Message#">            
+        </cfcatch>
+        </cftry>
+
+        <cfreturn #response#>
+    </cffunction>
+	
+	<!--- 
+        Type: Private
+        Used By: GetProfileIDDataForClient
+        Description: Returns the Client Group ID for client ID
+    --->
+    <cffunction name="clientGroupForClient" access="private" returntype="any" output="no">
+        <cfargument name="ClientID">
+    
+        <cftry>
+            <cfquery datasource="#this.ds#" name="qGetID">
+                Select Domain from mp_clients
+                Where cuuid = '#arguments.ClientID#'
+            </cfquery>
+
+            <cfif qGetID.RecordCount EQ 1>
+                <cfreturn qGetID.Domain>
+            <cfelse>
+                <cfreturn "Default">
+            </cfif>
+
+        <cfcatch type="any">
+            <cfset l = elogit("[clientGrroupForClient]: #cfcatch.Detail# #cfcatch.Message#")>
+        </cfcatch>
+        </cftry>
+        <cfreturn "Default">
+    </cffunction>
+	
+	<!--- 
+        Type: Private
+        Used By: GetProfileIDDataForClient
+        Description: Returns the patch name from the patch ID
+    --->
+    <cffunction name="profileIDListForGroup" access="private" returntype="any" output="no">
+        <cfargument name="GroupID">
+    
+        <cftry>
+            <cfquery datasource="#this.ds#" name="qGetProfiles">
+                select profileID
+                from mp_os_config_profiles_assigned
+				Where groupID = <cfqueryparam value="#arguments.GroupID#">
+            </cfquery>
+
+            <cfif qGetProfiles.RecordCount GTE 1>
+                <cfreturn #ValueList(qGetProfiles.profileID,",")#>
+            <cfelse>
+                <cfreturn "999999NONE">
+            </cfif>
+
+        <cfcatch type="any">
+            <cfset l = elogit("[profileIDListForGroup]: #cfcatch.Detail# #cfcatch.Message#")>
+        </cfcatch>
+        </cftry>
+        <cfreturn "999999NONE">
+    </cffunction>
 	
 	<!--- 
         Remote API
