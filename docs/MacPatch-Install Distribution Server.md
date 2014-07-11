@@ -40,7 +40,8 @@ Java JDK needs to be installed.
 
 	cd /Library/MacPatch/Server	
 	./conf/scripts/Setup/DataBaseLDAPSetup.sh
-	./conf/scripts/Setup/WebServicesSetup.shThis distribution server is now configured and running. The last step is to edit the Apache virtual host balancer to include the new distribution server.Configure "Master" MacPatch serverUsing your favorite editor edit the following file "/Library/MacPatch/Server/Apache2/conf/extra/httpd-vhosts.conf". You will want to edit the Virtual host "*:2600" (<VirtualHost *:2600>). Find and edit the lines:    #WslBalanceStart
-    BalancerMember http://localhost:3601 route=localhost-site1 loadfactor=50    #WslBalanceStop  Add the line below the first "**BalancerMember**"    BalancerMember http://[YOUR_SERVER_NAME_OR_IP]:3601 route=[YOUR_SERVER_NAME]-site1 loadfactor=50Add the server(s) via the Admin consoleLogin to the MacPatch admin console with a admin account and go to "Admin->Server->MacPatch Server" and add the new server.Restart the MacPatch services
+	./conf/scripts/Setup/WebServicesSetup.shThis distribution server is now configured and running. The last step is to edit the Apache virtual host balancer to include the new distribution server.##### Configure "Master" MacPatch server
+Using your favorite editor edit the following file "/Library/MacPatch/Server/Apache2/conf/extra/httpd-vhosts.conf". You will want to edit the Virtual host "*:2600" (<VirtualHost *:2600>). Find and edit the lines:    #WslBalanceStart
+    BalancerMember http://localhost:3601 route=localhost-site1 loadfactor=50    #WslBalanceStop  Add the line below the first "**BalancerMember**"    BalancerMember http://[YOUR_SERVER_NAME_OR_IP]:3601 route=[YOUR_SERVER_NAME]-site1 loadfactor=50Add the server(s) via the Admin consoleLogin to the MacPatch admin console with a admin account and go to "Admin->Server->MacPatch Server" and add the new server.##### Start the MacPatch services
 
-	./conf/scripts/Setup/StartServices.py --load All
+	/Library/MacPatch/Server/conf/scripts/Setup/StartServices.py --load All
