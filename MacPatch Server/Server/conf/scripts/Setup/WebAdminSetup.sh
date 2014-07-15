@@ -76,7 +76,7 @@ if $USELINUX; then
 
 		if [ "$DIST" == "redhat" ]; then
 			SFILE1="/Library/MacPatch/Server/conf/init.d/MPTomcatSite"
-			SUSCP1="systemctl enable MPTomcatSite"
+			SUSCP1="chkconfig MPTomcatSite on"
 		elif [ "$DIST" == "Ubuntu" ]; then
 			SFILE1="/Library/MacPatch/Server/conf/init.d/Ubuntu/MPTomcatSite"
 			SUSCP1="update-rc.d MPTomcatSite defaults"

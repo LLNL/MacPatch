@@ -44,7 +44,7 @@ mp_db_name=${mp_db_name:-MacPatchDB}
 read -p "MacPatch Database Server User Name [mpdbadm]: " mp_db_usr
 mp_db_usr=${mp_db_usr:-mpdbadm}
 read -s -p "MacPatch Database Server User Password: " mp_db_pas
-mp_db_pas_ro=`openssl rand -base64 15`
+read -s -p "MacPatch Database Server Read Only User Password: " mp_db_pas_ro
 clear
 echo "Configure MacPatch Login Source..."
 echo " "

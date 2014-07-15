@@ -1,9 +1,9 @@
 #MacPatch - Quick Start Guide for Linux
 **Version 1.0 for MacPatch v2.5.x**
 
-This is a quick start guide to getting MacPatch installed and running on a Linux based system running Ubuntu or RedHat 6.5.x (CentOS, Fedora20).
+This is a quick start guide to getting MacPatch installed and running on a Linux based system running Ubuntu or Fedora.
 
-Please note, this has been tested on Ubuntu 12.10, Fedora 20, RedHat 6.5.x
+Please note, this has been tested on Ubuntu 12.10, Fedora 20. While RHEL and CentOS may work they have not been tested at this time.
 
 ##Required Software
 
@@ -24,7 +24,7 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 	sudo apt-get install python-pip
 	sudo apt-get install python-mysql.connector 
 
-### RedHat, Fedora, CentOS
+### Fedora
 
 ##### YUM
 
@@ -39,26 +39,12 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 	sudo yum install python-pip
 	sudo yum install mysql-connector-python
 
-Note, some configuration may be required to get the mysql and python-pip repo.
-
-**Example: MySQL**
-
-	wget http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
-	sudo yum localinstall mysql-community-release-el6-5.noarch.rpm
-	sudo yum install mysql-connector-python
-	
-**Example: Python**
-
-	wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-	sudo rpm -Uvh epel-release-6-8.noarch.rpm
-	sudo yum install python-pip
-
-### Python
 
 ##### PIP (Python Modules)
 
 	pip install requests
 	pip install python-crontab
+	pip install argparse
 
 ##Download and build the Server software
 To download and build the MacPatch server software is just a few Terminal commands. Run the following commands to build and install the software. 
