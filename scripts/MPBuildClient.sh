@@ -14,8 +14,8 @@
 #
 # -------------------------------------------------------------
 
-GITROOT="/Library/MacPatch/tmp/MacPatch_25"
-BUILDROOT="/Library/MacPatch/tmp/Client_25"
+GITROOT="/Library/MacPatch/tmp/MacPatch"
+BUILDROOT="/Library/MacPatch/tmp/Client"
 BASEPKGVER="2.5.0.0"
 UPDTPKGVER="2.5.0.0"
 
