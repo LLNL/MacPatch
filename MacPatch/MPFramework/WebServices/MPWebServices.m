@@ -1551,7 +1551,7 @@
         return nil;
     }
 
-    return [result objectForKey:@"result"];
+    return result;
 }
 
 @end

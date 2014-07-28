@@ -96,12 +96,12 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 
 - (void)main
 {
-	@try {
+	//@try {
 		[self scanAndInstallPofiles];
-	}
-	@catch (NSException * e) {
-		logit(lcl_vError,@"[NSException]: %@",e);
-	}
+	//}
+	//@catch (NSException * e) {
+	//	logit(lcl_vError,@"[NSException]: %@",e);
+	//}
 	[self finish];
 }
 
