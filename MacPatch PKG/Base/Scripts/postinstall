@@ -83,9 +83,9 @@ fi
 
 if [ ! -d "/Library/MacPatch/Client/lib" ]; then
 	mkdir -p "/Library/MacPatch/Client/lib"
-	chmod 766 /Library/MacPatch/Client/lib
+	chmod 777 /Library/MacPatch/Client/lib
 else
-	chmod 766 /Library/MacPatch/Client/lib
+	chmod 777 /Library/MacPatch/Client/lib
 fi
 
 # Run Client Check-in
