@@ -106,6 +106,14 @@
               <div id="right">&nbsp;</div>
             </div>
             
+			<div id="row">
+              <div id="left">Profile Identifier</div>
+              <div id="center">
+                <cfinput type="text" name="profileIdentifier" SIZE="50" required="#isReq#" message="Error: A profileIdentifier is required." value="">
+              </div>
+              <div id="right"> (Sometimes Also Called "PayloadIdentifier") </div>
+            </div>
+			
             <div id="row">
               <div id="left"> Profile Enabled </div>
               <div id="center">

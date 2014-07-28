@@ -67,6 +67,9 @@
         <cfif IsDefined("Form.profileName") AND isEmpty(Form.profileName)>
         	,profileName = <cfqueryparam value="#form.profileName#">
         </cfif>
+		<cfif IsDefined("Form.profileIdentifier") AND isEmpty(Form.profileIdentifier)>
+        	,profileIdentifier = <cfqueryparam value="#form.profileIdentifier#">
+        </cfif>
         <cfif IsDefined("Form.profileDescription") AND isEmpty(Form.profileDescription)>
         	,profileDescription = <cfqueryparam value="#form.profileDescription#">
         </cfif>

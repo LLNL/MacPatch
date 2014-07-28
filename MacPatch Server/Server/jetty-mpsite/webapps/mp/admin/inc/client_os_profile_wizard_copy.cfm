@@ -16,10 +16,10 @@
 <cftry>
 <cfquery name="qDupPatch" datasource="#session.dbsource#">
 	INSERT INTO mp_os_config_profiles (
-		profileID, profileName, profileDescription, profileRev, profileData, uninstallOnRemove, enabled, profileHash
+		profileID, profileIdentifier, profileName, profileDescription, profileRev, profileData, uninstallOnRemove, enabled, profileHash
     )
     Values (
-        '#new_profileID#', '#nid#', '#qGetProfile.profileDescription#', 1, <cfqueryparam value="#qGetProfile.profileData#" cfsqltype="cf_sql_blob">, '#qGetProfile.uninstallOnRemove#', 0,
+        '#new_profileID#', '#qGetProfile.profileIdentifier#', '#nid#', '#qGetProfile.profileDescription#', 1, <cfqueryparam value="#qGetProfile.profileData#" cfsqltype="cf_sql_blob">, '#qGetProfile.uninstallOnRemove#', 0,
         '#qGetProfile.profileHash#'
     )
 </cfquery>

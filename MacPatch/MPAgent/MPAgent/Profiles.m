@@ -131,7 +131,7 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
                 if (!profileOnDisk) {
                     qlerror(@"Error, unable to install profile %@",[p objectForKey:@"profileIdentifier"]);
                 }
-                if ([self installProfile:profileOnDisk]) {
+                if ([self installProfile:profileOnDisk] == NO) {
                     qlerror(@"Error, install profile %@ failed.",[p objectForKey:@"profileIdentifier"]);
                 } else {
                     qlinfo(@"Profile, %@ was installed.",[p objectForKey:@"profileIdentifier"]);

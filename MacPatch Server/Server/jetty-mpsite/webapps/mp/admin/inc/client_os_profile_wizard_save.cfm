@@ -49,10 +49,10 @@
 <cftry>
 <cfquery name="qNewProfile" datasource="#session.dbsource#">
 	INSERT INTO mp_os_config_profiles (
-		profileID, profileName, profileDescription, profileRev, profileData, uninstallOnRemove, enabled, profileHash
+		profileID, profileIdentifier, profileName, profileDescription, profileRev, profileData, uninstallOnRemove, enabled, profileHash
     )
     Values (
-        '#new_profileID#', <cfqueryparam value="#form.profileName#">, <cfqueryparam value="#form.profileDescription#">, 1, <cfqueryparam value="#binProfile#" cfsqltype="cf_sql_blob">,
+        '#new_profileID#', <cfqueryparam value="#form.profileIdentifier#">, <cfqueryparam value="#form.profileName#">, <cfqueryparam value="#form.profileDescription#">, 1, <cfqueryparam value="#binProfile#" cfsqltype="cf_sql_blob">,
         <cfqueryparam value="#form.uninstallOnRemove#">, <cfqueryparam value="#form.enabled#">, '#md5Hash#'
     )
 </cfquery>
