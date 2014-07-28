@@ -2,7 +2,7 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Installer
-# ver 1.7
+# ver 1.8
 # Created By Charles Heizer
 # LLNL
 #
@@ -80,6 +80,13 @@ fi
 # ******************************************************************
 # Run Agent Components to populate DB with current info ************
 #
+
+if [ ! -d "/Library/MacPatch/Client/lib" ]; then
+	mkdir -p "/Library/MacPatch/Client/lib"
+	chmod 766 /Library/MacPatch/Client/lib
+else
+	chmod 766 /Library/MacPatch/Client/lib
+fi
 
 # Run Client Check-in
 /Library/MacPatch/Client/MPAgent -c
