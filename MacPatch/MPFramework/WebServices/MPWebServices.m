@@ -78,33 +78,44 @@
 }
 
 #pragma mark requests
+
 - (NSData *)requestWithMethodAndParams:(NSString *)aMethod params:(NSDictionary *)aParams error:(NSError **)err
 {
     MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
 
     NSError *error = nil;
     NSURLResponse *response;
-    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArray:[mpNetConfig servers]];
-    [req setApiURI:WS_CLIENT_FILE];
-    NSURLRequest *urlReq = [req buildGetRequestForWebServiceMethod:aMethod formData:aParams error:&error];
-    NSData *res = nil;
-    if (urlReq) {
-        error = nil;
-        res = [req sendSynchronousRequest:urlReq returningResponse:&response error:&error];
-    } else {
-        error = nil;
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
-        error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
-    }
 
-    if (error)
+    MPNetRequest *req;
+    NSURLRequest *urlReq;
+    NSData *res = nil;
+    NSArray *servers = [mpNetConfig servers];
+    for (MPNetServer *srv in servers)
     {
-		if (err != NULL) {
-            *err = error;
-        } else {
-            qlerror(@"%@",error.localizedDescription);
+        qlinfo(@"Trying Server %@",srv.host);
+        req = [[MPNetRequest alloc] initWithMPServer:srv];
+        [req setApiURI:WS_CLIENT_FILE];
+        error = nil;
+        urlReq = [req buildGetRequestForWebServiceMethod:aMethod formData:aParams error:&error];
+        if (error) {
+            qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
+            continue;
         }
-        return nil;
+        error = nil;
+        if (urlReq)
+        {
+            res = nil;
+            res = [req sendSynchronousRequest:urlReq returningResponse:&response error:&error];
+            if (error) {
+                qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
+                continue;
+            }
+        } else {
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
+            qlerror(@"%@",error.localizedDescription);
+            continue;
+        }
     }
 
     return res;
@@ -112,6 +123,7 @@
 
 - (NSData *)postRequestWithMethodAndParams:(NSString *)aMethod params:(NSDictionary *)aParams error:(NSError **)err
 {
+    /*
     MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
 
     NSError *error = nil;
@@ -138,6 +150,44 @@
             qlerror(@"%@",error.localizedDescription);
         }
         return nil;
+    }
+     */
+    MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
+
+    NSError *error = nil;
+    NSURLResponse *response;
+
+    MPNetRequest *req;
+    NSURLRequest *urlReq;
+    NSData *res = nil;
+    NSArray *servers = [mpNetConfig servers];
+    for (MPNetServer *srv in servers)
+    {
+        qlinfo(@"Trying Server %@",srv.host);
+        req = [[MPNetRequest alloc] initWithMPServer:srv];
+        [req setApiURI:WS_CLIENT_FILE];
+        error = nil;
+        //urlReq = [req buildGetRequestForWebServiceMethod:aMethod formData:aParams error:&error];
+        urlReq = [req buildRequestForWebServiceMethod:aMethod formData:aParams error:&error];
+        if (error) {
+            qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
+            continue;
+        }
+        error = nil;
+        if (urlReq)
+        {
+            res = nil;
+            res = [req sendSynchronousRequest:urlReq returningResponse:&response error:&error];
+            if (error) {
+                qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
+                continue;
+            }
+        } else {
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
+            qlerror(@"%@",error.localizedDescription);
+            continue;
+        }
     }
 
     return res;
@@ -1129,6 +1179,9 @@
         } else {
             qlerror(@"%@",error.localizedDescription);
         }
+        return NO;
+    }
+    if (!res) {
         return NO;
     }
 

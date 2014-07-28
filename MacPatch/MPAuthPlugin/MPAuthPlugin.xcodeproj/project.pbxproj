@@ -362,10 +362,7 @@
 				GCC_PREFIX_HEADER = "MPAuthPlugin/MPAuthPlugin-Prefix.pch";
 				INFOPLIST_FILE = "MPAuthPlugin/MPAuthPlugin-Info.plist";
 				INSTALL_PATH = /System/Library/CoreServices/SecurityAgentPlugins;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/MacPatch/tmp/MacPatch/MacPatch/Build/Products/Debug",
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -386,10 +383,7 @@
 				GCC_PREFIX_HEADER = "MPAuthPlugin/MPAuthPlugin-Prefix.pch";
 				INFOPLIST_FILE = "MPAuthPlugin/MPAuthPlugin-Info.plist";
 				INSTALL_PATH = /System/Library/CoreServices/SecurityAgentPlugins;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/MacPatch/tmp/MacPatch/MacPatch/Build/Products/Debug",
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

@@ -53,8 +53,7 @@
 	return self;
 }
 
-
-- (BOOL) isConcurrent 
+- (BOOL)isConcurrent
 {
     return YES;
 }
@@ -64,7 +63,7 @@
     [self finish];
 }
 
-- (void) finish 
+- (void)finish
 {
     [self willChangeValueForKey:@"isFinished"];
     [self willChangeValueForKey:@"isExecuting"];
@@ -74,7 +73,7 @@
     [self didChangeValueForKey:@"isFinished"];
 }
 
-- (void) start 
+- (void)start 
 {
     if ([self isCancelled]) {
         [self willChangeValueForKey:@"isFinished"];

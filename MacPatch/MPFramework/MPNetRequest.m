@@ -84,6 +84,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 @property (nonatomic, assign, readwrite) BOOL isFileDownload;
 @property (nonatomic, strong, readwrite) NSString *dlFilePath;
 
+- (int)networkIsReachable:(NSError **)error;
 - (int)testAndSetServerBasedOnReachability:(NSError **)error;
 
 @end
@@ -175,6 +176,30 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     return self;
 }
 
+- (int)networkIsReachable:(NSError **)error
+{
+    NSDictionary *eInfo;
+    Reachability *internetReachable = [Reachability reachabilityForInternetConnection];
+    NetworkStatus internetStatus = [internetReachable currentReachabilityStatus];
+    if (internetStatus == NotReachable)
+    {
+        qlerror(@"The internet is down.");
+        eInfo = [NSDictionary dictionaryWithObject:@"The internet connection is down." forKey:NSLocalizedDescriptionKey];
+        if (error != NULL) {
+            *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:1001  userInfo:eInfo];
+        }
+        return 1001;
+    }
+
+    // Set the Server Info
+    if ([mpServerArray count] >= 1) {
+        self.mpServer = nil;
+        self.mpServer = [mpServerArray objectAtIndex:0];
+    }
+    
+    return 0;
+}
+
 - (int)testAndSetServerBasedOnReachability:(NSError **)error
 {
     NSDictionary *eInfo;
@@ -190,63 +215,16 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
         return 1001;
     }
 
-    BOOL hostIsReachable = NO;
     int res = -1;
-    /* Old Way
     if (mpServerArray)
     {
-        Reachability *hostReachable;
-        for (MPNetServer *s in mpServerArray)
-        {
-            hostReachable = [Reachability reachabilityWithHostName:s.host];
-            NetworkStatus hostStatus = [hostReachable currentReachabilityStatus];
-            if (hostStatus == NotReachable) {
-                qlerror(@"%@ is not reachable.",s.host);
-                continue;
-            }
-            qlinfo(@"%@ is reachable.",s.host);
-            self.mpServer = s;
-            hostIsReachable = YES;
-            res = 1000;
-            break;
-        }
-
-        if (hostIsReachable == NO)
-        {
-            res = 1002;
-            eInfo = [NSDictionary dictionaryWithObject:@"A gateway to any of the host servers is down." forKey:NSLocalizedDescriptionKey];
-            if (error != NULL) {
-                *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:1002  userInfo:eInfo];
-            }
-        }
-    }
-     */
-
-    if (mpServerArray)
-    {
-        MPNetReach *nr = [[MPNetReach alloc] init];
         self.mpServer = nil;
         for (MPNetServer *s in mpServerArray)
         {
-            if ([nr isMPServerAlive:(int)s.port host:s.host]) {
-                qlinfo(@"%@ is reachable.",s.host);
-                self.mpServer = s;
-                hostIsReachable = YES;
-                res = 1000;
-                break;
-            } else {
-                qlerror(@"%@ is not reachable.",s.host);
-                continue;
-            }
-        }
-
-        if (hostIsReachable == NO)
-        {
-            res = 1002;
-            eInfo = [NSDictionary dictionaryWithObject:@"A gateway to any of the host servers is down." forKey:NSLocalizedDescriptionKey];
-            if (error != NULL) {
-                *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:1002  userInfo:eInfo];
-            }
+            qlinfo(@"%@ is reachable.",s.host);
+            self.mpServer = s;
+            res = 1000;
+            break;
         }
     }
 
@@ -256,7 +234,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 - (NSURLRequest *)buildRequestForWebServiceMethod:(NSString *)wsMethodName formData:(NSDictionary *)paramDict error:(NSError **)error
 {
     NSError *netErr = nil;
-    [self testAndSetServerBasedOnReachability:&netErr];
+    [self networkIsReachable:&netErr];
     if (netErr) {
         if (error) {
             NSDictionary *eInfo = [NSDictionary dictionaryWithObject:netErr.localizedDescription forKey:NSLocalizedDescriptionKey];
@@ -299,7 +277,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 - (NSURLRequest *)buildGetRequestForWebServiceMethod:(NSString *)wsMethodName formData:(NSDictionary *)paramDict error:(NSError **)error
 {
     NSError *netErr = nil;
-    [self testAndSetServerBasedOnReachability:&netErr];
+    [self networkIsReachable:&netErr];
     if (netErr) {
         if (error) {
             NSDictionary *eInfo = [NSDictionary dictionaryWithObject:netErr.localizedDescription forKey:NSLocalizedDescriptionKey];
@@ -335,7 +313,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 - (NSURLRequest *)buildDownloadRequest:(NSString *)url
 {
     NSError *netErr = nil;
-    [self testAndSetServerBasedOnReachability:&netErr];
+    [self networkIsReachable:&netErr];
     if (netErr) {
         qlerror(@"%@",netErr.localizedDescription);
         return nil;
@@ -649,7 +627,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
         NSNumber *progress = [NSNumber numberWithFloat:([resourceLength floatValue] / [dlSize floatValue])];
 
         [controller appendDownloadProgress:([progress floatValue] * 100)];
-		[controller appendDownloadProgressPercent:[NSString stringWithFormat:@"%.0f%",([progress floatValue] * 100)]];
+		[controller appendDownloadProgressPercent:[NSString stringWithFormat:@"%.0f%%",([progress floatValue] * 100)]];
     }
 
     if (_isFileDownload) {

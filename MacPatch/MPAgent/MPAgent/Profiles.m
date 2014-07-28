@@ -60,8 +60,7 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 	return self;
 }
 
-
-- (BOOL) isConcurrent
+- (BOOL)isConcurrent
 {
     return YES;
 }

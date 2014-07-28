@@ -25,22 +25,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MPFramework/MPNetServer.m"
-            timestampString = "421621577.62088"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
-            landmarkName = "-serverAsDictionary"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "MPAgentExec/MPAgentExec/MPDirectoryServices.m"
             timestampString = "421623190.958504"
             startingColumnNumber = "9223372036854775807"
@@ -106,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MPFramework/WebServices/MPWebServices.m"
-            timestampString = "422991888.237981"
+            timestampString = "428256979.416712"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "831"
-            endingLineNumber = "831"
+            startingLineNumber = "948"
+            endingLineNumber = "948"
             landmarkName = "-getAgentUpdates:build:error:"
             landmarkType = "5">
          </BreakpointContent>
@@ -128,22 +112,6 @@
             startingLineNumber = "74"
             endingLineNumber = "74"
             landmarkName = "-scanForUpdate"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MPAgentExec/MPAgentExec/MPInv.m"
-            timestampString = "423595272.133939"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "201"
-            endingLineNumber = "201"
-            landmarkName = "-collectInventoryDataForType:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -176,6 +144,22 @@
             startingLineNumber = "125"
             endingLineNumber = "125"
             landmarkName = "-validateTasksPlist"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MPFramework/WebServices/MPWebServices.m"
+            timestampString = "428256979.416712"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1261"
+            endingLineNumber = "1261"
+            landmarkName = "-postJSONDataForMethod:data:error:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -111,10 +111,11 @@
         return YES;
     }
 
-    NSMutableArray *reqs;
+    NSArray *reqs;
     NSMutableArray *reqsFailed = [[NSMutableArray alloc] init];
     if ([reqFile objectForKey:@"failedAttempts"]) {
-        reqs = [[NSMutableArray alloc] initWithArray:[reqFile objectForKey:@"failedAttempts"]];
+        //reqs = [[NSMutableArray alloc] initWithArray:[reqFile objectForKey:@"failedAttempts"]];
+        reqs = [NSArray arrayWithArray:[reqFile objectForKey:@"failedAttempts"]];
         if ([reqs count] == 0) {
             qlinfo(@"No failed requests to post");
             return YES;
@@ -126,11 +127,18 @@
 
     NSError *err = nil;
     MPWebServices *mpws = [[MPWebServices alloc] init];
-    for (NSMutableDictionary *req in reqs)
+    for (NSDictionary *req in reqs)
     {
         NSDictionary *params = [req objectForKey:@"params"];
         err = nil;
+
+        if (![req objectForKey:@"wsMethod"]) {
+            continue;
+        }
         qlinfo(@"Attempting to re-post data for %@",[req objectForKey:@"wsMethod"]);
+        if ([params objectForKey:@"aMethod"]) {
+            qldebug(@"Params Method: %@",[params objectForKey:@"aMethod"]);
+        }
         if ([[req objectForKey:@"wsMethod"] isEqualToString:@"postPatchScanResultsForType"]) {
             [mpws postPatchScanResultsForType:(NSInteger)[params objectForKey:@"aPatchScanType"] results:[params objectForKey:@"resultsDictionary"] error:&err];
 
@@ -164,10 +172,13 @@
 
         if (err) {
             qlerror(@"Error re-posting data for %@",[req objectForKey:@"wsMethod"]);
+            qldebug(@"Params: %@",params);
             if ([[req objectForKey:@"postAttempts"] intValue] <= 15) {
                 int p = [[req objectForKey:@"postAttempts"] intValue];
-                [req setObject:[NSNumber numberWithInt:p++] forKey:@"postAttempts"];
-                [reqsFailed addObject:req];
+                p++;
+                NSMutableDictionary *newReq = [NSMutableDictionary dictionaryWithDictionary:req];
+                [newReq setObject:[NSNumber numberWithInt:p] forKey:@"postAttempts"];
+                [reqsFailed addObject:newReq];
             } else {
                 qlerror(@"%@ is being removed due to to many re-post attempts.",[req objectForKey:@"wsMethod"]);
             }

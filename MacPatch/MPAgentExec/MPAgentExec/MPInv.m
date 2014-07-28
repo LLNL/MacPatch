@@ -192,7 +192,7 @@
 	NSFileManager *fm = [NSFileManager defaultManager];
 	MPDataMgr	*dataMgr	= [[MPDataMgr alloc] init];
 	NSDictionary *item;
-	NSString *dataMgrXML;
+	NSString *dataMgrJSON;
 	NSArray *tmpArr = nil;
     NSString *invCollectionHash;
 	
@@ -248,7 +248,7 @@
                     }
                 }
 
-				dataMgrXML = [dataMgr GenJSONForDataMgr:tmpArr
+				dataMgrJSON = [dataMgr GenJSONForDataMgr:tmpArr
 											   dbTable:[item objectForKey:@"wstype"] 
 										 dbTablePrefix:@"mpi_" 
 										 dbFieldPrefix:@"mpa_"
@@ -256,16 +256,16 @@
 											 deleteCol:@"cuuid"
 										deleteColValue:[self cUUID]];
 
-				if ([self sendResultsToWebService:dataMgrXML]) {
+				if ([self sendResultsToWebService:dataMgrJSON]) {
 					logit(lcl_vInfo,@"Results for %@ posted.",[item objectForKey:@"wstype"]);
                     [self writeInvDataHashToFile:[item objectForKey:@"type"] hash:invCollectionHash];
 				} else {
 					logit(lcl_vError,@"Results for %@ not posted.",[item objectForKey:@"wstype"]);
 				}
 
-                [dataMgrXML writeToFile:[@"/private/tmp" stringByAppendingPathComponent:[item objectForKey:@"wstype"]] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+                [dataMgrJSON writeToFile:[@"/private/tmp" stringByAppendingPathComponent:[item objectForKey:@"wstype"]] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
                 [self writeInvDataHashToFile:[item objectForKey:@"type"] hash:invCollectionHash];
-				dataMgrXML = NULL;
+				dataMgrJSON = NULL;
 			}
 		}
 	}

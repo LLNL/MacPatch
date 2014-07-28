@@ -1,1161 +1,0 @@
-TMPPKGUpload
-v6
-r1
-cCheck dependencies
-cPhaseScriptExecution Check\ Pods\ Manifest.lock /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh
-cProcessPCH /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cProcessPCH /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/WebRequest.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/AppDelegate.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/main.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/main.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/NSString+Helper.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/WebRequest.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/WebRequest.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cLd /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent\ Uploader normal x86_64
-cLd /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent\ Uploader normal i386
-cCreateUniversalBinary /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploader normal x86_64\ i386
-cCpResource MPPKGUpload/MPPkgUpLdIcon.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/MPPkgUpLdIcon.png
-cCopyStringsFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources/en.lproj/InfoPlist.strings MPPKGUpload/en.lproj/InfoPlist.strings
-cCopyTiffFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources/ClearDot.tiff MPPKGUpload/ClearDot.tiff
-cCompileXIB /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib
-cCpResource MPPKGUpload/YESRoom.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/YESRoom.png
-cCpResource MPPKGUpload/NORoom.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/NORoom.png
-cCopyPlistFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources/mpInfo.plist MPPKGUpload/mpInfo.plist
-cCompileAssetCatalog /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/Images.xcassets
-cProcessInfoPlistFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Info.plist /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Info.plist
-cGenerateDSYMFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app.dSYM /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploader
-cPhaseScriptExecution Copy\ Pods\ Resources /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh
-cTouch /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
-c00000000535544D400000000000000AA
-t1398097108
-s170
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
-c0000000052705079000000000000044C
-t1383092345
-s1100
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
-c0000000053272E2900000000000001DE
-t1395076649
-s478
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/AppKit
-c0000000053272E290000000000268434
-t1395076649
-s2524212
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/ApplicationServices
-c00000000527050790000000000007D5C
-t1383092345
-s32092
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/ATS
-c0000000053272E290000000000020D64
-t1395076649
-s134500
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ColorSync.framework/Versions/A/ColorSync
-c0000000052705079000000000001B3B8
-t1383092345
-s111544
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/HIServices
-c0000000053272E290000000000034FAC
-t1395076649
-s217004
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/LangAnalysis.framework/Versions/A/LangAnalysis
-c0000000052705079000000000000CB08
-t1383092345
-s51976
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/PrintCore.framework/Versions/A/PrintCore
-c0000000052705079000000000002C5F4
-t1383092345
-s181748
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/QD.framework/Versions/A/QD
-c0000000052705079000000000002B9A8
-t1383092345
-s178600
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesis
-c0000000053272E290000000000011EF8
-t1395076649
-s73464
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CFNetwork.framework/CFNetwork
-c0000000053272E2900000000000598A8
-t1395076649
-s366760
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Cocoa
-c0000000052705079000000000000253C
-t1383092345
-s9532
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreData.framework/CoreData
-c0000000053272E29000000000004C7C4
-t1395076649
-s313284
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation
-c0000000053272E290000000000085C70
-t1395076649
-s547952
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics
-c0000000053272E29000000000008B334
-t1395076649
-s570164
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/CoreServices
-c0000000052705079000000000000979C
-t1383092345
-s38812
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE
-c000000005270507900000000000223B4
-t1383092345
-s140212
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore
-c0000000053272E290000000000071CA8
-t1395076649
-s466088
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/DictionaryServices
-c00000000527050790000000000017E1C
-t1383092345
-s97820
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/LaunchServices
-c0000000053272E29000000000004F090
-t1395076649
-s323728
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Metadata
-c0000000053272E29000000000003AA48
-t1395076649
-s240200
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/OSServices.framework/Versions/A/OSServices
-c0000000053272E2900000000000383CC
-t1395076649
-s230348
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SearchKit.framework/Versions/A/SearchKit
-c0000000052705079000000000001B66C
-t1383092345
-s112236
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreText.framework/CoreText
-c0000000053272E290000000000030448
-t1395076649
-s197704
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreVideo.framework/CoreVideo
-c00000000527050790000000000017D00
-t1383092345
-s97536
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/DiskArbitration.framework/DiskArbitration
-c0000000053272E29000000000000B27C
-t1395076649
-s45692
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Foundation
-c0000000053272E2900000000000C9E38
-t1395076649
-s826936
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/IOKit.framework/IOKit
-c0000000053272E29000000000004426C
-t1395076649
-s279148
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/IOSurface.framework/IOSurface
-c0000000052705079000000000000A9A0
-t1383092345
-s43424
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ImageIO.framework/ImageIO
-c0000000053272E2900000000000394B0
-t1395076649
-s234672
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL
-c0000000053272E29000000000000BB7C
-t1395076649
-s47996
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
-c0000000053272E2900000000000211A0
-t1395076649
-s135584
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGLU.dylib
-c0000000053272E290000000000005F00
-t1395076649
-s24320
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/QuartzCore.framework/QuartzCore
-c0000000053272E290000000000055BC0
-t1395076649
-s351168
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/QuartzCore.framework/Versions/A/Frameworks/CoreImage.framework/Versions/A/CoreImage
-c0000000053272E290000000000056FB4
-t1395076649
-s356276
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/QuartzCore.framework/Versions/A/Frameworks/ScalableUserInterface.framework/Versions/A/ScalableUserInterface
-c000000005270507A000000000000D484
-t1383092346
-s54404
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Security.framework/Security
-c0000000053272E2A00000000000762B4
-t1395076650
-s484020
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration
-c0000000053272E2900000000000378BC
-t1395076649
-s227516
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libSystem.dylib
-c0000000053272E2A000000000000681C
-t1395076650
-s26652
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libobjc.dylib
-c000000005270507B0000000000014EF8
-t1383092347
-s85752
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcache.dylib
-c000000005270507B0000000000004734
-t1383092347
-s18228
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcommonCrypto.dylib
-c000000005270507B000000000000FC6C
-t1383092347
-s64620
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcompiler_rt.dylib
-c000000005270507B000000000000F6A0
-t1383092347
-s63136
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcopyfile.dylib
-c000000005270507B0000000000006254
-t1383092347
-s25172
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcorecrypto.dylib
-c000000005270507B000000000000E0F8
-t1383092347
-s57592
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdispatch.dylib
-c0000000053272E2A000000000000D6DC
-t1395076650
-s55004
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdyld.dylib
-c0000000053272E2A0000000000006308
-t1395076650
-s25352
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libkeymgr.dylib
-c000000005270507B0000000000004050
-t1383092347
-s16464
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/liblaunch.dylib
-c0000000053272E2A0000000000008570
-t1395076650
-s34160
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libmacho.dylib
-c000000005270507B0000000000005EA0
-t1383092347
-s24224
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libquarantine.dylib
-c000000005270507B0000000000005FAC
-t1383092347
-s24492
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libremovefile.dylib
-c000000005270507B0000000000004440
-t1383092347
-s17472
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_asl.dylib
-c000000005270507B000000000000AA28
-t1383092347
-s43560
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_blocks.dylib
-c000000005270507B0000000000003E2C
-t1383092347
-s15916
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_c.dylib
-c0000000053272E2A0000000000030B04
-t1395076650
-s199428
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_configuration.dylib
-c0000000053272E2A0000000000005E54
-t1395076650
-s24148
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_dnssd.dylib
-c0000000053272E2A0000000000006A90
-t1395076650
-s27280
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_info.dylib
-c000000005270507B00000000000178AC
-t1383092347
-s96428
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_kernel.dylib
-c0000000053272E2A000000000001ADC8
-t1395076650
-s110024
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_m.dylib
-c000000005270507B000000000001028C
-t1383092347
-s66188
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_malloc.dylib
-c0000000053272E2A0000000000008800
-t1395076650
-s34816
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_network.dylib
-c000000005270507B0000000000011090
-t1383092347
-s69776
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_notify.dylib
-c000000005270507B000000000000882C
-t1383092347
-s34860
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_platform.dylib
-c0000000053272E2A00000000000067AC
-t1395076650
-s26540
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_pthread.dylib
-c000000005270507B0000000000008DEC
-t1383092347
-s36332
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_sandbox.dylib
-c0000000053272E2A0000000000004C08
-t1395076650
-s19464
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_stats.dylib
-c0000000053272E2A0000000000002428
-t1395076650
-s9256
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunc.dylib
-c000000005270507B000000000000439C
-t1383092347
-s17308
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunwind.dylib
-c000000005270507B0000000000006768
-t1383092347
-s26472
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libxpc.dylib
-c0000000053272E2A00000000000172F4
-t1395076650
-s94964
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
-c0000000053272E2A0000000000000ADC
-t1395076650
-s2780
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/lib/darwin/libclang_rt.osx.a
-c00000000535544C80000000000001770
-t1398097096
-s6000
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent Uploader
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent Uploader.LinkFileList
-c0000000053B58CED0000000000000373
-t1404407021
-s883
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/AppDelegate.o
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.o
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/NSString+Helper.o
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/WebRequest.o
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/main.o
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent Uploader
-t1404407084
-s127496
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent Uploader.LinkFileList
-c0000000053B58CED000000000000037D
-t1404407021
-s893
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o
-t1404407084
-s180208
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.o
-t1404407084
-s22252
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.o
-t1404407084
-s30980
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.o
-t1404407084
-s51824
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.o
-t1404407084
-s3480
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh
-c0000000053B58CED0000000000000103
-t1404407021
-s259
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh
-c0000000053B58CED000000000000002F
-t1404407021
-s47
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/assetcatalog_dependencies.txt
-t1404407084
-s347
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/assetcatalog_generated_info.plist
-t1404407084
-s243
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-dhyxgcjkraadeodbgsrfbemfoafl/MPPKGUpload-Prefix.pch.pch
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch.pch
-t1404407084
-s120368
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-fexopggixdgxefcvdbwtxflnpzxw/MPPKGUpload-Prefix.pch.pch
-t1404407022
-s126568
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch.pch
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app
-t1404407022
-s102
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app.dSYM
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Info.plist
-t1404407084
-s1510
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/MacOS/Agent Uploader
-t2
-s0
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/PkgInfo
-t1404407084
-s8
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/Base.lproj/MainMenu.nib
-t1404407084
-s70937
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/ClearDot.tiff
-t1404407022
-s640
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/MPPkgUpLdIcon.png
-t1404407022
-s157280
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/NORoom.png
-t1404407022
-s1190
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/YESRoom.png
-t1404407022
-s1439
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/en.lproj/InfoPlist.strings
-t1404407022
-s92
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/mpInfo.plist
-t1404407022
-s626
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.h
-c0000000053B477B50000000000000E8E
-t1404336053
-s3726
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m
-c0000000053B477B800000000000084EC
-t1404336056
-s34028
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib
-c0000000053B58CC50000000000015A92
-t1404406981
-s88722
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/ClearDot.tiff
-c00000000506092D50000000000000280
-t1348506325
-s640
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Images.xcassets
-c0000000053725E880000000000000066
-t1400004232
-s102
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPCrypto.h
-c00000000521B83D00000000000000535
-t1377534928
-s1333
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m
-c000000005357F89700000000000019BB
-t1398274199
-s6587
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Info.plist
-c00000000534EC39D0000000000000464
-t1397670813
-s1124
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch
-c0000000053B477CC0000000000000416
-t1404336076
-s1046
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPPkgUpLdIcon.png
-c0000000053725D5F0000000000026660
-t1400003935
-s157280
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NORoom.png
-c0000000050608FB600000000000004A6
-t1348505526
-s1190
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.h
-c000000005314A72500000000000006DB
-t1393862437
-s1755
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m
-c000000005342CB2A0000000000001FD1
-t1396886314
-s8145
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/WebRequest.h
-c0000000053B477BD00000000000005E8
-t1404336061
-s1512
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/WebRequest.m
-c0000000053B477C000000000000018D9
-t1404336064
-s6361
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/YESRoom.png
-c0000000050608FB6000000000000059F
-t1348505526
-s1439
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/en.lproj/InfoPlist.strings
-c00000000534EC39D000000000000002D
-t1397670813
-s45
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/main.m
-c00000000534EC39D0000000000000113
-t1397670813
-s275
-
-N/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/mpInfo.plist
-c000000005357E3F00000000000000272
-t1398268912
-s626
-
-CBuild AST from /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m
-r0
-
-CBuild AST from /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m
-r0
-
-CBuild AST from /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m
-r0
-
-CBuild AST from /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/WebRequest.m
-r0
-
-CBuild AST from /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/main.m
-r0
-
-CCheck dependencies
-r0
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependencies376e81aac465b941^bac091aac465b941^---0#1#1#--18"Check dependencies36"31375907-1A17-4344-9B68-B85486F2D5DE-
-
-CCompileAssetCatalog /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/Images.xcassets
-s426099884.717245
-e426099884.750919
-r1
-xCompileAssetCatalog
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Images.xcassets
-o/* com.apple.actool.compilation-results */
-o/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/AppIcon.icns
-o/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/assetcatalog_generated_info.plist
-o
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection109"CompileAssetCatalog Build/Products/Release/Agent\ Uploader.app/Contents/Resources MPPKGUpload/Images.xcassets109"CompileAssetCatalog Build/Products/Release/Agent\ Uploader.app/Contents/Resources MPPKGUpload/Images.xcassets86abb7acc465b941^a73ec0acc465b941^-376"/* com.apple.actool.compilation-results *//Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/AppIcon.icns/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/assetcatalog_generated_info.plist-0#0#1#-19%DVTDocumentLocation2@119"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/Images.xcassets/0000000000000000^1081"CompileAssetCatalog Build/Products/Release/Agent\ Uploader.app/Contents/Resources MPPKGUpload/Images.xcassets    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    /Applications/Xcode.app/Contents/Developer/usr/bin/actool --output-format human-readable-text --notices --warnings --export-dependency-info /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/assetcatalog_dependencies.txt --output-partial-info-plist /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/assetcatalog_generated_info.plist --app-icon AppIcon --platform macosx --minimum-deployment-target 10.7 --target-device mac --compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/Images.xcassets36"ABC625B2-CB20-4774-B4EF-A1C8CF6A0285-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/AppDelegate.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.371151
-e426099884.386983
-r0
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/AppDelegate.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-oerror: -fobjc-arc is not supported on platforms using the legacy runtime
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection113"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m200"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/AppDelegate.o MPPKGUpload/AppDelegate.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compilerf2265facc465b941^3b1a63acc465b941^-198"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@124"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-426099884#18446744073709551615#0#-2#--20"Apple LLVM 5.0 Error--0#0#1#-19%DVTDocumentLocation3@116"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m0000000000000000^4539"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/AppDelegate.o MPPKGUpload/AppDelegate.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/i386 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/AppDelegate.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/AppDelegate.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/AppDelegate.o36"D5C4914F-69B1-4C04-A9CF-EF8AE8D6AE97-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.370759
-e426099884.384282
-r0
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-oerror: -fobjc-arc is not supported on platforms using the legacy runtime
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection110"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m194"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.o MPPKGUpload/MPCrypto.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler85095facc465b941^439162acc465b941^-198"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@124"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-426099884#18446744073709551615#0#-2#--20"Apple LLVM 5.0 Error--0#0#1#-19%DVTDocumentLocation3@113"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m0000000000000000^4521"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.o MPPKGUpload/MPCrypto.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/i386 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.o36"9588AEFA-FB82-42EB-8736-BD5C088722E1-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/NSString+Helper.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.386791
-e426099884.403434
-r0
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/NSString+Helper.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-oerror: -fobjc-arc is not supported on platforms using the legacy runtime
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection117"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m208"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/NSString+Helper.o MPPKGUpload/NSString+Helper.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler862063acc465b941^da9067acc465b941^-198"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@124"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-426099884#18446744073709551615#0#-2#--20"Apple LLVM 5.0 Error--0#0#1#-19%DVTDocumentLocation3@120"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m0000000000000000^4563"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/NSString+Helper.o MPPKGUpload/NSString+Helper.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/i386 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/NSString+Helper.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/NSString+Helper.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/NSString+Helper.o36"06921ED9-1885-4E7A-98CE-423033946B49-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/WebRequest.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/WebRequest.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.387339
-e426099884.405574
-r0
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/WebRequest.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/WebRequest.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-oerror: -fobjc-arc is not supported on platforms using the legacy runtime
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection112"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/WebRequest.m198"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/WebRequest.o MPPKGUpload/WebRequest.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compilerf33d63acc465b941^404e68acc465b941^-198"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@124"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-426099884#18446744073709551615#0#-2#--20"Apple LLVM 5.0 Error--0#0#1#-19%DVTDocumentLocation3@115"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/WebRequest.m0000000000000000^4533"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/WebRequest.o MPPKGUpload/WebRequest.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/i386 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/WebRequest.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/WebRequest.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/WebRequest.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/WebRequest.o36"A81F9C76-936D-4D62-B26F-536AB26705F3-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/main.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/main.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.371529
-e426099884.384659
-r0
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/main.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/main.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-oerror: -fobjc-arc is not supported on platforms using the legacy runtime
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection106"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/main.m186"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/main.o MPPKGUpload/main.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler44335facc465b941^73f262acc465b941^-198"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@124"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-426099884#18446744073709551615#0#-2#--20"Apple LLVM 5.0 Error--0#0#1#-19%DVTDocumentLocation3@109"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/main.m0000000000000000^4497"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/main.o MPPKGUpload/main.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/i386 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/main.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/main.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/main.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/main.o36"4406733F-AEA8-47AB-BE82-17C86CAC22DE-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.369551
-e426099884.661443
-r1
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.h
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPCrypto.h
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.h
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/WebRequest.h
-o/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m:208:19: warning: 'runModalForDirectory:file:' is deprecated: first deprecated in OS X 10.6 [-Wdeprecated-declarations]
-o    if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
-o                  ^
-oIn module 'Cocoa' imported from /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.h:26:
-oIn module 'AppKit' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h:13:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:313:1: note: method 'runModalForDirectory:file:' declared here
-o- (NSInteger)runModalForDirectory:(NSString *)path file:(NSString *)name NS_DEPRECATED_MAC(10_0, 10_6);
-o^
-o/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m:210:35: warning: 'filenames' is deprecated: first deprecated in OS X 10.6 [-Wdeprecated-declarations]
-o        NSArray* files = [openDlg filenames];
-o                                  ^
-oIn module 'Cocoa' imported from /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.h:26:
-oIn module 'AppKit' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h:13:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenPanel.h:43:1: note: method 'filenames' declared here
-o- (NSArray *)filenames NS_DEPRECATED_MAC(10_0, 10_6);
-o^
-o2 warnings generated.
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection113"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m204"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o MPPKGUpload/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler2aaa5eacc465b941^4354a9acc465b941^-1896"/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m:208:19: warning: 'runModalForDirectory:file:' is deprecated: first deprecated in OS X 10.6 [-Wdeprecated-declarations]    if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )                  ^In module 'Cocoa' imported from /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.h:26:In module 'AppKit' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h:13:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:313:1: note: method 'runModalForDirectory:file:' declared here- (NSInteger)runModalForDirectory:(NSString *)path file:(NSString *)name NS_DEPRECATED_MAC(10_0, 10_6);^/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m:210:35: warning: 'filenames' is deprecated: first deprecated in OS X 10.6 [-Wdeprecated-declarations]        NSArray* files = [openDlg filenames];                                  ^In module 'Cocoa' imported from /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/AppDelegate.h:26:In module 'AppKit' imported from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h:13:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenPanel.h:43:1: note: method 'filenames' declared here- (NSArray *)filenames NS_DEPRECATED_MAC(10_0, 10_6);^2 warnings generated.2(36%IDEClangDiagnosticActivityLogMessage2@73"'runModalForDirectory:file:' is deprecated: first deprecated in OS X 10.6-426099884#18446744073709551615#0#1(2@49"Method 'runModalForDirectory:file:' declared here-426099884#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@170"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h0000000000000000^312#0#312#0#16555#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@116"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m0000000000000000^207#18#207#18#7605#0#12"Deprecations--2@56"'filenames' is deprecated: first deprecated in OS X 10.6-426099884#18446744073709551615#0#1(2@32"Method 'filenames' declared here-426099884#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@170"file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenPanel.h0000000000000000^42#0#42#0#789#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@116"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m0000000000000000^209#34#209#34#7696#0#12"Deprecations--0#0#1#-19%DVTDocumentLocation4@116"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m0000000000000000^4553"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o MPPKGUpload/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/AppDelegate.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o36"B4A34412-BF50-48F5-85E1-B565B09175B8-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.369162
-e426099884.464449
-r1
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPCrypto.h
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection110"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m198"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.o MPPKGUpload/MPCrypto.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler7c9b5eacc465b941^1de776acc465b941^---0#0#1#-19%DVTDocumentLocation2@113"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m0000000000000000^4535"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.o MPPKGUpload/MPCrypto.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPCrypto.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.o36"421C15B4-1EF2-4FB5-B11B-746E6D0A7888-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.370004
-e426099884.472784
-r1
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.h
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection117"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m212"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.o MPPKGUpload/NSString+Helper.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler9dd55eacc465b941^aa0a79acc465b941^---0#0#1#-19%DVTDocumentLocation2@120"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m0000000000000000^4577"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.o MPPKGUpload/NSString+Helper.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/NSString+Helper.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.o36"B606ADFD-229B-4AFC-A710-0A2B64EFEC80-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/WebRequest.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.370417
-e426099884.485375
-r1
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/WebRequest.m
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/WebRequest.m
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/WebRequest.h
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection112"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/WebRequest.m202"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.o MPPKGUpload/WebRequest.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler08e45eacc465b941^07447cacc465b941^---0#0#1#-19%DVTDocumentLocation2@115"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/WebRequest.m0000000000000000^4547"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.o MPPKGUpload/WebRequest.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/WebRequest.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.o36"C3B6D9C6-3582-4409-BE75-F2DC7EAF90A4-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099884.369749
-e426099884.427409
-r1
-xCompileC
-xBuild/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.o
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/main.m
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/main.m
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection106"Compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/main.m190"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.o MPPKGUpload/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilercfba5eacc465b941^666b6dacc465b941^---0#0#1#-19%DVTDocumentLocation2@109"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/main.m0000000000000000^4511"CompileC Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.o MPPKGUpload/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -include /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.d --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.dia -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/main.m -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.o36"6D788842-B9D1-4A1B-8ABE-11DBF11FDC5A-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCompileXIB /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib
-s426099884.716623
-e426099884.860343
-r1
-xCompileXIB
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib
-o/* com.apple.ibtool.document.notices */
-o/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib:Sz4-al-dPf: note: View is clipping its content [13]
-o/* com.apple.ibtool.warnings */
-o/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib: warning: Internationalization of /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib is not available when compiling for targets before Mac OS X 10.8
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection125"Compiling /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib46"CompileXIB MPPKGUpload/Base.lproj/MainMenu.xibd881b7acc465b941^c040dcacc465b941^-566"/* com.apple.ibtool.document.notices *//Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib:Sz4-al-dPf: note: View is clipping its content/* com.apple.ibtool.warnings *//Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib: warning: Internationalization of /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib is not available when compiling for targets before Mac OS X 10.82(21%IDEActivityLogMessage2@28"View is clipping its content-426099884#18446744073709551615#0#-0#-23%DVTTextDocumentLocation3@126"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#15"Clipped Content--2@204"Internationalization of /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib is not available when compiling for targets before Mac OS X 10.8-426099884#18446744073709551615#0#-1#-3@126"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#38"Interface Builder XIB Compiler Warning--0#0#1#-19%DVTDocumentLocation4@126"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib0000000000000000^683"CompileXIB MPPKGUpload/Base.lproj/MainMenu.xib    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export XCODE_DEVELOPER_USR_PATH=/Applications/Xcode.app/Contents/Developer/usr/bin/..    /Applications/Xcode.app/Contents/Developer/usr/bin/ibtool --errors --warnings --notices --minimum-deployment-target 10.7 --output-format human-readable-text --compile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources/Base.lproj/MainMenu.nib /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/Base.lproj/MainMenu.xib36"B3E9EEBD-2E57-42FA-9824-6DC0C9644F4B-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CCopyPlistFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources/mpInfo.plist MPPKGUpload/mpInfo.plist
-s426099822.396746
-e426099822.398210
-r1
-xCopyPlistFile
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/mpInfo.plist
-xMPPKGUpload/mpInfo.plist
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection29"Copy MPPKGUpload/mpInfo.plist113"CopyPlistFile Build/Products/Release/Agent\ Uploader.app/Contents/Resources/mpInfo.plist MPPKGUpload/mpInfo.plistefac656ec465b941^77f6656ec465b941^---0#0#1#-19%DVTDocumentLocation2@115"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/mpInfo.plist0000000000000000^406"CopyPlistFile Build/Products/Release/Agent\ Uploader.app/Contents/Resources/mpInfo.plist MPPKGUpload/mpInfo.plist    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    builtin-copyPlist --outdir /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources -- MPPKGUpload/mpInfo.plist36"DACC48BF-5B4C-4926-814E-960C7A4FA7F3-
-b42BEBEB4-095D-4E25-8EC5-422C49A02CD8
-
-CCopyStringsFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources/en.lproj/InfoPlist.strings MPPKGUpload/en.lproj/InfoPlist.strings
-s426099822.395238
-e426099822.396579
-r1
-xCopyStringsFile
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/en.lproj/InfoPlist.strings
-xMPPKGUpload/en.lproj/InfoPlist.strings
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection43"Copy MPPKGUpload/en.lproj/InfoPlist.strings143"CopyStringsFile Build/Products/Release/Agent\ Uploader.app/Contents/Resources/en.lproj/InfoPlist.strings MPPKGUpload/en.lproj/InfoPlist.stringsd636656ec465b941^34a1656ec465b941^---0#0#1#-19%DVTDocumentLocation2@129"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/en.lproj/InfoPlist.strings0000000000000000^518"CopyStringsFile Build/Products/Release/Agent\ Uploader.app/Contents/Resources/en.lproj/InfoPlist.strings MPPKGUpload/en.lproj/InfoPlist.strings    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    builtin-copyStrings --validate --inputencoding utf-8 --outputencoding UTF-16 --outdir /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources/en.lproj -- MPPKGUpload/en.lproj/InfoPlist.strings36"BA3D81A7-2862-4EFA-A9C4-429B11FDDA2A-
-b42BEBEB4-095D-4E25-8EC5-422C49A02CD8
-
-CCopyTiffFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources/ClearDot.tiff MPPKGUpload/ClearDot.tiff
-s426099822.395345
-e426099822.396627
-r1
-xCopyTiffFile
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Resources/ClearDot.tiff
-xMPPKGUpload/ClearDot.tiff
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection30"Copy MPPKGUpload/ClearDot.tiff114"CopyTiffFile Build/Products/Release/Agent\ Uploader.app/Contents/Resources/ClearDot.tiff MPPKGUpload/ClearDot.tiffcc40656ec465b941^6e88656ec465b941^---0#0#1#-19%DVTDocumentLocation2@116"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/ClearDot.tiff0000000000000000^407"CopyTiffFile Build/Products/Release/Agent\ Uploader.app/Contents/Resources/ClearDot.tiff MPPKGUpload/ClearDot.tiff    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    builtin-copyTiff --outdir /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources -- MPPKGUpload/ClearDot.tiff36"F66C6003-F7B5-42B0-8116-0441E683F579-
-b42BEBEB4-095D-4E25-8EC5-422C49A02CD8
-
-CCpResource MPPKGUpload/MPPkgUpLdIcon.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/MPPkgUpLdIcon.png
-s426099822.395091
-e426099822.396092
-r1
-xCpResource
-xMPPKGUpload/MPPkgUpLdIcon.png
-xBuild/Products/Release/Agent Uploader.app/Contents/Resources/MPPkgUpLdIcon.png
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection83"Copy Build/Products/Release/Agent Uploader.app/Contents/Resources/MPPkgUpLdIcon.png120"CpResource MPPKGUpload/MPPkgUpLdIcon.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/MPPkgUpLdIcon.png992d656ec465b941^4567656ec465b941^---0#0#1#-19%DVTDocumentLocation2@171"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/Build/Products/Release/Agent%20Uploader.app/Contents/Resources/MPPkgUpLdIcon.png003400e6dcffdf42^704"CpResource MPPKGUpload/MPPkgUpLdIcon.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/MPPkgUpLdIcon.png    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-debug-symbols -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPPkgUpLdIcon.png /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources36"DADEB6C6-6118-4DCB-8D4C-B02FDC630950-
-b42BEBEB4-095D-4E25-8EC5-422C49A02CD8
-
-CCpResource MPPKGUpload/NORoom.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/NORoom.png
-s426099822.396408
-e426099822.397702
-r1
-xCpResource
-xMPPKGUpload/NORoom.png
-xBuild/Products/Release/Agent Uploader.app/Contents/Resources/NORoom.png
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection76"Copy Build/Products/Release/Agent Uploader.app/Contents/Resources/NORoom.png106"CpResource MPPKGUpload/NORoom.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/NORoom.png6b9c656ec465b941^20d0656ec465b941^---0#0#1#-19%DVTDocumentLocation2@164"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/Build/Products/Release/Agent%20Uploader.app/Contents/Resources/NORoom.png003400e6dcffdf42^683"CpResource MPPKGUpload/NORoom.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/NORoom.png    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-debug-symbols -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/NORoom.png /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources36"000AA787-BE62-4099-AF6E-6FD2C52D32B6-
-b42BEBEB4-095D-4E25-8EC5-422C49A02CD8
-
-CCpResource MPPKGUpload/YESRoom.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/YESRoom.png
-s426099822.395914
-e426099822.396944
-r1
-xCpResource
-xMPPKGUpload/YESRoom.png
-xBuild/Products/Release/Agent Uploader.app/Contents/Resources/YESRoom.png
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection77"Copy Build/Products/Release/Agent Uploader.app/Contents/Resources/YESRoom.png108"CpResource MPPKGUpload/YESRoom.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/YESRoom.pngb071656ec465b941^3eb2656ec465b941^---0#0#1#-19%DVTDocumentLocation2@165"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/Build/Products/Release/Agent%20Uploader.app/Contents/Resources/YESRoom.png003400e6dcffdf42^686"CpResource MPPKGUpload/YESRoom.png Build/Products/Release/Agent\ Uploader.app/Contents/Resources/YESRoom.png    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-debug-symbols -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/YESRoom.png /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Resources36"1759B181-FEA5-4E49-A34A-F9E2166F0AC8-
-b42BEBEB4-095D-4E25-8EC5-422C49A02CD8
-
-CCreateUniversalBinary /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploader normal x86_64\ i386
-s426099884.711120
-e426099884.715816
-r0
-xCreateUniversalBinary
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/MacOS/Agent Uploader
-xnormal
-xx86_64 i386
-ofatal error: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo: can't open input file: /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent Uploader (No such file or directory)
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection175"Create universal binary /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/MacOS/Agent Uploader115"CreateUniversalBinary Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploader normal x86_64\ i3868719b6acc465b941^d93fb7acc465b941^-336"fatal error: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo: can't open input file: /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent Uploader (No such file or directory)1(21%IDEActivityLogMessage2@229"can't open input file: /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent Uploader (No such file or directory)294"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo: can't open input file: /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent Uploader426099884#18446744073709551615#0#-2#-23%DVTTextDocumentLocation3@116"file:///fatal%20error:%20/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#10"Lipo Error--0#0#1#-19%DVTDocumentLocation4@166"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/Build/Products/Release/Agent%20Uploader.app/Contents/MacOS/Agent%20Uploader003400e6dcffdf42^839"CreateUniversalBinary Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploader normal x86_64\ i386    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent\ Uploader /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent\ Uploader -output /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploader36"E9BF2E59-F79E-4091-A48A-B64E3E8942BE-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CGenerateDSYMFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app.dSYM /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploader
-s426099884.862620
-e426099884.866914
-r0
-xGenerateDSYMFile
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app.dSYM
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/MacOS/Agent Uploader
-oerror: unable to open executable '/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/MacOS/Agent Uploader'
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection135"Generate /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app.dSYM138"GenerateDSYMFile Build/Products/Release/Agent\ Uploader.app.dSYM Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploaderc6dddcacc465b941^24eeddacc465b941^-187"error: unable to open executable '/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/MacOS/Agent Uploader'1(21%IDEActivityLogMessage2@186"error: unable to open executable '/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/MacOS/Agent Uploader'-426099884#18446744073709551615#0#-2#-23%DVTTextDocumentLocation3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#14"Dsymutil Error--0#0#1#-19%DVTDocumentLocation4@139"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/Build/Products/Release/Agent%20Uploader.app.dSYM003400e6dcffdf42^617"GenerateDSYMFile Build/Products/Release/Agent\ Uploader.app.dSYM Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploader    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/MacOS/Agent\ Uploader -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app.dSYM36"14049103-03F8-434F-99BF-A7E51AC19196-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CLd /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent\ Uploader normal i386
-s426099884.664153
-e426099884.673470
-r0
-xLd
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent Uploader
-xnormal
-xi386
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent Uploader.LinkFileList
-old: file not found: /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.o
-oclang: error: linker command failed with exit code 1 (use -v to see invocation)
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection183"Link /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent Uploader114"Ld Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent\ Uploader normal i3860610aaacc465b941^4568acacc465b941^-275"ld: file not found: /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.oclang: error: linker command failed with exit code 1 (use -v to see invocation)2(21%IDEActivityLogMessage2@190"File not found: /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/MPCrypto.o-426099884#0#195#-0#-23%DVTTextDocumentLocation3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#31"Apple Mach-O Linker (ld) Notice--2@65"Linker command failed with exit code 1 (use -v to see invocation)-426099884#195#80#-2#-3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#30"Apple Mach-O Linker (ld) Error--0#0#1#--1458"Ld Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent\ Uploader normal i386    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export MACOSX_DEPLOYMENT_TARGET=10.7    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -arch i386 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -L/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -filelist /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent\ Uploader.LinkFileList -mmacosx-version-min=10.7 -ObjC -framework CoreServices -framework Security -framework SystemConfiguration -fobjc-arc -fobjc-link-runtime -framework Cocoa -Xlinker -dependency_info -Xlinker /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent\ Uploader_dependency_info.dat -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/i386/Agent\ Uploader36"6A3221BB-DE3E-49FB-9AE7-654CC66E2E1D-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CLd /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent\ Uploader normal x86_64
-s426099884.663923
-e426099884.710397
-r1
-xLd
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent Uploader
-xnormal
-xx86_64
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent Uploader.LinkFileList
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/crt1.10.6.o
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/MPCrypto.o
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/AppDelegate.o
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/main.o
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/NSString+Helper.o
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/WebRequest.o
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/CoreServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Security.framework/Security
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework/Cocoa
-d/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/arc/libarclite_macosx.a
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Foundation.framework/Foundation
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libobjc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libSystem.dylib
-d/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/lib/darwin/libclang_rt.osx.a
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/IOKit.framework/IOKit
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/IOSurface.framework/IOSurface
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreData.framework/CoreData
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/ApplicationServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/QuartzCore.framework/QuartzCore
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreVideo.framework/CoreVideo
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/DiskArbitration.framework/DiskArbitration
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AppKit.framework/AppKit
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CFNetwork.framework/CFNetwork
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Metadata
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/OSServices.framework/Versions/A/OSServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SearchKit.framework/Versions/A/SearchKit
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/LaunchServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/DictionaryServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcache.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcommonCrypto.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcompiler_rt.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcopyfile.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcorecrypto.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdispatch.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdyld.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libkeymgr.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/liblaunch.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libmacho.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libquarantine.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libremovefile.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_asl.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_blocks.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_c.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_configuration.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_dnssd.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_info.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_kernel.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_m.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_malloc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_network.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_notify.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_platform.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_pthread.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_sandbox.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_stats.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunwind.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libxpc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/CoreText.framework/CoreText
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ImageIO.framework/ImageIO
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/ATS
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ColorSync.framework/Versions/A/ColorSync
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/HIServices
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/LangAnalysis.framework/Versions/A/LangAnalysis
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/PrintCore.framework/Versions/A/PrintCore
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/QD.framework/Versions/A/QD
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesis
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/QuartzCore.framework/Versions/A/Frameworks/CoreImage.framework/Versions/A/CoreImage
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/QuartzCore.framework/Versions/A/Frameworks/ScalableUserInterface.framework/Versions/A/ScalableUserInterface
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGLU.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection185"Link /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent Uploader118"Ld Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent\ Uploader normal x86_64d104aaacc465b941^09ddb5acc465b941^---0#0#1#--1470"Ld Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent\ Uploader normal x86_64    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export MACOSX_DEPLOYMENT_TARGET=10.7    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -L/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -filelist /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent\ Uploader.LinkFileList -mmacosx-version-min=10.7 -ObjC -framework CoreServices -framework Security -framework SystemConfiguration -fobjc-arc -fobjc-link-runtime -framework Cocoa -Xlinker -dependency_info -Xlinker /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent\ Uploader_dependency_info.dat -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Objects-normal/x86_64/Agent\ Uploader36"0BAEAF5F-218F-42F7-9C23-75904F421A7E-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CPhaseScriptExecution Check\ Pods\ Manifest.lock /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh
-s426099882.570483
-e426099882.582780
-r1
-xPhaseScriptExecution
-xCheck Pods Manifest.lock
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection50"Run custom shell script 'Check Pods Manifest.lock'146"PhaseScriptExecution Check\ Pods\ Manifest.lock Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh136692aac465b941^5d3395aac465b941^---0#0#1#--436"PhaseScriptExecution Check\ Pods\ Manifest.lock Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    /bin/sh -c \"/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-156505AE87B94EBDA75B0197.sh\"36"4A842F05-E7B2-4761-AA05-F02B0C66A6AB-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CPhaseScriptExecution Copy\ Pods\ Resources /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh
-s426099884.867703
-e426099884.944072
-r1
-xPhaseScriptExecution
-xCopy Pods Resources
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh
-obuilding file list ... done
-o
-osent 29 bytes  received 20 bytes  98.00 bytes/sec
-ototal size is 0  speedup is 0.00
-o/* com.apple.actool.compilation-results */
-o
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection45"Run custom shell script 'Copy Pods Resources'141"PhaseScriptExecution Copy\ Pods\ Resources Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh6b65deacc465b941^4baff1acc465b941^-156"building file list ... donesent 29 bytes  received 20 bytes  98.00 bytes/sectotal size is 0  speedup is 0.00/* com.apple.actool.compilation-results */4(21%IDEActivityLogMessage2@28"building file list ... done-426099884#0#28#-0#-----2@50"sent 29 bytes  received 20 bytes  98.00 bytes/sec-426099884#29#50#-0#-----2@33"total size is 0  speedup is 0.00-426099884#79#33#-0#-----2@43"/* com.apple.actool.compilation-results */-426099884#112#43#-0#-----0#0#1#--431"PhaseScriptExecution Copy\ Pods\ Resources Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    /bin/sh -c \"/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Script-7FB8DEEEC62E469091056F56.sh\"36"A7AB487B-AFE2-4C1C-AAB9-E01B199A777C-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CProcessInfoPlistFile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Info.plist /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Info.plist
-s426099884.860844
-e426099884.862264
-r1
-xProcessInfoPlistFile
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app/Contents/Info.plist
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Info.plist
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection122"Process /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Info.plist118"ProcessInfoPlistFile Build/Products/Release/Agent\ Uploader.app/Contents/Info.plist MPPKGUpload/MPPKGUpload-Info.plist276bdcacc465b941^94bedcacc465b941^---0#0#1#-19%DVTDocumentLocation2@125"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Info.plist0000000000000000^897"ProcessInfoPlistFile Build/Products/Release/Agent\ Uploader.app/Contents/Info.plist MPPKGUpload/MPPKGUpload-Info.plist    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    builtin-infoPlistUtility /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Info.plist -genpkginfo /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/PkgInfo -expandbuildsettings -platform macosx -additionalcontentfile /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/assetcatalog_generated_info.plist -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app/Contents/Info.plist36"B09B65D6-F8E6-4A0C-8535-1B1D18D3FF5F-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CProcessPCH /Users/heizer1/Developer/Xcode/DerivedData/MPPKGUpload-hgapxqrhmxddmaevjvfkrlvqfibl/Index/PrecompiledHeaders/MPPKGUpload-Prefix-byprldddaltfiugwaswoibjuduko_ast/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
-r0
-
-CProcessPCH /Users/heizer1/Developer/Xcode/DerivedData/MPPKGUpload-hgapxqrhmxddmaevjvfkrlvqfibl/Index/PrecompiledHeaders/MPPKGUpload-Prefix-cyswjofazsiobgacyuqkiskkdbfc_ast/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
-r0
-
-CProcessPCH /Users/heizer1/Developer/Xcode/DerivedData/MPPKGUpload-hgapxqrhmxddmaevjvfkrlvqfibl/Index/PrecompiledHeaders/MPPKGUpload-Prefix-exdczggiveaxyyfggmpblyvrqqmj_ast/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
-r0
-
-CProcessPCH /Users/heizer1/Developer/Xcode/DerivedData/MPPKGUpload-hgapxqrhmxddmaevjvfkrlvqfibl/Index/PrecompiledHeaders/MPPKGUpload-Prefix-fybidjscjurbhmemnrfwabjaljpz_ast/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
-r0
-
-CProcessPCH /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-dhyxgcjkraadeodbgsrfbemfoafl/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099822.003328
-e426099822.013451
-r0
-xProcessPCH
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-dhyxgcjkraadeodbgsrfbemfoafl/MPPKGUpload-Prefix.pch.pch
-xMPPKGUpload/MPPKGUpload-Prefix.pch
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-oerror: -fobjc-arc is not supported on platforms using the legacy runtime
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection45"Precompile MPPKGUpload/MPPKGUpload-Prefix.pch227"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-dhyxgcjkraadeodbgsrfbemfoafl/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler70e9006ec465b941^4774036ec465b941^-198"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@124"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-426099822#18446744073709551615#0#-2#--20"Apple LLVM 5.0 Error--0#0#1#-19%DVTDocumentLocation3@125"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch0000000000000000^4425"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-dhyxgcjkraadeodbgsrfbemfoafl/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch i386 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/i386 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-dhyxgcjkraadeodbgsrfbemfoafl/MPPKGUpload-Prefix.pch.dia -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-dhyxgcjkraadeodbgsrfbemfoafl/MPPKGUpload-Prefix.pch.d -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-dhyxgcjkraadeodbgsrfbemfoafl/MPPKGUpload-Prefix.pch.pch36"26932810-7EA5-4E66-A62C-17286515DB2B-
-b42BEBEB4-095D-4E25-8EC5-422C49A02CD8
-
-CProcessPCH /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099882.583510
-e426099884.368391
-r1
-xProcessPCH
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch.pch
-xMPPKGUpload/MPPKGUpload-Prefix.pch
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection45"Precompile MPPKGUpload/MPPKGUpload-Prefix.pch229"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compileref7295aac465b941^4c515eacc465b941^---0#0#1#-19%DVTDocumentLocation2@125"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch0000000000000000^4431"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch.dia -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch.d -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-eikgjvmhguqatedaqcemrlspgahv/MPPKGUpload-Prefix.pch.pch36"6766E076-71C4-4445-BAB5-60E41AE887A8-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CProcessPCH /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-fexopggixdgxefcvdbwtxflnpzxw/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099822.003082
-e426099822.049483
-r1
-xProcessPCH
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-fexopggixdgxefcvdbwtxflnpzxw/MPPKGUpload-Prefix.pch.pch
-xMPPKGUpload/MPPKGUpload-Prefix.pch
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection45"Precompile MPPKGUpload/MPPKGUpload-Prefix.pch229"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-fexopggixdgxefcvdbwtxflnpzxw/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler05db006ec465b941^69ad0c6ec465b941^---0#0#1#-19%DVTDocumentLocation2@125"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch0000000000000000^4431"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-fexopggixdgxefcvdbwtxflnpzxw/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/x86_64 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-fexopggixdgxefcvdbwtxflnpzxw/MPPKGUpload-Prefix.pch.dia -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-fexopggixdgxefcvdbwtxflnpzxw/MPPKGUpload-Prefix.pch.d -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-fexopggixdgxefcvdbwtxflnpzxw/MPPKGUpload-Prefix.pch.pch36"D9446C73-0C51-4067-A4D0-0E3CAFF22047-
-b42BEBEB4-095D-4E25-8EC5-422C49A02CD8
-
-CProcessPCH /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s426099882.583749
-e426099882.594960
-r0
-xProcessPCH
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch.pch
-xMPPKGUpload/MPPKGUpload-Prefix.pch
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-oerror: -fobjc-arc is not supported on platforms using the legacy runtime
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection45"Precompile MPPKGUpload/MPPKGUpload-Prefix.pch227"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler207f95aac465b941^375098aac465b941^-198"error: -fobjc-arc is not supported on platforms using the legacy runtimeCommand /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@124"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-426099882#18446744073709551615#0#-2#--20"Apple LLVM 5.0 Error--0#0#1#-19%DVTDocumentLocation3@125"file:///Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch%20Admin%20Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch0000000000000000^4425"ProcessPCH Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch.pch MPPKGUpload/MPPKGUpload-Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch i386 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fobjc-arc -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DCOCOAPODS=1 -DNS_BLOCK_ASSERTIONS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.7 -g -fvisibility=hidden -Wno-sign-conversion -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-generated-files.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-own-target-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-all-target-headers.hmap -iquote /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/Agent\ Uploader-project-headers.hmap -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/include -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources/i386 -I/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/MPPKGUpload.build/Release/MPPKGUpload.build/DerivedSources -F/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/AFNetworking -isystem/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Pods/Headers/Reachability --serialize-diagnostics /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch.dia -MMD -MT dependencies -MF /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch.d -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/MPPKGUpload/MPPKGUpload-Prefix.pch -o /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Intermediates/PrecompiledHeaders/MPPKGUpload-Prefix-gjitddsrqnhnejezbimbkcwqnasz/MPPKGUpload-Prefix.pch.pch36"85299A3E-4AF4-4BB7-85C1-0BDF4FDA112E-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-
-CTouch /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app
-s426099884.944539
-e426099884.948075
-r1
-xTouch
-x/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection127"Touch /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload/Build/Products/Release/Agent Uploader.app48"Touch Build/Products/Release/Agent\ Uploader.app9dd6f1acc465b941^4ab6f2acc465b941^---0#0#1#--285"Touch Build/Products/Release/Agent\ Uploader.app    cd "/Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch Admin Tools/MPAgentUpload"    /usr/bin/touch -c /Users/heizer1/GitHub/MP_2.5.0_BETA/MacPatch/MacPatch\ Admin\ Tools/MPAgentUpload/Build/Products/Release/Agent\ Uploader.app36"FA534747-8DE3-46FC-A5D9-C480A4A9EFA9-
-bB1369693-54BF-4077-BA76-44B3B560DA88
-

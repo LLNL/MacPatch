@@ -58,6 +58,13 @@
     return self;
 }
 
+//
+// Not using this at the moment, has bugs. Every now and then
+// sockaddr_in address goes empty and causes the test to fail
+// falsly.
+//
+// On the Todo list to fix
+//
 - (BOOL)isMPServerAlive:(int)aPort host:(NSString *)aHost
 {
 	@try
@@ -80,9 +87,17 @@
             return NO;
         }
 
-        if ([self isAlive:address] != 0) {
+        NSData *addressData = [NSData dataWithBytes:&address length:sizeof(address)];
+        if (addressData) {
+            if ([self isAlive:address] != 0) {
+                return NO;
+            }
+        } else {
+            qlerror(@"No address object found for %@",aHost);
             return NO;
+
         }
+
 
         // So far so good - the host exists and is up; check the port and report
         close (sock);

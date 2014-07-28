@@ -153,7 +153,7 @@
         }
     }
 
-    NSString            *dataMgrXML;
+    NSString            *dataMgrJSON;
     NSString            *jsonBase64String;
     MPASUSCatalogs      *mpCatalog;
     NSArray             *applePatchesArray;
@@ -202,7 +202,7 @@
         applePatchesArray = [mpAsus scanForAppleUpdates];
         
         // post patches to web service
-        dataMgrXML = [mpDataMgr GenJSONForDataMgr:applePatchesArray
+        dataMgrJSON = [mpDataMgr GenJSONForDataMgr:applePatchesArray
                                          dbTable:@"client_patches_apple"
                                    dbTablePrefix:@"mp_"
                                    dbFieldPrefix:@""
@@ -212,7 +212,7 @@
         
         
         // Encode to base64 and send to web service
-        jsonBase64String = [[dataMgrXML dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
+        jsonBase64String = [[dataMgrJSON dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
         wsErr = nil;
         [mpws postDataMgrJSON:jsonBase64String error:&wsErr];
         if (wsErr) {

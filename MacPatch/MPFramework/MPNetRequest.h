@@ -29,6 +29,8 @@
 
 @protocol MPNetRequestController
 
+@optional
+
 - (void)appendDownloadProgress:(double)aNumber;
 - (void)appendDownloadProgressPercent:(NSString *)aPercent;
 - (void)downloadStarted;

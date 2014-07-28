@@ -79,7 +79,6 @@
     return self;
 }
 
-
 - (BOOL)isConcurrent
 {
     return YES;

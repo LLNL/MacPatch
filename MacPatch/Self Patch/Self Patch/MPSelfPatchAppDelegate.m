@@ -789,18 +789,8 @@ done:
 	
 	// post patches to web service
 	MPDataMgr *dataMgr = [[[MPDataMgr alloc] init] autorelease];
-	NSString *dataMgrXML;
-    /*
-	dataMgrXML = [dataMgr GenXMLForDataMgr:applePatchesArray
-								   dbTable:@"client_patches_apple" 
-							 dbTablePrefix:@"mp_" 
-							 dbFieldPrefix:@""
-							  updateFields:@"cuuid,patch"
-								 deleteCol:@"cuuid"
-                            deleteColValue:[MPSystemInfo clientUUID]];
-	
-	*/
-    dataMgrXML = [dataMgr GenJSONForDataMgr:applePatchesArray
+	NSString *dataMgrJSON;
+    dataMgrJSON = [dataMgr GenJSONForDataMgr:applePatchesArray
                                     dbTable:@"client_patches_apple"
                               dbTablePrefix:@"mp_"
                               dbFieldPrefix:@""
@@ -809,7 +799,7 @@ done:
                              deleteColValue:[MPSystemInfo clientUUID]];
 
     // Encode to base64 and send to web service
-    NSString *jsonBase64String = [[dataMgrXML dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
+    NSString *jsonBase64String = [[dataMgrJSON dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
     mpws = [[[MPWebServices alloc] init] autorelease];
     wsErr = nil;
     [mpws postDataMgrJSON:jsonBase64String error:&wsErr];

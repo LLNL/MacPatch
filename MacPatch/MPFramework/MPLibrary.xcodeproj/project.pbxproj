@@ -106,9 +106,9 @@
 		8FE5609C16DE6D6D00BB7600 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608D16DE6CE100BB7600 /* IOKit.framework */; };
 		8FE5609D16DE6D6F00BB7600 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608B16DE6CD600BB7600 /* CoreFoundation.framework */; };
 		8FE5609E16DE6D7200BB7600 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608916DE6CD000BB7600 /* Cocoa.framework */; };
-		8FE5609F16DE6D7500BB7600 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608716DE6CC600BB7600 /* libicucore.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
-		8FE560A016DE6D7500BB7600 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608516DE6CBE00BB7600 /* libcrypto.dylib */; };
-		8FE560A116DE6D7500BB7600 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608316DE6CB700BB7600 /* libz.dylib */; };
+		8FE5609F16DE6D7500BB7600 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608716DE6CC600BB7600 /* libicucore.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
+		8FE560A016DE6D7500BB7600 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608516DE6CBE00BB7600 /* libcrypto.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
+		8FE560A116DE6D7500BB7600 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608316DE6CB700BB7600 /* libz.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE560CD16DE899B00BB7600 /* MPSWInstaller.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8FE560D216DE899B00BB7600 /* MPSWInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE560CE16DE899B00BB7600 /* MPSWInstaller.m */; };
 		8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE560D316DE932900BB7600 /* MPAgentController.h */; settings = {ATTRIBUTES = (Private, ); }; };

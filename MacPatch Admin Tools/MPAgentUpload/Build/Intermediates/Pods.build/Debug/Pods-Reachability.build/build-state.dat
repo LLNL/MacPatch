@@ -1,180 +1,0 @@
-TPods-Reachability
-v6
-r1
-cCheck dependencies
-cProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability-dummy.o /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-dummy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Reachability.o /Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cLibtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-Reachability.a normal x86_64
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework/Cocoa
-c000000005270507600000000000025C8
-t1383092342
-s9672
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration
-c0000000052705078000000000002F69C
-t1383092344
-s194204
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
-c0000000053272E3400000000000000AA
-t1395076660
-s170
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
-c0000000052705079000000000000044C
-t1383092345
-s1100
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
-c0000000053272E2900000000000001DE
-t1395076649
-s478
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
-c0000000053272E2A0000000000000ADC
-t1395076650
-s2780
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability-dummy.o
-t1397680779
-s4128
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability.LinkFileList
-c00000000534EE8D80000000000000119
-t1397680344
-s281
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Reachability.o
-t1397680779
-s46924
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch.pch
-t1397680779
-s130176
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch.pch
-t1397680779
-s129108
-
-N/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-Reachability.a
-t1397680779
-s51864
-
-N/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-dummy.m
-c00000000534EEA7F000000000000008A
-t1397680767
-s138
-
-N/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-prefix.pch
-c00000000534EEA7F000000000000004D
-t1397680767
-s77
-
-N/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-environment.h
-c00000000534EEA7F00000000000007B5
-t1397680767
-s1973
-
-N/Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.h
-c00000000534EE7470000000000000E57
-t1397679943
-s3671
-
-N/Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.m
-c00000000534EE7470000000000003737
-t1397679943
-s14135
-
-CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-dummy.m
-r0
-
-CBuild AST from /Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.m
-r0
-
-CCheck dependencies
-r0
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependencies29b4f0d822ffb841^1d1ff1d822ffb841^---0#1#1#--18"Check dependencies36"4177D360-3230-48CA-804B-2F7D6F03EF9C-
-
-CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability-dummy.o /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-dummy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s419373579.130026
-e419373579.174350
-r1
-xCompileC
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability-dummy.o
-x/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-dummy.m
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-dummy.m
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection75"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-dummy.m250"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability-dummy.o Pods-Reachability-dummy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler035b210b22ffb841^e5b32c0b22ffb841^---0#0#1#-19%DVTDocumentLocation2@74"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-dummy.m0000000000000000^3579"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability-dummy.o Pods-Reachability-dummy.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability-dummy.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability-dummy.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-dummy.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability-dummy.o36"2675A5AD-726E-4BC1-B03C-9658DABFB632-
-b86A5473B-29DD-4E49-B9F3-B32CD4410E6A
-
-CCompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Reachability.o /Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s419373579.130387
-e419373579.248320
-r1
-xCompileC
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Reachability.o
-x/Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.m
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.m
-d/Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.h
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection77"Compile /Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.m241"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Reachability.o Reachability/Reachability.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilerb570210b22ffb841^6076430b22ffb841^---0#0#1#-19%DVTDocumentLocation2@76"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.m0000000000000000^3573"CompileC /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Reachability.o Reachability/Reachability.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -DOS_OBJECT_USE_OBJC=0 -include /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Reachability.d --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Reachability.dia -c /Users/heizer1/Workspace/MPPKGUpload/Pods/Reachability/Reachability.m -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Reachability.o36"F7A2481D-431A-4D30-AAA9-C0D4F4BD010E-
-b86A5473B-29DD-4E49-B9F3-B32CD4410E6A
-
-CLibtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-Reachability.a normal x86_64
-s419373579.289968
-e419373579.298949
-r1
-xLibtool
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-Reachability.a
-xnormal
-xx86_64
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection102"Libtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-Reachability.a normal x86_64102"Libtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-Reachability.a normal x86_643b514a0b22ffb841^58e34c0b22ffb841^---0#0#1#--782"Libtool /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-Reachability.a normal x86_64    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export MACOSX_DEPLOYMENT_TARGET=10.9    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only x86_64 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -L/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -filelist /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Objects-normal/x86_64/Pods-Reachability.LinkFileList -framework Cocoa -framework SystemConfiguration -o /Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/libPods-Reachability.a36"2CEE773A-FB1C-45EE-BBBE-5FBDE1E48534-
-b86A5473B-29DD-4E49-B9F3-B32CD4410E6A
-
-CProcessPCH /Users/heizer1/Developer/Xcode/DerivedData/MPPKGUpload-dhcgexevjbibxzanqoywuypajuts/Index/PrecompiledHeaders/Pods-Reachability-prefix-dhpxdjxnsdcsxhgxrngthbvlpfsg_ast/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
-r0
-
-CProcessPCH /Users/heizer1/Developer/Xcode/DerivedData/MPPKGUpload-dhcgexevjbibxzanqoywuypajuts/Index/PrecompiledHeaders/Pods-Reachability-prefix-djdwfpcdnfjcfhagsfkjjeeolvov_ast/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
-r0
-
-CProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s419373579.071543
-e419373579.129377
-r1
-xProcessPCH
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch.pch
-xPods-Reachability-prefix.pch
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-prefix.pch
-d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-environment.h
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection39"Precompile Pods-Reachability-prefix.pch272"ProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilerf261120b22ffb841^7d20210b22ffb841^---0#0#1#-19%DVTDocumentLocation2@77"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-prefix.pch0000000000000000^3524"ProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug -fobjc-arc -DOS_OBJECT_USE_OBJC=0 --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch.dia -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch.d -c /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-prefix.pch -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-bpkhfcjaubvxfjgvcaxleyiqiyxm/Pods-Reachability-prefix.pch.pch36"223C14ED-285A-4CDF-966C-ABFCBFDAFA0A-
-b86A5473B-29DD-4E49-B9F3-B32CD4410E6A
-
-CProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s419373579.071213
-e419373579.121281
-r1
-xProcessPCH
-x/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch.pch
-xPods-Reachability-prefix.pch
-xnormal
-xx86_64
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-prefix.pch
-d/Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-environment.h
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection39"Precompile Pods-Reachability-prefix.pch272"ProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compilera65f120b22ffb841^0b0e1f0b22ffb841^---0#0#1#-19%DVTDocumentLocation2@77"file:///Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-prefix.pch0000000000000000^3490"ProcessPCH /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch.pch Pods-Reachability-prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/heizer1/Workspace/MPPKGUpload/Pods    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/heizer1/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-receiver-is-weak -Wno-arc-repeated-use-of-weak -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wno-deprecated-implementations -DDEBUG=1 -DCOCOAPODS=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.9 -g -Wno-sign-conversion -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-generated-files.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-own-target-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-all-target-headers.hmap -iquote /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/Pods-Reachability-project-headers.hmap -I/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug/include -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders -I/Users/heizer1/Workspace/MPPKGUpload/Pods/BuildHeaders/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/AFNetworking -I/Users/heizer1/Workspace/MPPKGUpload/Pods/Headers/Reachability -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/DerivedSources/x86_64 -I/Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/Pods.build/Debug/Pods-Reachability.build/DerivedSources -F/Users/heizer1/Workspace/MPPKGUpload/Build/Products/Debug --serialize-diagnostics /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch.dia -MMD -MT dependencies -MF /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch.d -c /Users/heizer1/Workspace/MPPKGUpload/Pods/Pods-Reachability-prefix.pch -o /Users/heizer1/Workspace/MPPKGUpload/Build/Intermediates/PrecompiledHeaders/Pods-Reachability-prefix-dvlvscmxlgsjxodatowvfworcqqj/Pods-Reachability-prefix.pch.pch36"BAB7BE19-BE5D-4458-934C-28DF237F2A48-
-b86A5473B-29DD-4E49-B9F3-B32CD4410E6A
-
