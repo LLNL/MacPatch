@@ -34,11 +34,13 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 - (void)scanAndInstallPofiles;
 - (NSArray *)retrieveProfileIDData:(NSError **)aErr;
 - (NSArray *)readLocalProfileData;
+- (NSArray *)readMPInstalledProfiles;
 - (NSArray *)readMPInstalledProfileData;
 - (NSString *)writeProfileToDisk:(NSString *)aData;
 - (BOOL)installProfile:(NSString *)aProfilePath;
 - (BOOL)removeProfile:(NSString *)aProfileIdentifier;
 - (void)recordProfileInstallToDisk:(NSDictionary *)aProfile;
+- (BOOL)profileIsInstalledOnDisk:(NSString *)profileID installedProfiles:(NSArray *)localProfiles;
 
 @end
 
@@ -121,11 +123,42 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
         }
         NSMutableArray *profileIdentities = [[NSMutableArray alloc] init];
         NSMutableArray *profilesToRemove = [[NSMutableArray alloc] init];
-        NSArray *installedProfiles = [self readMPInstalledProfileData];
+        NSArray *installedProfiles = [self readMPInstalledProfileData]; // returns an array of recorded installed profile id's
+        NSArray *installedProfilesRaw = [self readMPInstalledProfiles]; // returns and array of complete install profile dicts
+        NSArray *localProfiles = [self readLocalProfileData];
 
         // Install Profiles
         for (NSDictionary *p in profiles)
         {
+            if ([self profileIsInstalledOnDisk:[p objectForKey:@"profileIdentifier"] installedProfiles:localProfiles])
+            {
+                BOOL needsInstall = NO;
+                BOOL foundInMPInstalledArray = NO;
+                // Check the rev if it needs updating
+                if (installedProfilesRaw) {
+                    for (NSDictionary *installedProfile in installedProfilesRaw) {
+                        if ([[installedProfile objectForKey:@"profileIdentifier"] isEqualToString:[p objectForKey:@"profileIdentifier"]]) {
+                            int currentProfileRev = [[installedProfile objectForKey:@"rev"] intValue];
+                            int wsProfileRev = [[p objectForKey:@"rev"] intValue];
+                            qldebug(@"%d -- %d",currentProfileRev,wsProfileRev);
+                            if (currentProfileRev != wsProfileRev) {
+                                needsInstall = YES;
+                            }
+                            foundInMPInstalledArray = YES;
+                            break;
+                        }
+                    }
+                }
+
+                // No need to install profile again...
+                if (needsInstall == NO) {
+                    if (foundInMPInstalledArray == NO) {
+                        [self recordProfileInstallToDisk:p];
+                    }
+                    qldebug(@"continue");
+                    continue;
+                }
+            }
             if ([p objectForKey:@"data"]) {
                 NSString *profileOnDisk = [self writeProfileToDisk:[p objectForKey:@"data"]];
                 if (!profileOnDisk) {
@@ -215,6 +248,19 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
     return [NSArray arrayWithArray:profileIDs];
 }
 
+- (NSArray *)readMPInstalledProfiles
+{
+    NSString *filePath = [MP_ROOT_CLIENT stringByAppendingPathComponent:kMPProfilesData];
+    NSDictionary *mpProfileDict = [NSDictionary dictionaryWithContentsOfFile:filePath];
+
+    if ([mpProfileDict objectForKey:@"installed"])
+    {
+        return [mpProfileDict objectForKey:@"installed"];
+    }
+
+    return nil;
+}
+
 - (NSArray *)readMPInstalledProfileData
 {
     NSString *filePath = [MP_ROOT_CLIENT stringByAppendingPathComponent:kMPProfilesData];
@@ -289,17 +335,56 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 
 - (void)recordProfileInstallToDisk:(NSDictionary *)aProfile
 {
-    NSMutableArray *installedProfiles;
-    NSString *filePath = [MP_ROOT_CLIENT stringByAppendingPathComponent:kMPProfilesData];
-    NSMutableDictionary *profileData = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
-    if ([profileData objectForKey:@"installed"]) {
-        installedProfiles = [NSMutableArray arrayWithArray:[profileData objectForKey:@"installed"]];
-    } else {
-        installedProfiles = [[NSMutableArray alloc] init];
+    NSString *pID = nil;
+    if ([aProfile objectForKey:@"id"])
+    {
+        pID = [aProfile objectForKey:@"id"];
     }
-    [installedProfiles addObject:aProfile];
-    [profileData setObject:installedProfiles forKey:@"installed"];
-    [profileData writeToFile:filePath atomically:NO];
+
+    NSMutableArray *installedProfiles = [[NSMutableArray alloc] init];
+    NSString *filePath = [MP_ROOT_CLIENT stringByAppendingPathComponent:kMPProfilesData];
+    qlinfo(@"Recording profile install for %@",[aProfile objectForKey:@"profileIdentifier"]);
+    NSMutableDictionary *profileData = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+    if (!profileData) {
+        profileData = [NSMutableDictionary dictionary];
+    }
+
+    // Check to see if ID already exists
+    if ([profileData objectForKey:@"installed"])
+    {
+        for (NSDictionary *ip in [profileData objectForKey:@"installed"])
+        {
+            // Found it ...
+            if ([[[ip objectForKey:@"id"] uppercaseString] isEqualToString:[pID uppercaseString]])
+            {
+                [installedProfiles addObject:aProfile];
+            } else {
+                [installedProfiles addObject:ip];
+            }
+        }
+    } else {
+        [installedProfiles addObject:aProfile];
+    }
+
+    [profileData setObject:(NSArray *)installedProfiles forKey:@"installed"];
+    [(NSDictionary *)profileData writeToFile:filePath atomically:YES];
+    if (![fm fileExistsAtPath:filePath])
+    {
+        qlerror(@"%@ file was not found.",filePath);
+    }
+}
+
+- (BOOL)profileIsInstalledOnDisk:(NSString *)profileID installedProfiles:(NSArray *)localProfiles
+{
+    BOOL result = NO;
+    for (NSString *pID in localProfiles)
+    {
+        if ([[pID uppercaseString] isEqualToString:[profileID uppercaseString]]) {
+            result = YES;
+            break;
+        }
+    }
+    return result;
 }
 
 @end

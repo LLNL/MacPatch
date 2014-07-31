@@ -34,10 +34,12 @@
 #import "BatteryInfo.h"
 #import "PowerProfile.h"
 #import "MPDirectoryServices.h"
+#import "MacAppStoreDataItem.h"
+#import "NSMetadataQuery+Synchronous.h"
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
-#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,SINetworkInfo"
+#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,SINetworkInfo,AppStoreApps"
 #define kTasksPlist             @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
 #define kInvHashData            @"/Library/MacPatch/Client/Data/.gov.llnl.mp.inv.data.plist"
 
@@ -68,7 +70,6 @@
 	return self;
 }
  
-
 #pragma mark -
 
 - (BOOL)hasInvDataInDB
@@ -235,6 +236,8 @@
 				tmpArr = [self parseConfigProfilesInfo];
 			} else if ([[item objectForKey:@"type"] isEqual:@"SINetworkInfo"]) {
 				tmpArr = [self parseSysInfoNetworkData:[item objectForKey:@"data"]];
+			} else if ([[item objectForKey:@"type"] isEqual:@"AppStoreApps"]) {
+				tmpArr = [self parseAppStoreData];
 			}
 
 
@@ -1541,7 +1544,7 @@ done:
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *fileName = [NSString stringWithFormat: @"%.0f.%@", [NSDate timeIntervalSinceReferenceDate] * 1000.0, @"plist"];
     NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
-    qlinfo(@"Config profile data: %@",filePath);
+    qldebug(@"Config profile data: %@",filePath);
 
     // Write Profile Data To Plist
     NSArray *cmdArgs = [NSArray arrayWithObjects:@"-P",@"-o",filePath, nil];
@@ -1572,8 +1575,7 @@ done:
     }
     // Quick Clean Up
     //[fm removeItemAtPath:filePath error:NULL];
-    qlinfo(@"%@",profiles);
-    
+    qldebug(@"Collected Profiles: %@",profiles);
     return [NSArray arrayWithArray:profiles];
 }
 
@@ -1607,6 +1609,27 @@ done:
             }
         }
         [items addObject:result];
+    }
+
+    return [NSArray arrayWithArray:items];
+}
+
+- (NSArray *)parseAppStoreData
+{
+    NSDictionary *appData;
+    NSMutableArray *items = [[NSMutableArray alloc] init];
+
+    NSSet *dirs = [NSSet setWithObject:@"/Applications/"];
+    NSMetadataQuery *metadataSearch=[[NSMetadataQuery alloc] init];
+    NSArray *res = [metadataSearch resultsForSearchString:@"kMDItemAppStoreHasReceipt == '1'" inFolders:dirs];
+    MacAppStoreDataItem *di;
+    for (NSMetadataItem *item in res) {
+        di = [[MacAppStoreDataItem alloc] initWithNSMetadataItem:item];
+        appData = nil;
+        appData = [NSDictionary dictionaryWithDictionary:[di dictionaryRepresentation]];
+        if (appData) {
+            [items addObject:appData];
+        }
     }
 
     return [NSArray arrayWithArray:items];

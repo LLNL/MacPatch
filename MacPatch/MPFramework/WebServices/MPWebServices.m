@@ -110,6 +110,7 @@
                 qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
                 continue;
             }
+            break;
         } else {
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
             error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
@@ -182,6 +183,7 @@
                 qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
                 continue;
             }
+            break;
         } else {
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
             error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];

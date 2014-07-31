@@ -316,7 +316,11 @@ void usage(void) {
     printf(" \t\tPowerManagment\n");
     printf(" \t\tBatteryInfo\n");
     printf(" \t\tConfigProfiles\n");
+    printf(" \t\tAppStoreApps\n");
     printf(" -A \tCollect Audit data.\n\n");
+    printf(" -g \t[Software Group Name]Collect Audit data.\n");
+    printf(" -d \tCollect Audit data.\n");
+    printf(" -P \tCollect Audit data.\n");
 	printf(" -e \tEcho logging data to console.\n");
 	printf(" -V \tVerbose logging.\n");
 	printf(" -v \tDisplay version info. \n");

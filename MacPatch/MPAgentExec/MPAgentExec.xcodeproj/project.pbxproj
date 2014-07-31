@@ -39,6 +39,8 @@
 		8FE561B216DEB8EF00BB7600 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE561A916DEB8EF00BB7600 /* libcrypto.dylib */; };
 		8FE561B316DEB8EF00BB7600 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE561AA16DEB8EF00BB7600 /* libicucore.dylib */; };
 		8FE561B616DEB99600BB7600 /* MPAgentExecController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE561B516DEB99500BB7600 /* MPAgentExecController.m */; };
+		8FF56E4019897536002F2090 /* MacAppStoreDataItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF56E3F19897536002F2090 /* MacAppStoreDataItem.m */; };
+		8FF56E4319897548002F2090 /* NSMetadataQuery+Synchronous.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF56E4219897548002F2090 /* NSMetadataQuery+Synchronous.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -106,6 +108,10 @@
 		8FE561AA16DEB8EF00BB7600 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		8FE561B416DEB99500BB7600 /* MPAgentExecController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentExecController.h; sourceTree = "<group>"; };
 		8FE561B516DEB99500BB7600 /* MPAgentExecController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentExecController.m; sourceTree = "<group>"; };
+		8FF56E3E19897536002F2090 /* MacAppStoreDataItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacAppStoreDataItem.h; sourceTree = "<group>"; };
+		8FF56E3F19897536002F2090 /* MacAppStoreDataItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MacAppStoreDataItem.m; sourceTree = "<group>"; };
+		8FF56E4119897548002F2090 /* NSMetadataQuery+Synchronous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMetadataQuery+Synchronous.h"; sourceTree = "<group>"; };
+		8FF56E4219897548002F2090 /* NSMetadataQuery+Synchronous.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMetadataQuery+Synchronous.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +162,10 @@
 				8F9257BA18871D7B006AFBF6 /* BatteryInfo.m */,
 				8F9257C51887461D006AFBF6 /* PowerProfile.h */,
 				8F9257C61887461D006AFBF6 /* PowerProfile.m */,
+				8FF56E3E19897536002F2090 /* MacAppStoreDataItem.h */,
+				8FF56E3F19897536002F2090 /* MacAppStoreDataItem.m */,
+				8FF56E4119897548002F2090 /* NSMetadataQuery+Synchronous.h */,
+				8FF56E4219897548002F2090 /* NSMetadataQuery+Synchronous.m */,
 			);
 			name = Inventory;
 			sourceTree = "<group>";
@@ -307,12 +317,14 @@
 				8FD88E5716DFBF7200A870A3 /* NSDirectoryServices.m in Sources */,
 				8FD88E5816DFBF7200A870A3 /* CHDisk.m in Sources */,
 				8FD88E5916DFBF7200A870A3 /* CHDiskInfo.m in Sources */,
+				8FF56E4019897536002F2090 /* MacAppStoreDataItem.m in Sources */,
 				8FD88E5A16DFBF7200A870A3 /* MPUsersAndGroups.m in Sources */,
 				8FD88E6416DFC11200A870A3 /* FMDatabase.m in Sources */,
 				8F315B95191C04B70031FF73 /* MPDirectoryServices.m in Sources */,
 				8FD88E6516DFC11200A870A3 /* FMDatabaseAdditions.m in Sources */,
 				8FD88E6616DFC11200A870A3 /* FMResultSet.m in Sources */,
 				8F6007A3171481FF000F58B6 /* MPFileVaultInfo.m in Sources */,
+				8FF56E4319897548002F2090 /* NSMetadataQuery+Synchronous.m in Sources */,
 				8F9257C71887461D006AFBF6 /* PowerProfile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
