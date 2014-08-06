@@ -340,7 +340,7 @@
                       <option #IIf(selPatchCri.type is "Script", DE("Selected"), DE(""))#>Script</option>
                     </select>
                     &nbsp;
-                    <textarea name='reqPatchCriteria_#xi#' id='reqPatchCriteria_#xi#' cols="60" value="#selPatchCri.type_data#"></textarea>
+                    <textarea name='reqPatchCriteria_#xi#' id='reqPatchCriteria_#xi#' cols="60">#selPatchCri.type_data#</textarea>
                     &nbsp;
 					<input type='text' name='reqPatchCriteriaOrder_#xi#' value='#xi#' size='3' style='vertical-align:top;'>
 					<span style='vertical-align:top;'>(Order)</span>&nbsp; <a href='##' onClick='removeFormField("##rowreqPatchCriteria#xi#"); return false;'><img src='/admin/images/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'></a></p>
@@ -371,21 +371,21 @@
             <div id="row">
               <div id="left"> PreInstall Script </div>
               <div id="center">
-                <textarea name="pkg_preinstall" cols="60" rows="7" value="<cfoutput>#selPatch.pkg_preinstall#</cfoutput>"></textarea>
+                <textarea name="pkg_preinstall" cols="60" rows="7"><cfoutput>#selPatch.pkg_preinstall#</cfoutput></textarea>
               </div>
               <div id="right"> Note: The return code of "0" is True. </div>
             </div>
             <div id="row">
               <div id="left"> PostInstall Script </div>
               <div id="center">
-                <textarea name="pkg_postinstall" cols="60" rows="7" value="<cfoutput>#selPatch.pkg_postinstall#</cfoutput>"></textarea>
+                <textarea name="pkg_postinstall" cols="60" rows="7"><cfoutput>#selPatch.pkg_postinstall#</cfoutput></textarea>
               </div>
               <div id="right"> Note: The return code of "0" is True. </div>
             </div>
             <div id="row">
               <div id="left"> Patch Package </div>
               <div id="center">
-                <input type="file" name="mainPatchFile" =message="Error [Patch File]: A patch package name is required.">
+                <input type="file" name="mainPatchFile" message="Error [Patch File]: A patch package name is required.">
                 <br>
                 <div style="font-size:10px;padding:10px;">
                 	<cfoutput>
