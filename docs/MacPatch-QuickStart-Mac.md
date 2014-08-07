@@ -20,6 +20,13 @@ If you get back a version they are installed .
 *Install Xcode*<br>
 **% xcode-select --install**
 
+###Python
+There are a couple of python modules which are required.
+
+	% easy_install pip
+	% pip install requests
+	% pip install mysql-connector-python
+
 ##Download and build the Server software
 To download and build the MacPatch server software is just a few Terminal commands. Run the following commands to build and install the software. 
 

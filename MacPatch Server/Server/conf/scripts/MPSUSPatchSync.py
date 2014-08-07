@@ -25,7 +25,7 @@
 
 '''
     Script: MPSUSPatchSync
-    Version: 1.0.0
+    Version: 1.0.1
 
     Description: This Script read all of the patch information
     from the apple software update sucatlog files and post the 
@@ -202,7 +202,7 @@ def postDataToWebService(patches, config):
     if config['MPServerUseSSL'] == True:
         httpPrefix = "https"
     
-    _url = httpPrefix + "://" + config['MPServerAddress'] + ":" + config['MPServerPort'] + wsPostAPI
+    _url = httpPrefix + "://" + str(config['MPServerAddress']) + ":" + str(config['MPServerPort']) + wsPostAPI
     logger.debug("Post URL: "+ _url)
 
     payload = {'type': 'json' , 'data': json.dumps(patches)}

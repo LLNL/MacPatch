@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.1
+# Version: 1.2
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -91,6 +91,7 @@ mkdir -p /Library/MacPatch/Content/Web/clients
 mkdir -p /Library/MacPatch/Content/Web/patches
 mkdir -p /Library/MacPatch/Content/Web/sav
 mkdir -p /Library/MacPatch/Content/Web/sw
+mkdir -p /Library/MacPatch/Content/Web/tools
 mkdir -p /Library/MacPatch/Server
 mkdir -p /Library/MacPatch/Server/lib
 mkdir -p /Library/MacPatch/Server/Logs
@@ -99,6 +100,7 @@ mkdir -p /Library/MacPatch/Server/Logs
 # Copy compiled files
 # ------------------
 cp -R ${GITROOT}/MacPatch\ Server/Server ${MPBASE}
+cp ${MPSERVERBASE}/conf/Content/Web/tools/MPAgentUploader.app.zip /Library/MacPatch/Content/Web/tools/
 
 if $USEMACOS; then
 	# ------------------
@@ -150,7 +152,10 @@ if [ $TCATSRV == 0 ]; then
 else
 	cp -r ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpws
 	mv ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpsite
-
+	mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Files
+	mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Errors
+	mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Processed
+	
 	chmod -R 0775 "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
 	chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
 	rm -rf  "${MPSERVERBASE}/tomcat-mpws/webapps/ROOT"

@@ -791,6 +791,10 @@ def main():
     if args.save == True:
         gKeepFiles = True
         logger.info('Keep processed files is enabled.')
+        
+    if not os.path.exists(args.files):
+    	print "%s does not exist." % args.files
+        sys.exit(1)
 
     mpi = MPInventory(args.files)
     while True:
