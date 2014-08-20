@@ -2,14 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Disabled</key>
-	<true/>
 	<key>Label</key>
 	<string>gov.llnl.mploader</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Library/MacPatch/Server/bin/MPPatchLoader</string>
-		<string>-c</string>
+		<string>/Library/MacPatch/Server/conf/scripts/MPSUSPatchSync.py</string>
+		<string>--plist</string>
 		<string>/Library/MacPatch/Server/conf/etc/gov.llnl.mp.patchloader.plist</string>
 	</array>
 	<key>StartInterval</key>
