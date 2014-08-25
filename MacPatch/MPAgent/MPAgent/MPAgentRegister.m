@@ -16,11 +16,8 @@
 
 @interface MPAgentRegister ()
 
-@property (nonatomic, strong) NSString *clientKey;
 
 @end
-
-
 
 @implementation MPAgentRegister
 
@@ -47,8 +44,9 @@
     BOOL result = FALSE;
 
     NSError *err = nil;
-    NSString *res = [mpws getRegisterAgent:aRegKey hostName:hostName clientKey:clientKey error:&err];
-    NSLog(@"%@",res);
+
+    //NSString *res = [mpws getRegisterAgent:aRegKey hostName:hostName clientKey:clientKey error:&err];
+    //NSLog(@"%@",res);
 
     return result;
 }
@@ -67,8 +65,8 @@
 {
 
     NSError *err = nil;
-    NSString *res = [mpws getRegisterAgent:aRegKey hostName:hostName clientKey:clientKey error:&err];
-    NSLog(@"%@",res);
+    //NSString *res = [mpws getRegisterAgent:aRegKey hostName:hostName clientKey:clientKey error:&err];
+    //NSLog(@"%@",res);
     return 0;
 }
 

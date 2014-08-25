@@ -185,6 +185,27 @@
 
 #pragma mark main methods
 
+- (BOOL)getIsClientAgentRegistered:(NSError **)err
+{
+    return NO;
+}
+
+- (NSDictionary *)getServerPubKey:(NSError **)err
+{
+    return nil;
+}
+
+- (BOOL)getIsValidPubKeyHash:(NSString *)aHash error:(NSError **)err
+{
+    return NO;
+}
+
+- (NSDictionary *)getRegisterAgent:(NSString *)aRegKey hostName:(NSString *)hostName clientKey:(NSString *)clientKey error:(NSError **)err
+{
+    return nil;
+}
+
+
 - (NSDictionary *)getMPServerList:(NSError **)err
 {
     // Request

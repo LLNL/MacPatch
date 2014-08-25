@@ -203,8 +203,9 @@ int main (int argc, char * argv[])
             int regResult = -1;
             NSString *clientKey = [[NSProcessInfo processInfo] globallyUniqueString];
             MPAgentRegister *mpar = [[MPAgentRegister alloc] init];
-            regResult = [mpar registerClient:regKeyArg hostName:[[MPAgent sharedInstance] g_hostName] clientKey:clientKey];
-            NSLog(@"%@",regResult);
+            regResult = [mpar registerClient:clientKey];
+            //[mpar registerClient:regKeyArg hostName:[[MPAgent sharedInstance] g_hostName] clientKey:clientKey];
+            NSLog(@"%d",regResult);
         } else {
             MPAppController *mpac = [[MPAppController alloc] initWithArg:a_Type];
             [[NSRunLoop currentRunLoop] run];
