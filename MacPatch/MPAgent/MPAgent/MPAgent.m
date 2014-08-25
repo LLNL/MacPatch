@@ -41,6 +41,8 @@ static MPAgent *_instance;
 @synthesize g_TasksHash;
 @synthesize g_AppHashes;
 @synthesize g_agentPid;
+@synthesize g_hostName;
+
 // SWDist
 @synthesize g_SWDistTasks;
 @synthesize g_SWDistTasksHash;
@@ -65,6 +67,8 @@ static MPAgent *_instance;
             [_instance setG_agentPid:NULL];
             [_instance setG_SWDistTasksHash:@"NA"];
             [_instance setG_SWDistTasksJSONHash:@"NA"];
+            NSString *localHostName = (__bridge NSString *)SCDynamicStoreCopyLocalHostName(NULL);
+            [_instance setG_hostName:localHostName];
         }
     }
     return _instance;

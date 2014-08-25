@@ -156,6 +156,7 @@ else
 	mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Errors
 	mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Processed
 	
+	cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl/WEB-INF/lib/systemcommand.jar"
 	chmod -R 0775 "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
 	chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
 	rm -rf  "${MPSERVERBASE}/tomcat-mpws/webapps/ROOT"
@@ -168,6 +169,7 @@ else
 	cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/web.xml" "${MPSERVERBASE}/tomcat-mpws/conf/web.xml"
 	rm -rf "${MPSERVERBASE}/jetty-mpwsl"
 
+	cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/jetty-mpsite/webapps/mp/WEB-INF/lib/systemcommand.jar"
 	chmod -R 0775 "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
 	chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
 	rm -rf "${MPSERVERBASE}/tomcat-mpsite/webapps/ROOT"

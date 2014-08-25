@@ -99,6 +99,8 @@
 		8F4B1F3116DE639100E15A9E /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2916DE639100E15A9E /* NSData+Base64.m */; };
 		8F4B1F3716DE64DA00E15A9E /* MPSWTasks.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F3416DE64DA00E15A9E /* MPSWTasks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F3516DE64DA00E15A9E /* MPSWTasks.m */; };
+		8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F50CB7C199D5DD0006AC537 /* MPKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F50CB7D199D5DD0006AC537 /* MPKeychain.m */; };
 		8FE5609816DE6D6300BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609516DE6CFD00BB7600 /* Security.framework */; };
 		8FE5609916DE6D6600BB7600 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609316DE6CF700BB7600 /* Foundation.framework */; };
 		8FE5609A16DE6D6800BB7600 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609116DE6CF100BB7600 /* SystemConfiguration.framework */; };
@@ -117,6 +119,8 @@
 		8FEC938817CBFEFB00AA9C1C /* MPApplePatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938617CBFEFB00AA9C1C /* MPApplePatch.m */; };
 		8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEC938917CBFF0F00AA9C1C /* MPCustomPatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FEC938C17CBFF0F00AA9C1C /* MPCustomPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */; };
+		8FF93F9E199A9205005A4EEB /* RSACrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF93F9C199A9205005A4EEB /* RSACrypto.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FF93F9F199A9205005A4EEB /* RSACrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F9D199A9205005A4EEB /* RSACrypto.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -157,6 +161,8 @@
 		8F4B1F2916DE639100E15A9E /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		8F4B1F3416DE64DA00E15A9E /* MPSWTasks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSWTasks.h; sourceTree = "<group>"; };
 		8F4B1F3516DE64DA00E15A9E /* MPSWTasks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSWTasks.m; sourceTree = "<group>"; };
+		8F50CB7C199D5DD0006AC537 /* MPKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPKeychain.h; sourceTree = "<group>"; };
+		8F50CB7D199D5DD0006AC537 /* MPKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPKeychain.m; sourceTree = "<group>"; };
 		8F6BA41115C0E59A00F44501 /* MPDiskUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDiskUtil.h; sourceTree = "<group>"; };
 		8F6BA41215C0E59A00F44501 /* MPDiskUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDiskUtil.m; sourceTree = "<group>"; };
 		8F7B15CC15068211005CEA32 /* MPCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPCrypto.h; path = Crypto/MPCrypto.h; sourceTree = "<group>"; };
@@ -235,6 +241,8 @@
 		8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCustomPatch.m; sourceTree = "<group>"; };
 		8FED886F146462DB00709F8E /* MPASUSCatalogs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPASUSCatalogs.h; sourceTree = "<group>"; };
 		8FED8870146462DB00709F8E /* MPASUSCatalogs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPASUSCatalogs.m; sourceTree = "<group>"; };
+		8FF93F9C199A9205005A4EEB /* RSACrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSACrypto.h; sourceTree = "<group>"; };
+		8FF93F9D199A9205005A4EEB /* RSACrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSACrypto.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -303,6 +311,10 @@
 				8F7B15CD15068211005CEA32 /* MPCrypto.m */,
 				8F00CD0317610F1D008CC39E /* MPCodeSign.h */,
 				8F00CD0417610F1D008CC39E /* MPCodeSign.m */,
+				8FF93F9C199A9205005A4EEB /* RSACrypto.h */,
+				8FF93F9D199A9205005A4EEB /* RSACrypto.m */,
+				8F50CB7C199D5DD0006AC537 /* MPKeychain.h */,
+				8F50CB7D199D5DD0006AC537 /* MPKeychain.m */,
 				8FAEF635145F1773006284B2 /* MPPatch+Scanner */,
 				8F4B1F3316DE64BF00E15A9E /* MacPatch+SWDist */,
 				8FAEF64E145F187C006284B2 /* WebServices */,
@@ -573,6 +585,8 @@
 				8F2E697B19229A85001BF9D6 /* MPFailedRequests.h in Headers */,
 				8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */,
 				8F30D8791938FB3F006E55C2 /* MPNetReach.h in Headers */,
+				8FF93F9E199A9205005A4EEB /* RSACrypto.h in Headers */,
+				8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */,
 				8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */,
 				8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */,
 				8F47F0FD18EDFD6D00158396 /* Reachability.h in Headers */,
@@ -658,6 +672,7 @@
 				8F4B1DF416DD1D6400E15A9E /* MPSystemInfo.m in Sources */,
 				8F4B1DF516DD1D6400E15A9E /* MPDate.m in Sources */,
 				8F4B1DF616DD1D6400E15A9E /* MPClientCheckInData.m in Sources */,
+				8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */,
 				8F4B1DF716DD1D6400E15A9E /* MPNSTask.m in Sources */,
 				8F4B1DF916DD1D6400E15A9E /* MPCrypto.m in Sources */,
 				8F4B1DFA16DD1D6400E15A9E /* MPAsus.m in Sources */,
@@ -695,6 +710,7 @@
 				8F2E697C19229A85001BF9D6 /* MPFailedRequests.m in Sources */,
 				8FE560D816DE932900BB7600 /* MPAgentController.m in Sources */,
 				8F00CD0617610F1D008CC39E /* MPCodeSign.m in Sources */,
+				8FF93F9F199A9205005A4EEB /* RSACrypto.m in Sources */,
 				8FEC938817CBFEFB00AA9C1C /* MPApplePatch.m in Sources */,
 				8FEC938C17CBFF0F00AA9C1C /* MPCustomPatch.m in Sources */,
 			);

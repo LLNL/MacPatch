@@ -26,6 +26,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MPAppController.h"
+#import "MPAgentRegister.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -45,6 +46,8 @@ int main (int argc, char * argv[])
 		BOOL debugLogging = NO;
 		BOOL traceLogging = NO;
 		BOOL verboseLogging = NO;
+        BOOL doRegistration = NO;
+        NSString *regKeyArg = @"999999999";
 		
 		// Setup argument processing
 		int c;
@@ -71,11 +74,12 @@ int main (int argc, char * argv[])
 				{"Verbose"			,no_argument		,0, 'V'},
 				{"version"			,no_argument		,0, 'v'},
 				{"help"				,no_argument		,0, 'h'},
+                {"register"		    ,required_argument	,0, 'r'},
 				{0, 0, 0, 0}
 			};
 			// getopt_long stores the option index here.
 			int option_index = 0;
-			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwneVvh", long_options, &option_index);
+			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwneVvhr:", long_options, &option_index);
 			
 			// Detect the end of the options.
 			if (c == -1)
@@ -137,6 +141,10 @@ int main (int argc, char * argv[])
 				case 'v':
 					printf("%s\n",[APPVERSION UTF8String]);
 					return 0;
+                case 'r':
+                    doRegistration = YES;
+					regKeyArg = [NSString stringWithUTF8String:optarg];
+					break;
 				case 'h':
 				case '?':
 				default:
@@ -191,9 +199,16 @@ int main (int argc, char * argv[])
 			}
 			logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
 		}
-    
-		MPAppController *mpac = [[MPAppController alloc] initWithArg:a_Type];
-		[[NSRunLoop currentRunLoop] run];
+        if (doRegistration) {
+            int regResult = -1;
+            NSString *clientKey = [[NSProcessInfo processInfo] globallyUniqueString];
+            MPAgentRegister *mpar = [[MPAgentRegister alloc] init];
+            regResult = [mpar registerClient:regKeyArg hostName:[[MPAgent sharedInstance] g_hostName] clientKey:clientKey];
+            NSLog(@"%@",regResult);
+        } else {
+            MPAppController *mpac = [[MPAppController alloc] initWithArg:a_Type];
+            [[NSRunLoop currentRunLoop] run];
+        }
 		
     }
     return 0;

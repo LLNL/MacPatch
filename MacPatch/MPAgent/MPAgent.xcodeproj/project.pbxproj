@@ -35,6 +35,7 @@
 		8FE560E616DE97C700BB7600 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E516DE97C700BB7600 /* CoreServices.framework */; };
 		8FE560E816DE97CF00BB7600 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */; };
 		8FE560EA16DE97DD00BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E916DE97DD00BB7600 /* Security.framework */; };
+		8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F9219959206005A4EEB /* MPAgentRegister.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -97,6 +98,8 @@
 		8FE560E516DE97C700BB7600 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8FE560E916DE97DD00BB7600 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		8FF93F9119959206005A4EEB /* MPAgentRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentRegister.h; sourceTree = "<group>"; };
+		8FF93F9219959206005A4EEB /* MPAgentRegister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentRegister.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +165,8 @@
 				8F4B1EEF16DD77BD00E15A9E /* main.m */,
 				8F4B1F0016DD77FF00E15A9E /* MPAgent.h */,
 				8F4B1F0116DD77FF00E15A9E /* MPAgent.m */,
+				8FF93F9119959206005A4EEB /* MPAgentRegister.h */,
+				8FF93F9219959206005A4EEB /* MPAgentRegister.m */,
 				8F4B1F0216DD77FF00E15A9E /* MPAppController.h */,
 				8F4B1F0316DD77FF00E15A9E /* MPAppController.m */,
 				8F4B1F0416DD77FF00E15A9E /* MPDefaultsWatcher.h */,
@@ -275,6 +280,7 @@
 				8F4B1EF016DD77BD00E15A9E /* main.m in Sources */,
 				8F4B1F0616DD77FF00E15A9E /* MPAgent.m in Sources */,
 				8F2E697F1922C330001BF9D6 /* PostFailedWSRequests.m in Sources */,
+				8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */,
 				8F4B1F0716DD77FF00E15A9E /* MPAppController.m in Sources */,
 				8F315B9819212A920031FF73 /* GetServerListOperation.m in Sources */,
 				8F4B1F0816DD77FF00E15A9E /* MPDefaultsWatcher.m in Sources */,

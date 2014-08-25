@@ -72,6 +72,8 @@
 // Crypto
 #import "MPCrypto.h"
 #import "MPCodeSign.h"
+#import "RSACrypto.h"
+#import "MPKeychain.h"
 
 // Helpers
 #import "NSString-Base64Extensions.h"

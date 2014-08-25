@@ -5,19 +5,19 @@
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
  Written by Charles Heizer <heizer1 at llnl.gov>.
  LLNL-CODE-636469 All rights reserved.
- 
+
  This file is part of MacPatch, a program for installing and patching
  software.
- 
+
  MacPatch is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License (as published by the Free
  Software Foundation) version 2, dated June 1991.
- 
+
  MacPatch is distributed in the hope that it will be useful, but WITHOUT ANY
  WARRANTY; without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE. See the terms and conditions of the GNU General Public
  License for more details.
- 
+
  You should have received a copy of the GNU General Public License along
  with MacPatch; if not, write to the Free Software Foundation, Inc.,
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -58,7 +58,7 @@
     {
         [self set_cuuid:[MPSystemInfo clientUUID]];
         [self set_osver:[[MPSystemInfo osVersionOctets] objectForKey:@"minor"]];
-        
+
         MPDefaults *d = [[MPDefaults alloc] init];
         [self set_defaults:[d defaults]];
 	}
@@ -98,6 +98,9 @@
         error = nil;
         urlReq = [req buildGetRequestForWebServiceMethod:aMethod formData:aParams error:&error];
         if (error) {
+            if (err != NULL) {
+                *err = error;
+            }
             qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
             continue;
         }
@@ -107,6 +110,9 @@
             res = nil;
             res = [req sendSynchronousRequest:urlReq returningResponse:&response error:&error];
             if (error) {
+                if (err != NULL) {
+                    *err = error;
+                }
                 qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
                 continue;
             }
@@ -115,6 +121,9 @@
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
             error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
             qlerror(@"%@",error.localizedDescription);
+            if (err != NULL) {
+                *err = error;
+            }
             continue;
         }
     }
@@ -124,35 +133,6 @@
 
 - (NSData *)postRequestWithMethodAndParams:(NSString *)aMethod params:(NSDictionary *)aParams error:(NSError **)err
 {
-    /*
-    MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
-
-    NSError *error = nil;
-    NSURLResponse *response;
-    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArray:[mpNetConfig servers]];
-    [req setApiURI:WS_CLIENT_FILE];
-
-    NSURLRequest *urlReq = [req buildRequestForWebServiceMethod:aMethod formData:aParams error:&error];
-    NSData *res = nil;
-    if (urlReq) {
-        error = nil;
-        res = [req sendSynchronousRequest:urlReq returningResponse:&response error:&error];
-    } else {
-        error = nil;
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
-        error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
-    }
-
-    if (error)
-    {
-		if (err != NULL) {
-            *err = error;
-        } else {
-            qlerror(@"%@",error.localizedDescription);
-        }
-        return nil;
-    }
-     */
     MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
 
     NSError *error = nil;
@@ -168,9 +148,11 @@
         req = [[MPNetRequest alloc] initWithMPServer:srv];
         [req setApiURI:WS_CLIENT_FILE];
         error = nil;
-        //urlReq = [req buildGetRequestForWebServiceMethod:aMethod formData:aParams error:&error];
         urlReq = [req buildRequestForWebServiceMethod:aMethod formData:aParams error:&error];
         if (error) {
+            if (err != NULL) {
+                *err = error;
+            }
             qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
             continue;
         }
@@ -180,6 +162,9 @@
             res = nil;
             res = [req sendSynchronousRequest:urlReq returningResponse:&response error:&error];
             if (error) {
+                if (err != NULL) {
+                    *err = error;
+                }
                 qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
                 continue;
             }
@@ -188,6 +173,9 @@
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
             error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
             qlerror(@"%@",error.localizedDescription);
+            if (err != NULL) {
+                *err = error;
+            }
             continue;
         }
     }
@@ -290,7 +278,7 @@
         }
         return nil;
     }
-    
+
     // Parse Main JSON Result
     // MPJsonResult does all of the error checking on the result
     MPJsonResult *jres = [[MPJsonResult alloc] init];
@@ -386,13 +374,13 @@
     NSString *PatchGroupHash = @"NA";
     /*
      PatchGroup Cache File Layout
-        NSDictionary:
-            PatchGroupName: Default
-                hash: xxxx
-                data: ....
-             PatchGroupName: QA
-                 hash: xxxx
-                 data: ....
+     NSDictionary:
+     PatchGroupName: Default
+     hash: xxxx
+     data: ....
+     PatchGroupName: QA
+     hash: xxxx
+     data: ....
      */
     if ([[NSFileManager defaultManager] fileExistsAtPath:PatchGroupCacheFile])
     {
@@ -463,12 +451,12 @@
     /*
      PatchGroup Cache File Layout
      NSDictionary:
-         PatchGroupName: Default
-             hash: xxxx
-             data: ....
-         PatchGroupName: QA
-             hash: xxxx
-             data: ....
+     PatchGroupName: Default
+     hash: xxxx
+     data: ....
+     PatchGroupName: QA
+     hash: xxxx
+     data: ....
      */
     MPCrypto *mpc = [[MPCrypto alloc] init];
     NSMutableDictionary *PatchGroupInfo = [NSMutableDictionary dictionary];
@@ -1262,6 +1250,11 @@
         return nil;
     }
 
+    if (!res) {
+        qlerror(@"No result for NSURLRequest.");
+        return nil;
+    }
+
     // Parse Main JSON Result
     // MPJsonResult does all of the error checking on the result
     MPJsonResult *jres = [[MPJsonResult alloc] init];
@@ -1552,7 +1545,7 @@
         }
         return nil;
     }
-
+    
     return result;
 }
 

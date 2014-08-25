@@ -38,6 +38,7 @@
 	NSString			*g_TasksHash;
 	NSMutableDictionary	*g_AppHashes;
     NSString			*g_agentPid;
+    NSString			*g_hostName;
     // SWDist
     NSMutableArray		*g_SWDistTasks;
 	NSString			*g_SWDistTasksHash;
@@ -55,6 +56,7 @@
 @property (nonatomic, strong) NSString              *g_TasksHash;
 @property (nonatomic, strong) NSMutableDictionary   *g_AppHashes;
 @property (nonatomic, strong) NSString              *g_agentPid;
+@property (nonatomic, strong) NSString              *g_hostName;
 // SWDist
 @property (nonatomic, strong) NSMutableArray        *g_SWDistTasks;
 @property (nonatomic, strong) NSString              *g_SWDistTasksHash;

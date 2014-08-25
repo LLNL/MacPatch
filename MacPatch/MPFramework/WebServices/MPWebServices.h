@@ -35,6 +35,13 @@
 
 -(id)initWithDefaults:(NSDictionary *)aDefaults;
 
+// Registration
+- (BOOL)getIsClientAgentRegistered:(NSError **)err;
+- (NSDictionary *)getServerPubKey:(NSError **)err;
+- (BOOL)getIsValidPubKeyHash:(NSString *)aHash error:(NSError **)err;
+- (NSDictionary *)getRegisterAgent:(NSString *)aRegKey hostName:(NSString *)hostName clientKey:(NSString *)clientKey error:(NSError **)err;
+
+
 // Methods
 - (NSDictionary *)getMPServerList:(NSError **)err;
 - (NSDictionary *)getMPServerListVersion:(NSString *)aVersion listid:(NSString *)aListID error:(NSError **)err;
