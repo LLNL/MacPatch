@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-
 <script type="text/javascript" src="/admin/js/jquery-latest.js"></script>
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
@@ -101,6 +100,17 @@
     	Error occured.
     	<cfabort>
     </cfif>
+	
+	<!--- Has Rights To Edit --->
+	<cfquery name="qHasRights" datasource="#session.dbsource#">
+		select is_owner from mp_patch_group_members
+		Where user_id = '#session.Username#'
+		AND patch_group_id = <cfqueryparam value="#pID#">
+	</cfquery>
+	<cfset hasEditRights = false>
+	<cfif qHasRights.RecordCount EQ 1>
+    	<cfset hasEditRights = true>
+    </cfif>
 </cfif>
 
 <script type="text/javascript">
@@ -144,7 +154,7 @@
 				colModel :[ 
 				  {name:'rid',index:'rid', width:36, align:"center", sortable:false, resizable:false, hidden:true, search : false},
 				  {name:'enbl', index:'enbl', width: 30, align:'center', search : false, sortable:true, sorttype:'int', formatter:'checkbox', editoptions:{value:'1:0'}, 
-				  formatoptions:{disabled:<cfif session.IsAdmin IS true>false<cfelse>true</cfif>}},		
+				  formatoptions:{disabled:<cfif session.IsAdmin IS true>false<cfelseif hasEditRights IS true>false<cfelse>true</cfif>}},		
 				  {name:'name', index:'name', width:200}, 
 				  {name:'title', index:'title', width:300},
 				  {name:'reboot', index:'reboot', width:40, align:"center"},

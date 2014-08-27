@@ -92,6 +92,21 @@
 		<cfif oper EQ "edit">
 			<cfset strMsgType = "Edit">
 			<cfset strMsg = "Notice, MP edit."> 
+			
+			<cfquery datasource="#session.dbsource#" name="qEditPathcGroup1">
+				Update mp_patch_group
+				Set type = <cfqueryparam value="#Arguments.type#">,
+				name = <cfqueryparam value="#Arguments.name#">
+				where id = <cfqueryparam value="#Arguments.id#">
+			</cfquery>
+			
+			<cfquery datasource="#session.dbsource#" name="qEditPathcGroup2">
+				Update mp_patch_group_members
+				Set user_id = <cfqueryparam value="#Arguments.user_id#">
+				where patch_group_id = <cfqueryparam value="#Arguments.id#">
+				AND is_owner = 1
+			</cfquery>
+			
 		<cfelseif oper EQ "add">
 			<cfset strMsgType = "Add">
 			<cfset strMsg = "Notice, MP add."> 

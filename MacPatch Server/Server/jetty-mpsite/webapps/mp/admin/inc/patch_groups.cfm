@@ -54,7 +54,7 @@
 				  {name:'name', index:'name', width:120,editable:true}, 
 				  {name:'user_id', index:'user_id', width:90, editable:true, editoptions:{defaultValue: '<cfoutput>#session.Username#</cfoutput>'}},
 				  {name:'is_owner', index:'is_owner', width:90, align:"left", hidden: true},
-				  {name:'type', index:'type', width:50, align:"center",editable:true,edittype:"select", editoptions:{value:"2:Production;1:QA;0:Dev"}},
+				  {name:'type', index:'type', width:50, align:"center",editable:true,edittype:"select", editoptions:{value:"0:Production;1:QA;2:Dev"}},
 				  {name:'rights', index:'rights', width:90, align:"left", hidden: true},
 				  {name:'cTotal', index:'cTotal', width:30, align:"center"},
 				  {name:'mdate', index:'mdate', width:70, align:"center", hidden: true}
@@ -105,13 +105,23 @@
 				},
 				ondblClickRow: function(id) 
 				{
-				    <cfif session.IsAdmin IS true>
 					var patchID = $("#list").getDataIDs().indexOf(lastsel);
 					var patchIDVal = jQuery("#list").getCell(patchID,2);
-					$('#list').editRow(id, true, undefined, function(res) 
+				    <cfif session.IsAdmin IS true>
+						$('#list').editRow(id, true, undefined, function(res) 
+						{
+						    $("#list").trigger("reloadGrid");
+						});
+					<cfelse>
+					var rowData = $("#list").getRowData(id); 
+     	            var right = rowData['rights'];//replace name with you column
+					if (right == 2) 
 					{
-					    $("#list").trigger("reloadGrid");
-					});
+						$('#list').editRow(id, true, undefined, function(res) 
+						{
+						    $("#list").trigger("reloadGrid");
+						});			
+					}
 					</cfif>
 				},
 				jsonReader: {
@@ -139,7 +149,7 @@
 				{closeOnEscape:true}
 				);
 			<cfelse>
-			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false},
+			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:true,del:false},
 				{}, // default settings for edit
 				{}, // default settings for add
 				{}, // delete
