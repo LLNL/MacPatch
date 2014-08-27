@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-VG"
+            argument = "-VsF"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
