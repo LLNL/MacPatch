@@ -138,6 +138,7 @@
 
 
     NSString            *_approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
+    NSString            *_neededPatchesFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
 	NSMutableArray      *approvedUpdatesArray = [[NSMutableArray alloc] init];
 	NSMutableDictionary *tmpDict;
     NSArray             *approvedApplePatches = nil;
@@ -282,6 +283,7 @@ done:
     if ([fm isWritableFileAtPath:[_approvedPatchesFile stringByDeletingLastPathComponent]]) {
         logit(lcl_vDebug,@"Writing approved patches to %@",_approvedPatchesFile);
         [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
+        [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:_neededPatchesFile];
     } else {
         logit(lcl_vError,@"Unable to write approved patches file %@. Patch file will not be used.",_approvedPatchesFile);
     }
@@ -1168,24 +1170,27 @@ done:
 - (void)removeInstalledPatchFromCacheFile:(NSString *)aPatchName
 {
 	NSString *_approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
-	if ([fm fileExistsAtPath:_approvedPatchesFile] == NO) {
+    NSString *_neededPatchesFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
+	if (([fm fileExistsAtPath:_approvedPatchesFile] == NO) && ([fm fileExistsAtPath:_neededPatchesFile] == NO)) {
 		// No file, nothing todo.
-		return;	
+		return;
 	}
-	
-	NSMutableArray *_patchesArray = [NSMutableArray arrayWithContentsOfFile:[NSKeyedUnarchiver unarchiveObjectWithFile:_approvedPatchesFile]];
+
+	NSMutableArray *_patchesArray = [NSMutableArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:_approvedPatchesFile]];
+    NSMutableArray *_neededPatchesArray = [NSMutableArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:_approvedPatchesFile]];
 	if ([_patchesArray count] <= 0) {
 		// No Items in the Array, delete the file
 		[fm removeItemAtPath:_approvedPatchesFile error:NULL];
-		return;	
+        [fm removeItemAtPath:_neededPatchesFile error:NULL];
+		return;
 	}
-	
+
 	NSDictionary *_patchDict;
-	for (int i = 0; i < [_patchesArray count]; i++) 
+	for (int i = 0; i < [_patchesArray count]; i++)
 	{
 		_patchDict = [NSDictionary dictionaryWithDictionary:[_patchesArray objectAtIndex:i]];
 		if ([[_patchDict objectForKey:@"patch"] isEqualToString:aPatchName]) {
-			[_patchesArray removeObjectAtIndex:i];	
+			[_patchesArray removeObjectAtIndex:i];
 			break;
 		}
 	}
@@ -1193,11 +1198,13 @@ done:
 	if ([_patchesArray count] <= 0) {
 		// No Items in the Array, delete the file
 		[fm removeItemAtPath:_approvedPatchesFile error:NULL];
-		return;	
+        [fm removeItemAtPath:_neededPatchesFile error:NULL];
+		return;
 	} else {
         [NSKeyedArchiver archiveRootObject:_patchesArray toFile:_approvedPatchesFile];
+        [NSKeyedArchiver archiveRootObject:_patchesArray toFile:_neededPatchesFile];
 	}
-	
+    
 	return;
 }
 

@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		8FC41315192571FA00BB394F /* AppLaunchObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC41314192571FA00BB394F /* AppLaunchObject.m */; };
+		8FCCBA7119AFD1BB001F4C3B /* CHMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCBA6F19AFD1BB001F4C3B /* CHMenuViewController.m */; };
+		8FCCBA7219AFD1BB001F4C3B /* CHMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FCCBA7019AFD1BB001F4C3B /* CHMenuViewController.xib */; };
+		8FCCBA7519AFD40A001F4C3B /* RestartReq.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FCCBA7319AFD40A001F4C3B /* RestartReq.tif */; };
+		8FCCBA7619AFD40A001F4C3B /* empty.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FCCBA7419AFD40A001F4C3B /* empty.tif */; };
 		8FD8904B16DFE84600A870A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8904A16DFE84600A870A3 /* Cocoa.framework */; };
 		8FD8905516DFE84600A870A3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8905316DFE84600A870A3 /* InfoPlist.strings */; };
 		8FD8905716DFE84600A870A3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8905616DFE84600A870A3 /* main.m */; };
@@ -38,6 +42,11 @@
 		8FA9ADFC177225950055506B /* MPWorkerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPWorkerProtocol.h; sourceTree = "<group>"; };
 		8FC41313192571FA00BB394F /* AppLaunchObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppLaunchObject.h; sourceTree = "<group>"; };
 		8FC41314192571FA00BB394F /* AppLaunchObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppLaunchObject.m; sourceTree = "<group>"; };
+		8FCCBA6E19AFD1BB001F4C3B /* CHMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMenuViewController.h; sourceTree = "<group>"; };
+		8FCCBA6F19AFD1BB001F4C3B /* CHMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMenuViewController.m; sourceTree = "<group>"; };
+		8FCCBA7019AFD1BB001F4C3B /* CHMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CHMenuViewController.xib; sourceTree = "<group>"; };
+		8FCCBA7319AFD40A001F4C3B /* RestartReq.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RestartReq.tif; sourceTree = "<group>"; };
+		8FCCBA7419AFD40A001F4C3B /* empty.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = empty.tif; sourceTree = "<group>"; };
 		8FD8904716DFE84600A870A3 /* MPClientStatus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPClientStatus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD8904A16DFE84600A870A3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8FD8904D16DFE84600A870A3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -153,6 +162,9 @@
 				8FC41313192571FA00BB394F /* AppLaunchObject.h */,
 				8FC41314192571FA00BB394F /* AppLaunchObject.m */,
 				8FA9ADFC177225950055506B /* MPWorkerProtocol.h */,
+				8FCCBA6E19AFD1BB001F4C3B /* CHMenuViewController.h */,
+				8FCCBA6F19AFD1BB001F4C3B /* CHMenuViewController.m */,
+				8FCCBA7019AFD1BB001F4C3B /* CHMenuViewController.xib */,
 				8FD8909016DFE9B900A870A3 /* FMDB */,
 				8FD8907316DFE8BE00A870A3 /* Resources */,
 				8FD8905116DFE84600A870A3 /* Supporting Files */,
@@ -174,6 +186,8 @@
 		8FD8907316DFE8BE00A870A3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8FCCBA7319AFD40A001F4C3B /* RestartReq.tif */,
+				8FCCBA7419AFD40A001F4C3B /* empty.tif */,
 				8FD8907416DFE8D000A870A3 /* mpmenubar_alert2.png */,
 				8FD8907516DFE8D000A870A3 /* mpmenubar_normal.png */,
 				8FD8909C16DFEC3100A870A3 /* MacPatchInstalleArtBlack.png */,
@@ -248,11 +262,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FCCBA7519AFD40A001F4C3B /* RestartReq.tif in Resources */,
+				8FCCBA7219AFD1BB001F4C3B /* CHMenuViewController.xib in Resources */,
 				8FD8905516DFE84600A870A3 /* InfoPlist.strings in Resources */,
 				8FD8907816DFE8D000A870A3 /* mpmenubar_alert2.png in Resources */,
 				8FD8907916DFE8D000A870A3 /* mpmenubar_normal.png in Resources */,
 				8FD8907A16DFE8D000A870A3 /* MPClientStatusV2.icns in Resources */,
 				8FD8907B16DFE8D000A870A3 /* ClientStatusMainMenu.xib in Resources */,
+				8FCCBA7619AFD40A001F4C3B /* empty.tif in Resources */,
 				8FD8909D16DFEC3100A870A3 /* MacPatchInstalleArtBlack.png in Resources */,
 				8FD890CE16E51BFB00A870A3 /* MPBaseRoundIcon.png in Resources */,
 			);
@@ -265,6 +282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FCCBA7119AFD1BB001F4C3B /* CHMenuViewController.m in Sources */,
 				8FD8905716DFE84600A870A3 /* main.m in Sources */,
 				8FD8907116DFE8B200A870A3 /* MPClientStatusAppDelegate.m in Sources */,
 				8FD8907216DFE8B200A870A3 /* MPAppUsage.m in Sources */,

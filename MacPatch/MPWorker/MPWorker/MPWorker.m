@@ -1452,6 +1452,7 @@ done:
     }
     return 0;
 }
+
 // Proxy Method
 - (void)setDebugLogging:(BOOL)aState
 {

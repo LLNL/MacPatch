@@ -319,6 +319,7 @@
     logit(lcl_vDebug,@"Approved patches to install: %@",approvedUpdatesArray);
 
 done:
+    // Create File To Tell MPClientStatus to update it's view
 	[fm createFileAtPath:[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath]
                 contents:[@"update" dataUsingEncoding:NSASCIIStringEncoding]
               attributes:nil];
@@ -326,9 +327,16 @@ done:
     if ([fm isWritableFileAtPath:[_approvedPatchesFile stringByDeletingLastPathComponent]]) {
         logit(lcl_vDebug,@"Writing approved patches to %@",_approvedPatchesFile);
         [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
+        if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]])
+        {
+            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT] error:NULL];
+            [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]];
+        }
     } else {
         logit(lcl_vError,@"Unable to write approved patches file %@. Patch file will not be used.",_approvedPatchesFile);
     }
+
+
 
 	[self setApprovedPatches:[NSArray arrayWithArray:approvedUpdatesArray]];
 	[self removeTaskRunning:kMPPatchSCAN];
@@ -1237,7 +1245,8 @@ done:
 - (void)removeInstalledPatchFromCacheFile:(NSString *)aPatchName
 {
 	NSString *_approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
-	if ([fm fileExistsAtPath:_approvedPatchesFile] == NO) {
+    NSString *_neededPatchesFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
+	if (([fm fileExistsAtPath:_approvedPatchesFile] == NO) && ([fm fileExistsAtPath:_neededPatchesFile] == NO)) {
 		// No file, nothing todo.
 		return;
 	}
@@ -1246,6 +1255,7 @@ done:
 	if ([_patchesArray count] <= 0) {
 		// No Items in the Array, delete the file
 		[fm removeItemAtPath:_approvedPatchesFile error:NULL];
+        [fm removeItemAtPath:_neededPatchesFile error:NULL];
 		return;
 	}
 
@@ -1262,9 +1272,11 @@ done:
 	if ([_patchesArray count] <= 0) {
 		// No Items in the Array, delete the file
 		[fm removeItemAtPath:_approvedPatchesFile error:NULL];
+        [fm removeItemAtPath:_neededPatchesFile error:NULL];
 		return;
 	} else {
         [NSKeyedArchiver archiveRootObject:_patchesArray toFile:_approvedPatchesFile];
+        [NSKeyedArchiver archiveRootObject:_patchesArray toFile:_neededPatchesFile];
 	}
 
 	return;

@@ -29,6 +29,7 @@
 #import "MPAppUsage.h"
 #import "MPWorkerProtocol.h"
 #import "AppLaunchObject.h"
+#import "CHMenuViewController.h"
 
 // Private Methods
 @interface MPClientStatusAppDelegate ()
@@ -504,21 +505,21 @@ done:
 
 - (void)getClientPatchStatusThread
 {
-	@autoreleasepool {
-	// Run Once, to show current status
-		[self getClientPatchStatusMethod];
-		// 1800.0
-    // 600 = 10min
-		NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
-												 target:self 
-											   selector:@selector(getClientPatchStatusMethod) 
-											   userInfo:nil 
-												repeats:YES];
-		
-		
-		[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];  
-    [[NSRunLoop currentRunLoop] run];
-	
+	@autoreleasepool
+    {
+        // Run Once, to show current status
+        //[self getClientPatchStatusMethod];
+        // 1800.0
+        // 600 = 10min
+        NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
+                                                 target:self 
+                                               selector:@selector(getClientPatchStatusMethod) 
+                                               userInfo:nil 
+                                                repeats:YES];
+            
+            
+        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+        [[NSRunLoop currentRunLoop] run];
 	}
 }
 
@@ -526,6 +527,8 @@ done:
 {
     @autoreleasepool
     {
+        [self displayPatchData];
+        /* CEH
         NSError *wsErr = nil;
         MPWebServices *mpws = [[MPWebServices alloc] init];
         NSDictionary *result = [mpws GetClientPatchStatusCount:&wsErr];
@@ -546,6 +549,7 @@ done:
 
 			[checkPatchStatusMenuItem setTitle:_patchesNeededString];
         }
+         */
     }
 }
 
@@ -556,9 +560,89 @@ done:
 			//how do I pass the new value out to the updateLabel method, or reference aMyClassInstance.myVariable?
 			[self performSelectorOnMainThread:@selector(updatePatchStatusMethod) withObject:nil waitUntilDone:NO]; 
 			//the sleeping of the thread is absolutely mandatory and must be worked around.  The whole point of using NSThread is so I can have sleeps
+            [self displayPatchData];
 			[NSThread sleepForTimeInterval:2];
 		}
 	}
+}
+
+- (void)displayPatchData
+{
+    NSString *path = @"/Library/MacPatch/Client/Data/.neededPatches.plist";
+    id data = [[NSKeyedUnarchiver unarchiveObjectWithFile:path] mutableCopy];
+    NSString *subMenuTitle = [NSString stringWithFormat:@"Patches Needed: %d ",(int)[data count]];
+
+    // If No Patches ...
+    if ([data count] <= 0) {
+        [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
+        [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
+        [checkPatchStatusMenuItem setSubmenu:NULL];
+        return;
+    } else {
+        [statusItem setImage:[NSImage imageNamed:@"mpmenubar_alert2.png"]];
+    }
+
+    [checkPatchStatusMenuItem setTitle:subMenuTitle];
+    NSMenu *subMenu = [[NSMenu alloc] initWithTitle:subMenuTitle];
+    [checkPatchStatusMenuItem setSubmenu:subMenu];
+    [checkPatchStatusMenuItem setEnabled:YES];
+
+    NSMenuItem *newMenuItem;
+    NSString *title;
+
+    CHMenuViewController *vcTitle = [[CHMenuViewController alloc] init];
+
+    NSRect f = vcTitle.view.frame;
+    f.size.width = 337;
+    f.size.height = 26;
+    vcTitle.view.frame = f;
+
+    [vcTitle.view addSubview:vcTitle.titleView];
+
+    newMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""];
+    [newMenuItem setView:vcTitle.view];
+    [subMenu addItem:newMenuItem];
+
+
+    for (NSDictionary *d in data)
+    {
+        title = [NSString stringWithFormat:@"%@ (%@)",[d objectForKey:@"patch"],[d objectForKey:@"version"]];
+        newMenuItem = [[NSMenuItem alloc] initWithTitle:title action:@selector(doNothing) keyEquivalent:@""];
+
+        CHMenuViewController *vc = [[CHMenuViewController alloc] init];
+        [vc addTitle:[d objectForKey:@"patch"] version:[d objectForKey:@"version"]];
+        if ([[[d objectForKey:@"restart"] uppercaseString] isEqualTo:@"TRUE"] || [[[d objectForKey:@"restart"] uppercaseString] isEqualTo:@"YES"])
+        {
+            vc.ximage = [NSImage imageNamed:@"RestartReq.tif"];
+        } else {
+            vc.ximage = [NSImage imageNamed:@"empty.tif"];
+        }
+
+        [newMenuItem setView:vc.view];
+        [subMenu addItem:newMenuItem];
+    }
+
+    NSView *view1 = [[NSView alloc] initWithFrame:NSMakeRect(0 , 0, 337, 35)];
+    [view1 setWantsLayer:YES];
+    view1.layer.backgroundColor = [[NSColor yellowColor] CGColor];
+
+    CHMenuViewController *vc1 = [[CHMenuViewController alloc] init];
+
+    f = vc1.view.frame;
+    f.size.width = 337;
+    f.size.height = 35;
+    vc1.view.frame = f;
+
+    [vc1.view addSubview:vc1.altView];
+
+    newMenuItem = [[NSMenuItem alloc] initWithTitle:@"Open Self Patch To Patch..." action:NULL keyEquivalent:@""];
+    [newMenuItem setView:vc1.view];
+    [subMenu addItem:newMenuItem];
+}
+
+- (void)doNothing
+{
+    return;
 }
 
 - (void)updatePatchStatusMethod

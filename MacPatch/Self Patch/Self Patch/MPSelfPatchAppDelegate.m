@@ -960,9 +960,25 @@ done:
     [approvedUpdatesArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
     
 	logit(lcl_vDebug,@"Approved patches to install: %@",approvedUpdatesArray);
+
+    // Removing Image, write out array of required patches for Client Status
+    NSMutableArray *_requiredPatchesArray = [NSMutableArray new];
+    NSMutableDictionary *_dict;
+    for (NSDictionary *ePatch in approvedUpdatesArray)
+    {
+        _dict = [ePatch mutableCopy];
+        if ([_dict objectForKey:@"baseline"]) {
+            [_dict removeObjectForKey:@"baseline"];
+        }
+        if ([_dict objectForKey:@"reboot"]) {
+            [_dict removeObjectForKey:@"reboot"];
+        }
+        [_requiredPatchesArray addObject:_dict];
+    }
+
 	
-	if (approvedUpdatesArray && [approvedUpdatesArray count] > 0) {
-        
+	if (approvedUpdatesArray && [approvedUpdatesArray count] > 0)
+    {
         NSString *_approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
         
         BOOL isDir;
@@ -976,8 +992,13 @@ done:
         } else {
             [self createDirAtPathWithIntermediateDirs:[_approvedPatchesFile stringByDeletingLastPathComponent] intermediateDirs:YES];
         }
+
+        if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]]) {
+            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT] error:NULL];
+        }
         
         [self writeArrayToFile:(NSArray *)approvedUpdatesArray file:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
+        [self writeArrayToFile:(NSArray *)_requiredPatchesArray file:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]];
         
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:approvedUpdatesArray];	
@@ -1403,6 +1424,7 @@ done:
 	}
 	if (aStatusImage == 1) {
 		[patch setObject:[NSImage imageNamed:@"Installcomplete.tif"] forKey:@"statusImage"];
+        [self updateNeededPatchesFile:patch];
 	}
 	if (aStatusImage == 2) {
 		[patch setObject:[NSImage imageNamed:@"exclamation.tif"] forKey:@"statusImage"];
@@ -1417,6 +1439,33 @@ done:
     [arrayController didChangeValueForKey:@"arrangedObjects"];
 	[patch release];
     [patches release];
+}
+
+- (void)updateNeededPatchesFile:(NSDictionary *)aPatch
+{
+    NSMutableArray *patchesNew;
+    NSArray *patches;
+    NSString *archiveFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
+    if ([fm fileExistsAtPath:archiveFile]) {
+        patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:archiveFile]];
+        [fm removeItemAtPath:archiveFile error:NULL];
+    } else {
+        return;
+    }
+
+    patchesNew = [[NSMutableArray alloc] init];
+    if (patches) {
+        for (NSDictionary *p in patches) {
+            if ([[p objectForKey:@"patch_id"] isEqualTo:[aPatch objectForKey:@"patch_id"]]) {
+                qldebug(@"Remove patch from array, %@",aPatch);
+            } else {
+                [patchesNew addObject:p];
+            }
+        }
+    }
+    if (patchesNew.count >= 1) {
+        [self writeArrayToFile:(NSArray *)patchesNew file:archiveFile];
+    }
 }
 
 -(BOOL)checkPatchPreAndPostForRebootRequired:(NSArray *)aDictArray
