@@ -153,6 +153,10 @@ static NSString *kWAKE_ON_CLAMSHELLOPEN = @"Wake_On_Clamshell_Open";
 
 - (NSDictionary *)parseWithDictionary:(NSDictionary *)aDictionary
 {
+    if (!aDictionary) {
+        return [self dictionaryRepresentation];
+    }
+
     for (NSString *key in aDictionary.allKeys) {
         if ([key isEqualToString:@"Wake On LAN"]) {
             self.wake_On_LAN = ([[aDictionary objectForKey:@"Wake On LAN"] boolValue] ? @"Yes" :@"No");
