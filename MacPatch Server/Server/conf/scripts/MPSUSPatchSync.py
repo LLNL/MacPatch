@@ -207,14 +207,19 @@ def postDataToWebService(patches, config):
 
     payload = {'type': 'json' , 'data': json.dumps(patches)}
     headers = {'MPClient-API': wsPostKey, 'MPVersion-API': wsPostVersion}
-    request = requests.post(_url, data=payload, verify=False, headers=headers)
-    if request.status_code == requests.codes.ok:
-        logger.info("Data post was successful.")
-        logger.info(request.text)
-    else:
-        logger.info("Data post was not successful.")
 
-    print request.text    
+    try:
+        request = requests.post(_url, data=payload, verify=False, headers=headers)
+
+        if request.status_code == requests.codes.ok:
+            logger.info("Data post was successful.")
+            logger.info(request.text)
+        else:
+            logger.error("Data post was not successful.")
+            logger.error(request.text)
+
+    except requests.exceptions.RequestException as e:
+        logger.error(e)   
 
 def readSUSCatalogFile(sucatalog, asFile=False):
 
