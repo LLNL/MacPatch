@@ -57,7 +57,7 @@ fi
 mkdir -p ${TMP_DIR}
 cd ${TMP_DIR}
 
-HTTPD_SW="httpd-2.4.9.tar.gz"
+HTTPD_SW="httpd-2.4.10.tar.gz"
 APR_SW="apr-1.5.1.tar.gz"
 APRUTIL_SW="apr-util-1.5.3.tar.gz"
 PCRE_SW="pcre-8.35.tar.gz"

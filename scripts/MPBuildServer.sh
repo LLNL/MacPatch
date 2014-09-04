@@ -18,7 +18,7 @@ GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/build/Server"
 SRC_DIR="${MPSERVERBASE}/conf/src"
 TCATSRV=0
-J2EE_SW="apache-tomcat-7.0.54.tar.gz"
+J2EE_SW="apache-tomcat-7.0.55.tar.gz"
 
 XOSTYPE=`uname -s`
 USELINUX=false
