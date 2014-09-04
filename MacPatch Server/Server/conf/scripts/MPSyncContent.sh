@@ -10,7 +10,7 @@
 # --------------------------------------------------------------
 
 SYNC_DIR_NAME="mpContentWeb"
-MASTER_SERVER="mpprod01.llnl.gov"
+MASTER_SERVER="localhost"
 LOCAL_CONTENT="/Library/MacPatch/Content/Web"
 
 # Dont Run Unless Master Server Is Configured
