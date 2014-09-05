@@ -1492,6 +1492,7 @@ done:
     NSError *error = nil;
     NSString *archiveFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
     if ([fm fileExistsAtPath:archiveFile]) {
+        qlinfo(@"Removing file %@",archiveFile);
         [fm removeItemAtPath:archiveFile error:&error];
         if (error) {
             qlerror(@"%@",error.localizedDescription);

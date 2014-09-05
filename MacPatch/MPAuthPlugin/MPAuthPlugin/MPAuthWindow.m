@@ -77,6 +77,7 @@
 
 - (void)toggleFullScreen;
 - (void)toggleStatusProgress;
+- (void)updateNeededPatchesFile:(NSDictionary *)aPatch;
 
 // Helper
 - (void)connect;
@@ -1507,6 +1508,7 @@ done:
 	}
 	if (aStatusImage == 1) {
 		[patch setObject:[self tableImage:@"Success.png"] forKey:@"statusImage"];
+        [self updateNeededPatchesFile:patch];
 	}
 	if (aStatusImage == 2) {
 		[patch setObject:[self tableImage:@"Fail.png"] forKey:@"statusImage"];
@@ -1520,6 +1522,39 @@ done:
     [patchesTableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
     [patchesTableView performSelectorOnMainThread:@selector(deselectAll:) withObject:nil waitUntilDone:NO];
 
+}
+
+- (void)updateNeededPatchesFile:(NSDictionary *)aPatch
+{
+    NSError *error = nil;
+    NSMutableArray *patchesNew;
+    NSArray *patches;
+    NSString *archiveFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
+    if ([fm fileExistsAtPath:archiveFile]) {
+        patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:archiveFile]];
+        [self removeStatusFiles];
+        if (error) {
+            qlerror(@"%@",error.localizedDescription);
+        }
+    } else {
+        return;
+    }
+
+    patchesNew = [[NSMutableArray alloc] init];
+    if (patches) {
+        for (NSDictionary *p in patches) {
+            if ([[p objectForKey:@"patch_id"] isEqualTo:[aPatch objectForKey:@"patch_id"]]) {
+                qlinfo(@"Remove patch from array, %@",aPatch);
+            } else {
+                [patchesNew addObject:p];
+            }
+        }
+    }
+    if (patchesNew.count >= 1) {
+        [self writeArrayToFile:(NSArray *)patchesNew file:archiveFile];
+    } else {
+        [self removeStatusFiles];
+    }
 }
 
 - (NSImage *)tableImage:(NSString*)fileName

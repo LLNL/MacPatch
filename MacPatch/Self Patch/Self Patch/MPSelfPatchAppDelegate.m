@@ -647,11 +647,12 @@ done:
         [self connect:&error];
         if (error) {
             result = 1;
+            goto done;
         }
         if (!proxy) {
             result = 1;
+            goto done;
         }
-        goto done;
     }
 	
     @try 
@@ -669,17 +670,17 @@ done:
 
 - (void)removeStatusFiles
 {
-    int result = 0;
     NSError *error = nil;
 	if (!proxy) {
         [self connect:&error];
         if (error) {
-            result = 1;
+            logit(lcl_vError,@"%@",error.localizedDescription);
+            goto done;
         }
         if (!proxy) {
-            result = 1;
+            logit(lcl_vError,@"Could not create proxy object.");
+            goto done;
         }
-        goto done;
     }
 
     @try
@@ -692,7 +693,7 @@ done:
 
 done:
 	[self cleanup];
-	return result;
+	return;
 }
 
 #pragma mark -
@@ -1507,6 +1508,8 @@ done:
     }
     if (patchesNew.count >= 1) {
         [self writeArrayToFile:(NSArray *)patchesNew file:archiveFile];
+    } else {
+        [self removeStatusFiles];
     }
 }
 
