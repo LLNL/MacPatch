@@ -90,6 +90,7 @@ static BOOL gDone = false;
 - (int)writeDataToFile:(id)data file:(NSString *)aFile;
 - (int)writeArrayToFile:(NSArray *)data file:(NSString *)aFile;
 - (int)setLoggingState:(BOOL)aState;
+- (void)removeStatusFiles;
 
 @end
 
@@ -666,6 +667,34 @@ done:
 	return result;
 }
 
+- (void)removeStatusFiles
+{
+    int result = 0;
+    NSError *error = nil;
+	if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            result = 1;
+        }
+        if (!proxy) {
+            result = 1;
+        }
+        goto done;
+    }
+
+    @try
+	{
+		[proxy removeStatusFilesViaHelper];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to set the logging level, %@", e);
+    }
+
+done:
+	[self cleanup];
+	return result;
+}
+
 #pragma mark -
 #pragma mark SelfPatch
 - (void)showSelfPatchWindow:(id)sender
@@ -994,7 +1023,7 @@ done:
         }
 
         if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]]) {
-            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT] error:NULL];
+            [self removeStatusFiles];
         }
         
         [self writeArrayToFile:(NSArray *)approvedUpdatesArray file:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
@@ -1004,23 +1033,23 @@ done:
 		[arrayController addObjects:approvedUpdatesArray];	
 		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	} else {
+        NSError *rmErr;
         if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]]) {
+            rmErr = nil;
             logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]);
-            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] error:NULL];
+            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] error:&rmErr];
+            if (rmErr) {
+                qlerror(@"%@",rmErr.localizedDescription);
+            }
         }
         if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]]) {
             logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]);
-            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT] error:NULL];
+            [self removeStatusFiles];
         }
     }
 	
-done:	
-	// Create a file to tell MPStatus to update is patch info...
-	logit(lcl_vInfo,@"Create CLIENT_PATCH_STATUS_FILE = %@",[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath]);
-	[fm createFileAtPath:[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath] 
-											contents:[@"update" dataUsingEncoding:NSASCIIStringEncoding] 
-										  attributes:nil];
-	
+done:
+
 	[spStatusText setStringValue:@"Scan Completed."];
 	[spStatusText display];
 	
@@ -1452,12 +1481,16 @@ done:
 
 - (void)updateNeededPatchesFile:(NSDictionary *)aPatch
 {
+    NSError *error = nil;
     NSMutableArray *patchesNew;
     NSArray *patches;
     NSString *archiveFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
     if ([fm fileExistsAtPath:archiveFile]) {
         patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:archiveFile]];
-        [fm removeItemAtPath:archiveFile error:NULL];
+        [self removeStatusFiles];
+        if (error) {
+            qlerror(@"%@",error.localizedDescription);
+        }
     } else {
         return;
     }
@@ -1466,7 +1499,7 @@ done:
     if (patches) {
         for (NSDictionary *p in patches) {
             if ([[p objectForKey:@"patch_id"] isEqualTo:[aPatch objectForKey:@"patch_id"]]) {
-                qldebug(@"Remove patch from array, %@",aPatch);
+                qlinfo(@"Remove patch from array, %@",aPatch);
             } else {
                 [patchesNew addObject:p];
             }
