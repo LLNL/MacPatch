@@ -180,17 +180,22 @@
     [progressBar performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
     [extractImage setImage:[NSImage imageNamed:@"ClearDot"]];
     [extractImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
+    [extratContentsStatus setStringValue:@""];
     [agentConfigImage setImage:[NSImage imageNamed:@"ClearDot"]];
     [agentConfigImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
+    [getAgentConfStatus setStringValue:@""];
     [writeConfigImage setImage:[NSImage imageNamed:@"ClearDot"]];
     [writeConfigImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
+    [writeConfStatus setStringValue:@""];
     [flattenPackagesImage setImage:[NSImage imageNamed:@"ClearDot"]];
     [flattenPackagesImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
+    [flattenPkgStatus setStringValue:@""];
     [compressPackgesImage setImage:[NSImage imageNamed:@"ClearDot"]];
     [compressPackgesImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
+    [compressPkgStatus setStringValue:@""];
     [postPackagesImage setImage:[NSImage imageNamed:@"ClearDot"]];
     [postPackagesImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
-
+    [postPkgStatus setStringValue:@""];
 }
 
 - (IBAction)choosePackage:(id)sender

@@ -10,8 +10,6 @@
 		<string>2.5.0</string>
 		<key>osver</key>
 		<string>*</string>
-		<key>build</key>
-		<string>20</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>
@@ -23,8 +21,6 @@
 		<string>2.5.0</string>
 		<key>osver</key>
 		<string>*</string>
-		<key>build</key>
-		<string>20</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>

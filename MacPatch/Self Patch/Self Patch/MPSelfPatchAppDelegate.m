@@ -1003,7 +1003,14 @@ done:
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:approvedUpdatesArray];	
 		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-	}
+	} else {
+        if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]]) {
+            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] error:NULL];
+        }
+        if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]]) {
+            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT] error:NULL];
+        }
+    }
 	
 done:	
 	// Create a file to tell MPStatus to update is patch info...
