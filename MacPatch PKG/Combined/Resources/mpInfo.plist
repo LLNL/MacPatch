@@ -11,7 +11,7 @@
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>
-		<string>18</string>
+		<string>19</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>
@@ -24,7 +24,7 @@
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>
-		<string>18</string>
+		<string>19</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>
