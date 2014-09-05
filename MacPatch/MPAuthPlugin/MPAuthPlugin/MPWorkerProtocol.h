@@ -72,6 +72,7 @@
 - (int)writeArrayToFileViaHelper:(NSArray *)data toFile:(NSString *)aFile;
 - (int)setPermissionsForFileViaHelper:(in bycopy NSString *)aFile posixPerms:(unsigned long)posixPermissions;
 - (void)setDebugLogging:(BOOL)aState;
+- (void)removeStatusFilesViaHelper;
 
 - (void)logoutInstallCompletion:(int)taskAction;
 

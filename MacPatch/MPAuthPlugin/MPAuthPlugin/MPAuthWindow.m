@@ -97,6 +97,7 @@
 - (int)installAppleSoftwareUpdateViaProxy:(NSString *)appleUpdate;
 - (int)installPKGViaProxy:(NSString *)aPkgPath target:(NSString *)aTarget env:(NSString *)aEnv;
 - (int)runScriptViaProxy:(NSString *)aScript;
+- (void)removeStatusFiles;
 
 // MP
 - (void)scanAndPatch;
@@ -565,6 +566,76 @@ done:
 
 	//[self cleanup];
 	return result;
+}
+
+- (int)writeDataToFile:(id)data file:(NSString *)aFile
+{
+    int result = -1;
+	if (!proxy) {
+        [self connect];
+        if (!proxy) goto done;
+    }
+
+    @try
+	{
+        result = [proxy writeDataToFileViaHelper:data toFile:aFile];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to write data to file(%@). %@",aFile, e);
+    }
+
+done:
+	[self cleanup];
+    return result;
+}
+
+- (int)writeArrayToFile:(NSArray *)data file:(NSString *)aFile
+{
+    int result = -1;
+	if (!proxy) {
+        [self connect];
+        if (!proxy) goto done;
+    }
+
+    @try
+	{
+        result = [proxy writeArrayToFileViaHelper:data toFile:aFile];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to write data to file(%@). %@",aFile, e);
+    }
+
+done:
+	[self cleanup];
+    return result;
+}
+
+- (void)removeStatusFiles
+{
+    NSError *error = nil;
+	if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            logit(lcl_vError,@"%@",error.localizedDescription);
+            goto done;
+        }
+        if (!proxy) {
+            logit(lcl_vError,@"Could not create proxy object.");
+            goto done;
+        }
+    }
+
+    @try
+	{
+		[proxy removeStatusFilesViaHelper];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to set the logging level, %@", e);
+    }
+
+done:
+	[self cleanup];
+	return;
 }
 
 #pragma mark Client Callbacks
