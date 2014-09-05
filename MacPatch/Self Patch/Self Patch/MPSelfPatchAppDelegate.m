@@ -1501,6 +1501,8 @@ done:
         for (NSDictionary *p in patches) {
             if ([[p objectForKey:@"patch_id"] isEqualTo:[aPatch objectForKey:@"patch_id"]]) {
                 qlinfo(@"Remove patch from array, %@",aPatch);
+            } else if ([[p objectForKey:@"patch"] isEqualTo:[aPatch objectForKey:@"patch"]] && [[p objectForKey:@"type"] isEqualTo:@"Apple"]) {
+                qlinfo(@"Remove %@ patch from array, %@",[aPatch objectForKey:@"type"], aPatch);
             } else {
                 [patchesNew addObject:p];
             }
