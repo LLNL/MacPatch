@@ -958,7 +958,8 @@ done:
 
     NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"patch_install_weight" ascending:YES];
     [approvedUpdatesArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
-    
+
+    logit(lcl_vInfo,@"%d patche(s) needed.",(int)[approvedUpdatesArray count]);
 	logit(lcl_vDebug,@"Approved patches to install: %@",approvedUpdatesArray);
 
     // Removing Image, write out array of required patches for Client Status
@@ -976,7 +977,6 @@ done:
         [_requiredPatchesArray addObject:_dict];
     }
 
-	
 	if (approvedUpdatesArray && [approvedUpdatesArray count] > 0)
     {
         NSString *_approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
@@ -1005,9 +1005,11 @@ done:
 		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	} else {
         if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]]) {
+            logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]);
             [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] error:NULL];
         }
         if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]]) {
+            logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]);
             [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT] error:NULL];
         }
     }
