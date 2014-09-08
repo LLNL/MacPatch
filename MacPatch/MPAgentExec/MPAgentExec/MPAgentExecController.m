@@ -38,6 +38,9 @@
 // Web Services
 - (void)postInstallResults:(int)resultNo resultText:(NSString *)resultString task:(NSDictionary *)taskDict;
 
+// Misc
+- (void)updateNeededPatchesFile:(NSDictionary *)aPatch;
+
 // Helper
 - (void)connect;
 - (void)cleanup;
@@ -161,12 +164,14 @@
     NSMutableArray      *customPatchesArray;
     NSArray             *approvedCustomPatches = nil;
     NSString            *_approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
+    NSString            *_neededPatchesFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
 	NSMutableArray      *approvedUpdatesArray = [[NSMutableArray alloc] init];
 	NSMutableDictionary *tmpDict;
 	NSDictionary        *customPatch, *approvedPatch;
 
 	// Get Patch Group Patches
     MPWebServices *mpws = [[MPWebServices alloc] init];
+    NSError *rmErr = nil;
     NSError *wsErr = nil;
     NSDictionary *patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
     if (wsErr) {
@@ -319,14 +324,23 @@
     logit(lcl_vDebug,@"Approved patches to install: %@",approvedUpdatesArray);
 
 done:
-    // Create File To Tell MPClientStatus to update it's view
-	[fm createFileAtPath:[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath]
-                contents:[@"update" dataUsingEncoding:NSASCIIStringEncoding]
-              attributes:nil];
+
+    // Remove File If Found
+    if ([fm fileExistsAtPath:_neededPatchesFile]) {
+        [fm removeItemAtPath:_neededPatchesFile error:&rmErr];
+        if (rmErr) {
+            qlerror(@"%@",rmErr.localizedDescription);
+        }
+    }
+
+    // Re-write file with new patch info
+    if (approvedUpdatesArray && [approvedUpdatesArray count] > 0)
+    {
+        logit(lcl_vInfo,@"Writing approved patches to %@",_neededPatchesFile);
+        [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:_neededPatchesFile];
+    }
 
     if ([fm isWritableFileAtPath:[_approvedPatchesFile stringByDeletingLastPathComponent]]) {
-        logit(lcl_vDebug,@"Writing approved patches to %@",_approvedPatchesFile);
-        [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
         if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]])
         {
             [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT] error:NULL];
@@ -531,6 +545,8 @@ done:
 		patch = nil;
 		patch = [NSDictionary dictionaryWithDictionary:[updatesArray objectAtIndex:i]];
 
+        qlinfo(@"Patch: %@",patch);
+
 		if (hasConsoleUserLoggedIn == YES) {
             // Check if patch needs a reboot
             if ([[patch objectForKey:@"restart"] stringToBoolValue] == YES) {
@@ -659,6 +675,7 @@ done:
                             hadErr = YES;
                             break;
                         } else {
+                            [self updateNeededPatchesFile:patch];
                             logit(lcl_vInfo,@"%@ was installed successfully.",pkgPath);
                         }
                     } // End Loop
@@ -812,6 +829,7 @@ done:
                 logit(lcl_vError,@"Error installing update, error code %d.",installResult);
                 continue;
             } else {
+                [self updateNeededPatchesFile:patch];
                 logit(lcl_vInfo,@"%@ was installed successfully.",[patch objectForKey:@"patch"]);
             }
 
@@ -900,6 +918,46 @@ done:
 
 done:
 	[self removeTaskRunning:kMPPatchUPDATE];
+}
+
+- (void)updateNeededPatchesFile:(NSDictionary *)aPatch
+{
+    NSError *error = nil;
+    NSMutableArray *patchesNew;
+    NSArray *patches;
+    NSString *archiveFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
+    if ([fm fileExistsAtPath:archiveFile]) {
+        patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:archiveFile]];
+        [fm removeItemAtPath:archiveFile error:&error];
+        if (error) {
+            qlerror(@"%@",error.localizedDescription);
+        }
+    } else {
+        return;
+    }
+
+    patchesNew = [[NSMutableArray alloc] init];
+    if (patches) {
+        for (NSDictionary *p in patches) {
+            if ([[p objectForKey:@"patch_id"] isEqualTo:[aPatch objectForKey:@"patch_id"]]) {
+                qlinfo(@"Remove patch from array, %@",aPatch);
+            } else if ([[p objectForKey:@"patch"] isEqualTo:[aPatch objectForKey:@"patch"]] && [[p objectForKey:@"type"] isEqualTo:@"Apple"]) {
+                qlinfo(@"Remove %@ patch from array, %@",[aPatch objectForKey:@"type"], aPatch);
+            } else {
+                [patchesNew addObject:p];
+            }
+        }
+    }
+
+    if (patchesNew.count >= 1) {
+        [NSKeyedArchiver archiveRootObject:(NSArray *)patchesNew toFile:archiveFile];
+    } else {
+        error = nil;
+        [fm removeItemAtPath:archiveFile error:&error];
+        if (error) {
+            qlerror(@"%@",error.localizedDescription);
+        }
+    }
 }
 
 -(void)scanAndUpdateCustomWithPatchBundleID:(NSString *)aPatchBundleID
