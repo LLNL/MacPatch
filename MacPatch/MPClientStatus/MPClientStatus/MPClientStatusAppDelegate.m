@@ -622,10 +622,12 @@ done:
         [subMenu addItem:newMenuItem];
     }
 
+    /*
     NSView *view1 = [[NSView alloc] initWithFrame:NSMakeRect(0 , 0, 337, 35)];
     [view1 setWantsLayer:YES];
     view1.layer.backgroundColor = [[NSColor yellowColor] CGColor];
-
+     */
+    
     CHMenuViewController *vc1 = [[CHMenuViewController alloc] init];
 
     f = vc1.view.frame;
