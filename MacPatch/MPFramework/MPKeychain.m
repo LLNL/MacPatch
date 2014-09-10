@@ -47,6 +47,7 @@
             NSString *errStr = (__bridge NSString *)SecCopyErrorMessageString(res, NULL);
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errStr forKey:NSLocalizedDescriptionKey];
             self.error = [NSError errorWithDomain:@"gov.llnl.mp.keychain" code:-1001 userInfo:userInfo];
+
         }
         self.accessLabel = aAccessLabel;
     }

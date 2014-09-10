@@ -30,6 +30,7 @@
 #import "MPWorkerProtocol.h"
 #import "AppLaunchObject.h"
 #import "CHMenuViewController.h"
+#import "VDKQueue.h"
 
 // Private Methods
 @interface MPClientStatusAppDelegate ()
@@ -42,6 +43,10 @@
 
 // Worker Methods
 - (void)disableASUSSchedule;
+
+// Watch Patch Status/Needed  
+- (void)setupWatchedFolder;
+@property (nonatomic, strong) NSDate *lastPatchStatusUpdate;
 
 @end
 
@@ -77,6 +82,7 @@
 -(void)awakeFromNib
 {
 	// Turn off Scheduled Software Updates
+    [self setupWatchedFolder];
 	[self setAsusAlertOpen:NO];
     [self disableASUSSchedule];
 	
@@ -123,11 +129,8 @@
 	// Start Last CheckIn Thread, update every 10 min
 	[self showLastCheckIn];
 	
-	// Show patch state, update every 30min
-	[self getClientPatchStatus];
-	
 	// This will monitor for hits, when to update the patch status flags
-	[NSThread detachNewThreadSelector:@selector(updatePatchStatusThread) toTarget:self withObject:nil];
+    [self displayPatchData];
 	
 	[self setOpenASUS:NO];
 }
@@ -213,6 +216,34 @@
 }
 
 #pragma mark - Worker Methods
+
+- (void)removeStatusFiles
+{
+    NSError *error = nil;
+	if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            logit(lcl_vError,@"%@",error.localizedDescription);
+            goto done;
+        }
+        if (!proxy) {
+            logit(lcl_vError,@"Could not create proxy object.");
+            goto done;
+        }
+    }
+
+    @try
+	{
+		[proxy removeStatusFilesViaHelper];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to set the logging level, %@", e);
+    }
+
+done:
+	[self cleanup];
+	return;
+}
 
 - (void)disableASUSSchedule
 {
@@ -498,82 +529,19 @@ done:
 }
 
 #pragma mark Show Patch Status
-- (void)getClientPatchStatus
-{
-	[NSThread detachNewThreadSelector:@selector(getClientPatchStatusThread) toTarget:self withObject:nil];
-}
-
-- (void)getClientPatchStatusThread
-{
-	@autoreleasepool
-    {
-        // Run Once, to show current status
-        //[self getClientPatchStatusMethod];
-        // 1800.0
-        // 600 = 10min
-        NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
-                                                 target:self 
-                                               selector:@selector(getClientPatchStatusMethod) 
-                                               userInfo:nil 
-                                                repeats:YES];
-            
-            
-        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-        [[NSRunLoop currentRunLoop] run];
-	}
-}
-
-- (void)getClientPatchStatusMethod
-{
-    @autoreleasepool
-    {
-        [self displayPatchData];
-        /* CEH
-        NSError *wsErr = nil;
-        MPWebServices *mpws = [[MPWebServices alloc] init];
-        NSDictionary *result = [mpws GetClientPatchStatusCount:&wsErr];
-        if (wsErr) {
-            logit(lcl_vError,@"Web service returned the following error (%d).%@",(int)wsErr.code,wsErr.localizedDescription);
-            return;
-        }
-
-        if ([result objectForKey:@"totalPatchesNeeded"])
-        {
-            NSString *_patchesNeededString = [NSString stringWithFormat:@"Patches needed: %@",[result objectForKey:@"totalPatchesNeeded"]];
-
-			if ([[result objectForKey:@"totalPatchesNeeded"] intValue] == 0) {
-				[statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
-			} else {
-				[statusItem setImage:[NSImage imageNamed:@"mpmenubar_alert2.png"]];
-			}
-
-			[checkPatchStatusMenuItem setTitle:_patchesNeededString];
-        }
-         */
-    }
-}
-
-- (void)updatePatchStatusThread 
-{
-	@autoreleasepool {  
-		for (;;) {
-			//how do I pass the new value out to the updateLabel method, or reference aMyClassInstance.myVariable?
-			[self performSelectorOnMainThread:@selector(updatePatchStatusMethod) withObject:nil waitUntilDone:NO]; 
-			//the sleeping of the thread is absolutely mandatory and must be worked around.  The whole point of using NSThread is so I can have sleeps
-            [self displayPatchData];
-			[NSThread sleepForTimeInterval:2];
-		}
-	}
-}
 
 - (void)displayPatchData
 {
-    NSString *path = @"/Library/MacPatch/Client/Data/.neededPatches.plist";
-    id data = [[NSKeyedUnarchiver unarchiveObjectWithFile:path] mutableCopy];
+    NSArray  *data = [[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST] mutableCopy];
     NSString *subMenuTitle = [NSString stringWithFormat:@"Patches Needed: %d ",(int)[data count]];
 
     // If No Patches ...
-    if ([data count] <= 0) {
+    if (!data) {
+        [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
+        [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
+        [checkPatchStatusMenuItem setSubmenu:NULL];
+        return;
+    } else if ([data count] <= 0) {
         [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
         [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
         [checkPatchStatusMenuItem setSubmenu:NULL];
@@ -588,28 +556,25 @@ done:
     [checkPatchStatusMenuItem setEnabled:YES];
 
     NSMenuItem *newMenuItem;
-    NSString *title;
 
+    // Add Header Menu Item
     CHMenuViewController *vcTitle = [[CHMenuViewController alloc] init];
-
     NSRect f = vcTitle.view.frame;
     f.size.width = 337;
     f.size.height = 26;
     vcTitle.view.frame = f;
 
     [vcTitle.view addSubview:vcTitle.titleView];
-
     newMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""];
     [newMenuItem setView:vcTitle.view];
     [subMenu addItem:newMenuItem];
 
-
+    // Add Patches as menu item using views
+    CHMenuViewController *vc;
     for (NSDictionary *d in data)
     {
-        title = [NSString stringWithFormat:@"%@ (%@)",[d objectForKey:@"patch"],[d objectForKey:@"version"]];
-        newMenuItem = [[NSMenuItem alloc] initWithTitle:title action:@selector(doNothing) keyEquivalent:@""];
-
-        CHMenuViewController *vc = [[CHMenuViewController alloc] init];
+        newMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
+        vc = [[CHMenuViewController alloc] init];
         [vc addTitle:[d objectForKey:@"patch"] version:[d objectForKey:@"version"]];
         if ([[[d objectForKey:@"restart"] uppercaseString] isEqualTo:@"TRUE"] || [[[d objectForKey:@"restart"] uppercaseString] isEqualTo:@"YES"])
         {
@@ -617,17 +582,13 @@ done:
         } else {
             vc.ximage = [NSImage imageNamed:@"empty.tif"];
         }
-
         [newMenuItem setView:vc.view];
         [subMenu addItem:newMenuItem];
     }
 
-    /*
-    NSView *view1 = [[NSView alloc] initWithFrame:NSMakeRect(0 , 0, 337, 35)];
-    [view1 setWantsLayer:YES];
-    view1.layer.backgroundColor = [[NSColor yellowColor] CGColor];
-     */
-    
+    //
+    // Add Bottom Menu Item thats says you need to use Self Patch to patch
+    //
     CHMenuViewController *vc1 = [[CHMenuViewController alloc] init];
 
     f = vc1.view.frame;
@@ -640,33 +601,17 @@ done:
     newMenuItem = [[NSMenuItem alloc] initWithTitle:@"Open Self Patch To Patch..." action:NULL keyEquivalent:@""];
     [newMenuItem setView:vc1.view];
     [subMenu addItem:newMenuItem];
-}
 
-- (void)doNothing
-{
-    return;
-}
-
-- (void)updatePatchStatusMethod
-{
-	@autoreleasepool {
-		NSFileManager *fileManager = [NSFileManager defaultManager];
-    
-		NSString *l_file;
-		l_file = [NSString stringWithString:[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath]];
-		
-		if ([fileManager fileExistsAtPath: l_file] == YES)
-		{
-			logit(lcl_vDebug,@"Found file at %@",l_file);
-			[self performSelectorInBackground:@selector(getClientPatchStatusMethod) withObject:nil];
-			[fileManager removeItemAtPath:l_file error:NULL];
-		} 
-	}
+    NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:PATCHES_NEEDED_PLIST error:nil];
+    if (attrs != nil) {
+        [self setLastPatchStatusUpdate:(NSDate*)[attrs objectForKey: NSFileModificationDate]];
+    }
 }
 
 - (IBAction)refreshClientStatus:(id)sender
 {
-    [self getClientPatchStatusMethod];
+    // Should add scan now action and update without opening self patch
+    [self showLastCheckIn];
 }
 
 #pragma mark -
@@ -788,6 +733,39 @@ done:
 - (void)checkAgentStatus:(id)sender
 {
     
+}
+
+#pragma mark - 
+#pragma mark Watch Patch Needed File
+- (void)setupWatchedFolder
+{
+    NSString *watchedFolder = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"Data"];
+    vdkQueue = [[VDKQueue alloc] init];
+    [vdkQueue setDelegate:self];
+    [vdkQueue addPath:watchedFolder];
+    [vdkQueue setAlwaysPostNotifications:YES];
+}
+
+-(void) VDKQueue:(VDKQueue *)queue receivedNotification:(NSString*)note forPath:(NSString*)fpath
+{
+    if ([note.description isEqualTo:@"VDKQueueFileWrittenToNotification"]) {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:PATCHES_NEEDED_PLIST])
+        {
+            NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:PATCHES_NEEDED_PLIST error:nil];
+
+            if (attrs != nil) {
+                NSDate *cdate = (NSDate*)[attrs objectForKey: NSFileModificationDate];
+                if ([cdate timeIntervalSince1970] > [self.lastPatchStatusUpdate timeIntervalSince1970])
+                {
+                    [self displayPatchData];
+                }
+            }
+        }
+        else
+        {
+            [self removeStatusFiles];
+        }
+    }
 }
 
 @end

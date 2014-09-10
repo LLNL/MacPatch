@@ -514,7 +514,7 @@ done:
 	NSError *aErr = nil;
 	NSString *result;
 	result = [self installPkgWithResult:pkgPath target:aTarget error:&aErr];
-    result = nil;
+    qltrace(@"%@",result);
 	if (err != NULL) *err = aErr;
     return 0;
 }
@@ -628,7 +628,7 @@ done:
 	NSArray *binArgs = [NSArray arrayWithObjects:@"-x", @"-k", aZipFilePath, aTargetPath, nil];
 	NSString *result;
 	result = [self runTask:binFile binArgs:binArgs error:&aErr];
-    result = nil;
+    qltrace(@"%@",result);
 	if (err != NULL) *err = aErr;	
     return 0;
 }

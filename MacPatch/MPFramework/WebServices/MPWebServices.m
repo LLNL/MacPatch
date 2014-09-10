@@ -1405,7 +1405,7 @@
 - (id)getSWTasksForGroup:(NSString *)aGroupName error:(NSError **)err
 {
     if (!aGroupName) {
-        *err = [NSError errorWithDomain:NSCocoaErrorDomain
+        if (err != NULL) *err = [NSError errorWithDomain:NSCocoaErrorDomain
                                    code:-1000
                                userInfo:[NSDictionary dictionaryWithObject:@"No Group Name Found" forKey:NSLocalizedDescriptionKey]];
         return nil;
@@ -1491,7 +1491,7 @@
 - (id)getSWTaskForID:(NSString *)aTaskID error:(NSError **)err
 {
     if (!aTaskID) {
-        *err = [NSError errorWithDomain:NSCocoaErrorDomain
+        if (err != NULL) *err = [NSError errorWithDomain:NSCocoaErrorDomain
                                    code:-1000
                                userInfo:[NSDictionary dictionaryWithObject:@"No TaskID Found" forKey:NSLocalizedDescriptionKey]];
         return nil;

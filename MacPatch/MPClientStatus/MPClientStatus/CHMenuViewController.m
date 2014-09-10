@@ -16,6 +16,8 @@
 
 @synthesize xtitle;
 @synthesize xversion;
+@synthesize altView;
+@synthesize titleView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

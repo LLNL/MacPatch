@@ -25,10 +25,11 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MPWorkerProtocol.h"
+#import "VDKQueue.h"
 
 @class MPDefaults, MPAsus, MPAppUsage;
 
-@interface MPClientStatusAppDelegate : NSObject <MPWorkerClient>
+@interface MPClientStatusAppDelegate : NSObject <MPWorkerClient,VDKQueueDelegate>
 {
 	NSWindow *__unsafe_unretained window;
     
@@ -65,7 +66,9 @@
 	NSMutableData *showLastCheckInResultsData;
 	
 @private
+    
 	MPAppUsage *mpAppUsage;
+    VDKQueue *vdkQueue;
 }
 
 @property (unsafe_unretained) IBOutlet NSWindow *window;
@@ -117,19 +120,6 @@
 - (void)showLastCheckIn;
 - (void)showLastCheckInThread;
 - (void)showLastCheckInMethod;
-//- (void)lastCheckInDone:(ASIHTTPRequest *)request;
-//- (void)lastCheckInFailed:(ASIHTTPRequest *)request;
-
-// Show Patch Status
-- (void)getClientPatchStatus;
-- (void)getClientPatchStatusThread;
-- (void)getClientPatchStatusMethod;
-//- (void)clientPatchStatusDone:(ASIHTTPRequest *)request;
-//- (void)clientPatchStatusFailed:(ASIHTTPRequest *)request;
-
-// Patch Status Icon Update, via File
-- (void)updatePatchStatusThread;
-- (void)updatePatchStatusMethod;
 
 - (IBAction)openSelfPatchApplications:(id)sender;
 - (IBAction)openSoftwareCatalogApplications:(id)sender;

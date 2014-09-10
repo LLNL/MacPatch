@@ -36,6 +36,7 @@ NSString * const AGENT_PREFS_PLIST			= @"/Library/Preferences/gov.llnl.mpagent.p
 NSString * const AGENT_FRAMEWORK_PATH		= @"/Library/Frameworks/MPFramework.framework/Resources/Info.plist";
 NSString * const AGENT_SERVERS_PLIST        = @"/Library/MacPatch/Client/lib/Servers.plist";
 NSString * const APP_PREFS_PLIST			= @"/Library/Preferences/gov.llnl.MPClientStatus.plist";
+NSString * const PATCHES_NEEDED_PLIST       = @"/Library/MacPatch/Client/Data/.neededPatches.plist";
 
 NSString * const WS_CLIENT_REG              = @"/MPRegister.cfc";
 NSString * const WS_CLIENT_FILE             = @"/Service/MPClientService.cfc";

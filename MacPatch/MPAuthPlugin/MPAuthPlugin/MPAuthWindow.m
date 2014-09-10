@@ -1600,9 +1600,8 @@ done:
     NSError *error = nil;
     NSMutableArray *patchesNew;
     NSArray *patches;
-    NSString *archiveFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
-    if ([fm fileExistsAtPath:archiveFile]) {
-        patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:archiveFile]];
+    if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
+        patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST]];
         [self removeStatusFiles];
         if (error) {
             qlerror(@"%@",error.localizedDescription);
@@ -1622,7 +1621,7 @@ done:
         }
     }
     if (patchesNew.count >= 1) {
-        [self writeArrayToFile:(NSArray *)patchesNew file:archiveFile];
+        [self writeArrayToFile:(NSArray *)patchesNew file:PATCHES_NEEDED_PLIST];
     } else {
         [self removeStatusFiles];
     }

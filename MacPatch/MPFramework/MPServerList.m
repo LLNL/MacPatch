@@ -147,7 +147,7 @@
     
     NSMutableArray *_staticItems = [[NSMutableArray alloc] init];
     NSMutableArray *_randItems = [[NSMutableArray alloc] init];
-    NSMutableArray *_randComplete = [[NSMutableArray alloc] init];
+    NSMutableArray *_randComplete;
     if (![jData objectForKey:@"servers"]) {
         qlerror(@"Servers object was not found.");
         return NO;

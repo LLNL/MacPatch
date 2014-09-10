@@ -628,6 +628,7 @@ done:
 	
     @try
 	{
+        NSLog(@"Write Array, %@",aFile);
         result = [proxy writeArrayToFileViaHelper:data toFile:aFile];
     }
     @catch (NSException *e) {
@@ -1022,13 +1023,9 @@ done:
         } else {
             [self createDirAtPathWithIntermediateDirs:[_approvedPatchesFile stringByDeletingLastPathComponent] intermediateDirs:YES];
         }
-
-        if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]]) {
-            [self removeStatusFiles];
-        }
         
         [self writeArrayToFile:(NSArray *)approvedUpdatesArray file:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
-        [self writeArrayToFile:(NSArray *)_requiredPatchesArray file:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]];
+        [self writeArrayToFile:(NSArray *)_requiredPatchesArray file:PATCHES_NEEDED_PLIST];
         
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:approvedUpdatesArray];	
@@ -1043,8 +1040,8 @@ done:
                 qlerror(@"%@",rmErr.localizedDescription);
             }
         }
-        if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]]) {
-            logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT]);
+        if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
+            logit(lcl_vInfo,@"Removing file %@. No patches found.",PATCHES_NEEDED_PLIST);
             [self removeStatusFiles];
         }
     }
@@ -1485,10 +1482,9 @@ done:
     NSError *error = nil;
     NSMutableArray *patchesNew;
     NSArray *patches;
-    NSString *archiveFile = [NSString stringWithFormat:@"%@/Data/.neededPatches.plist",MP_ROOT_CLIENT];
-    if ([fm fileExistsAtPath:archiveFile]) {
-        patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:archiveFile]];
-        [self removeStatusFiles];
+    if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
+        patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST]];
+        //[self removeStatusFiles];
         if (error) {
             qlerror(@"%@",error.localizedDescription);
         }
@@ -1509,7 +1505,7 @@ done:
         }
     }
     if (patchesNew.count >= 1) {
-        [self writeArrayToFile:(NSArray *)patchesNew file:archiveFile];
+        [self writeArrayToFile:(NSArray *)patchesNew file:PATCHES_NEEDED_PLIST];
     } else {
         [self removeStatusFiles];
     }
