@@ -143,7 +143,6 @@
         qlerror(@"%@",wsErr.localizedDescription);
         return NO;
     }
-
     
     NSMutableArray *_staticItems = [[NSMutableArray alloc] init];
     NSMutableArray *_randItems = [[NSMutableArray alloc] init];
@@ -156,13 +155,16 @@
     // Sort the server types, Master and Proxy get added to the end of the array
     for (NSDictionary *d in [jData objectForKey:@"servers"])
     {
-        if ([[d objectForKey:@"isMaster"] isEqualToNumber:[NSNumber numberWithInt:1]] || [[d objectForKey:@"isProxy"] isEqualToNumber:[NSNumber numberWithInt:1]] ) 
+        if ([[d objectForKey:@"serverType"] isEqualToString:@"0"] || [[d objectForKey:@"serverType"] isEqualToString:@"2"])
         {
             [_staticItems addObject:d];
         } else {
             [_randItems addObject:d];
         }
     }
+
+    // Sort Static Items, Master Server Before Proxy
+    [_staticItems sortUsingDescriptors:[NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"serverType" ascending:YES], nil]];
 
     // Randomize the distribution servers
     if ([_randItems count] > 1) {
