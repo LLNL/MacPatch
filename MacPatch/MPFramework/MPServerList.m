@@ -143,7 +143,7 @@
         qlerror(@"%@",wsErr.localizedDescription);
         return NO;
     }
-    
+
     NSMutableArray *_staticItems = [[NSMutableArray alloc] init];
     NSMutableArray *_randItems = [[NSMutableArray alloc] init];
     NSMutableArray *_randComplete;

@@ -2,7 +2,7 @@
 <!---
         MPClientService 
         Database type is MySQL
-        MacPatch Version 2.2.x
+        MacPatch Version 2.5.x
 --->
 <!---   Notes:
 --->
@@ -418,7 +418,7 @@
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGet">
-                Select cuuid, ipaddr, hostname, Domain, ostype, osver
+                Select cuuid, ipaddr, hostname, Domain, ostype, osver, client_version, agent_version, agent_build
                 From mp_clients_view
                 Where cuuid = <cfqueryparam value="#arguments.clientID#">
             </cfquery>
