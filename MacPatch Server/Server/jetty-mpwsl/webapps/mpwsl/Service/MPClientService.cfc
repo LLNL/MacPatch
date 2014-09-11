@@ -611,7 +611,7 @@
     
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
-            <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
+            <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,0,30)#">
                 Select id from mp_patch_group
                 Where name = <cfqueryparam value="#arguments.PatchGroup#">
             </cfquery>
@@ -630,7 +630,7 @@
         </cftry>
         
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetGroupData" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
+            <cfquery datasource="#this.ds#" name="qGetGroupData" cachedwithin="#CreateTimeSpan(0,0,0,15)#">
                 Select data from mp_patch_group_data
                 Where pid = <cfqueryparam value="#qGetGroupID.id#">
                 AND data_type = <cfqueryparam value="#arguments.DataType#">
@@ -718,7 +718,7 @@
         </cftry>
 
 
-        <cfquery datasource="#this.ds#" name="qGetClient" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
+        <cfquery datasource="#this.ds#" name="qGetClient">
             Select cuuid From savav_info
             Where cuuid = <cfqueryparam value="#trim(arguments.clientID)#">
         </cfquery>
