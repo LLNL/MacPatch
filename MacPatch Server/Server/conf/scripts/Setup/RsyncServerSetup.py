@@ -27,7 +27,7 @@
   MacPatch Rsync Service Setup Script
   MacPatch Version 2.5.x
   
-  Script Version 1.1.0
+  Script Version 1.1.1
 '''
 
 import os
@@ -58,7 +58,11 @@ server_name = raw_input("MacPatch Server name TO sync data from [" + str(system_
 # ----------------------------------
 '''
 theFile = MP_SRV_BASE + "/conf/etc/gov.llnl.mp.sync.plist"
-prefs = plistlib.readPlist(theFile)
+if os.path.exists(theFile):
+	prefs = plistlib.readPlist(theFile)
+else:
+	prefs = {}
+
 prefs['MPServerAddress'] = server_name
 
 try:
@@ -86,4 +90,4 @@ if OS_TYPE == "Linux":
 	cron = CronTab()
 	job  = cron.new(command='/Library/MacPatch/Server/conf/scripts/MPSyncContent.sh -p /Library/MacPatch/Server/conf/etc/gov.llnl.sync.plist -r')
 	job.set_comment("MPSyncContent")
-	job.hour.every(11)	
+	job.hour.every(1)	

@@ -27,6 +27,8 @@
 #import "NSString+Helper.h"
 #import "WebRequest.h"
 
+#define MPADM_URI @"Service/MPAdminService.cfc"
+
 @interface AppDelegate (Private)
 
 - (void)extractPKG:(NSString *)aPath;
@@ -103,12 +105,10 @@
     }
 
     //-- Convert string into URL
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@:%@/Service/MPAdminService.cfc?method=GetAuthToken&authUser=%@&authPass=%@",_ssl,_host,_port,[authUserName.stringValue urlEncode],[authUserPass.stringValue urlEncode]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@:%@/%@?method=GetAuthToken&authUser=%@&authPass=%@",_ssl,_host,_port,MPADM_URI,[authUserName.stringValue urlEncode],[authUserPass.stringValue urlEncode]];
     NSMutableURLRequest *request =[[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:urlString]];
     [request setHTTPMethod:@"GET"];
-    //-- Getting response form server
-    //NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
 
     NSError *error = nil;
     NSURLResponse *response;
@@ -269,7 +269,7 @@
         [agentConfigImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
         __block NSString *result = nil;
         // NSURLSession *session = [NSURLSession sharedSession];
-        NSString *_url = [NSString stringWithFormat:@"%@://%@:%@/Service/MPAdminService.cfc?method=AgentConfig&token=%@&user=%@",_ssl,_host,_port,_authToken,authUserName.stringValue];
+        NSString *_url = [NSString stringWithFormat:@"%@://%@:%@/%@?method=AgentConfig&token=%@&user=%@",_ssl,_host,_port,MPADM_URI,_authToken,authUserName.stringValue];
 
         NSMutableURLRequest *request =[[NSMutableURLRequest alloc] init];
         [request setURL:[NSURL URLWithString:_url]];
@@ -360,92 +360,6 @@
 
         [progressBar stopAnimation:progressBar];
         [uploadButton setEnabled:YES];
-
-        /*
-        NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:_url] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-            if (error) {
-                [progressBar stopAnimation:progressBar];
-                [agentConfigImage setImage:[NSImage imageNamed:@"NORoom"]];
-                [uploadButton setEnabled:YES];
-                [progressBar stopAnimation:progressBar];
-                return;
-            }
-
-            NSError *bErr = nil;
-            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&bErr];
-            if (bErr) {
-                [agentConfigImage setImage:[NSImage imageNamed:@"NORoom"]];
-                [uploadButton setEnabled:YES];
-                [progressBar stopAnimation:progressBar];
-                return;
-            }
-            [agentConfigImage setImage:[NSImage imageNamed:@"YESRoom"]];
-            result = [json objectForKey:@"result"];
-
-            bErr = nil;
-            NSString *_reqID = [self getRequestID:@"heizer1" error:&bErr];
-            if (bErr) {
-                [agentConfigImage setImage:[NSImage imageNamed:@"NORoom"]];
-                [uploadButton setEnabled:YES];
-                [progressBar stopAnimation:progressBar];
-                return;
-            }
-
-            [self setAgentID:_reqID];
-            NSArray *pkgs1;
-
-            bErr = nil;
-            [writeConfigImage setImage:[NSImage imageNamed:NSImageNameRemoveTemplate]];
-            [writeConfigImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
-            pkgs1 = [self writePlistForPackage:result error:&bErr];
-            if (bErr) {
-                [writeConfigImage setImage:[NSImage imageNamed:@"NORoom"]];
-                [uploadButton setEnabled:YES];
-                [progressBar stopAnimation:progressBar];
-                return;
-            } else {
-                [writeConfigImage setImage:[NSImage imageNamed:@"YESRoom"]];
-            }
-
-            NSArray *pkgs2;
-            bErr = nil;
-            [flattenPackagesImage setImage:[NSImage imageNamed:NSImageNameRemoveTemplate]];
-            [flattenPackagesImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
-            pkgs2 = [self flattenPackages:pkgs1 error:&bErr];
-            if (bErr) {
-                [flattenPackagesImage setImage:[NSImage imageNamed:@"NORoom"]];
-                [uploadButton setEnabled:YES];
-                [progressBar stopAnimation:progressBar];
-                return;
-            } else {
-                [flattenPackagesImage setImage:[NSImage imageNamed:@"YESRoom"]];
-            }
-
-            NSArray *pkgs3;
-            bErr = nil;
-            [compressPackgesImage setImage:[NSImage imageNamed:NSImageNameRemoveTemplate]];
-            [compressPackgesImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
-            pkgs3 = [self compressPackages:pkgs2 error:&bErr];
-            if (bErr) {
-                [compressPackgesImage setImage:[NSImage imageNamed:@"NORoom"]];
-                [uploadButton setEnabled:YES];
-                [progressBar stopAnimation:progressBar];
-                return;
-            } else {
-                [compressPackgesImage setImage:[NSImage imageNamed:@"YESRoom"]];
-            }
-
-            [postPackagesImage setImage:[NSImage imageNamed:NSImageNameRemoveTemplate]];
-            [postPackagesImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
-            [self postFiles:(NSArray *)pkgs3 requestID:_reqID userID:@"heizer1"];
-            [self postAgentPKGData:pkgs3];
-            
-            [progressBar stopAnimation:progressBar];
-            [uploadButton setEnabled:YES];
-        }];
-        
-        [dataTask resume];
-         */
     }
 }
 
@@ -741,7 +655,7 @@
 
     //-- Convert string into URL
     NSString *dURL = [NSString stringWithFormat:@"&puuid=%@&type=%@&agent_ver=%@&version=%@&build=%@&pkg_name=%@&pkg_hash=%@&osver=%@",[d objectForKey:@"puuid"],[d objectForKey:@"type"],[d objectForKey:@"agent_ver"],[d objectForKey:@"version"],[d objectForKey:@"build"],[d objectForKey:@"pkg_name"],[d objectForKey:@"pkg_hash"],[d objectForKey:@"osver"]];
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@:%@/Service/MPAdminService.cfc?method=postAgentData&%@&user=%@&token=%@",_ssl,_host,_port,dURL,authUserName.stringValue,_authToken];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@:%@/%@?method=postAgentData&%@&user=%@&token=%@",_ssl,_host,_port,MPADM_URI,dURL,authUserName.stringValue,_authToken];
     NSMutableURLRequest *request =[[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:urlString]];
     [request setHTTPMethod:@"GET"];
@@ -789,7 +703,7 @@
     }
 
     //-- Convert string into URL
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@:%@/Service/MPAdminService.cfc?method=postAgentFiles&user=%@&token=%@",_ssl,_host,_port,authUserName.stringValue,_authToken];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@:%@/%@?method=postAgentFiles&user=%@&token=%@",_ssl,_host,_port,MPADM_URI,authUserName.stringValue,_authToken];
     NSMutableURLRequest *request =[[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:urlString]];
     [request setHTTPMethod:@"GET"];
