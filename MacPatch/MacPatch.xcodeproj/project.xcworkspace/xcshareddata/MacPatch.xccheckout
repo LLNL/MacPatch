@@ -14,7 +14,7 @@
 		<string>https://github.com/SMSG-MAC-DEV/MacPatch.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>MacPatch/MacPatch.xcodeproj/project.xcworkspace</string>
+	<string>MacPatch/MacPatch.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>978D518222FA6C8BFBE0677F0A4102FB20EDC388</key>

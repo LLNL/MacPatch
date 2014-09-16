@@ -317,6 +317,7 @@ void usage(void) {
     printf(" \t\tBatteryInfo\n");
     printf(" \t\tConfigProfiles\n");
     printf(" \t\tAppStoreApps\n");
+    printf(" \t\tMPServerList\n");
     printf(" -A \tCollect Audit data.\n\n");
     printf(" -g \t[Software Group Name]Collect Audit data.\n");
     printf(" -d \tCollect Audit data.\n");

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F0454E419C78D4700E28E2B /* MPServerEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F0454E319C78D4700E28E2B /* MPServerEntry.m */; };
 		8F315B95191C04B70031FF73 /* MPDirectoryServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F315B94191C04B70031FF73 /* MPDirectoryServices.m */; };
 		8F5F91EE171C6342001C77D1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5F91ED171C6342001C77D1 /* libxml2.dylib */; };
 		8F6007A3171481FF000F58B6 /* MPFileVaultInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6007A2171481FF000F58B6 /* MPFileVaultInfo.m */; };
@@ -57,6 +58,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8F0454E219C78D4700E28E2B /* MPServerEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPServerEntry.h; sourceTree = "<group>"; };
+		8F0454E319C78D4700E28E2B /* MPServerEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPServerEntry.m; sourceTree = "<group>"; };
 		8F315B93191C04B70031FF73 /* MPDirectoryServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDirectoryServices.h; sourceTree = "<group>"; };
 		8F315B94191C04B70031FF73 /* MPDirectoryServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDirectoryServices.m; sourceTree = "<group>"; };
 		8F4825F21958A40F008FFDB4 /* MPWorkerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPWorkerProtocol.h; sourceTree = "<group>"; };
@@ -166,6 +169,8 @@
 				8FF56E3F19897536002F2090 /* MacAppStoreDataItem.m */,
 				8FF56E4119897548002F2090 /* NSMetadataQuery+Synchronous.h */,
 				8FF56E4219897548002F2090 /* NSMetadataQuery+Synchronous.m */,
+				8F0454E219C78D4700E28E2B /* MPServerEntry.h */,
+				8F0454E319C78D4700E28E2B /* MPServerEntry.m */,
 			);
 			name = Inventory;
 			sourceTree = "<group>";
@@ -317,6 +322,7 @@
 				8FD88E5716DFBF7200A870A3 /* NSDirectoryServices.m in Sources */,
 				8FD88E5816DFBF7200A870A3 /* CHDisk.m in Sources */,
 				8FD88E5916DFBF7200A870A3 /* CHDiskInfo.m in Sources */,
+				8F0454E419C78D4700E28E2B /* MPServerEntry.m in Sources */,
 				8FF56E4019897536002F2090 /* MacAppStoreDataItem.m in Sources */,
 				8FD88E5A16DFBF7200A870A3 /* MPUsersAndGroups.m in Sources */,
 				8FD88E6416DFC11200A870A3 /* FMDatabase.m in Sources */,

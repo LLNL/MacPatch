@@ -1191,6 +1191,11 @@
         
         <cftry>
             <cfset gid = softwareGroupID(arguments.GroupName)>
+            <cfif gid EQ 0>
+            	<cfset response[ "errormsg" ] = "No group data found for #arguments.GroupName#." />
+                <cfreturn response>
+            </cfif>
+            
             <cfquery datasource="#this.ds#" name="qGetGroupTasksData" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 Select gData From mp_software_tasks_data
                 Where gid = '#gid#'
@@ -1212,7 +1217,7 @@
             <cfset response[ "errormsg" ] = "[GetSoftwareTasksForGroup]: #cfcatch.Detail# -- #cfcatch.Message#" />
         </cfcatch> 
         </cftry>
-        <cfreturn SerializeJson(response)>
+        <cfreturn response>
     </cffunction>
 
 	<!--- 

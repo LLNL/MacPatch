@@ -36,10 +36,11 @@
 #import "MPDirectoryServices.h"
 #import "MacAppStoreDataItem.h"
 #import "NSMetadataQuery+Synchronous.h"
+#import "MPServerEntry.h"
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
-#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,SINetworkInfo,AppStoreApps"
+#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,SINetworkInfo,AppStoreApps,MPServerList,MPServerListInfo"
 #define kTasksPlist             @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
 #define kInvHashData            @"/Library/MacPatch/Client/Data/.gov.llnl.mp.inv.data.plist"
 
@@ -238,8 +239,11 @@
 				tmpArr = [self parseSysInfoNetworkData:[item objectForKey:@"data"]];
 			} else if ([[item objectForKey:@"type"] isEqual:@"AppStoreApps"]) {
 				tmpArr = [self parseAppStoreData];
-			}
-
+            } else if ([[item objectForKey:@"type"] isEqual:@"MPServerList"]) {
+                tmpArr = [self parseAgentServerList];
+            } else if ([[item objectForKey:@"type"] isEqual:@"MPServerListInfo"]) {
+                tmpArr = [self parseAgentServerInfo];
+            }
 
 			if (tmpArr) {
                 // Gen a hash for the inv results, if it has not changed dont post it.
@@ -1635,6 +1639,70 @@ done:
     return [NSArray arrayWithArray:items];
 }
 
+- (NSArray *)parseAgentServerInfo
+{
+    NSArray *mpServerInfo = nil;
+    NSMutableDictionary *mpServerListInfo;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    /* Needs to be completed */
+    if ([fm fileExistsAtPath:AGENT_SERVERS_PLIST])
+    {
+        NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:AGENT_SERVERS_PLIST];
+        if ([d objectForKey:@"name"])
+        {
+            mpServerListInfo = [[NSMutableDictionary alloc] init];
+            [mpServerListInfo setObject:[d objectForKey:@"name"] forKey:@"name"];
+            if ([d objectForKey:@"version"]) {
+                [mpServerListInfo setObject:[[d objectForKey:@"version"] stringValue] forKey:@"version"];
+            } else {
+                [mpServerListInfo setObject:@"0" forKey:@"version"];
+            }
+            if ([d objectForKey:@"id"]) {
+                [mpServerListInfo setObject:[[d objectForKey:@"id"] stringValue] forKey:@"id"];
+            } else {
+                [mpServerListInfo setObject:@"0" forKey:@"id"];
+            }
+
+            NSArray *mpServerInfo = [NSArray arrayWithObject:mpServerListInfo];
+        } else {
+            logit(lcl_vError, @"name object does not exist.");
+        }
+    } else {
+        logit(lcl_vError, @"Parse Server Info. File %@ does not exist.",AGENT_SERVERS_PLIST);
+    }
+
+    return mpServerInfo;
+}
+
+- (NSArray *)parseAgentServerList
+{
+    NSArray *mpServers = nil;
+    NSMutableArray *serverItems = [[NSMutableArray alloc] init];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    MPServerEntry *se;
+    /* Needs to be completed */
+    if ([fm fileExistsAtPath:AGENT_SERVERS_PLIST])
+    {
+        NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:AGENT_SERVERS_PLIST];
+        if ([d objectForKey:@"servers"])
+        {
+            NSArray *serverArray = [d objectForKey:@"servers"];
+            for (int i = 0;i<serverArray.count;i++)
+            {
+                se = [[MPServerEntry alloc] initWithServerDictionary:[serverArray objectAtIndex:i] index:i];
+                [serverItems addObject:[se dictionaryRepresentation]];
+            }
+        } else {
+            logit(lcl_vError, @"servers object does not exist.");
+        }
+    } else {
+        logit(lcl_vError, @"File %@ does not exist.",AGENT_SERVERS_PLIST);
+    }
+
+    mpServers = [NSArray arrayWithArray:serverItems];
+    return mpServers;
+}
+
 #pragma mark Helper
 
 - (NSDictionary *)stringToDict:(NSString *)theString theDelimiter:(NSString *)theDelimiter
@@ -1654,7 +1722,5 @@ done:
 
 	return (NSDictionary *)keyValData;
 }
-
-
 
 @end
