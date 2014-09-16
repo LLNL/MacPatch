@@ -1689,7 +1689,7 @@ done:
             NSArray *serverArray = [d objectForKey:@"servers"];
             for (int i = 0;i<serverArray.count;i++)
             {
-                se = [[MPServerEntry alloc] initWithServerDictionary:[serverArray objectAtIndex:i] index:i];
+                se = [[MPServerEntry alloc] initWithServerDictionary:[serverArray objectAtIndex:i] index:[NSString stringWithFormat:@"%d",i]];
                 [serverItems addObject:[se dictionaryRepresentation]];
             }
         } else {

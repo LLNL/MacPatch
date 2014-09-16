@@ -47,7 +47,7 @@ static NSString *kORDER = @"order";
     self = [super init];
     if (self)
     {
-        [self parseWithDictionary:aServerItem];
+        [self parseWithDictionary:aServerItem index:idx];
         [self setOrder:idx];
     }
     return self;
@@ -74,27 +74,56 @@ static NSString *kORDER = @"order";
 
     for (NSString *key in aDictionary.allKeys) {
         if ([key isEqualToString:@"host"]) {
-            self.host = [[aDictionary objectForKey:@"host"] stringValue];
+            self.host = [aDictionary objectForKey:@"host"];
             continue;
         }
         if ([key isEqualToString:@"port"]) {
             self.port = [[aDictionary objectForKey:@"port"] stringValue];
             continue;
         }
-        if ([key isEqualToString:@"serverType"]) {
-            self.display_Sleep_Uses_Dim = [[aDictionary objectForKey:@"serverType"] stringValue];
+        if ([key isEqualToString:@"serverType"])
+        {
+            if ([[aDictionary objectForKey:@"serverType"] isKindOfClass:[NSString class]]) {
+                self.serverType = [aDictionary objectForKey:@"serverType"];
+            } else if ([[aDictionary objectForKey:@"serverType"] isKindOfClass:[NSNumber class]]) {
+                self.serverType = [[aDictionary objectForKey:@"serverType"] stringValue];
+            } else {
+                self.serverType = @"ERR";
+            }
+
             continue;
         }
-        if ([key isEqualToString:@"useHTTPS"]) {
-            self.standby_Delay = [[aDictionary objectForKey:@"useHTTPS"] stringValue];
+        if ([key isEqualToString:@"useHTTPS"])
+        {
+            if ([[aDictionary objectForKey:@"useHTTPS"] isKindOfClass:[NSString class]]) {
+                self.useHTTPS = [aDictionary objectForKey:@"useHTTPS"];
+            } else if ([[aDictionary objectForKey:@"useHTTPS"] isKindOfClass:[NSNumber class]]) {
+                self.useHTTPS = [[aDictionary objectForKey:@"useHTTPS"] stringValue];
+            } else {
+                self.useHTTPS = @"ERR";
+            }
             continue;
         }
-        if ([key isEqualToString:@"useTLSAuth"]) {
-            self.standby_Delay = [[aDictionary objectForKey:@"useTLSAuth"] stringValue];
+        if ([key isEqualToString:@"useTLSAuth"])
+        {
+            if ([[aDictionary objectForKey:@"useTLSAuth"] isKindOfClass:[NSString class]]) {
+                self.useTLSAuth = [aDictionary objectForKey:@"useTLSAuth"];
+            } else if ([[aDictionary objectForKey:@"useTLSAuth"] isKindOfClass:[NSNumber class]]) {
+                self.useTLSAuth = [[aDictionary objectForKey:@"useTLSAuth"] stringValue];
+            } else {
+                self.useTLSAuth = @"ERR";
+            }
             continue;
         }
-        if ([key isEqualToString:@"allowSelfSigned"]) {
-            self.standby_Delay = [[aDictionary objectForKey:@"allowSelfSigned"] stringValue];
+        if ([key isEqualToString:@"allowSelfSigned"])
+        {
+            if ([[aDictionary objectForKey:@"allowSelfSigned"] isKindOfClass:[NSString class]]) {
+                self.allowSelfSigned = [aDictionary objectForKey:@"allowSelfSigned"];
+            } else if ([[aDictionary objectForKey:@"allowSelfSigned"] isKindOfClass:[NSNumber class]]) {
+                self.allowSelfSigned = [[aDictionary objectForKey:@"allowSelfSigned"] stringValue];
+            } else {
+                self.allowSelfSigned = @"ERR";
+            }
             continue;
         }
     }
