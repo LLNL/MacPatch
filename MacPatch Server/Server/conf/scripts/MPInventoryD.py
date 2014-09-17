@@ -23,6 +23,11 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 '''
 
+'''
+    Script: MPInventory.py
+    Version: 1.0.1
+'''
+
 import logging
 import logging.handlers
 import argparse
@@ -48,10 +53,10 @@ gKeepFiles = False
 # MySQL Global Config
 myConfig = {
   'user': 'mpdbadm',
-  'password': 'Apple2e123',
-  'host': 'dbmy3.llnl.gov',
+  'password': '',
+  'host': 'localhost',
   'port': '3306',
-  'database': 'MacPatchDBDev',
+  'database': 'MacPatchDB',
   'raise_on_warnings': True,
   'buffered': True
 }
@@ -539,11 +544,7 @@ class DataMgr:
     def __init__(self,aFile):
         self.file = aFile
         json_data=open(self.file)
-        try:
-            self.invData = json.load(json_data)
-        except Exception, e:
-            raise e
-
+        self.invData = json.load(json_data)
         logger.info("Processing data for client id %s."%self.invData['key'])
         logger.info("Processing file %s."%self.file)
 
@@ -618,6 +619,9 @@ class DataMgr:
                 if self.valid_uuid(_keyVal) == True: 
                     # key is valid
                     db.removeKeyData(_table,_keyVal)
+                    if len(_rows) == 0:
+                      _result = True
+                      return _result
             else:
                 updateData = True
 
@@ -703,17 +707,13 @@ class MPInventory:
         for iFile in self.files:
             if os.path.exists(iFile):
                 # Process the inv File
-                try:
-                    dMgr = DataMgr(iFile)
-                    if dMgr.parseInvData() == True:
-                        if gKeepFiles == True:
-                            self.moveInvFile(iFile)
-                        else:
-                            os.remove(iFile)
+                dMgr = DataMgr(iFile)
+                if dMgr.parseInvData() == True:
+                    if gKeepFiles == True:
+                        self.moveInvFile(iFile)
                     else:
-                        self.moveErrorFile(iFile)
-                except Exception, e:
-                    logger.error('Error reading {0}:\n{1}'.format(iFile,e))
+                        os.remove(iFile)
+                else:
                     self.moveErrorFile(iFile)
 
 # --------------------------------------------
