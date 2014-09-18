@@ -543,8 +543,13 @@ class DataMgr:
 
     def __init__(self,aFile):
         self.file = aFile
-        json_data=open(self.file)
-        self.invData = json.load(json_data)
+        try:
+          json_data=open(self.file)
+          self.invData = json.load(json_data)
+          json_data.close()
+        except Exception, e:
+          raise e
+        
         logger.info("Processing data for client id %s."%self.invData['key'])
         logger.info("Processing file %s."%self.file)
 
@@ -707,14 +712,19 @@ class MPInventory:
         for iFile in self.files:
             if os.path.exists(iFile):
                 # Process the inv File
-                dMgr = DataMgr(iFile)
-                if dMgr.parseInvData() == True:
-                    if gKeepFiles == True:
-                        self.moveInvFile(iFile)
-                    else:
-                        os.remove(iFile)
-                else:
-                    self.moveErrorFile(iFile)
+                try:
+                  dMgr = DataMgr(iFile)
+                  if dMgr.parseInvData() == True:
+                      if gKeepFiles == True:
+                          self.moveInvFile(iFile)
+                      else:
+                          os.remove(iFile)
+                  else:
+                      self.moveErrorFile(iFile)
+                      
+                except Exception, e:
+                  logger.error('Error reading {0}:\n{1}'.format(iFile,e))
+                  self.moveErrorFile(iFile)
 
 # --------------------------------------------
 # Main Class
