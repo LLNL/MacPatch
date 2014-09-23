@@ -25,7 +25,7 @@
 
 '''
     Script: MPInventory.py
-    Version: 1.0.1
+    Version: 1.0.2
 '''
 
 import logging
@@ -221,7 +221,7 @@ class MPMySQL:
             return False
 
     def columnExists(self, column, table):
-        columns = columnsForTable(self,table)
+        columns = self.columnsForTable(self,table)
         if column.upper() in map(str.upper, columns):
             return True
         else:
