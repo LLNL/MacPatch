@@ -484,7 +484,16 @@ done:
     logit(lcl_vInfo, @"OS Info: (%@)",_osType);
 	if ([_osType isEqualToString:@"Mac OS X"]) {
 		if ([_defaults objectForKey:@"allowClient"]) {
-			if (![[_defaults objectForKey:@"allowClient"] isEqualToString:@"1"]) {
+
+            NSNumber *allowClientVal = [NSNumber numberWithInt:1];
+            if([[_defaults objectForKey:@"allowClient"] isKindOfClass:[NSString class]])
+            {
+                allowClientVal = [[_defaults objectForKey:@"allowClient"] integerValue];
+            } else if ([[_defaults objectForKey:@"allowClient"] isKindOfClass:[NSNumber class]]) {
+                allowClientVal = [_defaults objectForKey:@"allowClient"];
+            }
+
+			if ([allowClientVal isEqualToNumber:[NSNumber numberWithInt:0]]) {
 				logit(lcl_vInfo,@"Host is a Mac OS X Client and allowClient property is set to false. No updates will be applied.");
 				[self removeTaskRunning:kMPPatchUPDATE];
                 return;
@@ -495,7 +504,16 @@ done:
 	logit(lcl_vInfo, @"Validating server install status.");
 	if ([_osType isEqualToString:@"Mac OS X Server"]) {
 		if ([_defaults objectForKey:@"allowServer"]) {
-			if (![[_defaults objectForKey:@"allowServer"] isEqualToString:@"1"]) {
+
+            NSNumber *allowServerVal = [NSNumber numberWithInt:0];
+            if([[_defaults objectForKey:@"allowServer"] isKindOfClass:[NSString class]])
+            {
+                allowServerVal = [[_defaults objectForKey:@"allowServer"] integerValue];
+            } else if ([[_defaults objectForKey:@"allowServer"] isKindOfClass:[NSNumber class]]) {
+                allowServerVal = [_defaults objectForKey:@"allowServer"];
+            }
+
+			if ([allowServerVal isEqualToNumber:[NSNumber numberWithInt:0]]) {
 				logit(lcl_vInfo,@"Host is a Mac OS X Server and allowServer property is set to false. No updates will be applied.");
 				[self removeTaskRunning:kMPPatchUPDATE];
                 return;
