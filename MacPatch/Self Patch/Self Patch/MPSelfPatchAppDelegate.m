@@ -1473,6 +1473,7 @@ done:
     [arrayController willChangeValueForKey:@"arrangedObjects"];
 	[arrayController setContent:patches];
     [arrayController didChangeValueForKey:@"arrangedObjects"];
+    dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
 	[patch release];
     [patches release];
 }

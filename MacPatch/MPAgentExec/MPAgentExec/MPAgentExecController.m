@@ -488,7 +488,7 @@ done:
             NSNumber *allowClientVal = [NSNumber numberWithInt:1];
             if([[_defaults objectForKey:@"allowClient"] isKindOfClass:[NSString class]])
             {
-                allowClientVal = [[_defaults objectForKey:@"allowClient"] integerValue];
+                allowClientVal = [NSNumber numberWithInteger:[[_defaults objectForKey:@"allowClient"] integerValue]];
             } else if ([[_defaults objectForKey:@"allowClient"] isKindOfClass:[NSNumber class]]) {
                 allowClientVal = [_defaults objectForKey:@"allowClient"];
             }
@@ -508,7 +508,7 @@ done:
             NSNumber *allowServerVal = [NSNumber numberWithInt:0];
             if([[_defaults objectForKey:@"allowServer"] isKindOfClass:[NSString class]])
             {
-                allowServerVal = [[_defaults objectForKey:@"allowServer"] integerValue];
+                allowServerVal = [NSNumber numberWithInteger:[[_defaults objectForKey:@"allowServer"] integerValue]];
             } else if ([[_defaults objectForKey:@"allowServer"] isKindOfClass:[NSNumber class]]) {
                 allowServerVal = [_defaults objectForKey:@"allowServer"];
             }
@@ -1834,7 +1834,7 @@ done:
     NSURLResponse *response;
     MPNetConfig *mpnc = [[MPNetConfig alloc] init];
     MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
-    NSURLRequest *urlReq = [req buildDownloadRequest:[NSURL URLWithString:_url]];
+    NSURLRequest *urlReq = [req buildDownloadRequest:_url];
     NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
 
     if (dlErr) {

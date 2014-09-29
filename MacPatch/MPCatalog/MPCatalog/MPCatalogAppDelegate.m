@@ -579,7 +579,7 @@
         NSURLResponse *response;
         MPNetConfig *mpnc = [[MPNetConfig alloc] init];
         MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
-        NSURLRequest *urlReq = [req buildDownloadRequest:[NSURL URLWithString:_url]];
+        NSURLRequest *urlReq = [req buildDownloadRequest:_url];
         NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
 
         if (dlErr) {
@@ -681,7 +681,7 @@
     @catch ( NSException *ex ) {
         //do whatever you need to in case of a crash
         qlwarning(@"%@ is not a NSKeyedArchiver file. Open as a dictionary.\n%@",[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"],ex);
-        _a = [NSDictionary dictionaryWithContentsOfFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
+        _a = [NSArray arrayWithContentsOfFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
     }
 
     for (id item in _a) 
@@ -883,7 +883,7 @@
                     NSURLResponse *response;
                     MPNetConfig *mpnc = [[MPNetConfig alloc] init];
                     MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
-                    NSURLRequest *urlReq = [req buildDownloadRequest:[NSURL URLWithString:_url]];
+                    NSURLRequest *urlReq = [req buildDownloadRequest:_url];
                     NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
 
                     if (dlErr) {
