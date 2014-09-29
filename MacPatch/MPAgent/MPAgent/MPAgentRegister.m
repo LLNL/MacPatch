@@ -42,7 +42,6 @@
 - (BOOL)clientIsRegistered
 {
     BOOL result = FALSE;
-
     NSError *err = nil;
 
     //NSString *res = [mpws getRegisterAgent:aRegKey hostName:hostName clientKey:clientKey error:&err];

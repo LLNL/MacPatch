@@ -120,6 +120,8 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
         if (!profiles) {
             qlinfo(@"No profile data.");
             return;
+        } else {
+            qldebug(@"MP Profiles:%@",profiles);
         }
         NSMutableArray *profileIdentities = [[NSMutableArray alloc] init];
         NSMutableArray *profilesToRemove = [[NSMutableArray alloc] init];
@@ -130,6 +132,16 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
         // Install Profiles
         for (NSDictionary *p in profiles)
         {
+            if ([p objectForKey:@"profileIdentifier"] == (id)[NSNull null] || [[p objectForKey:@"profileIdentifier"] length] == 0 ) {
+                NSString *pName = @"NA";
+                if ([p objectForKey:@"id"]) {
+                    pName = [p objectForKey:@"id"];
+                }
+                qlerror(@"profileIdentifier is null. Skipping %@",pName);
+                qldebug(@"%@",p);
+                continue;
+            }
+            
             if ([self profileIsInstalledOnDisk:[p objectForKey:@"profileIdentifier"] installedProfiles:localProfiles])
             {
                 BOOL needsInstall = NO;
@@ -173,6 +185,7 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
                 }
             }
         }
+        
         // Build Profiles to Remove Array
         for (NSDictionary *rp in profiles)
         {
@@ -180,19 +193,24 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
                 [profileIdentities addObject:[rp objectForKey:@"profileIdentifier"]];
             }
         }
+        
         [profilesToRemove addObjectsFromArray:installedProfiles];
         [profilesToRemove removeObjectsInArray:profileIdentities];
-        qldebug(@"Profiles to remove %@",profilesToRemove);
-
+        
         // Remove Old Profiles
-        for (NSString *profileID in profilesToRemove)
+        if (profilesToRemove.count >= 1)
         {
-            if ([self removeProfile:profileID]) {
-                qlinfo(@"Profile %@ was removed.",profileID);
-            } else {
-                qlerror(@"Error, profile %@ was not removed.",profileID);
+            qldebug(@"Profiles to remove %@",profilesToRemove);
+            for (NSString *profileID in profilesToRemove)
+            {
+                if ([self removeProfile:profileID]) {
+                    qlinfo(@"Profile %@ was removed.",profileID);
+                } else {
+                    qlerror(@"Error, profile %@ was not removed.",profileID);
+                }
             }
         }
+        
         // Refresh MCX
         NSArray *cmdArgs = [NSArray arrayWithObjects:@"-n",@"root", nil];
         [[NSTask launchedTaskWithLaunchPath:@"/usr/bin/mcxrefresh" arguments:cmdArgs] waitUntilExit];
@@ -228,7 +246,10 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
     [[NSTask launchedTaskWithLaunchPath:@"/usr/bin/profiles" arguments:cmdArgs] waitUntilExit];
 
     if (![fm fileExistsAtPath:filePath]) {
+        qlerror(@"Could not find/read profile data from %@",filePath);
         return nil;
+    } else {
+        qldebug(@"Reading profiles file %@",filePath);
     }
 
     NSDictionary *profileDict = [NSDictionary dictionaryWithContentsOfFile:filePath];
@@ -238,14 +259,17 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
     {
         for (NSDictionary *p in [profileDict objectForKey:@"_computerlevel"])
         {
+            qldebug(@"Adding:\n%@",p);
             [profileIDs addObject:[p objectForKey:@"ProfileIdentifier"]];
         }
     } else {
+        qlinfo(@"No computerlevel profiles.");
         return nil;
     }
     // Quick Clean Up
-    [fm removeItemAtPath:filePath error:NULL];
-    return [NSArray arrayWithArray:profileIDs];
+    //[fm removeItemAtPath:filePath error:NULL];
+    qldebug(@"ProfileID: %@",profileIDs);
+    return [NSArray arrayWithArray:[profileIDs copy]];
 }
 
 - (NSArray *)readMPInstalledProfiles
@@ -376,14 +400,25 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 
 - (BOOL)profileIsInstalledOnDisk:(NSString *)profileID installedProfiles:(NSArray *)localProfiles
 {
+    if (profileID == (id)[NSNull null] || profileID.length == 0 ) {
+        qlerror(@"profileID is null. ");
+        return NO;
+    }
+    
     BOOL result = NO;
     for (NSString *pID in localProfiles)
     {
+        if (pID == (id)[NSNull null] || pID.length == 0 ) {
+            // We have a NULL, somehow
+            continue;
+        }
+        
         if ([[pID uppercaseString] isEqualToString:[profileID uppercaseString]]) {
             result = YES;
             break;
         }
     }
+    
     return result;
 }
 
