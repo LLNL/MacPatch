@@ -45,6 +45,9 @@
     __weak NSTextField *compressPkgStatus;
     __weak NSTextField *postPkgStatus;
     __weak NSButton *uploadButton;
+    // Options
+    __weak NSTextField *identityName;
+    __weak NSButton *signPKG;
 
     IBOutlet NSPanel *authSheet;
     __weak NSTextField *authUserName;
@@ -75,6 +78,9 @@
 @property (weak) IBOutlet NSTextField *flattenPkgStatus;
 @property (weak) IBOutlet NSTextField *compressPkgStatus;
 @property (weak) IBOutlet NSTextField *postPkgStatus;
+
+@property (weak) IBOutlet NSTextField *identityName;
+@property (weak) IBOutlet NSButton *signPKG;
 
 
 

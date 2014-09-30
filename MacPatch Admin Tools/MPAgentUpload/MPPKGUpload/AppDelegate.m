@@ -33,6 +33,7 @@
 
 - (void)extractPKG:(NSString *)aPath;
 - (void)writePlistForPackage:(NSString *)aPlist;
+- (void)showAlertForMissingIdentity;
 
 @end
 
@@ -55,6 +56,8 @@
 @synthesize compressPkgStatus;
 @synthesize postPkgStatus;
 @synthesize uploadButton;
+@synthesize identityName;
+@synthesize signPKG;
 @synthesize tmpDir = _tmpDir;
 @synthesize agentID = _agentID;
 @synthesize agentDict = _agentDict;
@@ -245,6 +248,18 @@
 {
     @autoreleasepool
     {
+        if (signPKG.state == NSOnState) {
+            if ([identityName.stringValue length] <= 0) {
+                NSAlert *alert = [[NSAlert alloc] init];
+                [alert setAlertStyle:NSWarningAlertStyle];
+                [alert setMessageText:@"Missing Identity"];
+                [alert setInformativeText:@"You have choosen to sign the packages but did not enter an identity name. Please enter an identity name and try again."];
+                [alert addButtonWithTitle:@"OK"];
+                [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
+                return;
+            }
+        }
+        
         [self resetInterface];
 
         NSString *_host = serverAddress.stringValue;
@@ -283,7 +298,7 @@
         {
             NSLog(@"%@",error.localizedDescription);
             [progressBar stopAnimation:progressBar];
-            [agentConfigImage setImage:[NSImage imageNamed:@"NORoom"]];
+            [agentConfigImage setImage:[NSImage imageNamed:@"NoIcon"]];
             [uploadButton setEnabled:YES];
             [progressBar stopAnimation:progressBar];
             return;
@@ -292,18 +307,18 @@
         NSError *bErr = nil;
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:&bErr];
         if (bErr) {
-            [agentConfigImage setImage:[NSImage imageNamed:@"NORoom"]];
+            [agentConfigImage setImage:[NSImage imageNamed:@"NoIcon"]];
             [uploadButton setEnabled:YES];
             [progressBar stopAnimation:progressBar];
             return;
         }
-        [agentConfigImage setImage:[NSImage imageNamed:@"YESRoom"]];
+        [agentConfigImage setImage:[NSImage imageNamed:@"YesIcon"]];
         result = [json objectForKey:@"result"];
 
         bErr = nil;
         NSString *_reqID = [self getRequestID:authUserName.stringValue error:&bErr];
         if (bErr) {
-            [agentConfigImage setImage:[NSImage imageNamed:@"NORoom"]];
+            [agentConfigImage setImage:[NSImage imageNamed:@"NoIcon"]];
             [uploadButton setEnabled:YES];
             [progressBar stopAnimation:progressBar];
             return;
@@ -317,12 +332,12 @@
         [writeConfigImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
         pkgs1 = [self writePlistForPackage:result error:&bErr];
         if (bErr) {
-            [writeConfigImage setImage:[NSImage imageNamed:@"NORoom"]];
+            [writeConfigImage setImage:[NSImage imageNamed:@"NoIcon"]];
             [uploadButton setEnabled:YES];
             [progressBar stopAnimation:progressBar];
             return;
         } else {
-            [writeConfigImage setImage:[NSImage imageNamed:@"YESRoom"]];
+            [writeConfigImage setImage:[NSImage imageNamed:@"YesIcon"]];
         }
 
         NSArray *pkgs2;
@@ -331,12 +346,12 @@
         [flattenPackagesImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
         pkgs2 = [self flattenPackages:pkgs1 error:&bErr];
         if (bErr) {
-            [flattenPackagesImage setImage:[NSImage imageNamed:@"NORoom"]];
+            [flattenPackagesImage setImage:[NSImage imageNamed:@"NoIcon"]];
             [uploadButton setEnabled:YES];
             [progressBar stopAnimation:progressBar];
             return;
         } else {
-            [flattenPackagesImage setImage:[NSImage imageNamed:@"YESRoom"]];
+            [flattenPackagesImage setImage:[NSImage imageNamed:@"YesIcon"]];
         }
 
         NSArray *pkgs3;
@@ -345,12 +360,12 @@
         [compressPackgesImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
         pkgs3 = [self compressPackages:pkgs2 error:&bErr];
         if (bErr) {
-            [compressPackgesImage setImage:[NSImage imageNamed:@"NORoom"]];
+            [compressPackgesImage setImage:[NSImage imageNamed:@"NoIcon"]];
             [uploadButton setEnabled:YES];
             [progressBar stopAnimation:progressBar];
             return;
         } else {
-            [compressPackgesImage setImage:[NSImage imageNamed:@"YESRoom"]];
+            [compressPackgesImage setImage:[NSImage imageNamed:@"YesIcon"]];
         }
 
         [postPackagesImage setImage:[NSImage imageNamed:NSImageNameRemoveTemplate]];
@@ -383,21 +398,42 @@
     [NSTask launchedTaskWithLaunchPath:@"/usr/sbin/pkgutil" arguments:tArgs2];
     [NSThread sleepForTimeInterval:2.0];
 
-    [extractImage setImage:[NSImage imageNamed:@"YESRoom"]];
+    [extractImage setImage:[NSImage imageNamed:@"YesIcon"]];
 }
 
 - (void)flattenPKG:(NSString *)aPKG
 {
-    NSString *pkgName = [aPKG lastPathComponent];
+    BOOL signIt = NO;
+    if (signPKG.state == NSOnState) {
+        signIt = YES;
+    }
+    
+    NSString *pkgName;
+    if (signIt == YES) {
+        pkgName = [NSString stringWithFormat:@"sign_%@",[aPKG lastPathComponent]];
+    } else {
+        pkgName = [aPKG lastPathComponent];
+    }
+    
     NSString *pkgExName;
     if ([[pkgName pathExtension] isEqualToString:@"pkg"]) {
         pkgExName = [_tmpDir stringByAppendingPathComponent:pkgName];
     } else {
         pkgExName = [_tmpDir stringByAppendingPathComponent:[pkgName stringByAppendingPathExtension:@"pkg"]];
     }
+    
+    // Flatten the PKG
     NSArray *tArgs2 = [NSArray arrayWithObjects:@"--flatten", aPKG, pkgExName, nil];
     [NSTask launchedTaskWithLaunchPath:@"/usr/sbin/pkgutil" arguments:tArgs2];
     [NSThread sleepForTimeInterval:1.0];
+    
+    // If Sign, then sign each pkg
+    if (signIt == YES) {
+        NSString *signedPkgName = [pkgExName stringByReplacingOccurrencesOfString:@"sign_" withString:@""];
+        NSArray *sArgs = [NSArray arrayWithObjects:@"--sign", identityName.stringValue, pkgExName, signedPkgName, nil];
+        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/productsign" arguments:sArgs];
+        [NSThread sleepForTimeInterval:1.0];
+    }
 }
 
 - (void)compressPKG:(NSString *)aPKG
@@ -508,7 +544,7 @@
 {
     if (!aReqID) {
         NSLog(@"Error: request id was nil.");
-        [postPackagesImage setImage:[NSImage imageNamed:@"NORoom"]];
+        [postPackagesImage setImage:[NSImage imageNamed:@"NoIcon"]];
         return;
     }
 
@@ -584,7 +620,7 @@
             NSLog(@"%@",error.localizedDescription);
         }
 
-        [postPackagesImage setImage:[NSImage imageNamed:@"NORoom"]];
+        [postPackagesImage setImage:[NSImage imageNamed:@"NoIcon"]];
         return;
     }
 
@@ -594,15 +630,15 @@
     if ([result objectForKey:@"errorno"]) {
         if ([[result objectForKey:@"errorno"] intValue] != 0) {
             [postPkgStatus setStringValue:[result objectForKey:@"errormsg"]];
-            [postPackagesImage setImage:[NSImage imageNamed:@"NORoom"]];
+            [postPackagesImage setImage:[NSImage imageNamed:@"NoIcon"]];
             return;
         } else {
-            [postPackagesImage setImage:[NSImage imageNamed:@"YESRoom"]];
+            [postPackagesImage setImage:[NSImage imageNamed:@"YesIcon"]];
             return;
         }
     }
 
-    [postPackagesImage setImage:[NSImage imageNamed:@"NORoom"]];
+    [postPackagesImage setImage:[NSImage imageNamed:@"NoIcon"]];
 }
 
 - (void)postAgentPKGData:(NSArray *)aPKGs
@@ -679,15 +715,15 @@
     if ([result objectForKey:@"errorno"]) {
         if ([[result objectForKey:@"errorno"] intValue] != 0) {
             [postPkgStatus setStringValue:[result objectForKey:@"errormsg"]];
-            [postPackagesImage setImage:[NSImage imageNamed:@"NORoom"]];
+            [postPackagesImage setImage:[NSImage imageNamed:@"NoIcon"]];
             return NO;
         } else {
-            [postPackagesImage setImage:[NSImage imageNamed:@"YESRoom"]];
+            [postPackagesImage setImage:[NSImage imageNamed:@"YesIcon"]];
             return YES;
         }
     }
 
-    [postPackagesImage setImage:[NSImage imageNamed:@"NORoom"]];
+    [postPackagesImage setImage:[NSImage imageNamed:@"NoIcon"]];
     return NO;
 }
 
