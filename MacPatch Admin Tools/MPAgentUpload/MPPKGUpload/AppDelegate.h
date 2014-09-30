@@ -25,6 +25,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class PreferenceController;
+
 @interface AppDelegate : NSObject <NSApplicationDelegate, NSURLSessionDelegate>
 {
     NSFileManager *fm;
@@ -55,6 +57,8 @@
     __weak NSTextField *authStatus;
     __weak NSProgressIndicator *authProgressWheel;
     __weak NSButton *authRequestButton;
+    
+    PreferenceController *preferenceController;
 }
 
 @property (assign) IBOutlet NSWindow *window;

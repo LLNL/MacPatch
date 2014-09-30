@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F18F44A19DB58F400CF0733 /* PreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F18F44919DB58F400CF0733 /* PreferenceController.m */; };
+		8F18F44C19DB590900CF0733 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F18F44B19DB590900CF0733 /* Preferences.xib */; };
 		8F2E697219226D2B001BF9D6 /* WebRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2E697119226D2B001BF9D6 /* WebRequest.m */; };
 		8F2E697819229508001BF9D6 /* MPPkgUpLdIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F2E697719229508001BF9D6 /* MPPkgUpLdIcon.png */; };
 		8F60C1D318FEFB1D00D57C2E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F60C1D218FEFB1D00D57C2E /* Cocoa.framework */; };
@@ -22,6 +24,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8F18F44819DB58F400CF0733 /* PreferenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferenceController.h; sourceTree = "<group>"; };
+		8F18F44919DB58F400CF0733 /* PreferenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferenceController.m; sourceTree = "<group>"; };
+		8F18F44B19DB590900CF0733 /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		8F2E697019226D2B001BF9D6 /* WebRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRequest.h; sourceTree = "<group>"; };
 		8F2E697119226D2B001BF9D6 /* WebRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebRequest.m; sourceTree = "<group>"; };
 		8F2E697719229508001BF9D6 /* MPPkgUpLdIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MPPkgUpLdIcon.png; sourceTree = "<group>"; };
@@ -103,9 +108,12 @@
 				8F2E697119226D2B001BF9D6 /* WebRequest.m */,
 				8F6462FD19082BB200230A97 /* MPCrypto.h */,
 				8F6462FE19082BB200230A97 /* MPCrypto.m */,
+				8F18F44819DB58F400CF0733 /* PreferenceController.h */,
+				8F18F44919DB58F400CF0733 /* PreferenceController.m */,
 				8F6463001908840700230A97 /* NSString+Helper.h */,
 				8F6463011908840700230A97 /* NSString+Helper.m */,
 				8F60C1E718FEFB1D00D57C2E /* MainMenu.xib */,
+				8F18F44B19DB590900CF0733 /* Preferences.xib */,
 				8F60C1EA18FEFB1D00D57C2E /* Images.xcassets */,
 				8F60C1D918FEFB1D00D57C2E /* Supporting Files */,
 			);
@@ -178,6 +186,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F18F44C19DB590900CF0733 /* Preferences.xib in Resources */,
 				8F2E697819229508001BF9D6 /* MPPkgUpLdIcon.png in Resources */,
 				8F60C1DD18FEFB1D00D57C2E /* InfoPlist.strings in Resources */,
 				8F60C1EB18FEFB1D00D57C2E /* Images.xcassets in Resources */,
@@ -196,6 +205,7 @@
 			files = (
 				8F6462FF19082BB200230A97 /* MPCrypto.m in Sources */,
 				8F60C1E618FEFB1D00D57C2E /* AppDelegate.m in Sources */,
+				8F18F44A19DB58F400CF0733 /* PreferenceController.m in Sources */,
 				8F60C1DF18FEFB1D00D57C2E /* main.m in Sources */,
 				8F6463021908840700230A97 /* NSString+Helper.m in Sources */,
 				8F2E697219226D2B001BF9D6 /* WebRequest.m in Sources */,

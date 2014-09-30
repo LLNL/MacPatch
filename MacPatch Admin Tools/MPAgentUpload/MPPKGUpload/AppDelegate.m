@@ -23,6 +23,7 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 #import "AppDelegate.h"
+#import "PreferenceController.h"
 #import "MPCrypto.h"
 #import "NSString+Helper.h"
 #import "WebRequest.h"
@@ -30,6 +31,10 @@
 #define MPADM_URI @"Service/MPAdminService.cfc"
 
 @interface AppDelegate (Private)
+
+- (IBAction)showPreferencePanel:(id)sender;
+- (void)populateFromDefaults;
+- (void)populateDefaults;
 
 - (void)extractPKG:(NSString *)aPath;
 - (void)writePlistForPackage:(NSString *)aPlist;
@@ -77,11 +82,82 @@
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(authTextDidChange:) name:NSControlTextDidChangeNotification object:authUserPass];
     [center addObserver:self selector:@selector(hostTextDidChange:) name:NSControlTextDidChangeNotification object:serverAddress];
+    //[self populateFromDefaults];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
+}
+
+- (IBAction)showPreferencePanel:(id)sender
+{
+    // Is preferenceController nil?
+    if (!preferenceController) {
+        preferenceController = [[PreferenceController alloc] init];
+    }
+    [preferenceController showWindow:self];
+}
+
+- (void)populateFromDefaults
+{
+    // User Defaults
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    if ([d objectForKey:@"dServerAddressState"]) {
+        if ([d objectForKey:@"dServerAddress"]) {
+            [serverAddress setStringValue:[d objectForKey:@"dServerAddress"]];
+        }
+    }
+    if ([d objectForKey:@"dServerPortState"]) {
+        if ([d objectForKey:@"dServerPort"]) {
+            [serverPort setStringValue:[d objectForKey:@"dServerPort"]];
+        }
+    }
+    if ([d objectForKey:@"dServerSSLState"]) {
+        if ([d objectForKey:@"dServerSSL"]) {
+            [useSSL setState:(NSInteger)[d objectForKey:@"dServerSSL"]];
+        }
+    }
+    if ([d objectForKey:@"dIdentityState"]) {
+        if ([d objectForKey:@"dIdentity"]) {
+            [identityName setStringValue:[d objectForKey:@"dIdentity"]];
+        }
+    }
+}
+
+- (void)populateDefaults
+{
+    // User Defaults
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    if ([d objectForKey:@"dServerAddressState"]) {
+        if ((NSInteger)[d objectForKey:@"dServerAddressState"] == NSOnState) {
+            [d setObject:serverAddress.stringValue forKey:@"dServerAddress"];
+        } else {
+            [d removeObjectForKey:@"dServerAddress"];
+        }
+    }
+    if ([d objectForKey:@"dServerPort"]) {
+        if ((NSInteger)[d objectForKey:@"dServerPortState"] == NSOnState) {
+            [d setObject:serverPort.stringValue forKey:@"dServerPort"];
+        } else {
+            [d removeObjectForKey:@"dServerPort"];
+        }
+    }
+    if ([d objectForKey:@"dServerPort"]) {
+        if ((NSInteger)[d objectForKey:@"dServerSSLState"] == NSOnState) {
+            [d setInteger:useSSL.state forKey:@"dServerSSL"];
+        } else {
+            [d removeObjectForKey:@"dServerSSL"];
+        }
+    }
+    if ([d objectForKey:@"dServerPort"]) {
+        if ((NSInteger)[d objectForKey:@"dIdentityState"] == NSOnState) {
+            [d setObject:identityName.stringValue forKey:@"dIdentity"];
+        } else {
+            [d removeObjectForKey:@"dIdentity"];
+        }
+    }
+    [d synchronize];
 }
 
 #pragma mark - sheet
@@ -367,7 +443,19 @@
         } else {
             [compressPackgesImage setImage:[NSImage imageNamed:@"YesIcon"]];
         }
-
+        
+        NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+        if ([d objectForKey:@"dDoNotUpload"]) {
+            if ([[d objectForKey:@"dDoNotUpload"] integerValue] == 1)
+            {
+                NSString *p = [[pkgs3 objectAtIndex:0] stringByDeletingLastPathComponent];
+                [[NSWorkspace sharedWorkspace] openFile:p];
+                [progressBar stopAnimation:progressBar];
+                [uploadButton setEnabled:YES];
+                return;
+            }
+        }
+        
         [postPackagesImage setImage:[NSImage imageNamed:NSImageNameRemoveTemplate]];
         [postPackagesImage performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
         [self postFiles:(NSArray *)pkgs3 requestID:_reqID userID:authUserName.stringValue];
@@ -410,7 +498,7 @@
     
     NSString *pkgName;
     if (signIt == YES) {
-        pkgName = [NSString stringWithFormat:@"sign_%@",[aPKG lastPathComponent]];
+        pkgName = [NSString stringWithFormat:@"toSign_%@",[aPKG lastPathComponent]];
     } else {
         pkgName = [aPKG lastPathComponent];
     }
@@ -429,7 +517,7 @@
     
     // If Sign, then sign each pkg
     if (signIt == YES) {
-        NSString *signedPkgName = [pkgExName stringByReplacingOccurrencesOfString:@"sign_" withString:@""];
+        NSString *signedPkgName = [pkgExName stringByReplacingOccurrencesOfString:@"toSign_" withString:@""];
         NSArray *sArgs = [NSArray arrayWithObjects:@"--sign", identityName.stringValue, pkgExName, signedPkgName, nil];
         [NSTask launchedTaskWithLaunchPath:@"/usr/bin/productsign" arguments:sArgs];
         [NSThread sleepForTimeInterval:1.0];
