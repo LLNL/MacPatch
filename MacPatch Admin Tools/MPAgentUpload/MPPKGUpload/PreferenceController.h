@@ -27,10 +27,6 @@
 
 
 @interface PreferenceController : NSWindowController 
-{
-    //IBOutlet NSButton *doNotUploadCheckBox;
-}
 
-//- (IBAction)changeDoNotUpload:(id)sender;
 
 @end

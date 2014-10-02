@@ -43,25 +43,6 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    
-    /*
-	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
-    if ([d objectForKey:@"dDoNotUpload"]) {
-        [doNotUploadCheckBox setState:[d integerForKey:@"dDoNotUpload"]];
-    } else {
-        [doNotUploadCheckBox setState:NSOnState];
-    }
-     */
 }
-
-/*
-- (IBAction)changeDoNotUpload:(id)sender
-{
-    NSInteger state = (int)[doNotUploadCheckBox state];
-    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
-    [d setInteger:state forKey:@"dDoNotUploadState"];
-    [d synchronize];
-}
-*/
 
 @end

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="14A361c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6245" systemVersion="14A379a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6246"/>
+        <deployment defaultVersion="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6245"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CHMenuViewController">
@@ -117,8 +117,5 @@
                 </textField>
             </subviews>
         </customView>
-        <byteCountFormatter id="A5K-ZX-vdU">
-            <byteCountFormatterUnits key="allowedUnits" default="YES" bytes="YES" kb="YES" mb="YES" gb="YES" tb="YES" pb="YES" eb="YES" zb="YES" ybOrHigher="YES" all="YES"/>
-        </byteCountFormatter>
     </objects>
 </document>
