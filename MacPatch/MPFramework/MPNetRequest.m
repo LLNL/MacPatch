@@ -326,7 +326,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     qldebug(@"buildDownloadRequest tempFilePath: %@",_dlFilePath);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setTimeoutInterval:30.0];
+    [request setTimeoutInterval:15.0];
     [request setValue:@"" forHTTPHeaderField:@"Accept-Encoding"];
     [request setURL:[NSURL URLWithString:(NSString *)theURL]];
     return request;
