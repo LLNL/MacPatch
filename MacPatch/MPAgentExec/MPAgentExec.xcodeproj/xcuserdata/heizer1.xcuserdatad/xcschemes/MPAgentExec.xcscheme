@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-se"
+            argument = "-et MPServerList"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

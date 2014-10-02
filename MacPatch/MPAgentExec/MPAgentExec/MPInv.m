@@ -1653,17 +1653,25 @@ done:
             mpServerListInfo = [[NSMutableDictionary alloc] init];
             [mpServerListInfo setObject:[d objectForKey:@"name"] forKey:@"name"];
             if ([d objectForKey:@"version"]) {
-                [mpServerListInfo setObject:[[d objectForKey:@"version"] stringValue] forKey:@"version"];
+                if ([[d objectForKey:@"version"] isKindOfClass:[NSNumber class]]) {
+                    [mpServerListInfo setObject:[[d objectForKey:@"version"] stringValue] forKey:@"version"];
+                } else {
+                    [mpServerListInfo setObject:[d objectForKey:@"version"] forKey:@"version"];
+                }
             } else {
                 [mpServerListInfo setObject:@"0" forKey:@"version"];
             }
             if ([d objectForKey:@"id"]) {
-                [mpServerListInfo setObject:[[d objectForKey:@"id"] stringValue] forKey:@"id"];
+                if ([[d objectForKey:@"id"] isKindOfClass:[NSNumber class]]) {
+                    [mpServerListInfo setObject:[[d objectForKey:@"id"] stringValue] forKey:@"id"];
+                } else {
+                    [mpServerListInfo setObject:[d objectForKey:@"id"] forKey:@"id"];
+                }
             } else {
                 [mpServerListInfo setObject:@"0" forKey:@"id"];
             }
 
-            NSArray *mpServerInfo = [NSArray arrayWithObject:mpServerListInfo];
+            mpServerInfo = [NSArray arrayWithObject:mpServerListInfo];
         } else {
             logit(lcl_vError, @"name object does not exist.");
         }

@@ -250,7 +250,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     qldebug(@"%@",theURL);
     [request setURL:[NSURL URLWithString:theURL]];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setTimeoutInterval:30.0];
+    [request setTimeoutInterval:15.0];
     [request setHTTPMethod:self.httpMethod];
 
     NSString *boundary = @"MP_BOUNDARY_STRING";
@@ -304,7 +304,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     }
     qldebug(@"%@",theURL);
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setTimeoutInterval:30.0];
+    [request setTimeoutInterval:15.0];
     [request setURL:[NSURL URLWithString:(NSString *)theURL]];
     [request setHTTPMethod:@"GET"];
     return request;
