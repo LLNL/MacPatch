@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-et MPServerList"
+            argument = "-V -g iLoad"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
