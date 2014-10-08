@@ -32,7 +32,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"2.0.1"
+#define APPVERSION	@"2.0.2"
 #define APPNAME		@"MPAgentExec"
 
 void usage(void);
@@ -263,6 +263,7 @@ int main (int argc, char * argv[])
                 break;
             case 7:
                 // Install Using SW Group Name ID
+                result = [controller installSoftwareTasksForGroup:argType];
                 break;
             case 8:
                 // Install Using SW Task ID
