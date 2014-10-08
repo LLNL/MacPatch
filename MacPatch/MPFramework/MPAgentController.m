@@ -413,9 +413,9 @@ done:
 	NSString *_osType = nil;
 	_osType = [[MPSystemInfo osVersionInfo] objectForKey:@"ProductName"];
 	if ([_osType isEqualToString:@"Mac OS X"]) {
-		if ([_defaults objectForKey:@"allowClient"]) {
-			if (![[_defaults objectForKey:@"allowClient"] isEqualToString:@"1"]) {
-				logit(lcl_vInfo,@"Host is a Mac OS X Client and allowClient property is set to false. No updates will be applied.");
+		if ([_defaults objectForKey:@"AllowClient"]) {
+			if (![[_defaults objectForKey:@"AllowClient"] isEqualToString:@"1"]) {
+				logit(lcl_vInfo,@"Host is a Mac OS X Client and AllowClient property is set to false. No updates will be applied.");
 				[self removeTaskRunning:kMPPatchUPDATE];
                 return;
 			}
@@ -424,14 +424,14 @@ done:
 
 	logit(lcl_vInfo, @"Validating server install status.");
 	if ([_osType isEqualToString:@"Mac OS X Server"]) {
-		if ([_defaults objectForKey:@"allowServer"]) {
-			if (![[_defaults objectForKey:@"allowServer"] isEqualToString:@"1"]) {
-				logit(lcl_vInfo,@"Host is a Mac OS X Server and allowServer property is set to false. No updates will be applied.");
+		if ([_defaults objectForKey:@"AllowServer"]) {
+			if (![[_defaults objectForKey:@"AllowServer"] isEqualToString:@"1"]) {
+				logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is set to false. No updates will be applied.");
 				[self removeTaskRunning:kMPPatchUPDATE];
                 return;
 			}
 		} else {
-			logit(lcl_vInfo,@"Host is a Mac OS X Server and allowServer property is not defined. No updates will be applied.");
+			logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is not defined. No updates will be applied.");
 			[self removeTaskRunning:kMPPatchUPDATE];
             return;
 		}
@@ -859,9 +859,9 @@ done:
 	NSString *_osType = nil;
 	_osType = [[MPSystemInfo osVersionInfo] objectForKey:@"ProductName"];
 	if ([_osType isEqualToString:@"Mac OS X"]) {
-		if ([_defaults objectForKey:@"allowClient"]) {
-			if (![[_defaults objectForKey:@"allowClient"] isEqualToString:@"1"]) {
-				logit(lcl_vInfo,@"Host is a Mac OS X Client and allowClient property is set to false. No updates will be applied.");
+		if ([_defaults objectForKey:@"AllowClient"]) {
+			if (![[_defaults objectForKey:@"AllowClient"] isEqualToString:@"1"]) {
+				logit(lcl_vInfo,@"Host is a Mac OS X Client and AllowClient property is set to false. No updates will be applied.");
 				[self removeTaskRunning:kMPPatchUPDATE];
                 [self setErrorCode:0];
                 return;
@@ -871,15 +871,15 @@ done:
     
 	logit(lcl_vInfo, @"Validating server install status.");
 	if ([_osType isEqualToString:@"Mac OS X Server"]) {
-		if ([_defaults objectForKey:@"allowServer"]) {
-			if (![[_defaults objectForKey:@"allowServer"] isEqualToString:@"1"]) {
-				logit(lcl_vInfo,@"Host is a Mac OS X Server and allowServer property is set to false. No updates will be applied.");
+		if ([_defaults objectForKey:@"AllowServer"]) {
+			if (![[_defaults objectForKey:@"AllowServer"] isEqualToString:@"1"]) {
+				logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is set to false. No updates will be applied.");
 				[self removeTaskRunning:kMPPatchUPDATE];
                 [self setErrorCode:0];
                 return;
 			}	
 		} else {
-			logit(lcl_vInfo,@"Host is a Mac OS X Server and allowServer property is not defined. No updates will be applied.");
+			logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is not defined. No updates will be applied.");
 			[self removeTaskRunning:kMPPatchUPDATE];
             [self setErrorCode:0];
             return;

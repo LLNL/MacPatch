@@ -67,8 +67,8 @@ int main (int argc, char * argv[])
                 {"AVInfo"				,no_argument	    ,0, 'a'},
                 {"AVUpdate"				,no_argument	    ,0, 'U'},
                 {"AgentUpdate"			,no_argument		,0, 'G'},
-                {"allowClient"			,no_argument	    ,0, 'C'},
-                {"allowServer"			,no_argument	    ,0, 'S'},
+                {"AllowClient"			,no_argument	    ,0, 'C'},
+                {"AllowServer"			,no_argument	    ,0, 'S'},
                 {"iload"				,no_argument	    ,0, 'i'},
                 {"FORCERUN"				,no_argument		,0, 'F'},
                 // Inventory
@@ -123,10 +123,10 @@ int main (int argc, char * argv[])
                         a_Type = 5;
                         break;
                     case 'C':
-                        _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"allowClient"];
+                        _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"AllowClient"];
                         break;
                     case 'S':
-                        _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"allowServer"];
+                        _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"AllowServer"];
                         break;
                     case 't':
                         argType = [NSString stringWithUTF8String:optarg];
