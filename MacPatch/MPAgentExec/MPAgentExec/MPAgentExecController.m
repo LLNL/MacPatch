@@ -1743,7 +1743,20 @@ done:
 
     MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
-    NSArray *tasks = [mpws getSWTasksForGroup:aGroupName error:&wsErr];
+    id tasksRaw = [mpws getSWTasksForGroup:aGroupName error:&wsErr];
+    NSArray *tasks;
+    if ([tasksRaw objectForKey:@"Tasks"])
+    {
+        tasks = [tasksRaw objectForKey:@"Tasks"];
+        if ([tasks count] <= 0) {
+            qlerror(@"Group (%@) contains no tasks.",aGroupName);
+            return 0;
+        }
+    } else {
+        qlerror(@"No tasks for group %@ were found.",aGroupName);
+        return 1;
+    }
+    
     if (wsErr) {
         qlerror(@"There was an error getting software tasks for group %@.",aGroupName);
         return 1;
