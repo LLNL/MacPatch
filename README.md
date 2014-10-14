@@ -17,7 +17,7 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 * End-User Self Patch
 * Software Catalog
 
-## Version 2.5.0 Beta
+## Version 2.5.0
 
 ###What's New
 
