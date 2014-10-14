@@ -10,5 +10,8 @@ aptitude update
 aptitude install -y $LIST_OF_APPS
 
 # Python Modules
+pip install plistlib
+pip install biplist
 pip install requests
 pip install python-crontab
+pip install argparse

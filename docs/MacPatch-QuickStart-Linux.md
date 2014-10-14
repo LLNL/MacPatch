@@ -31,7 +31,7 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 	sudo yum install gcc-c++
 	sudo yum install git
 	sudo yum install openssl-devel
-	sudo java-1.7.0-openjdk-devel
+	sudo yum install java-1.7.0-openjdk-devel
 	sudo yum install libxml2-devel
 	sudo yum install bzip2
 	sudo yum install bzip2-libs
@@ -62,9 +62,11 @@ Python v 2.7.x is required.*RedHat & CentOS 6.5* will need to have python 2.7 in
 
 ##### PIP (Python Modules)
 
-	pip install requests
-	pip install python-crontab
-	pip install argparse
+    pip install plistlib
+    pip install biplist
+    pip install requests
+    pip install python-crontab
+    pip install argparse
 
 ##Download and build the Server software
 To download and build the MacPatch server software is just a few Terminal commands. Run the following commands to build and install the software. 
@@ -102,12 +104,15 @@ Run the following commands via the Terminal.app.
 	mysql> CREATE USER 'mpdbro'@'%' IDENTIFIED BY 'Password';
 	mysql> GRANT SELECT ON MacPatchDB.* TO 'mpdbro'@'%';
 	mysql> SET GLOBAL log_bin_trust_function_creators = 1;
-	mysql> FLUSH PRIVILEGES;**Delete MySQL anonymous accounts**
+	mysql> FLUSH PRIVILEGES;
+
+**Delete MySQL anonymous accounts**
 
 	mysql> DROP USER ''@'localhost';
 	mysql> DROP USER ''@'host_name';
 	mysql> quit
-	**Load Database Schema**
+	
+**Load Database Schema**
 
 The database schema files are located on the MacPatch server in the **/Library/MacPatch/Server/conf/Database/** directory. To load the tables and the views, copy the **MacPatchDB_Tables.sql** and **MacPatchDB_Views.sql** files to the Database host. The following commands are for a server that is also hosting the MacPatch database.
 
@@ -164,7 +169,11 @@ The MacPatch server has five configuration script and should be run in the given
 
 ### Download Content - 
 
-##### Apple UpdatesApple patch content will download eventually on it's own cycle, but for the first time it's recommended to download it manually.Run the following command via the Terminal.app on the *Master* MacPatch server.
+##### Apple Updates
+
+Apple patch content will download eventually on it's own cycle, but for the first time it's recommended to download it manually.
+
+Run the following command via the Terminal.app on the *Master* MacPatch server.
 
 	sudo -s _appserver /Library/MacPatch/Server/conf/scripts/MPSUSPatchSync.py --plist /Library/MacPatch/Server/conf/etc/gov.llnl.mp.patchloader.plist
 

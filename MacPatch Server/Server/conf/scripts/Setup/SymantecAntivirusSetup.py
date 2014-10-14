@@ -27,11 +27,12 @@
   MacPatch SAV Defs Sync Setup Script
   MacPatch Version 2.5.x
   
-  Script Version 1.1.0
+  Script Version 1.1.1
 '''
 
 import os
 import plistlib
+import biplist
 import platform
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
@@ -64,13 +65,38 @@ else:
 # Write the Plist With Changes	
 # ----------------------------------
 '''
-theFile = MP_SRV_BASE + "/conf/etc/gov.llnl.mp.AVDefsSync.plist"
-prefs = plistlib.readPlist(theFile)
+
+def isBinaryPlist(pathOrFile):
+    result = True
+    didOpen = 0
+    if isinstance(pathOrFile, (str, unicode)):
+        pathOrFile = open(pathOrFile)
+        didOpen = 1
+    header = pathOrFile.read(8)
+    pathOrFile.seek(0)
+    if header == '<?xml ve' or header[2:] == '<?xml ': #XML plist file, without or with BOM 
+        result = False
+    elif header == 'bplist00': #binary plist file
+        result = True
+
+    return result
+
+theFile = MP_SRV_BASE + "/conf/etc/gov.llnl.mpavdl.plist"
+isBinPlist = isBinaryPlist(theFile)
+
+if isBinPlist === True:
+	prefs = biplist.readPlist(theFile)
+else:
+	prefs = plistlib.readPlist(theFile)
+
 prefs['MPServerAddress'] = server_name
 prefs['MPServerSSL'] = str(server_ssl)
 prefs['MPServerPort'] = str(server_port)
 try:
-	plistlib.writePlist(prefs,theFile)	
+	if isBinPlist === True:
+		biplist.writePlist(prefs,theFile)	
+	else:
+		plistlib.writePlist(prefs,theFile)	
 except Exception, e:
 	print("Error: %s" % e)	
 
@@ -81,13 +107,13 @@ except Exception, e:
 # ----------------------------------
 '''
 if OS_TYPE == "Darwin":
-	if os.path.exists("/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist"):
-		if os.path.exists("/Library/LaunchDaemons/gov.llnl.mploader.plist"):
-			os.remove("/Library/LaunchDaemons/gov.llnl.mploader.plist")
+	if os.path.exists("/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist"):
+		if os.path.exists("/Library/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist"):
+			os.remove("/Library/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist")
 		
-		os.symlink("/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist","/Library/LaunchDaemons/gov.llnl.mploader.plist")
-		os.chown("/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist", 0, 0)
-		os.chmod("/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist", 0644)
+		os.symlink("/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mploader.plist","/Library/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist")
+		os.chown("/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist", 0, 0)
+		os.chmod("/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.AVDefsSync.plist", 0644)
 
 if OS_TYPE == "Linux":
 	from crontab import CronTab
