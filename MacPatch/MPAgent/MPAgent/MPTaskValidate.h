@@ -40,7 +40,7 @@ extern NSString * const kEndDate;
 	NSDictionary *defaultTasks;
 }
 
-@property (nonatomic, retain) NSDictionary *defaultTasks;
+@property (nonatomic, strong) NSDictionary *defaultTasks;
 
 - (int)validateTask:(NSDictionary *)aTask;
 - (BOOL)validateInterval:(NSArray *)aInterval;

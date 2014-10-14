@@ -26,18 +26,14 @@
 #import <Cocoa/Cocoa.h>
 
 @protocol MPPatchScanDelegate;
-@class MPServerConnection;
 
 @interface MPPatchScan : NSObject 
 {
-    id<MPPatchScanDelegate>delegate;
-    MPServerConnection *mpServerConnection;
+    id<MPPatchScanDelegate>__unsafe_unretained delegate;
 	BOOL useDistributedNotification;
 }
 
-@property(nonatomic, assign) id<MPPatchScanDelegate>delegate;
-
-- (id)initWithServerConnection:(MPServerConnection *)aSrvObj;
+@property(nonatomic, unsafe_unretained) id<MPPatchScanDelegate>delegate;
 
 - (BOOL)useDistributedNotification;
 - (void)setUseDistributedNotification:(BOOL)flag;

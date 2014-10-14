@@ -26,7 +26,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface MPTask_EditorAppDelegate : NSObject {
-    NSWindow *window;
+    NSWindow *__unsafe_unretained window;
 	NSDictionary *taskFile;
 	BOOL usingAltTaskFile;
 	BOOL unsavedChanges;
@@ -35,10 +35,11 @@
 	IBOutlet NSPopUpButton *intervalStart;
 	IBOutlet NSPopUpButton *intervalDate;
 	IBOutlet NSButton *saveButton;
+    IBOutlet NSButton *activeCheckBox;
 }
 
-@property (assign) IBOutlet NSWindow *window;
-@property (readwrite, retain) NSDictionary *taskFile;
+@property (unsafe_unretained) IBOutlet NSWindow *window;
+@property (readwrite, strong) NSDictionary *taskFile;
 
 - (IBAction)savePlist:(id)sender;
 - (BOOL)populateInterfaceFromPlist:(NSDictionary *)plist;

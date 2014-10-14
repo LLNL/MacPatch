@@ -90,6 +90,7 @@ static BOOL gDone = false;
 - (int)writeDataToFile:(id)data file:(NSString *)aFile;
 - (int)writeArrayToFile:(NSArray *)data file:(NSString *)aFile;
 - (int)setLoggingState:(BOOL)aState;
+- (void)removeStatusFiles;
 
 @end
 
@@ -107,6 +108,7 @@ static BOOL gDone = false;
 
 @synthesize runTaskThread;
 @synthesize killTaskThread;
+@synthesize defaults;
 
 
 + (void)initialize
@@ -169,15 +171,13 @@ static BOOL gDone = false;
         }
     }
 	fm = [NSFileManager defaultManager];
-    
+
+    // Get Defaults
+    mpDefaults = [[MPDefaults alloc] init];
+    [self setDefaults:[mpDefaults defaults]];
+
 	// Center the Window
 	[window center];
-	
-    // Setup serverObject
-    mpServerConnection = [[MPServerConnection alloc] initWithNilServerObj];
-    
-	// Connect to Helper
-	//[self connect];
 	
 	if ([fm fileExistsAtPath:AGENT_PREFS_PLIST] == YES) {	
 		if ([fm isReadableFileAtPath:AGENT_PREFS_PLIST] == NO) {
@@ -188,8 +188,7 @@ static BOOL gDone = false;
         /* Need a Dialog here with error info */
 	}
     
-	[patchGroupLabel setStringValue:[mpServerConnection.mpDefaults objectForKey:@"PatchGroup"]];
-
+	[patchGroupLabel setStringValue:[defaults objectForKey:@"PatchGroup"]];
 	// Make sure the cancel button is not enabled
 	[spCancelButton setEnabled:NO];	
 }
@@ -265,7 +264,6 @@ static BOOL gDone = false;
 -(void)dealloc
 {
 	[asus release];
-    [mpServerConnection release];
     [self cleanup];
 	[super dealloc];
 }
@@ -348,6 +346,7 @@ static BOOL gDone = false;
 {
     //[statusTextStatus setStringValue:aData];
 }
+
 - (void)installData:(in bycopy NSString *)aData
 {
     //[statusTextStatus setStringValue:aData];
@@ -629,6 +628,7 @@ done:
 	
     @try
 	{
+        NSLog(@"Write Array, %@",aFile);
         result = [proxy writeArrayToFileViaHelper:data toFile:aFile];
     }
     @catch (NSException *e) {
@@ -648,11 +648,12 @@ done:
         [self connect:&error];
         if (error) {
             result = 1;
+            goto done;
         }
         if (!proxy) {
             result = 1;
+            goto done;
         }
-        goto done;
     }
 	
     @try 
@@ -666,6 +667,34 @@ done:
 done:	
 	[self cleanup];
 	return result;
+}
+
+- (void)removeStatusFiles
+{
+    NSError *error = nil;
+	if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            logit(lcl_vError,@"%@",error.localizedDescription);
+            goto done;
+        }
+        if (!proxy) {
+            logit(lcl_vError,@"Could not create proxy object.");
+            goto done;
+        }
+    }
+
+    @try
+	{
+		[proxy removeStatusFilesViaHelper];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to set the logging level, %@", e);
+    }
+
+done:
+	[self cleanup];
+	return;
 }
 
 #pragma mark -
@@ -721,6 +750,7 @@ done:
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSError *appleScanError = nil;
     NSError *customScanError = nil;
+    [self setDefaults:[mpDefaults readDefaults]];
     
 	[arrayController removeObjects:[arrayController arrangedObjects]];
 	[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
@@ -736,10 +766,9 @@ done:
 	NSImage *emptyImage = [NSImage imageNamed:@"empty.tif"];
 	NSImage *rebootImage = [NSImage imageNamed:@"RestartReq.tif"];
 	NSImage *baselineImage = [NSImage imageNamed:@"Installcomplete.tif"];
-	
-    [mpServerConnection refreshServerObject];
-	asus = [[MPAsus alloc] initWithServerConnection:mpServerConnection];
-	
+
+	asus = [[MPAsus alloc] init];
+
 	if (killTaskThread == YES) {
 		[spStatusText setStringValue:@"Canceling request..."];
 		goto done;
@@ -791,21 +820,20 @@ done:
 	
 	// post patches to web service
 	MPDataMgr *dataMgr = [[[MPDataMgr alloc] init] autorelease];
-	NSString *dataMgrXML;
-	dataMgrXML = [dataMgr GenXMLForDataMgr:applePatchesArray
-								   dbTable:@"client_patches_apple" 
-							 dbTablePrefix:@"mp_" 
-							 dbFieldPrefix:@""
-							  updateFields:@"cuuid,patch"
-								 deleteCol:@"cuuid"
-                            deleteColValue:[MPSystemInfo clientUUID]];
-	
-	
-	// Encode to base64 and send to web service	
-	NSString *xmlBase64String   = [[dataMgrXML dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
+	NSString *dataMgrJSON;
+    dataMgrJSON = [dataMgr GenJSONForDataMgr:applePatchesArray
+                                    dbTable:@"client_patches_apple"
+                              dbTablePrefix:@"mp_"
+                              dbFieldPrefix:@""
+                               updateFields:@"cuuid,patch"
+                                  deleteCol:@"cuuid"
+                             deleteColValue:[MPSystemInfo clientUUID]];
+
+    // Encode to base64 and send to web service
+    NSString *jsonBase64String = [[dataMgrJSON dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
     mpws = [[[MPWebServices alloc] init] autorelease];
     wsErr = nil;
-    [mpws postDataMgrXML:xmlBase64String error:&wsErr];
+    [mpws postDataMgrJSON:jsonBase64String error:&wsErr];
     if (wsErr) {
         logit(lcl_vError,@"Scan results posted to webservice returned false.");
         logit(lcl_vError,@"%@",wsErr.localizedDescription);
@@ -833,7 +861,7 @@ done:
 			// If no items in array, lets bail...
 			if ([approvedApplePatches count] == 0 ) {
 				[spStatusText setStringValue:@"No Patch Group patches found."];
-				logit(lcl_vInfo,@"No apple updates found for \"%@\" patch group.",[mpServerConnection.mpDefaults objectForKey:@"PatchGroup"]);
+				logit(lcl_vInfo,@"No apple updates found for \"%@\" patch group.",[defaults objectForKey:@"PatchGroup"]);
 			} else {
 				// Build Approved Patches
 				[spStatusText setStringValue:@"Building approved patch list..."];
@@ -894,11 +922,12 @@ done:
                                                         selector: @selector(scanForNotification:)
                                                             name: @"ScanForNotification"
                                                           object: nil];
+
 	[[NSDistributedNotificationCenter defaultCenter] addObserver: self
                                                         selector: @selector(scanForNotificationFinished:)
                                                             name: @"ScanForNotificationFinished"
                                                           object: nil];
-	
+
     [spStatusText setStringValue:@"Scanning for custom updates..."];
     [spStatusText display];
     customScanError = nil;
@@ -960,11 +989,27 @@ done:
 
     NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"patch_install_weight" ascending:YES];
     [approvedUpdatesArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
-    
+
+    logit(lcl_vInfo,@"%d patche(s) needed.",(int)[approvedUpdatesArray count]);
 	logit(lcl_vDebug,@"Approved patches to install: %@",approvedUpdatesArray);
-	
-	if (approvedUpdatesArray && [approvedUpdatesArray count] > 0) {
-        
+
+    // Removing Image, write out array of required patches for Client Status
+    NSMutableArray *_requiredPatchesArray = [NSMutableArray new];
+    NSMutableDictionary *_dict;
+    for (NSDictionary *ePatch in approvedUpdatesArray)
+    {
+        _dict = [ePatch mutableCopy];
+        if ([_dict objectForKey:@"baseline"]) {
+            [_dict removeObjectForKey:@"baseline"];
+        }
+        if ([_dict objectForKey:@"reboot"]) {
+            [_dict removeObjectForKey:@"reboot"];
+        }
+        [_requiredPatchesArray addObject:_dict];
+    }
+
+	if (approvedUpdatesArray && [approvedUpdatesArray count] > 0)
+    {
         NSString *_approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
         
         BOOL isDir;
@@ -980,19 +1025,29 @@ done:
         }
         
         [self writeArrayToFile:(NSArray *)approvedUpdatesArray file:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
+        [self writeArrayToFile:(NSArray *)_requiredPatchesArray file:PATCHES_NEEDED_PLIST];
         
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:approvedUpdatesArray];	
 		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-	}
+	} else {
+        NSError *rmErr;
+        if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]]) {
+            rmErr = nil;
+            logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]);
+            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] error:&rmErr];
+            if (rmErr) {
+                qlerror(@"%@",rmErr.localizedDescription);
+            }
+        }
+        if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
+            logit(lcl_vInfo,@"Removing file %@. No patches found.",PATCHES_NEEDED_PLIST);
+            [self removeStatusFiles];
+        }
+    }
 	
-done:	
-	// Create a file to tell MPStatus to update is patch info...
-	logit(lcl_vInfo,@"Create CLIENT_PATCH_STATUS_FILE = %@",[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath]);
-	[fm createFileAtPath:[CLIENT_PATCH_STATUS_FILE stringByExpandingTildeInPath] 
-											contents:[@"update" dataUsingEncoding:NSASCIIStringEncoding] 
-										  attributes:nil];
-	
+done:
+
 	[spStatusText setStringValue:@"Scan Completed."];
 	[spStatusText display];
 	
@@ -1030,9 +1085,7 @@ done:
 		logit(lcl_vError,@"There was a issue setting the CatalogURL, Apple updates will not occur.");
 	}
 
-	[mpServerConnection refreshServerObject];
-	MPAsus *mpAsus = [[[MPAsus alloc] initWithServerConnection:mpServerConnection] autorelease];
-	
+	MPAsus              *mpAsus = [[MPAsus alloc] init];
 	NSPredicate         *selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
 	NSMutableArray		*patchesToInstallArray    = [NSMutableArray arrayWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
 	
@@ -1101,7 +1154,7 @@ done:
 						[spStatusText setStringValue:[NSString stringWithFormat:@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
 						[spStatusText display];
 						//Pre Proxy Config
-						downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[[currPatchToInstallDict objectForKey:@"url"] urlEncode]];
+						downloadURL = [NSString stringWithFormat:@"/mp-content%@",[[currPatchToInstallDict objectForKey:@"url"] urlEncode]];
 						logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
 						err = nil;
 						dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
@@ -1399,14 +1452,15 @@ done:
 - (void)updateTableAndArrayController:(int)idx status:(int)aStatusImage
 {
 	NSPredicate		*selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
-	NSMutableArray	*patches				  = [NSMutableArray arrayWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
-	
+    NSMutableArray  *patches = [[NSMutableArray alloc] initWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
+
 	NSMutableDictionary *patch = [[NSMutableDictionary alloc] initWithDictionary:[patches objectAtIndex:idx]];
 	if (aStatusImage == 0) {
 		[patch setObject:[NSImage imageNamed:@"NSRemoveTemplate"] forKey:@"statusImage"];
 	}
 	if (aStatusImage == 1) {
 		[patch setObject:[NSImage imageNamed:@"Installcomplete.tif"] forKey:@"statusImage"];
+        [self updateNeededPatchesFile:patch];
 	}
 	if (aStatusImage == 2) {
 		[patch setObject:[NSImage imageNamed:@"exclamation.tif"] forKey:@"statusImage"];
@@ -1414,11 +1468,48 @@ done:
 	if (aStatusImage == 3) {
 		[patch setObject:[NSImage imageNamed:@"LogOutReq.tif"] forKey:@"statusImage"];
 	}
+
 	[patches replaceObjectAtIndex:idx withObject:patch];
+    [arrayController willChangeValueForKey:@"arrangedObjects"];
 	[arrayController setContent:patches];
-	[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-	[tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
+    [arrayController didChangeValueForKey:@"arrangedObjects"];
+    dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
 	[patch release];
+    [patches release];
+}
+
+- (void)updateNeededPatchesFile:(NSDictionary *)aPatch
+{
+    NSError *error = nil;
+    NSMutableArray *patchesNew;
+    NSArray *patches;
+    if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
+        patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST]];
+        //[self removeStatusFiles];
+        if (error) {
+            qlerror(@"%@",error.localizedDescription);
+        }
+    } else {
+        return;
+    }
+
+    patchesNew = [[NSMutableArray alloc] init];
+    if (patches) {
+        for (NSDictionary *p in patches) {
+            if ([[p objectForKey:@"patch_id"] isEqualTo:[aPatch objectForKey:@"patch_id"]]) {
+                qlinfo(@"Remove patch from array, %@",aPatch);
+            } else if ([[p objectForKey:@"patch"] isEqualTo:[aPatch objectForKey:@"patch"]] && [[p objectForKey:@"type"] isEqualTo:@"Apple"]) {
+                qlinfo(@"Remove %@ patch from array, %@",[aPatch objectForKey:@"type"], aPatch);
+            } else {
+                [patchesNew addObject:p];
+            }
+        }
+    }
+    if (patchesNew.count >= 1) {
+        [self writeArrayToFile:(NSArray *)patchesNew file:PATCHES_NEEDED_PLIST];
+    } else {
+        [self removeStatusFiles];
+    }
 }
 
 -(BOOL)checkPatchPreAndPostForRebootRequired:(NSArray *)aDictArray
@@ -1438,6 +1529,10 @@ done:
 
 - (void)postInstallToWebService:(NSString *)aPatch type:(NSString *)aType
 {
+    NSString *statusStr = [NSString stringWithFormat:@"Posting patch install results for %@",aPatch];
+    [spStatusText setStringValue:statusStr];
+	[spStatusText display];
+
     BOOL result = NO;
     MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
     NSError *wsErr = nil;
@@ -1495,6 +1590,7 @@ done:
 		[spStatusText display];
 	}	
 }
+
 - (void)scanForNotificationFinished:(NSNotification *)notification
 {
     if(notification)
@@ -1519,6 +1615,7 @@ done:
 		}	
 	}
 }
+
 - (void)installStatusCompleteNotify:(NSNotification *)notification
 {
 	if(notification)

@@ -32,10 +32,10 @@
 
 @interface MPClientCheckInData ()
 
-@property (nonatomic, readwrite, retain) NSDictionary *hostNames;
-@property (nonatomic, readwrite, retain) NSDictionary *osVersion;
-@property (nonatomic, readwrite, retain) NSDictionary *agentData;
-@property (nonatomic, readwrite, retain) NSDictionary *consoleUserData;
+@property (nonatomic, readwrite, strong) NSDictionary *hostNames;
+@property (nonatomic, readwrite, strong) NSDictionary *osVersion;
+@property (nonatomic, readwrite, strong) NSDictionary *agentData;
+@property (nonatomic, readwrite, strong) NSDictionary *consoleUserData;
 
 - (int)collectAgentData:(NSError **)error;
 
@@ -77,10 +77,6 @@
     }
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
 
 #pragma mark - Public Methods
 
@@ -107,7 +103,6 @@
 	}
 	
 	NSDictionary *results = [NSDictionary dictionaryWithDictionary:clientInfoDict];
-	[clientInfoDict release];
 	
 	qldebug(@"clientCheckInData: %@",results);
 	return results;

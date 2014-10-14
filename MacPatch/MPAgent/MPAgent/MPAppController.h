@@ -32,6 +32,8 @@
 @class PatchScanAndUpdateOperation;
 @class MPSWDistTaskOperation;
 @class Profiles;
+@class GetServerListOperation;
+@class PostFailedWSRequests;
 
 @interface MPAppController : NSObject {
     
@@ -46,7 +48,9 @@
 	PatchScanAndUpdateOperation *patchOp;
     MPSWDistTaskOperation *swDistOp;
     Profiles *profilesOp;
-	
+    GetServerListOperation *serverListOp;
+	PostFailedWSRequests *postFailedWSRequestsOp;
+
 	BOOL useOperationQueue;
 }
 
@@ -66,5 +70,7 @@
 - (void)scanAndUpdateAgentUpdater;
 - (void)runSWDistScanAndInstall;
 - (void)runProfilesScanAndInstall;
+- (void)runGetServerListOperation;
+- (void)runPostFailedWSRequests;
 
 @end

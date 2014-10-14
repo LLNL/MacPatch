@@ -31,7 +31,7 @@
     MPAgent *si;
     NSString *confHash;
 }
-@property (nonatomic, retain) NSString *confHash;
+@property (nonatomic, strong) NSString *confHash;
 
 - (id)initForHash;
 

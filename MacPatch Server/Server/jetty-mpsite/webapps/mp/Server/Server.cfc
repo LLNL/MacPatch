@@ -33,12 +33,22 @@
         
         <cftry> 
             <!--- Create Datasource --->
-            <cfif Datasourceisvalid("mpds")>
-                <cfset rmDS = Datasourcedelete("mpds")>
-            </cfif>
-            
-            <cfset DataSourceCreate( "mpds", srvconf.settings.database.prod )>
-            <cfset srvconf.settings.database.prod.password = Hash(srvconf.settings.database.prod.password,'MD5')>
+            <cfif structKeyExists(srvconf.settings.database,"prod")>
+				<cfset dsName = srvconf.settings.database.prod.dsName>
+                <cfif Datasourceisvalid(dsName)>
+                	<cfset rmDS = Datasourcedelete(dsName)>
+                </cfif>
+                <cfset DataSourceCreate( dsName , srvconf.settings.database.prod )>
+                <cfset srvconf.settings.database.prod.password = Hash(srvconf.settings.database.prod.password,'MD5')>
+        	</cfif>
+            <cfif structKeyExists(srvconf.settings.database,"ro")>
+				<cfset dsNameRO = srvconf.settings.database.ro.dsName>
+                <cfif Datasourceisvalid(dsNameRO)>
+                	<cfset rmDS = Datasourcedelete(dsNameRO)>
+                </cfif>
+                <cfset DataSourceCreate( dsNameRO , srvconf.settings.database.ro )>
+                <cfset srvconf.settings.database.ro.password = Hash(srvconf.settings.database.ro.password,'MD5')>
+        	</cfif>
             
             <cfcatch type="any"> 
                 <cfthrow message="Error trying to create datasource.">

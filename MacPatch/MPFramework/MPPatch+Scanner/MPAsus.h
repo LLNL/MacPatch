@@ -49,9 +49,9 @@
 	NSFileHandle *fh_installTask;
 }
 
-@property (nonatomic, retain) NSArray *catalogURLArray;
-@property (nonatomic, retain) NSDictionary *defaults;
-@property (nonatomic, retain) NSString *patchGroup;
+@property (nonatomic, strong) NSArray *catalogURLArray;
+@property (nonatomic, strong) NSDictionary *defaults;
+@property (nonatomic, strong) NSString *patchGroup;
 @property (nonatomic, assign) BOOL allowClient;
 @property (nonatomic, assign) BOOL allowServer;
 

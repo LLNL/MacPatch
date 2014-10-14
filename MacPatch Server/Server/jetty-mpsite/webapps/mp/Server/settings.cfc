@@ -83,6 +83,24 @@
         	<cfset appConf.settings.database.prod.enabled = "NO">    
         </cfif>
         
+        <!--- Database settings - ReadOnly Account --->
+        <cfset appConf.settings.database.ro = structNew()>
+        <cfif structKeyExists(xmlData.settings,"database")>
+			<cfif not structKeyExists(xmlData.settings.database,"ro")>
+               <cfthrow message="Invalid settings XML file!">
+               <cfset appConf.settings.database.ro.enabled = "NO"> 
+            <cfelse>
+            	<cfset appConf.settings.database.ro.enabled = "YES">  
+            	<cfloop item="key" collection="#xmlData.settings.database.ro#">
+					<cfif len(trim(xmlData.settings.database.ro[key].xmlText))>
+                        <cfset appConf.settings.database.ro[key] = xmlData.settings.database.ro[key].xmlText>
+                    </cfif>
+                </cfloop>   
+            </cfif>
+        <cfelse>
+        	<cfset appConf.settings.database.ro.enabled = "NO">    
+        </cfif>
+        
         <!--- mail server settings --->
 		<cfset srvconf.settings.mailserver = structNew()>
         <cfif not structKeyExists(xmlData.settings,"mailserver")>
@@ -103,12 +121,21 @@
         <cfargument name="config" required="yes">
         
         <cftry> 
-          <!--- Create Datasource --->
-          <cfif Datasourceisvalid("mpds")>
-              <cfset rmDS = Datasourcedelete("mpds")>
-          </cfif>
-          <cfset DataSourceCreate( "mpds", arguments.config.database.prod )>
-        
+			<!--- Create Datasource --->
+            <cfif structKeyExists(arguments.config.database,"prod")>
+				<cfset dsName = arguments.config.database.prod.dsName>
+                <cfif Datasourceisvalid(dsName)>
+                	<cfset rmDS = Datasourcedelete(dsName)>
+                </cfif>
+                <cfset DataSourceCreate( dsName , arguments.config.database.prod )>
+        	</cfif>
+            <cfif structKeyExists(arguments.config.database,"ro")>
+				<cfset dsNameRO = arguments.config.database.ro.dsName>
+                <cfif Datasourceisvalid(dsNameRO)>
+                	<cfset rmDS = Datasourcedelete(dsNameRO)>
+                </cfif>
+                <cfset DataSourceCreate( dsNameRO , arguments.config.database.ro )>
+        	</cfif>
           <cfcatch type="any"> 
               <cfthrow message="Error trying to create datasource.">
           </cfcatch> 

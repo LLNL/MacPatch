@@ -26,24 +26,18 @@
 
 #import <Foundation/Foundation.h>
 
-@class MPServerConnection;
-@class MPASINet;
-@class MPDefaults;
-
 @interface MPProxySyncController : NSObject
 {
-    NSDictionary *l_defaults;
-    MPServerConnection *serverConnection;
-    MPASINet *asiNet;
-    MPDefaults	*prefs;
+    NSDictionary    *defaults;
+    MPDefaults      *prefs;
+
 @private
 	NSString *logResult;
     NSArray *remotePatchContent;
     int numberOfPatchesSyncronnized;
-    
 }
 
-@property (nonatomic, copy) NSDictionary *l_defaults;
+@property (nonatomic, copy) NSDictionary *defaults;
 @property (nonatomic, strong) NSString *logResult;
 @property (nonatomic, copy) NSArray *remotePatchContent;
 @property (nonatomic) int numberOfPatchesSyncronnized;
@@ -55,8 +49,9 @@
 - (void)syncContent;
 - (void)syncSWContent;
 
-- (NSArray *)getRemotePatchContentForURL:(NSString *)aURL;
-- (BOOL)postSyncResults;
+- (NSArray *)getRemotePatchContentForMethod:(NSString *)method error:(NSError **)err;
+- (BOOL)postSyncResults:(NSError **)err;
+
 - (BOOL)downloadPatchContent:(NSArray *)aContent;
 - (BOOL)checkFileHash:(NSString *)aFilePath validHash:(NSString *)aValidHash;
 - (NSString *)downloadPatch:(NSString *)aURL error:(NSError **)err;

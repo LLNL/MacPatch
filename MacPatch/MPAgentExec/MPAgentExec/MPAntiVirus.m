@@ -37,32 +37,17 @@
 
 -(id)init
 {
-    MPServerConnection *_srvObj = [[[MPServerConnection alloc] init] autorelease];
-	return [self initWithServerConnection:_srvObj];
-}
-
-- (id)initWithServerConnection:(MPServerConnection *)aSrvObj
-{
     self = [super init];
 	if (self) {
         fm = [NSFileManager defaultManager];
 		avApp = nil;
         [self setIsNewerSEPSW:NO];
-        mpServerConnection = aSrvObj;
-		[self setL_Defaults:mpServerConnection.mpDefaults];
+        MPDefaults *mpDefaults = [[MPDefaults alloc] init];
+		[self setL_Defaults:[mpDefaults defaults]];
 	}
 	return self;
 }
 
--(void)dealloc
-{
-	[avType autorelease];
-    [avApp autorelease];
-    [avAppInfo autorelease];
-    [avDefsDate autorelease];
-    [l_Defaults autorelease];
-	[super dealloc];
-}
 
 -(void)scanDefs
 {
@@ -158,14 +143,13 @@
         }
     }
 	// Post AV to WebService
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
     [mpws postClientAVData:_avInfoToPost error:&wsErr];
     if (wsErr) {
         logit(lcl_vError,@"%@",wsErr.localizedDescription);
     }
 
-	[_avInfoToPost release];
 	return;
 }
 
@@ -205,7 +189,7 @@
 
     [self setAvApp:avApplication];
 	[self setAvAppInfo:_tmpAvDict];
-	return [_tmpAvDict autorelease];
+	return _tmpAvDict;
 }
 
 -(NSString *)getLocalDefsDate
@@ -319,7 +303,7 @@
 -(NSString *)getLatestAVDefsDate
 {
 	NSString *result;
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
     result = [mpws getLatestAVDefsDate:&wsErr];
     if (wsErr) {
@@ -337,7 +321,7 @@
 -(NSString *)getAvUpdateURL
 {
     NSString *result;
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
     result = [mpws getAvUpdateURL:&wsErr];
     if (wsErr) {
@@ -358,15 +342,9 @@
 {
 	// First we need to download the update
 	int result = 0;
-	MPDefaults *mpDefaults = [[MPDefaults alloc] init];
 	MPAsus *mpAsus = [[MPAsus alloc] init];
 	NSError *err = nil;
-	NSString *dlPatchLoc;
-	if ([pkgURL hasPrefix:@"http"] || [pkgURL hasPrefix:@"https"]) {
-		dlPatchLoc = [mpAsus downloadUpdate:pkgURL error:&err];
-	} else {
-		dlPatchLoc = [mpAsus downloadUpdate:[NSString stringWithFormat:@"http://%@%@",mpServerConnection.HTTP_HOST,pkgURL] error:&err];
-	}
+	NSString *dlPatchLoc = [mpAsus downloadUpdate:pkgURL error:&err];
 
 	if (err) {
 		logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",pkgURL, [err localizedDescription]);
@@ -404,11 +382,8 @@
 				result = 1;
 			}
 		}
-		[mpi release];
 	}
 	
-	[mpDefaults release];
-	[mpAsus release];
 	return result;
 }
 

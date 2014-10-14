@@ -76,7 +76,7 @@ static tDirStatus dsDataBufferAppendData(tDataBufferPtr  buf,
     UInt32 bufferCount = 0;
     tDataBufferPtr dataBuffer = nil;
     tDataListPtr nodeName = nil;
-    tContextData context = nil;
+    tContextData context = 0;
 	NSMutableArray* result = [NSMutableArray array];
 
 		// allocate a 32k buffer.
@@ -104,7 +104,7 @@ static tDirStatus dsDataBufferAppendData(tDataBufferPtr  buf,
 			}
 			else
 				logit(lcl_vError,@"Error %d from dsFindDirNodes", (int)dirStatus);
-			done = (context == nil);
+			done = (context == 0);
 		}
 		dsDataBufferDeAllocate( _dirRef, dataBuffer );
 	}
@@ -122,7 +122,7 @@ static tDirStatus dsDataBufferAppendData(tDataBufferPtr  buf,
     UInt32 bufferCount = 0;
     tDataBufferPtr dataBuffer = nil;
     tDataListPtr nodeName = nil;
-    tContextData context = nil;
+    tContextData context = 0;
 	NSMutableArray* result = [NSMutableArray array];
 	
 	// allocate a 32k buffer.
@@ -150,7 +150,7 @@ static tDirStatus dsDataBufferAppendData(tDataBufferPtr  buf,
 			}
 			else
 				logit(lcl_vError,@"Error %d from dsFindDirNodes", (int)dirStatus);
-			done = (context == nil);
+			done = (context == 0);
 		}
 		dsDataBufferDeAllocate( _dirRef, dataBuffer );
 	}
@@ -200,7 +200,7 @@ static tDirStatus dsDataBufferAppendData(tDataBufferPtr  buf,
 	tDataBufferPtr dataBuffer;
 	tDataBufferPtr responseBuffer;
 	tDirStatus aDirErr;
-	tContextData aContinueData = NULL;
+	tContextData aContinueData = 0;
 	long aDataBufSize = 0;
 	
 	//Spec the type of auth
@@ -333,7 +333,7 @@ static tDirStatus dsDataBufferAppendData(tDataBufferPtr  buf,
 		if (dataBuffer == nil)
 			break;
 			
-		tContextData context = NULL;
+		tContextData context = 0;
 		UInt32 recCount;
 		dirStatus = dsGetRecordList(_nodeRef, dataBuffer, &recNames, eDSExact, &recTypes, &attrTypes, false, &recCount, &context);
 		if (dirStatus != eDSNoErr)
@@ -416,7 +416,7 @@ static tDirStatus dsDataBufferAppendData(tDataBufferPtr  buf,
 		if (dataBuffer == nil)
 			break;
 			
-		tContextData context = nil;
+		tContextData context = 0;
 		UInt32 recCount;
 		dirStatus = dsGetRecordList(_nodeRef, dataBuffer, &recNames, eDSExact, &recTypes, &attrTypes, false, &recCount, &context);
 		if (dirStatus != eDSNoErr)
@@ -433,7 +433,7 @@ static tDirStatus dsDataBufferAppendData(tDataBufferPtr  buf,
 		
 		unsigned long i;
 		tRecordEntry* recEntry = nil;
-		tAttributeListRef attrListRef = nil;
+		tAttributeListRef attrListRef;
 		for (i = 1; i <= recCount; i++)
 		{
 			dirStatus = dsGetRecordEntry(_nodeRef, dataBuffer, (int)i, &attrListRef, &recEntry);
@@ -526,13 +526,13 @@ static tDirStatus dsDataBufferAppendData(
 	short i;
 
 	tRecordEntry* recEntry = nil;
-	tAttributeListRef attrListRef = nil;
-	dirStatus = dsGetRecordEntry(_nodeRef, dataBuffer, recIndex, &attrListRef, &recEntry);
+	tAttributeListRef attrListRef;
+	dirStatus = dsGetRecordEntry(_nodeRef, dataBuffer, (int)recIndex, &attrListRef, &recEntry);
 	if (dirStatus == eDSNoErr)
 	{
 		for (i = 1; i <= recEntry->fRecordAttributeCount; i++)
 		{
-			tAttributeValueListRef valueRef = nil;
+			tAttributeValueListRef valueRef;
 			tAttributeEntry *pAttrEntry = nil;
 			if (eDSNoErr == (dirStatus = dsGetAttributeEntry(_nodeRef, dataBuffer, attrListRef, i, &valueRef, &pAttrEntry)))
 			{
@@ -545,7 +545,7 @@ static tDirStatus dsDataBufferAppendData(
 		dsDeallocRecordEntry(_dirRef, recEntry);
 	}
 	else
-		NSLog(@"Can't get record entry - %ld", dirStatus);
+		NSLog(@"Can't get record entry - %d", dirStatus);
 }
 
 
@@ -575,7 +575,7 @@ static tDirStatus dsDataBufferAppendData(
 			// iterate over all the entries and add them to the array
 		for (k = 1; k <= pAttrEntry->fAttributeValueCount; k++)
 		{
-			if (eDSNoErr == (dirStatus = dsGetAttributeValue(_nodeRef, dataBuffer, k, valueRef, &pValueEntry)))
+			if (eDSNoErr == (dirStatus = dsGetAttributeValue(_nodeRef, dataBuffer, (int)k, valueRef, &pValueEntry)))
 			{
 				[entries addObject:[NSString stringWithCString:pValueEntry->fAttributeValueData.fBufferData encoding:[NSString defaultCStringEncoding]]];							
 				dirStatus = dsDeallocAttributeValueEntry(_dirRef, pValueEntry);
@@ -600,11 +600,11 @@ static tDirStatus dsDataBufferAppendData(
 		// iterate through all the attributes looking for the name attribute
 	for (i = 1; i <= recEntry->fRecordAttributeCount; i++)
 	{
-		tAttributeValueListRef valueRef = nil;
+		tAttributeValueListRef valueRef;
 		tAttributeEntry *pAttrEntry = nil;
 		
 			// get the attribute
-		if (eDSNoErr == (dirStatus = dsGetAttributeEntry(_nodeRef, dataBuffer, attrListRef, i, &valueRef, &pAttrEntry)))
+		if (eDSNoErr == (dirStatus = dsGetAttributeEntry(_nodeRef, dataBuffer, attrListRef, (int)i, &valueRef, &pAttrEntry)))
 		{
 				// cehck to see if this is the name attribute
 			if (0 == strcmp(pAttrEntry->fAttributeSignature.fBufferData, kDSNAttrRecordName))

@@ -24,15 +24,15 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "MacPatch.h"
+#import "MPWorkerProtocol.h"
+#import "MPNetRequest.h"
 
-@class MPServerConnection;
 @class MPAsus;
 @class MPDataMgr;
 
-@interface MPAgentExecController : NSObject
+@interface MPAgentExecController : NSObject <MPWorkerClient, MPNetRequestController>
 {
-    MPServerConnection *mpServerConnection;
-    
     NSDictionary    *_defaults;
     NSString        *_cuuid;
     NSString        *_appPid;
@@ -48,19 +48,24 @@
     
     int             errorCode;
     NSString        *errorMsg;
+
+    // Helper
+	id              proxy;
 }
 
-@property (nonatomic, retain) NSDictionary      *_defaults;
-@property (nonatomic, retain) NSString          *_cuuid;
-@property (nonatomic, retain) NSString          *_appPid;
+@property (nonatomic, strong) NSDictionary       *_defaults;
+@property (nonatomic, strong) NSString           *_cuuid;
+@property (nonatomic, strong) NSString           *_appPid;
 
-@property (nonatomic, assign) BOOL              iLoadMode;
-@property (nonatomic, assign) BOOL              forceRun;
+@property (nonatomic, assign) BOOL               iLoadMode;
+@property (nonatomic, assign) BOOL               forceRun;
 
-@property (nonatomic, retain) NSArray           *approvedPatches;
+@property (nonatomic, strong) NSArray            *approvedPatches;
 
-@property (nonatomic, readonly, assign) int     errorCode;
-@property (nonatomic, readonly, retain) NSString *errorMsg;
+@property (nonatomic, readonly, assign) int      errorCode;
+@property (nonatomic, readonly, strong) NSString *errorMsg;
+@property (nonatomic, readonly, assign) int      needsReboot;
+@property (nonatomic, strong)           NSURL    *mp_SOFTWARE_DATA_DIR;
 
 -(id)initForBundleUpdate;
 -(void)overRideDefaults:(NSDictionary *)aDict;
@@ -88,5 +93,9 @@
 
 -(BOOL)isLocalUserLoggedIn;
 -(void)postNotificationTo:(NSString *)aName info:(NSString *)info isGlobal:(BOOL)glb;
+
+-(int)installSoftwareTasks:(NSString *)aTasks;
+-(int)installSoftwareTasksForGroup:(NSString *)aGroupName;
+-(int)installSoftwareTasksUsingPLIST:(NSString *)aPlist;
 
 @end

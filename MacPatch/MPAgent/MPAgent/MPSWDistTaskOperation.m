@@ -79,19 +79,17 @@
     return self;
 }
 
-- (void) dealloc 
-{
-    [l_queue autorelease];
-    [mpc autorelease];
-    [super dealloc];
-}
-
-- (BOOL) isConcurrent 
+- (BOOL)isConcurrent
 {
     return YES;
 }
 
-- (void) finish 
+- (void)cancel
+{
+    [self finish];
+}
+
+- (void)finish
 {
     [self willChangeValueForKey:@"isFinished"];
     [self willChangeValueForKey:@"isExecuting"];
@@ -101,7 +99,7 @@
     [self didChangeValueForKey:@"isFinished"];
 }
 
-- (void) start 
+- (void)start
 {
     if ([self isCancelled]) {
         [self willChangeValueForKey:@"isFinished"];
@@ -117,7 +115,7 @@
     }
 }
 
-- (void) main 
+- (void)main
 {
     logit(lcl_vInfo,@"Run Mandatory Software Installs");
     @try {
@@ -129,16 +127,11 @@
 	[self finish];
 }
 
-- (void) cancel 
-{
-    [super cancel];
-}
-
 #pragma mark - SW Dist Methods
 
 - (void)checkAndInstallMandatoryApplications
 {
-    MPSWTasks *sw = [[[MPSWTasks alloc] init] autorelease];
+    MPSWTasks *sw = [[MPSWTasks alloc] init];
     NSError *err = nil;
     NSDictionary *_tasks = [sw getSWTasksForGroupFromServer:&err];
     NSArray *mandatoryInstllTasks;
@@ -155,8 +148,6 @@
     }
     MPSWInstaller  *mpCatalogD;
     MPDiskUtil *mpd = [[MPDiskUtil alloc] init];
-    MPNetworkUtils *mpn = [[MPNetworkUtils alloc] init];
-    NSDictionary *hostConnectInfo = [mpn hostConfig];
     
     // Install the mandatory software 
     for (NSDictionary *d in mandatoryInstllTasks) 
@@ -184,7 +175,7 @@
         }
         
         // Create Download URL
-        NSString *_url = [NSString stringWithFormat:@"%@://%@/mp-content%@",[hostConnectInfo objectForKey:@"HTTP_PREFIX"],[hostConnectInfo objectForKey:@"HTTP_HOST"],[d valueForKeyPath:@"Software.sw_url"]];
+        NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
         logit(lcl_vInfo,@"Download software from: %@",_url);
         
         BOOL isDir;
@@ -198,17 +189,17 @@
                 [fm createDirectoryAtPath:swLoc withIntermediateDirectories:YES attributes:attributes error:NULL];
             }
         }
-        
-        ASIHTTPRequest *asiRequest = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[_url urlEncode]]];
-        [asiRequest setValidatesSecureCertificate:NO];
-        [asiRequest setTimeOutSeconds:300.0];
-        [asiRequest setDownloadDestinationPath:[swLoc stringByAppendingPathComponent:[_url lastPathComponent]]];
-        [asiRequest setTemporaryFileDownloadPath:[[@"/private/tmp" stringByAppendingPathComponent:[_url lastPathComponent]] stringByAppendingPathExtension:@"download"]];
-        [asiRequest startSynchronous];
-        
-        NSError *error = [asiRequest error];
-        if (error) {
+
+        NSError *error = nil;
+        NSURLResponse *response;
+        MPNetConfig *mpnc = [[MPNetConfig alloc] init];
+        MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArray:[mpnc servers]];
+        NSURLRequest *urlReq = [req buildDownloadRequest:_url];
+        NSString *res = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
+        if (error)
+        {
             logit(lcl_vError,@"Error downloading software (%ld). No install will occure.",[error code]);
+            res = nil;
             continue;
         }
         
@@ -233,10 +224,9 @@
             [self softwareItemInstalled:d];
             [self postInstallResults:result resultText:@"" task:d];
         }
-        [mpCatalogD release], mpCatalogD = nil;
+        mpCatalogD = nil;
 
     }
-    [mpd release];
 }
 
 /* Needs to be completed */
@@ -298,7 +288,6 @@
     }
     [_data addObject:installData];
     [_data writeToFile:installFile atomically:YES];
-    [installData release];
     return YES;
 }
 
@@ -313,7 +302,6 @@
     if (content) 
     {
         /* If there is content */
-        //[content writeToFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"] atomically:NO];
         [NSKeyedArchiver archiveRootObject:content toFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
         _a = [NSKeyedUnarchiver unarchiveObjectWithFile:[[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"content.plist"]];
         for (id item in _a) 
@@ -322,7 +310,6 @@
             
             // Check for Mandatory apps
             if ([[d objectForKey:@"sw_task_type"] containsString:@"m" ignoringCase:YES] == NO) {
-                [d release];
                 continue;
             }
             
@@ -333,7 +320,6 @@
 
             if ([now timeIntervalSince1970] < [startDate timeIntervalSince1970]) {
                 // Software is not ready for deployment
-                [d release];
                 continue;
             }
             
@@ -344,7 +330,6 @@
                 {
                     logit(lcl_vDebug,@"Optional/Mandatory date has been reached for install.");
                 } else {
-                    [d release];
                     continue;
                 }
             }
@@ -374,11 +359,9 @@
                 logit(lcl_vInfo,@"OSVersion=FALSE: %@",[_SoftwareCriteria objectForKey:@"os_vers"]);
                 c++;
             }
-            [mpos release];
             mpos = nil;
             // Did not pass the criteria check
             if (c >= 1) {
-                [d release];
                 continue;
             }
 
@@ -389,7 +372,6 @@
                 [_MandatorySoftware addObject:d];
             }
 
-            [d release];
             d = nil;
         }
     }
@@ -399,7 +381,6 @@
         logit(lcl_vInfo,@"Approved Mandatory Software task: %@",[x objectForKey:@"name"]);
     }
     NSArray *results = [NSArray arrayWithArray:_MandatorySoftware];
-    [_MandatorySoftware release];
     return results;
 }
 
@@ -420,12 +401,12 @@
 
 - (void)postInstallResults:(int)resultNo resultText:(NSString *)resultString task:(NSDictionary *)taskDict
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    MPSWTasks *swt = [[MPSWTasks alloc] init];
-    int result = -1;
-    result = [swt postInstallResults:resultNo resultText:resultString task:taskDict];
-    [swt release];
-    [pool release];
+    @autoreleasepool {
+        MPSWTasks *swt = [[MPSWTasks alloc] init];
+        int result = -1;
+        result = [swt postInstallResults:resultNo resultText:resultString task:taskDict];
+        qldebug(@"Post Install Result: %d",result);
+    }
 }
 
 #pragma mark - Delegates not used

@@ -37,7 +37,7 @@ int main(int argc, const char * argv[])
     NSPort *receivePort = nil;
     if (argc >= 2) {
 		if (strcmp(argv[1], "-v") == 0) {
-            printf("1.6.1\n");
+            printf("1.6.2\n");
 			return (0);
         }
     }

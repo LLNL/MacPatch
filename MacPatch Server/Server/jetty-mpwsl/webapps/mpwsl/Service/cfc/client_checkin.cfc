@@ -10,7 +10,7 @@
 		<cfset var _res = StructNew()>
 		<cfset _res.errorCode = "0">
 		<cfset _res.errorMessage = "">
-		<cfset _res.result = false>
+		<cfset _res.result = "false">
 		
 		<cfif arguments.type EQ "JSON">
 			<cfif isJson(arguments.data) EQ false>
@@ -18,7 +18,7 @@
 				<cfset el = elogit("Not JSON Data.")>
 				<cfset _res.errorCode = "1">
 				<cfset _res.errorMessage = "Not JSON Data.">
-				<cfset _res.result = false>
+				<cfset _res.result = "false">
 				<cfreturn _res>	
 			</cfif>			
 			<cfset l_data = Deserializejson(arguments.data,"false")>
@@ -31,14 +31,14 @@
 				<cfset el = elogit("No columns defined, length = 0.")>
 				<cfset _res.errorCode = "1">
 				<cfset _res.errorMessage = "No columns defined, length = 0.">
-				<cfset _res.result = false>
+				<cfset _res.result = "false">
 				<cfreturn _res>	
 			</cfif>
 			<cfif ArrayLen(xData) EQ 0>
 				<cfset el = elogit("No data defined, length = 0.")>
 				<cfset _res.errorCode = "1">
 				<cfset _res.errorMessage = "No data defined, length = 0.">
-				<cfset _res.result = false>
+				<cfset _res.result = "false">
 				<cfreturn _res>
 			</cfif>
 			
@@ -48,7 +48,7 @@
 				<cfset el = elogit("Error verifing table #l_table#")>
 				<cfset _res.errorCode = "1">
 				<cfset _res.errorMessage = "Error verifing table #l_table#">
-				<cfset _res.result = false>
+				<cfset _res.result = "false">
 				<cfreturn _res>
 			</cfif>
 			
@@ -66,12 +66,14 @@
 							<cfset l_result = #l_result# + 1>
 						<cfelse>
 							<cfif _rres.qresult.RecordCount GTE 1>
+								<cflog file="_mpbase" type="error" application="no" text="Update">
 								<!--- Update --->
 								<cfset _ures = rowUpdate(xCols,iArr,'rid',_rres.qresult.rid,l_table)>
 								<cfif #_ures.error# NEQ "0">
 									<cfset l_result = #l_result# + 1>
 								</cfif>
 							<cfelse>
+								<cflog file="_mpbase" type="error" application="no" text="Insert">
 								<!--- Insert --->
 								<cfset _ires = rowInsert(xCols,iArr,l_table)>
 								<cfif #_ires.error# NEQ "0">
@@ -90,12 +92,12 @@
 		<cfif #l_result# EQ 0>
 			<cfset _res.errorCode = "0">
 			<cfset _res.errorMessage = "">
-			<cfset _res.result = true>
+			<cfset _res.result = "true">
 			<cfreturn _res>
 		<cfelse>
 			<cfset _res.errorCode = "1">
 			<cfset _res.errorMessage = "Check server log for error.">
-			<cfset _res.result = false>
+			<cfset _res.result = "false">
 			<cfreturn _res>
 		</cfif>
 	</cffunction>

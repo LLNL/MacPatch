@@ -40,10 +40,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
 
 - (NSString *)runTask:(NSString *)aBinPath binArgs:(NSArray *)aArgs error:(NSError **)err
 {
@@ -83,9 +79,8 @@
 	}
 	
     NSData *data = [file readDataToEndOfFile];
-    NSString *string = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+    NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 	
-	[cmd release];
     return [string trim];
 }
 

@@ -34,10 +34,14 @@ extern NSString * const AGENT_EXEC;
 extern NSString * const AGENT_VER_PLIST;
 extern NSString * const AGENT_PREFS_PLIST;
 extern NSString * const AGENT_FRAMEWORK_PATH;
+extern NSString * const AGENT_SERVERS_PLIST;
 extern NSString * const APP_PREFS_PLIST;
+extern NSString * const PATCHES_NEEDED_PLIST;
 
+extern NSString * const WS_CLIENT_REG;
 extern NSString * const WS_CLIENT_FILE;
 extern NSString * const WS_SERVER_FILE;
+extern NSString * const WS_FAILED_REQ_PLIST;
 
 extern NSString * const ASUS_BIN_PATH;
 extern NSString * const ASUS_APP_PATH;

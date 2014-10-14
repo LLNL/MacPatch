@@ -36,7 +36,6 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <poll.h>
-#include "ASIHTTPRequest.h"
 
 #undef  ql_component
 #define ql_component lcl_cMPNetUtils
@@ -120,11 +119,6 @@ static int isalive(struct sockaddr_in scanaddr)
     return self;
 }
 
-- (void)dealloc
-{
-    [hostConfig autorelease];
-    [super dealloc];
-}
 
 #pragma -
 
@@ -189,7 +183,7 @@ static int isalive(struct sockaddr_in scanaddr)
 	 
 	 So I created a dummy web service to check to see if we were up and running.
 	*/
-	
+	/*
 	@try {
 		NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@:%d%@?method=WSLTest",aHTTP,aHost,aPort,WS_CLIENT_FILE]];
         qldebug(@"isServerReachable url: %@",url);
@@ -211,6 +205,8 @@ static int isalive(struct sockaddr_in scanaddr)
 		qlerror(@"%@",[e description]);
         qlinfo(@"isServerReachable NSException: %@",[e description]);
 	}
+     */
+    qlerror(@"isServerReachable always returns false");
 	return NO;
 }
 
@@ -286,7 +282,6 @@ done:
 	if ([self isServerReachable:[d objectForKey:@"HTTP_HOST"] port:[[d objectForKey:@"HTTP_HOST_PORT"] intValue] connection:[d objectForKey:@"HTTP_PREFIX"]] == YES) {
 		res = YES;
 	}
-	[d release];
 	return res;
 }
 

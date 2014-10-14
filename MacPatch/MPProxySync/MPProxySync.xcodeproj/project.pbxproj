@@ -11,7 +11,7 @@
 		8F2C7CB817FC9252008CE21A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7CB717FC9252008CE21A /* main.m */; };
 		8F2C7CBC17FC9252008CE21A /* MPProxySync.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F2C7CBB17FC9252008CE21A /* MPProxySync.1 */; };
 		8F2C7CE717FC93CF008CE21A /* MPProxySyncController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7CE617FC93CF008CE21A /* MPProxySyncController.m */; };
-		8F2C7CEA17FC960F008CE21A /* FileMD5Hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7CE917FC960F008CE21A /* FileMD5Hash.c */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		8F2C7CEA17FC960F008CE21A /* FileMD5Hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C7CE917FC960F008CE21A /* FileMD5Hash.c */; };
 		8F2C7D3017FCD72F008CE21A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2C7D2F17FCD72F008CE21A /* libcrypto.dylib */; };
 		8F2C7D3217FCD739008CE21A /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2C7D3117FCD739008CE21A /* libcurl.dylib */; };
 		8F2C7D3417FCD758008CE21A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2C7D3317FCD758008CE21A /* libz.dylib */; };

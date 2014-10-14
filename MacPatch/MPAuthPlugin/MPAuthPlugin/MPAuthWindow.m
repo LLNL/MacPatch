@@ -77,10 +77,11 @@
 
 - (void)toggleFullScreen;
 - (void)toggleStatusProgress;
+- (void)updateNeededPatchesFile:(NSDictionary *)aPatch;
 
 // Helper
 - (void)connect;
-- (void)connect:(NSError **)err;
+- (int)connect:(NSError **)err;
 - (void)cleanup;
 - (void)connectionDown:(NSNotification *)notification;
 
@@ -96,6 +97,7 @@
 - (int)installAppleSoftwareUpdateViaProxy:(NSString *)appleUpdate;
 - (int)installPKGViaProxy:(NSString *)aPkgPath target:(NSString *)aTarget env:(NSString *)aEnv;
 - (int)runScriptViaProxy:(NSString *)aScript;
+- (void)removeStatusFiles;
 
 // MP
 - (void)scanAndPatch;
@@ -141,9 +143,8 @@ typedef NSUInteger MPInstallIconStatus;
 
 - (void)awakeFromNib
 {
-    mpServerConnection = [[MPServerConnection alloc] init];
     fm = [NSFileManager defaultManager];
-
+    mpDefauts = [[MPDefaults alloc] init];
     // Open a connection to the proxy
     [self connect];
 
@@ -267,7 +268,7 @@ typedef NSUInteger MPInstallIconStatus;
     [self connect:NULL];
 }
 
-- (void)connect:(NSError **)err
+- (int)connect:(NSError **)err
 {
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
@@ -295,6 +296,8 @@ typedef NSUInteger MPInstallIconStatus;
         qlerror(@"Could not connect to MPWorker: %@", e);
         [self cleanup];
     }
+
+    return 0;
 }
 
 - (void)cleanup
@@ -516,7 +519,7 @@ done:
         }
         if (!proxy)
         {
-            qlerror(@"[installAppleSoftwareUpdateViaProxy] Unable to get a connection to MPWorker.");
+            qlerror(@"[installPKGViaProxy] Unable to get a connection to MPWorker.");
             return result;
         }
     }
@@ -546,7 +549,7 @@ done:
         }
         if (!proxy)
         {
-            qlerror(@"[installAppleSoftwareUpdateViaProxy] Unable to get a connection to MPWorker.");
+            qlerror(@"[runScriptViaProxy] Unable to get a connection to MPWorker.");
             return result;
         }
     }
@@ -563,6 +566,76 @@ done:
 
 	//[self cleanup];
 	return result;
+}
+
+- (int)writeDataToFile:(id)data file:(NSString *)aFile
+{
+    int result = -1;
+	if (!proxy) {
+        [self connect];
+        if (!proxy) goto done;
+    }
+
+    @try
+	{
+        result = [proxy writeDataToFileViaHelper:data toFile:aFile];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to write data to file(%@). %@",aFile, e);
+    }
+
+done:
+	[self cleanup];
+    return result;
+}
+
+- (int)writeArrayToFile:(NSArray *)data file:(NSString *)aFile
+{
+    int result = -1;
+	if (!proxy) {
+        [self connect];
+        if (!proxy) goto done;
+    }
+
+    @try
+	{
+        result = [proxy writeArrayToFileViaHelper:data toFile:aFile];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to write data to file(%@). %@",aFile, e);
+    }
+
+done:
+	[self cleanup];
+    return result;
+}
+
+- (void)removeStatusFiles
+{
+    NSError *error = nil;
+	if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            logit(lcl_vError,@"%@",error.localizedDescription);
+            goto done;
+        }
+        if (!proxy) {
+            logit(lcl_vError,@"Could not create proxy object.");
+            goto done;
+        }
+    }
+
+    @try
+	{
+		[proxy removeStatusFilesViaHelper];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to set the logging level, %@", e);
+    }
+
+done:
+	[self cleanup];
+	return;
 }
 
 #pragma mark Client Callbacks
@@ -591,12 +664,14 @@ done:
 
 - (NSDictionary *)patchGroupPatches
 {
+    NSError *error = nil;
     NSDictionary *patchGroupPatches = nil;
-    MPJson *json = [[MPJson alloc] initWithServerConnection:mpServerConnection cuuid:[MPSystemInfo clientUUID]];
-	// Get Patch Group Patches
+    MPWebServices *mpws = [[MPWebServices alloc] init];
+
+    // Get Patch Group Patches
+    patchGroupPatches = [mpws getPatchGroupContent:&error];
 	qlinfo(@"Getting approved patch list for client.");
-    patchGroupPatches = [json downloadPatchGroupContent:NULL];
-	if (!patchGroupPatches) {
+	if (error) {
 		qlerror(@"There was a issue getting the approved patches for the patch group, scan will exit.");
         return nil;
 	}
@@ -631,7 +706,7 @@ done:
 			// If no items in array, lets bail...
 			if ([approvedApplePatches count] == 0 ) {
 				qlinfo(@"No Patch Group patches found.");
-				qlinfo(@"No apple updates found for \"%@\" patch group.",[mpServerConnection.mpDefaults objectForKey:@"PatchGroup"]);
+				qlinfo(@"No apple updates found for \"%@\" patch group.",[[mpDefauts defaults] objectForKey:@"PatchGroup"]);
 			} else {
 				// Build Approved Patches
 				qlinfo(@"Building approved apple patch list...");
@@ -844,7 +919,7 @@ done:
                         [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 
                         //Pre Proxy Config
-                        downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[currPatchToInstallDict objectForKey:@"url"]];
+                        downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
                         qlinfo(@"Download patch from: %@",downloadURL);
                         err = nil;
                         dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
@@ -1205,7 +1280,7 @@ done:
                                 [progressText performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
 
                                 //Pre Proxy Config
-                                downloadURL = [NSString stringWithFormat:@"http://%@/mp-content%@",mpServerConnection.HTTP_HOST,[currPatchToInstallDict objectForKey:@"url"]];
+                                downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
                                 qlinfo(@"Download patch from: %@",downloadURL);
                                 err = nil;
                                 dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
@@ -1504,6 +1579,7 @@ done:
 	}
 	if (aStatusImage == 1) {
 		[patch setObject:[self tableImage:@"Success.png"] forKey:@"statusImage"];
+        [self updateNeededPatchesFile:patch];
 	}
 	if (aStatusImage == 2) {
 		[patch setObject:[self tableImage:@"Fail.png"] forKey:@"statusImage"];
@@ -1517,6 +1593,40 @@ done:
     [patchesTableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
     [patchesTableView performSelectorOnMainThread:@selector(deselectAll:) withObject:nil waitUntilDone:NO];
 
+}
+
+- (void)updateNeededPatchesFile:(NSDictionary *)aPatch
+{
+    NSError *error = nil;
+    NSMutableArray *patchesNew;
+    NSArray *patches;
+    if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
+        patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST]];
+        [self removeStatusFiles];
+        if (error) {
+            qlerror(@"%@",error.localizedDescription);
+        }
+    } else {
+        return;
+    }
+
+    patchesNew = [[NSMutableArray alloc] init];
+    if (patches) {
+        for (NSDictionary *p in patches) {
+            if ([[p objectForKey:@"patch_id"] isEqualTo:[aPatch objectForKey:@"patch_id"]]) {
+                qlinfo(@"Remove patch from array, %@",aPatch);
+            } else if ([[p objectForKey:@"patch"] isEqualTo:[aPatch objectForKey:@"patch"]] && [[p objectForKey:@"type"] isEqualTo:@"Apple"]) {
+                qlinfo(@"Remove %@ patch from array, %@",[aPatch objectForKey:@"type"], aPatch);
+            } else {
+                [patchesNew addObject:p];
+            }
+        }
+    }
+    if (patchesNew.count >= 1) {
+        [self writeArrayToFile:(NSArray *)patchesNew file:PATCHES_NEEDED_PLIST];
+    } else {
+        [self removeStatusFiles];
+    }
 }
 
 - (NSImage *)tableImage:(NSString*)fileName

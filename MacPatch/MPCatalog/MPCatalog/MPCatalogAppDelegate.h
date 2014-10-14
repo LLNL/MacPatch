@@ -25,14 +25,14 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MacPatch.h"
-#import "MPDLWrapper.h"
 #import "MPWorkerProtocol.h"
+#import "MPNetRequest.h"
 
 @class PreferenceController;
 @class SWDistInfoController;
-@class MPServerConnection;
+@class MPDefaults;
 
-@interface MPCatalogAppDelegate : NSObject <NSApplicationDelegate,MPDLWrapperController, MPWorkerClient, NSTabViewDelegate>
+@interface MPCatalogAppDelegate : NSObject <NSApplicationDelegate, MPWorkerClient, NSTabViewDelegate, MPNetRequestController>
 {
     NSWindow *__unsafe_unretained window;
 	
@@ -51,7 +51,6 @@
     IBOutlet NSPanel                *rebootPanel;
     IBOutlet NSPanel                *swDistInfoPanel;
 
-    MPServerConnection              *mpServerConnection;
 	PreferenceController			*preferenceController;
     SWDistInfoController            *swDistInfoController;
     
@@ -64,7 +63,7 @@
 	id                              proxy;
 
 @private
-    MPDLWrapper				*downloadTask;
+    MPDefaults              *mpDefaults;
 	BOOL					isDownloading;
     BOOL                    cancelInstalls;
     NSDictionary            *_defaults;
@@ -91,12 +90,13 @@
 @property (nonatomic, strong)          NSOperationQueue     *queue;
 @property (nonatomic, strong)          NSMutableArray       *selectedItems;
 @property (nonatomic, strong)          NSArray              *swDistGroupsArray;
+@property (nonatomic, strong)          MPDefaults           *mpDefaults;
 
 @property (nonatomic, strong) IBOutlet NSPanel              *rebootPanel;
 @property (nonatomic, strong) IBOutlet NSPanel              *swDistInfoPanel;
 
 @property (nonatomic, assign) BOOL                          cancelInstalls;
-@property (nonatomic, strong)          NSDictionary         *_defaults;
+@property (nonatomic, strong)          NSDictionary         *defaults;
 @property (nonatomic, strong) IBOutlet NSTableColumn        *_selectionColumn;
 @property (nonatomic, assign) BOOL                          tableColEdit;
 @property (nonatomic, strong)          NSURL                *mp_SOFTWARE_DATA_DIR;

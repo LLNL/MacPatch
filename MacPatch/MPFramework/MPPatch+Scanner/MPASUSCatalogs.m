@@ -24,7 +24,7 @@
  */
 
 #import "MPASUSCatalogs.h"
-#import "MPJson.h"
+#import "MPWebServices.h"
 #import "MPNetworkUtils.h"
 #import "MPSystemInfo.h"
 
@@ -33,32 +33,16 @@
 
 @implementation MPASUSCatalogs
 
--(id)initWithServerConnection:(MPServerConnection *)aSrvObj
+-(id)init
 {
     self = [super init];
-	if (self) {
-		@try {
-            mpNetworkUtils = [[MPNetworkUtils alloc] init];
-            mpServerConnection = aSrvObj;
-		}
-		@catch (NSException *exception) {
-			qlerror(@"Exception: %@",exception);
-		}	
+	if (self)
+    {
+        mpNetworkUtils = [[MPNetworkUtils alloc] init];
     }
     return self;
 }
 
--(id)init
-{
-    MPServerConnection *_srvObj = [[[MPServerConnection alloc] init] autorelease];
-    return [self initWithServerConnection:_srvObj];
-}
-
-- (void) dealloc
-{
-    [mpNetworkUtils release];
-	[super dealloc];
-}	
 
 #pragma mark -
 
@@ -83,10 +67,9 @@
 - (NSDictionary *)getCatalogURLSFromServer
 {
 	NSDictionary	*catalogURLDict = NULL;
-	NSDictionary	*osVerData	= [MPSystemInfo osVersionOctets];
     NSError *err = nil;
-    MPJson *mpj = [[[MPJson alloc] init] autorelease];
-    catalogURLDict = [mpj getCatalogURLSForOS:[osVerData objectForKey:@"minor"] error:&err];
+    MPWebServices *mpw = [[MPWebServices alloc] init];
+    catalogURLDict = [mpw getCatalogURLSForHostOS:&err];
     if (err) {
 		qlerror(@"%@",[err localizedDescription]);
         return nil;
@@ -102,11 +85,11 @@
 	NSDictionary *catDict = [self getCatalogURLSFromServer];
 	if (!catDict) {
 		qlerror(@"Problem parsing catalog plist data.");
-		goto done;
+		return result;
 	}
     
 	NSString *currentCatalogURL = [self readCatalogURL];
-	NSMutableArray *catURLS = [[[NSMutableArray alloc] init] autorelease];
+	NSMutableArray *catURLS = [[NSMutableArray alloc] init];
 	if ([catDict objectForKey:@"CatalogURLS"]) {
 		[catURLS addObjectsFromArray:[catDict objectForKey:@"CatalogURLS"]];
     }
@@ -143,7 +126,7 @@
 		// CatalogURL is not defined, use the default Apple Config
 		result = YES;
 	}
-done:	
+
 	return result;
 }
 
@@ -167,8 +150,6 @@ done:
         if ([[osVerInfo objectForKey:@"minor"] intValue] >= 9)
         {
             // For Mac OS X 10.9
-            // [NSTask launchedTaskWithLaunchPath:@"/usr/bin/killall" arguments:[NSArray arrayWithObjects:@"-HUP",@"softwareupdated",nil]];
-            // [NSTask launchedTaskWithLaunchPath:@"/usr/bin/killall" arguments:[NSArray arrayWithObjects:@"-HUP",@"cfprefsd",nil]];
             [NSTask launchedTaskWithLaunchPath:@"/usr/sbin/softwareupdate" arguments:[NSArray arrayWithObjects:@"--set-catalog",aCatalogURL,nil]];
         }
         else

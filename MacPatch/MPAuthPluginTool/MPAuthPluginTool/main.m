@@ -149,7 +149,7 @@ int main(int argc, char * argv[])
             exit(0);
         }
 
-        if (!CFDictionaryGetValueIfPresent(login_dict, CFSTR("mechanisms"), &arrayRef)) {
+        if (!CFDictionaryGetValueIfPresent(login_dict, CFSTR("mechanisms"), (const void **)&arrayRef)) {
             exit(1);
         }
 
@@ -195,6 +195,11 @@ int main(int argc, char * argv[])
             // Read ...
             NSDictionary *d = [NSDictionary dictionaryWithDictionary:(__bridge NSDictionary *)((CFDictionaryRef)login_dict)];
             NSLog(@"%@",[d objectForKey:@"mechanisms"]);
+            if (mechansimString)
+                CFRelease(mechansimString);
+            if (newMechanisms)
+                CFRelease(newMechanisms);
+
             return 0;
         }
 
@@ -202,6 +207,13 @@ int main(int argc, char * argv[])
         new_login_dict = CFDictionaryCreateMutableCopy(NULL, 0, login_dict);
         CFDictionarySetValue(new_login_dict, CFSTR("mechanisms"), newMechanisms);
         status = AuthorizationRightSet(authRef, [_right UTF8String], new_login_dict, NULL, NULL, NULL);
+
+        if (mechansimString)
+            CFRelease(mechansimString);
+        if (newMechanisms)
+            CFRelease(newMechanisms);
+        if (new_login_dict)
+            CFRelease(new_login_dict);
         return status;
     }
     return 0;

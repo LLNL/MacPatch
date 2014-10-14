@@ -191,8 +191,6 @@ NSString * const DirectoryLocationDomain = @"DirectoryLocationDomain";
 		executableName = @"NA";
 	}
 
-    NSLog(@"attributes: %@",attributes);
-
 	NSError *error = nil;
     NSString *result;
 	result = [self findOrCreateDirectory:NSApplicationSupportDirectory inDomain:aDomainMask appendPathComponent:executableName directoryAttributes:attributes error:&error];

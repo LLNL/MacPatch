@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F1949A31948C40700372FB8 /* disabled.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F1949A11948C40700372FB8 /* disabled.tif */; };
+		8F1949A41948C40700372FB8 /* enabled.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F1949A21948C40700372FB8 /* enabled.tif */; };
 		8FD88F3616DFD26C00A870A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88F3516DFD26C00A870A3 /* Cocoa.framework */; };
 		8FD88F4016DFD26C00A870A3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88F3E16DFD26C00A870A3 /* InfoPlist.strings */; };
 		8FD88F4216DFD26C00A870A3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88F4116DFD26C00A870A3 /* main.m */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8F1949A11948C40700372FB8 /* disabled.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = disabled.tif; sourceTree = "<group>"; };
+		8F1949A21948C40700372FB8 /* enabled.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = enabled.tif; sourceTree = "<group>"; };
 		8FD88F3216DFD26C00A870A3 /* MPTaskEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPTaskEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD88F3516DFD26C00A870A3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8FD88F3816DFD26C00A870A3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -113,6 +117,8 @@
 			children = (
 				8FD88F5A16DFD28D00A870A3 /* MPTaskEditor_MainMenu.xib */,
 				8FD88F5B16DFD28D00A870A3 /* MPTaskListEditor.icns */,
+				8F1949A11948C40700372FB8 /* disabled.tif */,
+				8F1949A21948C40700372FB8 /* enabled.tif */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -171,6 +177,8 @@
 				8FD88F4016DFD26C00A870A3 /* InfoPlist.strings in Resources */,
 				8FD88F4616DFD26C00A870A3 /* Credits.rtf in Resources */,
 				8FD88F5D16DFD28D00A870A3 /* MPTaskEditor_MainMenu.xib in Resources */,
+				8F1949A41948C40700372FB8 /* enabled.tif in Resources */,
+				8F1949A31948C40700372FB8 /* disabled.tif in Resources */,
 				8FD88F5E16DFD28D00A870A3 /* MPTaskListEditor.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -234,7 +242,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -259,7 +267,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -267,11 +275,13 @@
 		8FD88F5016DFD26C00A870A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPTaskEditor/MPTaskEditor-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				INFOPLIST_FILE = "MPTaskEditor/MPTask Editor-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -280,11 +290,13 @@
 		8FD88F5116DFD26C00A870A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPTaskEditor/MPTaskEditor-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				INFOPLIST_FILE = "MPTaskEditor/MPTask Editor-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

@@ -64,9 +64,9 @@ done:
 {
     NSString *activeInterface = @"en0";
     SCDynamicStoreRef dynRefForIF = SCDynamicStoreCreate(kCFAllocatorSystemDefault,(CFStringRef)@"GetDynamicStoreForIP", NULL, NULL);
-    NSArray *aIfList = [(NSArray *)SCDynamicStoreCopyKeyList(dynRefForIF,CFSTR("State:/Network/Global/IPv4")) autorelease];
+    NSArray *aIfList = (NSArray *)CFBridgingRelease(SCDynamicStoreCopyKeyList(dynRefForIF,CFSTR("State:/Network/Global/IPv4")));
     for (NSString *aIf in aIfList) {
-        NSDictionary *dict = [(NSDictionary *)SCDynamicStoreCopyValue(dynRefForIF,(CFStringRef)aIf) autorelease];
+        NSDictionary *dict = (NSDictionary *)CFBridgingRelease(SCDynamicStoreCopyValue(dynRefForIF,(__bridge CFStringRef)aIf));
         if (dict) {
             activeInterface = [NSString stringWithString:[dict objectForKey:@"PrimaryInterface"]];
             break;
@@ -84,19 +84,18 @@ done:
 + (NSString *)getMacAddressForInterface:(NSString *)bsdIfName
 {
     NSString				*macAddress			= nil;
-	NSArray                 *allInterfaces      = (NSArray*)SCNetworkInterfaceCopyAll();
+	NSArray                 *allInterfaces      = (NSArray*)CFBridgingRelease(SCNetworkInterfaceCopyAll());
 	NSEnumerator            *interfaceWalker	= [allInterfaces objectEnumerator];
 	SCNetworkInterfaceRef   curInterface		= nil;
 	
-	while ((curInterface = (SCNetworkInterfaceRef)[interfaceWalker nextObject]))
+	while ((curInterface = (__bridge SCNetworkInterfaceRef)[interfaceWalker nextObject]))
 	{
-		if ( [(NSString*)SCNetworkInterfaceGetBSDName(curInterface) isEqualToString:bsdIfName])
+		if ( [(__bridge NSString*)SCNetworkInterfaceGetBSDName(curInterface) isEqualToString:bsdIfName])
 		{
-			macAddress = [NSString stringWithString:(NSString*)SCNetworkInterfaceGetHardwareAddressString(curInterface)];
+			macAddress = [NSString stringWithString:(__bridge NSString*)SCNetworkInterfaceGetHardwareAddressString(curInterface)];
 			break;
 		}
 	}
-	[allInterfaces release];
 	return macAddress;
 }
 
@@ -110,14 +109,14 @@ done:
     NSString *ipResult = @"NA";
     
     SCDynamicStoreRef dynRef=SCDynamicStoreCreate(kCFAllocatorSystemDefault,(CFStringRef)@"", NULL, NULL);
-    NSArray *interfaceList=[(NSArray *)SCDynamicStoreCopyKeyList(dynRef,(CFStringRef)@"State:/Network/Interface/.*/IPv4") autorelease];
+    NSArray *interfaceList=(NSArray *)CFBridgingRelease(SCDynamicStoreCopyKeyList(dynRef,(CFStringRef)@"State:/Network/Interface/.*/IPv4"));
     qldebug(@"interfaceList: %@",interfaceList);
     for (NSString *interface in interfaceList) 
     {
         if ([interface rangeOfString:bsdIfName].location != NSNotFound && [interface rangeOfString:@"lo0"].location == NSNotFound)
         {
             qldebug(@"interface: %@",interface);
-            NSDictionary *interfaceDict = [(NSDictionary *)SCDynamicStoreCopyValue(dynRef,(CFStringRef)interface) autorelease];
+            NSDictionary *interfaceDict = (NSDictionary *)CFBridgingRelease(SCDynamicStoreCopyValue(dynRef,(__bridge CFStringRef)interface));
             NSArray *iList = nil;
             iList = [NSArray arrayWithArray:[interfaceDict objectForKey:@"Addresses"]];
             if (iList) {
@@ -135,7 +134,7 @@ done:
 
 + (NSDictionary *)consoleUserData
 {
-    NSMutableDictionary *uData = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary *uData = [[NSMutableDictionary alloc] init];
 	[uData setObject:@"NA" forKey:@"consoleUser"];
 	[uData setObject:@"NA" forKey:@"consoleUserUID"];
 	[uData setObject:@"NA" forKey:@"consoleUserGID"];
@@ -145,13 +144,12 @@ done:
 	uid_t	uid;
 	gid_t	gid;
     
-    consoleUserName = (NSString *)SCDynamicStoreCopyConsoleUser(NULL, &uid, &gid);
+    consoleUserName = (NSString *)CFBridgingRelease(SCDynamicStoreCopyConsoleUser(NULL, &uid, &gid));
 	if ([consoleUserName length] >= 1) {
 		[uData setObject:(NSString *)consoleUserName forKey:@"consoleUser"];
 		[uData setObject:[NSString stringWithFormat:@"%i",uid] forKey:@"consoleUserUID"];
 		[uData setObject:[NSString stringWithFormat:@"%i",gid] forKey:@"consoleUserGID"];
 	}
-    [consoleUserName release];
     
     NSDictionary *consoleUser = [NSDictionary dictionaryWithDictionary:uData];
     return consoleUser;
@@ -159,7 +157,7 @@ done:
 
 + (NSDictionary *)hostAndComputerNames
 {
-    NSMutableDictionary *localInfo = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary *localInfo = [[NSMutableDictionary alloc] init];
 	
 	[localInfo setObject:@"NA" forKey:@"localComputerName"];
 	[localInfo setObject:@"NA" forKey:@"localHostName"];
@@ -167,9 +165,12 @@ done:
     // Get Local Computer Name
 	CFStringRef localComputerName = SCDynamicStoreCopyLocalHostName(NULL);
 	if (localComputerName && CFStringGetLength(localComputerName)!=0) {
-		[localInfo setObject:(NSString *)localComputerName forKey:@"localComputerName"];
-        CFRelease(localComputerName);
+		[localInfo setObject:(__bridge NSString *)localComputerName forKey:@"localComputerName"];
 	}
+
+    if (localComputerName) {
+        CFRelease(localComputerName);
+    }
     
 	// Get Local Host Name
 	NSHost *localHost = [NSHost currentHost];
@@ -182,7 +183,7 @@ done:
 + (NSDictionary *)osVersionInfo
 {
     NSFileManager *fm = [NSFileManager defaultManager]; 
-    NSMutableDictionary *osVers = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary *osVers = [[NSMutableDictionary alloc] init];
 	
     NSString *serverAppPath = @"/Applications/Server.app";
 	NSString *clientVerPath = @"/System/Library/CoreServices/SystemVersion.plist";
@@ -213,7 +214,7 @@ done:
 
 + (NSDictionary *)osVersionOctets
 {
-    NSMutableDictionary *result = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
 
     SInt32 verMajor=10, verMinor=0, verRev=0;
     Gestalt(gestaltSystemVersionMajor, &verMajor);
@@ -269,7 +270,7 @@ done:
     NSString *taskResult = nil;
     
     
-    NSMutableArray *files = [[[NSMutableArray alloc] initWithArray:[fm directoryContentsAtPath:MP_ROOT_CLIENT]] autorelease];
+    NSMutableArray *files = [[NSMutableArray alloc] initWithArray:[fm directoryContentsAtPath:MP_ROOT_CLIENT]];
     [files addObject:@"/Library/Frameworks/MPFramework.framework"];
     
     NSMutableDictionary *apps = [[NSMutableDictionary alloc] init];
@@ -290,8 +291,6 @@ done:
     }
     
     result = [NSDictionary dictionaryWithDictionary:apps];
-    [apps release];
-    [task release];
     return result;
 }
 

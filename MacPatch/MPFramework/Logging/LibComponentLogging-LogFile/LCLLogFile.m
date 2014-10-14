@@ -371,7 +371,7 @@ static NSString *_LCLLogFile_prefix(const char *identifier_c, uint32_t level,
     
     // create prefix
     NSString *prefix;
-	if (level == 4) {	
+	if (level == 4) {
 		prefix = [NSString stringWithFormat:@" [%u:%x][%s] %s -- ",
 				  /*    */
 				  /* %u */ _LCLLogFile_processId,

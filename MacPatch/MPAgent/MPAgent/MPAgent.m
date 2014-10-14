@@ -41,6 +41,8 @@ static MPAgent *_instance;
 @synthesize g_TasksHash;
 @synthesize g_AppHashes;
 @synthesize g_agentPid;
+@synthesize g_hostName;
+
 // SWDist
 @synthesize g_SWDistTasks;
 @synthesize g_SWDistTasksHash;
@@ -65,8 +67,8 @@ static MPAgent *_instance;
             [_instance setG_agentPid:NULL];
             [_instance setG_SWDistTasksHash:@"NA"];
             [_instance setG_SWDistTasksJSONHash:@"NA"];
-			[mpd release];
-            [osDict release];
+            NSString *localHostName = (__bridge NSString *)SCDynamicStoreCopyLocalHostName(NULL);
+            [_instance setG_hostName:localHostName];
         }
     }
     return _instance;
@@ -76,26 +78,11 @@ static MPAgent *_instance;
 
 + (id)allocWithZone:(NSZone *)zone
 {
-	return [[self sharedInstance]retain];
+	return [self sharedInstance];
 }
 
 
 - (id)copyWithZone:(NSZone *)zone
-{
-    return self;
-}
-
-- (id)retain
-{
-    return self;
-}
-
-- (unsigned long)retainCount
-{
-    return NSUIntegerMax;  //denotes an object that cannot be released
-}
-
-- (id)autorelease
 {
     return self;
 }
@@ -149,7 +136,7 @@ static MPAgent *_instance;
 	if (serialAsCFString == NULL) {
 		result = @"NA";
 	} else {
-		result = [NSString stringWithFormat:@"%@",(NSString *)serialAsCFString];
+		result = [NSString stringWithFormat:@"%@",(__bridge NSString *)serialAsCFString];
 		CFRelease(serialAsCFString);
 	}
 	

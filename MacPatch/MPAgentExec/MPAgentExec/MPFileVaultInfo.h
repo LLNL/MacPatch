@@ -33,9 +33,9 @@
 }
 
 @property (nonatomic, assign, readonly) int state;
-@property (nonatomic, retain, readonly) NSString *status;
-@property (nonatomic, retain, readonly) NSString *users;
-@property (nonatomic, retain, readonly) NSError *error;
+@property (nonatomic, strong, readonly) NSString *status;
+@property (nonatomic, strong, readonly) NSString *users;
+@property (nonatomic, strong, readonly) NSError *error;
 
 - (void)refresh;
 

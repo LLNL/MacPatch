@@ -24,10 +24,7 @@
  */
 
 #import "MPSWTasks.h"
-#import "MPServerConnection.h"
-#import "ASIHTTPRequest.h"
-#import "ASIFormDataRequest.h"
-#import "JSONKit.h"
+#import "MPWebServices.h"
 
 @interface MPSWTasks () 
 
@@ -37,6 +34,7 @@
 
 @synthesize mpHostConfigInfo;
 
+@synthesize defaults;
 @synthesize groupHash;
 @synthesize groupName;
 
@@ -50,15 +48,14 @@
     self = [super init];
     if (self)
     {
-        mpServerConnection = [[MPServerConnection alloc] init];
-        [self setMpHostConfigInfo:[mpServerConnection mpConnection]];
-
+        MPDefaults *d = [[MPDefaults alloc] init];
+        [self setDefaults:[d defaults]];
 
         if (aGroup) {
             [self setGroupName:aGroup];
         } else {
-            if ([mpServerConnection.mpDefaults objectForKey:@"SWDistGroup"]) {
-                [self setGroupName:[mpServerConnection.mpDefaults objectForKey:@"SWDistGroup"]];
+            if ([defaults objectForKey:@"SWDistGroup"]) {
+                [self setGroupName:[defaults objectForKey:@"SWDistGroup"]];
             } else {
                 [self setGroupName:@"NA"];
             }
@@ -68,15 +65,6 @@
     return self;
 }
 
-- (void)dealloc 
-{
-    [groupHash release];
-    groupHash = nil;
-    [groupName release];
-    groupName = nil;
-    [mpServerConnection release];
-    [super dealloc];
-}
 
 - (void)main 
 {
@@ -106,62 +94,17 @@
 
 - (NSString *)getHashForGroup:(NSError **)err
 {
+    NSError *error = nil;
     NSString *result = @"NA";
-    NSDictionary *jsonResult = nil;
-    // Create JSON Request URL
-	NSString *urlString = [NSString stringWithFormat:@"%@?method=GetSoftwareTasksForGroupHash&GroupName=%@",mpServerConnection.MP_JSON_URL,groupName];
-    qldebug(@"JSON URL: %@",urlString);
-    
-	// Create http request
-	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:urlString]];
-	[request setValidatesSecureCertificate:NO];	
-	[request setTimeOutSeconds:120];
-	[request startSynchronous];
-	
-	NSDictionary *userInfoDict;
-	NSError *error = [request error];
-	if (error) {
-		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
-		if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:[error code]  userInfo:userInfoDict];
-		qlerror(@"%@",[error localizedDescription]);
-		goto done;
-	}
-    
-    error = nil;
-    jsonResult = [[request responseString] objectFromJSONStringWithParseOptions:JKParseOptionNone error:&error];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
+    result = [mpws getHashForSWTaskGroup:self.groupName error:&error];
     if (error) {
-        userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
-        if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:[error code]  userInfo:userInfoDict];
-        qlerror(@"%@",[error localizedDescription]);
-        goto done;
-    }
-    
-done:
-    if (!jsonResult) {
-        return result;
-    } else {
-        // First Check to make sure we have the errorno object and then check to 
-        // see if the return value is 0, else error.
-        if ([jsonResult hasKey:@"errorno"]) {
-            if ([[jsonResult objectForKey:@"errorno"] integerValue] != 0) {
-                userInfoDict = [NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Error[%d]: %@",(int)[jsonResult objectForKey:@"errorno"],[jsonResult objectForKey:@"errormsg"]] forKey:NSLocalizedDescriptionKey];
-                if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:(int)[jsonResult objectForKey:@"errorno"]  userInfo:userInfoDict];
-                qlerror(@"%@",[userInfoDict objectForKey:NSLocalizedDescriptionKey]);
-                return result;
-            }
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
         }
-        // Now that the error code is 0, lets try and read the result
-        // Does it have the right key?
-        if ([jsonResult hasKey:@"result"]) {
-            if ([[jsonResult objectForKey:@"result"] hasKey:@"hash"]) {
-                userInfoDict = [NSDictionary dictionaryWithObject:@"\"hash\" key is missing." forKey:NSLocalizedDescriptionKey];
-                if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:1  userInfo:userInfoDict];
-                qlerror(@"%@",[userInfoDict objectForKey:NSLocalizedDescriptionKey]);
-                return result;   
-            } else {
-                result = [[jsonResult objectForKey:@"result"] objectForKey:@"hash"];
-            }
-        }
+        return @"NA";
     }
     
     qldebug(@"Result: %@",result);
@@ -170,63 +113,17 @@ done:
 
 - (id)getSWTasksForGroupFromServer:(NSError **)err
 {
+    NSError *error = nil;
     id result = nil;
-    NSDictionary *userInfoDict;
-    NSDictionary *jsonResult = nil;
-    // Create JSON Request URL
-    NSString *urlString = [NSString stringWithFormat:@"%@?method=GetSoftwareTasksForGroup&GroupName=%@",mpServerConnection.MP_JSON_URL,groupName];
-    qldebug(@"JSON URL: %@",urlString);
-    
-	// Create http request
-	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:urlString]];
-	[request setValidatesSecureCertificate:NO];	
-	[request setTimeOutSeconds:120];
-	[request startSynchronous];
-	
-	NSError *error = [request error];
-	if (error) {
-		userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
-		if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:[error code]  userInfo:userInfoDict];
-		qlerror(@"%@",[error localizedDescription]);
-		goto done;
-	}
-    
-    error = nil;
-    jsonResult = [[request responseString] objectFromJSONStringWithParseOptions:JKParseOptionNone error:&error];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
+    result = [mpws getSWTasksForGroup:self.groupName error:&error];
     if (error) {
-        userInfoDict = [NSDictionary dictionaryWithObject:[error localizedDescription] forKey:NSLocalizedDescriptionKey];
-        if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:[error code]  userInfo:userInfoDict];
-        qlerror(@"%@",[error localizedDescription]);
-        goto done;
-    }
-	
-done:
-    if (!jsonResult) {
-        return result;
-    } else {
-        // First Check to make sure we have the errorno object and then check to 
-        // see if the return value is 0, else error.
-        if ([jsonResult hasKey:@"errorno"]) {
-            if ([[jsonResult objectForKey:@"errorno"] integerValue] != 0) {
-                userInfoDict = [NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Error[%d]: %@",(int)[jsonResult objectForKey:@"errorno"],[jsonResult objectForKey:@"errormsg"]] forKey:NSLocalizedDescriptionKey];
-                if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:(int)[jsonResult objectForKey:@"errorno"]  userInfo:userInfoDict];
-                qlerror(@"%@",[userInfoDict objectForKey:NSLocalizedDescriptionKey]);
-                return result;
-            }
-        }
-        // Now that the error code is 0, lets try and read the result
-        // Does it have the right key?
-        if ([jsonResult hasKey:@"result"]) {
-            result = [jsonResult objectForKey:@"result"];
+        if (err != NULL) {
+            *err = error;
         } else {
-            userInfoDict = [NSDictionary dictionaryWithObject:@"\"result\" key is missing." forKey:NSLocalizedDescriptionKey];
-            if (err != NULL) *err = [NSError errorWithDomain:@"gov.llnl.mp" code:1  userInfo:userInfoDict];
-            qlerror(@"%@",[userInfoDict objectForKey:NSLocalizedDescriptionKey]);
-            return result;   
+            qlerror(@"%@",error.localizedDescription);
         }
-        
-        // Todo, set hash value of result. So, that the next time it's run it uses the last known value.
-        // Or just use alt method and do  validation.
+        return @"NA";
     }
     
     qldebug(@"Result: %@",result);
@@ -235,62 +132,54 @@ done:
 
 - (int)postInstallResults:(int)resultNo resultText:(NSString *)resultString task:(NSDictionary *)taskDict
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@",mpServerConnection.MP_JSON_URL];
-    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
-    logit(lcl_vDebug,@"POST JSON Result:%@",urlString);
-    [request setUserAgent:@"MacPatchAgent"];
-    [request setPostValue:@"PostSoftwareInstallResults" forKey:@"method"];
-    [request setPostValue:@"json" forKey:@"type"];
-    [request setPostValue:[MPSystemInfo clientUUID] forKey:@"ClientID"];
-    [request setPostValue:[taskDict objectForKey:@"id"] forKey:@"SWTaskID"];
-    [request setPostValue:[taskDict valueForKeyPath:@"Software.sid"] forKey:@"SWDistID"];
-    [request setPostValue:[NSNumber numberWithInt:resultNo] forKey:@"ResultNo"];
-    [request setPostValue:resultString forKey:@"ResultString"];
-    [request setPostValue:@"i" forKey:@"Action"];
-    [request setValidatesSecureCertificate:NO];	
-    [request setTimeOutSeconds:15];
-    [request startSynchronous];
-    
-    NSString *requestString;
-    requestString = [request responseString];
-    qldebug(@"POST JSON Result:%@",requestString);
-     
-     if ([request responseStatusCode] == 0) {
-         // Need to parse results to see if the error code is 0
-         return 0;
-     } else {
-         return 1;
-     }
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    [params setObject:@"json" forKey:@"type"];
+    [params setObject:[MPSystemInfo clientUUID] forKey:@"ClientID"];
+    [params setObject:[taskDict objectForKey:@"id"] forKey:@"SWTaskID"];
+    [params setObject:[taskDict valueForKeyPath:@"Software.sid"] forKey:@"SWDistID"];
+    [params setObject:[NSNumber numberWithInt:resultNo] forKey:@"ResultNo"];
+    [params setObject:resultString forKey:@"ResultString"];
+    [params setObject:@"i" forKey:@"Action"];
+
+
+    NSError *error = nil;
+    int result = -1;
+    MPWebServices *mpws = [[MPWebServices alloc] init];
+    result = [mpws postSWInstallResults:(NSDictionary *)params error:&error];
+    if (error)
+    {
+        qlerror(@"%@",error.localizedDescription);
+        return 1;
+    }
+
+    qldebug(@"Result [postSWInstallResults]: %d",result);
+    return result;
 }
 
 - (int)postUnInstallResults:(int)resultNo resultText:(NSString *)resultString task:(NSDictionary *)taskDict
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@",mpServerConnection.MP_JSON_URL];
-    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
-    logit(lcl_vDebug,@"POST JSON Result:%@",urlString);
-    [request setUserAgent:@"MacPatchAgent"];
-    [request setPostValue:@"PostSoftwareInstallResults" forKey:@"method"];
-    [request setPostValue:@"json" forKey:@"type"];
-    [request setPostValue:[MPSystemInfo clientUUID] forKey:@"ClientID"];
-    [request setPostValue:[taskDict objectForKey:@"id"] forKey:@"SWTaskID"];
-    [request setPostValue:[taskDict valueForKeyPath:@"Software.sid"] forKey:@"SWDistID"];
-    [request setPostValue:[NSNumber numberWithInt:resultNo] forKey:@"ResultNo"];
-    [request setPostValue:resultString forKey:@"ResultString"];
-    [request setPostValue:@"u" forKey:@"Action"];
-    [request setValidatesSecureCertificate:NO];	
-    [request setTimeOutSeconds:15];
-    [request startSynchronous];
-    
-    NSString *requestString;
-    requestString = [request responseString];
-    qldebug(@"POST JSON Result:%@",requestString);
-    
-    if ([request responseStatusCode] == 0) {
-        // Need to parse results to see if the error code is 0
-        return 0;
-    } else {
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    [params setObject:@"json" forKey:@"type"];
+    [params setObject:[MPSystemInfo clientUUID] forKey:@"ClientID"];
+    [params setObject:[taskDict objectForKey:@"id"] forKey:@"SWTaskID"];
+    [params setObject:[taskDict valueForKeyPath:@"Software.sid"] forKey:@"SWDistID"];
+    [params setObject:[NSNumber numberWithInt:resultNo] forKey:@"ResultNo"];
+    [params setObject:resultString forKey:@"ResultString"];
+    [params setObject:@"u" forKey:@"Action"];
+
+
+    NSError *error = nil;
+    int result = -1;
+    MPWebServices *mpws = [[MPWebServices alloc] init];
+    result = [mpws postSWInstallResults:(NSDictionary *)params error:&error];
+    if (error)
+    {
+        qlerror(@"%@",error.localizedDescription);
         return 1;
     }
+
+    qldebug(@"Result [postUnInstallResults]: %d",result);
+    return result;
 }
 
 @end

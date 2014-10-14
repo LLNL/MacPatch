@@ -48,8 +48,8 @@ extern NSString * const kRBSWInstallAlertBody;
 @property (nonatomic, assign) BOOL _confirmed;
 @property (nonatomic, assign) BOOL isPatchReboot;
 
-@property (nonatomic, retain) IBOutlet NSTextField *wTitle;
-@property (nonatomic, retain) IBOutlet NSTextField *wBody;
+@property (nonatomic, strong) IBOutlet NSTextField *wTitle;
+@property (nonatomic, strong) IBOutlet NSTextField *wBody;
 
 - (IBAction)logoutNowButton:(id)sender;
 - (IBAction)confirmAppTerminate:(id)sender;

@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">13A603</string>
-		<string key="IBDocument.InterfaceBuilderVersion">4514</string>
-		<string key="IBDocument.AppKitVersion">1265</string>
-		<string key="IBDocument.HIToolboxVersion">695.00</string>
+		<string key="IBDocument.SystemVersion">13F18</string>
+		<string key="IBDocument.InterfaceBuilderVersion">5056</string>
+		<string key="IBDocument.AppKitVersion">1265.21</string>
+		<string key="IBDocument.HIToolboxVersion">698.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">4514</string>
+			<string key="NS.object.0">5056</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSArrayController</string>
@@ -95,6 +95,9 @@
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="1031032053"/>
 						<reference key="NSMixedImage" ref="976213795"/>
+						<object class="NSAttributedString" key="NSAttributedTitle">
+							<string key="NSString"/>
+						</object>
 					</object>
 					<object class="NSMenuItem" id="32870849">
 						<reference key="NSMenu" ref="545417575"/>
@@ -1589,6 +1592,7 @@
 						</object>
 					</array>
 					<string key="NSFrameSize">{360, 166}</string>
+					<reference key="NSNextKeyView" ref="551734748"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {2560, 1578}}</string>
 				<string key="NSMaxSize">{360, 188}</string>
@@ -1664,12 +1668,12 @@
 						<object class="NSTextField" id="76999802">
 							<reference key="NSNextResponder" ref="1010665651"/>
 							<int key="NSvFlags">270</int>
-							<string key="NSFrame">{{105, 238}, {358, 111}}</string>
+							<string key="NSFrame">{{105, 299}, {358, 50}}</string>
 							<reference key="NSSuperview" ref="1010665651"/>
 							<reference key="NSNextKeyView" ref="634614302"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="234851264">
-								<int key="NSCellFlags">67108864</int>
+								<int key="NSCellFlags">69206017</int>
 								<int key="NSCellFlags2">272629760</int>
 								<string key="NSContents">Multiline Label</string>
 								<object class="NSFont" key="NSSupport" id="119985606">
@@ -1690,12 +1694,12 @@
 							<array class="NSMutableArray" key="NSSubviews">
 								<object class="NSClipView" id="422492468">
 									<reference key="NSNextResponder" ref="634614302"/>
-									<int key="NSvFlags">2304</int>
+									<int key="NSvFlags">2322</int>
 									<array class="NSMutableArray" key="NSSubviews">
 										<object class="NSTableView" id="344262179">
 											<reference key="NSNextResponder" ref="422492468"/>
 											<int key="NSvFlags">256</int>
-											<string key="NSFrameSize">{438, 190}</string>
+											<string key="NSFrameSize">{438, 247}</string>
 											<reference key="NSSuperview" ref="422492468"/>
 											<reference key="NSNextKeyView" ref="155201165"/>
 											<bool key="NSEnabled">YES</bool>
@@ -1706,14 +1710,13 @@
 												<int key="NSvFlags">256</int>
 												<string key="NSFrameSize">{438, 17}</string>
 												<reference key="NSSuperview" ref="155201165"/>
-												<reference key="NSNextKeyView" ref="610382220"/>
+												<reference key="NSNextKeyView" ref="422492468"/>
 												<reference key="NSTableView" ref="344262179"/>
 											</object>
-											<object class="_NSCornerView" key="NSCornerView" id="610382220">
-												<reference key="NSNextResponder" ref="634614302"/>
+											<object class="_NSCornerView" key="NSCornerView">
+												<nil key="NSNextResponder"/>
 												<int key="NSvFlags">-2147483392</int>
 												<string key="NSFrame">{{224, 0}, {16, 17}}</string>
-												<reference key="NSSuperview" ref="634614302"/>
 												<reference key="NSNextKeyView" ref="422492468"/>
 											</object>
 											<array class="NSMutableArray" key="NSTableColumns">
@@ -1809,7 +1812,7 @@
 											<int key="NSTableViewGroupRowStyle">1</int>
 										</object>
 									</array>
-									<string key="NSFrame">{{1, 17}, {438, 190}}</string>
+									<string key="NSFrame">{{1, 17}, {438, 247}}</string>
 									<reference key="NSSuperview" ref="634614302"/>
 									<reference key="NSNextKeyView" ref="344262179"/>
 									<reference key="NSDocView" ref="344262179"/>
@@ -1840,7 +1843,7 @@
 								</object>
 								<object class="NSClipView" id="155201165">
 									<reference key="NSNextResponder" ref="634614302"/>
-									<int key="NSvFlags">2304</int>
+									<int key="NSvFlags">2338</int>
 									<array class="NSMutableArray" key="NSSubviews">
 										<reference ref="273621857"/>
 									</array>
@@ -1851,9 +1854,8 @@
 									<reference key="NSBGColor" ref="693324236"/>
 									<int key="NScvFlags">4</int>
 								</object>
-								<reference ref="610382220"/>
 							</array>
-							<string key="NSFrame">{{20, 22}, {440, 208}}</string>
+							<string key="NSFrame">{{20, 22}, {440, 265}}</string>
 							<reference key="NSSuperview" ref="1010665651"/>
 							<reference key="NSNextKeyView" ref="422492468"/>
 							<int key="NSsFlags">133682</int>
@@ -4535,7 +4537,7 @@
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<real value="1060" key="NS.object.0"/>
+			<real value="1070" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>

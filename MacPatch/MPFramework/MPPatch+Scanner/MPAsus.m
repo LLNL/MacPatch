@@ -26,12 +26,12 @@
 #import "MPAsus.h"
 #import "MPNetworkUtils.h"
 #import "MPPatchScan.h"
-#import "ASIHTTPRequest.h"
+#import "Constants.h"
+#import "MPNetConfig.h"
+#import "MPNetRequest.h"
 
 #undef  ql_component
 #define ql_component lcl_cMPAsus
-
-static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.plist";
 
 @implementation MPAsus
 
@@ -48,24 +48,23 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 //  init 
 //=========================================================== 
 
-- (id)initWithServerConnection:(MPServerConnection *)srvObj
+- (id)init
 {
     self = [super init];
-	if (self) 
+	if (self)
     {
         mpNetworkUtils = [[MPNetworkUtils alloc] init];
-        mpServerConnection = srvObj;
+        MPDefaults *mpDefaults = [[MPDefaults alloc] init];
+        defaults = [mpDefaults defaults];
 
-        defaults = [mpServerConnection mpDefaults];
-        
         [self setCatalogURLArray:[defaults objectForKey:@"CatalogURL"]];
-		
+
         if ([defaults objectForKey:@"PatchGroup"]) {
 			[self setPatchGroup:[defaults objectForKey:@"PatchGroup"]];
 		} else {
 			[self setPatchGroup:@"RecommendedPatches"];
 		}
-		
+
 		if ([defaults objectForKey:@"AllowClient"]) {
 			NSString *cVal = [defaults objectForKey:@"AllowServer"];
 			if ([cVal isEqualToString:@"1"] || [cVal isEqualToString:@"Y"] || [cVal isEqualToString:@"Yes"] || [cVal isEqualToString:@"T"] || [cVal isEqualToString:@"True"]) {
@@ -76,7 +75,7 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 		} else {
 			[self setAllowClient:YES];
 		}
-		
+
 		if ([defaults objectForKey:@"AllowServer"]) {
 			NSString *sVal = [defaults objectForKey:@"AllowServer"];
 			if ([sVal isEqualToString:@"1"] || [sVal isEqualToString:@"Y"] || [sVal isEqualToString:@"Yes"] || [sVal isEqualToString:@"T"] || [sVal isEqualToString:@"True"]) {
@@ -91,17 +90,16 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
     return self;
 }
 
+- (id)initWithServerConnection:(id)srvObj
+{
+    return [self init];
+}
+
 #pragma mark -
 #pragma mark dealloc
 //===========================================================
 //  dealloc
 //===========================================================
-- (void) dealloc
-{
-    [mpNetworkUtils release];
-    [catalogURLArray release];
-	[super dealloc];
-}
 
 #pragma mark -
 #pragma mark Class Methods
@@ -149,7 +147,7 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 
 - (NSString *)readCatalogURLFromPlist
 {
-	NSDictionary *tmpDict = [NSDictionary dictionaryWithContentsOfFile:ASUS_PLIST];
+	NSDictionary *tmpDict = [NSDictionary dictionaryWithContentsOfFile:ASUS_PLIST_PATH];
 	NSString *result = [tmpDict valueForKey:@"CatalogURL"];
 	return result;
 }
@@ -157,10 +155,10 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 -(BOOL)writeCatalogURL:(NSString *)CatalogURL
 {
 	BOOL returnVal = NO;
-	NSMutableDictionary *tmpDefaults = [NSMutableDictionary dictionaryWithContentsOfFile:ASUS_PLIST];
+	NSMutableDictionary *tmpDefaults = [NSMutableDictionary dictionaryWithContentsOfFile:ASUS_PLIST_PATH];
 	[tmpDefaults setObject:CatalogURL forKey:@"CatalogURL"];
 	@try {
-		[tmpDefaults writeToFile:ASUS_PLIST atomically:YES];
+		[tmpDefaults writeToFile:ASUS_PLIST_PATH atomically:YES];
 		returnVal = YES; 
 	}
 	@catch ( NSException *e ) {
@@ -215,7 +213,6 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 	
 	NSData *xmlData = [xmlDoc XMLDataWithOptions:NSXMLNodePrettyPrint];
 
-	[xmlDoc release];
 	return xmlData;
 }
 
@@ -232,11 +229,9 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 		[tmpDict setObject:anObject forKey:@"patch"];
 		[tmpDict setObject:aType forKey:@"type"];
 		[tmpArray addObject:tmpDict];
-		[tmpDict release];
 	}
 	
 	results = [NSArray arrayWithArray:tmpArray];
-	[tmpArray release];
 	
 	return results;
 }
@@ -247,9 +242,8 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 {
 	NSArray *result = nil;
 	MPPatchScan *patchScanObj = [[MPPatchScan alloc] init];
-	[patchScanObj setUseDistributedNotification:YES];
+	//[patchScanObj setUseDistributedNotification:YES];
 	result = [NSArray arrayWithArray:[patchScanObj scanForPatches]];
-	[patchScanObj release];
 	return result;
 }
 
@@ -257,9 +251,8 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 {
     NSArray *result = nil;
 	MPPatchScan *patchScanObj = [[MPPatchScan alloc] init];
-	[patchScanObj setUseDistributedNotification:NO];
+	//[patchScanObj setUseDistributedNotification:NO];
 	result = [NSArray arrayWithArray:[patchScanObj scanForPatchesWithbundleID:aBundleID]];
-	[patchScanObj release];
 	return result;
 }
 
@@ -292,16 +285,14 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 	int status = [task terminationStatus];
 	if (status != 0) {
 		qlinfo(@"Error: softwareupdate exit code = %d",status);
-		[task release];
 		return appleUpdates;
 	} else {
 		qlinfo(@"Apple software update scan was completed.");
 	}
     
-	[task release];
 	
 	NSData *data = [file readDataToEndOfFile];
-    NSString *string = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+    NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 	
 	qldebug(@"Apple software update full scan results\n%@",string);
 	
@@ -349,12 +340,10 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 				}
 				
 				[tmpAppleUpdates addObject:tmpDict];
-				[tmpDict release];
 			} // if is an update
 		} // if / empty lines
 	} // for loop
 	appleUpdates = [NSArray arrayWithArray:tmpAppleUpdates];
-	[tmpAppleUpdates release];
 	
 	qldebug(@"Apple Updates Found, %@",appleUpdates);
 	return appleUpdates;
@@ -383,7 +372,7 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 
 - (void)scanAppleSoftwareUpdates:(NSArray *)approvedUpdates
 {
-	NSMutableArray *appArgs = [[[NSMutableArray alloc] initWithArray:approvedUpdates] autorelease];
+	NSMutableArray *appArgs = [[NSMutableArray alloc] initWithArray:approvedUpdates];
 	
 	NSTask *task = [[NSTask alloc] init];
     [task setLaunchPath: ASUS_BIN_PATH];
@@ -407,13 +396,12 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 
 	
 	[task launch];
-	[task release];
 	[fh_installTask readInBackgroundAndNotify];
 }
 
 - (void)installAppleSoftwareUpdates:(NSArray *)approvedUpdates
 {
-	NSMutableArray *appArgs = [[[NSMutableArray alloc] initWithArray:approvedUpdates] autorelease];
+	NSMutableArray *appArgs = [[NSMutableArray alloc] initWithArray:approvedUpdates];
 	[appArgs insertObject:@"-i" atIndex:0];
 	
 	NSTask *task = [[NSTask alloc] init];
@@ -439,7 +427,6 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 											   object: fh_installTask];
 	
 	[task launch];
-	[task release];
 	[fh_installTask readInBackgroundAndNotify];
 }
 
@@ -491,8 +478,7 @@ static NSString *ASUS_PLIST			= @"/Library/Preferences/com.apple.SoftwareUpdate.
 	
 done:
 	
-	[task release];
-	[appArgs release];
+	;
 	
 	return result;
 }
@@ -501,23 +487,18 @@ done:
 
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
-    qldebug(@"[downloadUpdate] url=%@",aURL);
-	NSString *tempFilePath = [self createTempDirFromURL:aURL];
-    qldebug(@"[tempFilePath] url=%@",tempFilePath);
-    
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:aURL]];
-    [request setTimeOutSeconds:300];
-    [request setDownloadDestinationPath:tempFilePath];
-    [request setValidatesSecureCertificate:NO];
-    [request startSynchronous];
-    NSError *error = [request error];
+    MPNetConfig *mpConfig = [[MPNetConfig alloc] init];
+    NSError *error = nil;
+    NSURLResponse *response;
+    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArray:[mpConfig servers]];
+    NSURLRequest *urlReq = [req buildDownloadRequest:aURL];
+    NSString *dlFileLoc = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
     if (error) {
-        qlerror(@"Error[%d], trying to download file. %@",(int)[error code],[error localizedDescription]);
-        if (err != NULL) *err = [NSError errorWithDomain:@"downloadUpdate" code:[error code] userInfo:nil];
+        qlerror(@"%@",error.localizedDescription);
+        if (err != NULL) *err = error;
         return @"";
     }
-    
-    return tempFilePath;
+    return dlFileLoc;
 }
 
 - (int)installPkg:(NSString *)pkgPath error:(NSError **)err
@@ -533,6 +514,7 @@ done:
 	NSError *aErr = nil;
 	NSString *result;
 	result = [self installPkgWithResult:pkgPath target:aTarget error:&aErr];
+    qltrace(@"%@",result);
 	if (err != NULL) *err = aErr;
     return 0;
 }
@@ -592,9 +574,8 @@ done:
 	}
 	
     NSData *data = [file readDataToEndOfFile];
-    NSString *string = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+    NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 	
-	[cmd release];
     return [string trim];
 }
 
@@ -647,6 +628,7 @@ done:
 	NSArray *binArgs = [NSArray arrayWithObjects:@"-x", @"-k", aZipFilePath, aTargetPath, nil];
 	NSString *result;
 	result = [self runTask:binFile binArgs:binArgs error:&aErr];
+    qltrace(@"%@",result);
 	if (err != NULL) *err = aErr;	
     return 0;
 }
@@ -664,13 +646,12 @@ done:
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"ASUSInstallStatus" object:self userInfo:myData];
 	
 	[[aNotification object] readInBackgroundAndNotify];
-	[string release];
 }
 
 - (void)installTaskEnded:(NSNotification *)aNotification
 {
 	NSData *data = [fh_installTask readDataToEndOfFile];
-    NSString *resultsString = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
+    NSString *resultsString = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
 	qlinfo(@"Task completed[results]:\n%@",resultsString);
 	
 	NSDictionary *myData = [NSDictionary dictionaryWithObject:@"Done" forKey:@"iData"];

@@ -66,8 +66,6 @@ static MPCatalog *_instance;
             [_instance setG_agentPid:NULL];
             [_instance setG_SWDistTasksHash:@"NA"];
             [_instance setG_SWDistTasksJSONHash:@"NA"];
-			[mpd release];
-            [osDict release];
         }
     }
     return _instance;
@@ -77,26 +75,11 @@ static MPCatalog *_instance;
 
 + (id)allocWithZone:(NSZone *)zone
 {
-	return [[self sharedInstance]retain];
+	return [self sharedInstance];
 }
 
 
 - (id)copyWithZone:(NSZone *)zone
-{
-    return self;
-}
-
-- (id)retain
-{
-    return self;
-}
-
-- (unsigned long)retainCount
-{
-    return NSUIntegerMax;  //denotes an object that cannot be released
-}
-
-- (id)autorelease
 {
     return self;
 }
@@ -150,7 +133,7 @@ static MPCatalog *_instance;
 	if (serialAsCFString == NULL) {
 		result = @"NA";
 	} else {
-		result = [NSString stringWithFormat:@"%@",(NSString *)serialAsCFString];
+		result = [NSString stringWithFormat:@"%@",(__bridge NSString *)serialAsCFString];
 		CFRelease(serialAsCFString);
 	}
 	

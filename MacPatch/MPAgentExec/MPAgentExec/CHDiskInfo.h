@@ -1,6 +1,5 @@
 //
 //  CHDiskInfo.h
-//  PathTest
 /*
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -34,10 +33,10 @@
     NSArray *bsdDiskArray;
 }
 
-@property (nonatomic, retain) NSArray *diskInfoArray;
+@property (nonatomic, strong) NSArray *diskInfoArray;
 
 // Private
-@property (nonatomic, retain) NSArray *bsdDiskArray;
+@property (nonatomic, strong) NSArray *bsdDiskArray;
 
 - (NSArray *)collectBSDDiskNames;
 - (NSArray *)collectDiskInfoForLocalDisks;

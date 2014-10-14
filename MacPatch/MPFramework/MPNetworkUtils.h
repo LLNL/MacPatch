@@ -31,7 +31,7 @@
 	NSDictionary *hostConfig;
 }
 
-@property (nonatomic, retain) NSDictionary *hostConfig;
+@property (nonatomic, strong) NSDictionary *hostConfig;
 
 - (BOOL)isHostReachable:(NSString *)aHost;
 - (BOOL)isHostURLReachable:(NSString *)aURL;

@@ -25,8 +25,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class MPServerConnection;
-
 @interface MPAntiVirus : NSObject 
 {
 	NSString		*avType;
@@ -34,20 +32,17 @@
 	NSDictionary	*avAppInfo;
 	NSString		*avDefsDate;
 	NSDictionary	*l_Defaults;
-	
-    MPServerConnection  *mpServerConnection;
+
     NSFileManager   *fm;
     BOOL            isNewerSEPSW;
 }
 
-@property (nonatomic, retain) NSString *avType;
-@property (nonatomic, retain) NSString *avApp;
-@property (nonatomic, retain) NSDictionary *avAppInfo;
-@property (nonatomic, retain) NSString *avDefsDate;
-@property (nonatomic, retain) NSDictionary *l_Defaults;
+@property (nonatomic, strong) NSString *avType;
+@property (nonatomic, strong) NSString *avApp;
+@property (nonatomic, strong) NSDictionary *avAppInfo;
+@property (nonatomic, strong) NSString *avDefsDate;
+@property (nonatomic, strong) NSDictionary *l_Defaults;
 @property (nonatomic, assign) BOOL isNewerSEPSW;
-
-- (id)initWithServerConnection:(MPServerConnection *)aSrvObj;
 
 // Scan & Update
 - (void)scanDefs;

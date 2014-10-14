@@ -37,5 +37,6 @@
 + (void)runAVInfoScan;
 + (void)runAVInfoScanAndDefsUpdate;
 + (void)runAgentScanAndUpdate;
++ (void)runExecTaskUsingArgs:(NSArray *)aArgs;
 
 @end

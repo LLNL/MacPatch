@@ -6,3 +6,8 @@
 DerivedData
 .idea/
 *.hmap 
+*/_notes/*
+dwsync.xml
+*/no_sync/*
+*/Build/*
+*/xcuserdata/*

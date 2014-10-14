@@ -69,7 +69,6 @@ OSStatus initializeWindow(AuthorizationMechanismRef inMechanism, int modal)
 
 OSStatus finalizeWindow(AuthorizationMechanismRef inMechanism)
 {
-	[mpAuthController release];
 	return 0;
 }
 
@@ -92,7 +91,6 @@ OSStatus finalizeWindow(AuthorizationMechanismRef inMechanism)
 
 - (void)dealloc
 {
-    [super dealloc];
 	mpAuthController = nil;
 	lastMechanismRef = 0;
 }
@@ -129,12 +127,14 @@ OSStatus finalizeWindow(AuthorizationMechanismRef inMechanism)
     consoleUserName = SCDynamicStoreCopyConsoleUser(store, NULL, NULL);
     if (consoleUserName != NULL)
     {
-        if ([(NSString *)consoleUserName isEqualToString:@"loginwindow"])
+        if ([(__bridge NSString *)consoleUserName isEqualToString:@"loginwindow"])
         {
+            CFRelease(consoleUserName);
             [[self window] makeKeyAndOrderFront:nil];
             [[self window] display];
         }
     }
+    CFRelease(consoleUserName);
 }
 
 - (void)dismissWindow

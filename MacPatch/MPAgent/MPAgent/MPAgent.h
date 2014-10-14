@@ -38,27 +38,29 @@
 	NSString			*g_TasksHash;
 	NSMutableDictionary	*g_AppHashes;
     NSString			*g_agentPid;
+    NSString			*g_hostName;
     // SWDist
     NSMutableArray		*g_SWDistTasks;
 	NSString			*g_SWDistTasksHash;
     NSString			*g_SWDistTasksJSONHash;
 }
 
-@property (nonatomic, retain) NSDictionary          *g_Defaults;
-@property (nonatomic, retain) NSDictionary          *g_OSVers;
-@property (nonatomic, retain) NSString              *g_cuuid;
-@property (nonatomic, retain) NSString              *g_serialNo;
-@property (nonatomic, retain) NSString              *g_osVer;
-@property (nonatomic, retain) NSString              *g_osType;
-@property (nonatomic, retain) NSString              *g_agentVer;
-@property (nonatomic, retain) NSMutableArray        *g_Tasks;
-@property (nonatomic, retain) NSString              *g_TasksHash;
-@property (nonatomic, retain) NSMutableDictionary   *g_AppHashes;
-@property (nonatomic, retain) NSString              *g_agentPid;
+@property (nonatomic, strong) NSDictionary          *g_Defaults;
+@property (nonatomic, strong) NSDictionary          *g_OSVers;
+@property (nonatomic, strong) NSString              *g_cuuid;
+@property (nonatomic, strong) NSString              *g_serialNo;
+@property (nonatomic, strong) NSString              *g_osVer;
+@property (nonatomic, strong) NSString              *g_osType;
+@property (nonatomic, strong) NSString              *g_agentVer;
+@property (nonatomic, strong) NSMutableArray        *g_Tasks;
+@property (nonatomic, strong) NSString              *g_TasksHash;
+@property (nonatomic, strong) NSMutableDictionary   *g_AppHashes;
+@property (nonatomic, strong) NSString              *g_agentPid;
+@property (nonatomic, strong) NSString              *g_hostName;
 // SWDist
-@property (nonatomic, retain) NSMutableArray        *g_SWDistTasks;
-@property (nonatomic, retain) NSString              *g_SWDistTasksHash;
-@property (nonatomic, retain) NSString              *g_SWDistTasksJSONHash;
+@property (nonatomic, strong) NSMutableArray        *g_SWDistTasks;
+@property (nonatomic, strong) NSString              *g_SWDistTasksHash;
+@property (nonatomic, strong) NSString              *g_SWDistTasksJSONHash;
 
 + (MPAgent *)sharedInstance;
 - (NSString *)collectCUUIDFromHost;

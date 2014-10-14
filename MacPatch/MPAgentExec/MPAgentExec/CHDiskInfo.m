@@ -53,7 +53,7 @@
     NSFileManager *fm = [NSFileManager defaultManager];
     
     CFUUIDRef uuid = CFUUIDCreate(NULL);
-    NSString *uniqueString = (NSString *)CFUUIDCreateString(NULL, uuid);
+    NSString *uniqueString = (NSString *)CFBridgingRelease(CFUUIDCreateString(NULL, uuid));
     CFRelease(uuid);
     
     NSString *tempFile = [NSString pathWithComponents:[NSArray arrayWithObjects:NSTemporaryDirectory(), uniqueString, nil]];
@@ -66,7 +66,6 @@
     [task setStandardOutput:file];
     [task launch];
     [task waitUntilExit];
-    [task release];
     
     NSDictionary *_res = [NSDictionary dictionaryWithContentsOfFile:tempFile];
     if ([_res objectForKey:@"AllDisks"]) {
@@ -96,22 +95,12 @@
         for (id item in bsdDiskArray) 
         {
             disk = DADiskCreateFromBSDName(kCFAllocatorDefault, session, [item UTF8String]);
-            if(disk == NULL) {
-                CFRelease(session);
-            }
-            
             diskDescription = DADiskCopyDescription(disk);
-            if(diskDescription == NULL) {
-                CFRelease(session);
-                CFRelease(disk);
-            }
-            
-            NSDictionary *diskData = (NSDictionary *)diskDescription;
+            NSDictionary *diskData = (__bridge NSDictionary *)diskDescription;
             if (![[diskData objectForKey:@"DADeviceModel"] isEqualToString:@"Disk Image"]) {
                 cdisk = [[CHDisk alloc] init];
                 [cdisk populateDeviceDataFromDict:diskData];
                 [_disks addObject:[cdisk deviceData]];
-                [cdisk release];
                 cdisk = nil;
             }   
         }

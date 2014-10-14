@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		8F2D4F2C188EFFB50008853B /* Profiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D4F2B188EFFB50008853B /* Profiles.m */; };
+		8F2E697F1922C330001BF9D6 /* PostFailedWSRequests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2E697E1922C330001BF9D6 /* PostFailedWSRequests.m */; };
+		8F315B9819212A920031FF73 /* GetServerListOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F315B9719212A920031FF73 /* GetServerListOperation.m */; };
 		8F4B1EED16DD77BD00E15A9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4B1EEC16DD77BD00E15A9E /* Foundation.framework */; };
 		8F4B1EF016DD77BD00E15A9E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1EEF16DD77BD00E15A9E /* main.m */; };
 		8F4B1EF416DD77BD00E15A9E /* MPAgent.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F4B1EF316DD77BD00E15A9E /* MPAgent.1 */; };
@@ -33,6 +35,7 @@
 		8FE560E616DE97C700BB7600 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E516DE97C700BB7600 /* CoreServices.framework */; };
 		8FE560E816DE97CF00BB7600 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */; };
 		8FE560EA16DE97DD00BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E916DE97DD00BB7600 /* Security.framework */; };
+		8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F9219959206005A4EEB /* MPAgentRegister.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +54,10 @@
 /* Begin PBXFileReference section */
 		8F2D4F2A188EFFB50008853B /* Profiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profiles.h; sourceTree = "<group>"; };
 		8F2D4F2B188EFFB50008853B /* Profiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profiles.m; sourceTree = "<group>"; };
+		8F2E697D1922C330001BF9D6 /* PostFailedWSRequests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostFailedWSRequests.h; sourceTree = "<group>"; };
+		8F2E697E1922C330001BF9D6 /* PostFailedWSRequests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostFailedWSRequests.m; sourceTree = "<group>"; };
+		8F315B9619212A920031FF73 /* GetServerListOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetServerListOperation.h; sourceTree = "<group>"; };
+		8F315B9719212A920031FF73 /* GetServerListOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetServerListOperation.m; sourceTree = "<group>"; };
 		8F4B1EE916DD77BD00E15A9E /* MPAgent */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MPAgent; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F4B1EEC16DD77BD00E15A9E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8F4B1EEF16DD77BD00E15A9E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -91,6 +98,8 @@
 		8FE560E516DE97C700BB7600 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8FE560E916DE97DD00BB7600 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		8FF93F9119959206005A4EEB /* MPAgentRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentRegister.h; sourceTree = "<group>"; };
+		8FF93F9219959206005A4EEB /* MPAgentRegister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentRegister.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +165,8 @@
 				8F4B1EEF16DD77BD00E15A9E /* main.m */,
 				8F4B1F0016DD77FF00E15A9E /* MPAgent.h */,
 				8F4B1F0116DD77FF00E15A9E /* MPAgent.m */,
+				8FF93F9119959206005A4EEB /* MPAgentRegister.h */,
+				8FF93F9219959206005A4EEB /* MPAgentRegister.m */,
 				8F4B1F0216DD77FF00E15A9E /* MPAppController.h */,
 				8F4B1F0316DD77FF00E15A9E /* MPAppController.m */,
 				8F4B1F0416DD77FF00E15A9E /* MPDefaultsWatcher.h */,
@@ -207,6 +218,10 @@
 				8F4B1F1616DE634600E15A9E /* MPSWDistTaskOperation.m */,
 				8F2D4F2A188EFFB50008853B /* Profiles.h */,
 				8F2D4F2B188EFFB50008853B /* Profiles.m */,
+				8F315B9619212A920031FF73 /* GetServerListOperation.h */,
+				8F315B9719212A920031FF73 /* GetServerListOperation.m */,
+				8F2E697D1922C330001BF9D6 /* PostFailedWSRequests.h */,
+				8F2E697E1922C330001BF9D6 /* PostFailedWSRequests.m */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -264,7 +279,10 @@
 			files = (
 				8F4B1EF016DD77BD00E15A9E /* main.m in Sources */,
 				8F4B1F0616DD77FF00E15A9E /* MPAgent.m in Sources */,
+				8F2E697F1922C330001BF9D6 /* PostFailedWSRequests.m in Sources */,
+				8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */,
 				8F4B1F0716DD77FF00E15A9E /* MPAppController.m in Sources */,
+				8F315B9819212A920031FF73 /* GetServerListOperation.m in Sources */,
 				8F4B1F0816DD77FF00E15A9E /* MPDefaultsWatcher.m in Sources */,
 				8F4B1F1716DE634600E15A9E /* ClientCheckInOperation.m in Sources */,
 				8F4B1F1816DE634600E15A9E /* AgentScanAndUpdateOperation.m in Sources */,
@@ -307,7 +325,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -340,7 +358,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -357,6 +375,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_INT_CONVERSION = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPAgent/MPAgent-Prefix.pch";
@@ -381,6 +400,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_INT_CONVERSION = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPAgent/MPAgent-Prefix.pch";

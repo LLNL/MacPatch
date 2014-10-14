@@ -53,14 +53,14 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	[super dealloc];
-}
-
 - (BOOL) isConcurrent 
 {
     return YES;
+}
+
+- (void)cancel
+{
+    [self finish];
 }
 
 - (void) finish 
@@ -105,55 +105,53 @@
 - (void)runPatchScan 
 {
 	logit(lcl_vInfo,@"Running client vulnerability scan.");
-	NSAutoreleasePool *taskpool = [[NSAutoreleasePool alloc] init];
-	NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:appPath]) {
-		logit(lcl_vError,@"Unable to find MPAgentExec app.");
-	} else {
-		if ([MPCodeSign checkSignature:appPath]) {
-			NSError *error = nil;
-			NSString *result;
-			MPNSTask *mpr = [[MPNSTask alloc] init];
-			result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-s", nil] error:&error];
-			
-			if (error) {
-				logit(lcl_vError,@"%@",[error description]);
+	@autoreleasepool {
+		NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
+		if (![fm fileExistsAtPath:appPath]) {
+			logit(lcl_vError,@"Unable to find MPAgentExec app.");
+		} else {
+			if ([MPCodeSign checkSignature:appPath]) {
+				NSError *error = nil;
+				NSString *result;
+				MPNSTask *mpr = [[MPNSTask alloc] init];
+				result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-s", nil] error:&error];
+				
+				if (error) {
+					logit(lcl_vError,@"%@",[error description]);
+				}
+				
+				logit(lcl_vDebug,@"%@",result);
+				logit(lcl_vInfo,@"Vulnerability scan has been completed.");
+				logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
 			}
-			
-			logit(lcl_vDebug,@"%@",result);
-			logit(lcl_vInfo,@"Vulnerability scan has been completed.");
-			logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
-			[mpr release];
-		}
-	}	
-	[taskpool release];
+		}	
+	}
 }
 
 - (void)runPatchScanAndUpdate
 {
 	logit(lcl_vInfo,@"Running client vulnerability update.");
-	NSAutoreleasePool *taskpool = [[NSAutoreleasePool alloc] init];
-	NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:appPath]) {
-		logit(lcl_vError,@"Unable to find MPAgentExec app.");
-	} else {
-		if ([MPCodeSign checkSignature:appPath]) {	
-			NSError *error = nil;
-			NSString *result;
-			MPNSTask *mpr = [[MPNSTask alloc] init];
-			result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-u", nil] error:&error];
-			
-			if (error) {
-				logit(lcl_vError,@"%@",[error description]);
+	@autoreleasepool {
+		NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
+		if (![fm fileExistsAtPath:appPath]) {
+			logit(lcl_vError,@"Unable to find MPAgentExec app.");
+		} else {
+			if ([MPCodeSign checkSignature:appPath]) {	
+				NSError *error = nil;
+				NSString *result;
+				MPNSTask *mpr = [[MPNSTask alloc] init];
+				result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-u", nil] error:&error];
+				
+				if (error) {
+					logit(lcl_vError,@"%@",[error description]);
+				}
+				
+				logit(lcl_vDebug,@"%@",result);
+				logit(lcl_vInfo,@"Vulnerability scan & update has been completed.");
+				logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
 			}
-			
-			logit(lcl_vDebug,@"%@",result);
-			logit(lcl_vInfo,@"Vulnerability scan & update has been completed.");
-			logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
-			[mpr release];
-		}
-	}	
-	[taskpool release];
+		}	
+	}
 }
 
 @end

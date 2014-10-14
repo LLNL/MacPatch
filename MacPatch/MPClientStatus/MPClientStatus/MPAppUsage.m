@@ -42,11 +42,6 @@
 	return self;
 }
 
-- (void)dealloc 
-{
-    [db release];    
-    [super dealloc];
-}
 
 -(int)initAndPrepDB
 {
@@ -54,12 +49,18 @@
 	if (![db open]) 
     {
 		logit(lcl_vError,@"Could not open db.");
-		[db release];
         return 1;
     }
 	
 	[db executeUpdate:@"create table appUsage (app_name text, app_path text, app_version text, last_launched text, times_launched INTEGER)"];
 	return 0;
+}
+
+-(void)cleanDB
+{
+	[db beginTransaction];
+    [db executeUpdate:@"Delete from appUsage where app_version IS NULL"];
+	[db commit];
 }
 
 -(void)insertLaunchDataForApp:(NSString *)aAppName appPath:(NSString *)aAppPath appVersion:(NSString *)aAppVer

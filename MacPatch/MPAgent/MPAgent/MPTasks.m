@@ -150,8 +150,6 @@
 		NSDictionary *_updatedDict = [NSDictionary dictionaryWithObject:_newTasks forKey:@"mpTasks"];
 		[_updatedDict writeToFile:MP_TASKS_PLIST atomically:YES];
 	}
-	[_newTasks release];
-	[taskValidate release];
 	return 0;
 }
 
@@ -211,11 +209,9 @@
 		[tmpDict setObject:[NSNumber numberWithDouble:ed] forKey:@"endDateInt"];
 		[tmpArr addObject:[self genNextRunAt:tmpDict]];
 		logit(lcl_vDebug,@"Task loaded: %@",tmpDict);
-		[tmpDict release];
 		tmpDict = nil;
 	}
     [si setG_Tasks:tmpArr];
-    [tmpArr release];
 }
 
 - (NSDictionary *)genNextRunAt:(NSDictionary *)aTask
@@ -302,7 +298,6 @@
 		logit(lcl_vError,@"Changing task (%@) state to inactive.",[tmpDict objectForKey:@"name"]);
 		[tmpDict setObject:@"0" forKey:@"active"];
 		NSDictionary *results = [NSDictionary dictionaryWithDictionary:tmpDict];
-		[tmpDict release];
 		tmpDict = nil;
 		
 		return results;	
@@ -391,7 +386,6 @@
 
 	[tmpDict setObject:[NSNumber numberWithDouble:next_run] forKey:@"nextrun"];
 	NSDictionary *results = [NSDictionary dictionaryWithDictionary:tmpDict];
-	[tmpDict release];
 	tmpDict = nil;
 	
 	return results;
@@ -447,11 +441,9 @@
 																																						locale:nil]);
 			[tmpDict setObject:[NSNumber numberWithDouble:next_run] forKey:@"nextrun"];
 			[[si g_Tasks] replaceObjectAtIndex:i withObject:[NSDictionary dictionaryWithDictionary:tmpDict]];
-			[tmpDict release];
 			tmpDict = nil;
 			break;
 		}
-		[tmpDict release];
 		tmpDict = nil;	 
 	}
 	
@@ -473,11 +465,9 @@
 		{
 			[tmpDict setObject:[NSNumber numberWithInt:x] forKey:@"nextrun"];
 			[[si g_Tasks] replaceObjectAtIndex:i withObject:[NSDictionary dictionaryWithDictionary:tmpDict]];
-			[tmpDict release];
 			tmpDict = nil;
 			break;
 		}
-		[tmpDict release];
 		tmpDict = nil;	 
 	}
 }
@@ -488,7 +478,6 @@
 	NSCalendar *gregorianCal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 	NSDateComponents *components = [gregorianCal components:NSWeekdayCalendarUnit fromDate:aDate];
 	NSInteger dateWeekDay = [components weekday];
-	[gregorianCal release];
 	return dateWeekDay;
 }
 
@@ -518,9 +507,6 @@
 	NSCalendar *gregorianCal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 	NSDate *newDate = [gregorianCal dateByAddingComponents:components toDate:today options:0];
 	
-	[gregorianCal release];
-	[components release];
-	[today release];
 	return newDate;
 }
 

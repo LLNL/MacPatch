@@ -29,14 +29,13 @@
 #import "MPWorkerProtocol.h"
 
 @class MPDefaults;
-@class MPServerConnection;
 
 @interface MPAuthWindow : NSWindow <MPWorkerClient,NSTableViewDelegate>
 {
     NSPoint initialLocation;
     BOOL fullscreen;
+    MPDefaults *mpDefauts;
 
-    MPServerConnection *mpServerConnection;
     // Helper
 	id                 proxy;
 
@@ -69,7 +68,7 @@
     int currentPatchInstallIndex;
 }
 
-@property (nonatomic, assign) IBOutlet NSTextField *title;
+@property (nonatomic, unsafe_unretained) IBOutlet NSTextField *title;
 @property (nonatomic, strong) MPServerConnection *mpServerConnection;
 @property (nonatomic, strong) NSThread *taskThread;
 @property (nonatomic, assign) BOOL killTaskThread;

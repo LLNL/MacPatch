@@ -33,10 +33,14 @@
 #import <CommonCrypto/CommonDigest.h>
 #import "BatteryInfo.h"
 #import "PowerProfile.h"
+#import "MPDirectoryServices.h"
+#import "MacAppStoreDataItem.h"
+#import "NSMetadataQuery+Synchronous.h"
+#import "MPServerEntry.h"
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
-#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles"
+#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,SINetworkInfo,AppStoreApps,MPServerList,MPServerListInfo"
 #define kTasksPlist             @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
 #define kInvHashData            @"/Library/MacPatch/Client/Data/.gov.llnl.mp.inv.data.plist"
 
@@ -63,25 +67,17 @@
 	self = [super init];
 	if (self) {
 		[self setCUUID:[MPSystemInfo clientUUID]];
-		mpServerConnection = [[MPServerConnection alloc] init];
 	}	
 	return self;
 }
  
-- (void) dealloc 
-{    
-	[invResults autorelease];
-    [cUUID autorelease];
-	[super dealloc];
-}
-
 #pragma mark -
 
 - (BOOL)hasInvDataInDB
 {
     BOOL res = NO;
     NSError *err = nil;
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     res = [mpws clientHasInvDataInDB:&err];
     if (err) {
         logit(lcl_vError,@"%@",err.localizedDescription);
@@ -95,7 +91,7 @@
 {
     int res = -1;
     NSError *err = nil;
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     res = [mpws postClientHasInvData:&err];
     if (err) {
         logit(lcl_vError,@"%@",err.localizedDescription);
@@ -149,40 +145,56 @@
 	NSMutableDictionary *result;
 	NSError *err = nil;
 	NSString *filePath = NULL;
+    NSString *invType;
 	int i = 0;
 	for (i=0;i<[invColTypes count];i++)
 	{
+        // Multiple Types, PREFIX of SP is system profiler and SI sysinfocachegen
 		logit(lcl_vInfo,@"Collecting inventory for type %@",[invColTypes objectAtIndex:i]);
-		err = nil;
-		filePath = [self getProfileData:[invColTypes objectAtIndex:i] error:&err];
-		if (err) {
-			logit(lcl_vError,@"Gathering inventory for data type %@",[invColTypes objectAtIndex:i]);
-			continue;
-		} else {
-			result = [[NSMutableDictionary alloc] init];
-			[result setObject:filePath forKey:@"file"];
-			[result setObject:[invColTypes objectAtIndex:i] forKey:@"type"];
-			
-			// This needs to be cleaned up in the next release, 
-			
-			if ([[invColTypes objectAtIndex:i] isEqual:@"SPSoftwareDataType"]) {
-				[result setObject:@"SPSystemOverview" forKey:@"wstype"];
-			} else if ([[invColTypes objectAtIndex:i] isEqual:@"SPHardwareDataType"]) {
-				[result setObject:@"SPHardwareOverview" forKey:@"wstype"];
-			} else {
-				[result setObject:[[invColTypes objectAtIndex:i] replace:@"DataType" replaceString:@""] forKey:@"wstype"];
-			}
+        invType = [invColTypes objectAtIndex:i];
+        if ([invType hasPrefix:@"SI"] == NO)
+        {
+            err = nil;
+            filePath = [self getProfileData:[invColTypes objectAtIndex:i] error:&err];
+            if (err) {
+                logit(lcl_vError,@"Gathering inventory for data type %@",[invColTypes objectAtIndex:i]);
+                continue;
+            } else {
+                result = [[NSMutableDictionary alloc] init];
+                [result setObject:filePath forKey:@"file"];
+                [result setObject:[invColTypes objectAtIndex:i] forKey:@"type"];
 
-			[resultsArray addObject:result];
-			[result release];
-			result = nil;
-		}
+                // This needs to be cleaned up in the next release,
+
+                if ([[invColTypes objectAtIndex:i] isEqual:@"SPSoftwareDataType"]) {
+                    [result setObject:@"SPSystemOverview" forKey:@"wstype"];
+                } else if ([[invColTypes objectAtIndex:i] isEqual:@"SPHardwareDataType"]) {
+                    [result setObject:@"SPHardwareOverview" forKey:@"wstype"];
+                } else {
+                    [result setObject:[[invColTypes objectAtIndex:i] replace:@"DataType" replaceString:@""] forKey:@"wstype"];
+                }
+                
+                [resultsArray addObject:result];
+                result = nil;
+            }
+        } else if ([invType hasPrefix:@"SI"]) {
+            if ([invType isEqualToString:@"SINetworkInfo"]) {
+                NSArray *networkDataArray = [self getSysInfoGenDataForType:@"Mac_NetworkInterfaceElement" error:NULL];
+                result = [[NSMutableDictionary alloc] init];
+                [result setObject:[kSP_DATA_Dir stringByAppendingPathComponent:@"sysInfoGen.plist"] forKey:@"file"];
+                [result setObject:networkDataArray forKey:@"data"];
+                [result setObject:invType forKey:@"type"];
+                [result setObject:@"SINetworkInfo" forKey:@"wstype"];
+                [resultsArray addObject:result];
+                result = nil;
+            }
+        }
 	}
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
 	MPDataMgr	*dataMgr	= [[MPDataMgr alloc] init];
 	NSDictionary *item;
-	NSString *dataMgrXML;
+	NSString *dataMgrJSON;
 	NSArray *tmpArr = nil;
     NSString *invCollectionHash;
 	
@@ -223,8 +235,15 @@
 				tmpArr = [self parseBatteryInfo];
 			} else if ([[item objectForKey:@"type"] isEqual:@"ConfigProfiles"]) {
 				tmpArr = [self parseConfigProfilesInfo];
-			}
-
+			} else if ([[item objectForKey:@"type"] isEqual:@"SINetworkInfo"]) {
+				tmpArr = [self parseSysInfoNetworkData:[item objectForKey:@"data"]];
+			} else if ([[item objectForKey:@"type"] isEqual:@"AppStoreApps"]) {
+				tmpArr = [self parseAppStoreData];
+            } else if ([[item objectForKey:@"type"] isEqual:@"MPServerList"]) {
+                tmpArr = [self parseAgentServerList];
+            } else if ([[item objectForKey:@"type"] isEqual:@"MPServerListInfo"]) {
+                tmpArr = [self parseAgentServerInfo];
+            }
 
 			if (tmpArr) {
                 // Gen a hash for the inv results, if it has not changed dont post it.
@@ -236,21 +255,24 @@
                     }
                 }
 
-				dataMgrXML = [dataMgr GenXMLForDataMgr:tmpArr
+				dataMgrJSON = [dataMgr GenJSONForDataMgr:tmpArr
 											   dbTable:[item objectForKey:@"wstype"] 
 										 dbTablePrefix:@"mpi_" 
 										 dbFieldPrefix:@"mpa_"
 										  updateFields:@"rid,cuuid"
 											 deleteCol:@"cuuid"
 										deleteColValue:[self cUUID]];
-				
-				if ([self sendResultsToWebService:dataMgrXML]) {
+
+				if ([self sendResultsToWebService:dataMgrJSON]) {
 					logit(lcl_vInfo,@"Results for %@ posted.",[item objectForKey:@"wstype"]);
                     [self writeInvDataHashToFile:[item objectForKey:@"type"] hash:invCollectionHash];
 				} else {
 					logit(lcl_vError,@"Results for %@ not posted.",[item objectForKey:@"wstype"]);
 				}
-				dataMgrXML = NULL;
+
+                [dataMgrJSON writeToFile:[@"/private/tmp" stringByAppendingPathComponent:[item objectForKey:@"wstype"]] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+                [self writeInvDataHashToFile:[item objectForKey:@"type"] hash:invCollectionHash];
+				dataMgrJSON = NULL;
 			}
 		}
 	}
@@ -265,8 +287,6 @@
     {
         [self postInvDataState];
     }
-	[resultsArray release];
-	[dataMgr release];
 	return 0;
 }
 
@@ -275,16 +295,16 @@
 	BOOL result = NO;
 
 	// Encode to base64 and send to web service
-	NSString	*cleanXMLString = [aDataMgrXML validXMLString];
-    NSString    *xmlB64String   = [[cleanXMLString dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
-	if (!xmlB64String) {
+	//NSString	*cleanXMLString = [aDataMgrXML validXMLString];
+    NSString    *b64String   = [[aDataMgrXML dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
+	if (!b64String) {
 		logit(lcl_vError,@"Unable to encode xml data.");
 		return result;
 	}
 
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
-    result = [mpws postDataMgrXML:xmlB64String error:&wsErr];
+    result = [mpws postDataMgrJSON:b64String error:&wsErr];
     if (wsErr) {
         logit(lcl_vError,@"Results posted to webservice returned false.");
         logit(lcl_vError,@"%@",wsErr.localizedDescription);
@@ -344,11 +364,70 @@
     NSString *string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
 	logit(lcl_vInfo,@"Writing result to %@",[kSP_DATA_Dir stringByAppendingPathComponent:spFileName]);
 	[string writeToFile:[kSP_DATA_Dir stringByAppendingPathComponent:spFileName] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-	[string release];
 	
-	[spTask release];
 	
 	return [kSP_DATA_Dir stringByAppendingPathComponent:spFileName];
+}
+
+- (id)getSysInfoGenDataForType:(NSString *)aType error:(NSError **)error
+{
+	// SystemProfiler Output file Name
+	NSString *spFileName = [kSP_DATA_Dir stringByAppendingPathComponent:@"sysInfoGen.plist"];
+
+	NSFileManager *fm = [NSFileManager defaultManager];
+
+	BOOL isDir;
+	if (([fm fileExistsAtPath:kSP_DATA_Dir isDirectory:&isDir] && isDir) == NO) {
+        [fm createDirectoryAtPath:kSP_DATA_Dir withIntermediateDirectories:YES attributes:nil error:NULL];
+	}
+
+	if (![fm isWritableFileAtPath:kSP_DATA_Dir]) {
+		logit(lcl_vError, @"Temp directory (%@) is not writable. Inventory will no get processed properly.",kSP_DATA_Dir);
+	}
+
+	// If File Exists then delete it
+	if ([fm fileExistsAtPath:spFileName isDirectory:NO]) {
+        [fm removeItemAtPath:spFileName error:NULL];
+	}
+
+    NSTask *task;
+    task = [[NSTask alloc] init];
+    [task setLaunchPath:@"/System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Support/sysinfocachegen"];
+
+    NSArray *arguments;
+    arguments = [NSArray arrayWithObjects:@"-p",spFileName,nil];
+    [task setArguments: arguments];
+
+    NSPipe *pipe;
+    pipe = [NSPipe pipe];
+    [task setStandardOutput: pipe];
+
+    NSFileHandle *file;
+    file = [pipe fileHandleForReading];
+
+    [task launch];
+
+    NSData *data;
+    data = [file readDataToEndOfFile];
+
+    NSString *string;
+    string = [[NSString alloc] initWithData:data encoding: NSUTF8StringEncoding];
+    qltrace(@"Completed running sysinfocachegen, %@",string);
+    
+	logit(lcl_vInfo,@"Writing result to %@",spFileName);
+    NSDictionary *_data = [NSDictionary dictionaryWithContentsOfFile:spFileName];
+    if ([_data objectForKey:@"Objects"]) {
+        if ([[_data objectForKey:@"Objects"] objectForKey:aType]) {
+            return [[_data objectForKey:@"Objects"] objectForKey:aType];
+        } else {
+            qlerror(@"%@ was not found in Objects",aType);
+        }
+    } else {
+        qlerror(@"Objects object was not found sys info data.");
+        return nil;
+    }
+
+    return nil;
 }
 
 #pragma mark -
@@ -549,22 +628,21 @@
 - (NSArray *)parseHardwareOverview:(NSString *)fileToParse
 {
 	NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-	[d setObject:@"NA" forKey:@"Model_Name"];
-	[d setObject:@"NA" forKey:@"Model_Identifier"];
-	[d setObject:@"NA" forKey:@"Processor_Name"];
-	[d setObject:@"NA" forKey:@"Processor_Speed"];
-	[d setObject:@"NA" forKey:@"Number_Of_Processors"];
-	[d setObject:@"NA" forKey:@"Total_Number_Of_Cores"];
-	[d setObject:@"NA" forKey:@"L2_Cache"];
-	[d setObject:@"NA" forKey:@"Memory"];
-	[d setObject:@"NA" forKey:@"Bus_Speed"];
-	[d setObject:@"NA" forKey:@"Boot_ROM_Version"];
-	[d setObject:@"NA" forKey:@"SMC_Version"];
-	[d setObject:@"NA" forKey:@"Serial_Number"];
+	[d setObject:@"na" forKey:@"model_name"];
+	[d setObject:@"na" forKey:@"model_identifier"];
+	[d setObject:@"na" forKey:@"processor_name"];
+	[d setObject:@"na" forKey:@"processor_speed"];
+	[d setObject:@"na" forKey:@"number_of_processors"];
+	[d setObject:@"na" forKey:@"total_number_of_cores"];
+	[d setObject:@"na" forKey:@"l2_cache"];
+	[d setObject:@"na" forKey:@"memory"];
+	[d setObject:@"na" forKey:@"bus_speed"];
+	[d setObject:@"na" forKey:@"boot_rom_version"];
+	[d setObject:@"na" forKey:@"smc_version"];
+	[d setObject:@"na" forKey:@"serial_number"];
 
 	NSString *dataString = [[NSString alloc] initWithContentsOfFile:fileToParse encoding:NSUTF8StringEncoding error:NULL];
 	NSArray *lines = [dataString componentsSeparatedByString:@"\n"];
-	[dataString release];
 	
 	NSEnumerator *enumerator = [lines objectEnumerator];
 	id obj;
@@ -599,14 +677,13 @@
 				
 				if ([[title trim] length] > 2)
 				{
-					[d setObject:value forKey:title];
+					[d setObject:value forKey:[title lowercaseString]];
 				} // if, title len
 			} // if, Hardware 
 		} // if, length
 	} // end while
 
 	NSDictionary *result = [NSDictionary dictionaryWithDictionary:d];
-	[d autorelease];
 	return [NSArray arrayWithObject:result];
 }
 
@@ -620,7 +697,6 @@
 	
 	// Parse by line endings and put in to an array
 	NSArray *lines = [dataString componentsSeparatedByString:@"\n"];
-	[dataString release];
 	
 	NSEnumerator *enumerator = [lines objectEnumerator];
 	id obj;
@@ -639,37 +715,36 @@
 					// Add entry 
 					if (d) {
 						[networkData addObject:d];
-						[d release];
 						d = nil;
 					}
 					
 					d = [[NSMutableDictionary alloc] init];
-					[d setObject:[[[obj trim] componentsSeparatedByString:@":"] objectAtIndex:0] forKey:@"Name"];
-					[d setObject:@"NA" forKey:@"Type"];
-					[d setObject:@"NA" forKey:@"Hardware"];
-					[d setObject:@"NA" forKey:@"BSD_Device_Name"];
-					[d setObject:@"NA" forKey:@"Has_IP_Assigned"];
-					[d setObject:@"NA" forKey:@"IPv4_Addresses"];
-					[d setObject:@"NA" forKey:@"IPv4_Configuration_Method"];
-					[d setObject:@"NA" forKey:@"IPv4_Interface_Name"];
-					[d setObject:@"NA" forKey:@"IPv4_NetworkSignature"];
-					[d setObject:@"NA" forKey:@"IPv4_Router"];
-					[d setObject:@"NA" forKey:@"IPv4_Subnet_Masks"];
-					[d setObject:@"NA" forKey:@"AppleTalk_Configuration_Method"];
-					[d setObject:@"NA" forKey:@"AppleTalk_Default_Zone"];
-					[d setObject:@"NA" forKey:@"AppleTalk_Interface_Name"];
-					[d setObject:@"NA" forKey:@"AppleTalk_Network_ID"];
-					[d setObject:@"NA" forKey:@"AppleTalk_Node_ID"];
-					[d setObject:@"NA" forKey:@"DNS_Search_Domains"];
-					[d setObject:@"NA" forKey:@"DNS_Server_Addresses"];
-					[d setObject:@"NA" forKey:@"Proxies_Exceptions_List"];
-					[d setObject:@"NA" forKey:@"Proxies_FTP_Passive_Mode"];
-					[d setObject:@"NA" forKey:@"Proxies_HTTP_Proxy_Enabled"];
-					[d setObject:@"NA" forKey:@"Proxies_HTTP_Proxy_Port"];
-					[d setObject:@"NA" forKey:@"Proxies_HTTP_Proxy_Server"];
-					[d setObject:@"NA" forKey:@"Ethernet_MAC_Address"];
-					[d setObject:@"NA" forKey:@"Ethernet_Media_Options"];
-					[d setObject:@"NA" forKey:@"Ethernet_Media_Subtype"];
+					[d setObject:[[[obj trim] componentsSeparatedByString:@":"] objectAtIndex:0] forKey:@"name"];
+					[d setObject:@"na" forKey:@"type"];
+					[d setObject:@"na" forKey:@"hardware"];
+					[d setObject:@"na" forKey:@"bsd_device_name"];
+					[d setObject:@"na" forKey:@"has_ip_assigned"];
+					[d setObject:@"na" forKey:@"ipv4_addresses"];
+					[d setObject:@"na" forKey:@"ipv4_configuration_method"];
+					[d setObject:@"na" forKey:@"ipv4_interface_name"];
+					[d setObject:@"na" forKey:@"ipv4_networksignature"];
+					[d setObject:@"na" forKey:@"ipv4_router"];
+					[d setObject:@"na" forKey:@"ipv4_subnet_masks"];
+					[d setObject:@"na" forKey:@"appletalk_configuration_method"];
+					[d setObject:@"na" forKey:@"appletalk_default_zone"];
+					[d setObject:@"na" forKey:@"appletalk_interface_name"];
+					[d setObject:@"na" forKey:@"appletalk_network_id"];
+					[d setObject:@"na" forKey:@"appletalk_node_id"];
+					[d setObject:@"na" forKey:@"dns_search_domains"];
+					[d setObject:@"na" forKey:@"dns_server_addresses"];
+					[d setObject:@"na" forKey:@"proxies_exceptions_list"];
+					[d setObject:@"na" forKey:@"proxies_ftp_passive_mode"];
+					[d setObject:@"na" forKey:@"proxies_http_proxy_enabled"];
+					[d setObject:@"na" forKey:@"proxies_http_proxy_port"];
+					[d setObject:@"na" forKey:@"proxies_http_proxy_server"];
+					[d setObject:@"na" forKey:@"ethernet_mac_address"];
+					[d setObject:@"na" forKey:@"ethernet_media_options"];
+					[d setObject:@"na" forKey:@"ethernet_media_subtype"];
 				} else {
 					if ([[[[[obj trim] componentsSeparatedByString:@":"] objectAtIndex:1] trim] length] == 0) {
 						// Set the valPrefix
@@ -685,14 +760,14 @@
 						title = NULL;
 						value = NULL;
 						tmpTxt = [[obj trim] replace:@":" replaceString:@"^"];
-						title = [[[tmpTxt componentsSeparatedByString:@"^"] objectAtIndex:0] replaceAll:@" " replaceString:@"_"]; 
+						title = [[[tmpTxt componentsSeparatedByString:@"^"] objectAtIndex:0] replaceAll:@" " replaceString:@"_"];
 						title = [title replaceAll:@"(" replaceString:@""];
 						title = [title replaceAll:@")" replaceString:@""];
-						title = [NSString stringWithFormat:@"%@%@",valPrefix,title];
+						title = [NSString stringWithFormat:@"%@%@",valPrefix,[title lowercaseString]];
 						value = [[[tmpTxt componentsSeparatedByString:@"^"] objectAtIndex:1] trim];
 						value = [value replaceAll:@"(" replaceString:@""];
 						value = [value replaceAll:@")" replaceString:@""];
-						[d setObject:value forKey:title];
+						[d setObject:value forKey:[title lowercaseString]];
 					}
 				} // if, mid
 			} // if, Network 
@@ -702,43 +777,38 @@
 	// Add the last record
 	if (d) {
 		[networkData addObject:d];
-		[d release];
 		d = nil;
 	}
 	NSArray *result = nil;
 	if (networkData)
 		result = [NSArray arrayWithArray:networkData];
 	
-	[networkData release];
 	return result;
 }
 
 - (NSArray *)parseSystemOverviewData:(NSString *)fileToParse
 {
 	NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-	[d setObject:@"NA" forKey:@"Name"];
-	[d setObject:@"NA" forKey:@"System_Version"];
-	[d setObject:@"NA" forKey:@"Kernel_Version"];
-	[d setObject:@"NA" forKey:@"Boot_Volume"];
-	[d setObject:@"NA" forKey:@"Boot_Mode"];
-	[d setObject:@"NA" forKey:@"Computer_Name"];
-	[d setObject:@"NA" forKey:@"User_Name"];
-	[d setObject:@"NA" forKey:@"Time_since_boot"];
+	[d setObject:@"NA" forKey:@"name"];
+	[d setObject:@"NA" forKey:@"system_version"];
+	[d setObject:@"NA" forKey:@"kernel_version"];
+	[d setObject:@"NA" forKey:@"boot_volume"];
+	[d setObject:@"NA" forKey:@"boot_mode"];
+	[d setObject:@"NA" forKey:@"computer_name"];
+	[d setObject:@"NA" forKey:@"user_name"];
+	[d setObject:@"NA" forKey:@"time_since_boot"];
 	
 	
 	NSString *dataString = [[NSString alloc] initWithContentsOfFile:fileToParse encoding:NSUTF8StringEncoding error:NULL];
 	NSArray *lines = [dataString componentsSeparatedByString:@"\n"];
-	[dataString release];
 	
 	NSEnumerator *enumerator = [lines objectEnumerator];
 	id obj;
-	NSString *title;
-	NSString *value;
+	NSString *title = @"";
+	NSString *value = @"";
 	while (obj = [enumerator nextObject]) {
 		if ([[obj trim] length] >=1)
 		{
-			title = @"";
-			value = @"";
 			if ([[obj trim] isEqual:@"Software:"] == NO)
 			{
 				if ([[obj trim] isEqual:@"System Software Overview:"])
@@ -753,14 +823,13 @@
 				
 				if ([[title trim] length] > 2)
 				{
-					[d setObject:value forKey:title];
+					[d setObject:value forKey:[title lowercaseString]];
 				} // if, title len
 			} // if, Software 
 		} // if, length
 	} // end while
 	
 	NSDictionary *result = [NSDictionary dictionaryWithDictionary:d];
-	[d release];
 	return [NSArray arrayWithObject:result];
 }
 
@@ -771,7 +840,7 @@
 	if ([dm fileExistsAtPath:xmlFileToParse] == NO)
 	{
 		logit(lcl_vError,@"Inventory cache file was not found. Data will not be parsed.");
-		goto done;
+		return result;
 	}
 	
 	NSArray *spX = [NSArray arrayWithContentsOfFile:xmlFileToParse];
@@ -808,14 +877,10 @@
 		}	
 		
 		[newItemsArray addObject:rec];
-		[rec release];
 		rec = nil;
 	}
 	
 	result = [NSArray arrayWithArray:newItemsArray];
-	[newItemsArray release];
-	
-done:
 	return result;	
 }
 
@@ -881,12 +946,10 @@ done:
 		}	
 		
 		[newItemsArray addObject:rec];
-		[rec release];
 		rec = nil;
 	}
 	
 	result = [NSArray arrayWithArray:newItemsArray];
-	[newItemsArray release];
 	
 	return result;	
 }
@@ -901,9 +964,8 @@ done:
 	
 	// This is done to remove unicode chars
 	NSData *asciiData = [dataString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
-	[dataString release];
 	
-	NSString *asciiString = [[[NSString alloc] initWithData:asciiData encoding:NSASCIIStringEncoding] autorelease];
+	NSString *asciiString = [[NSString alloc] initWithData:asciiData encoding:NSASCIIStringEncoding];
 	
 	// Parse by line endings and put in to an array
 	NSArray *lines = [asciiString componentsSeparatedByString:@"\n"];
@@ -926,12 +988,12 @@ done:
 					@try 
 					{
 						d = [[NSMutableDictionary alloc] init];
-						[d setObject:[[line componentsSeparatedByString:@":"] objectAtIndex:0] forKey:@"Name"];
-						[d setObject:@"NA" forKey:@"Version"];
-						[d setObject:@"NA" forKey:@"Last_Modified"];
-						[d setObject:@"NA" forKey:@"Kind"];
-						[d setObject:@"NA" forKey:@"Get_Info_String"];
-						[d setObject:@"NA" forKey:@"Location"];
+						[d setObject:[[line componentsSeparatedByString:@":"] objectAtIndex:0] forKey:@"name"];
+						[d setObject:@"NA" forKey:@"version"];
+						[d setObject:@"NA" forKey:@"last_modified"];
+						[d setObject:@"NA" forKey:@"kind"];
+						[d setObject:@"NA" forKey:@"get_info_string"];
+						[d setObject:@"NA" forKey:@"location"];
 						
 						for (l = (i+1);l < (i+16); l++)
 						{	
@@ -950,46 +1012,44 @@ done:
 									if ([[lines objectAtIndex:(l+1)] containsString:@":"]) {
 										nextVal = [NSString stringWithString:[lines objectAtIndex:(l+1)]];
 									}
-									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"Version"];
+									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"version"];
 									
 								} else if ([[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:0] trim] containsString:@"Last Modified"]) {
 									// If next line is true, add it to the current line
 									if ([[lines objectAtIndex:(l+1)] containsString:@":"]) {
 										nextVal = [NSString stringWithString:[lines objectAtIndex:(l+1)]];
 									}
-									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"Last_Modified"];
+									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"last_modified"];
 									
 								} else if ([[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:0] trim] containsString:@"Kind"]) {
 									// If next line is true, add it to the current line
 									if ([[lines objectAtIndex:(l+1)] containsString:@":"]) {
 										nextVal = [NSString stringWithString:[lines objectAtIndex:(l+1)]];
 									}
-									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"Kind"];
+									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"kind"];
 									
 								} else if ([[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:0] trim] containsString:@"Get Info String"]) {
 									// If next line is true, add it to the current line
 									if ([[lines objectAtIndex:(l+1)] containsString:@":"]) {
 										nextVal = [NSString stringWithString:[lines objectAtIndex:(l+1)]];
 									}
-									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"Get_Info_String"];
+									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"get_info_string"];
 									
 								} else if ([[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:0] trim] containsString:@"Location"]) {
 									// If next line is true, add it to the current line
 									if ([[lines objectAtIndex:(l+1)] containsString:@":"]) {
 										nextVal = [NSString stringWithString:[lines objectAtIndex:(l+1)]];
 									}
-									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"Location"];
+									[d setObject:[NSString stringWithFormat:@"%@%@",[[[nValue componentsSeparatedByString:@"^"] objectAtIndex:1] trim], nextVal] forKey:@"location"];
 									break;
 								} // Attributes if
 							} // if line contains :
 						} // for loop
 						[applicationData addObject:d];
-						[d release];
 						d = nil;
 					}	
 					@catch (NSException * e) {
 						logit(lcl_vError,@"Error: %@",[e description]);
-						[d release];
 						d = nil;
 					}
 				}
@@ -999,7 +1059,6 @@ done:
 	
 	
 	NSArray *result = [NSArray arrayWithArray:applicationData];
-	[applicationData release];
 	return result;
 }
 
@@ -1016,7 +1075,6 @@ done:
 	[record setObject:@"NA" forKey:@"AD_Kerberos_ID"];
 	[record setObject:@"0" forKey:@"Bound_To_Domain"];
 	result = [NSDictionary dictionaryWithDictionary:record];
-	[record release];
 	return result;
 }
 
@@ -1052,6 +1110,11 @@ done:
 		if (![fm fileExistsAtPath:adPlist])
 			goto done;
 		NSDictionary *adInfo = [NSDictionary dictionaryWithContentsOfFile:adPlist];
+        if (!adInfo) {
+            NSHost *_host = [NSHost currentHost];
+            adInfo = [NSDictionary dictionaryWithObjectsAndKeys:[[_host localizedName] stringByAppendingString:@"$"],@"trustaccount",@"NA",@"AD_Kerberos_ID",@"NA",@"ADDomain",nil];
+        }
+
 		// Computer Name
 		if ([[adInfo allKeys] containsObject:@"trustaccount"]) {
 			[record setObject:[adInfo objectForKey:@"trustaccount"] forKey:@"AD_Computer_ID"];
@@ -1069,24 +1132,36 @@ done:
 			}	
 		}	
 			
-		
-		NSDirectoryServices *dsSearch = [[[NSDirectoryServices alloc] init] autorelease];
+		/* Old Way  */
+		NSDirectoryServices *dsSearch = [[NSDirectoryServices alloc] init];
 		NSDictionary *computerAccountInfo = [dsSearch getRecord:[adInfo objectForKey:@"trustaccount"] ofType:DHDSComputerAccountType fromNode:DHDSSEARCHNODE];
 		
 		if ([computerAccountInfo objectForKey:@"dsAttrTypeNative:distinguishedName"]) {
 			[record setObject:[computerAccountInfo objectForKey:@"dsAttrTypeNative:distinguishedName"] forKey:@"distinguishedName"];
 		} else {
-			[record setObject:@"NA" forKey:@"distinguishedName"];
+            if ([computerAccountInfo objectForKey:@"dsAttrTypeStandard:AppleMetaRecordName"]) {
+                [record setObject:[computerAccountInfo objectForKey:@"dsAttrTypeStandard:AppleMetaRecordName"] forKey:@"distinguishedName"];
+            } else {
+                [record setObject:@"NA" forKey:@"distinguishedName"];
+            }
 		}
 		if ([computerAccountInfo objectForKey:@"dsAttrTypeNative:cn"]) {
 			[record setObject:[computerAccountInfo objectForKey:@"dsAttrTypeNative:cn"] forKey:@"cn"];
 		} else {
-			[record setObject:@"NA" forKey:@"cn"];
+            if ([computerAccountInfo objectForKey:@"dsAttrTypeStandard:RealName"]) {
+                [record setObject:[computerAccountInfo objectForKey:@"dsAttrTypeStandard:RealName"] forKey:@"cn"];
+            } else {
+                [record setObject:@"NA" forKey:@"cn"];
+            }
 		}
 		if ([computerAccountInfo objectForKey:@"dsAttrTypeNative:DNSName"]) {
 			[record setObject:[computerAccountInfo objectForKey:@"dsAttrTypeNative:DNSName"] forKey:@"DNSName"];
 		} else {
-			[record setObject:@"NA" forKey:@"DNSName"];
+            if ([computerAccountInfo objectForKey:@"dsAttrTypeStandard:DNSName"]) {
+                [record setObject:[computerAccountInfo objectForKey:@"dsAttrTypeStandard:DNSName"] forKey:@"DNSName"];
+            } else {
+                [record setObject:@"NA" forKey:@"DNSName"];
+            }
 		}
 		
 		if ([computerAccountInfo objectForKey:@"dsAttrTypeNative:llnlHosts"]) {
@@ -1096,6 +1171,35 @@ done:
 		} else {
 			[record setObject:@"0" forKey:@"HasSLAM"];	
 		}
+
+        /* New Way, not working yet
+        MPDirectoryServices *mpds = [[MPDirectoryServices alloc] init];
+		NSDictionary *computerAccountInfo = [mpds computerInfo:[adInfo objectForKey:@"trustaccount"]];
+
+		if ([computerAccountInfo objectForKey:@"dsAttrTypeStandard:AppleMetaRecordName"]) {
+			[record setObject:[computerAccountInfo objectForKey:@"dsAttrTypeStandard:AppleMetaRecordName"] forKey:@"distinguishedName"];
+		} else {
+			[record setObject:@"NA" forKey:@"distinguishedName"];
+		}
+		if ([computerAccountInfo objectForKey:@"dsAttrTypeStandard:RealName"]) {
+			[record setObject:[computerAccountInfo objectForKey:@"dsAttrTypeStandard:RealName"] forKey:@"cn"];
+		} else {
+			[record setObject:@"NA" forKey:@"cn"];
+		}
+		if ([computerAccountInfo objectForKey:@"dsAttrTypeStandard:DNSName"]) {
+			[record setObject:[computerAccountInfo objectForKey:@"dsAttrTypeStandard:DNSName"] forKey:@"DNSName"];
+		} else {
+			[record setObject:@"NA" forKey:@"DNSName"];
+		}
+
+		if ([computerAccountInfo objectForKey:@"dsAttrTypeNative:llnlHosts"]) {
+			if ([[computerAccountInfo objectForKey:@"dsAttrTypeNative:llnlHosts"] count] > 0) {
+				[record setObject:@"1" forKey:@"HasSLAM"];
+			}
+		} else {
+			[record setObject:@"0" forKey:@"HasSLAM"];
+		}
+         */
 	}
 	@catch (NSException * e) {
 		logit(lcl_vError,@"%@",[e description]);
@@ -1139,7 +1243,7 @@ done:
 			[record setObject:[adPlist objectForKey:@"AD Computer Kerberos ID"] forKey:@"AD_Kerberos_ID"];
 		}
 		
-		NSDirectoryServices *dsSearch = [[[NSDirectoryServices alloc] init] autorelease];
+		NSDirectoryServices *dsSearch = [[NSDirectoryServices alloc] init];
 		NSDictionary *computerAccountInfo = [dsSearch getRecord:computerName ofType:DHDSComputerAccountType fromNode:DHDSSEARCHNODE];
 		
 		if ([computerAccountInfo objectForKey:@"dsAttrTypeNative:distinguishedName"]) {
@@ -1204,7 +1308,6 @@ done:
 	FMDatabase *db = [FMDatabase databaseWithPath:appDB];
 	if (![db open]) {
         logit(lcl_vError,@"Could not open app usage data file.");
-		[rows release];
         return nil;
     }
 	FMResultSet *rs = [db executeQuery:@"select app_name,app_path,app_version,last_launched,times_launched from appUsage"];
@@ -1219,7 +1322,6 @@ done:
 		}
 		logit(lcl_vDebug, @"App Usage Row: %@",_rec);
 		[rows addObject:_rec];
-		[_rec release];
 		_rec = nil;
     }
     // close the result set.
@@ -1228,7 +1330,6 @@ done:
     [rs close]; 
 	[db close];
 	NSArray *results = [NSArray arrayWithArray:rows];
-	[rows release];
 	rows = nil;
 	logit(lcl_vDebug, @"App Usage results: %@",results);
 	return results;
@@ -1290,14 +1391,11 @@ done:
 		[tmpPluginDict setObject:[self readKeyFromFile:[tmpPluginDict objectForKey:@"path_real"] key:@"CFBundleIdentifier" error:NULL] forKey:@"BundleIdentifier"];
 		
 		[plugInsDictArray addObject:tmpPluginDict];
-		[tmpPluginDict release];
 		tmpPluginDict=nil;
 	}	
-	[plugInsTmp release];
 	
 		
 	plugins = [NSArray arrayWithArray:plugInsDictArray];
-	[plugInsDictArray release];
 	
 	return plugins;
 }
@@ -1333,7 +1431,7 @@ done:
 			if (err != NULL)  *err = [NSError errorWithDomain:@"world" code:1 userInfo:details];
 			logit(lcl_vError, @"File %@ does not exist.",pathInfo);
 		}
-		goto done;
+		return result;
 	}
 	
 	NSString *l_error = NULL;
@@ -1349,14 +1447,13 @@ done:
 		[details setValue:[NSString stringWithFormat:@"Error, %@ reading plist %@.",l_error, pathInfo] forKey:NSLocalizedDescriptionKey];
 		if (err != NULL) *err = [NSError errorWithDomain:@"world" code:2 userInfo:details];
 		logit(lcl_vError, @"Error, %@ reading plist %@.",l_error, pathInfo);
-		goto done;
+		return result;
 	} 
 	
 	if ([thePlist objectForKey:aKey]) {
 		result = [NSString stringWithString:[thePlist objectForKey:aKey]];
 	}	
-	
-done:	
+
 	return result;
 }
 
@@ -1376,7 +1473,6 @@ done:
         logit(lcl_vError,@"Getting local users, %@",[err description]);
         return nil;
     }
-    [m release];
     return _users;
 }
 
@@ -1389,20 +1485,18 @@ done:
         logit(lcl_vError,@"Getting local groups, %@",[err description]);
         return nil;
     }
-    [m release];
     return _groups;
 }
 
 - (NSArray *)parseFileVaultInfo
 {
     MPFileVaultInfo *fv = [[MPFileVaultInfo alloc] init];
-    NSMutableDictionary *fvDict = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary *fvDict = [[NSMutableDictionary alloc] init];
     [fvDict setObject:[NSString stringWithFormat:@"%d",[fv state]] forKey:@"state" defaultObject:@"0"];
     [fvDict setObject:[fv status] forKey:@"status" defaultObject:@"na"];
     [fvDict setObject:[fv users] forKey:@"users" defaultObject:@"na"];
     
     NSArray *res = [NSArray arrayWithObject:(NSDictionary *)fvDict];
-    [fv release];
     return res;
 }
 
@@ -1454,6 +1548,7 @@ done:
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *fileName = [NSString stringWithFormat: @"%.0f.%@", [NSDate timeIntervalSinceReferenceDate] * 1000.0, @"plist"];
     NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
+    qldebug(@"Config profile data: %@",filePath);
 
     // Write Profile Data To Plist
     NSArray *cmdArgs = [NSArray arrayWithObjects:@"-P",@"-o",filePath, nil];
@@ -1483,8 +1578,137 @@ done:
         return nil;
     }
     // Quick Clean Up
-    [fm removeItemAtPath:filePath error:NULL];
+    //[fm removeItemAtPath:filePath error:NULL];
+    qldebug(@"Collected Profiles: %@",profiles);
     return [NSArray arrayWithArray:profiles];
+}
+
+- (NSArray *)parseSysInfoNetworkData:(NSArray *)networkData
+{
+    NSArray *netKeys = [NSArray arrayWithObjects:@"HardwareAddress",@"IsPrimary",@"InterfaceName",@"PrimaryIPAddress",
+                        @"ConfigurationType",@"AllDNSServers",@"PrimaryDNSServer",@"IsActive",@"RouterAddress",
+                        @"ConfigurationName",@"DomainName",@"AllIPAddresses", nil];
+
+    NSMutableDictionary *netDict = [[NSMutableDictionary alloc] init];
+    for (NSString *key in netKeys) {
+        [netDict setObject:@"NA" forKey:key];
+    }
+
+    NSDictionary *item;
+    NSMutableDictionary *result;
+    NSMutableArray *items = [[NSMutableArray alloc] init];
+    for (int i = 0; i < [networkData count]; i++)
+    {
+        item = [networkData objectAtIndex:i];
+        result = [[NSMutableDictionary alloc] initWithDictionary:netDict];
+        for (NSString *akey in netKeys)
+        {
+            if ([item objectForKey:akey]) {
+                if ([[item objectForKey:akey] isKindOfClass:[NSNumber class]]) {
+                    [result setObject:[[item objectForKey:akey] stringValue] forKey:akey];
+                }
+                if ([[item objectForKey:akey] isKindOfClass:[NSString class]]) {
+                    [result setObject:[item objectForKey:akey] forKey:akey];
+                }
+            }
+        }
+        [items addObject:result];
+    }
+
+    return [NSArray arrayWithArray:items];
+}
+
+- (NSArray *)parseAppStoreData
+{
+    NSDictionary *appData;
+    NSMutableArray *items = [[NSMutableArray alloc] init];
+
+    NSSet *dirs = [NSSet setWithObject:@"/Applications/"];
+    NSMetadataQuery *metadataSearch=[[NSMetadataQuery alloc] init];
+    NSArray *res = [metadataSearch resultsForSearchString:@"kMDItemAppStoreHasReceipt == '1'" inFolders:dirs];
+    MacAppStoreDataItem *di;
+    for (NSMetadataItem *item in res) {
+        di = [[MacAppStoreDataItem alloc] initWithNSMetadataItem:item];
+        appData = nil;
+        appData = [NSDictionary dictionaryWithDictionary:[di dictionaryRepresentation]];
+        if (appData) {
+            [items addObject:appData];
+        }
+    }
+
+    return [NSArray arrayWithArray:items];
+}
+
+- (NSArray *)parseAgentServerInfo
+{
+    NSArray *mpServerInfo = nil;
+    NSMutableDictionary *mpServerListInfo;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    /* Needs to be completed */
+    if ([fm fileExistsAtPath:AGENT_SERVERS_PLIST])
+    {
+        NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:AGENT_SERVERS_PLIST];
+        if ([d objectForKey:@"name"])
+        {
+            mpServerListInfo = [[NSMutableDictionary alloc] init];
+            [mpServerListInfo setObject:[d objectForKey:@"name"] forKey:@"name"];
+            if ([d objectForKey:@"version"]) {
+                if ([[d objectForKey:@"version"] isKindOfClass:[NSNumber class]]) {
+                    [mpServerListInfo setObject:[[d objectForKey:@"version"] stringValue] forKey:@"version"];
+                } else {
+                    [mpServerListInfo setObject:[d objectForKey:@"version"] forKey:@"version"];
+                }
+            } else {
+                [mpServerListInfo setObject:@"0" forKey:@"version"];
+            }
+            if ([d objectForKey:@"id"]) {
+                if ([[d objectForKey:@"id"] isKindOfClass:[NSNumber class]]) {
+                    [mpServerListInfo setObject:[[d objectForKey:@"id"] stringValue] forKey:@"id"];
+                } else {
+                    [mpServerListInfo setObject:[d objectForKey:@"id"] forKey:@"id"];
+                }
+            } else {
+                [mpServerListInfo setObject:@"0" forKey:@"id"];
+            }
+
+            mpServerInfo = [NSArray arrayWithObject:mpServerListInfo];
+        } else {
+            logit(lcl_vError, @"name object does not exist.");
+        }
+    } else {
+        logit(lcl_vError, @"Parse Server Info. File %@ does not exist.",AGENT_SERVERS_PLIST);
+    }
+
+    return mpServerInfo;
+}
+
+- (NSArray *)parseAgentServerList
+{
+    NSArray *mpServers = nil;
+    NSMutableArray *serverItems = [[NSMutableArray alloc] init];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    MPServerEntry *se;
+    /* Needs to be completed */
+    if ([fm fileExistsAtPath:AGENT_SERVERS_PLIST])
+    {
+        NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:AGENT_SERVERS_PLIST];
+        if ([d objectForKey:@"servers"])
+        {
+            NSArray *serverArray = [d objectForKey:@"servers"];
+            for (int i = 0;i<serverArray.count;i++)
+            {
+                se = [[MPServerEntry alloc] initWithServerDictionary:[serverArray objectAtIndex:i] index:[NSString stringWithFormat:@"%d",i]];
+                [serverItems addObject:[se dictionaryRepresentation]];
+            }
+        } else {
+            logit(lcl_vError, @"servers object does not exist.");
+        }
+    } else {
+        logit(lcl_vError, @"File %@ does not exist.",AGENT_SERVERS_PLIST);
+    }
+
+    mpServers = [NSArray arrayWithArray:serverItems];
+    return mpServers;
 }
 
 #pragma mark Helper
@@ -1506,7 +1730,5 @@ done:
 
 	return (NSDictionary *)keyValData;
 }
-
-
 
 @end

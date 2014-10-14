@@ -30,16 +30,16 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"1.5.1"
+#define APPVERSION	@"2.0.0"
 #define APPNAME		@"MPAgentUp2Date"
 
 void usage(void);
 
 int main (int argc, char * argv[])
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     
-    int a_Type = 0;
+        int a_Type = 0;
 	BOOL echoToConsole = NO;
 	BOOL verboseLogging = NO;
 	
@@ -87,23 +87,23 @@ int main (int argc, char * argv[])
 				printf("%s\n",[APPVERSION UTF8String]);
 				return 0;
 			case 'h':
-                usage();
-                return 0;
+                    usage();
+                    return 0;
 			case '?':
-                usage();
-                return 0;
+                    usage();
+                    return 0;
 			default:
 				usage();
 		}
 	}
 	
 	if (optind < argc) {
-        while (optind < argc) {
-            printf ("Invalid argument %s ", argv[optind++]);
+            while (optind < argc) {
+                printf ("Invalid argument %s ", argv[optind++]);
+            }
+            usage();
+            exit(0);
         }
-        usage();
-        exit(0);
-    }
 	
 	// Make sure the user is root or is using sudo
 	if (getuid()) {
@@ -113,10 +113,10 @@ int main (int argc, char * argv[])
 #endif
 	}
 	
-    // Setup Logging
+        // Setup Logging
 	NSString *_logFile = [NSString stringWithFormat:@"%@/Logs/MPAgentUp2Date.log",MP_ROOT_UPDATE];
-    [MPLog setupLogging:_logFile level:lcl_vDebug];
-    if (verboseLogging) {
+        [MPLog setupLogging:_logFile level:lcl_vDebug];
+        if (verboseLogging) {
 		lcl_configure_by_name("*", lcl_vDebug);
 		[LCLLogFile setMirrorsToStdErr:YES];
 		logit(lcl_vInfo,@"***** %@ v.%@ started -- Debug Enabled *****", APPNAME, APPVERSION);
@@ -124,11 +124,11 @@ int main (int argc, char * argv[])
 		lcl_configure_by_name("*", lcl_vInfo);
 		if (echoToConsole) {
 			[LCLLogFile setMirrorsToStdErr:YES];
-        }
+            }
 		logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
 	}
-    
-    NSFileManager *fm = [NSFileManager defaultManager];
+        
+        NSFileManager *fm = [NSFileManager defaultManager];
 	NSError *error = nil;
 	NSArray *files = [fm contentsOfDirectoryAtPath:@"/Users/Shared/.mpUpdate" error:&error];
 	
@@ -139,19 +139,18 @@ int main (int argc, char * argv[])
 		}
 	}
 	
-    // Run Functions
+        // Run Functions
 	MPAgentUp2DateController *_controller = [[MPAgentUp2DateController alloc] init];
 	
-    if (a_Type == 1) {
+        if (a_Type == 1) {
 		[_controller scanForUpdate];
 	} else if (a_Type == 2) {
 		[_controller scanAndUpdate];
 	} else {
 		logit(lcl_vError, @"should never have gotten here!");
 	}
-    
-	[_controller release];
-    [pool drain];
+        
+    }
     return 0;
 }
 

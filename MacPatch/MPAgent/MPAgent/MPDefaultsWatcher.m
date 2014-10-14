@@ -53,11 +53,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [confHash release];
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark Class Methods
@@ -79,14 +74,14 @@
 
 - (void)checkConfigThread
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	BOOL isRunning = YES;
-	while (isRunning)
-	{
-		[self checkConfig];
-		[NSThread sleepForTimeInterval:MP_SCAN_INTERVAL];
+	@autoreleasepool {
+		BOOL isRunning = YES;
+		while (isRunning)
+		{
+			[self checkConfig];
+			[NSThread sleepForTimeInterval:MP_SCAN_INTERVAL];
+		}
 	}
-	[pool release];
 }
          
 #pragma mark Plist Methods
@@ -98,7 +93,7 @@
     if ([fm fileExistsAtPath:AGENT_PREFS_PLIST] == NO)
     {
         logit(lcl_vError,@"Error plist file '%@' does not exist.",AGENT_PREFS_PLIST);
-        goto done;
+        return result;
     }
 
     // Read the plist
@@ -111,12 +106,10 @@
                                                                      errorDescription:&error];
     if (!thePlist) {
         logit(lcl_vError,@"Error reading plist from file '%@', error = '%@'",AGENT_PREFS_PLIST,error);
-        goto done;
+        return result;
     } 
 
     result = [NSDictionary dictionaryWithDictionary:thePlist];
-    
-done:
     return result;
 }
 
@@ -153,7 +146,6 @@ done:
 		}
 	}
 	
-    [crypto release];
 	
 	return hashResult;
 }
@@ -161,7 +153,7 @@ done:
 -(NSString *)hashForFile:(NSString *)aFilePath digest:(NSString *)aDigest
 {
 	MPCrypto *crypto;
-	crypto = [[[MPCrypto alloc] init] autorelease];
+	crypto = [[MPCrypto alloc] init];
 	if ([[aDigest uppercaseString] isEqualToString:@"MD5"]) {
 		return [crypto md5HashForFile:aFilePath];
 	} else if ([[aDigest uppercaseString] isEqualToString:@"SHA1"]) {

@@ -34,10 +34,14 @@ NSString * const AGENT_EXEC                 = @"/Library/MacPatch/Client/MPAgent
 NSString * const AGENT_VER_PLIST			= @"/Library/MacPatch/Client/.mpVersion.plist";
 NSString * const AGENT_PREFS_PLIST			= @"/Library/Preferences/gov.llnl.mpagent.plist";
 NSString * const AGENT_FRAMEWORK_PATH		= @"/Library/Frameworks/MPFramework.framework/Resources/Info.plist";
+NSString * const AGENT_SERVERS_PLIST        = @"/Library/MacPatch/Client/lib/Servers.plist";
 NSString * const APP_PREFS_PLIST			= @"/Library/Preferences/gov.llnl.MPClientStatus.plist";
+NSString * const PATCHES_NEEDED_PLIST       = @"/Library/MacPatch/Client/Data/.neededPatches.plist";
 
+NSString * const WS_CLIENT_REG              = @"/MPRegister.cfc";
 NSString * const WS_CLIENT_FILE             = @"/Service/MPClientService.cfc";
 NSString * const WS_SERVER_FILE             = @"/Service/MPServerService.cfc";
+NSString * const WS_FAILED_REQ_PLIST        = @"/Library/MacPatch/Client/lib/WebRequests.plist";
 
 NSString * const ASUS_BIN_PATH				= @"/usr/sbin/softwareupdate";
 NSString * const ASUS_APP_PATH				= @"/System/Library/CoreServices/Software Update.app";

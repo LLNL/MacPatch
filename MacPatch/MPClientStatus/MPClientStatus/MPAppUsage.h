@@ -30,9 +30,10 @@
 	FMDatabase *db;
 	NSString *dbPath;
 }	
-@property (nonatomic, retain) NSString *dbPath;
+@property (nonatomic, strong) NSString *dbPath;
 
 -(int)initAndPrepDB;
+-(void)cleanDB;
 -(void)insertLaunchDataForApp:(NSString *)aAppName appPath:(NSString *)aAppPath appVersion:(NSString *)aAppVer;
 -(int)numberOfPreviousLaunchesForApp:(NSString *)aAppName appPath:(NSString *)aAppPath appVersion:(NSString *)aAppVer;
 

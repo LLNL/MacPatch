@@ -21,8 +21,13 @@ _lcl_component(MPInstaller,         "MPInstaller",      "MPInstaller")
 _lcl_component(MPSystemInfo,        "MPSystemInfo",     "MPSystemInfo")
 _lcl_component(MPDate,              "MPDate",           "MPDate")
 _lcl_component(MPClientCheckInData, "MPClientCheckInData",  "MPClientCheckInData")
-_lcl_component(MPNSTask,            "MPNSTask",         "MPNSTask")
-_lcl_component(MPWEBServices,       "MPWEBServices",    "MPWEBServices")
+_lcl_component(MPNSTask,            "MPNSTask",             "MPNSTask")
+_lcl_component(MPWEBServices,       "MPWEBServices",        "MPWEBServices")
+_lcl_component(MPNetwork,           "MPNetwork",            "MPNetwork")
+_lcl_component(MPNetRequest,        "MPNetRequest",         "MPNetRequest")
+_lcl_component(MPNetServer,         "MPNetServer",          "MPNetServer")
+_lcl_component(MPNetConfig,         "MPNetConfig",          "MPNetConfig")
+_lcl_component(MPJsonResult,        "MPJsonResult",         "MPJsonResult")
 
 
 

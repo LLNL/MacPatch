@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+### BEGIN INIT INFO
+# Provides:          MPApache
+# Required-Start:    $network $syslog
+# Required-Stop:     $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+cd /
+umask 022
+
+RETVAL=$?
+APACHE_HOME="/Library/MacPatch/Server/Apache2"
+
+case "$1" in
+start)
+        if [ -f $APACHE_HOME/bin/apachectl ]; then
+                echo $"Starting MacPatch Apache"
+                $APACHE_HOME/bin/apachectl start
+        fi
+        ;;
+stop)
+        if [ -f $APACHE_HOME/bin/apachectl ]; then
+                echo $"Stopping MacPatch Apache"
+                $APACHE_HOME/bin/apachectl stop
+        fi
+        ;;
+graceful)
+        if [ -f $APACHE_HOME/bin/apachectl ]; then
+                echo $"Graceful MacPatch Apache"
+                $APACHE_HOME/bin/apachectl graceful
+        fi
+        ;;
+restart)
+        if [ -f $APACHE_HOME/bin/apachectl ]; then
+                echo $"Restarting MacPatch Apache"
+                $APACHE_HOME/bin/apachectl restart
+        fi
+        ;;
+*)
+        echo $"Usage: $0 {start|stop|restart|graceful}"
+        exit 1
+        ;;
+esac
+
+exit $RETVAL

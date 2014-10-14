@@ -99,6 +99,49 @@
         
 		<cfreturn response>
 	</cffunction>
+	
+	<cffunction name="getSWDistributionContentAsJSON" access="remote" returnType="struct" returnFormat="json" output="false">
+		<cfset response = {} />
+		<cfset response[ "errorNo" ] = "0" />
+		<cfset response[ "errorMsg" ] = "" />
+		<cfset response[ "result" ] = "" />
+
+		<!--- Continue --->
+        <cftry>
+            <cfquery datasource="#this.ds#" name="qGet">
+                Select `suuid`, `sw_url`, `sw_hash`
+                From mp_software
+                Where `sState` >= '1'
+            </cfquery>
+        
+            <cfif qGet.RecordCount LTE 0>
+           		<cfset response[ "errorNo" ] = "1001" />
+                <cfset response[ "errorMsg" ] = "No content found." />
+                <cfreturn response>
+            </cfif>
+            <cfcatch>
+                <cfset response[ "errorNo" ] = "1" />
+                <cfset response[ "errorMsg" ] = "#cfcatch.Detail# #cfcatch.Message#" />
+                <cfreturn response>
+            </cfcatch>
+		</cftry>
+        
+		<cfset _content = {} />
+        <cfset _content[ "Content" ] = {} />
+        <cfset _contArr = arrayNew(1)>
+        <cfoutput query="qGet">
+            <cfset _tmp = {} />
+            <cfset _tmp[ "puuid" ] = "#suuid#" />
+            <cfset _tmp[ "pkg_url" ] = "#sw_url#" />
+            <cfset _tmp[ "pkg_hash" ] = "#sw_hash#" />
+            <cfset a = ArrayAppend(_contArr,_tmp)>
+        </cfoutput>	
+        
+        <cfset _content.Content = _contArr />
+		<cfset response.result = serializeJSON(_content)>
+        
+		<cfreturn response>
+	</cffunction>
     
     <cffunction name="getDistributionContent" access="private" returntype="string" output="no">
 		<cfargument name="returnType">

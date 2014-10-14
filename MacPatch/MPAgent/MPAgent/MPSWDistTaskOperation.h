@@ -26,7 +26,6 @@
 #import <Foundation/Foundation.h>
 
 @class MPAgent;
-@class MPServerConnection;
 
 @interface MPSWDistTaskOperation : NSOperation
 {
@@ -47,11 +46,11 @@
 
 @property (nonatomic, readonly) BOOL                isExecuting;
 @property (nonatomic, readonly) BOOL                isFinished;
-@property (nonatomic, retain) NSString              *_fileHash;
+@property (nonatomic, strong) NSString              *_fileHash;
 @property (nonatomic, assign) NSTimeInterval        _timerInterval;
-@property (nonatomic, retain) NSOperationQueue      *l_queue;
-@property (nonatomic, retain) NSString              *_swDiskTaskListHash;
-@property (nonatomic, retain) NSURL                 *mp_SOFTWARE_DATA_DIR;
+@property (nonatomic, strong) NSOperationQueue      *l_queue;
+@property (nonatomic, strong) NSString              *_swDiskTaskListHash;
+@property (nonatomic, strong) NSURL                 *mp_SOFTWARE_DATA_DIR;
 
 - (void)checkAndInstallMandatoryApplications;
 - (BOOL)validateSoftwareDistListHashForGroup:(NSString *)aGroupName hash:(NSString *)aHash error:(NSError **)err;

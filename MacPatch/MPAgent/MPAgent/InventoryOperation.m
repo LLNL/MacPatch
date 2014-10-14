@@ -50,17 +50,17 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	[super dealloc];
-}
-
-- (BOOL) isConcurrent 
+- (BOOL)isConcurrent
 {
     return YES;
 }
 
-- (void) finish 
+- (void)cancel
+{
+    [self finish];
+}
+
+- (void)finish
 {
     [self willChangeValueForKey:@"isFinished"];
     [self willChangeValueForKey:@"isExecuting"];
@@ -70,7 +70,7 @@
     [self didChangeValueForKey:@"isFinished"];
 }
 
-- (void) start 
+- (void)start 
 {
     if ([self isCancelled]) {
         [self willChangeValueForKey:@"isFinished"];
@@ -97,32 +97,31 @@
 
 - (void)runInventoryCollection
 {
-	NSAutoreleasePool *rPool = [[NSAutoreleasePool alloc] init];
-	logit(lcl_vInfo,@"Running client inventory scan.");
-	NSString *invAppPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:invAppPath]) {
-		logit(lcl_vError,@"Unable to find MPInventory app to collect inventory data.");
-		return;
-	}
+	@autoreleasepool {
+		logit(lcl_vInfo,@"Running client inventory scan.");
+		NSString *invAppPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
+		if (![fm fileExistsAtPath:invAppPath]) {
+			logit(lcl_vError,@"Unable to find MPInventory app to collect inventory data.");
+			return;
+		}
 
-	if (![MPCodeSign checkSignature:invAppPath]) {
-		return; // Not a valid signature, bail.
+		if (![MPCodeSign checkSignature:invAppPath]) {
+			return; // Not a valid signature, bail.
+		}
+		
+		NSError *error = nil;
+		NSString *result;
+		MPNSTask *mpr = [[MPNSTask alloc] init];
+		result = [mpr runTask:invAppPath binArgs:[NSArray arrayWithObjects:@"-t", @"All", nil] error:&error];
+		
+		if (error) {
+			logit(lcl_vError,@"%@",[error description]);
+		}
+		
+		logit(lcl_vDebug,@"%@",result);
+		logit(lcl_vInfo,@"Inventory collection has been completed.");
+		logit(lcl_vInfo,@"See the MPInventory.log file for more information.");
 	}
-	
-	NSError *error = nil;
-	NSString *result;
-	MPNSTask *mpr = [[MPNSTask alloc] init];
-	result = [mpr runTask:invAppPath binArgs:[NSArray arrayWithObjects:@"-t", @"All", nil] error:&error];
-	
-	if (error) {
-		logit(lcl_vError,@"%@",[error description]);
-	}
-	
-	logit(lcl_vDebug,@"%@",result);
-	logit(lcl_vInfo,@"Inventory collection has been completed.");
-	logit(lcl_vInfo,@"See the MPInventory.log file for more information.");
-	[mpr release];
-	[rPool release];
 }
 
 @end

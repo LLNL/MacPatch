@@ -60,7 +60,7 @@
 	
     // Clean up and go home
     BIO_free_all(mem);
-    return [base64String autorelease];
+    return base64String;
 }
 
 @end

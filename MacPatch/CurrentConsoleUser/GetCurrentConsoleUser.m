@@ -25,32 +25,35 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <SystemConfiguration/SystemConfiguration.h>
 
-int main (int argc, char * argv[]) {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init]; 
+int main (int argc, char * argv[])
+{
+    @autoreleasepool
+    {
 	
-	int c;	
-	while ((c = getopt (argc, argv, "v")) != -1)
-		switch (c)
-	{
-		case 'v':
-			fprintf (stdout, "1.0.1\n");
-			return 0;
-	}
-	
-	
-	SCDynamicStoreRef   store;
-	CFStringRef		consoleUserName;
+		int c;	
+		while ((c = getopt (argc, argv, "v")) != -1)
+			switch (c)
+		{
+			case 'v':
+				fprintf (stdout, "1.1.0\n");
+				return 0;
+		}
+		
+		
+		SCDynamicStoreRef   store;
+		CFStringRef         consoleUserName;
 
-	store = SCDynamicStoreCreate(NULL, NULL, NULL, NULL);
-	consoleUserName = SCDynamicStoreCopyConsoleUser(store, NULL, NULL);
-	
-	NSString *nsString = (NSString*)consoleUserName;
-	
-	if (nsString) {
-		printf ("%s\n", [nsString UTF8String]);
-	} else {
-		printf ("null\n");
-	}	
-	[pool drain];
+		store = SCDynamicStoreCreate(NULL, NULL, NULL, NULL);
+		consoleUserName = SCDynamicStoreCopyConsoleUser(store, NULL, NULL);
+		
+		NSString *nsString = (__bridge NSString*)consoleUserName;
+		if (nsString) {
+			printf ("%s\n", [nsString UTF8String]);
+		} else {
+			printf ("null\n");
+		}
+        if (consoleUserName)
+            CFRelease(consoleUserName);
+	}
     return 0;
 }

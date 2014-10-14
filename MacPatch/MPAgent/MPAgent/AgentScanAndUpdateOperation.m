@@ -50,17 +50,17 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	[super dealloc];
-}
-
-- (BOOL) isConcurrent 
+- (BOOL)isConcurrent
 {
     return YES;
 }
 
-- (void) finish 
+- (void)cancel
+{
+    [self finish];
+}
+
+- (void)finish
 {
     [self willChangeValueForKey:@"isFinished"];
     [self willChangeValueForKey:@"isExecuting"];
@@ -70,7 +70,7 @@
     [self didChangeValueForKey:@"isFinished"];
 }
 
-- (void) start 
+- (void)start 
 {
     if ([self isCancelled]) {
         [self willChangeValueForKey:@"isFinished"];
@@ -97,29 +97,28 @@
 
 - (void)runAgentScanAndUpdate
 {
-	NSAutoreleasePool *rPool = [[NSAutoreleasePool alloc] init];
-	logit(lcl_vInfo,@"Running agent update check.");
-	NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-	if (![fm fileExistsAtPath:appPath]) {
-		logit(lcl_vError,@"Unable to find MPAgentExec app.");
-	} else {
-		if ([MPCodeSign checkSignature:appPath]) {
-			NSError *error = nil;
-			NSString *result;
-            MPNSTask *mpr = [[MPNSTask alloc] init];
-			result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-G", nil] error:&error];
-			
-			if (error) {
-				logit(lcl_vError,@"%@",[error description]);
+	@autoreleasepool {
+		logit(lcl_vInfo,@"Running agent update check.");
+		NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
+		if (![fm fileExistsAtPath:appPath]) {
+			logit(lcl_vError,@"Unable to find MPAgentExec app.");
+		} else {
+			if ([MPCodeSign checkSignature:appPath]) {
+				NSError *error = nil;
+				NSString *result;
+                MPNSTask *mpr = [[MPNSTask alloc] init];
+				result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-G", nil] error:&error];
+				
+				if (error) {
+					logit(lcl_vError,@"%@",[error description]);
+				}
+				
+				logit(lcl_vDebug,@"%@",result);
+				logit(lcl_vInfo,@"Update Up2Date has been completed.");
+				logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
 			}
-			
-			logit(lcl_vDebug,@"%@",result);
-			logit(lcl_vInfo,@"Update Up2Date has been completed.");
-			logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
-			[mpr release];
-		}
-	}	
-	[rPool release];
+		}	
+	}
 }
 
 @end

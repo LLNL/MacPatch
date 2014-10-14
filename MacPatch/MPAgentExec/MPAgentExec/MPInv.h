@@ -25,18 +25,14 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class MPServerConnection;
-
 @interface MPInv : NSObject 
-{
-    MPServerConnection *mpServerConnection;
-    
+{    
 	NSArray		*invResults;
 	NSString	*cUUID;
 }
 // Getters * Setters
-@property (nonatomic, retain) NSArray *invResults;
-@property (nonatomic, retain) NSString *cUUID;
+@property (nonatomic, strong) NSArray *invResults;
+@property (nonatomic, strong) NSString *cUUID;
 
 // Main SP Inventory
 - (BOOL)validateCollectionType:(NSString *)aColType;
@@ -75,6 +71,9 @@
 - (NSArray *)parsePowerManagmentInfo;
 - (NSArray *)parseBatteryInfo;
 - (NSArray *)parseConfigProfilesInfo;
+- (NSArray *)parseAppStoreData;
+- (NSArray *)parseAgentServerInfo;
+- (NSArray *)parseAgentServerList;
 
 // Helpers for Directory Data from Daniel
 - (NSDictionary *)stringToDict:(NSString *)theString theDelimiter:(NSString *)theDelimiter;

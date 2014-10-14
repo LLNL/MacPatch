@@ -24,19 +24,15 @@
  */
 
 #import <Foundation/Foundation.h>
-@class ODQuery;
 
 @interface MPUsersAndGroups : NSObject
 {
     NSArray *usrAttrs;
     NSArray *grpAttrs;
-    
-@private
-    ODQuery *odQuery;
 }
 
-@property(nonatomic, retain, readonly)NSArray *usrAttrs;
-@property(nonatomic, retain, readonly)NSArray *grpAttrs;
+@property(nonatomic, strong, readonly)NSArray *usrAttrs;
+@property(nonatomic, strong, readonly)NSArray *grpAttrs;
 
 - (NSArray *)getLocalUsers:(NSError **)error;
 - (NSArray *)getLocalGroups:(NSError **)error;

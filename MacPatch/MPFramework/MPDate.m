@@ -37,7 +37,6 @@
 	[dateFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 	[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	NSString *dateString = [dateFormatter stringFromDate:date];
-	[dateFormatter release];
 	return dateString;
 }
 
@@ -63,7 +62,6 @@
 	BOOL result = false;
 	NSDate *now = [[NSDate alloc] init];
 	if ([self dateGreaterThan:aDate Date:now] && [self dateLessThan:bDate Date:now]) result = true;
-	[now release];
 	now = nil;
 	return result;
 }

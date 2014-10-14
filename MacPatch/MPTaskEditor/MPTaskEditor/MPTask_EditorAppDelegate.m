@@ -29,6 +29,52 @@
 
 #define MP_TASKS_PLIST @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
 #define MP_ALT_TASKS_PLIST @"/Library/MacPatch/Client/MPTasks.plist"
+
+
+@interface CheckBoxValueTransformer: NSValueTransformer
+{
+    NSButton *buttonState;
+}
+@end
+
+@implementation CheckBoxValueTransformer
+
+- (id)init
+{
+    if (self = [super init])
+    {
+        [buttonState setEnabled:YES];
+        [buttonState setState:NSOffState];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    buttonState = nil;
+}
+
++ (Class)transformedValueClass { return [NSButton class]; }
++ (BOOL)allowsReverseTransformation { return YES; }
+
+- (id)transformedValue:(id)value
+{
+    return [NSNumber numberWithBool:([value integerValue] > 0)];
+}
+
+- (id)reverseTransformedValue:(id)value
+{
+    //NSLog(@"%@",value);
+    if ([[value stringValue] isEqualToString:@"1"]) {
+        return @"1";
+    } else {
+        return @"0";
+    }
+}
+
+@end
+
+
 @implementation MPTask_EditorAppDelegate
 
 @synthesize window;
@@ -247,7 +293,7 @@
 			//Figure out where we are writing to
 			NSString * plistDestination = nil;
 			plistDestination = (usingAltTaskFile) ? MP_ALT_TASKS_PLIST : MP_TASKS_PLIST;
-			char *myArguments[] = { "-r",[tempFile cStringUsingEncoding:NSUTF8StringEncoding],[plistDestination cStringUsingEncoding:NSUTF8StringEncoding],NULL };
+			char *myArguments[] = { "-r",(char *)[tempFile cStringUsingEncoding:NSUTF8StringEncoding],(char *)[plistDestination cStringUsingEncoding:NSUTF8StringEncoding],NULL };
 			
 			FILE *myCommunicationsPipe = NULL;
 			char myReadBuffer[128];

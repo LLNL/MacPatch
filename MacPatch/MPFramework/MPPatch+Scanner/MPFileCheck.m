@@ -61,7 +61,6 @@
 - (void)setFilePath:(NSString *)aFilePath
 {
 	if (filePath != aFilePath) {
-        [filePath release];
         filePath = [aFilePath copy];
     }
 }
@@ -234,7 +233,7 @@ done:
 	NSDate *date = [NSDate dateWithNaturalLanguageString:dateAndTime];
 	if (!date) return nil;
 	
-	NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+	NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 	[calendar setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
 	NSDateComponents *dateComps = [calendar components:(
 														NSYearCalendarUnit |
@@ -270,31 +269,29 @@ done:
 		localFileDict = [NSDictionary dictionaryWithContentsOfFile:l_localFilePath];
 	} else {
 		qlinfo(@"Unable to get version from file %@. Please check supported file types.",localFilePath);
-		goto done;
+		return fileVerPass;
 	}
 	
 	NSString *localFileVer = NULL;
 	if (![localFileDict objectForKey:@"CFBundleShortVersionString"]) {
 		qlerror(@"CFBundleShortVersionString was not found.");
 		fileVerPass = NO;
-		goto done;
+		return fileVerPass;
 	}
 	
 	localFileVer = [NSString stringWithString:[localFileDict objectForKey:@"CFBundleShortVersionString"]];
+    localFileVer = [localFileVer trim];
 	qldebug(@"Found file version: =%@",localFileVer);
 	
 	NSString *regexString	= @"^(\\d+)(.\\d+)?(.\\d+)?(.\\d+)?(.\\d+)?(.\\d+)?$";
 	NSString *matchedString = [localFileVer stringByMatching:regexString];
 	if ([matchedString isEqualToString:localFileVer] == NO) {
 		qlerror(@"CFBundleShortVersionString (%@) is not valid version string format.",localFileVer);
-		fileVerPass = NO;
-		goto done;
+        return fileVerPass;
 	}
 	
 	fileVerPass = [self compareVersion:localFileVer operator:aOp compareTo:aPatchFileVer];
-	goto done;
-	
-done:	
+
 	return fileVerPass;
 }
 
@@ -391,8 +388,6 @@ done:
 	
 done:
 	qldebug(@"Comparing version strings result: %@",(fileVerPass ? @"YES" : @"NO"));
-	[leftFields release];
-	[rightFields release];
 	return fileVerPass;
 }
 
@@ -445,7 +440,6 @@ done:
 		}
 	}
 	
-    [crypto release];
 	
 	return hashResult;
 }

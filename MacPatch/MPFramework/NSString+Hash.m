@@ -34,7 +34,6 @@
 	
     NSData *inputData = [[NSData alloc] initWithContentsOfFile:self];
     CC_MD5([inputData bytes], (CC_LONG)[inputData length], outputData);
-    [inputData release];
 	
     NSMutableString *hash = [[NSMutableString alloc] init];
 	
@@ -51,7 +50,6 @@
 	
     NSData *inputData = [[NSData alloc] initWithContentsOfFile:self];
     CC_SHA1([inputData bytes], (CC_LONG)[inputData length], outputData);
-    [inputData release];
 	
     NSMutableString *hash = [[NSMutableString alloc] init];
 	

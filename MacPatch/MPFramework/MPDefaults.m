@@ -48,7 +48,8 @@
 	self = [super init];
 	if (self) {
 		qldebug(@"Reading plist from file '%@'",sPlistPath);
-		[self readPlist:sPlistPath]; 
+        [self setPlist:sPlistPath];
+		[self readPlist:sPlistPath];
     }
     
     return self;
@@ -59,14 +60,11 @@
 	self = [super init];
 	if (self) {
 		[self setDefaults:aDictionary];
+        [self setPlist:nil];
     }
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark Getters & Setters
@@ -76,14 +74,25 @@
 
 - (NSDictionary *)defaults
 {
-    return [[defaults retain] autorelease]; 
+    return defaults; 
 }
 
 - (void)setDefaults:(NSDictionary *)aDefaults
 {
     if (defaults != aDefaults) {
-        [defaults release];
         defaults = [aDefaults copy];
+    }
+}
+
+- (NSString *)plist
+{
+    return plist;
+}
+
+- (void)setPlist:(NSString *)aPlist
+{
+    if (plist != aPlist) {
+        plist = [aPlist copy];
     }
 }
 
@@ -106,7 +115,6 @@
 																		 errorDescription:&error];
 		if (!thePlist) {
 			qlerror(@"Error reading plist from file '%@', error = '%@'",aPlist,error);
-			[error release];  
 			return;
 		} 
 		[self setDefaults:[NSDictionary dictionaryWithDictionary:thePlist]];
@@ -123,6 +131,16 @@
 	[self readPlist:aPlist];
 	result = [[self defaults] objectForKey:aKey];
 	return (id)result;
+}
+
+- (NSDictionary *)readDefaults
+{
+    if (plist) {
+        [self readPlist:plist];
+        return defaults;
+    } else {
+        return defaults;
+    }
 }
 
 @end
