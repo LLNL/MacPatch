@@ -57,7 +57,7 @@
             </cfif>
             <cfset tmp = ArrayAppend(myArray,y)>
         </cfloop>
-        <cfset var myAlphaList = ArrayToList(myArray, "0")>
+        <cfset var myAlphaList = ArrayToList(myArray, "")>
         
         <cfreturn myAlphaList>    
     </cffunction>
