@@ -39,7 +39,7 @@
 	<cfcatch>
 	</cfcatch>
 </cftry>
-<cfset obj = CreateObject("component","inc.sw_group_list")>
+<cfset obj = CreateObject("component","software_group_edit")>
 <cfloop query="qGetGroupsToUpdate">
 	<cfset res = obj.PopulateSoftwareGroupData(sw_group_id)>
 </cfloop>
