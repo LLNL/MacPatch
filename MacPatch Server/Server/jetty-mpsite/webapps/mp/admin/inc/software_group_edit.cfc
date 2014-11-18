@@ -111,7 +111,7 @@
 		<cfreturn strReturn>
 	</cffunction>
     
-    <cffunction name="PopulateSoftwareGroupData" access="private" returnType="any" output="false">
+    <cffunction name="PopulateSoftwareGroupData" access="public" returnType="any" output="false">
 		<cfargument name="SWGroupID">
 
 		<!--- Response Struct --->
