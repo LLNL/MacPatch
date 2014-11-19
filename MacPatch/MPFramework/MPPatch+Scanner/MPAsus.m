@@ -487,6 +487,7 @@ done:
 
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
+    /*
     MPNetConfig *mpConfig = [[MPNetConfig alloc] init];
     NSError *error = nil;
     NSURLResponse *response;
@@ -499,6 +500,50 @@ done:
         return @"";
     }
     return dlFileLoc;
+     */
+    
+    MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
+    NSError *error = nil;
+    NSURLResponse *response;
+    
+    MPNetRequest *req;
+    NSURLRequest *urlReq;
+    NSString *res = nil;
+    NSArray *servers = [mpNetConfig servers];
+    for (MPNetServer *srv in servers)
+    {
+        qlinfo(@"Trying Server %@",srv.host);
+        req = [[MPNetRequest alloc] initWithMPServer:srv];
+        error = nil;
+        urlReq = [req buildDownloadRequest:aURL];
+        if (urlReq)
+        {
+            res = nil;
+            res = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
+            if (error) {
+                if (err != NULL) {
+                    *err = error;
+                }
+                qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
+                continue;
+            }
+            // Make any previouse error pointers nil, now that we have a valid host/connection
+            if (err != NULL) {
+                *err = nil;
+            }
+            break;
+        } else {
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
+            qlerror(@"%@",error.localizedDescription);
+            if (err != NULL) {
+                *err = error;
+            }
+            continue;
+        }
+    }
+    
+    return res;
 }
 
 - (int)installPkg:(NSString *)pkgPath error:(NSError **)err
@@ -605,10 +650,8 @@ done:
 	
 	NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
 	free(tempDirectoryNameCString);
-	
-	//NSURL *tmpURL = [NSURL URLWithString:aURL];
-	tempFilePath = [tempDirectoryPath stringByAppendingPathComponent:[aURL lastPathComponent]];
-	
+
+	tempFilePath = [tempDirectoryPath stringByAppendingPathComponent:[aURL lastPathComponent]];	
 	return tempFilePath;
 }
 

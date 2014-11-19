@@ -120,7 +120,7 @@
 
 - (void)connectionDown:(NSNotification *)notification
 {
-    logit(lcl_vInfo,@"MPWorker connection down");
+    logit(lcl_vTrace,@"MPWorker connection down");
     [self cleanup];
 }
 
