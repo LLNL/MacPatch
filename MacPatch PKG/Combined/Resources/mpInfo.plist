@@ -7,11 +7,11 @@
 		<key>version</key>
 		<string>2.0.0</string>
 		<key>agent_version</key>
-		<string>2.5.35</string>
+		<string>2.5.36</string>
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>
-		<string>35</string>
+		<string>36</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>
@@ -20,11 +20,11 @@
 		<key>version</key>
 		<string>2.0.0</string>
 		<key>agent_version</key>
-		<string>2.5.35</string>
+		<string>2.5.36</string>
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>
-		<string>35</string>
+		<string>36</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>
