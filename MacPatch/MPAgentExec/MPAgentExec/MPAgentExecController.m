@@ -1859,6 +1859,11 @@ done:
     if (dlErr) {
         logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
     }
+    if (!dlPath) {
+        logit(lcl_vError,@"Error, downloaded file path is nil.");
+        logit(lcl_vError,@"No install will occure.");
+        return NO;
+    }
 
     // Create Destination Dir
     dlErr = nil;

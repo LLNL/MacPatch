@@ -619,8 +619,6 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    //[receivedData appendData:data];
-
     if (useController)
     {
         dlRecievedData = [NSNumber numberWithUnsignedInteger:([dlRecievedData floatValue] + [data length])];

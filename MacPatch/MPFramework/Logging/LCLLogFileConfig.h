@@ -21,7 +21,7 @@
 
 // Tell LCLLogFile the maximum size of a log file in bytes.
 #define _LCLLogFile_MaxLogFileSizeInBytes /* (size_t) */                       \
-    2 * 1024 * 1024
+    10 * 1024 * 1024
 
 // Tell LCLLogFile whether it should mirror the log messages to stderr.
 #define _LCLLogFile_MirrorMessagesToStdErr /* (BOOL) */                        \
