@@ -885,6 +885,7 @@
                     MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
                     NSURLRequest *urlReq = [req buildDownloadRequest:_url];
                     NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
+                    NSString *decodedName = [[dlPath lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
                     if (dlErr) {
                         logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
@@ -903,7 +904,7 @@
 
                     // Move Downloaded File to Destination
                     dlErr = nil;
-                    [fm moveItemAtPath:dlPath toPath:[swLoc stringByAppendingPathComponent:[dlPath lastPathComponent]] error:&dlErr];
+                    [fm moveItemAtPath:dlPath toPath:[swLoc stringByAppendingPathComponent:decodedName] error:&dlErr];
                     if (dlErr) {
                         logit(lcl_vError,@"Error[%d], trying to move downloaded file to %@.",(int)[dlErr code],swLoc);
                     }

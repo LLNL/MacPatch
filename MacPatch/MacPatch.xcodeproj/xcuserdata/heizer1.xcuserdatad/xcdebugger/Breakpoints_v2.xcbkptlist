@@ -153,13 +153,45 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Self Patch/Self Patch/MPSelfPatchAppDelegate.m"
-            timestampString = "438107903.420072"
+            filePath = "MPCatalog/MPCatalog/MPCatalog.m"
+            timestampString = "439148656.940272"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1456"
-            endingLineNumber = "1456"
-            landmarkName = "-updateTableAndArrayController:status:"
+            startingLineNumber = "171"
+            endingLineNumber = "171"
+            landmarkName = "-validateAppHashes:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MPWorker/MPWorker/MPWorker.m"
+            timestampString = "439148977.998039"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1247"
+            endingLineNumber = "1247"
+            landmarkName = "-installPkgViaHelper:target:env:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MPWorker/MPWorker/MPWorker.m"
+            timestampString = "439148998.095955"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1259"
+            endingLineNumber = "1259"
+            landmarkName = "-runInstallPkgTask:target:env:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
