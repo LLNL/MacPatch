@@ -2,7 +2,7 @@
 #
 # --------------------------------------------------------------
 # Script MPSyncContent.sh
-# Version 1.1.1
+# Version 1.1.2
 # Edit: MASTER_SERVER variable
 #
 # Runs via LaunchDaemon on Interval or Cron Job
@@ -23,6 +23,8 @@ MP_SYNC_PLIST="${MP_SRV_CONF}/etc/gov.llnl.mp.sync.plist"
 
 USE_SERVER=false
 USE_PLIST=true
+USE_DRYRUN=""
+USE_CHECKSUM=""
 
 function usage
 {
@@ -31,6 +33,10 @@ function usage
     echo
     echo "  -s   --server    Rsync Server to Sync from"
     echo "  -p   --plist     Plist containing config data"
+    echo
+    echo "  -c   --checksum  Use checksum verificartion"
+    echo "                   This methos is much slower."
+    echo "  -d   --dry       Outputs results, dry run."
     echo
     echo "  -h   --help      Help or Usage"
     echo
@@ -47,6 +53,12 @@ while [ "$1" != "" ]; do
                             ;;
         -p | --plist )      shift
                             MP_SYNC_PLIST=$1
+                            ;;
+        -c | --checksum )   shift
+                            USE_CHECKSUM="-c"
+                            ;;
+        -d | --dry )        shift
+                            USE_DRYRUN="-n"
                             ;;
         -h | --help )       usage
                             exit
@@ -70,7 +82,7 @@ fi
 
 if [ "$MASTER_SERVER" != "localhost" ]; then
         echo "$(/bin/date +"%Y-%m-%d %H:%M:%S") --- Starting Content Sync..."
-        /usr/bin/rsync -vai --delete-before --ignore-errors --exclude=.DS_Store \
+        /usr/bin/rsync -vai $USE_DRYRUN $USE_CHECKSUM --delete-before --ignore-errors --exclude=.DS_Store \
         $MASTER_SERVER::$SYNC_DIR_NAME $LOCAL_CONTENT
         echo "$(/bin/date +"%Y-%m-%d %H:%M:%S") --- Content Sync Complete"
 else

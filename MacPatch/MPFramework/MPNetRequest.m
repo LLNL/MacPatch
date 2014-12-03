@@ -552,8 +552,8 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
         else if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust)
         {
 
-            if(challenge.previousFailureCount < 5) {
-
+            if(challenge.previousFailureCount < 5)
+            {
                 self.serverTrust = challenge.protectionSpace.serverTrust;
                 SecTrustResultType result;
                 SecTrustEvaluate(self.serverTrust, &result);
