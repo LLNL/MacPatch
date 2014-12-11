@@ -114,7 +114,6 @@
     NSArray *reqs;
     NSMutableArray *reqsFailed = [[NSMutableArray alloc] init];
     if ([reqFile objectForKey:@"failedAttempts"]) {
-        //reqs = [[NSMutableArray alloc] initWithArray:[reqFile objectForKey:@"failedAttempts"]];
         reqs = [NSArray arrayWithArray:[reqFile objectForKey:@"failedAttempts"]];
         if ([reqs count] == 0) {
             qlinfo(@"No failed requests to post");

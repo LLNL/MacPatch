@@ -28,7 +28,8 @@
 #import "Reachability.h"
 #import "MPNetReach.h"
 
-#define URI @"/Service/MPClientService.cfc"
+#define URI             @"/Service/MPClientService.cfc"
+#define URL_TIMEOUT     10.0 // Does not, need to be longer
 
 #undef  ql_component
 #define ql_component lcl_cMPNetRequest
@@ -250,7 +251,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     qldebug(@"%@",theURL);
     [request setURL:[NSURL URLWithString:theURL]];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setTimeoutInterval:15.0];
+    [request setTimeoutInterval:URL_TIMEOUT];
     [request setHTTPMethod:self.httpMethod];
 
     NSString *boundary = @"MP_BOUNDARY_STRING";
@@ -304,7 +305,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     }
     qldebug(@"%@",theURL);
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setTimeoutInterval:15.0];
+    [request setTimeoutInterval:URL_TIMEOUT];
     [request setURL:[NSURL URLWithString:(NSString *)theURL]];
     [request setHTTPMethod:@"GET"];
     return request;
@@ -326,7 +327,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     qldebug(@"buildDownloadRequest tempFilePath: %@",_dlFilePath);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setTimeoutInterval:15.0];
+    [request setTimeoutInterval:URL_TIMEOUT];
     [request setValue:@"" forHTTPHeaderField:@"Accept-Encoding"];
     [request setURL:[NSURL URLWithString:(NSString *)theURL]];
     return request;
@@ -551,8 +552,8 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
         else if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust)
         {
 
-            if(challenge.previousFailureCount < 5) {
-
+            if(challenge.previousFailureCount < 5)
+            {
                 self.serverTrust = challenge.protectionSpace.serverTrust;
                 SecTrustResultType result;
                 SecTrustEvaluate(self.serverTrust, &result);
@@ -618,8 +619,6 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    //[receivedData appendData:data];
-
     if (useController)
     {
         dlRecievedData = [NSNumber numberWithUnsignedInteger:([dlRecievedData floatValue] + [data length])];

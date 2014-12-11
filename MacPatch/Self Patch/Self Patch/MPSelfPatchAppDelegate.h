@@ -91,7 +91,7 @@
 // Misc
 - (BOOL)checkPatchPreAndPostForRebootRequired:(NSArray *)aDictArray;
 - (void)postInstallToWebService:(NSString *)aPatch type:(NSString *)aType;
-- (void)updateTableAndArrayController:(int)objectAtIntex status:(int)aStatusImage;
+- (void)updateTableAndArrayControllerWithPatch:(NSDictionary *)aPatch status:(int)aStatusImage;
 
 // Test
 -(void)handleColStateToggle:(NSNotification *)note;

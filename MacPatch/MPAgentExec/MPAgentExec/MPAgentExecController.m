@@ -1786,7 +1786,8 @@ done:
 {
     [self setUpSWDistProperties];
     needsReboot = 0;
-
+    int result = 0;
+    
     if ([fm fileExistsAtPath:aPlist] == NO) {
         logit(lcl_vError,@"No installs will occure. Plist %@ was not found.",aPlist);
         return 1;
@@ -1798,12 +1799,16 @@ done:
         return 1;
     }
 
+    BOOL installWasSuccessful = NO;
     NSError *tErr = nil;
     NSArray *pTasks = [pData objectForKey:@"tasks"];
-    for (NSString *aTask in pTasks) {
+    for (NSString *aTask in pTasks)
+    {
         tErr = nil;
-        if ([self installSoftwareTask:aTask error:&tErr] == NO) {
-            return 1;
+        installWasSuccessful = [self installSoftwareTask:aTask error:&tErr];
+        if (tErr || (installWasSuccessful == NO)) {
+            qlerror(@"Software has been installed that requires a reboot.");
+            result = 1;
         }
     }
 
@@ -1812,13 +1817,14 @@ done:
         return 2;
     }
 
-    return 0;
+    return result;
 }
 
 - (BOOL)installSoftwareWithTask:(NSDictionary *)aTask error:(NSError **)err
 {
     NSString *noteName = @"MPSWInstallStatus";
-    [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Installing %@ ...",[aTask objectForKey:@"name"]] isGlobal:YES];
+    NSString *tID = [aTask objectForKey:@"id"];
+    [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Installing [taskid:%@]: %@",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
     logit(lcl_vInfo,@"Installing %@ (%@).",[aTask objectForKey:@"name"],[aTask objectForKey:@"id"]);
     logit(lcl_vInfo,@"INFO: %@",[aTask valueForKeyPath:@"Software.sw_type"]);
 
@@ -1839,7 +1845,7 @@ done:
     }
 
     // Create Download URL
-    [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Downloading %@",[aTask objectForKey:@"name"]] isGlobal:YES];
+    [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Downloading [taskid:%@]: %@",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
     NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[aTask valueForKeyPath:@"Software.sw_url"] urlEncode]];
     logit(lcl_vDebug,@"Download software from: %@",[aTask valueForKeyPath:@"Software.sw_type"]);
 
@@ -1852,6 +1858,11 @@ done:
 
     if (dlErr) {
         logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+    }
+    if (!dlPath) {
+        logit(lcl_vError,@"Error, downloaded file path is nil.");
+        logit(lcl_vError,@"No install will occure.");
+        return NO;
     }
 
     // Create Destination Dir
@@ -1903,12 +1914,13 @@ done:
                 [NSThread sleepForTimeInterval:5];
             }
 
-            [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Installing %@ completed.",[aTask objectForKey:@"name"]] isGlobal:YES];
+            [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Installing [taskid:%@]: %@ completed.",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
             [self recordInstallSoftwareItem:aTask];
 
             [self postInstallResults:result resultText:@"" task:aTask];
             return YES;
         } else {
+            [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Failed [taskid:%@]: %@ failed to install.",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
             return NO;
         }
     }

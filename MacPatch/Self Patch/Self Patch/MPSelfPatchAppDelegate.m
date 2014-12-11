@@ -337,7 +337,7 @@ static BOOL gDone = false;
 
 - (void)connectionDown:(NSNotification *)notification 
 {
-    logit(lcl_vInfo,@"MPWorker connection down");
+    logit(lcl_vTrace,@"MPWorker connection down");
     [self cleanup];
 } 
 
@@ -628,7 +628,6 @@ done:
 	
     @try
 	{
-        NSLog(@"Write Array, %@",aFile);
         result = [proxy writeArrayToFileViaHelper:data toFile:aFile];
     }
     @catch (NSException *e) {
@@ -1143,7 +1142,7 @@ done:
 					}
 					
 					// Update table view to show whats installing
-					[self updateTableAndArrayController:i status:0];
+                    [self updateTableAndArrayControllerWithPatch:patch status:0];
 					
 					// We have a currPatchToInstallDict to work with
 					logit(lcl_vInfo,@"Start install for patch %@ from %@",[currPatchToInstallDict objectForKey:@"url"],[patch objectForKey:@"patch"]);
@@ -1163,7 +1162,7 @@ done:
 							[spStatusText setStringValue:[NSString stringWithFormat:@"Error downloading a patch, skipping %@.",[patch objectForKey:@"patch"]]];
 							[spStatusText display];
 							
-							[self updateTableAndArrayController:i status:2];
+                            [self updateTableAndArrayControllerWithPatch:patch status:2];
 							break;
 						}
 						[spStatusText setStringValue:[NSString stringWithFormat:@"Patch download completed."]];
@@ -1172,7 +1171,7 @@ done:
 					}
 					@catch (NSException *e) {
 						logit(lcl_vError,@"%@", e);
-						[self updateTableAndArrayController:i status:2];
+                        [self updateTableAndArrayControllerWithPatch:patch status:2];
 						break;
 					}
 					
@@ -1190,7 +1189,7 @@ done:
 						[spStatusText setStringValue:[NSString stringWithFormat:@"The downloaded file did not pass the file hash validation. No install will occur."]];
 						[spStatusText display];
 						logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
-						[self updateTableAndArrayController:i status:2];
+                        [self updateTableAndArrayControllerWithPatch:patch status:2];
 						continue;
 					}
 					
@@ -1205,7 +1204,7 @@ done:
 						[spStatusText setStringValue:[NSString stringWithFormat:@"Error decompressing a patch, skipping %@.",[patch objectForKey:@"patch"]]];
 						[spStatusText display];
 						logit(lcl_vError,@"Error decompressing a patch, skipping %@. Err Message:%@",[patch objectForKey:@"patch"],[err localizedDescription]);
-						[self updateTableAndArrayController:i status:2];
+                        [self updateTableAndArrayControllerWithPatch:patch status:2];
 						break;
 					}
 					[spStatusText setStringValue:[NSString stringWithFormat:@"Patch has been uncompressed."]];
@@ -1222,7 +1221,7 @@ done:
 						if ([self runScript:preInstScript] != 0 ) 
 						{
 							logit(lcl_vError,@"Error (%d) running pre-install script.",(int)installResult);
-							[self updateTableAndArrayController:i status:2];
+                            [self updateTableAndArrayControllerWithPatch:patch status:2];
 							break;
 						}
 					}
@@ -1248,7 +1247,7 @@ done:
 								[spStatusText setStringValue:[NSString stringWithFormat:@"Error installing patch."]];
 								[spStatusText display];
 								logit(lcl_vError,@"Error installing package, error code %d.",installResult);
-								[self updateTableAndArrayController:i status:2];
+                                [self updateTableAndArrayControllerWithPatch:patch status:2];
 								hadErr = YES;
 								break;
 							} else {
@@ -1263,7 +1262,7 @@ done:
 						[spStatusText display];
 						logit(lcl_vError,@"%@", e);
 						logit(lcl_vError,@"Error attempting to install patch, skipping %@. Err Message:%@",[patch objectForKey:@"patch"],[err localizedDescription]);
-						[self updateTableAndArrayController:i status:2];
+                        [self updateTableAndArrayControllerWithPatch:patch status:2];
 						break;
 					}
 					if (hadErr) {
@@ -1295,7 +1294,7 @@ done:
 				    [spStatusText setStringValue:[NSString stringWithFormat:@"Patch install completed."]];
 				    [spStatusText display];	 
                     
-					[self updateTableAndArrayController:i status:1];
+                    [self updateTableAndArrayControllerWithPatch:patch status:1];
 					
 				} // End patchArray To install
 			} else if ([[patch objectForKey:@"type"] isEqualTo:@"Apple"]) {
@@ -1309,7 +1308,7 @@ done:
 				[spStatusText display];
 				
 				// Update the table view to show we are in the install process
-				[self updateTableAndArrayController:i status:0];
+                [self updateTableAndArrayControllerWithPatch:patch status:0];
 				
 				if ([[patch objectForKey:@"hasCriteria"] boolValue] == NO || ![patch objectForKey:@"hasCriteria"]) {
 					
@@ -1386,7 +1385,7 @@ done:
 					[spStatusText setStringValue:[NSString stringWithFormat:@"Error installing update, error code %d.",installResult]];
 					[spStatusText display];	 
 					logit(lcl_vError,@"Error installing update, error code %d.",installResult);
-					[self updateTableAndArrayController:i status:2];
+                    [self updateTableAndArrayControllerWithPatch:patch status:2];
 					continue;
 				} else {
 					[spStatusText setStringValue:[NSString stringWithFormat:@"%@ was installed successfully.",[patch objectForKey:@"patch"]]];
@@ -1403,8 +1402,8 @@ done:
 					
 					[spStatusText setStringValue:[NSString stringWithFormat:@"Patch install completed."]];
 					[spStatusText display];	 
-					
-					[self updateTableAndArrayController:i status:1];
+
+                    [self updateTableAndArrayControllerWithPatch:patch status:1];
 				}
 			} else {
 				continue;
@@ -1413,7 +1412,7 @@ done:
 		} else {
 			logit(lcl_vInfo,@"%@(%@) requires a reboot, this patch will be installed on logout.",[patch objectForKey:@"patch"],[patch objectForKey:@"version"]);
 			launchRebootWindow++;
-			[self updateTableAndArrayController:i status:3];
+            [self updateTableAndArrayControllerWithPatch:patch status:3];
 			continue;
 		}
 	} //End patchesToInstallArray For Loop
@@ -1476,6 +1475,33 @@ done:
     dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
 	[patch release];
     [patches release];
+}
+
+- (void)updateTableAndArrayControllerWithPatch:(NSDictionary *)aPatch status:(int)aStatusImage
+{
+    NSString *curPatchID = [aPatch objectForKey:@"patch_id"];
+    for (NSMutableDictionary *p in arrayController.arrangedObjects)
+    {
+        if ([curPatchID isEqualToString:[p objectForKey:@"patch_id"]]) {
+            [arrayController willChangeValueForKey:@"arrangedObjects"];
+            if (aStatusImage == 0) {
+                [p setObject:[NSImage imageNamed:@"NSRemoveTemplate"] forKey:@"statusImage"];
+            }
+            if (aStatusImage == 1) {
+                [p setObject:[NSImage imageNamed:@"Installcomplete.tif"] forKey:@"statusImage"];
+                [self updateNeededPatchesFile:p];
+            }
+            if (aStatusImage == 2) {
+                [p setObject:[NSImage imageNamed:@"exclamation.tif"] forKey:@"statusImage"];
+            }
+            if (aStatusImage == 3) {
+                [p setObject:[NSImage imageNamed:@"LogOutReq.tif"] forKey:@"statusImage"];
+            }
+            [arrayController didChangeValueForKey:@"arrangedObjects"];
+            dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
+            break;
+        }
+    }
 }
 
 - (void)updateNeededPatchesFile:(NSDictionary *)aPatch
