@@ -10,4 +10,5 @@ DerivedData
 dwsync.xml
 */no_sync/*
 */Build/*
-*/xcuserdata/*
+xcuserdata/
+*.xcuserstate
