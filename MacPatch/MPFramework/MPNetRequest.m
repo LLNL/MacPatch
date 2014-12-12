@@ -607,6 +607,19 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
+    NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+    if (statusCode >= 400)
+    {
+        [connection cancel];  // stop connecting; no more delegate messages
+        NSDictionary *errorInfo = [NSDictionary dictionaryWithObject:
+                                   [NSString stringWithFormat:@"Server returned status code %ld",(long)statusCode] forKey:NSLocalizedDescriptionKey];
+        NSError *statusError = [NSError errorWithDomain:NSHTTPPropertyStatusCodeKey code:statusCode userInfo:errorInfo];
+        [self connection:connection didFailWithError:statusError];
+        return;
+    }
+    
+    
+    
     dlRecievedData = [NSNumber numberWithUnsignedInteger:0];
     dlSize = [NSNumber numberWithLongLong:[response expectedContentLength]];
 
@@ -654,7 +667,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
         controller = nil;
         self.errorCode = (int)error.code;
     }
-
+    
     [self.condition lock];
     self.error = error;
     self.connectionDidFinishLoading = YES;

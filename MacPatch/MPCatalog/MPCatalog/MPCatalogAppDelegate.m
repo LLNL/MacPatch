@@ -926,7 +926,7 @@
                         req = [[MPNetRequest alloc] initWithMPServerAndController:self server:srv];
                         urlReq = [req buildDownloadRequest:_url];
                         dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
-                        if (dlErr) {
+                        if (dlErr || req.errorCode >= 400) {
                             logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
                             if (s == (serverListCount-1)) {
                                 needsToBreak = TRUE;
@@ -1161,7 +1161,7 @@
 
 - (void)appendDownloadProgressPercent:(NSString *)aPercent
 {
-    logit(lcl_vDebug,@"%@",[NSString stringWithFormat:@"%@%%",aPercent]);
+    logit(lcl_vDebug,@"%@",[NSString stringWithFormat:@"%@%",aPercent]);
 }
 
 - (void)downloadStarted
@@ -1258,6 +1258,7 @@
 {
     [[NSWorkspace sharedWorkspace] openFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Library/Logs/MPCatalog.log"] withApplication:@"Console"]; 
 }
+
 - (IBAction)showHelperLog:(id)sender
 {
     [[NSWorkspace sharedWorkspace] openFile:@"/Library/MacPatch/Client/Logs/MPWorker.log" withApplication:@"Console"]; 
