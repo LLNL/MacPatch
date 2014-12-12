@@ -60,6 +60,11 @@
     } else {
         [enableInstallOnLaunchCheckBox setState:1];
     }
+    if ([d objectForKey:@"enableRemoveSoftware"]) {
+        [enableRemoveSoftwareCheckBox setState:[d integerForKey:@"enableRemoveSoftware"]];
+    } else {
+        [enableRemoveSoftwareCheckBox setState:1];
+    }
     //[enableInstallOnLaunchCheckBox display];
     
     if ([d objectForKey:@"enableDebugLogging"]) {
@@ -106,6 +111,20 @@
 		lcl_configure_by_name("*", lcl_vInfo);
 		logit(lcl_vInfo,@"Log level set to info.");
 	}
+}
+
+- (IBAction)changeRemoveSoftware:(id)sender
+{
+    int state = (int)[enableRemoveSoftwareCheckBox state];
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    [d setBool:state forKey:@"enableRemoveSoftware"];
+    [d synchronize];
+    
+    if ([enableRemoveSoftwareCheckBox state] == NSOnState) {
+        logit(lcl_vDebug,@"Remove Software Set to True");
+    } else {
+        logit(lcl_vInfo,@"Remove Software Set to False");
+    }
 }
 
 #pragma mark -

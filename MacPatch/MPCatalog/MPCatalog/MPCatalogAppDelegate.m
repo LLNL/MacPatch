@@ -319,6 +319,10 @@
 	if (![d objectForKey:@"colStateOnLaunch"]) {
 		[d setBool:NO forKey:@"colStateOnLaunch"];
 	}
+    if (![d objectForKey:@"enableRemoveSoftware"]) {
+        [d setBool:YES forKey:@"enableRemoveSoftware"];
+    }
+    [d synchronize];
     
     // Setup logging
 	NSString *_logFile = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Logs/MPCatalog.log"];
@@ -571,21 +575,46 @@
             }
         }
         
+        // Download Software
+        
         [progressBar setDoubleValue:0.0];
         [progressBar setIndeterminate:NO];
-
-        // Download Software
+        
         NSError *dlErr = nil;
         NSURLResponse *response;
         MPNetConfig *mpnc = [[MPNetConfig alloc] init];
-        MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
-        NSURLRequest *urlReq = [req buildDownloadRequest:_url];
-        NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
-
-        if (dlErr) {
-            logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+        MPNetRequest *req;
+        NSURLRequest *urlReq;
+        NSString *dlPath;
+        
+        BOOL needsToBreak = FALSE;
+        int serverListCount = (int)[[mpnc servers] count];
+        for (int s = 0; s < serverListCount; s++)
+        {
+            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
+            MPNetServer *srv = [[mpnc servers] objectAtIndex:s];
+            logit(lcl_vInfo,@"Trying server: %@",srv.host);
+            
+            req = [[MPNetRequest alloc] initWithMPServerAndController:self server:srv];
+            urlReq = [req buildDownloadRequest:_url];
+            dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
+            if (dlErr) {
+                logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+                if (s == (serverListCount-1)) {
+                    needsToBreak = TRUE;
+                } else {
+                    continue;
+                }
+            }
+            break;
         }
-
+        
+        if (needsToBreak == TRUE) {
+            [self postInstallResults:99 resultText:@"Unable to download software." task:d];
+            [self updateArrayControllerWithDictionary:d forActionType:@"error"];
+            continue;
+        }
+        
         [self updateArrayControllerWithDictionary:d forActionType:@"download"];
 
         // Create Destination Dir
@@ -819,7 +848,8 @@
 
 - (void)installSoftwareThread
 {
-    @autoreleasepool {
+    @autoreleasepool
+    {
         [self setTableColEdit:NO];
         [installButton setEnabled:NO];
         [cancelButton setEnabled:YES];
@@ -872,28 +902,51 @@
                     }
                     
                     // Create Download URL
-                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
                     NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
                     logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
                     
                     [progressBar setDoubleValue:0.0];
                     [progressBar setIndeterminate:NO];
-
+                    
                     NSError *dlErr = nil;
                     NSURLResponse *response;
                     MPNetConfig *mpnc = [[MPNetConfig alloc] init];
-                    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
-                    NSURLRequest *urlReq = [req buildDownloadRequest:_url];
-                    NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
-                    NSString *decodedName = [[dlPath lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-
-                    if (dlErr) {
-                        logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+                    MPNetRequest *req;
+                    NSURLRequest *urlReq;
+                    NSString *dlPath;
+                    
+                    BOOL needsToBreak = FALSE;
+                    int serverListCount = (int)[[mpnc servers] count];
+                    for (int s = 0; s < serverListCount; s++)
+                    {
+                        [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
+                        MPNetServer *srv = [[mpnc servers] objectAtIndex:s];
+                        logit(lcl_vInfo,@"Trying server: %@",srv.host);
+                        
+                        req = [[MPNetRequest alloc] initWithMPServerAndController:self server:srv];
+                        urlReq = [req buildDownloadRequest:_url];
+                        dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
+                        if (dlErr) {
+                            logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+                            if (s == (serverListCount-1)) {
+                                needsToBreak = TRUE;
+                            } else {
+                                continue;
+                            }
+                        }
+                        break;
+                    }
+                    
+                    if (needsToBreak == TRUE) {
+                        [self postInstallResults:99 resultText:@"Unable to download software." task:d];
+                        [self updateArrayControllerWithDictionary:d forActionType:@"error"];
+                        continue;
                     }
 
                     [self updateArrayControllerWithDictionary:d forActionType:@"download"];
 
                     // Create Destination Dir
+                    NSString *decodedName = [[dlPath lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     dlErr = nil;
                     if ([fm fileExistsAtPath:swLoc] == NO) {
                         [fm createDirectoryAtPath:swLoc withIntermediateDirectories:YES attributes:nil error:&dlErr];
@@ -953,11 +1006,25 @@
                             [self updateArrayControllerWithDictionary:d];
                         } else {
                             [self updateArrayControllerWithDictionary:d forActionType:@"error"];
+                            [progressBar setDoubleValue:0.0]; // Clears the progress bar, timing issue does not clear it otherwise.
                         }
                         
                         [self postInstallResults:result resultText:@"" task:d];
                         [progressBar stopAnimation:nil];
-                        [progressBar display];
+                        dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar display];});
+                    }
+                    
+                    // Clean up downloaded software
+                    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableRemoveSoftware"] == YES)
+                    {
+                        if ([fm fileExistsAtPath:swLoc] == YES)
+                        {
+                            NSError *rmErr = nil;
+                            [fm removeItemAtPath:swLoc error:&rmErr];
+                            if (rmErr) {
+                                logit(lcl_vError,@"Error[%d], trying to remove downloaded software directory. %@.",(int)[dlErr code],swLoc);
+                            }
+                        }
                     }
                 }
             }
@@ -1094,26 +1161,22 @@
 
 - (void)appendDownloadProgressPercent:(NSString *)aPercent
 {
-	//[self setStatusDownloadPercent:[NSString stringWithFormat:@"%@%%",aPercent]];
-    logit(lcl_vDebug,@"%@",[NSString stringWithFormat:@"%@%",aPercent]);
+    logit(lcl_vDebug,@"%@",[NSString stringWithFormat:@"%@%%",aPercent]);
 }
 
 - (void)downloadStarted
 {
-    NSLog(@"downloadStarted");
 	[statusTextStatus setStringValue:@"Downloading..."];
 }
 
 - (void)downloadFinished
 {
-    NSLog(@"downloadFinished");
     [statusTextStatus setStringValue:@"Download Complete"];
 	isDownloading = NO;
 }
 
 - (void)downloadError
 {
-    NSLog(@"downloadError");
 	//[cancelButton setEnabled:YES];
     [statusTextStatus setStringValue:@"Download Error"];
 	[progressBar setDoubleValue:0.0];
@@ -1179,8 +1242,8 @@
     if (a && [a count] > 0) {
 		[arrayController removeObjects:[arrayController arrangedObjects]];
 		[arrayController addObjects:a];	
-        [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-        [tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
+        [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+        [tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:YES];
 	}
 }
 
@@ -1208,83 +1271,44 @@
 - (void)updateArrayControllerWithDictionary:(NSDictionary *)dict forActionType:(NSString *)type
 {
     NSString *curID = [dict objectForKey:@"id"];
-    for (NSMutableDictionary *d in arrayController.arrangedObjects)
-    {
-        if ([[d objectForKey:@"id"] isEqualTo:curID])
-        {
-            [arrayController willChangeValueForKey:@"arrangedObjects"];
-            
-            if ([type isEqualToString:@"installed"] == YES) {
-                [d setObject:[NSNumber numberWithInt:1] forKey:@"installed"];
-                [d setObject:[NSNumber numberWithBool:NO] forKey:@"selected"];
-            } else if ([type isEqualToString:@"remove"] == YES) {
-                [d setObject:[NSNumber numberWithInt:0] forKey:@"installed"];
-                [d setObject:[NSNumber numberWithBool:NO] forKey:@"selected"];
-                if ([dict hasKey:@"isReceipt"]) {
-                    if ([[dict objectForKey:@"isReceipt"] isEqualToNumber:[NSNumber numberWithInt:1]]) {
-                        [arrayController removeObjects:[NSArray arrayWithObject:d]];
-                        break;
-                    }
-                }
-            } else if ([type isEqualToString:@"install"] == YES) {
-                [d setObject:[NSNumber numberWithInt:2] forKey:@"installed"];
-            } else if ([type isEqualToString:@"error"] == YES) {
-                [d setObject:[NSNumber numberWithInt:3] forKey:@"installed"];
-            } else if ([type isEqualToString:@"download"] == YES) {
-                [d setObject:[NSNumber numberWithInt:4] forKey:@"installed"];
-            } else {
-                [d setObject:[NSNumber numberWithInt:0] forKey:@"installed"];
-            }
-            
-            [arrayController didChangeValueForKey:@"arrangedObjects"];
-            dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
-            break;
-        }
-    }
+    [arrayController.arrangedObjects enumerateObjectsUsingBlock:^(id object, NSUInteger index, BOOL *stop)
+     {
+         NSMutableDictionary *d = object;
+         
+         if ([[d objectForKey:@"id"] isEqualTo:curID])
+         {
+             //[arrayController willChangeValueForKey:@"arrangedObjects"];
+             
+             if ([type isEqualToString:@"installed"] == YES) {
+                 [d setObject:[NSNumber numberWithInt:1] forKey:@"installed"];
+                 [d setObject:[NSNumber numberWithBool:NO] forKey:@"selected"];
+             } else if ([type isEqualToString:@"remove"] == YES) {
+                 [d setObject:[NSNumber numberWithInt:0] forKey:@"installed"];
+                 [d setObject:[NSNumber numberWithBool:NO] forKey:@"selected"];
+                 if ([dict hasKey:@"isReceipt"]) {
+                     if ([[dict objectForKey:@"isReceipt"] isEqualToNumber:[NSNumber numberWithInt:1]]) {
+                         [arrayController removeObjects:[NSArray arrayWithObject:d]];
+                         //break;
+                         *stop = YES;    // Stop enumerating
+                         return;
+                     }
+                 }
+             } else if ([type isEqualToString:@"install"] == YES) {
+                 [d setObject:[NSNumber numberWithInt:2] forKey:@"installed"];
+             } else if ([type isEqualToString:@"error"] == YES) {
+                 [d setObject:[NSNumber numberWithInt:3] forKey:@"installed"];
+             } else if ([type isEqualToString:@"download"] == YES) {
+                 [d setObject:[NSNumber numberWithInt:4] forKey:@"installed"];
+             } else {
+                 [d setObject:[NSNumber numberWithInt:0] forKey:@"installed"];
+             }
+             
+             //[arrayController didChangeValueForKey:@"arrangedObjects"];
+             //dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
+             //break;
+         }
+     }];
 }
-/*
-- (void)updateArrayControllerWithDictionary:(NSDictionary *)dict forActionType:(NSString *)type
-{
-    NSMutableArray *a = [[NSMutableArray alloc] initWithArray:[arrayController arrangedObjects]];
-    
-    [arrayController removeObjects:[arrayController arrangedObjects]];
-    
-    for (int i = 0; i < [a count]; i++) 
-    {
-        if ([[[a objectAtIndex:i] objectForKey:@"id"] isEqualTo:[dict objectForKey:@"id"]]) {
-            NSMutableDictionary *d = [NSMutableDictionary dictionaryWithDictionary:dict];
-            if ([type isEqualToString:@"installed"] == YES) {
-                [d setObject:[NSNumber numberWithInt:1] forKey:@"installed"];
-                [d setObject:[NSNumber numberWithBool:NO] forKey:@"selected"];
-            } else if ([type isEqualToString:@"remove"] == YES) {
-                [d setObject:[NSNumber numberWithInt:0] forKey:@"installed"];
-                [d setObject:[NSNumber numberWithBool:NO] forKey:@"selected"];
-                if ([dict hasKey:@"isReceipt"]) {
-                    if ([[dict objectForKey:@"isReceipt"] isEqualToNumber:[NSNumber numberWithInt:1]]) {
-                        [a removeObjectAtIndex:i];
-                        break;
-                    }
-                }
-            } else if ([type isEqualToString:@"install"] == YES) {
-                [d setObject:[NSNumber numberWithInt:2] forKey:@"installed"];
-            } else if ([type isEqualToString:@"error"] == YES) {
-                [d setObject:[NSNumber numberWithInt:3] forKey:@"installed"];  
-            } else if ([type isEqualToString:@"download"] == YES) {
-                [d setObject:[NSNumber numberWithInt:4] forKey:@"installed"];      
-            } else {
-                [d setObject:[NSNumber numberWithInt:0] forKey:@"installed"];
-            }
-            [a replaceObjectAtIndex:i withObject:d];
-        }
-    }
-    
-    [arrayController addObjects:[a copy]];	
-    [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-    [tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
-    [self checkboxChanged:nil];
-}
- */
-
 
 - (void)removeSoftwareInstallStatus:(NSString *)swID
 {
@@ -1339,7 +1363,6 @@
         }
         
         [progressBar stopAnimation:nil];
-        
         [self checkAndInstallMandatoryApplications];
     }
 }
@@ -1478,13 +1501,17 @@
     }
     
     logit(lcl_vInfo,@"Approved/Installed Software tasks: %@",_SoftwareArray);
-    [arrayController removeObjects:[arrayController arrangedObjects]];
-    if (_SoftwareArray && [_SoftwareArray count] > 0) 
-    {	
-		[arrayController addObjects:_SoftwareArray];	
-	}
-    [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-    [tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [arrayController removeObjects:[arrayController arrangedObjects]];
+        if (_SoftwareArray && [_SoftwareArray count] > 0)
+        {
+            [arrayController addObjects:_SoftwareArray];
+        }
+    });
+    
+    [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+    [tableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:YES];
     
     if ([_MandatorySoftware count] >= 1) {
         logit(lcl_vDebug,@"Need to install mandatory apps");
@@ -1619,7 +1646,7 @@ done:
     {
         @try 
         {
-            [proxy setLoggingState:aState];
+            [proxy setLoggingLevel:aState];
         }
         @catch (NSException *e) {
             logit(lcl_vError,@"Trying to set the logging level, %@", e);

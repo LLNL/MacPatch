@@ -697,9 +697,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 	NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
 	free(tempDirectoryNameCString);
 
-	//NSURL *tmpURL = [NSURL URLWithString:aURL];
 	tempFilePath = [tempDirectoryPath stringByAppendingPathComponent:[aURL lastPathComponent]];
-
 	return tempFilePath;
 }
 

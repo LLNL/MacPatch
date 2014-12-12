@@ -30,6 +30,7 @@
 {
     IBOutlet NSButton *enableInstallOnLaunchCheckBox;
 	IBOutlet NSButton *enableDebugLogCheckBox;
+    IBOutlet NSButton *enableRemoveSoftwareCheckBox;
 	
 	// Helper
 	id proxy;
@@ -37,5 +38,6 @@
 
 - (IBAction)changeInstallOnLaunch:(id)sender;
 - (IBAction)changeEnableDebugLog:(id)sender;
+- (IBAction)changeRemoveSoftware:(id)sender;
 
 @end

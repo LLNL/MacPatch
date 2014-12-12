@@ -4,15 +4,15 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>MPClientStatus.xcscheme</key>
+		<key>MPAuthPlugin.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>16</integer>
+			<integer>24</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>8FD8904616DFE84600A870A3</key>
+		<key>8F7793ED1820401A008FA072</key>
 		<dict>
 			<key>primary</key>
 			<true/>

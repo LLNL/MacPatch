@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8FD88FC616DFDD9200A870A3"
-               BuildableName = "MPCatalog.app"
-               BlueprintName = "MPCatalog"
-               ReferencedContainer = "container:MPCatalog.xcodeproj">
+               BlueprintIdentifier = "8F7793ED1820401A008FA072"
+               BuildableName = "MPAuthPlugin.bundle"
+               BlueprintName = "MPAuthPlugin"
+               ReferencedContainer = "container:MPAuthPlugin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -29,15 +29,6 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8FD88FC616DFDD9200A870A3"
-            BuildableName = "MPCatalog.app"
-            BlueprintName = "MPCatalog"
-            ReferencedContainer = "container:MPCatalog.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -48,22 +39,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8FD88FC616DFDD9200A870A3"
-            BuildableName = "MPCatalog.app"
-            BlueprintName = "MPCatalog"
-            ReferencedContainer = "container:MPCatalog.xcodeproj">
+            BlueprintIdentifier = "8F7793ED1820401A008FA072"
+            BuildableName = "MPAuthPlugin.bundle"
+            BlueprintName = "MPAuthPlugin"
+            ReferencedContainer = "container:MPAuthPlugin.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "CA_DEBUG_TRANSACTIONS"
-            value = "1"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -73,15 +57,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8FD88FC616DFDD9200A870A3"
-            BuildableName = "MPCatalog.app"
-            BlueprintName = "MPCatalog"
-            ReferencedContainer = "container:MPCatalog.xcodeproj">
+            BlueprintIdentifier = "8F7793ED1820401A008FA072"
+            BuildableName = "MPAuthPlugin.bundle"
+            BlueprintName = "MPAuthPlugin"
+            ReferencedContainer = "container:MPAuthPlugin.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
