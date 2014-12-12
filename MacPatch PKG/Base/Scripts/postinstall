@@ -2,7 +2,7 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Installer
-# ver 1.8
+# ver 1.9
 # Created By Charles Heizer
 # LLNL
 #
@@ -155,6 +155,10 @@ fi
 # 
 /bin/launchctl load -w /Library/LaunchDaemons/gov.llnl.mp.worker.plist
 sleep 2
+
+# Kill it , this ensures a new launch
+kill $(ps ax | grep "MPWorker" | grep -v "grep" | awk '{print $1}')
+sleep 3
 
 # ******************************************************************
 # Start LaunchAgent Apps *******************************************
