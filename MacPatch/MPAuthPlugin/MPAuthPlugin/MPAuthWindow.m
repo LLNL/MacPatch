@@ -1592,7 +1592,6 @@ done:
     [patchesTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
     [patchesTableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
     [patchesTableView performSelectorOnMainThread:@selector(deselectAll:) withObject:nil waitUntilDone:NO];
-
 }
 
 - (void)updateNeededPatchesFile:(NSDictionary *)aPatch

@@ -818,6 +818,7 @@ done:
 	}
 	
 	// post patches to web service
+    /*
 	MPDataMgr *dataMgr = [[[MPDataMgr alloc] init] autorelease];
 	NSString *dataMgrJSON;
     dataMgrJSON = [dataMgr GenJSONForDataMgr:applePatchesArray
@@ -830,9 +831,11 @@ done:
 
     // Encode to base64 and send to web service
     NSString *jsonBase64String = [[dataMgrJSON dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
+     */
     mpws = [[[MPWebServices alloc] init] autorelease];
     wsErr = nil;
-    [mpws postDataMgrJSON:jsonBase64String error:&wsErr];
+    [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
+    //[mpws postDataMgrJSON:jsonBase64String error:&wsErr];
     if (wsErr) {
         logit(lcl_vError,@"Scan results posted to webservice returned false.");
         logit(lcl_vError,@"%@",wsErr.localizedDescription);

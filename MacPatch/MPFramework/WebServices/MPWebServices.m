@@ -940,6 +940,71 @@
     return result;
 }
 
+- (BOOL)postClientScanDataWithType:(NSArray *)scanData type:(NSInteger)aType error:(NSError **)err
+{
+    MPJsonResult *jres = [[MPJsonResult alloc] init];
+    
+    // Request
+    NSError *error = nil;
+    NSDictionary *pData = [NSDictionary dictionaryWithObjectsAndKeys:scanData, @"rows", nil];
+    NSString *jData = [jres serializeJSONDataAsString:pData error:&error];
+    if (error) {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return NO;
+    }
+    
+    NSDictionary *params;
+    // 0 = Apple, 1 = Third
+    if (aType == 0) {
+        params = [NSDictionary dictionaryWithObjectsAndKeys:_cuuid, @"clientID", @"0", @"type", jData, @"jsonData", nil];
+    } else if ( aType == 1 ) {
+        params = [NSDictionary dictionaryWithObjectsAndKeys:_cuuid, @"clientID", @"1", @"type", jData, @"jsonData", nil];
+    } else {
+        //Err
+    }
+    
+    NSData *res = [self requestWithMethodAndParams:@"PostClientScanData" params:params error:&error];
+    if (error)
+    {
+        NSMutableDictionary *errDict = [[NSMutableDictionary alloc] init];
+        [errDict setObject:scanData forKey:@"aDict"];
+        MPFailedRequests *mpf = [[MPFailedRequests alloc] init];
+        [mpf addFailedRequest:@"PostClientScanData" params:errDict errorNo:error.code errorMsg:error.localizedDescription];
+        mpf = nil;
+        
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return NO;
+    }
+    
+    // Parse Main JSON Result
+    // MPJsonResult does all of the error checking on the result
+    [jres setJsonData:res];
+    error = nil;
+    id result = [jres returnResult:&error];
+    qldebug(@"JSON Result: %@",result);
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        qlerror(@"Client Scan Data was not posted to webservice.");
+        return NO;
+    }
+    
+    qlinfo(@"Client Scan Data was posted to webservice.");
+    return YES;
+}
+
 // deprecated as of 2.5 release
 - (BOOL)postDataMgrXML:(NSString *)aDataMgrXML error:(NSError **)err __deprecated
 {

@@ -156,8 +156,8 @@
         }
     }
 
-    NSString            *dataMgrJSON;
-    NSString            *jsonBase64String;
+    //NSString            *dataMgrJSON;
+    //NSString            *jsonBase64String;
     MPASUSCatalogs      *mpCatalog;
     NSArray             *applePatchesArray;
     NSArray             *approvedApplePatches = nil;
@@ -204,8 +204,9 @@
         // New way, using the helper daemon
         applePatchesArray = nil;
         applePatchesArray = [mpAsus scanForAppleUpdates];
-
+        
         // post patches to web service
+        /*
         dataMgrJSON = [mpDataMgr GenJSONForDataMgr:applePatchesArray
                                            dbTable:@"client_patches_apple"
                                      dbTablePrefix:@"mp_"
@@ -214,11 +215,18 @@
                                          deleteCol:@"cuuid"
                                     deleteColValue:[MPSystemInfo clientUUID]];
 
-
+        
+        logit(lcl_vInfo,@"%%%%%%%%%%%%%%%%%%%%%%%%%%\n%@",dataMgrJSON);
+        */
         // Encode to base64 and send to web service
+        /*
         jsonBase64String = [[dataMgrJSON dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
+         */
         wsErr = nil;
+        /*
         [mpws postDataMgrJSON:jsonBase64String error:&wsErr];
+         */
+        [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
         if (wsErr) {
             logit(lcl_vError,@"Scan results posted to webservice returned false.");
             logit(lcl_vError,@"%@",wsErr.localizedDescription);
