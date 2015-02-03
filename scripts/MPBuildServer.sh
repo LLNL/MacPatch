@@ -119,6 +119,25 @@ if $USEMACOS; then
 	# ------------------
 	cp -R ${BUILDROOT}/Release/ ${MPSERVERBASE}/bin
 fi
+# ------------------
+# Install required packages
+# ------------------
+
+if [ $XOSTYPE == "Linux" ]; then
+	if [ -f "/etc/redhat-release" ]; then
+		# Check if needed packges are installed or install
+		pkgs=("gcc-c++" "git" "openssl-devel" "java-1.7.0-openjdk-devel" "libxml2-devel" "bzip2-libs" "bzip2-devel" "bzip2" "python-pip" "mysql-connector-python")
+	
+		for i in "${pkgs[@]}"
+		do
+			p=`rpm -qa --qf '%{NAME}\n' | grep -e ${i}$`
+			if [ -z $p ]; then
+				echo "Install $i"
+				yum install -y ${i}
+			fi
+		done
+	fi
+fi
 
 # ------------------
 # Setup Tomcat
