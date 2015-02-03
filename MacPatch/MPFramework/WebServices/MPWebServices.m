@@ -967,7 +967,7 @@
         //Err
     }
     
-    NSData *res = [self requestWithMethodAndParams:@"PostClientScanData" params:params error:&error];
+    NSData *res = [self postRequestWithMethodAndParams:@"PostClientScanData" params:params error:&error];
     if (error)
     {
         NSMutableDictionary *errDict = [[NSMutableDictionary alloc] init];
