@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.2
+# Version: 1.3
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
