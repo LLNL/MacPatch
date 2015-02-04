@@ -1,20 +1,54 @@
+<!---
+    Name: settings.cfc
+    Version: 1.1.0
+    History: 
+    - Intial Creatation read .xml 
+    - Added JSON support
+--->
 <cfcomponent>
+    <cffunction name="getJSONAppSettings" access="public" returntype="struct">
+        <cfargument name="cFile" required="true">
+
+        <cfset appConf.settings = structNew()>    
+        <cfset jData = DeserializeJSON(file=arguments.cFile)>
+
+        <!--- main settings --->
+        <cfif not structKeyExists(jData,"settings")>
+           <cfreturn appConf.settings>
+        <cfelse>
+            <cfset appConf.settings = jData.settings>    
+        </cfif>
+        
+        <!--- Set J2EE Server type (Legacy) --->
+        <cfset appConf.settings.j2eeType = "TOMCAT">
+
+        <!--- Admin user settings, hash the password--->
+        <cfif structKeyExists(jData.settings.users,"admin")>
+            <cfif structKeyExists(jData.settings.users.admin,"enabled")>
+                <cfif jData.settings.users.admin["enabled"] EQ "YES">
+                    <cfif structKeyExists(jData.settings.users.admin,"pass")>
+                        <cfset appConf.settings.users.admin.pass = Hash(jData.settings.users.admin.pass,'MD5')>
+                    </cfif>
+                <cfelse>
+                    <cfset appConf.settings.users.enabled = "NO">
+                    <cfset rc = StructDelete(appConf.settings.users.admin, "name", "False")>
+                    <cfset rc = StructDelete(appConf.settings.users.admin, "pass", "False")>
+                </cfif>
+            </cfif>    
+        </cfif>
+
+        <cfreturn appConf.settings> 
+    </cffunction>
+
 	<cffunction name="getAppSettings" access="public" returntype="struct">
-    
+        <cfargument name="cFile" required="true">
+
     	<cfset var j2eeType = "JETTY">
 		<cfset jvmObj = CreateObject("java","java.lang.System").getProperties() />
         <cfif IsDefined("jvmObj.catalina.base")>
         	<cfset j2eeType = "TOMCAT">
-        	<cfset _localConf = "#jvmObj.catalina.base#/app_conf/siteconfig.xml">
-        <cfelseif IsDefined("jvmObj.jetty.home")>
-			<cfset _localConf = "#jvmObj.jetty.home#/app_conf/siteconfig.xml">
 		</cfif>
-            
-		<cfif fileExists(_localConf)>
-            <cfset _confFile = #_localConf#>
-        <cfelse>
-            <cfset _confFile = "/Library/MacPatch/Server/conf/etc/siteconfig.xml">
-        </cfif>
+        <cfset _confFile = arguments.cFile>
   
     	<cffile action="read" file="#_confFile#" variable="xml">
 		<cfxml variable="xmlData"><cfoutput>#xml#</cfoutput></cfxml>
@@ -110,6 +144,7 @@
         <cfreturn appConf.settings>	
 	</cffunction>
 
+    <!--- Not Sure If Used
     <cffunction name="setupDB" access="public" returntype="void">
         <cfargument name="config" required="yes">
         
@@ -125,4 +160,5 @@
             </cfcatch> 
         </cftry>
     </cffunction>
+    --->
 </cfcomponent>

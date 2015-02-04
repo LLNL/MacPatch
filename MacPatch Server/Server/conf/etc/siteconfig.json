@@ -1,0 +1,72 @@
+{
+    "settings": 
+    {
+        "paths": 
+        {
+                "base":"/Library/MacPatch",
+                "content":"/Library/MacPatch/Content/Web"
+        },
+        "users": 
+        {
+            "admin": {
+                "enabled": "YES",
+                "name":"mpadmin",
+                "pass":"*mpadmin*"
+            }    
+        },
+        "ldap": 
+        {
+            "server":"AD-DOMAIN-FQDN",
+            "searchbase":"AD-SEARCH-BASE",
+            "attributes":"givenname,initials,sn,mail,memberOf,dn,samAccountName,userPrincipalName",
+            "port":"AD-DOMAIN-PORT",
+            "secure":"AD-DOMAIN-SSL",
+            "loginAttr":"AD-LOGIN-ATTR",
+            "loginUsrPrefix":"AD-LOGIN-PRE",
+            "loginUsrSufix":"AD-LOGIN-SUF"
+        },
+        "database": 
+        {
+            "prod": {
+                "enabled": "YES",
+                "dsName":"mpds",
+                "dbHost":"127.0.0.1",
+                "dbPort":"3306",
+                "dbName":"MacPatchDB",
+                "hoststringPre":"jdbc:mysql://",
+                "hoststringURI":"?cacheResultSetMetadata=false&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull",
+                "drivername":"com.mysql.jdbc.Driver",
+                "databasename":"[DB-NAME]",
+                "username":"[DB-USER]",
+                "password":"[DB-PASS]",
+                "maxconnections":500,
+                "logintimeout":30,
+                "connectiontimeout":30,
+                "connectionretries":2
+            },
+            "ro": {
+                "enabled": "YES",
+                "dsName":"mpdsro",
+                "dbHost":"127.0.0.1",
+                "dbPort":"3306",
+                "dbName":"MacPatchDB",
+                "hoststringPre":"jdbc:mysql",
+                "hoststringURI":"?cacheResultSetMetadata=false&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull",
+                "drivername":"com.mysql.jdbc.Driver",
+                "username":"mpdbro",
+                "password":"[DB-PASS]",
+                "maxconnections":100,
+                "logintimeout":30,
+                "connectiontimeout":30,
+                "connectionretries":2
+            }
+        },
+        "mailserver": 
+        {
+            "enabled": "YES",
+            "server":"127.0.0.1",
+            "username":"bObama",
+            "password":"imdumberthanbush"
+        }
+    }
+}
