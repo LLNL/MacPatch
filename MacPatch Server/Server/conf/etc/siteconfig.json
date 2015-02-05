@@ -36,7 +36,6 @@
                 "hoststringPre":"jdbc:mysql://",
                 "hoststringURI":"?cacheResultSetMetadata=false&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull",
                 "drivername":"com.mysql.jdbc.Driver",
-                "databasename":"[DB-NAME]",
                 "username":"[DB-USER]",
                 "password":"[DB-PASS]",
                 "maxconnections":500,
