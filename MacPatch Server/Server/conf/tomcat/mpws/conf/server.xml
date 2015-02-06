@@ -23,8 +23,9 @@
   <!-- Security listener. Documentation at /docs/config/listeners.html
   <Listener className="org.apache.catalina.security.SecurityListener" />
   -->
-  <!--APR library loader. Documentation at /docs/apr.html -->
+  <!--APR library loader. Documentation at /docs/apr.html 
   <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  -->
   <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
   <Listener className="org.apache.catalina.core.JasperListener" />
   <!-- Prevent memory leaks due to use of particular java/javax APIs-->
@@ -68,10 +69,9 @@
          Define a non-SSL HTTP/1.1 Connector on port 8080
     -->
     <Connector port="3601" protocol="org.apache.coyote.http11.Http11NioProtocol"
-      connectionTimeout="20000" redirectPort="36443"
-      maxThreads="250" minSpareThreads="25" maxSpareThreads="50" tcpNoDelay="true" 
-      enableLookups="false" maxKeepAliveRequests="1" acceptCount="200" maxConnections="8192"
-      compression="off" />
+      connectionTimeout="20000" redirectPort="36443" maxThreads="400" minSpareThreads="25" tcpNoDelay="true" 
+      enableLookups="false" maxKeepAliveRequests="1" acceptCount="200" compression="off" />
+      
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"
