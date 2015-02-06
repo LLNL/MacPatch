@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.3
+# Version: 1.4
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -11,14 +11,18 @@
 # Info:
 # Simply modify the GITROOT and BUILDROOT variables
 #
+# History:
+# 1.4: 	Remove Jetty Support
+#		Added Tomcat 7.5.57
+#
 # -------------------------------------------------------------
 MPBASE="/Library/MacPatch"
 MPSERVERBASE="/Library/MacPatch/Server"
 GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/build/Server"
 SRC_DIR="${MPSERVERBASE}/conf/src"
-TCATSRV=0
-J2EE_SW="apache-tomcat-7.0.55.tar.gz"
+TCATSRV=1
+J2EE_SW="apache-tomcat-7.0.57.tar.gz"
 
 XOSTYPE=`uname -s`
 USELINUX=false
@@ -72,14 +76,6 @@ if [ ! -d "$GITROOT" ]; then
 	echo "cd /Library/MacPatch/tmp; git clone https://github.com/SMSG-MAC-DEV/MacPatch.git"
 	exit
 fi	
-
-# ------------------------------------
-# ASK On J2EE Server Type
-# Tomcat support is new and going to replace Jetty
-# ------------------------------------
-
-read -p "Use older Jetty J2EE Server [N]: " TCATSRV
-TCATSRV=${TCATSRV:-1}
 
 # ------------------
 # Create Skeleton Dir Structure
@@ -143,13 +139,11 @@ fi
 # Setup Tomcat
 # ------------------
 
-if [ $TCATSRV == 1 ]; then
-	mkdir -p "${MPSERVERBASE}/apache-tomcat"
-	tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/apache-tomcat
-	chmod +x ${MPSERVERBASE}/apache-tomcat/bin/*
-	rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/docs
-	rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/examples
-fi
+mkdir -p "${MPSERVERBASE}/apache-tomcat"
+tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/apache-tomcat
+chmod +x ${MPSERVERBASE}/apache-tomcat/bin/*
+rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/docs
+rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/examples
 
 # ------------------
 # Build Apache
@@ -162,51 +156,42 @@ ${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh
 ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
 chown -R $OWNERGRP ${MPSERVERBASE}
 
-if [ $TCATSRV == 0 ]; then
-	rm -rf "${MPSERVERBASE}/apache-tomcat"
-	chmod -R 0775 ${MPSERVERBASE}/jetty-mpsite
-	chown -R $OWNERGRP ${MPSERVERBASE}/jetty-mpsite
-	chmod -R 0775 ${MPSERVERBASE}/jetty-mpwsl
-	chown -R $OWNERGRP ${MPSERVERBASE}/jetty-mpwsl
-else
-	cp -r ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpws
-	mv ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpsite
-	mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Files
-	mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Errors
-	mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Processed
-	
-	cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl/WEB-INF/lib/systemcommand.jar"
-	chmod -R 0775 "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
-	chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
-	rm -rf  "${MPSERVERBASE}/tomcat-mpws/webapps/ROOT"
-	jar cf "${MPSERVERBASE}/conf/tomcat/mpws/ROOT.war" -C "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl" .
-	cp "${MPSERVERBASE}/conf/tomcat/mpws/ROOT.war" "${MPSERVERBASE}/tomcat-mpws/webapps"
-	cp "${MPSERVERBASE}/conf/tomcat/mpws/bin/setenv.sh" "${MPSERVERBASE}/tomcat-mpws/bin/setenv.sh"
-	cp "${MPSERVERBASE}/conf/tomcat/mpws/bin/launchdTomcat.sh" "${MPSERVERBASE}/tomcat-mpws/bin/launchdTomcat.sh"
-	cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/Catalina" "${MPSERVERBASE}/tomcat-mpws/conf/"
-	cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/server.xml" "${MPSERVERBASE}/tomcat-mpws/conf/server.xml"
-	cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/web.xml" "${MPSERVERBASE}/tomcat-mpws/conf/web.xml"
-	rm -rf "${MPSERVERBASE}/jetty-mpwsl"
+cp -r ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpws
+mv ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpsite
+mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Files
+mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Errors
+mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Processed
 
-	cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/jetty-mpsite/webapps/mp/WEB-INF/lib/systemcommand.jar"
-	chmod -R 0775 "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
-	chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
-	rm -rf "${MPSERVERBASE}/tomcat-mpsite/webapps/ROOT"
-	jar cf "${MPSERVERBASE}/conf/tomcat/mpsite/ROOT.war" -C "${MPSERVERBASE}/jetty-mpsite/webapps/mp" .
-	cp "${MPSERVERBASE}/conf/tomcat/mpsite/ROOT.war" "${MPSERVERBASE}/tomcat-mpsite/webapps"
-	cp "${MPSERVERBASE}/conf/tomcat/mpsite/bin/setenv.sh" "${MPSERVERBASE}/tomcat-mpsite/bin/setenv.sh"
-	cp "${MPSERVERBASE}/conf/tomcat/mpsite/bin/launchdTomcat.sh" "${MPSERVERBASE}/tomcat-mpsite/bin/launchdTomcat.sh"
-	cp -r "${MPSERVERBASE}/conf/tomcat/mpsite/conf/Catalina" "${MPSERVERBASE}/tomcat-mpsite/conf/"
-	cp -r "${MPSERVERBASE}/conf/tomcat/mpsite/conf/server.xml" "${MPSERVERBASE}/tomcat-mpsite/conf/server.xml"
-	cp -r "${MPSERVERBASE}/conf/tomcat/mpsite/conf/web.xml" "${MPSERVERBASE}/tomcat-mpsite/conf/web.xml"
-	rm -rf "${MPSERVERBASE}/jetty-mpsite"
+cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl/WEB-INF/lib/systemcommand.jar"
+chmod -R 0775 "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
+chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
+rm -rf  "${MPSERVERBASE}/tomcat-mpws/webapps/ROOT"
+jar cf "${MPSERVERBASE}/conf/tomcat/mpws/ROOT.war" -C "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl" .
+cp "${MPSERVERBASE}/conf/tomcat/mpws/ROOT.war" "${MPSERVERBASE}/tomcat-mpws/webapps"
+cp "${MPSERVERBASE}/conf/tomcat/mpws/bin/setenv.sh" "${MPSERVERBASE}/tomcat-mpws/bin/setenv.sh"
+cp "${MPSERVERBASE}/conf/tomcat/mpws/bin/launchdTomcat.sh" "${MPSERVERBASE}/tomcat-mpws/bin/launchdTomcat.sh"
+cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/Catalina" "${MPSERVERBASE}/tomcat-mpws/conf/"
+cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/server.xml" "${MPSERVERBASE}/tomcat-mpws/conf/server.xml"
+cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/web.xml" "${MPSERVERBASE}/tomcat-mpws/conf/web.xml"
+rm -rf "${MPSERVERBASE}/jetty-mpwsl"
 
-	chmod -R 0775 ${MPSERVERBASE}/tomcat-mpws
-	chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpws
-	chmod -R 0775 ${MPSERVERBASE}/tomcat-mpsite
-	chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpsite
-fi
+cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/jetty-mpsite/webapps/mp/WEB-INF/lib/systemcommand.jar"
+chmod -R 0775 "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
+chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
+rm -rf "${MPSERVERBASE}/tomcat-mpsite/webapps/ROOT"
+jar cf "${MPSERVERBASE}/conf/tomcat/mpsite/ROOT.war" -C "${MPSERVERBASE}/jetty-mpsite/webapps/mp" .
+cp "${MPSERVERBASE}/conf/tomcat/mpsite/ROOT.war" "${MPSERVERBASE}/tomcat-mpsite/webapps"
+cp "${MPSERVERBASE}/conf/tomcat/mpsite/bin/setenv.sh" "${MPSERVERBASE}/tomcat-mpsite/bin/setenv.sh"
+cp "${MPSERVERBASE}/conf/tomcat/mpsite/bin/launchdTomcat.sh" "${MPSERVERBASE}/tomcat-mpsite/bin/launchdTomcat.sh"
+cp -r "${MPSERVERBASE}/conf/tomcat/mpsite/conf/Catalina" "${MPSERVERBASE}/tomcat-mpsite/conf/"
+cp -r "${MPSERVERBASE}/conf/tomcat/mpsite/conf/server.xml" "${MPSERVERBASE}/tomcat-mpsite/conf/server.xml"
+cp -r "${MPSERVERBASE}/conf/tomcat/mpsite/conf/web.xml" "${MPSERVERBASE}/tomcat-mpsite/conf/web.xml"
+rm -rf "${MPSERVERBASE}/jetty-mpsite"
 
+chmod -R 0775 ${MPSERVERBASE}/tomcat-mpws
+chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpws
+chmod -R 0775 ${MPSERVERBASE}/tomcat-mpsite
+chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpsite
 chown -R $OWNERGRP ${MPSERVERBASE}/Logs
 chmod 0775 ${MPSERVERBASE}
 
@@ -219,4 +204,9 @@ find ${MPSERVERBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
 # ------------------
 # Create Archive
 # ------------------
-zip -r ${MPBASE}/MacPatch_Server.zip ${MPSERVERBASE}
+MKARC=0
+read -p "Create Archive Of Server Install [N]: " MKARC
+MKARC=${MKARC:-0}
+if [ $MKARC == 1 ]; then
+	zip -r ${MPBASE}/MacPatch_Server.zip ${MPSERVERBASE}
+fi
