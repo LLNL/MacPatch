@@ -275,7 +275,7 @@ static BOOL gDone = false;
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
 	
-    [connection setRequestTimeout: 10.0];
+    [connection setRequestTimeout: 60.0];
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
@@ -300,7 +300,7 @@ static BOOL gDone = false;
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
 	
-    [connection setRequestTimeout: 10.0];
+    [connection setRequestTimeout: 60.0];
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
@@ -1451,37 +1451,40 @@ done:
 	}
 }
 
-- (void)updateTableAndArrayController:(int)idx status:(int)aStatusImage
-{
-	NSPredicate		*selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
-    NSMutableArray  *patches = [[NSMutableArray alloc] initWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
-
-	NSMutableDictionary *patch = [[NSMutableDictionary alloc] initWithDictionary:[patches objectAtIndex:idx]];
-	if (aStatusImage == 0) {
-		[patch setObject:[NSImage imageNamed:@"NSRemoveTemplate"] forKey:@"statusImage"];
-	}
-	if (aStatusImage == 1) {
-		[patch setObject:[NSImage imageNamed:@"Installcomplete.tif"] forKey:@"statusImage"];
-        [self updateNeededPatchesFile:patch];
-	}
-	if (aStatusImage == 2) {
-		[patch setObject:[NSImage imageNamed:@"exclamation.tif"] forKey:@"statusImage"];
-	}
-	if (aStatusImage == 3) {
-		[patch setObject:[NSImage imageNamed:@"LogOutReq.tif"] forKey:@"statusImage"];
-	}
-
-	[patches replaceObjectAtIndex:idx withObject:patch];
-    [arrayController willChangeValueForKey:@"arrangedObjects"];
-	[arrayController setContent:patches];
-    [arrayController didChangeValueForKey:@"arrangedObjects"];
-    dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
-	[patch release];
-    [patches release];
-}
-
 - (void)updateTableAndArrayControllerWithPatch:(NSDictionary *)aPatch status:(int)aStatusImage
 {
+    NSString *curPatchID;
+    if ([[aPatch objectForKey:@"type"] isEqualTo:@"Apple"]) {
+        curPatchID = [aPatch objectForKey:@"patch"];
+    } else {
+        curPatchID = [aPatch objectForKey:@"patch_id"];
+    }
+    
+    [arrayController.arrangedObjects enumerateObjectsUsingBlock:^(id object, NSUInteger index, BOOL *stop)
+     {
+         NSMutableDictionary *d = object;
+         if ([[d objectForKey:@"patch_id"] isEqualTo:curPatchID] || [[d objectForKey:@"patch"] isEqualTo:curPatchID])
+         {
+             if (aStatusImage == 0) {
+                 [d setObject:[NSImage imageNamed:@"NSRemoveTemplate"] forKey:@"statusImage"];
+             }
+             if (aStatusImage == 1) {
+                 [d setObject:[NSImage imageNamed:@"Installcomplete.tif"] forKey:@"statusImage"];
+                 [self updateNeededPatchesFile:d];
+             }
+             if (aStatusImage == 2) {
+                 [d setObject:[NSImage imageNamed:@"exclamation.tif"] forKey:@"statusImage"];
+             }
+             if (aStatusImage == 3) {
+                 [d setObject:[NSImage imageNamed:@"LogOutReq.tif"] forKey:@"statusImage"];
+             }
+             dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
+             *stop = YES;
+             return;
+         }
+     }];
+    
+    /* old code
     NSString *curPatchID = [aPatch objectForKey:@"patch_id"];
     for (NSMutableDictionary *p in arrayController.arrangedObjects)
     {
@@ -1505,6 +1508,7 @@ done:
             break;
         }
     }
+     */
 }
 
 - (void)updateNeededPatchesFile:(NSDictionary *)aPatch

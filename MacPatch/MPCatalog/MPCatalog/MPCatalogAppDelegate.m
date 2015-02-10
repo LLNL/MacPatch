@@ -1720,7 +1720,7 @@ done:
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
 	
-    [connection setRequestTimeout: 10.0];
+    [connection setRequestTimeout: 60.0];
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
