@@ -27,7 +27,7 @@
   MacPatch Rsync Service Setup Script
   MacPatch Version 2.5.x
   
-  Script Version 1.1.1
+  Script Version 1.1.2
 '''
 
 import os
@@ -88,6 +88,7 @@ if OS_TYPE == "Darwin":
 if OS_TYPE == "Linux":
 	from crontab import CronTab
 	cron = CronTab()
-	job  = cron.new(command='/Library/MacPatch/Server/conf/scripts/MPSyncContent.sh -p /Library/MacPatch/Server/conf/etc/gov.llnl.sync.plist -r')
+	job  = cron.new(command='/Library/MacPatch/Server/conf/scripts/MPSyncContent.py --plist /Library/MacPatch/Server/conf/etc/gov.llnl.mp.sync.plist')
 	job.set_comment("MPSyncContent")
 	job.hour.every(1)	
+	cron.write()
