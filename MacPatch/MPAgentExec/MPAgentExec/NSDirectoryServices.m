@@ -347,7 +347,7 @@ static tDirStatus dsDataBufferAppendData(tDataBufferPtr  buf,
 			//NSLog(@"Number records: %ld", recCount);
 			break;
 		} else if (recCount > 1) {
-			NSLog(@"Shaft. There are %i records", recCount);
+			qlinfo(@"Shaft. There are %i records", recCount);
 			NSMutableDictionary *theOther = [NSMutableDictionary dictionary];
 			[self addRecordAtIndex:2 toDictionary:theOther withBuffer:dataBuffer];
 											 NSLog(@"The other record is this one: %@", theOther);
