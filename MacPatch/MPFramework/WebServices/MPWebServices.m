@@ -958,11 +958,11 @@
     }
     
     NSDictionary *params;
-    // 0 = Apple, 1 = Third
+    // 1 = Apple, 2 = Third
     if (aType == 0) {
-        params = [NSDictionary dictionaryWithObjectsAndKeys:_cuuid, @"clientID", @"0", @"type", jData, @"jsonData", nil];
-    } else if ( aType == 1 ) {
         params = [NSDictionary dictionaryWithObjectsAndKeys:_cuuid, @"clientID", @"1", @"type", jData, @"jsonData", nil];
+    } else if ( aType == 1 ) {
+        params = [NSDictionary dictionaryWithObjectsAndKeys:_cuuid, @"clientID", @"2", @"type", jData, @"jsonData", nil];
     } else {
         //Err
     }
