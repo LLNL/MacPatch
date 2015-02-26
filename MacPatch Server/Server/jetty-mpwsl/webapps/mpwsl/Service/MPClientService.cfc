@@ -2,7 +2,7 @@
 <!---
         MPClientService
         Database type is MySQL
-        MacPatch Version 2.2.x
+        MacPatch Version 2.5.x
 --->
 <!---   Notes:
 --->
@@ -360,9 +360,10 @@
             <cfoutput query="qGetLatestVersion">
                 <cfif versionCompare(agent_version,arguments.agentVersion) EQ 1>
                     <cfset count = count + 1>
-                </cfif>
-                <cfif versionCompare(agent_build,arguments.agentBuild) EQ 1 AND #arguments.agentBuild# NEQ "0">
-                    <cfset count = count + 1>
+                <cfelseif versionCompare(agent_version,arguments.agentVersion) EQ 0>
+                    <cfif versionCompare(agent_build,arguments.agentBuild) EQ 1 AND #arguments.agentBuild# NEQ "0">
+                        <cfset count = count + 1>
+                    </cfif>
                 </cfif>
             </cfoutput>
         <cfelse>
