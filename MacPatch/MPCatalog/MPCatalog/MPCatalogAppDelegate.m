@@ -1766,6 +1766,7 @@ done:
 {
     [statusTextStatus setStringValue:aData];
 }
+
 - (void)installData:(in bycopy NSString *)aData
 {
     NSString *strTxt;
