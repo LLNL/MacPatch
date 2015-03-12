@@ -42,6 +42,7 @@
 	[super windowDidLoad];
 	[scanOnLaunchCheckBox setState:[self scanOnLaunch]];
 	[enableDebugLogCheckBox setState:[self debugLogging]];
+    [allowInstallRebootPatchesCheckBox setState:[self allowInstallRebootPatches]];
 	[stateColumnCheckBox setState:[self colStateOnLaunch]];
 	[sizeColumnCheckBox setState:[self colSizeOnLaunch]];
 	[baselineColumnCheckBox setState:[self colBaselineOnLaunch]];
@@ -58,6 +59,16 @@
 	logit(lcl_vInfo,@"Scan on launch state changed %d",state);
 	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
 	[d setBool:state forKey:@"enableScanOnLaunch"];
+}
+
+- (IBAction)changeAllowInstallOfRebootPatches:(id)sender
+{
+    int state = (int)[allowInstallRebootPatchesCheckBox state];
+    logit(lcl_vInfo,@"Allow Reboot Patch Installs state changed %d",state);
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    [d setBool:state forKey:@"allowRebootPatchInstalls"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"AllowInstallRebootPatches" object:self];
 }
 
 - (IBAction)changeEnableDebugLog:(id)sender
@@ -114,21 +125,31 @@
 	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
 	return [d boolForKey:@"enableScanOnLaunch"];
 }
+
 - (BOOL)debugLogging
 {
 	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
 	return [d boolForKey:@"enableDebugLogging"];
 }
+
+- (BOOL)allowInstallRebootPatches
+{
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    return [d boolForKey:@"allowRebootPatchInstalls"];
+}
+
 - (BOOL)colStateOnLaunch;
 {
 	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
 	return [d boolForKey:@"colStateOnLaunch"];
 }
+
 - (BOOL)colSizeOnLaunch;
 {
 	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
 	return [d boolForKey:@"colSizeOnLaunch"];
 }
+
 - (BOOL)colBaselineOnLaunch;
 {
 	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];

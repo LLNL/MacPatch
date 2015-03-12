@@ -242,6 +242,8 @@
         </menu>
         <customObject id="494" customClass="MPSelfPatchAppDelegate">
             <connections>
+                <outlet property="allowRebootInstallsWarningImage" destination="25Z-UK-KuW" id="1bS-20-4Yi"/>
+                <outlet property="allowRebootInstallsWarningLabel" destination="caM-nC-p6Z" id="PbQ-BF-TTc"/>
                 <outlet property="arrayController" destination="576" id="577"/>
                 <outlet property="patchGroupLabel" destination="614" id="616"/>
                 <outlet property="spCancelButton" destination="549" id="632"/>
@@ -261,7 +263,7 @@
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
             <value key="minSize" type="size" width="715" height="415"/>
             <view key="contentView" id="534">
-                <rect key="frame" x="0.0" y="0.0" width="715" height="415"/>
+                <rect key="frame" x="0.0" y="5" width="715" height="415"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView id="659" customClass="WindowViewSubclass">
@@ -269,7 +271,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     </customView>
                     <box autoresizesSubviews="NO" title="Status" borderType="line" id="540">
-                        <rect key="frame" x="10" y="79" width="695" height="56"/>
+                        <rect key="frame" x="10.000000146199984" y="72" width="695" height="56"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <view key="contentView">
                             <rect key="frame" x="1" y="1" width="693" height="40"/>
@@ -294,7 +296,7 @@
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" id="539">
-                        <rect key="frame" x="10" y="16" width="695" height="62"/>
+                        <rect key="frame" x="10" y="16" width="695.00000014620002" height="62"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <view key="contentView">
                             <rect key="frame" x="1" y="1" width="693" height="46"/>
@@ -566,8 +568,23 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <imageView hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="25Z-UK-KuW">
+                        <rect key="frame" x="682.00000014620002" y="115" width="20" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Warning" id="4pX-Z4-ufW"/>
+                    </imageView>
+                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="caM-nC-p6Z">
+                        <rect key="frame" x="449" y="115" width="227" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Allow Reboot Patch Installs Enabled" id="2T0-Pk-nhn">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="272.5" y="510.5"/>
         </window>
         <arrayController selectsInsertedObjects="NO" id="576">
             <declaredKeys>
@@ -614,5 +631,6 @@
     <resources>
         <image name="MPSelfPatch" width="512" height="512"/>
         <image name="NSAdvanced" width="32" height="32"/>
+        <image name="Warning" width="21" height="21"/>
     </resources>
 </document>

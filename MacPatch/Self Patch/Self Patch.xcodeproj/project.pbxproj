@@ -10,6 +10,7 @@
 		7258911C179F6BE50058FF64 /* exclamation.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7258911B179F6BE50058FF64 /* exclamation.tif */; };
 		7258911E179F6BF60058FF64 /* running.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7258911D179F6BF60058FF64 /* running.tiff */; };
 		8F1592041767B64B006BE1E0 /* empty.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F1592031767B64B006BE1E0 /* empty.tif */; };
+		8F226CD01AB21AB900354546 /* Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F226CCF1AB21AB900354546 /* Warning.png */; };
 		8F779399181EDB8D008FA072 /* LogOutReq.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F779398181EDB8D008FA072 /* LogOutReq.tif */; };
 		8FA9ADF91767B6930055506B /* RestartReq.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9ADF81767B6930055506B /* RestartReq.tif */; };
 		8FA9ADFB1767B6A00055506B /* Installcomplete.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9ADFA1767B6A00055506B /* Installcomplete.tif */; };
@@ -37,6 +38,7 @@
 		7258911B179F6BE50058FF64 /* exclamation.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = exclamation.tif; sourceTree = "<group>"; };
 		7258911D179F6BF60058FF64 /* running.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = running.tiff; sourceTree = "<group>"; };
 		8F1592031767B64B006BE1E0 /* empty.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = empty.tif; sourceTree = "<group>"; };
+		8F226CCF1AB21AB900354546 /* Warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Warning.png; sourceTree = "<group>"; };
 		8F779398181EDB8D008FA072 /* LogOutReq.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LogOutReq.tif; sourceTree = "<group>"; };
 		8FA9ADF81767B6930055506B /* RestartReq.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RestartReq.tif; sourceTree = "<group>"; };
 		8FA9ADFA1767B6A00055506B /* Installcomplete.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Installcomplete.tif; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				8F1592031767B64B006BE1E0 /* empty.tif */,
 				8FA9ADFA1767B6A00055506B /* Installcomplete.tif */,
 				7258911B179F6BE50058FF64 /* exclamation.tif */,
+				8F226CCF1AB21AB900354546 /* Warning.png */,
 				8FD890F516E5253600A870A3 /* Preferences.xib */,
 				8FD890F616E5253600A870A3 /* SelfPatchMainMenu.xib */,
 				8FD890F716E5253600A870A3 /* MPSelfPatch.icns */,
@@ -232,6 +235,7 @@
 			files = (
 				8FD890B516DFEDB700A870A3 /* InfoPlist.strings in Resources */,
 				8FD890FA16E5253600A870A3 /* Preferences.xib in Resources */,
+				8F226CD01AB21AB900354546 /* Warning.png in Resources */,
 				8FD890FB16E5253600A870A3 /* SelfPatchMainMenu.xib in Resources */,
 				8FD890FC16E5253600A870A3 /* MPSelfPatch.icns in Resources */,
 				8F1592041767B64B006BE1E0 /* empty.tif in Resources */,

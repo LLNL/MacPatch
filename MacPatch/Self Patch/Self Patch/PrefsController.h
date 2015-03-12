@@ -26,9 +26,11 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface PrefsController : NSWindowController {
+@interface PrefsController : NSWindowController
+{
 	IBOutlet NSButton *scanOnLaunchCheckBox;
 	IBOutlet NSButton *enableDebugLogCheckBox;
+    IBOutlet NSButton *allowInstallRebootPatchesCheckBox;
 	IBOutlet NSButton *stateColumnCheckBox;
 	IBOutlet NSButton *sizeColumnCheckBox;
 	IBOutlet NSButton *baselineColumnCheckBox;
@@ -40,6 +42,7 @@
 
 - (IBAction)changeScanOnLaunch:(id)sender;
 - (IBAction)changeEnableDebugLog:(id)sender;
+- (IBAction)changeAllowInstallOfRebootPatches:(id)sender;
 
 - (IBAction)showHideSelectColumn:(id)sender;
 - (IBAction)showHideSizeColumn:(id)sender;
@@ -47,6 +50,7 @@
 
 - (BOOL)scanOnLaunch;
 - (BOOL)debugLogging;
+- (BOOL)allowInstallRebootPatches;
 - (BOOL)colStateOnLaunch;
 - (BOOL)colSizeOnLaunch;
 - (BOOL)colBaselineOnLaunch;
