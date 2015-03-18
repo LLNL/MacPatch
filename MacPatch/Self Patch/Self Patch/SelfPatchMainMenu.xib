@@ -296,7 +296,7 @@
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" id="539">
-                        <rect key="frame" x="10" y="16" width="695.00000014620002" height="62"/>
+                        <rect key="frame" x="10.000000146200028" y="16" width="695" height="62"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <view key="contentView">
                             <rect key="frame" x="1" y="1" width="693" height="46"/>
