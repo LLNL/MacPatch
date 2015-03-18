@@ -273,7 +273,7 @@ typedef NSUInteger MPInstallIconStatus;
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
 
-    [connection setRequestTimeout: 30.0];
+    [connection setRequestTimeout: 60.0];
     [connection setReplyTimeout: 1800.0]; //30 min to install
 
     @try {
@@ -1592,7 +1592,6 @@ done:
     [patchesTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
     [patchesTableView performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
     [patchesTableView performSelectorOnMainThread:@selector(deselectAll:) withObject:nil waitUntilDone:NO];
-
 }
 
 - (void)updateNeededPatchesFile:(NSDictionary *)aPatch

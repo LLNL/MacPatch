@@ -25,7 +25,7 @@
 
 '''
     Script: MPSUSPatchSync
-    Version: 1.0.1
+    Version: 1.0.2
 
     Description: This Script read all of the patch information
     from the apple software update sucatlog files and post the 
@@ -74,6 +74,8 @@ import base64
 import sys
 import subprocess
 import hashlib
+from pprint import pprint
+
 
 # Define logging for global use
 logger = logging.getLogger('MPSUSPatchSync')
@@ -244,8 +246,14 @@ def readSUSCatalogFile(sucatalog, asFile=False):
 
         patch = {}
         patch['akey'] = key
-        patch['postdate'] = returnDateTimeAsString(prefs['Products'][key]['PostDate'])
-        patch['size'] = str(prefs['Products'][key]['Packages'][0]['Size'])
+        if prefs['Products'][key].has_key("PostDate"):
+            patch['postdate'] = returnDateTimeAsString(prefs['Products'][key]['PostDate'])
+        else:
+            patch['postdate'] = '1984-01-01 00:00:00'
+        if len(prefs['Products'][key]['Packages']) > 0 and prefs['Products'][key]['Packages'][0].has_key("Size"): 
+            patch['size'] = str(prefs['Products'][key]['Packages'][0]['Size'])
+        else:
+            patch['size'] = '0'
         patch['title'] = 'NA'
         patch['description'] = base64.b64encode('NA')
         patch['name'] = ''
@@ -291,6 +299,8 @@ def readSUSCatalogFile(sucatalog, asFile=False):
         patch.pop("ServerMetadataURL", None)
         patch.pop("Distribution", None)
         patches.append(patch)
+
+        pprint(patch)
 
         
         containsWordFound = 0

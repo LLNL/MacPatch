@@ -69,6 +69,8 @@
 
 - (BOOL)postJSONDataForMethod:(NSString *)aMethod data:(NSDictionary *)aData error:(NSError **)err;
 
+- (BOOL)postClientScanDataWithType:(NSArray *)scanData type:(NSInteger)aType error:(NSError **)err;
+
 // ClientStatus
 - (id)GetClientPatchStatusCount:(NSError **)err;
 - (id)GetLastCheckIn:(NSError **)err;

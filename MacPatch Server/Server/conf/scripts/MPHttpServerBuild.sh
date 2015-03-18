@@ -1,8 +1,20 @@
 #!/bin/bash
 #
+# -------------------------------------------------------------
+# Script: MPHttpServerBuild.sh
+# Version: 1.1
+#
+# Description:
 # Will Download and Compile PCRE & Apache 2.4.x for MacPatch Server
 # Updated 6/27/14 Updated SW
 #
+# Info:
+# Simply modify the GITROOT and BUILDROOT variables
+#
+# History:
+# 1.1:	Added New Httpd and Apr-Util and PCRE source
+#
+# -------------------------------------------------------------
 
 MP_BUILD_DIR=/Library/MacPatch/Server
 MP_CONF_DIR=${MP_BUILD_DIR}/conf
@@ -57,10 +69,10 @@ fi
 mkdir -p ${TMP_DIR}
 cd ${TMP_DIR}
 
-HTTPD_SW="httpd-2.4.10.tar.gz"
+HTTPD_SW="httpd-2.4.12.tar.gz"
 APR_SW="apr-1.5.1.tar.gz"
-APRUTIL_SW="apr-util-1.5.3.tar.gz"
-PCRE_SW="pcre-8.35.tar.gz"
+APRUTIL_SW="apr-util-1.5.4.tar.gz"
+PCRE_SW="pcre-8.36.tar.gz"
 
 # Apache HTTPD
 mkdir ${TMP_DIR}/httpd

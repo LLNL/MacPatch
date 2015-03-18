@@ -26,6 +26,7 @@
 #import "Profiles.h"
 #import "MPAgent.h"
 #import "MPDefaultsWatcher.h"
+#import "MacPatch.h"
 
 static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 
@@ -314,7 +315,9 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 {
     NSString *fileName = [NSString stringWithFormat: @"%.0f.%@", [NSDate timeIntervalSinceReferenceDate] * 1000.0, @"mobileconfig"];
     NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
-    NSData *pData = [[NSData alloc] initWithBase64EncodedString:aData options:0];
+    // Fix Bug, on 10.8 systems. initWithBase64EncodedString on 10.9 and higher
+    // NSData *pData = [[NSData alloc] initWithBase64EncodedString:aData options:0];
+    NSData *pData = [NSData dataFromBase64String:aData];
     NSError *err = nil;
     [pData writeToFile:filePath options:NSDataWritingAtomic error:&err];
     if (err) {

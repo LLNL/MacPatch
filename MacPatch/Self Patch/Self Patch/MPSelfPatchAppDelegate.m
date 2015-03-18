@@ -92,6 +92,8 @@ static BOOL gDone = false;
 - (int)setLoggingState:(BOOL)aState;
 - (void)removeStatusFiles;
 
+- (void)generateRebootPatchForDownload:(NSDictionary *)aPatch;
+
 @end
 
 
@@ -190,7 +192,14 @@ static BOOL gDone = false;
     
 	[patchGroupLabel setStringValue:[defaults objectForKey:@"PatchGroup"]];
 	// Make sure the cancel button is not enabled
-	[spCancelButton setEnabled:NO];	
+	[spCancelButton setEnabled:NO];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveAllowInstallRebootPatchesNotification:)
+                                                 name:@"AllowInstallRebootPatches"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"AllowInstallRebootPatches" object:self];
 }
 
 -(IBAction)windowCloseWillExit:(id)sender
@@ -275,7 +284,7 @@ static BOOL gDone = false;
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
 	
-    [connection setRequestTimeout: 10.0];
+    [connection setRequestTimeout: 60.0];
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
@@ -300,7 +309,7 @@ static BOOL gDone = false;
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
 	
-    [connection setRequestTimeout: 10.0];
+    [connection setRequestTimeout: 60.0];
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
@@ -818,21 +827,9 @@ done:
 	}
 	
 	// post patches to web service
-	MPDataMgr *dataMgr = [[[MPDataMgr alloc] init] autorelease];
-	NSString *dataMgrJSON;
-    dataMgrJSON = [dataMgr GenJSONForDataMgr:applePatchesArray
-                                    dbTable:@"client_patches_apple"
-                              dbTablePrefix:@"mp_"
-                              dbFieldPrefix:@""
-                               updateFields:@"cuuid,patch"
-                                  deleteCol:@"cuuid"
-                             deleteColValue:[MPSystemInfo clientUUID]];
-
-    // Encode to base64 and send to web service
-    NSString *jsonBase64String = [[dataMgrJSON dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
     mpws = [[[MPWebServices alloc] init] autorelease];
     wsErr = nil;
-    [mpws postDataMgrJSON:jsonBase64String error:&wsErr];
+    [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
     if (wsErr) {
         logit(lcl_vError,@"Scan results posted to webservice returned false.");
         logit(lcl_vError,@"%@",wsErr.localizedDescription);
@@ -1088,6 +1085,7 @@ done:
 	NSPredicate         *selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
 	NSMutableArray		*patchesToInstallArray    = [NSMutableArray arrayWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
 	
+    NSMutableArray      *rebootPatchesToDownload  = [[NSMutableArray alloc] init];
 	NSDictionary		*patch;
 	NSDictionary		*currPatchToInstallDict;
 	NSArray				*patchPatchesArray;
@@ -1105,7 +1103,9 @@ done:
 		logit(lcl_vDebug,@"Checking to see if patch %@ needs a reboot; \"%@\"",[patch objectForKey:@"patch"],[patch objectForKey:@"restart"]);
 		
 		// Check if patch needs a reboot
-		if ([[[patch objectForKey:@"restart"] uppercaseString] isEqualTo:@"N"] || [[[patch objectForKey:@"restart"] uppercaseString] isEqualTo:@"NO"] || [[[patch objectForKey:@"restart"] uppercaseString] isEqualTo:@"FALSE"]) {
+		if (([[[patch objectForKey:@"restart"] uppercaseString] isEqualTo:@"N"] || [[[patch objectForKey:@"restart"] uppercaseString] isEqualTo:@"NO"] || [[[patch objectForKey:@"restart"] uppercaseString] isEqualTo:@"FALSE"]) || [[NSUserDefaults standardUserDefaults] boolForKey:@"allowRebootPatchInstalls"] == YES)
+        {
+            logit(lcl_vInfo,@"Allow Install of Reboot Patches is %@",[[NSUserDefaults standardUserDefaults] boolForKey:@"allowRebootPatchInstalls"] ? @"ON":@"OFF");
 			logit(lcl_vInfo,@"Preparing to install %@(%@)",[patch objectForKey:@"patch"],[patch objectForKey:@"version"]);
 			logit(lcl_vDebug,@"Patch to process: %@",patch);
 			
@@ -1148,7 +1148,8 @@ done:
 					logit(lcl_vInfo,@"Start install for patch %@ from %@",[currPatchToInstallDict objectForKey:@"url"],[patch objectForKey:@"patch"]);
 					
 					// First we need to download the update
-					@try {
+					@try
+                    {
 						logit(lcl_vInfo,@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
 						[spStatusText setStringValue:[NSString stringWithFormat:@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
 						[spStatusText display];
@@ -1411,6 +1412,8 @@ done:
 			
 		} else {
 			logit(lcl_vInfo,@"%@(%@) requires a reboot, this patch will be installed on logout.",[patch objectForKey:@"patch"],[patch objectForKey:@"version"]);
+            //[self generateRebootPatchForDownload:patch];
+            
 			launchRebootWindow++;
             [self updateTableAndArrayControllerWithPatch:patch status:3];
 			continue;
@@ -1448,37 +1451,40 @@ done:
 	}
 }
 
-- (void)updateTableAndArrayController:(int)idx status:(int)aStatusImage
-{
-	NSPredicate		*selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
-    NSMutableArray  *patches = [[NSMutableArray alloc] initWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
-
-	NSMutableDictionary *patch = [[NSMutableDictionary alloc] initWithDictionary:[patches objectAtIndex:idx]];
-	if (aStatusImage == 0) {
-		[patch setObject:[NSImage imageNamed:@"NSRemoveTemplate"] forKey:@"statusImage"];
-	}
-	if (aStatusImage == 1) {
-		[patch setObject:[NSImage imageNamed:@"Installcomplete.tif"] forKey:@"statusImage"];
-        [self updateNeededPatchesFile:patch];
-	}
-	if (aStatusImage == 2) {
-		[patch setObject:[NSImage imageNamed:@"exclamation.tif"] forKey:@"statusImage"];
-	}
-	if (aStatusImage == 3) {
-		[patch setObject:[NSImage imageNamed:@"LogOutReq.tif"] forKey:@"statusImage"];
-	}
-
-	[patches replaceObjectAtIndex:idx withObject:patch];
-    [arrayController willChangeValueForKey:@"arrangedObjects"];
-	[arrayController setContent:patches];
-    [arrayController didChangeValueForKey:@"arrangedObjects"];
-    dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
-	[patch release];
-    [patches release];
-}
-
 - (void)updateTableAndArrayControllerWithPatch:(NSDictionary *)aPatch status:(int)aStatusImage
 {
+    NSString *curPatchID;
+    if ([[aPatch objectForKey:@"type"] isEqualTo:@"Apple"]) {
+        curPatchID = [aPatch objectForKey:@"patch"];
+    } else {
+        curPatchID = [aPatch objectForKey:@"patch_id"];
+    }
+    
+    [arrayController.arrangedObjects enumerateObjectsUsingBlock:^(id object, NSUInteger index, BOOL *stop)
+     {
+         NSMutableDictionary *d = object;
+         if ([[d objectForKey:@"patch_id"] isEqualTo:curPatchID] || [[d objectForKey:@"patch"] isEqualTo:curPatchID])
+         {
+             if (aStatusImage == 0) {
+                 [d setObject:[NSImage imageNamed:@"NSRemoveTemplate"] forKey:@"statusImage"];
+             }
+             if (aStatusImage == 1) {
+                 [d setObject:[NSImage imageNamed:@"Installcomplete.tif"] forKey:@"statusImage"];
+                 [self updateNeededPatchesFile:d];
+             }
+             if (aStatusImage == 2) {
+                 [d setObject:[NSImage imageNamed:@"exclamation.tif"] forKey:@"statusImage"];
+             }
+             if (aStatusImage == 3) {
+                 [d setObject:[NSImage imageNamed:@"LogOutReq.tif"] forKey:@"statusImage"];
+             }
+             dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
+             *stop = YES;
+             return;
+         }
+     }];
+    
+    /* old code
     NSString *curPatchID = [aPatch objectForKey:@"patch_id"];
     for (NSMutableDictionary *p in arrayController.arrangedObjects)
     {
@@ -1502,6 +1508,7 @@ done:
             break;
         }
     }
+     */
 }
 
 - (void)updateNeededPatchesFile:(NSDictionary *)aPatch
@@ -1605,7 +1612,96 @@ done:
 	[prefsController showWindow:self];
 }
 
+- (void)generateRebootPatchForDownload:(NSDictionary *)aPatch
+{
+    
+    if ([[aPatch objectForKey:@"type"] isEqualTo:@"Third"])
+    {
+        // Setup Reboot Patch Dictionary
+        NSMutableDictionary *reboot = [[NSMutableDictionary alloc] init];
+        [reboot setObject:aPatch forKey:@"patch"];
+        
+        // Read & Write Reboot Patches to the .MPAuthPatches.plist
+        NSMutableArray *rebootDictArray;
+        if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthPatches.plist"])
+        {
+            rebootDictArray = [NSKeyedUnarchiver unarchiveObjectWithFile:@"/private/tmp/.MPAuthPatches.plist"];
+        } else {
+            rebootDictArray = [[NSMutableArray alloc] init];
+        }
+        
+        // Init MPAsus to download the patch
+        MPAsus *mpa = [[MPAsus alloc] init];
+        qlinfo(@"Generate Download Object for Reboot Patch (%@)",[aPatch objectForKey:@"patch"]);
+        
+        NSError *err = nil;
+        NSArray *patchPatchesArray = [NSArray arrayWithArray:[[aPatch objectForKey:@"patches"] objectForKey:@"patches"]];
+        NSDictionary *currPatchToInstallDict = nil;
+        
+        for (int pIdx=0;pIdx < [patchPatchesArray count];pIdx++)
+        {
+            
+            // Make sure we only process the dictionaries in the NSArray
+            if ([[patchPatchesArray objectAtIndex:pIdx] isKindOfClass:[NSDictionary class]]) {
+                currPatchToInstallDict = [NSDictionary dictionaryWithDictionary:[patchPatchesArray objectAtIndex:pIdx]];
+                [reboot setObject:currPatchToInstallDict forKey:@"patchToInstall"];
+            } else {
+                logit(lcl_vInfo,@"Object found was not of dictionary type; could be a problem. %@",[patchPatchesArray objectAtIndex:pIdx]);
+                continue;
+            }
+            
+            @try
+            {
+                qlinfo(@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]);
+                NSString *downloadURL = [NSString stringWithFormat:@"/mp-content%@",[[currPatchToInstallDict objectForKey:@"url"] urlEncode]];
+                [reboot setObject:downloadURL forKey:@"downloadURL"];
+                qlinfo(@"Download patch from: %@",downloadURL);
+                
+                [spStatusText setStringValue:[NSString stringWithFormat:@"Downloading %@ for later install.",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
+                [spStatusText display];
+                
+                err = nil;
+                NSString *dlPatchLoc = [mpa downloadUpdate:downloadURL error:&err];
+                if (err) {
+                    logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",[aPatch objectForKey:@"patch"],[err localizedDescription]);
+                    break;
+                }
+                [reboot setObject:dlPatchLoc forKey:@"patchLocation"];
+                logit(lcl_vInfo,@"Patch download completed.");
+                logit(lcl_vInfo,@"File downloaded to %@",dlPatchLoc);
+            }
+            @catch (NSException *e) {
+                logit(lcl_vError,@"%@", e);
+                break;
+            }
+        }
+        
+        [rebootDictArray addObject:reboot];
+        [NSKeyedArchiver archiveRootObject:rebootDictArray toFile:@"/private/tmp/.MPAuthPatches.plist"];
+    }
+    
+}
+
 #pragma mark Notifications
+
+- (void)receiveAllowInstallRebootPatchesNotification:(NSNotification *)notification
+{
+    if(notification)
+    {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"allowRebootPatchInstalls"] == YES)
+        {
+            [_allowRebootInstallsWarningImage setHidden:NO];
+            [_allowRebootInstallsWarningImage display];
+            [_allowRebootInstallsWarningLabel setHidden:NO];
+            [_allowRebootInstallsWarningLabel display];
+        } else {
+            [_allowRebootInstallsWarningImage setHidden:YES];
+            [_allowRebootInstallsWarningImage display];
+            [_allowRebootInstallsWarningLabel setHidden:YES];
+            [_allowRebootInstallsWarningLabel display];
+        }
+    }
+}
 
 - (void)scanForNotification:(NSNotification *)notification
 {

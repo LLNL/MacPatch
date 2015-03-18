@@ -24,7 +24,25 @@
 	<cffunction name="onRequestStart">
 		<cfargument name="uri" required="true"/>
 		<cfset StructDelete( application, "settings" )>
-	    <cfinvoke component="Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
+
+		<cfset var xFile = "/Library/MacPatch/Server/conf/etc/siteconfig.xml">
+  		<cfset var jFile = "/Library/MacPatch/Server/conf/etc/siteconfig.json">
+  		
+  		<cfif fileExists(jFile)>
+			<cfinvoke component="Server.settings" method="getJSONAppSettings" returnvariable="_AppSettings">
+				<cfinvokeargument name="cFile" value="#jFile#">
+			</cfinvoke>
+        <cfelse>
+            <cfif fileExists(xFile)>
+                <cfinvoke component="Server.settings" method="getAppSettings" returnvariable="_AppSettings">
+                    <cfinvokeargument name="cFile" value="#xFile#">
+                </cfinvoke>
+            <cfelse>
+            	<cfthrow message="No App Settings file found.">
+            	<cfreturn>
+            </cfif>
+        </cfif>
+
 	    <cfset application.settings = _AppSettings>
 		<cfset StructDelete( session, "loggedin" )>
 	</cffunction>

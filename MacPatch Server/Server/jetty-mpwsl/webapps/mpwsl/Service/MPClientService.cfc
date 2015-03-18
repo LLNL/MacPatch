@@ -2,7 +2,7 @@
 <!---
         MPClientService
         Database type is MySQL
-        MacPatch Version 2.2.x
+        MacPatch Version 2.5.x
 --->
 <!---   Notes:
 --->
@@ -360,9 +360,10 @@
             <cfoutput query="qGetLatestVersion">
                 <cfif versionCompare(agent_version,arguments.agentVersion) EQ 1>
                     <cfset count = count + 1>
-                </cfif>
-                <cfif versionCompare(agent_build,arguments.agentBuild) EQ 1 AND #arguments.agentBuild# NEQ "0">
-                    <cfset count = count + 1>
+                <cfelseif versionCompare(agent_version,arguments.agentVersion) EQ 0>
+                    <cfif versionCompare(agent_build,arguments.agentBuild) EQ 1 AND #arguments.agentBuild# NEQ "0">
+                        <cfset count = count + 1>
+                    </cfif>
                 </cfif>
             </cfoutput>
         <cfelse>
@@ -692,6 +693,161 @@
         </cftry>
 
         <cfreturn response>
+    </cffunction>
+
+    <!---
+        Remote API
+        Type: Public/Remote
+        Description: Post Patch Scan Data for Apple & Custom content
+        Note: New for MacPatch 2.5.43 and higher 
+    --->
+    <cffunction name="PostClientScanData" access="remote" returnType="struct" returnformat="json" output="false">
+        <cfargument name="clientID" required="true" default="0" />
+        <cfargument name="type" required="true" default="0" hint="0 = error, 1 = Apple, 2 = Third" />
+        <cfargument name="jsonData" required="true">
+
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "0" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfset response[ "result" ] = {} />
+
+        <cftry>
+            <!--- Type should not be 0 --->
+            <cfif arguments.type EQ 0>
+                <cfset l = elogit("[PostClientScanData][type: #arguments.type#]: #arguments.clientID#: #arguments.jsonData#")>
+                <cfset response[ "errorno" ] = "1" />
+                <cfset response[ "errormsg" ] = "[PostClientScanData]: Missing type." />
+                <cfreturn response>
+            </cfif>
+
+            <cfset var patchData = DeserializeJSON(arguments.jsonData)>
+            <cfset pArr = #patchData['rows']# />
+
+            <!---  Apple Patches --->
+            <cfif arguments.type EQ 1>
+
+                <cfquery datasource="#this.ds#" name="qPurgeClientApplePatches">
+                    Delete * From mp_client_patches_apple
+                    Where cuuid = <cfqueryparam value="#trim(arguments.clientID)#">
+                </cfquery>
+
+                <cfif ArrayLen(pArr) EQ 0>
+                    <cfset response[ "errorno" ] = "0" />
+                    <cfset response[ "errormsg" ] = "[PostClientScanData][Apple]: Patches posted successfully." />
+                    <cfreturn response>
+                </cfif>
+                <cfloop array=#patchData['rows']# index="p">
+                    <!--- Add row object check --->
+                    <cfif NOT IsValidApplePatchObj(p)>
+                        <cfset jErr = serializeJSON(p) />
+                        <cfset l = elogit("[PostClientScanData][type: #arguments.type#][insert][#arguments.clientID#]: #jErr#")>
+                        <cfcontinue>
+                    </cfif>
+                    <cfquery datasource="#this.ds#" name="qInsertClientApplePatches">
+                        Insert Into mp_client_patches_apple
+                            (cuuid,mdate,type,patch,description,size,recommended,restart,version)
+                        Values
+                            (<cfqueryparam value="#arguments.clientID#">,<cfqueryparam value="#p['mdate']#">,
+                            <cfqueryparam value="#p['type']#">,<cfqueryparam value="#p['patch']#">,
+                            <cfqueryparam value="#p['description']#">,<cfqueryparam value="#p['size']#">,
+                            <cfqueryparam value="#p['recommended']#">,<cfqueryparam value="#p['restart']#">,<cfqueryparam value="#p['version']#">)
+                    </cfquery>
+                    <cfset response[ "errormsg" ] = "[PostClientScanData][Apple]: Patches posted successfully." />
+                </cfloop>
+
+            </cfif>
+
+            <!---  Third Patches --->
+            <cfif arguments.type EQ 2>
+
+                <cfquery datasource="#this.ds#" name="qPurgeClientCustomPatches">
+                    Delete * From mp_client_patches_third
+                    Where cuuid = <cfqueryparam value="#trim(arguments.clientID)#">
+                </cfquery>
+
+                <cfif ArrayLen(pArr) EQ 0>
+                    <cfset response[ "errorno" ] = "0" />
+                    <cfset response[ "errormsg" ] = "[PostClientScanData][Third]: Patches posted successfully." />
+                    <cfreturn response>
+                </cfif>
+                <cfloop array=#patchData['rows']# index="p">
+                    <!--- Add row object check --->
+                    <cfif NOT IsValidCustomPatchObj(p)>
+                        <cfset jErr = serializeJSON(p) />
+                        <cfset l = elogit("[PostClientScanData][type: #arguments.type#][insert][#arguments.clientID#]: #jErr#")>
+                        <cfcontinue>
+                    </cfif>
+                    <cfquery datasource="#this.ds#" name="qInsertClientApplePatches">
+                        Insert Into mp_client_patches_third
+                            (cuuid,mdate,type,patch,patch_id,description,size,recommended,restart,version,bundleID)
+                        Values
+                            (<cfqueryparam value="#arguments.clientID#">,<cfqueryparam value="#p['mdate']#">,<cfqueryparam value="#p['type']#">,
+                            <cfqueryparam value="#p['patch']#">,<cfqueryparam value="#p['patch_id']#">,<cfqueryparam value="#p['description']#">,
+                            <cfqueryparam value="#p['size']#">,<cfqueryparam value="#p['recommended']#">,<cfqueryparam value="#p['restart']#">,
+                            <cfqueryparam value="#p['version']#">,<cfqueryparam value="#p['bundleID']#">)
+                    </cfquery>
+                    <cfset response[ "errormsg" ] = "[PostClientScanData][Third]: Patches posted successfully." />
+                </cfloop>
+
+            </cfif>
+
+            <cfcatch>
+                <cfset l = elogit("[PostClientScanData]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#")>
+                <cfset response[ "errorno" ] = "1004" />
+                <cfset response[ "errormsg" ] = "[PostClientScanData]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
+                <cfreturn response>
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response>
+    </cffunction>
+
+    <!---
+        Type: Private
+        Used By: PostClientScanData
+        Description: Returns True/False if object is valid
+        Note: New for MacPatch 2.5.43 and higher 
+    --->
+    <cffunction name="IsValidApplePatchObj" access="private" returntype="any" output="no">
+        <cfargument name="model" required="true" type="struct" />
+        <cfset result = 0 />
+
+        <cfset objKeys=["mdate","type","patch","description","size","recommended","restart","version"]>
+        <cfloop array=#objKeys# index="o">
+            <cfif NOT structkeyexists(arguments.model,o)>
+                <cfset result = 1 />
+            </cfif>
+        </cfloop>
+        
+        <cfif result EQ 0>
+            <cfreturn True>
+        <cfelse>
+            <cfreturn False>
+        </cfif>
+    </cffunction>
+
+    <!---
+        Type: Private
+        Used By: PostClientScanData
+        Description: Returns True/False if object is valid
+        Note: New for MacPatch 2.5.43 and higher 
+    --->
+    <cffunction name="IsValidCustomPatchObj" access="private" returntype="any" output="no">
+        <cfargument name="model" required="true" type="struct" />
+        <cfset result = 0 />
+
+        <cfset objKeys=["mdate","type","patch","patch_id","description","size","recommended","restart","version","bundleID"]>
+        <cfloop array=#objKeys# index="o">
+            <cfif NOT structkeyexists(arguments.model,o)>
+                <cfset result = 1 />
+            </cfif>
+        </cfloop>
+        
+        <cfif result EQ 0>
+            <cfreturn True>
+        <cfelse>
+            <cfreturn False>
+        </cfif>
     </cffunction>
 
     <!---

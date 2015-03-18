@@ -320,9 +320,9 @@ void usage(void) {
     printf(" \t\tAppStoreApps\n");
     printf(" \t\tMPServerList\n");
     printf(" -A \tCollect Audit data.\n\n");
-    printf(" -g \t[Software Group Name]Collect Audit data.\n");
-    printf(" -d \tCollect Audit data.\n");
-    printf(" -P \tCollect Audit data.\n");
+    printf(" -g \t[Software Group Name] Install Software in group.\n");
+    printf(" -d \tInstall software using TaskID\n");
+    printf(" -P \t[Software Plist] Install software using plist.\n");
 	printf(" -e \tEcho logging data to console.\n");
 	printf(" -V \tVerbose logging.\n");
 	printf(" -v \tDisplay version info. \n");

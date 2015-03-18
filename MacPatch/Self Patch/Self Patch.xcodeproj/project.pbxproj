@@ -10,6 +10,7 @@
 		7258911C179F6BE50058FF64 /* exclamation.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7258911B179F6BE50058FF64 /* exclamation.tif */; };
 		7258911E179F6BF60058FF64 /* running.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7258911D179F6BF60058FF64 /* running.tiff */; };
 		8F1592041767B64B006BE1E0 /* empty.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F1592031767B64B006BE1E0 /* empty.tif */; };
+		8F226CD01AB21AB900354546 /* Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F226CCF1AB21AB900354546 /* Warning.png */; };
 		8F779399181EDB8D008FA072 /* LogOutReq.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F779398181EDB8D008FA072 /* LogOutReq.tif */; };
 		8FA9ADF91767B6930055506B /* RestartReq.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9ADF81767B6930055506B /* RestartReq.tif */; };
 		8FA9ADFB1767B6A00055506B /* Installcomplete.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9ADFA1767B6A00055506B /* Installcomplete.tif */; };
@@ -20,7 +21,7 @@
 		8FD890F916E5253600A870A3 /* PrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD890F416E5253600A870A3 /* PrefsController.m */; };
 		8FD890FA16E5253600A870A3 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FD890F516E5253600A870A3 /* Preferences.xib */; };
 		8FD890FB16E5253600A870A3 /* SelfPatchMainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FD890F616E5253600A870A3 /* SelfPatchMainMenu.xib */; };
-		8FD890FC16E5253600A870A3 /* MPSelfPatchV2.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8FD890F716E5253600A870A3 /* MPSelfPatchV2.icns */; };
+		8FD890FC16E5253600A870A3 /* MPSelfPatch.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8FD890F716E5253600A870A3 /* MPSelfPatch.icns */; };
 		8FD8910916E5259100A870A3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8910016E5259100A870A3 /* Security.framework */; };
 		8FD8910A16E5259100A870A3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8910116E5259100A870A3 /* SystemConfiguration.framework */; };
 		8FD8910B16E5259100A870A3 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8910216E5259100A870A3 /* CoreServices.framework */; };
@@ -37,6 +38,7 @@
 		7258911B179F6BE50058FF64 /* exclamation.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = exclamation.tif; sourceTree = "<group>"; };
 		7258911D179F6BF60058FF64 /* running.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = running.tiff; sourceTree = "<group>"; };
 		8F1592031767B64B006BE1E0 /* empty.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = empty.tif; sourceTree = "<group>"; };
+		8F226CCF1AB21AB900354546 /* Warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Warning.png; sourceTree = "<group>"; };
 		8F779398181EDB8D008FA072 /* LogOutReq.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LogOutReq.tif; sourceTree = "<group>"; };
 		8FA9ADF81767B6930055506B /* RestartReq.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RestartReq.tif; sourceTree = "<group>"; };
 		8FA9ADFA1767B6A00055506B /* Installcomplete.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Installcomplete.tif; sourceTree = "<group>"; };
@@ -54,7 +56,7 @@
 		8FD890F416E5253600A870A3 /* PrefsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefsController.m; sourceTree = "<group>"; };
 		8FD890F516E5253600A870A3 /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		8FD890F616E5253600A870A3 /* SelfPatchMainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SelfPatchMainMenu.xib; sourceTree = "<group>"; };
-		8FD890F716E5253600A870A3 /* MPSelfPatchV2.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MPSelfPatchV2.icns; sourceTree = "<group>"; };
+		8FD890F716E5253600A870A3 /* MPSelfPatch.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MPSelfPatch.icns; sourceTree = "<group>"; };
 		8FD890FE16E5255200A870A3 /* Self Patch-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Self Patch-Info.plist"; sourceTree = "<group>"; };
 		8FD8910016E5259100A870A3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		8FD8910116E5259100A870A3 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -172,9 +174,10 @@
 				8F1592031767B64B006BE1E0 /* empty.tif */,
 				8FA9ADFA1767B6A00055506B /* Installcomplete.tif */,
 				7258911B179F6BE50058FF64 /* exclamation.tif */,
+				8F226CCF1AB21AB900354546 /* Warning.png */,
 				8FD890F516E5253600A870A3 /* Preferences.xib */,
 				8FD890F616E5253600A870A3 /* SelfPatchMainMenu.xib */,
-				8FD890F716E5253600A870A3 /* MPSelfPatchV2.icns */,
+				8FD890F716E5253600A870A3 /* MPSelfPatch.icns */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -232,8 +235,9 @@
 			files = (
 				8FD890B516DFEDB700A870A3 /* InfoPlist.strings in Resources */,
 				8FD890FA16E5253600A870A3 /* Preferences.xib in Resources */,
+				8F226CD01AB21AB900354546 /* Warning.png in Resources */,
 				8FD890FB16E5253600A870A3 /* SelfPatchMainMenu.xib in Resources */,
-				8FD890FC16E5253600A870A3 /* MPSelfPatchV2.icns in Resources */,
+				8FD890FC16E5253600A870A3 /* MPSelfPatch.icns in Resources */,
 				8F1592041767B64B006BE1E0 /* empty.tif in Resources */,
 				8FA9ADF91767B6930055506B /* RestartReq.tif in Resources */,
 				8F779399181EDB8D008FA072 /* LogOutReq.tif in Resources */,

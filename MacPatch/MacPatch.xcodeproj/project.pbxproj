@@ -51,7 +51,6 @@
 			);
 			dependencies = (
 				8F9F89A517D6A81C00ACC37B /* PBXTargetDependency */,
-				8F9F89A717D6AB7C00ACC37B /* PBXTargetDependency */,
 			);
 			name = SERVER_BUILD;
 			productName = X_SERVER_BUILD;
@@ -235,13 +234,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8F4B1DE216DD1BC600E15A9E;
 			remoteInfo = MacPatch;
-		};
-		8F9F89A617D6AB7C00ACC37B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FD2086F16E567AC00F78296 /* MacPatch Server.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8FDBA6771752C2230017865A;
-			remoteInfo = SERVER_BUILD;
 		};
 		8FA706431700AC0E00A1C57C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -427,7 +419,6 @@
 		8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPPrefMigrate.xcodeproj; path = MPPrefMigrate/MPPrefMigrate.xcodeproj; sourceTree = "<group>"; };
 		8F95FF77182AFC81006242F3 /* MPAuthPluginTool.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAuthPluginTool.xcodeproj; path = MPAuthPluginTool/MPAuthPluginTool.xcodeproj; sourceTree = "<group>"; };
 		8FA7063F1700AC0E00A1C57C /* GetCurrentConsoleUser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GetCurrentConsoleUser.xcodeproj; path = CurrentConsoleUser/GetCurrentConsoleUser.xcodeproj; sourceTree = "<group>"; };
-		8FD2086F16E567AC00F78296 /* MacPatch Server.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MacPatch Server.xcodeproj"; path = "MacPatch Server/MacPatch Server.xcodeproj"; sourceTree = "<group>"; };
 		8FD88E2D16DFB40B00A870A3 /* MPAgentUp2Date.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAgentUp2Date.xcodeproj; path = MPAgentUp2Date/MPAgentUp2Date.xcodeproj; sourceTree = "<group>"; };
 		8FD88E8916DFC59F00A870A3 /* MPRebootD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPRebootD.xcodeproj; path = MPRebootD/MPRebootD.xcodeproj; sourceTree = "<group>"; };
 		8FD88EC216DFCD0A00A870A3 /* MPWorker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPWorker.xcodeproj; path = MPWorker/MPWorker.xcodeproj; sourceTree = "<group>"; };
@@ -460,7 +451,6 @@
 				8FD890C716DFEDB700A870A3 /* Self Patch.xcodeproj */,
 				8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */,
 				8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */,
-				8FD2086F16E567AC00F78296 /* MacPatch Server.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -500,13 +490,6 @@
 			isa = PBXGroup;
 			children = (
 				8FA706441700AC0E00A1C57C /* GetCurrentConsoleUser */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		8FD2087016E567AC00F78296 /* Products */ = {
-			isa = PBXGroup;
-			children = (
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -620,10 +603,6 @@
 				{
 					ProductGroup = 8FA706401700AC0E00A1C57C /* Products */;
 					ProjectRef = 8FA7063F1700AC0E00A1C57C /* GetCurrentConsoleUser.xcodeproj */;
-				},
-				{
-					ProductGroup = 8FD2087016E567AC00F78296 /* Products */;
-					ProjectRef = 8FD2086F16E567AC00F78296 /* MacPatch Server.xcodeproj */;
 				},
 				{
 					ProductGroup = 8F4B1EFB16DD77BD00E15A9E /* Products */;
@@ -901,11 +880,6 @@
 			isa = PBXTargetDependency;
 			name = MacPatch;
 			targetProxy = 8F9F89A417D6A81C00ACC37B /* PBXContainerItemProxy */;
-		};
-		8F9F89A717D6AB7C00ACC37B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = SERVER_BUILD;
-			targetProxy = 8F9F89A617D6AB7C00ACC37B /* PBXContainerItemProxy */;
 		};
 		8FA706471700AC2000A1C57C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

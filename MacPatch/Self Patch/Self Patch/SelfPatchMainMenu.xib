@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E9" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="14D87h" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1060" defaultVersion="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
+        <deployment version="1060" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -11,7 +11,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application">
+        <customObject id="-3" userLabel="Application" customClass="NSObject">
             <connections>
                 <outlet property="delegate" destination="494" id="656"/>
             </connections>
@@ -242,6 +242,8 @@
         </menu>
         <customObject id="494" customClass="MPSelfPatchAppDelegate">
             <connections>
+                <outlet property="allowRebootInstallsWarningImage" destination="25Z-UK-KuW" id="1bS-20-4Yi"/>
+                <outlet property="allowRebootInstallsWarningLabel" destination="caM-nC-p6Z" id="PbQ-BF-TTc"/>
                 <outlet property="arrayController" destination="576" id="577"/>
                 <outlet property="patchGroupLabel" destination="614" id="616"/>
                 <outlet property="spCancelButton" destination="549" id="632"/>
@@ -261,7 +263,7 @@
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
             <value key="minSize" type="size" width="715" height="415"/>
             <view key="contentView" id="534">
-                <rect key="frame" x="0.0" y="0.0" width="715" height="415"/>
+                <rect key="frame" x="0.0" y="5" width="715" height="415"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView id="659" customClass="WindowViewSubclass">
@@ -269,7 +271,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     </customView>
                     <box autoresizesSubviews="NO" title="Status" borderType="line" id="540">
-                        <rect key="frame" x="10.000000907268891" y="79" width="695" height="56"/>
+                        <rect key="frame" x="10.000000146199984" y="72" width="695" height="56"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <view key="contentView">
                             <rect key="frame" x="1" y="1" width="693" height="40"/>
@@ -294,7 +296,7 @@
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" id="539">
-                        <rect key="frame" x="10" y="16" width="695.00000090726894" height="62"/>
+                        <rect key="frame" x="10.000000146200028" y="16" width="695" height="62"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <view key="contentView">
                             <rect key="frame" x="1" y="1" width="693" height="46"/>
@@ -364,7 +366,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="18" headerView="559" id="560">
-                                    <rect key="frame" x="0.0" y="0.0" width="715" height="188"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="715" height="20"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -530,7 +532,7 @@
                             <rect key="frame" x="1" y="173" width="715" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.026595744680851033" horizontal="NO" id="562">
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="562">
                             <rect key="frame" x="701" y="17" width="15" height="156"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
@@ -542,7 +544,7 @@
                     <imageView id="542">
                         <rect key="frame" x="13" y="357" width="48" height="48"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="MPSelfPatchV2" id="543"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="MPSelfPatch" id="543"/>
                     </imageView>
                     <textField wantsLayer="YES" verticalHuggingPriority="750" id="541">
                         <rect key="frame" x="66" y="357" width="159" height="34"/>
@@ -552,7 +554,7 @@
                             <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         </shadow>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Self Patch" id="544">
-                            <font key="font" size="28" name="LucidaGrande-Bold"/>
+                            <font key="font" metaFont="systemBold" size="28"/>
                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -566,8 +568,23 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <imageView hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="25Z-UK-KuW">
+                        <rect key="frame" x="682.00000014620002" y="115" width="20" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Warning" id="4pX-Z4-ufW"/>
+                    </imageView>
+                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="caM-nC-p6Z">
+                        <rect key="frame" x="449" y="115" width="227" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Allow Reboot Patch Installs Enabled" id="2T0-Pk-nhn">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="272.5" y="510.5"/>
         </window>
         <arrayController selectsInsertedObjects="NO" id="576">
             <declaredKeys>
@@ -612,7 +629,8 @@
         <userDefaultsController representsSharedInstance="YES" id="627"/>
     </objects>
     <resources>
-        <image name="MPSelfPatchV2" width="512" height="512"/>
+        <image name="MPSelfPatch" width="512" height="512"/>
         <image name="NSAdvanced" width="32" height="32"/>
+        <image name="Warning" width="21" height="21"/>
     </resources>
 </document>

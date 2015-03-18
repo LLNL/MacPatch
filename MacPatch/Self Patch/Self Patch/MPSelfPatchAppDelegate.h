@@ -71,6 +71,8 @@
 @property (nonatomic, retain) IBOutlet NSArrayController *arrayController;
 @property (nonatomic, retain) IBOutlet NSButton *spUpdateButton;
 @property (nonatomic, retain) IBOutlet NSButton *spCancelButton;
+@property (nonatomic, retain) IBOutlet NSTextField *allowRebootInstallsWarningLabel;
+@property (nonatomic, retain) IBOutlet NSImageView *allowRebootInstallsWarningImage;
 
 @property (nonatomic, assign) NSThread *runTaskThread;
 @property (nonatomic, assign) BOOL killTaskThread;

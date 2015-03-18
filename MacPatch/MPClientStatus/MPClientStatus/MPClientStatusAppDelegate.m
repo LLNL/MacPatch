@@ -148,7 +148,7 @@
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
 	
-    [connection setRequestTimeout: 10.0];
+    [connection setRequestTimeout: 60.0];
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
@@ -156,10 +156,18 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
 		
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
-        BOOL successful = [proxy registerClient:self];
-        if (!successful) {
-            NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
-            [self cleanup];
+        BOOL successful;
+        for (int i = 0; i < 3; i++)
+        {
+            successful = [proxy registerClient:self];
+            if (!successful) {
+                if (i == 3) {
+                    NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+                }
+                [self cleanup];
+            } else {
+                break;
+            }
         }
     }
     @catch (NSException *e) {
@@ -173,7 +181,7 @@
     // Use mach ports for communication, since we're local.
     NSConnection *connection = [NSConnection connectionWithRegisteredName:kMPWorkerPortName host:nil];
 	
-    [connection setRequestTimeout: 10.0];
+    [connection setRequestTimeout: 60.0];
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
@@ -181,13 +189,21 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
 		
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
-        BOOL successful = [proxy registerClient:self];
-        if (!successful) {
-            NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
-            NSMutableDictionary *details = [NSMutableDictionary dictionary];
-			[details setValue:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue." forKey:NSLocalizedDescriptionKey];
-            if (err != NULL)  *err = [NSError errorWithDomain:@"world" code:1 userInfo:details];
-            [self cleanup];
+        BOOL successful;
+        for (int i = 0; i < 3; i++)
+        {
+            successful = [proxy registerClient:self];
+            if (!successful) {
+                if (i == 3) {
+                    NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+                    NSMutableDictionary *details = [NSMutableDictionary dictionary];
+                    [details setValue:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue." forKey:NSLocalizedDescriptionKey];
+                    if (err != NULL)  *err = [NSError errorWithDomain:@"world" code:1 userInfo:details];
+                }
+                [self cleanup];
+            } else {
+                break;
+            }
         }
     }
     @catch (NSException *e) {

@@ -42,11 +42,9 @@
 - (BOOL)clientIsRegistered
 {
     BOOL result = FALSE;
-    NSError *err = nil;
-
+    //NSError *err = nil;
     //NSString *res = [mpws getRegisterAgent:aRegKey hostName:hostName clientKey:clientKey error:&err];
     //NSLog(@"%@",res);
-
     return result;
 }
 
@@ -62,8 +60,7 @@
 
 - (int)registerClient:(NSString *)aRegKey hostName:(NSString *)hostName
 {
-
-    NSError *err = nil;
+    //NSError *err = nil;
     //NSString *res = [mpws getRegisterAgent:aRegKey hostName:hostName clientKey:clientKey error:&err];
     //NSLog(@"%@",res);
     return 0;
