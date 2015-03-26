@@ -102,8 +102,23 @@
                 <cfset location("/admin")>
             </cfif>   
 		</cfif>
+
+        <cfset var xFile = "/Library/MacPatch/Server/conf/etc/siteconfig.xml">
+        <cfset var jFile = "/Library/MacPatch/Server/conf/etc/siteconfig.json">
         
-        <cfinvoke component="root.Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
+        <cfif fileExists(jFile)>
+            <cfinvoke component="root.Server.settings" method="getJSONAppSettings" returnvariable="_AppSettings">
+                <cfinvokeargument name="cFile" value="#jFile#">
+            </cfinvoke>
+        <cfelseif fileExists(xFile)>
+            <cfinvoke component="root.Server.settings" method="getAppSettings" returnvariable="_AppSettings">
+                <cfinvokeargument name="cFile" value="#xFile#">
+            </cfinvoke>
+        <cfelse>
+            <cfthrow message="No App Settings file found.">
+            <cfreturn>
+        </cfif>
+        
         <cfif isSecure>
 			<cfset session.cflocFix = "https://#cgi.HTTP_HOST#">
         <cfelse>
@@ -195,7 +210,22 @@
 	<cfargument name="username" required="true"/>
 	<cfargument name="password" required="true" />
 
-	<cfinvoke component="root.Server.settings" method="getAppSettings" returnvariable="_AppSettings" />
+	<cfset var xFile = "/Library/MacPatch/Server/conf/etc/siteconfig.xml">
+    <cfset var jFile = "/Library/MacPatch/Server/conf/etc/siteconfig.json">
+    
+    <cfif fileExists(jFile)>
+        <cfinvoke component="root.Server.settings" method="getJSONAppSettings" returnvariable="_AppSettings">
+            <cfinvokeargument name="cFile" value="#jFile#">
+        </cfinvoke>
+    <cfelseif fileExists(xFile)>
+        <cfinvoke component="root.Server.settings" method="getAppSettings" returnvariable="_AppSettings">
+            <cfinvokeargument name="cFile" value="#xFile#">
+        </cfinvoke>
+    <cfelse>
+        <cfthrow message="No App Settings file found.">
+        <cfreturn>
+    </cfif>
+        
     <cfset _usr = #_AppSettings.users.admin.name#>
     <cfset _pas = #hash(arguments.password,"MD5")#>
 

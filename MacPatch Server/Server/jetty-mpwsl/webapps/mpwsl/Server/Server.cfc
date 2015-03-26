@@ -75,7 +75,7 @@
     	
     	<cfset dbConf= structNew()>
     	<cfset dbConf['dsName']= dbData.dsName>
-    	<cfset dbConf['hoststring']= dbData.hoststringPre & "//" &  dbData.dbHost & ":" & dbData.dbPort & "/" & dbData.dbName & hoststringURI>
+    	<cfset dbConf['hoststring']= dbData.hoststringPre & "//" &  dbData.dbHost & ":" & dbData.dbPort & "/" & dbData.dbName & dbData.hoststringURI>
     	<cfset dbConf['drivername']= dbData.drivername>
     	<cfset dbConf['databasename']= dbData.dbName>
     	<cfset dbConf['username']= dbData.username>
