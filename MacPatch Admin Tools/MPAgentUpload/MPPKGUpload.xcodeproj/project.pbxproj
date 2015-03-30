@@ -162,6 +162,11 @@
 			attributes = {
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Lawrence Livermore National Laboratory";
+				TargetAttributes = {
+					8F60C1CE18FEFB1D00D57C2E = {
+						DevelopmentTeam = BLZUAP2L36;
+					};
+				};
 			};
 			buildConfigurationList = 8F60C1CA18FEFB1D00D57C2E /* Build configuration list for PBXProject "MPPKGUpload" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -308,11 +313,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPPKGUpload/MPPKGUpload-Prefix.pch";
 				INFOPLIST_FILE = "MPPKGUpload/MPPKGUpload-Info.plist";
 				PRODUCT_NAME = "Agent Uploader";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -321,11 +329,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPPKGUpload/MPPKGUpload-Prefix.pch";
 				INFOPLIST_FILE = "MPPKGUpload/MPPKGUpload-Info.plist";
 				PRODUCT_NAME = "Agent Uploader";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

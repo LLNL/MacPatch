@@ -25,7 +25,7 @@
 
 '''
     Script: MPInventory.py
-    Version: 1.0.2
+    Version: 1.0.4
 '''
 
 import logging
@@ -45,6 +45,8 @@ from urlparse import urlparse
 import xml.etree.ElementTree as ET
 from uuid import UUID
 import shutil
+import json
+import os.path
 
 
 gDebug = False
@@ -752,6 +754,7 @@ def main():
     '''Main command processing'''
     parser = argparse.ArgumentParser(description='Process some args.')
     parser.add_argument('--siteXML', help="SiteConfig.xml file", required=False, default=None)
+    parser.add_argument('--siteJSON', help="SiteConfig.json file", required=False, default=None)
     parser.add_argument('--debug', help='Set log level to debug', action='store_true')
     parser.add_argument('--files', help="JSON files to process", required=True)
     parser.add_argument('--save', help='Saves JSON files', action='store_true')
@@ -801,6 +804,58 @@ def main():
                     myConfig['host'] = dbhost
                     myConfig['port'] = dbport
 
+    # Make Sure the Config Exists
+    if args.siteJSON:
+        jsonConf = mpSrvRootDir + "/conf/etc/siteconfig.json"
+        if not os.path.exists(args.siteJSON):
+            print "Unable to open " + args.siteJSON +". File not found."
+            sys.exit(1)  
+
+        confData = []
+        try:
+            with open(jsonConf) as data_file:
+                confData = json.load(data_file)
+
+            print confData
+
+        except OSError:
+            print('Well darn.')
+
+
+        _cnf = None
+        if 'prod' in confData['settings']['database']:
+            _cnf = confData['settings']['database']['prod']
+            pprint.pprint(_cnf)
+        else:
+            raise ValueError("Error, prod was not defined in db config")
+            return None
+
+        if 'dbName' in _cnf:
+            myConfig['database'] = _cnf['dbName']
+        else:
+            raise ValueError("Error, config missing key.")
+
+        if 'dbHost' in _cnf:
+            myConfig['host'] = _cnf['dbHost']
+        else:
+            raise ValueError("Error, config missing key.")
+
+        if 'dbPort' in _cnf:
+            myConfig['port'] = _cnf['dbPort']
+        else:
+            raise ValueError("Error, config missing key.")
+
+        if 'username' in _cnf:
+            myConfig['user'] = _cnf['username']
+        else:
+            raise ValueError("Error, config missing key.")
+
+        if 'password' in _cnf:
+            myConfig['password'] = _cnf['password']
+        else:
+            raise ValueError("Error, config missing key.")
+
+
     logger.info('# ------------------------------------------------------')
     logger.info('# Starting MPInventory'                                  )
     logger.info('# ------------------------------------------------------')
@@ -811,7 +866,7 @@ def main():
         logger.info('Keep processed files is enabled.')
         
     if not os.path.exists(args.files):
-    	print "%s does not exist." % args.files
+        print "%s does not exist." % args.files
         sys.exit(1)
 
     mpi = MPInventory(args.files)

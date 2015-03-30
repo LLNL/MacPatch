@@ -10,7 +10,7 @@
 --->
 <cfcomponent output="false"> 
   <cffunction name="onServerStart"> 
-
+  		
   		<cfset var xFile = "/Library/MacPatch/Server/conf/etc/siteconfig.xml">
   		<cfset var jFile = "/Library/MacPatch/Server/conf/etc/siteconfig.json">
   		
@@ -52,13 +52,24 @@
         
         <cftry> 
             <!--- Create Datasource --->
-            <cfif Datasourceisvalid(srvconf.settings.database.prod.dsName)>
-                <cfset rmDS = Datasourcedelete(srvconf.settings.database.prod.dsName)>
-            </cfif>
-
-            <cfset dbConf = genDBStruct(srvconf.settings.database.prod)>
-            <cfset DataSourceCreate( srvconf.settings.database.prod.dsName, srvconf.settings.database.prod )>
-            <cfset srvconf.settings.database.prod.password = Hash(srvconf.settings.database.prod.password,'MD5')>
+            <cfif structKeyExists(srvconf.settings.database,"prod")>
+				<cfset dsName = srvconf.settings.database.prod.dsName>
+                <cfif Datasourceisvalid(dsName)>
+                	<cfset rmDS = Datasourcedelete(dsName)>
+                </cfif>
+                <cfset dbConf1 = genDBStruct(srvconf.settings.database.prod)>
+                <cfset DataSourceCreate( dsName , dbConf1 )>
+                <cfset srvconf.settings.database.prod.password = Hash(srvconf.settings.database.prod.password,'MD5')>
+        	</cfif>
+            <cfif structKeyExists(srvconf.settings.database,"ro")>
+				<cfset dsNameRO = srvconf.settings.database.ro.dsName>
+                <cfif Datasourceisvalid(dsNameRO)>
+                	<cfset rmDS = Datasourcedelete(dsNameRO)>
+                </cfif>
+                <cfset dbConf2 = genDBStruct(srvconf.settings.database.prod)>
+                <cfset DataSourceCreate( dsNameRO , dbConf2 )>
+                <cfset srvconf.settings.database.ro.password = Hash(srvconf.settings.database.ro.password,'MD5')>
+        	</cfif>
             
             <cfcatch type="any"> 
                 <cfthrow message="Error trying to create datasource.">
@@ -66,10 +77,10 @@
         </cftry>
         
         <!--- Assign settings to server settings scope --->
-		<cfset server.mpsettings = srvconf>
-	</cffunction> 
+        <cfset server.mpsettings = srvconf>
+  </cffunction> 
 
-	<!--- Quick Function to Generate the right db struct --->
+  <!--- Quick Function to Generate the right db struct --->
 	<cffunction name="genDBStruct" access="private" returntype="struct">
     	<cfargument name="dbData" type="struct" required="true">
     	

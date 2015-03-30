@@ -9,8 +9,8 @@
 	<key>ProgramArguments</key>
 	<array>
 		<string>/Library/MacPatch/Server/conf/scripts/MPInventoryD.py</string>
-		<string>--siteXML</string>
-		<string>/Library/MacPatch/Server/conf/etc/siteconfig.xml</string>
+		<string>--siteJSON</string>
+		<string>/Library/MacPatch/Server/conf/etc/siteconfig.json</string>
 		<string>--files</string>
 		<string>/Library/MacPatch/Server/tomcat-mpws/InvData/Files</string>
 	</array>
