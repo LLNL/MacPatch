@@ -66,7 +66,7 @@
                 <cfif Datasourceisvalid(dsNameRO)>
                 	<cfset rmDS = Datasourcedelete(dsNameRO)>
                 </cfif>
-                <cfset dbConf2 = genDBStruct(srvconf.settings.database.prod)>
+                <cfset dbConf2 = genDBStruct(srvconf.settings.database.ro)>
                 <cfset DataSourceCreate( dsNameRO , dbConf2 )>
                 <cfset srvconf.settings.database.ro.password = Hash(srvconf.settings.database.ro.password,'MD5')>
         	</cfif>

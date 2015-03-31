@@ -342,10 +342,16 @@
 <cffunction name="getDBTables" access="private" returntype="any">
 	<cfset var _db = #application.settings.database.ro#>
 
+	<cfif structKeyExists(_db,"databasename")>
+    	<cfset _dbName = #_db.databasename#>
+    <cfelseif structKeyExists(_db,"dbName")>	
+    	<cfset _dbName = #_db.dbName#>
+    </cfif>
+
 	<CFQUERY NAME="q_Tables" DATASOURCE="#_db.dsName#">
         SELECT TABLE_NAME as object_name, TABLE_TYPE as object_type 
         FROM information_schema.`TABLES` 
-        WHERE TABLE_SCHEMA LIKE '#_db.databasename#' 
+        WHERE TABLE_SCHEMA LIKE '#_dbName#' 
         AND (TABLE_NAME like 'mpi_%' OR TABLE_NAME like 'mp_clients_view') 
     </CFQUERY>
     
@@ -356,13 +362,19 @@
 	<cfargument name="table" required="yes">
     
     <cfset var _db = #application.settings.database.ro#>
+    <cfif structKeyExists(_db,"databasename")>
+    	<cfset _dbName = #_db.databasename#>
+    <cfelseif structKeyExists(_db,"dbName")>	
+    	<cfset _dbName = #_db.dbName#>
+    </cfif>
+
 	<cfset var colList = "">
     
     <CFQUERY NAME="q_Columns" DATASOURCE="#_db.dsName#">
 		<cfoutput>
             SELECT TABLE_NAME, COLUMN_NAME 
             FROM INFORMATION_SCHEMA.COLUMNS 
-            WHERE TABLE_SCHEMA = '#_db.databasename#' AND TABLE_NAME = '#arguments.table#'
+            WHERE TABLE_SCHEMA = '#_dbName#' AND TABLE_NAME = '#arguments.table#'
         </cfoutput>
 	</CFQUERY>
     

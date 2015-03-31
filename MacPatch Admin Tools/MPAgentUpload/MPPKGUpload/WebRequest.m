@@ -58,30 +58,6 @@
 @synthesize serverTrust                 = _serverTrust;
 @synthesize useUnTrustedCert            = _useUnTrustedCert;
 
-/*
-- (id)initWithURL:(NSURL *)url
-{
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-	return [self initWithNSURLRequest:request];
-}
-
-- (id)initWithNSURLRequest:(NSURLRequest *)urlRequest
-{
-    if (self = [super init])
-	{
-        self.condition = [[NSCondition alloc] init];
-        self.connection = nil;
-        self.connectionDidFinishLoading = NO;
-        self.error = nil;
-        self.responseData = [NSData data];
-        self.useUnTrustedCert = NO;
-
-        _connection = [NSURLConnection connectionWithRequest:urlRequest delegate:self];
-        [_connection start];
-    }
-    return self;
-}
- */
 
 - (id)init
 {
