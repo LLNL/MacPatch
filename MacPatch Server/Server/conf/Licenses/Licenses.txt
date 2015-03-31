@@ -4,9 +4,6 @@ MacPatch Components Licenses
 C & Objective-C Components
 ------------------------------------------------------
 
-• asi-http-request (BSD License)
-http://allseeing-i.com/ASIHTTPRequest/
-
 • NSData & NSString -- Base64Extensions (AS IS)
 http://www.dribin.org/dave/resources/files/
 
@@ -71,8 +68,22 @@ http://tech-laboratory.blogspot.com/
 Creative Commons Attribution-ShareAlike 3.0 Unported License.
 http://creativecommons.org/licenses/by-sa/3.0/
 
-• DataMgr (GNU Lesser General Public License)
-http://datamgr.riaforge.org/
-License: 
-LGPL (GNU Lesser General Public License)
-http://www.opensource.org/licenses/lgpl-license.php
+------------------------------------------------------
+Included Source Files
+------------------------------------------------------
+
+• Apache HTTPD (Apache License, Version 2.0)
+http://httpd.apache.org
+http://www.apache.org/LICENSE.txt
+
+• Apache Tomcat 7 (Apache License, Version 2.0)
+http://tomcat.apache.org
+http://www.apache.org/LICENSE.txt
+
+• Apache Portable Runtime (APR) (Apache License, Version 2.0)
+https://apr.apache.org
+http://www.apache.org/LICENSE.txt
+
+• PCRE - Perl Compatible Regular Expressions (BSD License)
+http://www.pcre.org
+http://www.pcre.org/licence.txt
