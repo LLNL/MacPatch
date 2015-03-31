@@ -17,7 +17,7 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 * End-User Self Patch
 * Software Catalog
 
-## Version 2.5.0
+## Version 2.6.x
 
 ###What's New
 
@@ -56,14 +56,12 @@ Installing them is as “simple” as dumping them to the "/System/Library/Frame
 
 
 ## Install and Setup
-To get MacPatch up and running first clone the project and review the "MacPatch – Server Install.pdf" file in the docs folder.
+To get MacPatch up and running use the QuickStart docs from the macpatch.github.io website.
 
-```
-mkdir -p /Library/MacPatch/tmp
-cd /Library/MacPatch/tmp
-git clone https://github.com/SMSG-MAC-DEV/MacPatch.git 
+* Mac QuickStart: https://macpatch.github.io/documentation/quickstart-osx.html
+* Linux QuickStart: https://macpatch.github.io/documentation/quickstart-linux.html
 
-```
+
 
 ## License
 
