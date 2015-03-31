@@ -25,7 +25,7 @@
 
 '''
     Script: MPInventory.py
-    Version: 1.0.4
+    Version: 1.0.5
 '''
 
 import logging
@@ -815,8 +815,6 @@ def main():
         try:
             with open(jsonConf) as data_file:
                 confData = json.load(data_file)
-
-            print confData
 
         except OSError:
             print('Well darn.')
