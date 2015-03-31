@@ -25,7 +25,7 @@
 
 '''
     Script: MPSUSPatchSync
-    Version: 1.0.2
+    Version: 1.0.3
 
     Description: This Script read all of the patch information
     from the apple software update sucatlog files and post the 
@@ -299,8 +299,7 @@ def readSUSCatalogFile(sucatalog, asFile=False):
         patch.pop("ServerMetadataURL", None)
         patch.pop("Distribution", None)
         patches.append(patch)
-
-        pprint(patch)
+        pprint.pprint("Adding patch: " + patch['suname'])
 
         
         containsWordFound = 0
@@ -312,7 +311,6 @@ def readSUSCatalogFile(sucatalog, asFile=False):
         if containsWordFound <= 0:
             patches.append(patch)         
 
-    #print json.dumps(patches)
     return patches
 
 def main():
