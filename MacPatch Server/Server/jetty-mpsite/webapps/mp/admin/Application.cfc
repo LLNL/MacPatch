@@ -296,7 +296,7 @@
               name="qry"
               start="#application.settings.ldap.searchbase#"
               attributes="#application.settings.ldap.attributes#"
-              filter="(&(objectClass=*)(#application.settings.ldap.loginAttr#=#arguments.username##application.settings.ldap.loginUsrSufix#))"
+              filter="(&(objectClass=*)(userPrincipalName=#arguments.username##application.settings.ldap.loginUsrSufix#))"
               scope="SUBTREE"
               port="#application.settings.ldap.port#"
               username="#arguments.username##application.settings.ldap.loginUsrSufix#"
