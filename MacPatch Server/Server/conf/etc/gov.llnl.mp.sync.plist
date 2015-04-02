@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>MPServerAddress</key>
-	<string>mpprod01.llnl.gov</string>
+	<string>localhost</string>
 </dict>
 </plist>
