@@ -23,7 +23,7 @@ case "$1" in
  start)
 	if [ -f $INV_HOME/MPInventoryD.py ]; then
 	    echo $"Starting MacPatch Inventory"
-		$INV_HOME/MPInventoryD.py --siteXML /Library/MacPatch/Server/conf/etc/siteconfig.xml --files /Library/MacPatch/Server/tomcat-mpws/InvData/Files/ &
+		$INV_HOME/MPInventoryD.py --siteJSON /Library/MacPatch/Server/conf/etc/siteconfig.json --files /Library/MacPatch/Server/tomcat-mpws/InvData/Files/ &
     fi
 	;;
  stop)
