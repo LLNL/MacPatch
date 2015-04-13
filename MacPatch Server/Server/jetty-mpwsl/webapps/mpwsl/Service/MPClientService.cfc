@@ -2,8 +2,8 @@
 <!---
         MPClientService
         Database type is MySQL
-        MacPatch Version 2.5.x
-        Rev 2
+        MacPatch Version 2.6.5.x
+        Rev 3
 --->
 <!---   Notes:
 --->
@@ -748,7 +748,7 @@
                         Insert Into mp_client_patches_apple
                             (cuuid,mdate,type,patch,description,size,recommended,restart,version)
                         Values
-                            (<cfqueryparam value="#arguments.clientID#">,<cfqueryparam value="#p['mdate']#">,
+                            (<cfqueryparam value="#arguments.clientID#">,#CreateODBCDateTime(now())#,
                             <cfqueryparam value="#p['type']#">,<cfqueryparam value="#p['patch']#">,
                             <cfqueryparam value="#p['description']#">,<cfqueryparam value="#p['size']#">,
                             <cfqueryparam value="#p['recommended']#">,<cfqueryparam value="#p['restart']#">,<cfqueryparam value="#p['version']#">)
@@ -782,7 +782,7 @@
                         Insert Into mp_client_patches_third
                             (cuuid,mdate,type,patch,patch_id,description,size,recommended,restart,version,bundleID)
                         Values
-                            (<cfqueryparam value="#arguments.clientID#">,<cfqueryparam value="#p['mdate']#">,<cfqueryparam value="#p['type']#">,
+                            (<cfqueryparam value="#arguments.clientID#">,#CreateODBCDateTime(now())#,<cfqueryparam value="#p['type']#">,
                             <cfqueryparam value="#p['patch']#">,<cfqueryparam value="#p['patch_id']#">,<cfqueryparam value="#p['description']#">,
                             <cfqueryparam value="#p['size']#">,<cfqueryparam value="#p['recommended']#">,<cfqueryparam value="#p['restart']#">,
                             <cfqueryparam value="#p['version']#">,<cfqueryparam value="#p['bundleID']#">)
@@ -813,7 +813,7 @@
         <cfargument name="model" required="true" type="struct" />
         <cfset result = 0 />
 
-        <cfset objKeys=["mdate","type","patch","description","size","recommended","restart","version"]>
+        <cfset objKeys=["type","patch","description","size","recommended","restart","version"]>
         <cfloop array=#objKeys# index="o">
             <cfif NOT structkeyexists(arguments.model,o)>
                 <cfset result = 1 />
@@ -837,7 +837,7 @@
         <cfargument name="model" required="true" type="struct" />
         <cfset result = 0 />
 
-        <cfset objKeys=["mdate","type","patch","patch_id","description","size","recommended","restart","version","bundleID"]>
+        <cfset objKeys=["type","patch","patch_id","description","size","recommended","restart","version","bundleID"]>
         <cfloop array=#objKeys# index="o">
             <cfif NOT structkeyexists(arguments.model,o)>
                 <cfset result = 1 />
