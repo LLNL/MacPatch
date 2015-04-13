@@ -3,6 +3,7 @@
         MPClientService
         Database type is MySQL
         MacPatch Version 2.5.x
+        Rev 2
 --->
 <!---   Notes:
 --->
@@ -727,7 +728,7 @@
             <cfif arguments.type EQ 1>
 
                 <cfquery datasource="#this.ds#" name="qPurgeClientApplePatches">
-                    Delete * From mp_client_patches_apple
+                    Delete From mp_client_patches_apple
                     Where cuuid = <cfqueryparam value="#trim(arguments.clientID)#">
                 </cfquery>
 
@@ -761,7 +762,7 @@
             <cfif arguments.type EQ 2>
 
                 <cfquery datasource="#this.ds#" name="qPurgeClientCustomPatches">
-                    Delete * From mp_client_patches_third
+                    Delete From mp_client_patches_third
                     Where cuuid = <cfqueryparam value="#trim(arguments.clientID)#">
                 </cfquery>
 

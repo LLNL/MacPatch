@@ -12,7 +12,7 @@
         <array>
                 <string>/usr/bin/rsync</string>
                 <string>--daemon</string>
-                <string>--config=/etc/rsyncd.conf</string>
+                <string>--config=/Library/MacPatch/Server/conf/etc/rsyncd.conf</string>
 		<string>--no-detach</string>
         </array>
         <key>inetdCompatibility</key>
