@@ -1,7 +1,7 @@
 /*
 	MacPatch Database Schema
 	Main Views
-	Version 2.6.5.3
+	Version 2.6.5.4
 */
 
 SET NAMES utf8;
@@ -346,7 +346,7 @@ IF EXISTS `mp_client_patches_third_view`;
 CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_third_view` AS SELECT
   `mpca`.`rid` AS `rid`,
   `mpca`.`cuuid` AS `cuuid`,
-  `mpca`.`date` AS `date`,
+  `mpca`.`mdate` AS `date`,
   concat(
     `mpp`.`patch_name`,
     _latin1 '-',
