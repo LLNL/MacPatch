@@ -299,7 +299,7 @@ def readSUSCatalogFile(sucatalog, asFile=False):
         patch.pop("ServerMetadataURL", None)
         patch.pop("Distribution", None)
         patches.append(patch)
-        pprint.pprint("Adding patch: " + patch['suname'])
+        pprint("Adding patch: " + patch['suname'])
 
         
         containsWordFound = 0
