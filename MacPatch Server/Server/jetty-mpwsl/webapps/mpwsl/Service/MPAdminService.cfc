@@ -84,7 +84,7 @@
         <cfset response = {} />
         <cfset response[ "OSArch" ] = "X86" />
         <cfset response[ "OSType" ] = "Desktop" />
-		<cfset response[ "OSVersion" ] = "10.6.*,10.7.*,10.8.*,10.9.*" />
+		<cfset response[ "OSVersion" ] = "*" />
         <cfset response[ "bundle_id" ] = "" />
 		<cfset response[ "description" ] = "" />
         <cfset response[ "description_url" ] = "" />
@@ -100,6 +100,36 @@
 		<cfset response[ "patch_status" ] = "" />
         <cfset response[ "patch_vendor" ] = "" />
 		<cfset response[ "patch_version" ] = "0" />
+		
+        <cfreturn response>
+    </cffunction>
+
+    <cffunction name="autoPKGObj" access="private" returntype="struct" output="no">
+
+    	<cfset response = {} />
+
+        <cfset response[ "puuid" ] = "" />
+		<cfset response[ "bundle_id" ] = "" />
+		<cfset response[ "patch_name" ] = "" />
+		<cfset response[ "patch_ver" ] = "" />
+		<cfset response[ "patch_vendor" ] = "" />
+		<cfset response[ "patch_install_weight" ] = "30" />
+		<cfset response[ "description" ] = "" />
+		<cfset response[ "description_url" ] = "" />
+		<cfset response[ "patch_severity" ] = "High" />
+		<cfset response[ "patch_state" ] = "" />
+		<cfset response[ "patch_reboot" ] = "No" />
+		<cfset response[ "cve_id" ] = "" />
+		<cfset response[ "active" ] = "0" />
+		<cfset response[ "pkg_preinstall" ] = "" />
+		<cfset response[ "pkg_postinstall" ] = "" />
+		<cfset response[ "pkg_name" ] = "AUTOPKG" />
+		<cfset response[ "pkg_env_var" ] = "" />
+		<!--- Criteria --->
+		<cfset response[ "OSArch" ] = "X86" />
+		<cfset response[ "OSType" ] = "Mac OS X, Mac OS X Server" />
+		<cfset response[ "OSVersion" ] = "*" />
+		<cfset response[ "patch_criteria_enc" ] = arrayNew(1) />
 		
         <cfreturn response>
     </cffunction>
@@ -790,7 +820,143 @@
 		
 		<cfreturn result>
 	</cffunction>
+<!--- **************************************************************************************** --->
+<!---	AutoPKG Support --->
 	
+	<cffunction name="postAutoPKGPatch" access="remote" returnType="struct" returnFormat="json" output="false">
+		<cfargument name="user">
+		<cfargument name="token">
+		<cfargument name="autoPKGData">
+		
+        <cfset var response = responseObj(0) />
+		
+		<!--- Make Sure the Auth info is Good --->
+		<cfif NOT isValidAuthToken(arguments.user,arguments.token)>
+			<cfset response.errorNo = "9000">
+			<cfset response.errorMsg = "Invalid auth data.">
+			<cfreturn response>
+		</cfif>
+
+		<!--- Is Valid JSON Data --->
+		<cfif NOT IsJSON(arguments.autoPKGData)> 
+			<cfset response.errorNo = "9001">
+			<cfset response.errorMsg = "Invalid data type.">
+			<cfreturn response>
+		</cfif>
+		<cfset var aPKGJSON = DeserializeJSON(arguments.autoPKGData) />
+
+		<!--- Check to see if required fields are included --->
+		<cfif NOT IsValidPatchObj(arguments.autoPKGData)>
+			<cfset response.errorNo = "9002">
+			<cfset response.errorMsg = "Invalid data.">
+			<cfreturn response>
+		</cfif>
+
+		<!--- Populate patch object with values --->
+		<cfset var patch = autoPKGObj() />
+		<cfset autoPKGKeys = StructKeyList(arguments.autoPKGData,",")>
+		<cfloop index="key" list="#autoPKGKeys#" delimiters = ",">  
+		    <cfif NOT structkeyexists(patch,key)>
+		    	<cfset patch[key] = arguments.autoPKGData[key]>
+		    </cfif>   
+		</cfloop>
+		
+		<!--- Add Patch to Database --->
+		<cftry>
+			<cfset patchID = #CreateUUID()#>
+			<cfset patch.puuid = patchID>
+			<cfset preInstallScpt = ToString( ToBinary( patch.pkg_preinstall ) ) />
+			<cfset postInstallScpt = ToString( ToBinary( patch.pkg_postinstall ) ) />
+
+			<!--- Insert Main Patch Data --->
+			<cfquery name="qAddPatch" datasource="#this.ds#"> 
+	            Insert Into mp_patches ( puuid,bundle_id,patch_name,patch_ver,
+	            							  patch_severity,patch_state,active, patch_vendor,
+	            							  patch_install_weight,description,description_url,patch_reboot,
+	            							  cve_id,pkg_preinstall,pkg_postinstall,pkg_env_var, 
+	            							  cDate, mDate )
+	            Values ( <cfqueryparam value="#patch.puuid#">, <cfqueryparam value="#patch.bundle_id#">, <cfqueryparam value="#patch.patch_name#">, <cfqueryparam value="#patch.patch_ver#">,
+	            	<cfqueryparam value="#patch.patch_severity#">, <cfqueryparam value="#patch.patch_state#">, <cfqueryparam value="#patch.active#">, <cfqueryparam value="#patch.patch_vendor#">,
+	            	<cfqueryparam value="#patch.patch_install_weight#">, <cfqueryparam value="#patch.description#">, <cfqueryparam value="#patch.description_url#">, <cfqueryparam value="#patch.patch_reboot#">,
+	            	<cfqueryparam value="#patch.cve_id#">, <cfqueryparam value="#preInstallScpt#">,<cfqueryparam value="#postInstallScpt#">, <cfqueryparam value="#patch.pkg_env_var#">,
+	            	#CreateODBCDateTime(now())#, #CreateODBCDateTime(now())#)
+	        </cfquery>
+	        <!--- Criteria --->
+	        <cfquery name="qAddPatchC1" datasource="#this.ds#"> 
+	            Insert Into mp_patches_criteria ( puuid, type, type_data, type_order )
+	            Values ( <cfqueryparam value="#patch.puuid#">, "OSType", <cfqueryparam value="#patch.OSType#">, <cfqueryparam value="1">)
+	        </cfquery>
+	        <cfquery name="qAddPatchC2" datasource="#this.ds#"> 
+	            Insert Into mp_patches_criteria ( puuid, type, type_data, type_order )
+	            Values ( <cfqueryparam value="#patch.puuid#">, "OSVersion", <cfqueryparam value="#patch.OSVersion#">, <cfqueryparam value="2">)
+	        </cfquery>
+	        <cfquery name="qAddPatchC3" datasource="#this.ds#"> 
+	            Insert Into mp_patches_criteria ( puuid, type, type_data, type_order )
+	            Values ( <cfqueryparam value="#patch.puuid#">, "OSArch", <cfqueryparam value="#patch.OSArch#">, <cfqueryparam value="3">)
+	        </cfquery>
+	        <!--- Criteria Array --->
+	        <cfloop index="i" from="1" to="#arrayLen(patch.patch_criteria_enc)#">
+	        	<cfset xOrder = i + 3>
+	        	<cfset cList = patch.patch_criteria_enc[i]>
+	        	<cfset cType = #trim(listGetAt(cList, 1, "@"))#>
+	        	<cfset cQry =  #ListDeleteAt(cList, 1, "@")#>
+	        	<!--- Might Have to use Base64 if the type is script --->
+		        <cfquery name="qAddPatchC4" datasource="#this.ds#"> 
+		             Insert Into mp_patches_criteria ( puuid, type, type_data, type_order )
+		             Values ( <cfqueryparam value="#patch.puuid#">, <cfqueryparam value="#cType#">, <cfqueryparam value="#cQry#">, <cfqueryparam value="#xOrder#">)
+		        </cfquery>
+	        </cfloop>
+	        
+	        <cfset response.result = patch.puuid>
+
+			<cfcatch>
+				<cfset response.errorno = "9003">
+				<cfset response.errormsg = "Error: #cfcatch.Detail# #cfcatch.message#">
+				<cfreturn response>
+			</cfcatch>
+		</cftry>
+        
+        <cfreturn response>
+    </cffunction>
+
+    <cffunction name="IsValidPatchObj" access="private" returntype="any" output="no">
+        <cfargument name="model" required="true" type="struct" />
+        <cfset result = 0 />
+
+		<cfset reqObjKeys=["bundle_id","patch_name","patch_ver","patch_severity","patch_state","OSArch","OSType","OSVersion","patch_criteria_enc"]>
+        
+        <cfloop array=#objKeys# index="o">
+            <cfif NOT structkeyexists(arguments.model,o)>
+                <cfset result = 1 />
+            </cfif>
+        </cfloop>
+        
+        <cfif result EQ 0>
+            <cfreturn True>
+        <cfelse>
+            <cfreturn False>
+        </cfif>
+    </cffunction>
+
+    <cffunction name="IsValidCriteria" access="private" returntype="any" output="no">
+        <cfargument name="model" required="true" type="struct" />
+        <cfset result = 0 />
+
+		<cfset reqObjKeys=["bundle_id","patch_name","patch_ver","patch_severity","patch_state","OSArch","OSType","OSVersion","patch_criteria_enc"]>
+        
+        <cfloop array=#objKeys# index="o">
+            <cfif NOT structkeyexists(arguments.model,o)>
+                <cfset result = 1 />
+            </cfif>
+        </cfloop>
+        
+        <cfif result EQ 0>
+            <cfreturn True>
+        <cfelse>
+            <cfreturn False>
+        </cfif>
+    </cffunction>
+
 	<cfscript>
 	/**
 	 * Replaces a huge amount of unnecessary whitespace from your HTML code.
