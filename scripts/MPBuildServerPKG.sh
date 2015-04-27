@@ -104,7 +104,7 @@ chown -R $OWNERGRP ${MPSERVERBASE}
 
 
 cp -r ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpws
-mv ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpsite
+cp -r ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpsite
 mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Files
 mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Errors
 mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Processed
@@ -142,6 +142,7 @@ chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpsite
 
 chown -R $OWNERGRP ${MPSERVERBASE}/Logs
 chmod 0775 ${MPSERVERBASE}
+rm -rf ${MPSERVERBASE}/apache-tomcat
 
 # ------------------
 # Clean up structure place holders
