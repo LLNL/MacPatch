@@ -85,4 +85,6 @@ unzip /Library/MacPatch/Server/conf/bin/MPServerAdmin.app.zip
 # ------------------------------------
 /Library/MacPatch/Server/conf/scripts/Permissions.sh
 
+open /Library/MacPatch/Server
+
 exit 0
