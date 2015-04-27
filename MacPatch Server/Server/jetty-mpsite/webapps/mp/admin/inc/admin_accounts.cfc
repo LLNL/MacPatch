@@ -24,7 +24,7 @@
         
         <cftry>
 			<cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-				Select b.rid, b.user_id, b.user_type, b.group_id, b.last_login, b.number_of_logins, b.enabled
+				Select b.rid, b.user_id, b.user_type, b.group_id, b.last_login, b.number_of_logins, b.enabled, b.user_email, b.email_notification
                 from mp_adm_group_users b
                 LEFT Join mp_adm_users a ON a.user_id = b.user_id
 				<cfif blnSearch AND strSearch NEQ "">
@@ -40,59 +40,7 @@
 				<cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">					
 			</cfcatch>		
 		</cftry>
-        <!---
-	    <cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
-	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
-	    <cfargument name="searchString" required="no" default="" hint="Search Text">
-		
-		<cfset var arrUsers = ArrayNew(1)>
-		<cfset var strMsg = "">
-		<cfset var strMsgType = "Success">
-		<cfset var records = "">
-		<cfset var blnSearch = false>
-		<cfset var strSearch = "">	
-        <cfif session.IsAdmin EQ False>
-			<cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-                Select b.rid, b.user_id, b.user_type, b.group_id, b.last_login, b.number_of_logins, b.enabled
-				from mp_adm_group_users b
-				LEFT Join mp_adm_users a ON a.user_id = b.user_id
-                Where b.user_id = '#session.Username#'
-                ORDER BY #sidx# #sord#				
-            </cfquery>
-		<cfelse>
-			<cfif Arguments._search>
-				<cfset strSearch = buildSearchString(Arguments.searchField,Arguments.searchOper,Arguments.searchString)>
-				<cfset blnSearch = true>
-				<cftry>
-					<cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-						Select b.rid, b.user_id, b.user_type, b.group_id, b.last_login, b.number_of_logins, b.enabled
-						from mp_adm_group_users b
-						LEFT Join mp_adm_users a ON a.user_id = b.user_id
-						Where 
-							#PreserveSingleQuotes(strSearch)#	
-					</cfquery>
-					
-	                <cfcatch type="any">
-						<cfset blnSearch = false>					
-						<cfset strMsgType = "Error">
-						<cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">					
-					</cfcatch>		
-				</cftry>
-			<cfelse>
-	            <cfquery name="selUsers" datasource="#session.dbsource#" result="res">
-	                Select b.rid, b.user_id, b.user_type, b.group_id, b.last_login, b.number_of_logins, b.enabled
-					from mp_adm_group_users b
-					LEFT Join mp_adm_users a ON a.user_id = b.user_id
-	                Where 0=0
-	                <cfif blnSearch>
-	                    AND 
-	                        #PreserveSingleQuotes(strSearch)#
-	                </cfif>
-	                ORDER BY #sidx# #sord#				
-	            </cfquery>
-			</cfif>
-		</cfif>
-		--->
+       
 		<cfset records = selUsers>
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
 		<cfset end = (start-1) + arguments.rows>
@@ -127,6 +75,17 @@
 			    	<cfset eType = "Yes">
 			    </cfdefaultcase> 
 			</cfswitch> 
+			<cfswitch expression="#email_notification#"> 
+			    <cfcase value="0"> 
+					<cfset enType = "No">
+			    </cfcase> 
+			    <cfcase value="1"> 
+					<cfset enType = "Yes">
+			    </cfcase> 
+			    <cfdefaultcase> 
+			    	<cfset enType = "No">
+			    </cfdefaultcase> 
+			</cfswitch> 
 			<cfswitch expression="#user_type#"> 
 			    <cfcase value="0"> 
 					<cfset uType = "Local">
@@ -141,7 +100,7 @@
 			    	<cfset uType = "Undefined">
 			    </cfdefaultcase> 
 			</cfswitch> 
-			<cfset arrUsers[i] = [#rid#, #user_id#, #uType#, #gType#, #last_login#, #number_of_logins#, #eType#]>
+			<cfset arrUsers[i] = [#rid#, #user_id#, #uType#, #gType#, #last_login#, #number_of_logins#, #eType#, #user_email#, #enType#]>
 			<cfset i = i + 1>			
 		</cfloop>
 

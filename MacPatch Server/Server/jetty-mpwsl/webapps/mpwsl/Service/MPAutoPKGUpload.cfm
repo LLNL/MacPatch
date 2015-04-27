@@ -1,5 +1,10 @@
 <cfset baseLoc = "/Library/MacPatch/Content/Web/patches">
 
+<cflog file="MPAutoPKGUpload" type="error" application="no" text="-----------------------------------------------------------------">
+<cflog file="MPAutoPKGUpload" type="error" application="no" text="patchID: #form.patchID#">
+<cflog file="MPAutoPKGUpload" type="error" application="no" text="userID: #form.userID#">
+<cflog file="MPAutoPKGUpload" type="error" application="no" text="token: #form.token#">
+
 <cfset response = responseObj(0) />
 <cfif NOT IsDefined("form.patchID") OR NOT IsDefined("form.userID") OR NOT IsDefined("form.token")>
 		<cfset response.errorno = "1" />
@@ -37,7 +42,13 @@
 	      	Destination="#ulTmpPath#"
 	      	nameConflict="overwrite"
 	        mode="644" result="pkg1">
-	<cfset aap = #ArrayAppend(pkgs, pkg1.clientFile)#>		
+
+	<cfset aap = #ArrayAppend(pkgs, pkg1.clientFile)#>	
+
+	<cfset theFilePath = #baseLoc# & "/" & #pkgUUID# & "/" & #pkg1.clientfile#>
+	<cfset pkg_url = "/patches/" & #pkgUUID# & "/" & #pkg1.clientFile#>
+	<cfset pkg_sizeK = #pkg1.fileSize# / 1024>
+
 </cfif>
 
 <!--- Move Packages To New Location --->
@@ -55,6 +66,7 @@
 <cfelse>
 	<cfset response.errorno = "4" />
 	<cfset response.errormsg = "Error: Package ID path was already created." />
+	<cfdirectory action="delete" directory="#ulTmpPath#" recurse="true">
 	<cfoutput>#Trim(SerializeJSON(response))#</cfoutput>
 	<cfabort>	
 </cfif>
@@ -63,9 +75,39 @@
 	<cfset pkg_source = ulTmpPath & "/" & #pkgs[i]#>
 	<cfset pkg_source = #Replace(pkg_source,"//","/","All")#>
 	<cftry>
+
+		<!--- Get the Name of the package --->
+		<cfparam name="pkg_name" default="NULL">
+		<cfset pkgFileInfo = GetFileinfo(pkg_source) /> 
+		<cfif FindNocase(".zip",pkgFileInfo.name)>
+			<cfset md5Hash = HashBinary(pkg_source) />
+			<cfzip action="list" zipfile="#pkg_source#" variable="zipContents" recurse="FALSE" />
+			<cfloop query="zipContents">
+				<cfif #name# Contains ".mpkg" OR #name# Contains ".pkg">
+					<cfset pkg_name = #SpanExcluding(name,"/")#>
+		        	<cfbreak>
+			    </cfif>
+			</cfloop>
+		</cfif>
+
 		<cffile action="move" source="#pkg_source#" destination="#new_pkgBaseDir#">
+		<!--- Add Package Info To DB --->
+		<cfquery datasource="mpds" name="qUpdatePatchRecord">
+			Update mp_patches
+    		Set pkg_name = <cfqueryparam value="#pkg_name#" cfsqltype="cf_sql_varchar">, 
+			pkg_hash = <cfqueryparam value="#md5Hash#" cfsqltype="cf_sql_varchar">, 
+			pkg_path = '#theFilePath#', 
+			pkg_url = <cfqueryparam value="#pkg_url#" cfsqltype="cf_sql_varchar">, 
+			pkg_size = <cfqueryparam value="#pkg_sizeK#" cfsqltype="cf_sql_varchar">
+			Where puuid = '#pkgUUID#'
+		</cfquery>
+
 		<cfcatch>
-			<cfoutput>Error: #cfcatch.Detail#</cfoutput>
+			<cflog file="MPAutoPKGUpload" type="error" application="no" text="#cfcatch.Detail# #cfcatch.message#">
+			<cfset response.errorno = "5" />
+			<cfset response.errormsg = #cfcatch.Detail# />
+			<cfoutput>#Trim(SerializeJSON(response))#</cfoutput>
+			<cfdirectory action="delete" directory="#ulTmpPath#" recurse="true">
 			<cfabort>
 		</cfcatch>
 	</cftry>

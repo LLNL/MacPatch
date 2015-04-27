@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+  <head>
+    <title>Database Settings</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="Database Settings">
+    <link href="hs_desktop/design.css" media="screen" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="hs_mainwrapper">
+    <div id="hs_head">
+    <div id="hs_logo">
+    </div>
+    <div id="hs_headtext">
+    <h2>Database Settings</h2>
+    <p></p>
+    </div>
+    </div>
+
+    MacPatch uses a MySQL database for it's data store. All of connection information is configured on the database tab. Prior to setting up the server the MySQL database software is to be installed and setup. Once setup and running the following attributes need to be populated.<div><br></div><div><ul><li>DB Hostname</li><li>DB TCP Port (If Changed from default value)</li><li>Database Name&nbsp;<meta http-equiv="Content-Type" content="text/html; charset=utf-8">(If Changed from default value)</li><li>DB User&nbsp;<meta http-equiv="Content-Type" content="text/html; charset=utf-8">(If Changed from default value)</li><li>DB Password</li><li>DB User RO&nbsp;<meta http-equiv="Content-Type" content="text/html; charset=utf-8">(If Changed from default value)</li><li>DB User RO Password&nbsp;</li></ul><div><br></div><div><br></div><div><div><b><font class="Apple-style-span" size="5">Configure MySQL Database</font></b></div><div><b><font class="Apple-style-span" size="4"><br></font></b></div><div>Run the following commands via the Terminal.app.</div><div><br></div><div><b>Log in as the MySQL root user</b></div><div><br></div></div></div><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><div><div><div>mysql -u root -p</div></div></div></blockquote><div><div><div>&nbsp; &nbsp;&nbsp;</div><div><b>Run the following MySQL commands</b></div><div>Replace the word "Password" with your own password.</div><div><br></div></div></div><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><div><div><div>mysql&gt; CREATE DATABASE MacPatchDB;</div></div></div><div><div><div>mysql&gt; CREATE USER 'mpdbadm'@'%' IDENTIFIED BY 'Password';</div></div></div><div><div><div>mysql&gt; GRANT ALL ON MacPatchDB.* TO 'mpdbadm'@'%' IDENTIFIED BY 'Password';</div></div></div><div><div><div>mysql&gt; GRANT ALL PRIVILEGES ON MacPatchDB.* TO 'mpdbadm'@'localhost' IDENTIFIED BY 'Password';</div></div></div><div><div><div>mysql&gt; CREATE USER 'mpdbro'@'%' IDENTIFIED BY 'Password';</div></div></div><div><div><div>mysql&gt; GRANT SELECT ON MacPatchDB.* TO 'mpdbro'@'%';</div></div></div><div><div><div>mysql&gt; SET GLOBAL log_bin_trust_function_creators = 1;</div></div></div><div><div><div>mysql&gt; FLUSH PRIVILEGES;</div></div></div></blockquote><div><div><div>&nbsp; &nbsp;&nbsp;</div><div><b>Delete MySQL anonymous accounts</b></div><div><br></div></div></div><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><div><div><div>mysql&gt; DROP USER ''@'localhost';</div></div></div><div><div><div>mysql&gt; DROP USER ''@'host_name';</div></div></div><div><div><div>mysql&gt; quit</div></div></div></blockquote><div><div><div>&nbsp; &nbsp;&nbsp;</div><div><b>Load Database Schema</b></div><div><br></div><div>The database schema files are located on the MacPatch server in the /Library/MacPatch/Server/conf/Database/ directory. To load the tables and the views, copy the MacPatchDB_Tables.sql and MacPatchDB_Views.sql files to the Database host. The following commands are for a server that is also hosting the MacPatch database.</div><div><br></div></div></div><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><div><div><div>% mysql MacPatchDB -u mpdbadm -p &lt; /Library/MacPatch/Server/conf/Database/MacPatchDB_Tables.sql</div></div></div><div><div><div>% mysql MacPatchDB -u mpdbadm -p &lt; /Library/MacPatch/Server/conf/Database/MacPatchDB_Views.sql</div></div></div></blockquote><div><div><div>&nbsp; &nbsp;&nbsp;</div></div><div><br></div><div><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><a href="macpatch_server_admin.html">Table of contents</a></div></div>
+    </div>
+  </body>
+</html>

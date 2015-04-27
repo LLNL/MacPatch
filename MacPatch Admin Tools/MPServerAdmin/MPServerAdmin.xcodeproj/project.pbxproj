@@ -1,0 +1,590 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8F1D1F391A605A0600397DCF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F381A605A0600397DCF /* main.m */; };
+		8F1D1F411A605A6600397DCF /* HelperTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F401A605A6600397DCF /* HelperTool.m */; };
+		8F1D1F481A605BBF00397DCF /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F441A605BBF00397DCF /* Common.m */; };
+		8F1D1F491A605BBF00397DCF /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F441A605BBF00397DCF /* Common.m */; };
+		8F1D1F4A1A605BBF00397DCF /* Common.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8F1D1F451A605BBF00397DCF /* Common.strings */; };
+		8F1D1F4C1A60697500397DCF /* gov.llnl.mp.admin.helper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F1D1F361A605A0600397DCF /* gov.llnl.mp.admin.helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8F1D1F561A60AE5600397DCF /* WebServerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F541A60AE5600397DCF /* WebServerVC.m */; };
+		8F1D1F571A60AE5600397DCF /* WebServerVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F1D1F551A60AE5600397DCF /* WebServerVC.xib */; };
+		8F1D1F5B1A6437E600397DCF /* SUSCatalog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F5A1A6437E600397DCF /* SUSCatalog.m */; };
+		8F61C81F1A5DBD6700705CD8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C81E1A5DBD6700705CD8 /* AppDelegate.m */; };
+		8F61C8211A5DBD6700705CD8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C8201A5DBD6700705CD8 /* main.m */; };
+		8F61C8231A5DBD6700705CD8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C8221A5DBD6700705CD8 /* Images.xcassets */; };
+		8F61C8261A5DBD6700705CD8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C8241A5DBD6700705CD8 /* MainMenu.xib */; };
+		8F61C84A1A5F11F600705CD8 /* AdminServiceVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C8481A5F11F600705CD8 /* AdminServiceVC.m */; };
+		8F61C84B1A5F11F600705CD8 /* AdminServiceVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C8491A5F11F600705CD8 /* AdminServiceVC.xib */; };
+		8F61C84F1A5F130100705CD8 /* WebServiceVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C84D1A5F130100705CD8 /* WebServiceVC.m */; };
+		8F61C8501A5F130100705CD8 /* WebServiceVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C84E1A5F130100705CD8 /* WebServiceVC.xib */; };
+		8F61C8691A5F266A00705CD8 /* ApplePatchSyncVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C8671A5F266A00705CD8 /* ApplePatchSyncVC.m */; };
+		8F61C86A1A5F266A00705CD8 /* ApplePatchSyncVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C8681A5F266A00705CD8 /* ApplePatchSyncVC.xib */; };
+		8F61C86E1A5F274400705CD8 /* ContentSyncVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C86C1A5F274400705CD8 /* ContentSyncVC.m */; };
+		8F61C86F1A5F274400705CD8 /* ContentSyncVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C86D1A5F274400705CD8 /* ContentSyncVC.xib */; };
+		8F61C8731A5F279D00705CD8 /* AVSyncVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C8711A5F279D00705CD8 /* AVSyncVC.m */; };
+		8F61C8741A5F279D00705CD8 /* AVSyncVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C8721A5F279D00705CD8 /* AVSyncVC.xib */; };
+		8F61C8781A5F27AE00705CD8 /* DatabaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C8761A5F27AE00705CD8 /* DatabaseVC.m */; };
+		8F61C8791A5F27AE00705CD8 /* DatabaseVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C8771A5F27AE00705CD8 /* DatabaseVC.xib */; };
+		8FB5018F1AEE88D00063FA92 /* MPServerAdmin Help in Resources */ = {isa = PBXBuildFile; fileRef = 8FB5018E1AEE88D00063FA92 /* MPServerAdmin Help */; };
+		8FCD31FC1AD2F65900912BEC /* MPRsyncD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */; };
+		8FCD31FD1AD2F65900912BEC /* MPRsyncD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */; };
+		8FCD32031AD44D0600912BEC /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD32021AD44D0600912BEC /* XMLDictionary.m */; };
+		8FCD32041AD44D0600912BEC /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD32021AD44D0600912BEC /* XMLDictionary.m */; };
+		8FCD321E1ADC16FA00912BEC /* AuthenticationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD321C1ADC16FA00912BEC /* AuthenticationVC.m */; };
+		8FCD321F1ADC16FA00912BEC /* AuthenticationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD321C1ADC16FA00912BEC /* AuthenticationVC.m */; };
+		8FCD32201ADC16FA00912BEC /* AuthenticationVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FCD321D1ADC16FA00912BEC /* AuthenticationVC.xib */; };
+		8FCFB3521ACB3367008DBEDB /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCFB3511ACB3367008DBEDB /* Constants.m */; };
+		8FCFB3531ACB3367008DBEDB /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCFB3511ACB3367008DBEDB /* Constants.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8F1D1F341A605A0600397DCF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		8F1D1F4B1A60696100397DCF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchServices;
+			dstSubfolderSpec = 1;
+			files = (
+				8F1D1F4C1A60697500397DCF /* gov.llnl.mp.admin.helper in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8F1D1F361A605A0600397DCF /* gov.llnl.mp.admin.helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = gov.llnl.mp.admin.helper; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F1D1F381A605A0600397DCF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8F1D1F3D1A605A6600397DCF /* gov.llnl.mp.admin.helper-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "gov.llnl.mp.admin.helper-Info.plist"; sourceTree = "<group>"; };
+		8F1D1F3E1A605A6600397DCF /* gov.llnl.mp.admin.helper-Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "gov.llnl.mp.admin.helper-Launchd.plist"; sourceTree = "<group>"; };
+		8F1D1F3F1A605A6600397DCF /* HelperTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelperTool.h; sourceTree = "<group>"; };
+		8F1D1F401A605A6600397DCF /* HelperTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelperTool.m; sourceTree = "<group>"; };
+		8F1D1F431A605BBF00397DCF /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		8F1D1F441A605BBF00397DCF /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
+		8F1D1F461A605BBF00397DCF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Common.strings; sourceTree = "<group>"; };
+		8F1D1F471A605BBF00397DCF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Common.strings; sourceTree = "<group>"; };
+		8F1D1F531A60AE5600397DCF /* WebServerVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServerVC.h; sourceTree = "<group>"; };
+		8F1D1F541A60AE5600397DCF /* WebServerVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebServerVC.m; sourceTree = "<group>"; };
+		8F1D1F551A60AE5600397DCF /* WebServerVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebServerVC.xib; sourceTree = "<group>"; };
+		8F1D1F591A6437E600397DCF /* SUSCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUSCatalog.h; path = Models/SUSCatalog.h; sourceTree = "<group>"; };
+		8F1D1F5A1A6437E600397DCF /* SUSCatalog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUSCatalog.m; path = Models/SUSCatalog.m; sourceTree = "<group>"; };
+		8F61C8181A5DBD6700705CD8 /* MPServerAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPServerAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F61C81C1A5DBD6700705CD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8F61C81D1A5DBD6700705CD8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		8F61C81E1A5DBD6700705CD8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		8F61C8201A5DBD6700705CD8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8F61C8221A5DBD6700705CD8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		8F61C8251A5DBD6700705CD8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		8F61C8471A5F11F600705CD8 /* AdminServiceVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdminServiceVC.h; sourceTree = "<group>"; };
+		8F61C8481A5F11F600705CD8 /* AdminServiceVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdminServiceVC.m; sourceTree = "<group>"; };
+		8F61C8491A5F11F600705CD8 /* AdminServiceVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AdminServiceVC.xib; sourceTree = "<group>"; };
+		8F61C84C1A5F130100705CD8 /* WebServiceVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServiceVC.h; sourceTree = "<group>"; };
+		8F61C84D1A5F130100705CD8 /* WebServiceVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebServiceVC.m; sourceTree = "<group>"; };
+		8F61C84E1A5F130100705CD8 /* WebServiceVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebServiceVC.xib; sourceTree = "<group>"; };
+		8F61C8661A5F266A00705CD8 /* ApplePatchSyncVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePatchSyncVC.h; sourceTree = "<group>"; };
+		8F61C8671A5F266A00705CD8 /* ApplePatchSyncVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplePatchSyncVC.m; sourceTree = "<group>"; };
+		8F61C8681A5F266A00705CD8 /* ApplePatchSyncVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ApplePatchSyncVC.xib; sourceTree = "<group>"; };
+		8F61C86B1A5F274400705CD8 /* ContentSyncVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentSyncVC.h; sourceTree = "<group>"; };
+		8F61C86C1A5F274400705CD8 /* ContentSyncVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContentSyncVC.m; sourceTree = "<group>"; };
+		8F61C86D1A5F274400705CD8 /* ContentSyncVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ContentSyncVC.xib; sourceTree = "<group>"; };
+		8F61C8701A5F279D00705CD8 /* AVSyncVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVSyncVC.h; sourceTree = "<group>"; };
+		8F61C8711A5F279D00705CD8 /* AVSyncVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVSyncVC.m; sourceTree = "<group>"; };
+		8F61C8721A5F279D00705CD8 /* AVSyncVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AVSyncVC.xib; sourceTree = "<group>"; };
+		8F61C8751A5F27AE00705CD8 /* DatabaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseVC.h; sourceTree = "<group>"; };
+		8F61C8761A5F27AE00705CD8 /* DatabaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseVC.m; sourceTree = "<group>"; };
+		8F61C8771A5F27AE00705CD8 /* DatabaseVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DatabaseVC.xib; sourceTree = "<group>"; };
+		8FB5018E1AEE88D00063FA92 /* MPServerAdmin Help */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "MPServerAdmin Help"; path = "Resources/MPServerAdmin Help"; sourceTree = "<group>"; };
+		8FCD31FA1AD2F65900912BEC /* MPRsyncD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPRsyncD.h; sourceTree = "<group>"; };
+		8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPRsyncD.m; sourceTree = "<group>"; };
+		8FCD32011AD44D0600912BEC /* XMLDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDictionary.h; sourceTree = "<group>"; };
+		8FCD32021AD44D0600912BEC /* XMLDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLDictionary.m; sourceTree = "<group>"; };
+		8FCD321B1ADC16FA00912BEC /* AuthenticationVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationVC.h; sourceTree = "<group>"; };
+		8FCD321C1ADC16FA00912BEC /* AuthenticationVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AuthenticationVC.m; sourceTree = "<group>"; };
+		8FCD321D1ADC16FA00912BEC /* AuthenticationVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AuthenticationVC.xib; sourceTree = "<group>"; };
+		8FCFB3501ACB3367008DBEDB /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		8FCFB3511ACB3367008DBEDB /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8F1D1F331A605A0600397DCF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F61C8151A5DBD6700705CD8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8F1D1F371A605A0600397DCF /* gov.llnl.mp.admin.helper */ = {
+			isa = PBXGroup;
+			children = (
+				8F1D1F3D1A605A6600397DCF /* gov.llnl.mp.admin.helper-Info.plist */,
+				8F1D1F3E1A605A6600397DCF /* gov.llnl.mp.admin.helper-Launchd.plist */,
+				8F1D1F381A605A0600397DCF /* main.m */,
+				8F1D1F3F1A605A6600397DCF /* HelperTool.h */,
+				8F1D1F401A605A6600397DCF /* HelperTool.m */,
+				8FCD31FA1AD2F65900912BEC /* MPRsyncD.h */,
+				8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */,
+				8FCD32011AD44D0600912BEC /* XMLDictionary.h */,
+				8FCD32021AD44D0600912BEC /* XMLDictionary.m */,
+			);
+			path = gov.llnl.mp.admin.helper;
+			sourceTree = "<group>";
+		};
+		8F1D1F421A605BBF00397DCF /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				8FCFB3501ACB3367008DBEDB /* Constants.h */,
+				8FCFB3511ACB3367008DBEDB /* Constants.m */,
+				8F1D1F431A605BBF00397DCF /* Common.h */,
+				8F1D1F441A605BBF00397DCF /* Common.m */,
+				8F1D1F451A605BBF00397DCF /* Common.strings */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		8F1D1F581A6437C200397DCF /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8F1D1F591A6437E600397DCF /* SUSCatalog.h */,
+				8F1D1F5A1A6437E600397DCF /* SUSCatalog.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		8F61C80F1A5DBD6700705CD8 = {
+			isa = PBXGroup;
+			children = (
+				8F61C81A1A5DBD6700705CD8 /* MPServerAdmin */,
+				8F1D1F371A605A0600397DCF /* gov.llnl.mp.admin.helper */,
+				8F1D1F421A605BBF00397DCF /* Common */,
+				8F61C8191A5DBD6700705CD8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8F61C8191A5DBD6700705CD8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8F61C8181A5DBD6700705CD8 /* MPServerAdmin.app */,
+				8F1D1F361A605A0600397DCF /* gov.llnl.mp.admin.helper */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8F61C81A1A5DBD6700705CD8 /* MPServerAdmin */ = {
+			isa = PBXGroup;
+			children = (
+				8F61C81D1A5DBD6700705CD8 /* AppDelegate.h */,
+				8F61C81E1A5DBD6700705CD8 /* AppDelegate.m */,
+				8F61C8221A5DBD6700705CD8 /* Images.xcassets */,
+				8F61C8241A5DBD6700705CD8 /* MainMenu.xib */,
+				8F61C81B1A5DBD6700705CD8 /* Supporting Files */,
+				8F1D1F581A6437C200397DCF /* Models */,
+				8F61C87A1A5F291F00705CD8 /* Views */,
+			);
+			path = MPServerAdmin;
+			sourceTree = "<group>";
+		};
+		8F61C81B1A5DBD6700705CD8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8FB5018E1AEE88D00063FA92 /* MPServerAdmin Help */,
+				8F61C81C1A5DBD6700705CD8 /* Info.plist */,
+				8F61C8201A5DBD6700705CD8 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8F61C87A1A5F291F00705CD8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8F1D1F531A60AE5600397DCF /* WebServerVC.h */,
+				8F1D1F541A60AE5600397DCF /* WebServerVC.m */,
+				8F1D1F551A60AE5600397DCF /* WebServerVC.xib */,
+				8F61C8471A5F11F600705CD8 /* AdminServiceVC.h */,
+				8F61C8481A5F11F600705CD8 /* AdminServiceVC.m */,
+				8F61C8491A5F11F600705CD8 /* AdminServiceVC.xib */,
+				8F61C84C1A5F130100705CD8 /* WebServiceVC.h */,
+				8F61C84D1A5F130100705CD8 /* WebServiceVC.m */,
+				8F61C84E1A5F130100705CD8 /* WebServiceVC.xib */,
+				8F61C8661A5F266A00705CD8 /* ApplePatchSyncVC.h */,
+				8F61C8671A5F266A00705CD8 /* ApplePatchSyncVC.m */,
+				8F61C8681A5F266A00705CD8 /* ApplePatchSyncVC.xib */,
+				8F61C86B1A5F274400705CD8 /* ContentSyncVC.h */,
+				8F61C86C1A5F274400705CD8 /* ContentSyncVC.m */,
+				8F61C86D1A5F274400705CD8 /* ContentSyncVC.xib */,
+				8F61C8701A5F279D00705CD8 /* AVSyncVC.h */,
+				8F61C8711A5F279D00705CD8 /* AVSyncVC.m */,
+				8F61C8721A5F279D00705CD8 /* AVSyncVC.xib */,
+				8F61C8751A5F27AE00705CD8 /* DatabaseVC.h */,
+				8F61C8761A5F27AE00705CD8 /* DatabaseVC.m */,
+				8F61C8771A5F27AE00705CD8 /* DatabaseVC.xib */,
+				8FCD321B1ADC16FA00912BEC /* AuthenticationVC.h */,
+				8FCD321C1ADC16FA00912BEC /* AuthenticationVC.m */,
+				8FCD321D1ADC16FA00912BEC /* AuthenticationVC.xib */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8F1D1F351A605A0600397DCF /* gov.llnl.mp.admin.helper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F1D1F3C1A605A0600397DCF /* Build configuration list for PBXNativeTarget "gov.llnl.mp.admin.helper" */;
+			buildPhases = (
+				8F1D1F321A605A0600397DCF /* Sources */,
+				8F1D1F331A605A0600397DCF /* Frameworks */,
+				8F1D1F341A605A0600397DCF /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gov.llnl.mp.admin.helper;
+			productName = gov.llnl.mp.admin.helper;
+			productReference = 8F1D1F361A605A0600397DCF /* gov.llnl.mp.admin.helper */;
+			productType = "com.apple.product-type.tool";
+		};
+		8F61C8171A5DBD6700705CD8 /* MPServerAdmin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F61C8351A5DBD6700705CD8 /* Build configuration list for PBXNativeTarget "MPServerAdmin" */;
+			buildPhases = (
+				8F61C8141A5DBD6700705CD8 /* Sources */,
+				8F61C8151A5DBD6700705CD8 /* Frameworks */,
+				8F61C8161A5DBD6700705CD8 /* Resources */,
+				8F1D1F4B1A60696100397DCF /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MPServerAdmin;
+			productName = MPServerAdmin;
+			productReference = 8F61C8181A5DBD6700705CD8 /* MPServerAdmin.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8F61C8101A5DBD6700705CD8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0620;
+				ORGANIZATIONNAME = "Charles Heizer";
+				TargetAttributes = {
+					8F1D1F351A605A0600397DCF = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					8F61C8171A5DBD6700705CD8 = {
+						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = BLZUAP2L36;
+					};
+				};
+			};
+			buildConfigurationList = 8F61C8131A5DBD6700705CD8 /* Build configuration list for PBXProject "MPServerAdmin" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				de,
+			);
+			mainGroup = 8F61C80F1A5DBD6700705CD8;
+			productRefGroup = 8F61C8191A5DBD6700705CD8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8F61C8171A5DBD6700705CD8 /* MPServerAdmin */,
+				8F1D1F351A605A0600397DCF /* gov.llnl.mp.admin.helper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8F61C8161A5DBD6700705CD8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F61C8231A5DBD6700705CD8 /* Images.xcassets in Resources */,
+				8F61C8501A5F130100705CD8 /* WebServiceVC.xib in Resources */,
+				8F1D1F4A1A605BBF00397DCF /* Common.strings in Resources */,
+				8F61C86A1A5F266A00705CD8 /* ApplePatchSyncVC.xib in Resources */,
+				8F61C8261A5DBD6700705CD8 /* MainMenu.xib in Resources */,
+				8F61C84B1A5F11F600705CD8 /* AdminServiceVC.xib in Resources */,
+				8F1D1F571A60AE5600397DCF /* WebServerVC.xib in Resources */,
+				8FCD32201ADC16FA00912BEC /* AuthenticationVC.xib in Resources */,
+				8FB5018F1AEE88D00063FA92 /* MPServerAdmin Help in Resources */,
+				8F61C8791A5F27AE00705CD8 /* DatabaseVC.xib in Resources */,
+				8F61C8741A5F279D00705CD8 /* AVSyncVC.xib in Resources */,
+				8F61C86F1A5F274400705CD8 /* ContentSyncVC.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8F1D1F321A605A0600397DCF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FCD31FD1AD2F65900912BEC /* MPRsyncD.m in Sources */,
+				8FCD32041AD44D0600912BEC /* XMLDictionary.m in Sources */,
+				8FCD321F1ADC16FA00912BEC /* AuthenticationVC.m in Sources */,
+				8F1D1F491A605BBF00397DCF /* Common.m in Sources */,
+				8F1D1F391A605A0600397DCF /* main.m in Sources */,
+				8F1D1F411A605A6600397DCF /* HelperTool.m in Sources */,
+				8FCFB3531ACB3367008DBEDB /* Constants.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F61C8141A5DBD6700705CD8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FCD32031AD44D0600912BEC /* XMLDictionary.m in Sources */,
+				8F1D1F561A60AE5600397DCF /* WebServerVC.m in Sources */,
+				8F61C8211A5DBD6700705CD8 /* main.m in Sources */,
+				8F1D1F5B1A6437E600397DCF /* SUSCatalog.m in Sources */,
+				8F61C8731A5F279D00705CD8 /* AVSyncVC.m in Sources */,
+				8F61C86E1A5F274400705CD8 /* ContentSyncVC.m in Sources */,
+				8F61C84F1A5F130100705CD8 /* WebServiceVC.m in Sources */,
+				8F61C81F1A5DBD6700705CD8 /* AppDelegate.m in Sources */,
+				8FCD31FC1AD2F65900912BEC /* MPRsyncD.m in Sources */,
+				8F61C8781A5F27AE00705CD8 /* DatabaseVC.m in Sources */,
+				8F1D1F481A605BBF00397DCF /* Common.m in Sources */,
+				8FCD321E1ADC16FA00912BEC /* AuthenticationVC.m in Sources */,
+				8F61C84A1A5F11F600705CD8 /* AdminServiceVC.m in Sources */,
+				8F61C8691A5F266A00705CD8 /* ApplePatchSyncVC.m in Sources */,
+				8FCFB3521ACB3367008DBEDB /* Constants.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		8F1D1F451A605BBF00397DCF /* Common.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8F1D1F461A605BBF00397DCF /* de */,
+				8F1D1F471A605BBF00397DCF /* en */,
+			);
+			name = Common.strings;
+			sourceTree = "<group>";
+		};
+		8F61C8241A5DBD6700705CD8 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8F61C8251A5DBD6700705CD8 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8F1D1F3A1A605A0600397DCF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "gov.llnl.mp.admin.helperl/gov.llnl.mp.admin.helper-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					"gov.llnl.mp.admin.helper/gov.llnl.mp.admin.helper-Info.plist",
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"gov.llnl.mp.admin.helper/gov.llnl.mp.admin.helper-Launchd.plist",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		8F1D1F3B1A605A0600397DCF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				INFOPLIST_FILE = "gov.llnl.mp.admin.helperl/gov.llnl.mp.admin.helper-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					"gov.llnl.mp.admin.helper/gov.llnl.mp.admin.helper-Info.plist",
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"gov.llnl.mp.admin.helper/gov.llnl.mp.admin.helper-Launchd.plist",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		8F61C8331A5DBD6700705CD8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		8F61C8341A5DBD6700705CD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		8F61C8361A5DBD6700705CD8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MPServerAdmin/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8F61C8371A5DBD6700705CD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MPServerAdmin/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8F1D1F3C1A605A0600397DCF /* Build configuration list for PBXNativeTarget "gov.llnl.mp.admin.helper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F1D1F3A1A605A0600397DCF /* Debug */,
+				8F1D1F3B1A605A0600397DCF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8F61C8131A5DBD6700705CD8 /* Build configuration list for PBXProject "MPServerAdmin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F61C8331A5DBD6700705CD8 /* Debug */,
+				8F61C8341A5DBD6700705CD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8F61C8351A5DBD6700705CD8 /* Build configuration list for PBXNativeTarget "MPServerAdmin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F61C8361A5DBD6700705CD8 /* Debug */,
+				8F61C8371A5DBD6700705CD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8F61C8101A5DBD6700705CD8 /* Project object */;
+}
