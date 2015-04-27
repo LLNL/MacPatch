@@ -34,15 +34,6 @@
                         <action selector="toggleService:" target="-2" id="DB2-Q7-oOf"/>
                     </connections>
                 </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="H2Z-3Y-0Le">
-                    <rect key="frame" x="15" y="405" width="327" height="27"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="MacPatch Web Admin Console" id="GBa-jr-hqv">
-                        <font key="font" metaFont="systemBold" size="22"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="zLx-sc-YBc">
                     <rect key="frame" x="27" y="368" width="92" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -145,6 +136,15 @@
                         <action selector="openAdminConsole:" target="-2" id="PIu-2G-aLF"/>
                     </connections>
                 </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="H2Z-3Y-0Le">
+                    <rect key="frame" x="15" y="405" width="576" height="27"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="MacPatch Web Admin Console" id="GBa-jr-hqv">
+                        <font key="font" metaFont="systemBold" size="22"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
             </subviews>
             <point key="canvasLocation" x="47" y="8"/>
         </customView>

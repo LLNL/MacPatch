@@ -25,7 +25,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="2Vg-la-r3J">
-                    <rect key="frame" x="15" y="405" width="308" height="27"/>
+                    <rect key="frame" x="15" y="405" width="651" height="27"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="MacPatch Database Settings" id="VJ9-gb-2oD">
                         <font key="font" metaFont="systemBold" size="22"/>

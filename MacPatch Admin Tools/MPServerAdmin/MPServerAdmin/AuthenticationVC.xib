@@ -81,7 +81,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="MYS-bh-25t">
-                    <rect key="frame" x="15" y="405" width="267" height="27"/>
+                    <rect key="frame" x="15" y="405" width="601" height="27"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="MacPatch LDAP Settings" id="S5a-g7-YUI">
                         <font key="font" metaFont="systemBold" size="22"/>

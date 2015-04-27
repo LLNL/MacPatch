@@ -32,7 +32,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="FXe-FC-Xzm">
-                    <rect key="frame" x="15" y="405" width="257" height="27"/>
+                    <rect key="frame" x="15" y="405" width="620" height="27"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="MacPatch Content Sync" id="sXr-pa-yb0">
                         <font key="font" metaFont="systemBold" size="22"/>

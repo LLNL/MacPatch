@@ -33,7 +33,7 @@
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UVg-gA-4uI">
-                    <rect key="frame" x="15" y="405" width="236" height="27"/>
+                    <rect key="frame" x="15" y="405" width="432" height="27"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="MacPatch Web Server" id="obq-tw-RJd">
                         <font key="font" metaFont="systemBold" size="22"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

@@ -35,7 +35,7 @@
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="68V-L2-wIu">
-                    <rect key="frame" x="15" y="405" width="257" height="27"/>
+                    <rect key="frame" x="15" y="405" width="582" height="27"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="MacPatch Web Services" id="vKN-hs-JVV">
                         <font key="font" metaFont="systemBold" size="22"/>
