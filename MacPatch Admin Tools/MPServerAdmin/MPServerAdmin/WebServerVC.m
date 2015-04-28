@@ -37,7 +37,7 @@
 
 - (void)viewDidLoad
 {
-    qlinfo(@"Web Server View Did Load");
+    qldebug(@"Web Server View Did Load");
     
     [super viewDidLoad];
     [self checkServiceState];
@@ -77,9 +77,6 @@
 
 - (void)viewDidAppear
 {
-    NSLog(@"viewDidAppear");
-    qlinfo(@"Web Server View Did Appear");
-    
     [self checkServiceState];
     [self showServiceState];
     [self readStartonBootValue];
@@ -141,19 +138,17 @@
     }
     for (NSDictionary *s in jobs)
     {
-        NSLog(@"Looking at jobs, %@", [s objectForKey:@"Label"]);
-        qlinfo(@"Looking at jobs, %@", [s objectForKey:@"Label"]);
+        qltrace(@"Looking at jobs, %@", [s objectForKey:@"Label"]);
         if ([[s objectForKey:@"Label"] isEqualToString:SERVICE_WEBSERVER])
         {
+            qltrace(@"Job found %@", [s objectForKey:@"Label"]);
             if (![s objectForKey:@"PID"])
             {
-                qlinfo(@"No PID");
                 _serviceStatusText.stringValue = SRVS_OFF;
                 _serviceState = 0;
                 _serviceButton.title = @"Start Service";
                 _serviceStatusImage.image = [NSImage imageNamed:@"NSStatusUnavailable"];
             } else {
-                qlinfo(@"Yes PID");
                 _serviceStatusText.stringValue = SRVS_ON;
                 _serviceState = 1;
                 _serviceButton.title = @"Stop Service";
