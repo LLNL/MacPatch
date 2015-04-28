@@ -15,6 +15,9 @@
 #define SRVS_ON         @"Service is running."
 #define SRVS_OFF        @"Service is not running."
 
+#undef  ql_component
+#define ql_component lcl_cMain
+
 @interface WebServerVC () {
     AuthorizationRef    _authRef;
 }
@@ -34,6 +37,8 @@
 
 - (void)viewDidLoad
 {
+    qlinfo(@"Web Server View Did Load");
+    
     [super viewDidLoad];
     [self checkServiceState];
     
@@ -70,6 +75,8 @@
 
 - (void)viewDidAppear
 {
+    qlinfo(@"Web Server View Did Appear");
+    
     [self checkServiceState];
     [self showServiceState];
     [self readStartonBootValue];

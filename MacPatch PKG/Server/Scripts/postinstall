@@ -67,12 +67,12 @@ if [ -f /Library/LaunchDaemons/gov.llnl.mp.httpd.plist ]; then
 	rm /Library/LaunchDaemons/gov.llnl.mp.httpd.plist
 fi
 
-if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.httpd.plist ]; then
-	ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.httpd.plist /Library/LaunchDaemons/gov.llnl.mp.httpd.plist
+#if [ -f /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.httpd.plist ]; then
+#	ln -s /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.httpd.plist /Library/LaunchDaemons/gov.llnl.mp.httpd.plist
 	# Set permissions & ownership
-	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.httpd.plist
-	chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.httpd.plist
-fi
+#	chown root:wheel /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.httpd.plist
+#	chmod 644 /Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.httpd.plist
+#fi
 
 # ------------------------------------
 # Move Server Admin

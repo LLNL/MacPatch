@@ -15,8 +15,16 @@ int main(int argc, char **argv)
     // We just create and start an instance of the main helper tool object and then
     // have it run the run loop forever.
     
-    @autoreleasepool {
+    @autoreleasepool
+    {
         HelperTool *  m;
+        
+        NSArray *paths = NSSearchPathForDirectoriesInDomains( NSLibraryDirectory, NSLocalDomainMask, YES );
+        NSString *logFile = [[paths firstObject] stringByAppendingPathComponent:@"Logs/MPServerAdmin.log"];
+        [LCLLogFile setPath:logFile];
+        lcl_configure_by_name("*", lcl_vDebug);
+        [LCLLogFile setAppendsToExistingLogFile:YES];
+        [LCLLogFile setMirrorsToStdErr:YES];
         
         m = [[HelperTool alloc] init];
         [m run];                // This never comes back...

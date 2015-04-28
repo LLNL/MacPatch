@@ -41,6 +41,14 @@
     // Insert code here to initialize your application
     // put the views into the tabview
     
+    NSArray *paths = NSSearchPathForDirectoriesInDomains( NSLibraryDirectory, NSUserDomainMask, YES );
+    NSString *logFile = [[paths firstObject] stringByAppendingPathComponent:@"Logs/MPServerAdmin.log"];
+    [LCLLogFile setPath:logFile];
+    lcl_configure_by_name("*", lcl_vDebug);
+    [LCLLogFile setAppendsToExistingLogFile:YES];
+    [LCLLogFile setMirrorsToStdErr:YES];
+    
+    
     NSTabViewItem *item;
     item = [[self tabView] tabViewItemAtIndex:0];
     [item setView:[[self webServerVC] view]];

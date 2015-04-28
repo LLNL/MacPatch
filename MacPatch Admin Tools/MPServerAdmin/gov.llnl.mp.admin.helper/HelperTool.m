@@ -55,6 +55,9 @@
 #import "MPRsyncD.h"
 #import "XMLDictionary.h"
 
+#undef  ql_component
+#define ql_component lcl_cHelper
+
 @interface HelperTool () <NSXPCListenerDelegate, HelperToolProtocol>
 
 @property (atomic, strong, readwrite) NSXPCListener *listener;
@@ -248,14 +251,17 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
 #pragma mark WEB Server
 - (void)startWebServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
 {
-    //NSLog(@"Called start Web Server");
+    NSLog(@"Called start Web Server");
     
     NSFileManager *fm = [NSFileManager defaultManager];
     if (![fm fileExistsAtPath:LAUNCHD_FILE_WEBSERVER])
     {
+        qltrace(@"File Does Not Exist %@",LAUNCHD_FILE_WEBSERVER);
+        
         NSError *err = nil;
         [fm copyItemAtPath:LAUNCHD_ORIG_WEBSERVER toPath:LAUNCHD_FILE_WEBSERVER error:&err];
         if (err) {
+            qlerror(@"%@",err.localizedDescription);
             NSLog(@"Error: %@",err.localizedDescription);
             return;
         }
@@ -266,6 +272,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
                               @"wheel",NSFileGroupOwnerAccountName,
                               [NSNumber numberWithInt:420],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
                               nil];
+        qldebug(@"%@",dict);
         
         err = nil;
         [fm setAttributes:dict ofItemAtPath:LAUNCHD_FILE_WEBSERVER error:&err];
@@ -275,8 +282,11 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Load the file
+        qldebug(@"/bin/launchctl args: %@",[NSArray arrayWithObjects:@"load",LAUNCHD_FILE_WEBSERVER, nil]);
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_FILE_WEBSERVER, nil]];
     }
+    
+    qlinfo(@"Set RunAtLoad");
     
     // Set RunAtLoad value
     NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE_WEBSERVER];
