@@ -324,13 +324,13 @@
             </view>
             <point key="canvasLocation" x="93" y="61"/>
         </window>
+        <viewController nibName="WebServerVC" id="bk2-Oh-zDS" customClass="WebServerVC"/>
         <viewController nibName="AdminServiceVC" id="RO4-3f-yBe" customClass="AdminServiceVC"/>
         <viewController nibName="WebServiceVC" id="dgO-ky-6SY" customClass="WebServiceVC"/>
         <viewController nibName="ApplePatchSyncVC" id="Qof-Mm-IfH" customClass="ApplePatchSyncVC"/>
         <viewController nibName="ContentSyncVC" id="jSx-Nq-YKU" customClass="ContentSyncVC"/>
         <viewController nibName="AVSyncVC" id="hPh-CL-a3f" customClass="AVSyncVC"/>
         <viewController nibName="DatabaseVC" id="XpW-b6-KcN" customClass="DatabaseVC"/>
-        <viewController nibName="WebServerVC" id="bk2-Oh-zDS" customClass="WebServerVC"/>
         <viewController nibName="AuthenticationVC" id="MFw-vu-5DQ" customClass="AuthenticationVC"/>
     </objects>
 </document>

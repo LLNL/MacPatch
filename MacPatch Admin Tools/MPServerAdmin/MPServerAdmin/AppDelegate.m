@@ -20,12 +20,17 @@
 #import "HelperTool.h"
 #include <ServiceManagement/ServiceManagement.h>
 
+#undef  ql_component
+#define ql_component lcl_cMain
+
 @interface AppDelegate () {
     AuthorizationRef    _authRef;
 }
 
 @property (atomic, copy,   readwrite) NSData *authorization;
 @property (atomic, strong, readwrite) NSXPCConnection *helperToolConnection;
+
+- (NSString *)javaHome;
 
 @end
 
@@ -47,7 +52,6 @@
     lcl_configure_by_name("*", lcl_vDebug);
     [LCLLogFile setAppendsToExistingLogFile:YES];
     [LCLLogFile setMirrorsToStdErr:YES];
-    
     
     NSTabViewItem *item;
     item = [[self tabView] tabViewItemAtIndex:0];
@@ -112,6 +116,7 @@
     }
     
     [self.window makeKeyAndOrderFront:self];
+    [self checkForJava:nil];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
@@ -225,6 +230,65 @@
 - (IBAction)installHelperApp:(id)sender
 {
     [self installHelper];
+}
+
+- (IBAction)checkForJava:(id)sender
+{
+    // /usr/libexec/java_home
+    NSString *jResult = [self javaHome];
+    if ([jResult rangeOfString:@"No Java runtime"].location == NSNotFound) {
+        qltrace(@"Java Home was found.");
+    } else {
+        qlerror(@"%@",jResult);
+        // Show Dialog
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setAlertStyle:NSCriticalAlertStyle];
+        [alert setMessageText:@"Error, Java does not appear to be installed."];
+        [alert setInformativeText:@"Please download and install the JAVA JDK."];
+        [alert addButtonWithTitle:@"OK"];
+        [alert addButtonWithTitle:@"Oracle (Java JDK)"];
+        [alert beginSheetModalForWindow:_window modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
+    }
+}
+
+- (void)alertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)context
+{
+    switch(returnCode) {
+        case NSAlertFirstButtonReturn:
+            // First
+            break;
+        case NSAlertSecondButtonReturn:
+            // Next
+            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html"]];
+            break;
+    }
+}
+
+- (NSString *)javaHome
+{
+    
+    NSPipe *newPipe = [NSPipe pipe];
+    NSFileHandle *readHandle = [newPipe fileHandleForReading];
+    NSData *inData = nil;
+    NSString* returnValue = nil;
+    
+    NSTask * unixTask = [[NSTask alloc] init];
+    [unixTask setStandardOutput:newPipe];
+    [unixTask setLaunchPath:@"/usr/libexec/java_home"];
+    [unixTask launch];
+    [unixTask waitUntilExit];
+    int status = [unixTask terminationStatus];
+    
+    while ((inData = [readHandle availableData]) && [inData length]) {
+        
+        returnValue= [[NSString alloc]
+                      initWithData:inData encoding:[NSString defaultCStringEncoding]];
+        
+        returnValue = [returnValue substringToIndex:[returnValue length]-1];
+        qldebug(@"[%d]: %@",status, returnValue);
+    }
+    
+    return returnValue;
 }
 
 @end

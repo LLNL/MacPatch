@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/bash -x
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.2
+# Version: 1.2.1
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,6 +12,8 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # -------------------------------------------------------------
+clear
+
 MP_SERVER_PKG_VER="1.0.0.0"
 MPBASE="/Library/MacPatch"
 MPSERVERBASE="/Library/MacPatch/Server"
@@ -30,6 +32,33 @@ if [ "`whoami`" != "root" ] ; then   # If not root user,
    echo "Please re-run the script using sudo."
    echo
    exit 1;
+fi
+
+# -----------------------------------
+# Server Check 
+# -----------------------------------
+BUILDPKG="Y"
+
+if [ -d "${MPSERVERBASE}" ]; then 
+	echo
+	echo "This system contains a possible MacPatch server deployment."
+	echo "This deployment will be removed allong with all of the content."
+	echo
+	read -p "Would you like to continue (Y/N)? [N]: " BUILDPKG
+	BUILDPKG=${BUILDPKG:-N}
+	echo
+fi
+
+if [ "$BUILDPKG" == "n" ] || [ "$BUILDPKG" == "N" ] || [ "$BUILDPKG" == "y" ] || [ "$BUILDPKG" == "Y" ]; then
+
+	if [ "$BUILDPKG" == "n" ] || [ "$BUILDPKG" == "N" ] ; then
+			exit 0;
+	fi
+else
+	echo
+	echo "Error: Incorrect answer type, exiting script."
+	echo
+	exit 1;
 fi
 
 # -----------------------------------
@@ -137,7 +166,7 @@ rm -rf "${MPSERVERBASE}/jetty-mpsite"
 
 chmod -R 0775 ${MPSERVERBASE}/tomcat-mpws
 chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpws
-chmod -R 0775 ${MPSERVERBASE}/tomcat-mpsite
+chmod -R 0775 ${MPSERVERBASE}/tomcat-mpsiteloc
 chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpsite
 
 chown -R $OWNERGRP ${MPSERVERBASE}/Logs

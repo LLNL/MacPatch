@@ -71,10 +71,13 @@
     if (self->_authRef) {
         [Common setupAuthorizationRights:self->_authRef];
     }
+    
+    [self showServiceState];
 }
 
 - (void)viewDidAppear
 {
+    NSLog(@"viewDidAppear");
     qlinfo(@"Web Server View Did Appear");
     
     [self checkServiceState];
@@ -138,15 +141,19 @@
     }
     for (NSDictionary *s in jobs)
     {
+        NSLog(@"Looking at jobs, %@", [s objectForKey:@"Label"]);
+        qlinfo(@"Looking at jobs, %@", [s objectForKey:@"Label"]);
         if ([[s objectForKey:@"Label"] isEqualToString:SERVICE_WEBSERVER])
         {
             if (![s objectForKey:@"PID"])
             {
+                qlinfo(@"No PID");
                 _serviceStatusText.stringValue = SRVS_OFF;
                 _serviceState = 0;
                 _serviceButton.title = @"Start Service";
                 _serviceStatusImage.image = [NSImage imageNamed:@"NSStatusUnavailable"];
             } else {
+                qlinfo(@"Yes PID");
                 _serviceStatusText.stringValue = SRVS_ON;
                 _serviceState = 1;
                 _serviceButton.title = @"Stop Service";

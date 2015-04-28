@@ -62,6 +62,8 @@
 
 @property (atomic, strong, readwrite) NSXPCListener *listener;
 
+- (BOOL)setLaunchDFilePermissions:(NSString *)aFile;
+
 @end
 
 @implementation HelperTool
@@ -267,26 +269,15 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"root",NSFileOwnerAccountName,
-                              @"wheel",NSFileGroupOwnerAccountName,
-                              [NSNumber numberWithInt:420],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
-                              nil];
-        qldebug(@"%@",dict);
-        
-        err = nil;
-        [fm setAttributes:dict ofItemAtPath:LAUNCHD_FILE_WEBSERVER error:&err];
-        if (err) {
-            NSLog(@"Error: %@",err.localizedDescription);
-            return;
-        }
+        [self setLaunchDFilePermissions:LAUNCHD_FILE_WEBSERVER];
         
         // Load the file
         qldebug(@"/bin/launchctl args: %@",[NSArray arrayWithObjects:@"load",LAUNCHD_FILE_WEBSERVER, nil]);
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_FILE_WEBSERVER, nil]];
     }
     
-    qlinfo(@"Set RunAtLoad");
+    // Permissions and Ownership
+    [self setLaunchDFilePermissions:LAUNCHD_FILE_WEBSERVER];
     
     // Set RunAtLoad value
     NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE_WEBSERVER];
@@ -350,22 +341,14 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"root",NSFileOwnerAccountName,
-                              @"wheel",NSFileGroupOwnerAccountName,
-                              [NSNumber numberWithInt:420],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
-                              nil];
-        
-        err = nil;
-        [fm setAttributes:dict ofItemAtPath:LAUNCHD_FILE error:&err];
-        if (err) {
-            NSLog(@"Error: %@",err.localizedDescription);
-            return;
-        }
+        [self setLaunchDFilePermissions:LAUNCHD_FILE];
         
         // Load the file
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_FILE, nil]];
     }
+    
+    // Permissions and Ownership
+    [self setLaunchDFilePermissions:LAUNCHD_FILE];
     
     // Set RunAtLoad value
     NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE];
@@ -487,18 +470,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"root",NSFileOwnerAccountName,
-                              @"wheel",NSFileGroupOwnerAccountName,
-                              [NSNumber numberWithInt:420],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
-                              nil];
-        
-        err = nil;
-        [fm setAttributes:dict ofItemAtPath:LAUNCHD_WS_FILE error:&err];
-        if (err) {
-            NSLog(@"Error: %@",err.localizedDescription);
-            return;
-        }
+        [self setLaunchDFilePermissions:LAUNCHD_WS_FILE];
         
         // Load the file
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_WS_FILE, nil]];
@@ -619,6 +591,29 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(md);
 }
 
+- (BOOL)setLaunchDFilePermissions:(NSString *)aFile
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSError *err = nil;
+    
+    // Permissions and Ownership
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"root",NSFileOwnerAccountName,
+                          @"wheel",NSFileGroupOwnerAccountName,
+                          [NSNumber numberWithInt:420],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
+                          nil];
+    
+    err = nil;
+    [fm setAttributes:dict ofItemAtPath:aFile error:&err];
+    if (err) {
+        qlerror(@"%@",err.localizedDescription);
+        return NO;
+    }
+    
+    qltrace(@"Set Permissions on %@ to %@",aFile,dict);
+    return YES;
+}
+
 #pragma mark Apple Patch Sync
 
 - (void)startSUSService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
@@ -636,22 +631,14 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"root",NSFileOwnerAccountName,
-                              @"wheel",NSFileGroupOwnerAccountName,
-                              [NSNumber numberWithInt:420],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
-                              nil];
-        
-        err = nil;
-        [fm setAttributes:dict ofItemAtPath:LAUNCHD_SUS_FILE error:&err];
-        if (err) {
-            NSLog(@"Error: %@",err.localizedDescription);
-            return;
-        }
+        [self setLaunchDFilePermissions:LAUNCHD_SUS_FILE];
         
         // Load the file
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_SUS_FILE, nil]];
     }
+    
+    // Permissions and Ownership
+    [self setLaunchDFilePermissions:LAUNCHD_SUS_FILE];
     
     // Set RunAtLoad value
     NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_SUS_FILE];
@@ -770,22 +757,14 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"root",NSFileOwnerAccountName,
-                              @"wheel",NSFileGroupOwnerAccountName,
-                              [NSNumber numberWithInt:420],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
-                              nil];
-        
-        err = nil;
-        [fm setAttributes:dict ofItemAtPath:LAUNCHD_FILE_PATCH_SYNC error:&err];
-        if (err) {
-            NSLog(@"Error: %@",err.localizedDescription);
-            return;
-        }
+        [self setLaunchDFilePermissions:LAUNCHD_FILE_PATCH_SYNC];
         
         // Load the file
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_FILE_PATCH_SYNC, nil]];
     }
+    
+    // Permissions and Ownership
+    [self setLaunchDFilePermissions:LAUNCHD_FILE_PATCH_SYNC];
     
     // Set RunAtLoad value
     NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE_PATCH_SYNC];
@@ -928,22 +907,14 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"root",NSFileOwnerAccountName,
-                              @"wheel",NSFileGroupOwnerAccountName,
-                              [NSNumber numberWithInt:420],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
-                              nil];
-        
-        err = nil;
-        [fm setAttributes:dict ofItemAtPath:LAUNCHD_RSYNCD_FILE error:&err];
-        if (err) {
-            NSLog(@"Error: %@",err.localizedDescription);
-            return;
-        }
+        [self setLaunchDFilePermissions:LAUNCHD_RSYNCD_FILE];
         
         // Load the file
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_RSYNCD_FILE, nil]];
     }
+    
+    // Permissions and Ownership
+    [self setLaunchDFilePermissions:LAUNCHD_RSYNCD_FILE];
     
     // Set RunAtLoad value
     NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_RSYNCD_FILE];

@@ -34,14 +34,8 @@
 		8F61C8791A5F27AE00705CD8 /* DatabaseVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C8771A5F27AE00705CD8 /* DatabaseVC.xib */; };
 		8F6E48BE1AEFEDC50003D3B0 /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48B01AEFEDC50003D3B0 /* lcl.m */; };
 		8F6E48BF1AEFEDC50003D3B0 /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48B01AEFEDC50003D3B0 /* lcl.m */; };
-		8F6E48C01AEFEDC50003D3B0 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48B41AEFEDC50003D3B0 /* README.md */; };
-		8F6E48C11AEFEDC50003D3B0 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48B41AEFEDC50003D3B0 /* README.md */; };
 		8F6E48C21AEFEDC50003D3B0 /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48B81AEFEDC50003D3B0 /* LCLLogFile.m */; };
 		8F6E48C31AEFEDC50003D3B0 /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48B81AEFEDC50003D3B0 /* LCLLogFile.m */; };
-		8F6E48C41AEFEDC50003D3B0 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48BA1AEFEDC50003D3B0 /* README.md */; };
-		8F6E48C51AEFEDC50003D3B0 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48BA1AEFEDC50003D3B0 /* README.md */; };
-		8F6E48C61AEFEDC50003D3B0 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48BD1AEFEDC50003D3B0 /* README.md */; };
-		8F6E48C71AEFEDC50003D3B0 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48BD1AEFEDC50003D3B0 /* README.md */; };
 		8FB5018F1AEE88D00063FA92 /* MPServerAdmin Help in Resources */ = {isa = PBXBuildFile; fileRef = 8FB5018E1AEE88D00063FA92 /* MPServerAdmin Help */; };
 		8FCD31FC1AD2F65900912BEC /* MPRsyncD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */; };
 		8FCD31FD1AD2F65900912BEC /* MPRsyncD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */; };
@@ -437,11 +431,8 @@
 				8F6E48BF1AEFEDC50003D3B0 /* lcl.m in Sources */,
 				8F1D1F491A605BBF00397DCF /* Common.m in Sources */,
 				8F1D1F391A605A0600397DCF /* main.m in Sources */,
-				8F6E48C71AEFEDC50003D3B0 /* README.md in Sources */,
 				8F6E48C31AEFEDC50003D3B0 /* LCLLogFile.m in Sources */,
-				8F6E48C11AEFEDC50003D3B0 /* README.md in Sources */,
 				8F1D1F411A605A6600397DCF /* HelperTool.m in Sources */,
-				8F6E48C51AEFEDC50003D3B0 /* README.md in Sources */,
 				8FCFB3531ACB3367008DBEDB /* Constants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -452,7 +443,6 @@
 			files = (
 				8FCD32031AD44D0600912BEC /* XMLDictionary.m in Sources */,
 				8F1D1F561A60AE5600397DCF /* WebServerVC.m in Sources */,
-				8F6E48C61AEFEDC50003D3B0 /* README.md in Sources */,
 				8F61C8211A5DBD6700705CD8 /* main.m in Sources */,
 				8F1D1F5B1A6437E600397DCF /* SUSCatalog.m in Sources */,
 				8F61C8731A5F279D00705CD8 /* AVSyncVC.m in Sources */,
@@ -463,8 +453,6 @@
 				8FCD31FC1AD2F65900912BEC /* MPRsyncD.m in Sources */,
 				8F61C8781A5F27AE00705CD8 /* DatabaseVC.m in Sources */,
 				8F1D1F481A605BBF00397DCF /* Common.m in Sources */,
-				8F6E48C01AEFEDC50003D3B0 /* README.md in Sources */,
-				8F6E48C41AEFEDC50003D3B0 /* README.md in Sources */,
 				8F6E48BE1AEFEDC50003D3B0 /* lcl.m in Sources */,
 				8FCD321E1ADC16FA00912BEC /* AuthenticationVC.m in Sources */,
 				8F61C84A1A5F11F600705CD8 /* AdminServiceVC.m in Sources */,
@@ -627,9 +615,10 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = MPServerAdmin/MPServerAdminPrefixHeader.pch;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				INFOPLIST_FILE = MPServerAdmin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -641,9 +630,10 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = MPServerAdmin/MPServerAdminPrefixHeader.pch;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				INFOPLIST_FILE = MPServerAdmin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
