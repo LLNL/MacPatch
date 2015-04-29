@@ -237,7 +237,7 @@
              if (_serviceState == 0) {
                  [[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError) {
                      NSLog(@"Error: %@",proxyError.localizedDescription);
-                 }] startService:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
+                 }] startWSService:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
                      if (commandError != nil) {
                          NSLog(@"Error: %@",commandError.localizedDescription);
                      } else {
@@ -250,7 +250,7 @@
              } else {
                  [[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError) {
                      NSLog(@"Error: %@",proxyError.localizedDescription);
-                 }] stopService:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
+                 }] stopWSService:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
                      if (commandError != nil) {
                          NSLog(@"Error: %@",commandError.localizedDescription);
                      } else {

@@ -258,7 +258,7 @@
              if (_serviceState == 0) {
                  [[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError) {
                      NSLog(@"Error: %@",proxyError.localizedDescription);
-                 }] startWebServer:self.authorization  startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
+                 }] startSUSService:self.authorization  startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
                      if (commandError != nil) {
                          NSLog(@"Error: %@",commandError.localizedDescription);
                          _serviceButton.enabled = TRUE;
@@ -272,7 +272,7 @@
              } else {
                  [[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError) {
                      NSLog(@"Error: %@",proxyError.localizedDescription);
-                 }] stopWebServer:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
+                 }] stopSUSService:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
                      if (commandError != nil) {
                          NSLog(@"Error: %@",commandError.localizedDescription);
                          _serviceButton.enabled = TRUE;

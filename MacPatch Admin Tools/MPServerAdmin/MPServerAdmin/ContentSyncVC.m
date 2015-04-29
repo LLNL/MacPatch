@@ -238,7 +238,7 @@
              if (_serviceState1 == 0) {
                  [[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError) {
                      NSLog(@"Error: %@",proxyError.localizedDescription);
-                 }] startPatchSyncService:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
+                 }] startRSyncService:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
                      if (commandError != nil) {
                          NSLog(@"Error: %@",commandError.localizedDescription);
                          _serviceButton1.enabled = TRUE;
@@ -252,7 +252,7 @@
              } else {
                  [[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError) {
                      NSLog(@"Error: %@",proxyError.localizedDescription);
-                 }] stopPatchSyncService:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
+                 }] stopRSyncService:self.authorization startOnBoot:onOff withReply:^(NSError * commandError, NSString * licenseKey) {
                      if (commandError != nil) {
                          NSLog(@"Error: %@",commandError.localizedDescription);
                          _serviceButton1.enabled = TRUE;
