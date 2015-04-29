@@ -193,7 +193,7 @@
     }
     for (NSDictionary *s in jobs)
     {
-        if ([[s objectForKey:@"Label"] isEqualToString:SERVICE])
+        if ([[s objectForKey:@"Label"] isEqualToString:SERVICE_WS])
         {
             if (![s objectForKey:@"PID"])
             {

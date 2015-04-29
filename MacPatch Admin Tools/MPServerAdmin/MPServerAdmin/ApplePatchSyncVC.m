@@ -214,7 +214,7 @@
     }
     for (NSDictionary *s in jobs)
     {
-        if ([[s objectForKey:@"Label"] isEqualToString:SERVICE])
+        if ([[s objectForKey:@"Label"] isEqualToString:SERVICE_SUS])
         {
             if (![s objectForKey:@"PID"])
             {
