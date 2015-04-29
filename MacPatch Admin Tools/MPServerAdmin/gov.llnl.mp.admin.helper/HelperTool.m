@@ -1051,7 +1051,6 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         // Set Production Data
         NSMutableDictionary *prdDict = [NSMutableDictionary dictionaryWithDictionary:[scf valueForKeyPath:@"settings.database.prod"]];
-        NSLog(@"%@",prdDict);
         for (NSString *k in [[dbDict objectForKey:@"prod"] allKeys])
         {
             [prdDict setObject:[[dbDict objectForKey:@"prod"] objectForKey:k] forKey:k];
@@ -1064,7 +1063,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         {
             [roDict setObject:[[dbDict objectForKey:@"ro"] objectForKey:k] forKey:k];
         }
-        scf[@"settings"][@"database"][@"ro"] = prdDict;
+        scf[@"settings"][@"database"][@"ro"] = roDict;
         
         // Write Site Config Back Out
         err = nil;
