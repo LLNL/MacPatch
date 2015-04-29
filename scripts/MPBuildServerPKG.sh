@@ -229,6 +229,12 @@ if [ "$SIGNPKG" == "Y" ] || [ "$SIGNPKG" == "y" ] ; then
 		echo
 	else
 		/usr/bin/productsign --sign "${IDENTNAME}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
+		if [ $? -eq 0 ]; then
+			echo "GOOD"
+		else
+			echo "FAIL"
+		fi
+		#rm ${BUILDROOT}/PKG/_MPServer.pkg
 	fi
 
 else
