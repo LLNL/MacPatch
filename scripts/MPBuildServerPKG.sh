@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.2.1
+# Version: 1.2.2
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -205,7 +205,39 @@ ${BUILDROOT}/PKG/Server.pkg
 productbuild --distribution ${BUILDROOT}/Server/Distribution \
 --resources ${BUILDROOT}/Server/Resources \
 --package-path ${BUILDROOT}/PKG \
-${BUILDROOT}/PKG/MPServer.pkg
+${BUILDROOT}/PKG/_MPServer.pkg
+
+# Possibly Sign the newly created PKG
+clear
+echo
+read -p "Would you like to sign the installer PKG (Y/N)? [N]: " SIGNPKG
+SIGNPKG=${SIGNPKG:-N}
+echo
+
+if [ "$SIGNPKG" == "Y" ] || [ "$SIGNPKG" == "y" ] ; then
+	clear
+	echo
+	read -p "The name of the identity to use for signing the package: " IDENTNAME
+	IDENTNAME=${IDENTNAME:-None}
+	echo  "Signing package..."
+	if [ "$IDENTNAME" == "None" ] ; then
+		echo
+		echo "There was an issue with the identity."
+		echo "Please sign the package by hand."
+		echo 
+		echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
+		echo
+	else
+		/usr/bin/productsign --sign "${IDENTNAME}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
+	fi
+
+else
+	mv ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
+fi
+
 
 # Clean up the base package
 rm ${BUILDROOT}/PKG/Server.pkg
+
+# Open the build package dir
+open ${BUILDROOT}/PKG
