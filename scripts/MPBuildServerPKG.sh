@@ -124,6 +124,7 @@ rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/examples
 # Build Apache
 # ------------------
 ${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh
+chown -R $OWNERGRP ${MPSERVERBASE}/Apache2
 
 # ------------------
 # Link & Set Permissions
@@ -166,7 +167,7 @@ rm -rf "${MPSERVERBASE}/jetty-mpsite"
 
 chmod -R 0775 ${MPSERVERBASE}/tomcat-mpws
 chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpws
-chmod -R 0775 ${MPSERVERBASE}/tomcat-mpsiteloc
+chmod -R 0775 ${MPSERVERBASE}/tomcat-mpsite
 chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpsite
 
 chown -R $OWNERGRP ${MPSERVERBASE}/Logs
@@ -230,17 +231,23 @@ if [ "$SIGNPKG" == "Y" ] || [ "$SIGNPKG" == "y" ] ; then
 	else
 		/usr/bin/productsign --sign "${IDENTNAME}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
 		if [ $? -eq 0 ]; then
-			echo "GOOD"
+			# GOOD
+			rm ${BUILDROOT}/PKG/_MPServer.pkg
 		else
-			echo "FAIL"
+			# FAILED
+			echo "The signing process failed."
+			echo 
+			echo "Please sign the package by hand."
+			echo 
+			echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
+			echo
 		fi
-		#rm ${BUILDROOT}/PKG/_MPServer.pkg
+		#
 	fi
 
 else
 	mv ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
 fi
-
 
 # Clean up the base package
 rm ${BUILDROOT}/PKG/Server.pkg
