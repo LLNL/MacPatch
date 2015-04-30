@@ -593,14 +593,13 @@ table.genTable td
 <cfif session.adm_mp_accounts EQ "11">
 	<cftry>
 		<cfquery datasource="#session.dbsource#" name="addAccount">
-			Insert Into mp_adm_users (user_id, user_RealName, user_pass, enabled, user_email, email_notification)
-			Values (<cfqueryparam value="#form.USER_ID#">,<cfqueryparam value="#form.USER_REALNAME#">,<cfqueryparam value="#hash(form.USER_PASS1,'MD5')#">,<cfqueryparam value="#form.Enabled#">,
-				<cfqueryparam value="#form.email_notification#">, <cfqueryparam value="#form.user_email#">)
+			Insert Into mp_adm_users (user_id, user_RealName, user_pass, enabled)
+			Values (<cfqueryparam value="#form.USER_ID#">,<cfqueryparam value="#form.USER_REALNAME#">,<cfqueryparam value="#hash(form.USER_PASS1,'MD5')#">,<cfqueryparam value="#form.Enabled#">)
 		</cfquery>	
 		<cfquery datasource="#session.dbsource#" name="addAccountGroup">
 			Insert Into mp_adm_group_users (group_id, user_id, user_type, number_of_logins, enabled, user_email, email_notification)
 			Values (<cfqueryparam value="#decrypt(form.GROUP,session.usrKey,'AES/CBC/PKCS5Padding','base64')#">,<cfqueryparam value="#form.USER_ID#">,'1','0',<cfqueryparam value="#form.Enabled#">,
-				<cfqueryparam value="#form.email_notification#">, <cfqueryparam value="#form.user_email#">)
+				<cfqueryparam value="#form.user_email#">, <cfqueryparam value="#form.email_notification#">)
 		</cfquery>
 		<cfcatch type="any">
 			<cfset session.adm_mp_account_msg = #cfcatch.Message#>

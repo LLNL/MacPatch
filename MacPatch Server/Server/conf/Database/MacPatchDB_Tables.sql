@@ -1,8 +1,8 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.5.0
-	Rev 2
+	Version 2.6.6
+	Rev 1
 */
 
 SET NAMES utf8;
@@ -132,8 +132,10 @@ CREATE TABLE `mp_adm_group_users` (
   `enabled` int(1) unsigned DEFAULT '1',
   `authToken1` varchar(50) DEFAULT NULL,
   `authToken2` varchar(50) DEFAULT NULL,
+  `user_email` varchar(100) DEFAULT NULL,
+  `email_notification` int(1) unsigned DEFAULT '0',
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='Updated for MacPatch 2.5.x';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='Updated for MacPatch 2.5.x\nUpdated for MacPatch 2.6.6';
 
 -- ----------------------------
 --  Table structure for `mp_adm_groups`
