@@ -887,13 +887,6 @@
 	            	<cfqueryparam value="#patch.cve_id#">, <cfqueryparam value="#preInstallScpt#">,<cfqueryparam value="#postInstallScpt#">, <cfqueryparam value="#patch.pkg_env_var#">,
 	            	#CreateODBCDateTime(now())#, #CreateODBCDateTime(now())#)
 	        </cfquery>
-	        <!--- Orig, all attributes
-	        Values ( <cfqueryparam value="#patch.puuid#">, <cfqueryparam value="#patch.bundle_id#">, <cfqueryparam value="#patch.patch_name#">, <cfqueryparam value="#patch.patch_ver#">,
-	            	<cfqueryparam value="#patch.patch_severity#">, <cfqueryparam value="#patch.patch_state#">, <cfqueryparam value="#patch.active#">, <cfqueryparam value="#patch.patch_vendor#">,
-	            	<cfqueryparam value="#patch.patch_install_weight#">, <cfqueryparam value="#patch.description#">, <cfqueryparam value="#patch.description_url#">, <cfqueryparam value="#patch.patch_reboot#">,
-	            	<cfqueryparam value="#patch.cve_id#">, <cfqueryparam value="#preInstallScpt#">,<cfqueryparam value="#postInstallScpt#">, <cfqueryparam value="#patch.pkg_env_var#">,
-	            	#CreateODBCDateTime(now())#, #CreateODBCDateTime(now())#)
-	        --->
 
 	        <!--- Criteria --->
 	        <cfquery name="qAddPatchC1" datasource="#this.ds#"> 
@@ -990,9 +983,17 @@
         <cfquery name="qGet" datasource="#this.ds#"> 
         	Select * from mp_patches
         	Where bundle_id = <cfqueryparam value="#arguments.bundle_id#">
+        	AND patch_ver = <cfqueryparam value="#arguments.patch_ver#">
+        </cfquery>
+
+        <!--- Orig
+        <cfquery name="qGet" datasource="#this.ds#"> 
+        	Select * from mp_patches
+        	Where bundle_id = <cfqueryparam value="#arguments.bundle_id#">
         	AND patch_name = <cfqueryparam value="#arguments.patch_name#">
         	AND patch_ver = <cfqueryparam value="#arguments.patch_ver#">
         </cfquery>
+        --->
 
         <cfif qGet.RecordCount GTE 1>
             <cfreturn True>
