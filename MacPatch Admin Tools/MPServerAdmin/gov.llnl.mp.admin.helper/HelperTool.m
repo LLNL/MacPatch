@@ -381,7 +381,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     }
     
     // Set RunAtLoad value
-    NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE];
+    // NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE];
     if (isStart > 0)
     {
         [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
@@ -389,7 +389,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
     }
     // Write the changes
-    [md writeToFile:LAUNCHD_FILE atomically:NO];
+    // [md writeToFile:LAUNCHD_FILE atomically:NO];
     
     [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"stop", SERVICE, nil]];
     
@@ -460,6 +460,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     //NSLog(@"Called start service");
     
     NSFileManager *fm = [NSFileManager defaultManager];
+    
+    // Web Service File
     if (![fm fileExistsAtPath:LAUNCHD_WS_FILE])
     {
         NSError *err = nil;
@@ -476,21 +478,45 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_WS_FILE, nil]];
     }
     
+    // Inv Service File
+    if (![fm fileExistsAtPath:LAUNCHD_INV_FILE])
+    {
+        NSError *err = nil;
+        [fm copyItemAtPath:LAUNCHD_INV_ORIG toPath:LAUNCHD_INV_FILE error:&err];
+        if (err) {
+            NSLog(@"Error: %@",err.localizedDescription);
+            return;
+        }
+        
+        // Permissions and Ownership
+        [self setLaunchDFilePermissions:LAUNCHD_INV_FILE];
+        
+        // Load the file
+        [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_INV_FILE, nil]];
+    }
+    
     // Set RunAtLoad value
-    NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_WS_FILE];
     if (isStart > 0)
     {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_WS_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        if ([fm fileExistsAtPath:LAUNCHD_WS_FILE]) {
+            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_WS_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        }
+        if ([fm fileExistsAtPath:LAUNCHD_INV_FILE]) {
+            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_INV_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        }
     } else {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_WS_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        if ([fm fileExistsAtPath:LAUNCHD_WS_FILE]) {
+            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_WS_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        }
+        if ([fm fileExistsAtPath:LAUNCHD_INV_FILE]) {
+            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_INV_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        }
     }
-    // Write the changes
-    [md writeToFile:LAUNCHD_WS_FILE atomically:NO];
-    
     
     NSString *licenseKey = @"OK KEY";
     NSError *error = nil;
     [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"start",SERVICE_WS, nil]];
+    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"start",SERVICE_INV, nil]];
     
     reply(error, licenseKey);
 }
@@ -501,23 +527,34 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     NSError *error = nil;
     NSFileManager *fm = [NSFileManager defaultManager];
     
-    if (![fm fileExistsAtPath:LAUNCHD_WS_FILE]) {
+    if (![fm fileExistsAtPath:LAUNCHD_WS_FILE] && ![fm fileExistsAtPath:LAUNCHD_INV_FILE]) {
         reply(error, licenseKey);
         return;
     }
     
     // Set RunAtLoad value
-    NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_WS_FILE];
+    //NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_WS_FILE];
     if (isStart > 0)
     {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_WS_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        if ([fm fileExistsAtPath:LAUNCHD_WS_FILE]) {
+            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_WS_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        }
+        if ([fm fileExistsAtPath:LAUNCHD_INV_FILE]) {
+            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_INV_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        }
     } else {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_WS_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        if ([fm fileExistsAtPath:LAUNCHD_WS_FILE]) {
+            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_WS_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        }
+        if ([fm fileExistsAtPath:LAUNCHD_INV_FILE]) {
+            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_INV_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        }
     }
     // Write the changes
-    [md writeToFile:LAUNCHD_WS_FILE atomically:NO];
+    //[md writeToFile:LAUNCHD_WS_FILE atomically:NO];
     
     [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"stop",SERVICE_WS, nil]];
+    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"stop",SERVICE_INV, nil]];
     
     reply(error, licenseKey);
 }

@@ -48,6 +48,10 @@ NSString * const LAUNCHD_WS_ORIG             = @"/Library/MacPatch/Server/conf/L
 NSString * const SERVICE_WS                  = @"gov.llnl.mp.wsl";
 NSString * const TOMCAT_WS_CONF              = @"/Library/MacPatch/Server/tomcat-mpws/conf/server.xml";
 
+NSString * const LAUNCHD_INV_FILE            = @"/Library/LaunchDaemons/gov.llnl.mp.invd.plist";
+NSString * const LAUNCHD_INV_ORIG            = @"/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.invd.plist";
+NSString * const SERVICE_INV                 = @"gov.llnl.mp.invd";
+
 // Software Update Sync
 NSString * const SUS_SYNC_FILE               = @"/Library/MacPatch/Server/conf/scripts/MPSUSPatchSync.py";
 NSString * const LAUNCHD_SUS_FILE            = @"/Library/LaunchDaemons/gov.llnl.mp.sus.sync.plist";

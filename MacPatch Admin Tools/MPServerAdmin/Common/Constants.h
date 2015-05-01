@@ -48,6 +48,10 @@ extern NSString * const LAUNCHD_WS_ORIG;
 extern NSString * const SERVICE_WS;
 extern NSString * const TOMCAT_WS_CONF;
 
+extern NSString * const LAUNCHD_INV_FILE;
+extern NSString * const LAUNCHD_INV_ORIG;
+extern NSString * const SERVICE_INV;
+
 // Software Update Sync
 extern NSString * const SUS_SYNC_FILE;
 extern NSString * const LAUNCHD_SUS_FILE;
