@@ -2,7 +2,7 @@
 <!---
 		MPAdminService 
 	 	Database type is MySQL
-		MacPatch Version 2.6.5.x
+		MacPatch Version 2.6.6.x
 --->
 <!---	Notes:
 --->
@@ -221,12 +221,15 @@
 		<cfargument name="usertype" required="true"/>
 	    
 	    <cfset var result = false>
+
+	    <!--- See if the user exists and get properties --->
 	    <cfquery name="qGroupRights" datasource="#this.ds#"> 
 	        Select user_id, group_id, number_of_logins
 	        From mp_adm_group_users
 	        Where user_id in ('#arguments.username#')
 	    </cfquery>
 	    
+	    <!--- does not exist, add login entry and put in user group --->
 	    <cfif qGroupRights.recordcount EQ 0>
 	        <cfquery name="qAddAccount" datasource="#this.ds#"> 
 	            Insert Into mp_adm_group_users ( user_id, user_type, last_login, number_of_logins)
@@ -235,14 +238,45 @@
 		<cfelseif qGroupRights.recordcount EQ 1 AND qGroupRights.group_id EQ 0>
 			<cfset result = true>
 		</cfif>
+		<!---
 		<cfif #arguments.username# EQ this.settings.users.admin.name>
 			<cfset result = true>
 	    <cfelseif #arguments.username# EQ this.settings.users.admin.pass>
 	    	<cfset result = true>     
 		</cfif>
-	    
+	    --->
 		<cfset tmp = updateLogInInfo(arguments.username,qGroupRights.number_of_logins)>
 	    
+	    <cfreturn #result#>
+	</cffunction>
+
+	<cffunction name="logInUserAutoPKG" returntype="boolean" access="private">
+		<cfargument name="username" required="true"/>
+	    
+	    <cfset var result = false>
+
+	    <!--- See if the user exists and get properties --->
+	    <cftry>
+		    <cfquery name="qGroupRights" datasource="#this.ds#"> 
+		        Select user_id, user_type
+		        From mp_adm_group_users
+		        Where user_id in ('#arguments.username#')
+		    </cfquery>
+		    
+		    <!--- 0 = Admin, 1 = User, 2 = autopkg --->
+		    <cfif qGroupRights.recordcount EQ 1>
+		        <cfif qGroupRights.user_type EQ 0>
+		        	<cfset result = true>
+		        </cfif>
+		        <cfif qGroupRights.user_type EQ 2>
+		        	<cfset result = true>
+		        </cfif>
+			</cfif>
+			<cfcatch>
+				<cflog file="MPAdminLoginError" type="error" application="no" text="#cfcatch.message# #cfcatch.detail#">
+			<cfcatch>
+		</cftry>
+
 	    <cfreturn #result#>
 	</cffunction>
 
@@ -397,13 +431,18 @@
 		<cfif logInUserSimple( arguments.authUser, arguments.authPass )>
             <cfset userSession.IsAdmin=#logInUserGroupRights(arguments.authUser,'0')#>
             <cfset userSession.usrKey=#hash(Generatesecretkey("AES"),"SHA")#>
+            <cfset userSession.IsAutoPKG=#logInUserAutoPKG(arguments.authUser)#>
             <!--- <cfset userSession.usrKey=#Generatesecretkey("AES",256)#> --->
         <cfelseif logInUserDatabase( arguments.authUser, arguments.authPass )> 
             <cfset userSession.IsAdmin=#logInUserGroupRights(arguments.authUser,'1')#>
             <cfset userSession.usrKey=#hash(Generatesecretkey("AES"),"SHA")#>
+            <cfset userSession.IsAutoPKG=#logInUserAutoPKG(arguments.authUser)#>
+
         <cfelseif logInUserDirectory( arguments.authUser, arguments.authPass )> 
             <cfset userSession.IsAdmin=#logInUserGroupRights(arguments.authUser,'2')#>
             <cfset userSession.usrKey=#hash(Generatesecretkey("AES"),"SHA")#>
+            <cfset userSession.IsAutoPKG=#logInUserAutoPKG(arguments.authUser)#>
+
 		<cfelse>
 			<cflog file="MPAdminLoginError" type="error" application="no" text="No authentication scheme was found.">
 			<cfset response[ "errorno" ] = 1001 />
@@ -412,7 +451,7 @@
 			<cfreturn response>
 		</cfif>
 		
-		<cfif userSession.IsAdmin EQ False>
+		<cfif userSession.IsAdmin EQ False and userSession.IsAutoPKG EQ False>
 			<cflog file="MPAdminLoginError" type="error" application="no" text="#arguments.authUser# is not an admin account.">
 			<cfset response[ "errorno" ] = 1002 />
 			<cfset response[ "errormsg" ] = "User has no rights to perform requests." />
@@ -833,6 +872,12 @@
 		<cfif NOT isValidAuthToken(arguments.user,arguments.token)>
 			<cfset response.errorNo = "9000">
 			<cfset response.errorMsg = "Invalid auth data.">
+			<cfreturn response>
+		</cfif>
+
+		<cfif NOT logInUserAutoPKG(arguments.user)>
+			<cfset response.errorNo = "9000">
+			<cfset response.errorMsg = "Invalid auth user.">
 			<cfreturn response>
 		</cfif>
 

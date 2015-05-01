@@ -60,6 +60,9 @@
 			    <cfcase value="1"> 
 					<cfset gType = "User">
 			    </cfcase> 
+			    <cfcase value="2"> 
+					<cfset gType = "AutoPKG">
+			    </cfcase> 
 			    <cfdefaultcase> 
 			    	<cfset gType = "User">
 			    </cfdefaultcase> 

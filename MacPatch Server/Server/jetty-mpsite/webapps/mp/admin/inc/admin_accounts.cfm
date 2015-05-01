@@ -501,6 +501,7 @@ table.genTable td
 			<tr><td>Group:</td><td><select name="group">
 				<option value="#encrypt('1',session.usrKey,'AES/CBC/PKCS5Padding','base64')#" selected>User</option>
 				<option value="#encrypt('0',session.usrKey,'AES/CBC/PKCS5Padding','base64')#">Admin</option>
+				<option value="#encrypt('2',session.usrKey,'AES/CBC/PKCS5Padding','base64')#">AutoPKG</option>
 				</select></td></tr>
 			<tr><td>Enabled:</td><td><select name="enabled">
 				<option value="1">Yes</option>
@@ -541,6 +542,7 @@ table.genTable td
 				<select name="group">
 					<option value="#encrypt('1',session.usrKey,'AES/CBC/PKCS5Padding','base64')#"<cfif accountData.group_id EQ "1"> selected</cfif>>User</option>
 					<option value="#encrypt('0',session.usrKey,'AES/CBC/PKCS5Padding','base64')#"<cfif accountData.group_id EQ "0"> selected</cfif>>Admin</option>
+					<option value="#encrypt('2',session.usrKey,'AES/CBC/PKCS5Padding','base64')#"<cfif accountData.group_id EQ "2"> selected</cfif>>AutoPKG</option>
 				</select></td></tr>
 			<tr><td>Enabled:</td><td><select name="enabled">
 				<option value="1"<cfif accountData.enabled EQ "1"> selected</cfif>>Yes</option>
