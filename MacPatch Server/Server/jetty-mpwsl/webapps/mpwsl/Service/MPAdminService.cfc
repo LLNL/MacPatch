@@ -258,23 +258,23 @@
 	    <!--- See if the user exists and get properties --->
 	    <cftry>
 		    <cfquery name="qGroupRights" datasource="#this.ds#"> 
-		        Select user_id, user_type
+		        Select user_id, user_type, group_id
 		        From mp_adm_group_users
 		        Where user_id in ('#arguments.username#')
 		    </cfquery>
 		    
 		    <!--- 0 = Admin, 1 = User, 2 = autopkg --->
 		    <cfif qGroupRights.recordcount EQ 1>
-		        <cfif qGroupRights.user_type EQ 0>
+		        <cfif qGroupRights.group_id EQ 0>
 		        	<cfset result = true>
 		        </cfif>
-		        <cfif qGroupRights.user_type EQ 2>
+		        <cfif qGroupRights.group_id EQ 2>
 		        	<cfset result = true>
 		        </cfif>
 			</cfif>
 			<cfcatch>
 				<cflog file="MPAdminLoginError" type="error" application="no" text="#cfcatch.message# #cfcatch.detail#">
-			<cfcatch>
+			</cfcatch>
 		</cftry>
 
 	    <cfreturn #result#>
