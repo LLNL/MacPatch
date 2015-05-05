@@ -1,6 +1,6 @@
 <!---
-	This Server.cfc is used to get server settings populated in the 
-	server settings scope. 
+	This Server.cfc is used to get server settings populated in the
+	server settings scope.
 	Settings are gathered in the settings.cfc file.
 
 	Version: 1.1.0
@@ -8,12 +8,12 @@
 	- Initial XML Support
 	- Added JSON support
 --->
-<cfcomponent output="false"> 
-  <cffunction name="onServerStart"> 
-  		
+<cfcomponent output="false">
+  <cffunction name="onServerStart">
+
   		<cfset var xFile = "/Library/MacPatch/Server/conf/etc/siteconfig.xml">
   		<cfset var jFile = "/Library/MacPatch/Server/conf/etc/siteconfig.json">
-  		
+
   		<cfif fileExists(jFile)>
 			<cfinvoke component="Server.settings" method="getJSONAppSettings" returnvariable="_AppSettings">
 				<cfinvokeargument name="cFile" value="#jFile#">
@@ -26,31 +26,31 @@
         	<cfthrow message="No App Settings file found.">
         	<cfreturn>
         </cfif>
-		
+
 		<!--- main settings --->
 		<cfset srvconf.settings = _AppSettings>
-		
+
 		<!--- Validate users settings - user --->
 		<cfif not structKeyExists(srvconf.settings.users,"admin")>
 		   <cfthrow message="Invalid settings, user info!">
 		</cfif>
-		
+
 		<!--- Validate LDAP settings - prod --->
 		<cfif not structKeyExists(srvconf.settings,"ldap")>
 		   <cfthrow message="Invalid settings, LDAP!">
 		</cfif>
-		
+
 		<!--- Validate Database settings - prod --->
 		<cfif not structKeyExists(srvconf.settings.database,"prod")>
 		   <cfthrow message="Invalid settings, Database!">
 		</cfif>
-		
+
 		<!--- Validate Mail server settings --->
 		<cfif not structKeyExists(srvconf.settings,"mailserver")>
 		   <cfthrow message="Invalid settings, SMTP!">
 		</cfif>
-        
-        <cftry> 
+
+        <cftry>
             <!--- Create Datasource --->
             <cfif structKeyExists(srvconf.settings.database,"prod")>
 				<cfset dsName = srvconf.settings.database.prod.dsName>
@@ -72,21 +72,22 @@
         	</cfif>
 
             <!--- Populate Default Data --->
+			<cflog file="Server" application="no" text="Check DB for default data.">
             <cfset dbDefTmp = hasDefaultDBData() />
-            
-            <cfcatch type="any"> 
+
+            <cfcatch type="any">
                 <cfthrow message="Error trying to create datasource.">
-            </cfcatch> 
+            </cfcatch>
         </cftry>
-        
+
         <!--- Assign settings to server settings scope --->
         <cfset server.mpsettings = srvconf>
-    </cffunction> 
+    </cffunction>
 
     <!--- Quick Function to Generate the right db struct --->
 	<cffunction name="genDBStruct" access="private" returntype="struct">
     	<cfargument name="dbData" type="struct" required="true">
-    	
+
     	<cfset dbConf= structNew()>
     	<cfset dbConf['dsName']= dbData.dsName>
     	<cfset dbConf['hoststring']= dbData.hoststringPre & "//" &  dbData.dbHost & ":" & dbData.dbPort & "/" & dbData.dbName & dbData.hoststringURI>
@@ -99,26 +100,32 @@
     	<cfset dbConf['connectiontimeout']= dbData.connectiontimeout>
     	<cfset dbConf['connectionretries']= dbData.connectionretries>
 
-        <cfreturn dbConf>	
+        <cfreturn dbConf>
 	</cffunction>
 
     <cffunction name="hasDefaultDBData" access="private" returntype="struct">
-        
+
         <cfset var dbData = structNew() />
         <cfset dbData["ServerConf"] = serverConf('query') />
+		<cflog file="Server" application="no" text="Check ServerConf: #dbData["ServerConf"]#">
         <cfset dbData["ClientConf"] = clientConf('query') />
+		<cflog file="Server" application="no" text="Check ClientConf: #dbData["ClientConf"]#">
         <cfset dbData["PatchGroupConf"] = patchGroupConf('query') />
+		<cflog file="Server" application="no" text="Check PatchGroupConf: #dbData["PatchGroupConf"]#">
 
         <cfif dbData["ServerConf"] EQ false>
             <cfset loadSrvConf = serverConf('populate') />
+			<cflog file="Server" application="no" text="Populate ServerConf: #loadSrvConf#">
         </cfif>
 
         <cfif dbData["ClientConf"] EQ false>
-            <cfset loadSrvConf = clientConf('populate') />
+            <cfset loadClientConf = clientConf('populate') />
+			<cflog file="Server" application="no" text="Populate ClientConf: #loadClientConf#">
         </cfif>
 
         <cfif dbData["PatchGroupConf"] EQ false>
-            <cfset loadSrvConf = patchGroupConf('populate') />
+            <cfset loadPatchGroupConf = patchGroupConf('populate') />
+			<cflog file="Server" application="no" text="Populate PatchGroupConf: #loadPatchGroupConf#">
         </cfif>
 
         <cfreturn>
@@ -127,7 +134,7 @@
     <cffunction name="serverConf" access="private" returntype="any">
         <cfargument name="action" required="true">
 
-        <cfif arguments.action = "query">
+        <cfif arguments.action EQ "query">
             <cftry>
                 <cfquery name="queryServer" datasource="mpds">
                     select *
@@ -138,15 +145,15 @@
                     <cfreturn false>
                 <cfelse>
                     <cfreturn true>
-                </cfif>    
+                </cfif>
                 <cfcatch>
                     <cfreturn false>
                 </cfcatch>
             </cftry>
-        </cfif>      
-        <cfif arguments.action = "populate">
+        </cfif>
+        <cfif arguments.action EQ "populate">
             <cftry>
-                <cfquery name="qAddServer" datasource="mpds"> 
+                <cfquery name="qAddServer" datasource="mpds">
                     Insert Into mp_servers ( listid, server, port, useSSL, useSSLAuth, allowSelfSignedCert, isMaster, isProxy, active)
                     Values ( '1', 'localhost', 2600, 1, 0, 1, 1, 0, 0)
                 </cfquery>
@@ -161,7 +168,7 @@
     <cffunction name="clientConf" access="private" returntype="any">
         <cfargument name="action" required="true">
 
-        <cfif arguments.action = "query">
+        <cfif arguments.action EQ "query">
             <cftry>
                 <cfquery name="queryServer" datasource="mpds">
                     select *
@@ -172,19 +179,19 @@
                     <cfreturn false>
                 <cfelse>
                     <cfreturn true>
-                </cfif>    
+                </cfif>
                 <cfcatch>
                     <cfreturn false>
                 </cfcatch>
             </cftry>
         </cfif>
-        
-        <cfif arguments.action = "populate">
+
+        <cfif arguments.action EQ "populate">
             <cftry>
                 <cfset cID = CreateUuid()>
                 <cfquery name="addConfig" datasource="mpds">
-                    Insert Into mp_agent_config (aid, name)
-                    Values (#cID#,"Default")
+                    Insert Into mp_agent_config (aid, name, isDefault)
+                    Values ('#cID#','Default',1)
                 </cfquery>
                 <cfscript>
                     agentConf = {
@@ -194,7 +201,7 @@
                         Domain = "Default",
                         PatchGroup = "Default",
                         Reboot = "1",
-                        SWDistGroup = "Default", 
+                        SWDistGroup = "Default",
                         MPProxyServerAddress = "AUTOFILL",
                         MPProxyServerPort = "2600",
                         MPProxyEnabled = "0",
@@ -208,8 +215,8 @@
                     <cfquery name="addConfigData" datasource="mpds">
                         Insert Into mp_agent_config_data (aid, aKey, aKeyValue, enforced)
                         Values ("#cID#","#key#","#agentConf[key]#","0")
-                    </cfquery> 
-                </cfoop>
+                    </cfquery>
+                </cfloop>
 
                 <cfset rev = getConfigRevision(cID)>
                 <cfif rev.errorNo NEQ 0>
@@ -224,6 +231,8 @@
 
                 <cfreturn true>
             <cfcatch>
+				<cflog file="Server" application="no" text="#cfcatch.message#">
+				<cflog file="Server" application="no" text="#cfcatch.detail#">
                 <cfreturn false>
             </cfcatch>
             </cftry>
@@ -232,12 +241,12 @@
 
     <cffunction name="getConfigRevision" access="private" output="no" returntype="any">
         <cfargument name="configID">
-        
+
         <cfset var result = Structnew()>
         <cfset result.errorNo = "0">
         <cfset result.errorMsg = "">
         <cfset result.result = "">
-        
+
         <cftry>
             <cfquery datasource="mpds" name="qGetAgentConfigData">
                 Select aKeyValue From mp_agent_config_data
@@ -248,25 +257,25 @@
                 <cfoutput query="qGetAgentConfigData">
                     <cfset confData = confData & "#aKeyValue#">
                 </cfoutput>
-                
+
                 <cfset result.result = Hash(confData,"MD5")>
             <cfelse>
                 <cfset result.errorNo = "1">
-                <cfset result.errorMsg = "No config data found.">   
+                <cfset result.errorMsg = "No config data found.">
             </cfif>
             <cfcatch>
                 <cfset result.errorNo = "1">
-                <cfset result.errorMsg = "#cfcatch.Detail# #cfcatch.message#">  
+                <cfset result.errorMsg = "#cfcatch.Detail# #cfcatch.message#">
             </cfcatch>
         </cftry>
-        
+
         <cfreturn result>
     </cffunction>
 
     <cffunction name="patchGroupConf" access="private" returntype="any">
         <cfargument name="action" required="true">
 
-        <cfif arguments.action = "query">
+        <cfif arguments.action EQ "query">
             <cftry>
                 <cfquery name="queryServer" datasource="mpds">
                     select *
@@ -277,24 +286,25 @@
                     <cfreturn false>
                 <cfelse>
                     <cfreturn true>
-                </cfif>    
+                </cfif>
                 <cfcatch>
                     <cfreturn false>
                 </cfcatch>
             </cftry>
-        </cfif>      
-        <cfif arguments.action = "populate">
+        </cfif>
+        <cfif arguments.action EQ "populate">
             <cftry>
                 <cfset cID = CreateUuid()>
-                <cfquery name="qAddGroupName" datasource="mpds"> 
+                <cfquery name="qAddGroupName" datasource="mpds">
                     Insert Into mp_patch_group ( name, id, type)
-                    Values ('Default', cID, '1')
+                    Values ('Default', '#cID#', '0')
                 </cfquery>
 
-                <cfquery name="qAddGroupOwner" datasource="mpds"> 
+                <cfquery name="qAddGroupOwner" datasource="mpds">
                     Insert Into mp_patch_group_members ( user_id, patch_group_id, is_owner)
-                    Values ('mpadmin', cID, '1')
+                    Values ('mpadmin', '#cID#', '1')
                 </cfquery>
+
                 <cfreturn true>
                 <cfcatch>
                     <cfreturn false>
@@ -303,5 +313,5 @@
         </cfif>
     </cffunction>
 
-</cfcomponent> 
+</cfcomponent>
 
