@@ -238,13 +238,7 @@
 		<cfelseif qGroupRights.recordcount EQ 1 AND qGroupRights.group_id EQ 0>
 			<cfset result = true>
 		</cfif>
-		<!---
-		<cfif #arguments.username# EQ this.settings.users.admin.name>
-			<cfset result = true>
-	    <cfelseif #arguments.username# EQ this.settings.users.admin.pass>
-	    	<cfset result = true>     
-		</cfif>
-	    --->
+
 		<cfset tmp = updateLogInInfo(arguments.username,qGroupRights.number_of_logins)>
 	    
 	    <cfreturn #result#>
@@ -429,7 +423,7 @@
 
         <!---	User is attempting to login at this point; we call one of the login functions	--->
 		<cfif logInUserSimple( arguments.authUser, arguments.authPass )>
-            <cfset userSession.IsAdmin=#logInUserGroupRights(arguments.authUser,'0')#>
+            <cfset userSession.IsAdmin=true>
             <cfset userSession.usrKey=#hash(Generatesecretkey("AES"),"SHA")#>
             <cfset userSession.IsAutoPKG=#logInUserAutoPKG(arguments.authUser)#>
             <!--- <cfset userSession.usrKey=#Generatesecretkey("AES",256)#> --->
