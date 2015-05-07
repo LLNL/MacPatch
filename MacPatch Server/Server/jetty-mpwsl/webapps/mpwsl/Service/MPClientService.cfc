@@ -552,10 +552,11 @@
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
             <cfset pid = patchGroupIDFromName(arguments.PatchGroup)>
-            <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
+            <cfquery datasource="#this.ds#" name="qGetGroupID">
                 SELECT mdate FROM mp_patch_group_data
                 WHERE pid = <cfqueryparam value="#pid#">
                 AND hash = <cfqueryparam value="#arguments.Hash#">
+                AND data_type = 'JSON'
             </cfquery>
 
             <cfif qGetGroupID.RecordCount EQ 1>
@@ -646,13 +647,17 @@
                 Where pid = <cfqueryparam value="#qGetGroupID.id#">
                 AND data_type = <cfqueryparam value="#arguments.DataType#">
             </cfquery>
-            <cfif qGetGroupID.RecordCount NEQ 1>
-                <cfset l = logit("Error","[GetPatchGroupPatches][qGetGroupData]: No group data was found for id #qGetGroupID.id#")>
+
+            <cfif qGetGroupData.RecordCount EQ 0>
+                <cfset response[ "errorno" ] = "0" />
+                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupData]: No group data was found for #arguments.PatchGroup#" />
+                <cfset response[ "result" ] = {"AppleUpdates":[],"CustomUpdates":[]} />
+            <cfelseif qGetGroupData.RecordCount EQ 1>
+                <cfset response.result  =  #qGetGroupData.data#> />    
+            <cfelse>
                 <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupData]: No group data was found for id #qGetGroupID.id#" />
-                <cfreturn response>
+                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupData]: Data found found, but wrong amount." />
             </cfif>
-            <cfset response.result  =  #qGetGroupData.data#> />
 
             <cfcatch>
                 <cfset l = logit("Error","[GetPatchGroupPatches]: #cfcatch.Detail# -- #cfcatch.Message#")>
