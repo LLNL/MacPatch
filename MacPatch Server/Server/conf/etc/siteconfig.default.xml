@@ -48,7 +48,7 @@
 	</database>	
 	<mailserver>
 		<server>127.0.0.1</server>
-		<username>bObama</username>
-		<password>imdumberthanarock</password>
+		<username>exampleusername</username>
+		<password>examplepassword</password>
 	</mailserver>
 </settings>
