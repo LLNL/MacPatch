@@ -94,7 +94,7 @@ function checkPassword(form)
 			{
 				url:'admin_accounts.cfc?method=getMPAccounts', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
-				colNames:['','User ID', 'User Type', 'Group', 'Last Login Date', 'Number of Logins', 'Enabled'],
+				colNames:['','User ID', 'User Type', 'Group', 'Last Login Date', 'Number of Logins', 'Enabled', 'Email', 'Email Notify'],
 				colModel :[ 
 				  {name:'rid',index:'rid', width:30, align:"center", sortable:false, hidden:true},
 				  {name:'user_id', index:'user_id', width:100}, 
@@ -102,7 +102,9 @@ function checkPassword(form)
 				  {name:'group_id', index:'group_id', width:40, sorttype:'float'},
 				  {name:'last_login', index:'last_login', width:70, align:"center"}, 
 				  {name:'number_of_logins', index:'number_of_logins', width:70, align:"center"},
-				  {name:'enabled', index:'enabled', width:70, align:"center"}
+				  {name:'enabled', index:'enabled', width:70, align:"center"},
+				  {name:'email', index:'email', width:70, align:"center"},
+				  {name:'notify', index:'notify', width:70, align:"center"}
 				],
 				altRows:true,
 				altclass:'xAltRow',
@@ -493,13 +495,19 @@ table.genTable td
 			<table border="0" class="tbltask">
 			<tr><td>User ID (Login ID):</td><td><input type="text" name="user_id" size="40" maxlength="255" value="" autocomplete="off"></td></tr>
 			<tr><td>User Name:</td><td><input type="text" name="user_RealName" size="40" maxlength="255" value="" autocomplete="off"></td></tr>
+			<tr><td>Email Address:</td><td><input type="text" name="user_email" size="40" maxlength="255" value="" autocomplete="off"></td></tr>
 			<tr><td>Password:</td><td><input type="password" name="user_pass1" size="40" maxlength="255" value="" autocomplete="off"></td></tr>
 			<tr><td>Password:</td><td><input type="password" name="user_pass2" size="40" maxlength="255" value="" autocomplete="off"></td></tr>
 			<tr><td>Group:</td><td><select name="group">
 				<option value="#encrypt('1',session.usrKey,'AES/CBC/PKCS5Padding','base64')#" selected>User</option>
 				<option value="#encrypt('0',session.usrKey,'AES/CBC/PKCS5Padding','base64')#">Admin</option>
+				<option value="#encrypt('2',session.usrKey,'AES/CBC/PKCS5Padding','base64')#">AutoPKG</option>
 				</select></td></tr>
 			<tr><td>Enabled:</td><td><select name="enabled">
+				<option value="1">Yes</option>
+				<option value="0" selected>No</option>
+				</select></td></tr>	
+			<tr><td>Email Notifications:</td><td><select name="email_notification">
 				<option value="1">Yes</option>
 				<option value="0" selected>No</option>
 				</select></td></tr>	
@@ -526,6 +534,7 @@ table.genTable td
 			<table border="0" class="tbltask">
 			<tr><td>User ID (Login ID):</td><td><input type="text" name="user_id" size="40" maxlength="255" value="#accountData.user_id#" readonly></td></tr>
 			<tr><td>User Name:</td><td><input type="text" name="user_RealName" size="40" maxlength="255" value="#accountData.user_RealName#" autocomplete="off"></td></tr>
+			<tr><td>Email Address:</td><td><input type="text" name="user_email" size="40" maxlength="255" value="#accountData.user_email#" autocomplete="off"></td></tr>
 			<tr><td>Old Password:</td><td><input type="password" name="user_pass0" size="40" maxlength="255" value="" autocomplete="off"></td></tr>
 			<tr><td>Password:</td><td><input type="password" name="user_pass1" size="40" maxlength="255" value="" autocomplete="off"></td></tr>
 			<tr><td>Password:</td><td><input type="password" name="user_pass2" size="40" maxlength="255" value="" autocomplete="off"></td></tr>
@@ -533,10 +542,15 @@ table.genTable td
 				<select name="group">
 					<option value="#encrypt('1',session.usrKey,'AES/CBC/PKCS5Padding','base64')#"<cfif accountData.group_id EQ "1"> selected</cfif>>User</option>
 					<option value="#encrypt('0',session.usrKey,'AES/CBC/PKCS5Padding','base64')#"<cfif accountData.group_id EQ "0"> selected</cfif>>Admin</option>
+					<option value="#encrypt('2',session.usrKey,'AES/CBC/PKCS5Padding','base64')#"<cfif accountData.group_id EQ "2"> selected</cfif>>AutoPKG</option>
 				</select></td></tr>
 			<tr><td>Enabled:</td><td><select name="enabled">
 				<option value="1"<cfif accountData.enabled EQ "1"> selected</cfif>>Yes</option>
 				<option value="0"<cfif accountData.enabled EQ "0"> selected</cfif>>No</option>
+				</select></td></tr>	
+			<tr><td>Email Notification:</td><td><select name="email_notification">
+				<option value="1"<cfif accountData.email_notification EQ "1"> selected</cfif>>Yes</option>
+				<option value="0"<cfif accountData.email_notification EQ "0"> selected</cfif>>No</option>
 				</select></td></tr>	
 			</table>
 		</fieldset>
@@ -562,7 +576,7 @@ table.genTable td
 <cfif session.adm_mp_accounts EQ "2">
 	<cfsilent>
 		<cfquery name="accountData" datasource="#session.dbsource#">
-			Select b.rid, b.group_id, b.user_id, b.user_type, a.user_RealName, b.enabled
+			Select b.rid, b.group_id, b.user_id, b.user_type, a.user_RealName, b.enabled, b.user_email, b.email_notification
 			from mp_adm_group_users b
 			LEFT Join mp_adm_users a ON a.user_id = b.user_id
 			Where b.rid = '#editUserID#'
@@ -585,8 +599,9 @@ table.genTable td
 			Values (<cfqueryparam value="#form.USER_ID#">,<cfqueryparam value="#form.USER_REALNAME#">,<cfqueryparam value="#hash(form.USER_PASS1,'MD5')#">,<cfqueryparam value="#form.Enabled#">)
 		</cfquery>	
 		<cfquery datasource="#session.dbsource#" name="addAccountGroup">
-			Insert Into mp_adm_group_users (group_id, user_id, user_type, number_of_logins, enabled)
-			Values (<cfqueryparam value="#decrypt(form.GROUP,session.usrKey,'AES/CBC/PKCS5Padding','base64')#">,<cfqueryparam value="#form.USER_ID#">,'1','0',<cfqueryparam value="#form.Enabled#">)
+			Insert Into mp_adm_group_users (group_id, user_id, user_type, number_of_logins, enabled, user_email, email_notification)
+			Values (<cfqueryparam value="#decrypt(form.GROUP,session.usrKey,'AES/CBC/PKCS5Padding','base64')#">,<cfqueryparam value="#form.USER_ID#">,'1','0',<cfqueryparam value="#form.Enabled#">,
+				<cfqueryparam value="#form.user_email#">, <cfqueryparam value="#form.email_notification#">)
 		</cfquery>
 		<cfcatch type="any">
 			<cfset session.adm_mp_account_msg = #cfcatch.Message#>
@@ -601,7 +616,7 @@ table.genTable td
 	<cfset updateType = "0">
 	
 	<cfquery name="accountData" datasource="#session.dbsource#">
-		Select a.user_pass, b.user_type from mp_adm_users a
+		Select a.user_pass, b.user_type, b.user_email, b.email_notification from mp_adm_users a
 		LEFT Join mp_adm_group_users b ON a.user_id = b.user_id
 		Where b.rid = <cfqueryparam value="#form.rid#">
 	</cfquery>
@@ -639,14 +654,16 @@ table.genTable td
 		<cfquery name="editUser2" datasource="#session.dbsource#">
 			UPDATE mp_adm_group_users
 			SET
-				enabled = <cfqueryparam value="#form.Enabled#">
+				enabled = <cfqueryparam value="#form.Enabled#">,
+				user_email = <cfqueryparam value="#form.user_email#">,
+				email_notification = <cfqueryparam value="#form.email_notification#">
 				<cfif session.IsAdmin IS true>
 				,group_id = <cfqueryparam value="#decrypt(form.GROUP,session.usrKey,'AES/CBC/PKCS5Padding','base64')#" cfsqltype="cf_sql_integer">
 				</cfif>
 			WHERE rid = #Val(form.rid)#
 		</cfquery>
 	<cfcatch type="any">
-		<cfset session.adm_mp_account_msg = #cfcatch.Message#>
+		<cfset session.adm_mp_account_msg = #cfcatch.Message# & #cfcatch.detail#>
 	</cfcatch>
 	</cftry>
 	<cflocation url="#session.cflocFix#/admin/inc/admin_accounts.cfm">

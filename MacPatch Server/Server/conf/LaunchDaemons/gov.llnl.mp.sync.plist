@@ -20,17 +20,5 @@
 	<integer>1800</integer>
 	<key>RunAtLoad</key>
 	<true/>
-	<key>onDemand</key>
-	<true/>
-	<key>Sockets</key>
-	<dict>
-		<key>Listeners</key>
-		<array>
-			<dict>
-				<key>SockServiceName</key>
-				<string>2605</string>
-			</dict>
-		</array>
-	</dict>
 </dict>
 </plist>

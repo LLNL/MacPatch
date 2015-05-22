@@ -2,8 +2,8 @@
 <!---
         MPClientService
         Database type is MySQL
-        MacPatch Version 2.5.x
-        Rev 2
+        MacPatch Version 2.6.5.x
+        Rev 3
 --->
 <!---   Notes:
 --->
@@ -552,10 +552,11 @@
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
             <cfset pid = patchGroupIDFromName(arguments.PatchGroup)>
-            <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
+            <cfquery datasource="#this.ds#" name="qGetGroupID">
                 SELECT mdate FROM mp_patch_group_data
                 WHERE pid = <cfqueryparam value="#pid#">
                 AND hash = <cfqueryparam value="#arguments.Hash#">
+                AND data_type = 'JSON'
             </cfquery>
 
             <cfif qGetGroupID.RecordCount EQ 1>
@@ -646,13 +647,17 @@
                 Where pid = <cfqueryparam value="#qGetGroupID.id#">
                 AND data_type = <cfqueryparam value="#arguments.DataType#">
             </cfquery>
-            <cfif qGetGroupID.RecordCount NEQ 1>
-                <cfset l = logit("Error","[GetPatchGroupPatches][qGetGroupData]: No group data was found for id #qGetGroupID.id#")>
+
+            <cfif qGetGroupData.RecordCount EQ 0>
+                <cfset response[ "errorno" ] = "0" />
+                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupData]: No group data was found for #arguments.PatchGroup#" />
+                <cfset response[ "result" ] = {"AppleUpdates":[],"CustomUpdates":[]} />
+            <cfelseif qGetGroupData.RecordCount EQ 1>
+                <cfset response.result  =  #qGetGroupData.data#> />    
+            <cfelse>
                 <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupData]: No group data was found for id #qGetGroupID.id#" />
-                <cfreturn response>
+                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupData]: Data found found, but wrong amount." />
             </cfif>
-            <cfset response.result  =  #qGetGroupData.data#> />
 
             <cfcatch>
                 <cfset l = logit("Error","[GetPatchGroupPatches]: #cfcatch.Detail# -- #cfcatch.Message#")>
@@ -748,7 +753,7 @@
                         Insert Into mp_client_patches_apple
                             (cuuid,mdate,type,patch,description,size,recommended,restart,version)
                         Values
-                            (<cfqueryparam value="#arguments.clientID#">,<cfqueryparam value="#p['mdate']#">,
+                            (<cfqueryparam value="#arguments.clientID#">,#CreateODBCDateTime(now())#,
                             <cfqueryparam value="#p['type']#">,<cfqueryparam value="#p['patch']#">,
                             <cfqueryparam value="#p['description']#">,<cfqueryparam value="#p['size']#">,
                             <cfqueryparam value="#p['recommended']#">,<cfqueryparam value="#p['restart']#">,<cfqueryparam value="#p['version']#">)
@@ -782,7 +787,7 @@
                         Insert Into mp_client_patches_third
                             (cuuid,mdate,type,patch,patch_id,description,size,recommended,restart,version,bundleID)
                         Values
-                            (<cfqueryparam value="#arguments.clientID#">,<cfqueryparam value="#p['mdate']#">,<cfqueryparam value="#p['type']#">,
+                            (<cfqueryparam value="#arguments.clientID#">,#CreateODBCDateTime(now())#,<cfqueryparam value="#p['type']#">,
                             <cfqueryparam value="#p['patch']#">,<cfqueryparam value="#p['patch_id']#">,<cfqueryparam value="#p['description']#">,
                             <cfqueryparam value="#p['size']#">,<cfqueryparam value="#p['recommended']#">,<cfqueryparam value="#p['restart']#">,
                             <cfqueryparam value="#p['version']#">,<cfqueryparam value="#p['bundleID']#">)
@@ -813,7 +818,7 @@
         <cfargument name="model" required="true" type="struct" />
         <cfset result = 0 />
 
-        <cfset objKeys=["mdate","type","patch","description","size","recommended","restart","version"]>
+        <cfset objKeys=["type","patch","description","size","recommended","restart","version"]>
         <cfloop array=#objKeys# index="o">
             <cfif NOT structkeyexists(arguments.model,o)>
                 <cfset result = 1 />
@@ -837,7 +842,7 @@
         <cfargument name="model" required="true" type="struct" />
         <cfset result = 0 />
 
-        <cfset objKeys=["mdate","type","patch","patch_id","description","size","recommended","restart","version","bundleID"]>
+        <cfset objKeys=["type","patch","patch_id","description","size","recommended","restart","version","bundleID"]>
         <cfloop array=#objKeys# index="o">
             <cfif NOT structkeyexists(arguments.model,o)>
                 <cfset result = 1 />

@@ -21,8 +21,9 @@ fi
 if [ -d /Library/MacPatch/Server/tomcat-mpws ]; then
 	chown -R 79:70 /Library/MacPatch/Server/tomcat-mpws
 fi
-chown -R 79:70 /Library/MacPatch/Server/Logs
-chown -R 79:70 /Library/MacPatch/Content/Web
+
+chown -R 79:70 /Library/MacPatch/Server
+chown -R 79:70 /Library/MacPatch/Content
 chmod 0775 /Library/MacPatch/Server
 chmod 0775 /Library/MacPatch/Server/Logs
 chmod -R 0775 /Library/MacPatch/Content/Web

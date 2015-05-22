@@ -34,7 +34,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#define DEFAULT_TIMEOUT 10
+#define DEFAULT_TIMEOUT 15
 
 @interface MPNetReach ()
 

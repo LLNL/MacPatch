@@ -16,14 +16,14 @@
         },
         "ldap": 
         {
-            "server":"AD-DOMAIN-FQDN",
-            "searchbase":"AD-SEARCH-BASE",
+            "server":"SERVERNAME",
+            "searchbase":"SEARCH-BASE",
             "attributes":"givenname,initials,sn,mail,memberOf,dn,samAccountName,userPrincipalName",
-            "port":"AD-DOMAIN-PORT",
+            "port":"SERVER-PORT",
             "secure":"AD-DOMAIN-SSL",
-            "loginAttr":"AD-LOGIN-ATTR",
-            "loginUsrPrefix":"AD-LOGIN-PRE",
-            "loginUsrSufix":"AD-LOGIN-SUF"
+            "loginAttr":"LOGIN-ATTRIBUTE",
+            "loginUsrPrefix":"LOGIN-PREFIX",
+            "loginUsrSufix":"LOGIN-SUFFIX"
         },
         "database": 
         {
@@ -36,8 +36,8 @@
                 "hoststringPre":"jdbc:mysql:",
                 "hoststringURI":"?cacheResultSetMetadata=false&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull",
                 "drivername":"com.mysql.jdbc.Driver",
-                "username":"[DB-USER]",
-                "password":"[DB-PASS]",
+                "username":"mpdbadm",
+                "password":"",
                 "maxconnections":500,
                 "logintimeout":30,
                 "connectiontimeout":30,
@@ -53,7 +53,7 @@
                 "hoststringURI":"?cacheResultSetMetadata=false&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull",
                 "drivername":"com.mysql.jdbc.Driver",
                 "username":"mpdbro",
-                "password":"[DB-PASS]",
+                "password":"",
                 "maxconnections":100,
                 "logintimeout":30,
                 "connectiontimeout":30,

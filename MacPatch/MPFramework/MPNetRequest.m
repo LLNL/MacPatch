@@ -29,7 +29,7 @@
 #import "MPNetReach.h"
 
 #define URI             @"/Service/MPClientService.cfc"
-#define URL_TIMEOUT     10.0 // Does not, need to be longer
+#define URL_TIMEOUT     30.0 // Does not, need to be longer
 
 #undef  ql_component
 #define ql_component lcl_cMPNetRequest

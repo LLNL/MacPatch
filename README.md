@@ -3,29 +3,18 @@
 ## Overview
 MacPatch simplifies the act of patching and installing software on Mac OS X based systems. The client relies on using the built-in software update application for patching the Mac OS X system updates and it's own scan and patch engine for custom patches. 
 
-MacPatch offers features and functionality that provide Mac OS X administrators with best possible patching solution to meet the challenges of supporting Mac OS X in the enterprise today.
+MacPatch offers features and functionality that provide Mac OS X administrators with best possible patching solution to meet the challenges of supporting Mac OS X in a Workgroup or Enterprise.
 
 ## Features
 
-* Apple Software update server support
 * Custom patch creation
 * Custom patch groups
-* Patch baselines
-* Client reboot notification
+* End-User Self Patch
+* Software Distribution
 * Inventory Collection
 * Basic Reporting
-* End-User Self Patch
-* Software Catalog
-
-## Version 2.6.x
-
-###What's New
-
-* Power managment
 * Mac OS X Profiles support
-* More Inventory
-* New Web Admin Console
-* Linux Server Support
+* AutoPKG support
 
 ## System Requirements
 
@@ -35,33 +24,24 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 
 #####Server Requirements:
 * Mac OS X or Mac OS X Server 10.7 or higher 
-* Linux Fedora & Unbuntu
+* Linux Fedora (19 and higher), RHEL 7, Ubuntu 12.x
 * Using Intel Hardware, PPC is not supported
 * 4 GB of RAM, 8 GB is recommended
 * Java v1.6 or higher
 * MySQL version 5.1 or higher, MySQL 5.6.x is recommended.
 
-######*JAVA 7 Issue* 
-
-If your using JAVA 1.7, Oracle did not include the "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7". Apparently they are needed for any stronger keys then 128-bit keys. You can get the Unlimited Strength bundles from the Oracle site ([http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)). 
-Installing them is as “simple” as dumping them to the "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home/jre/lib/security/" directory.
-
-#####Server (TCP) Ports Used:
-
-
-######Default
-80, 443, 2600, 3601, 4601
-######Configurable
-2600, 3601, 4601
-
-
 ## Install and Setup
 To get MacPatch up and running use the QuickStart docs from the macpatch.github.io website.
 
+#### From Source
 * Mac QuickStart: https://macpatch.github.io/documentation/quickstart-osx.html
 * Linux QuickStart: https://macpatch.github.io/documentation/quickstart-linux.html
 
+#### Binary
+* Download the [MacPatch DMG](https://github.com/SMSG-MAC-DEV/MacPatch/releases/latest). Install PDF and client are located in the DMG.
 
+## Help
+For questions or help visit the [MacPatch](https://groups.google.com/d/forum/macpatch) group.
 
 ## License
 

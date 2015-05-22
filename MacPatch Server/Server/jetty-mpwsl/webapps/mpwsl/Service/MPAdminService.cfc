@@ -2,7 +2,7 @@
 <!---
 		MPAdminService 
 	 	Database type is MySQL
-		MacPatch Version 2.2.x
+		MacPatch Version 2.6.6.x
 --->
 <!---	Notes:
 --->
@@ -81,10 +81,11 @@
 	
 	<cffunction name="patchObj" access="private" returntype="struct" output="no">
 
+		<!--- Not Used Yet, should delete it soon --->
         <cfset response = {} />
         <cfset response[ "OSArch" ] = "X86" />
         <cfset response[ "OSType" ] = "Desktop" />
-		<cfset response[ "OSVersion" ] = "10.6.*,10.7.*,10.8.*,10.9.*" />
+		<cfset response[ "OSVersion" ] = "*" />
         <cfset response[ "bundle_id" ] = "" />
 		<cfset response[ "description" ] = "" />
         <cfset response[ "description_url" ] = "" />
@@ -100,6 +101,36 @@
 		<cfset response[ "patch_status" ] = "" />
         <cfset response[ "patch_vendor" ] = "" />
 		<cfset response[ "patch_version" ] = "0" />
+		
+        <cfreturn response>
+    </cffunction>
+
+    <cffunction name="autoPKGObj" access="private" returntype="struct" output="no">
+
+    	<cfset response = {} />
+
+        <cfset response[ "puuid" ] = "" />
+		<cfset response[ "bundle_id" ] = "" />
+		<cfset response[ "patch_name" ] = "" />
+		<cfset response[ "patch_ver" ] = "" />
+		<cfset response[ "patch_vendor" ] = "" />
+		<cfset response[ "patch_install_weight" ] = "30" />
+		<cfset response[ "description" ] = "" />
+		<cfset response[ "description_url" ] = "" />
+		<cfset response[ "patch_severity" ] = "High" />
+		<cfset response[ "patch_state" ] = "" />
+		<cfset response[ "patch_reboot" ] = "No" />
+		<cfset response[ "cve_id" ] = "" />
+		<cfset response[ "active" ] = "0" />
+		<cfset response[ "pkg_preinstall" ] = "" />
+		<cfset response[ "pkg_postinstall" ] = "" />
+		<cfset response[ "pkg_name" ] = "AUTOPKG" />
+		<cfset response[ "pkg_env_var" ] = "" />
+		<!--- Criteria --->
+		<cfset response[ "OSArch" ] = "X86" />
+		<cfset response[ "OSType" ] = "Mac OS X, Mac OS X Server" />
+		<cfset response[ "OSVersion" ] = "*" />
+		<cfset response[ "patch_criteria_enc" ] = arrayNew(1) />
 		
         <cfreturn response>
     </cffunction>
@@ -190,12 +221,15 @@
 		<cfargument name="usertype" required="true"/>
 	    
 	    <cfset var result = false>
+
+	    <!--- See if the user exists and get properties --->
 	    <cfquery name="qGroupRights" datasource="#this.ds#"> 
 	        Select user_id, group_id, number_of_logins
 	        From mp_adm_group_users
 	        Where user_id in ('#arguments.username#')
 	    </cfquery>
 	    
+	    <!--- does not exist, add login entry and put in user group --->
 	    <cfif qGroupRights.recordcount EQ 0>
 	        <cfquery name="qAddAccount" datasource="#this.ds#"> 
 	            Insert Into mp_adm_group_users ( user_id, user_type, last_login, number_of_logins)
@@ -204,14 +238,39 @@
 		<cfelseif qGroupRights.recordcount EQ 1 AND qGroupRights.group_id EQ 0>
 			<cfset result = true>
 		</cfif>
-		<cfif #arguments.username# EQ this.settings.users.admin.name>
-			<cfset result = true>
-	    <cfelseif #arguments.username# EQ this.settings.users.admin.pass>
-	    	<cfset result = true>     
-		</cfif>
-	    
+
 		<cfset tmp = updateLogInInfo(arguments.username,qGroupRights.number_of_logins)>
 	    
+	    <cfreturn #result#>
+	</cffunction>
+
+	<cffunction name="logInUserAutoPKG" returntype="boolean" access="private">
+		<cfargument name="username" required="true"/>
+	    
+	    <cfset var result = false>
+
+	    <!--- See if the user exists and get properties --->
+	    <cftry>
+		    <cfquery name="qGroupRights" datasource="#this.ds#"> 
+		        Select user_id, user_type, group_id
+		        From mp_adm_group_users
+		        Where user_id in ('#arguments.username#')
+		    </cfquery>
+		    
+		    <!--- 0 = Admin, 1 = User, 2 = autopkg --->
+		    <cfif qGroupRights.recordcount EQ 1>
+		        <cfif qGroupRights.group_id EQ 0>
+		        	<cfset result = true>
+		        </cfif>
+		        <cfif qGroupRights.group_id EQ 2>
+		        	<cfset result = true>
+		        </cfif>
+			</cfif>
+			<cfcatch>
+				<cflog file="MPAdminLoginError" type="error" application="no" text="#cfcatch.message# #cfcatch.detail#">
+			</cfcatch>
+		</cftry>
+
 	    <cfreturn #result#>
 	</cffunction>
 
@@ -364,17 +423,20 @@
 
         <!---	User is attempting to login at this point; we call one of the login functions	--->
 		<cfif logInUserSimple( arguments.authUser, arguments.authPass )>
-			<cflog file="MPAdminLoginError" type="error" application="no" text="Login using Simple Auth">
-            <cfset userSession.IsAdmin=#logInUserGroupRights(arguments.authUser,'0')#>
-            <cfset userSession.usrKey=#Generatesecretkey("AES",256)#>
+            <cfset userSession.IsAdmin=true>
+            <cfset userSession.usrKey=#hash(Generatesecretkey("AES"),"SHA")#>
+            <cfset userSession.IsAutoPKG=#logInUserAutoPKG(arguments.authUser)#>
+            <!--- <cfset userSession.usrKey=#Generatesecretkey("AES",256)#> --->
         <cfelseif logInUserDatabase( arguments.authUser, arguments.authPass )> 
-			<cflog file="MPAdminLoginError" type="error" application="no" text="Login using Database">
             <cfset userSession.IsAdmin=#logInUserGroupRights(arguments.authUser,'1')#>
             <cfset userSession.usrKey=#hash(Generatesecretkey("AES"),"SHA")#>
+            <cfset userSession.IsAutoPKG=#logInUserAutoPKG(arguments.authUser)#>
+
         <cfelseif logInUserDirectory( arguments.authUser, arguments.authPass )> 
-			<cflog file="MPAdminLoginError" type="error" application="no" text="Login using Directory">
             <cfset userSession.IsAdmin=#logInUserGroupRights(arguments.authUser,'2')#>
             <cfset userSession.usrKey=#hash(Generatesecretkey("AES"),"SHA")#>
+            <cfset userSession.IsAutoPKG=#logInUserAutoPKG(arguments.authUser)#>
+
 		<cfelse>
 			<cflog file="MPAdminLoginError" type="error" application="no" text="No authentication scheme was found.">
 			<cfset response[ "errorno" ] = 1001 />
@@ -383,7 +445,7 @@
 			<cfreturn response>
 		</cfif>
 		
-		<cfif userSession.IsAdmin EQ False>
+		<cfif userSession.IsAdmin EQ False and userSession.IsAutoPKG EQ False>
 			<cflog file="MPAdminLoginError" type="error" application="no" text="#arguments.authUser# is not an admin account.">
 			<cfset response[ "errorno" ] = 1002 />
 			<cfset response[ "errormsg" ] = "User has no rights to perform requests." />
@@ -790,7 +852,244 @@
 		
 		<cfreturn result>
 	</cffunction>
+<!--- **************************************************************************************** --->
+<!---	AutoPKG Support --->
 	
+	<cffunction name="postAutoPKGPatch" access="remote" returnType="struct" returnFormat="json" output="false">
+		<cfargument name="user">
+		<cfargument name="token">
+		<cfargument name="autoPKGData">
+		
+        <cfset var response = responseObj(0) />
+		
+		<!--- Make Sure the Auth info is Good --->
+		<cfif NOT isValidAuthToken(arguments.user,arguments.token)>
+			<cfset response.errorNo = "9000">
+			<cfset response.errorMsg = "Invalid auth data.">
+			<cfreturn response>
+		</cfif>
+
+		<cfif NOT logInUserAutoPKG(arguments.user)>
+			<cfset response.errorNo = "9000">
+			<cfset response.errorMsg = "Invalid auth user.">
+			<cfreturn response>
+		</cfif>
+
+		<!--- Is Valid JSON Data --->
+		<cfif NOT IsJSON(arguments.autoPKGData)> 
+			<cfset response.errorNo = "9001">
+			<cfset response.errorMsg = "Invalid data type.">
+			<cfreturn response>
+		</cfif>
+		<cfset var aPKGJSON = DeserializeJSON(arguments.autoPKGData) />
+
+		<!--- Check to see if required fields are included --->
+		<cfif NOT IsValidPatchObj(aPKGJSON)>
+			<cfset response.errorNo = "9002">
+			<cfset response.errorMsg = "Invalid data.">
+			<cfreturn response>
+		</cfif>
+
+		<!--- Populate patch object with values --->
+		<cfset var patch = autoPKGObj() />
+		<cfset autoPKGKeys = StructKeyList(aPKGJSON,",")>
+		<cfloop index="key" list="#autoPKGKeys#" delimiters = ",">  
+		    <cfif structkeyexists(patch,key)>
+		    	<cfset patch[key] = aPKGJSON[key]>
+		    </cfif>   
+		</cfloop>
+
+		<!--- Check to see if the same patch has already been added --->
+		<cfif patchExists(patch.bundle_id,patch.patch_name,patch.patch_ver)>
+			<cfset response.errorNo = "9003">
+			<cfset response.errorMsg = "Patch already exists.">
+			<cfreturn response>
+		</cfif>
+		
+		<!--- Add Patch to Database --->
+		<cftry>
+			<cfset patchID = #CreateUUID()#>
+			<cfset patch.puuid = patchID>
+			<cfset preInstallScpt = ToString( ToBinary( patch.pkg_preinstall ) ) />
+			<cfset postInstallScpt = ToString( ToBinary( patch.pkg_postinstall ) ) />
+
+			<!--- Insert Main Patch Data --->
+			<cfquery name="qAddPatch" datasource="#this.ds#"> 
+	            Insert Into mp_patches ( puuid,bundle_id,patch_name,patch_ver,
+	            							  patch_severity,patch_state,active, patch_vendor,
+	            							  patch_install_weight,description,description_url,patch_reboot,
+	            							  cve_id,pkg_preinstall,pkg_postinstall,pkg_env_var, 
+	            							  cDate, mDate )
+	            Values ( <cfqueryparam value="#patch.puuid#">, <cfqueryparam value="#patch.bundle_id#">, <cfqueryparam value="#patch.patch_name#">, <cfqueryparam value="#patch.patch_ver#">,
+	            	<cfqueryparam value="#patch.patch_severity#">, <cfqueryparam value="AutoPKG">, <cfqueryparam value="1">, <cfqueryparam value="#patch.patch_vendor#">,
+	            	<cfqueryparam value="#patch.patch_install_weight#">, <cfqueryparam value="#patch.description#">, <cfqueryparam value="#patch.description_url#">, <cfqueryparam value="#patch.patch_reboot#">,
+	            	<cfqueryparam value="#patch.cve_id#">, <cfqueryparam value="#preInstallScpt#">,<cfqueryparam value="#postInstallScpt#">, <cfqueryparam value="#patch.pkg_env_var#">,
+	            	#CreateODBCDateTime(now())#, #CreateODBCDateTime(now())#)
+	        </cfquery>
+
+	        <!--- Criteria --->
+	        <cfquery name="qAddPatchC1" datasource="#this.ds#"> 
+	            Insert Into mp_patches_criteria ( puuid, type, type_data, type_order )
+	            Values ( <cfqueryparam value="#patch.puuid#">, "OSType", <cfqueryparam value="#patch.OSType#">, <cfqueryparam value="1">)
+	        </cfquery>
+	        <cfquery name="qAddPatchC2" datasource="#this.ds#"> 
+	            Insert Into mp_patches_criteria ( puuid, type, type_data, type_order )
+	            Values ( <cfqueryparam value="#patch.puuid#">, "OSVersion", <cfqueryparam value="#patch.OSVersion#">, <cfqueryparam value="2">)
+	        </cfquery>
+	        <cfquery name="qAddPatchC3" datasource="#this.ds#"> 
+	            Insert Into mp_patches_criteria ( puuid, type, type_data, type_order )
+	            Values ( <cfqueryparam value="#patch.puuid#">, "OSArch", <cfqueryparam value="#patch.OSArch#">, <cfqueryparam value="3">)
+	        </cfquery>
+	        <!--- Criteria Array --->
+	        <cfloop index="i" from="1" to="#arrayLen(patch.patch_criteria_enc)#">
+	        	<cfset xOrder = i + 3>
+	        	<cfset criteriaString = ToString( ToBinary( patch.patch_criteria_enc[i] ) ) />
+	        	<cfset cList = criteriaString>
+	        	<cfset cType = #trim(listGetAt(cList, 1, "@"))#>
+	        	<cfset cQry =  #ListDeleteAt(cList, 1, "@")#>
+	        	<!--- Might Have to use Base64 if the type is script --->
+		        <cfquery name="qAddPatchC4" datasource="#this.ds#"> 
+		             Insert Into mp_patches_criteria ( puuid, type, type_data, type_order )
+		             Values ( <cfqueryparam value="#patch.puuid#">, <cfqueryparam value="#cType#">, <cfqueryparam value="#cQry#">, <cfqueryparam value="#xOrder#">)
+		        </cfquery>
+	        </cfloop>
+	        
+	        <!--- Add the request to the package can be uploaded --->
+	        <cfquery name="qAddAccount" datasource="#this.ds#"> 
+	            Insert Into mp_agent_upload ( uid, requestID, cDate)
+	            Values ( <cfqueryparam value="#Arguments.user#">, '#patchID#', #CreateODBCDateTime(now())#)
+	        </cfquery>
+
+	        <cfset response.result = patch.puuid>
+	        <cfset eres = sendNewAutoPKGEmail(arguments.user, patch.puuid, patch.patch_name, patch.patch_ver, patch.bundle_id)>
+
+			<cfcatch>
+				<cfset response.errorno = "9004">
+				<cfset response.errormsg = "Error: #cfcatch.Detail# #cfcatch.message#">
+				<cfreturn response>
+			</cfcatch>
+		</cftry>
+        
+        <cfreturn response>
+    </cffunction>
+
+    <cffunction name="IsValidPatchObj" access="private" returntype="any" output="no">
+        <cfargument name="model" required="true" type="struct" />
+        <cfset result = 0 />
+
+		<cfset reqObjKeys=["bundle_id","patch_name","patch_ver","patch_severity","OSType","OSVersion","patch_criteria_enc"]>
+        
+        <cfloop array=#reqObjKeys# index="o">
+        	<cflog file="MPAdminServiceDebug" type="error" application="no" text="#o#">
+            <cfif NOT structkeyexists(arguments.model,o)>
+            	<cflog file="MPAdminServiceDebug" type="error" application="no" text="Error: #o#">
+                <cfset result = 1 />
+            </cfif>
+        </cfloop>
+        
+        <cfif result EQ 0>
+            <cfreturn True>
+        <cfelse>
+            <cfreturn False>
+        </cfif>
+    </cffunction>
+
+    <!--- Not In Use Yet, will be used to validate criteria query --->
+    <cffunction name="IsValidCriteria" access="private" returntype="any" output="no">
+        <cfargument name="model" required="true" type="struct" />
+        <cfset result = 0 />
+
+		<cfset reqObjKeys=["bundle_id","patch_name","patch_ver","patch_severity","patch_state","OSArch","OSType","OSVersion","patch_criteria_enc"]>
+        
+        <cfloop array=#reqObjKeys# index="o">
+            <cfif NOT structkeyexists(arguments.model,o)>
+                <cfset result = 1 />
+            </cfif>
+        </cfloop>
+        
+        <cfif result EQ 0>
+            <cfreturn True>
+        <cfelse>
+            <cfreturn False>
+        </cfif>
+    </cffunction>
+
+    <cffunction name="patchExists" access="private" returntype="any" output="no">
+        <cfargument name="bundle_id" required="true" />
+        <cfargument name="patch_name" required="true" />
+        <cfargument name="patch_ver" required="true" />
+
+        <cfquery name="qGet" datasource="#this.ds#"> 
+        	Select * from mp_patches
+        	Where bundle_id = <cfqueryparam value="#arguments.bundle_id#">
+        	AND patch_ver = <cfqueryparam value="#arguments.patch_ver#">
+        </cfquery>
+
+        <!--- Orig
+        <cfquery name="qGet" datasource="#this.ds#"> 
+        	Select * from mp_patches
+        	Where bundle_id = <cfqueryparam value="#arguments.bundle_id#">
+        	AND patch_name = <cfqueryparam value="#arguments.patch_name#">
+        	AND patch_ver = <cfqueryparam value="#arguments.patch_ver#">
+        </cfquery>
+        --->
+
+        <cfif qGet.RecordCount GTE 1>
+            <cfreturn True>
+        <cfelse>
+            <cfreturn False>
+        </cfif>
+    </cffunction>
+
+    <cffunction name="sendNewAutoPKGEmail" access="private" returntype="any" output="no">
+        <cfargument name="userID" required="true" />
+        <cfargument name="puuid" required="true" />
+        <cfargument name="name" required="true" />
+        <cfargument name="ver" required="true" />
+        <cfargument name="bundleID" required="true" />
+
+		<cfsavecontent variable="emailBody" trim="true">
+			<cfoutput>
+			User: #arguments.userID# 
+			-----------------------------------------------
+			Patch info
+			PatchID: #arguments.puuid#
+			Patch Name: #arguments.name# 
+			Patch Version: #arguments.ver# 
+			Patch Bundle ID: #arguments.bundleID# 
+			</cfoutput>
+		</cfsavecontent>
+
+        <cflog file="MPAdminService_AutoPKG" type="error" application="no" text="**************************************************************************">	
+        <cflog file="MPAdminService_AutoPKG" type="error" application="no" text="New AutoPKG Patch Created">
+        <cflog file="MPAdminService_AutoPKG" type="error" application="no" text="#emailBody#">	
+
+        <cfquery name="qNotify" datasource="#this.ds#">
+        	Select user_email from mp_adm_group_users
+        	Where email_notification = 1
+        	AND user_email IS NOT NULL
+        </cfquery>
+
+        <cfif qNotify.RecordCount GTE 1>
+        	<cfset emailList = ValueList(qNotify.user_email,",")>
+        <cfelse>
+        	<cfreturn>
+        </cfif>
+
+        <cftry>
+        	<cfparam name="this.settings.mailserver.username" default="">
+			<cfparam name="this.settings.mailserver.password" default="">
+			<cfparam name="this.settings.mailserver.port" default="25">
+	        <cfmail from="MacPatch WebServices" to="#emailList#" subject="New AutoPKG Patch Created" 
+				type="text" server="#this.settings.mailserver.server#" port="#this.settings.mailserver.port#"
+				username="#IIF(this.settings.mailserver.username EQ "bObama",DE(''),DE(this.settings.mailserver.username))#" 
+				password="#IIF(this.settings.mailserver.password EQ "imdumberthanbush",DE(''),DE(this.settings.mailserver.username))#">#emailBody#</cfmail>
+		<cfcatch>
+			<cflog file="MPAdminService_AutoPKG" type="error" application="no" text="[sendNewAutoPKGEmail]: #cfcatch.detail#">	
+		</cfcatch>
+		</cftry>
+    </cffunction>
+
 	<cfscript>
 	/**
 	 * Replaces a huge amount of unnecessary whitespace from your HTML code.
