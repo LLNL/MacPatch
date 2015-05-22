@@ -64,8 +64,8 @@
         {
             "enabled": "YES",
             "server":"127.0.0.1",
-            "username":"bObama",
-            "password":"imdumberthanbush"
+            "username":"exampleusername",
+            "password":"examplepassword"
         }
     }
 }
