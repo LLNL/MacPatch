@@ -111,7 +111,15 @@
 		if (![fm fileExistsAtPath:appPath]) {
 			logit(lcl_vError,@"Unable to find MPAgentExec app.");
 		} else {
-			if ([MPCodeSign checkSignature:appPath]) {
+            NSError *err = nil;
+            MPCodeSign *cs = [[MPCodeSign alloc] init];
+            BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
+            if (err) {
+                logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+            }
+            cs = nil;
+            if (result == YES)
+            {
 				NSError *error = nil;
 				NSString *result;
 				MPNSTask *mpr = [[MPNSTask alloc] init];
@@ -139,8 +147,15 @@
 			logit(lcl_vError,@"Unable to find MPAgentExec app.");
 		}
 
-		if ([MPCodeSign checkSignature:appPath]) 
-		{	
+        NSError *err = nil;
+        MPCodeSign *cs = [[MPCodeSign alloc] init];
+        BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
+        if (err) {
+            logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+        }
+        cs = nil;
+        if (result == YES)
+		{
 			NSError *error = nil;
 			NSString *result;
 			MPNSTask *mpr = [[MPNSTask alloc] init];

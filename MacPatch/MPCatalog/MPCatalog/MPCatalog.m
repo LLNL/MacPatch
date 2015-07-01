@@ -177,7 +177,15 @@ static MPCatalog *_instance;
 	}
 	
 	// Check Signature
-	if ([MPCodeSign checkSignature:aStringPath]) {
+    NSError *err = nil;
+    MPCodeSign *cs = [[MPCodeSign alloc] init];
+    BOOL result = [cs verifyAppleDevBinary:aStringPath error:&err];
+    if (err) {
+        logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+    }
+    cs = nil;
+    if (result == YES)
+    {
 		[g_AppHashes setValue:[aStringPath getMD5FromFile] forKey:[aStringPath lastPathComponent]];
 		result = YES;
 		goto done;

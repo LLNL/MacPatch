@@ -2,7 +2,7 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Installer
-# ver 1.9
+# ver 2.0
 # Created By Charles Heizer
 # LLNL
 #
@@ -46,6 +46,7 @@ setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.agent.plist
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.worker.plist
 setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPRebootD.plist
 setOwnerAndPerms /Library/LaunchAgents/gov.llnl.mp.status.plist
+setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPLoginAgent.plist
 
 if [ ! -d "/Library/Application Support/MPClientStatus" ]; then
 	mkdir "/Library/Application Support/MPClientStatus"
@@ -127,22 +128,14 @@ fi
 # ******************************************************************
 # Install Auth Plugin **********************************************
 #
-if [ -d "/Library/MacPatch/Client/MPAuthPlugin.bundle" ]; then
-	mv "/Library/MacPatch/Client/MPAuthPlugin.bundle" "/System/Library/CoreServices/SecurityAgentPlugins/"
-	chown -R root:wheel "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
-	chmod -R 0755 "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
-	if [ -f "/Library/MacPatch/Client/MPAuthPluginTool" ]; then
-		/Library/MacPatch/Client/MPAuthPluginTool -a 
-	fi
-fi
-
-
-# ******************************************************************
-# Quick Clean Up from older release ********************************
-#
-if [ -f "/var/root/Library/Preferences/com.apple.loginwindow.plist" ]; then
-	/usr/bin/defaults delete /var/root/Library/Preferences/com.apple.loginwindow LogoutHook
-fi
+#if [ -d "/Library/MacPatch/Client/MPAuthPlugin.bundle" ]; then
+#	mv "/Library/MacPatch/Client/MPAuthPlugin.bundle" "/System/Library/CoreServices/SecurityAgentPlugins/"
+#	chown -R root:wheel "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
+#	chmod -R 0755 "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
+#	if [ -f "/Library/MacPatch/Client/MPAuthPluginTool" ]; then
+#		/Library/MacPatch/Client/MPAuthPluginTool -a 
+#	fi
+#fi
 
 # ******************************************************************
 # Launch the MPAgent service ***************************************

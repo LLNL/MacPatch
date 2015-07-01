@@ -440,7 +440,7 @@ done:
 		}
 	}
 	
-	
+    crypto = nil;
 	return hashResult;
 }
 

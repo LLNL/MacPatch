@@ -31,7 +31,6 @@
 
 // Run tasks ...
 + (void)runCheckIn;
-+ (void)runInventoryCollection;
 + (void)runPatchScan;
 + (void)runPatchScanAndUpdate;
 + (void)runAVInfoScan;

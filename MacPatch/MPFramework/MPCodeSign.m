@@ -29,10 +29,95 @@
 
 @implementation MPCodeSign
 
+- (BOOL)verifyAppleBinary:(NSString *)aFilePath error:(NSError **)err
+{
+    return [self verifyBinary:aFilePath requirement:@"anchor apple" error:err];
+}
+
+- (BOOL)verifyAppleDevBinary:(NSString *)aFilePath error:(NSError **)err
+{
+    return [self verifyBinary:aFilePath requirement:@"anchor apple generic" error:err];
+}
+
+/*
+ Use "anchor apple generic" as the requirement type for Apple Developer
+ account certs.
+ */
+
+- (BOOL)verifyBinary:(NSString *)aFilePath requirement:(NSString *)aRequirement error:(NSError **)err
+{
+    MPDefaults *d = [[MPDefaults alloc] init];
+    if ([[d defaults] objectForKey:@"CheckSignatures"]) {
+        if ([[[d defaults] objectForKey:@"CheckSignatures"] boolValue] == NO) {
+            return YES;
+        }
+    }
+    
+    NSError *error = nil;
+    BOOL result = NO;
+    
+    SecStaticCodeRef code = NULL;
+    SecRequirementRef ancorReq  = 0;
+    
+    // File Exists
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:aFilePath]) {
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: NSLocalizedString(@"File not found.", nil)};
+        error = [NSError errorWithDomain:NSPOSIXErrorDomain code:-1 userInfo:userInfo];
+        if (err != NULL) *err = error;
+        return result;
+    }
+    
+    CFStringRef pathStr = CFStringCreateWithCString( kCFAllocatorDefault, [aFilePath UTF8String], kCFStringEncodingUTF8 );
+    if( pathStr == NULL ) {
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: NSLocalizedString(@"File not found.", nil)};
+        error = [NSError errorWithDomain:NSPOSIXErrorDomain code:-2 userInfo:userInfo];
+        if (err != NULL) *err = error;
+        return result;
+    }
+    
+    CFURLRef pathURL = CFURLCreateWithString( kCFAllocatorDefault, pathStr, NULL );
+    if( pathURL == NULL ) {
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: NSLocalizedString(@"Unable to convert path to CFURL.", nil)};
+        error = [NSError errorWithDomain:NSPOSIXErrorDomain code:-3 userInfo:userInfo];
+        if (err != NULL) *err = error;
+        return result;
+    }
+    
+    OSStatus status = SecStaticCodeCreateWithPath( pathURL, kSecCSDefaultFlags, &code );
+    if( status ) {
+        error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
+        if (err != NULL) *err = error;
+        return result;
+    }
+    
+    status = SecRequirementCreateWithString( (__bridge CFStringRef)aRequirement, kSecCSDefaultFlags, &ancorReq );
+    if( status ) {
+        error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
+        if (err != NULL) *err = error;
+        return result;
+    }
+    
+    status = SecStaticCodeCheckValidity(code, kSecCSDefaultFlags, ancorReq );
+    if (status == errSecSuccess) {
+        result = YES;
+    } else {
+        error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
+    }
+    
+    if (err != NULL) *err = error;
+    
+    if (result != YES) {
+        logit(lcl_vError,@"%@ is not signed or trusted.",aFilePath);
+    }
+    return result;
+}
+
+
 + (BOOL)checkSignature:(NSString *)aStringPath
 {
 	BOOL result = NO;
-	NSArray *_fingerPrintBaseArray = [NSArray arrayWithObjects:@"a42b1c000514941e965efa6d9c80df6572ef028f",@"d82b0abf5523dbdb6b605e570ce3a005b7a3f80d",nil];
+	NSArray *_fingerPrintBaseArray = [NSArray arrayWithObjects:@"0",@"0",nil];
     
     // Check to see if use code sign validation is enabled
     MPDefaults *d = [[MPDefaults alloc] init];

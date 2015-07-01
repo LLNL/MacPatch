@@ -1521,7 +1521,15 @@ done:
 	MPNSTask *mpr = [[MPNSTask alloc] init];
 
 	// If no or valid MP signature, replace and install
-	if ([MPCodeSign checkSignature:updateAppPath]) {
+    NSError *err = nil;
+    MPCodeSign *cs = [[MPCodeSign alloc] init];
+    BOOL result = [cs verifyAppleDevBinary:updateAppPath error:&err];
+    if (err) {
+        logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+    }
+    cs = nil;
+    if (result == YES)
+    {
 		verString = [mpr runTask:updateAppPath binArgs:[NSArray arrayWithObjects:@"-v", nil] error:&error];
 		if (error) {
 			logit(lcl_vError,@"%@",[error description]);

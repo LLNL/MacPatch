@@ -234,9 +234,13 @@
                                         [queue addOperation:avOp];
                                         avOp = nil;
                                     } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPInvScan"]) {
-                                        invOp = [[InventoryOperation alloc] init];
-                                        [queue addOperation:invOp];
-                                        invOp = nil;
+                                        @autoreleasepool {
+                                            invOp = [[InventoryOperation alloc] init];
+                                            invOp.queuePriority = NSOperationQueuePriorityLow;
+                                            invOp.qualityOfService = NSOperationQualityOfServiceBackground;
+                                            [queue addOperation:invOp];
+                                            invOp = nil;
+                                        }
                                     } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPVulScan"]) {
                                         patchOp = [[PatchScanAndUpdateOperation alloc] init];
                                         [queue addOperation:patchOp];
@@ -311,7 +315,9 @@
 
 -(void)runInventoryCollection
 {
-	[MPTaskThread runInventoryCollection];
+    invOp = [[InventoryOperation alloc] init];
+    [queue addOperation:invOp];
+    invOp = nil;
 	exit(0);
 }
 

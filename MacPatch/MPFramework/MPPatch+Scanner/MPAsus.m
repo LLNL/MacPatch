@@ -242,7 +242,6 @@
 {
 	NSArray *result = nil;
 	MPPatchScan *patchScanObj = [[MPPatchScan alloc] init];
-	//[patchScanObj setUseDistributedNotification:YES];
 	result = [NSArray arrayWithArray:[patchScanObj scanForPatches]];
 	return result;
 }
@@ -251,7 +250,6 @@
 {
     NSArray *result = nil;
 	MPPatchScan *patchScanObj = [[MPPatchScan alloc] init];
-	//[patchScanObj setUseDistributedNotification:NO];
 	result = [NSArray arrayWithArray:[patchScanObj scanForPatchesWithbundleID:aBundleID]];
 	return result;
 }
@@ -487,20 +485,6 @@ done:
 
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
-    /*
-    MPNetConfig *mpConfig = [[MPNetConfig alloc] init];
-    NSError *error = nil;
-    NSURLResponse *response;
-    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArray:[mpConfig servers]];
-    NSURLRequest *urlReq = [req buildDownloadRequest:aURL];
-    NSString *dlFileLoc = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
-    if (error) {
-        qlerror(@"%@",error.localizedDescription);
-        if (err != NULL) *err = error;
-        return @"";
-    }
-    return dlFileLoc;
-     */
     
     MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
     NSError *error = nil;

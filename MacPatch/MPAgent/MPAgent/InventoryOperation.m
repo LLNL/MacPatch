@@ -26,6 +26,7 @@
 #import "InventoryOperation.h"
 #import "MPAgent.h"
 #import "MacPatch.h"
+#import "MPInv.h"
 
 @interface InventoryOperation (Private)
 
@@ -97,28 +98,16 @@
 
 - (void)runInventoryCollection
 {
-	@autoreleasepool {
+	@autoreleasepool
+    {
 		logit(lcl_vInfo,@"Running client inventory scan.");
-		NSString *invAppPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-		if (![fm fileExistsAtPath:invAppPath]) {
-			logit(lcl_vError,@"Unable to find MPInventory app to collect inventory data.");
-			return;
-		}
 
-		if (![MPCodeSign checkSignature:invAppPath]) {
-			return; // Not a valid signature, bail.
-		}
-		
-		NSError *error = nil;
-		NSString *result;
-		MPNSTask *mpr = [[MPNSTask alloc] init];
-		result = [mpr runTask:invAppPath binArgs:[NSArray arrayWithObjects:@"-t", @"All", nil] error:&error];
-		
-		if (error) {
-			logit(lcl_vError,@"%@",[error description]);
-		}
-		
-		logit(lcl_vDebug,@"%@",result);
+        int res = -1;
+        MPInv *inv = [[MPInv alloc] init];
+        res = [inv collectInventoryData];
+        inv = nil;
+        
+		logit(lcl_vDebug,@"[collectInventoryData]: Result =  %ld",res);
 		logit(lcl_vInfo,@"Inventory collection has been completed.");
 		logit(lcl_vInfo,@"See the MPInventory.log file for more information.");
 	}

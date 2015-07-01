@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>62EAAC2D-C4BA-433E-BCEB-14E45883A30A</string>
 	<key>IDESourceControlProjectName</key>
-	<string>MacPatch</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>978D518222FA6C8BFBE0677F0A4102FB20EDC388</key>
 		<string>https://github.com/SMSG-MAC-DEV/MacPatch.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>MacPatch/MacPatch.xcodeproj</string>
+	<string>MacPatch/MacPatch.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>978D518222FA6C8BFBE0677F0A4102FB20EDC388</key>

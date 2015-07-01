@@ -129,12 +129,20 @@ int main (int argc, char * argv[])
                         _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"AllowServer"];
                         break;
                     case 't':
+                    /*
                         argType = [NSString stringWithUTF8String:optarg];
                         a_Type = 6;
+                     */
+                        printf("Inventory has been moved to MPAgent.");
+                        return 0;
                         break;
                     case 'A':
+                    /*
                         argType = @"Custom";
                         a_Type = 6;
+                     */
+                        printf("Inventory has been moved to MPAgent.");
+                        return 0;
                         break;
                     case 'c':
                         printf("%s\n",[[MPSystemInfo clientUUID] UTF8String]);

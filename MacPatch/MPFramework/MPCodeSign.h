@@ -28,7 +28,12 @@
 
 @interface MPCodeSign : NSObject
 
-// CodeSign Validate
+// Verify Signed Apple Code
+- (BOOL)verifyAppleBinary:(NSString *)aFilePath error:(NSError **)err;
+// Verify Signed Apple Developer Account Code
+- (BOOL)verifyAppleDevBinary:(NSString *)aFilePath error:(NSError **)err;
+- (BOOL)verifyBinary:(NSString *)aFilePath requirement:(NSString *)aRequirement error:(NSError **)err;
+
 + (BOOL)checkSignature:(NSString *)aStringPath;
 
 @end

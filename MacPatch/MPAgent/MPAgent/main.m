@@ -27,12 +27,13 @@
 #import <Foundation/Foundation.h>
 #import "MPAppController.h"
 #import "MPAgentRegister.h"
+#import "MPInv.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"2.0.1"
+#define APPVERSION	@"2.0.2.1"
 #define APPNAME		@"MPAgent"
 
 void usage(void);
@@ -48,6 +49,8 @@ int main (int argc, char * argv[])
 		BOOL verboseLogging = NO;
         BOOL doRegistration = NO;
         NSString *regKeyArg = @"999999999";
+        // Inventory
+        NSString *invArg = NULL;
 		
 		// Setup argument processing
 		int c;
@@ -75,11 +78,15 @@ int main (int argc, char * argv[])
 				{"version"			,no_argument		,0, 'v'},
 				{"help"				,no_argument		,0, 'h'},
                 {"register"		    ,required_argument	,0, 'r'},
+                // Inventory, not documented yet
+                {"type"                 ,required_argument	,0, 't'},
+                {"Audit"                ,no_argument		,0, 'A'},
+                {"cuuid"                ,no_argument		,0, 'C'},
 				{0, 0, 0, 0}
 			};
 			// getopt_long stores the option index here.
 			int option_index = 0;
-			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwneVvhr:", long_options, &option_index);
+			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwneVvhr:t:AC", long_options, &option_index);
 			
 			// Detect the end of the options.
 			if (c == -1)
@@ -126,6 +133,18 @@ int main (int argc, char * argv[])
                 case 'w':
 					a_Type = 11;
 					break;
+                // Inventory
+                case 't':
+                    invArg = [NSString stringWithUTF8String:optarg];
+                    a_Type = 12;
+                    break;
+                case 'A':
+                    invArg = @"Custom";
+                    a_Type = 12;
+                    break;
+                case 'C':
+                    printf("%s\n",[[MPSystemInfo clientUUID] UTF8String]);
+                    return 0;
 				case 'V':
 					verboseLogging = YES;
 					break;
@@ -199,6 +218,21 @@ int main (int argc, char * argv[])
 			}
 			logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
 		}
+        
+        // Process Inventory
+        if (invArg !=NULL) {
+            int x = 0;
+            MPInv *inv = [[MPInv alloc] init];
+            if ([invArg isEqual:@"Custom"]) {
+                x = [inv collectAuditTypeData];
+            } else if ([invArg isEqual:@"All"]) {
+                x = [inv collectInventoryData];
+            } else {
+                x = [inv collectInventoryDataForType:invArg];
+            }
+            return x;
+        }
+        
         if (doRegistration) {
             int regResult = -1;
             NSString *clientKey = [[NSProcessInfo processInfo] globallyUniqueString];
@@ -224,7 +258,33 @@ void usage(void) {
     printf(" -q \tRun as background daemon using operation queues.\n");
 	printf(" -c \t --CheckIn \t\tRun client checkin.\n");
     printf(" -n \t --Servers \t\tRun server list verify/update.\n");
-    printf(" -w \t --WebServicePost \tRe-post failed post attempts.\n");
+    printf(" -w \t --WebServicePost \tRe-post failed post attempts.\n\n");
+    printf("Inventory \n");
+    printf("Option: -t [ALL] or [SPType]\n\n");
+    printf(" -t\tInventory type, All is default.\n");
+    printf(" \tSupported types:\n");
+    printf(" \t\tAll\n");
+    printf(" \t\tSPHardwareDataType\n");
+    printf(" \t\tSPSoftwareDataType\n");
+    printf(" \t\tSPNetworkDataType (Depricated)\n");
+    printf(" \t\tSINetworkInfo\n");
+    printf(" \t\tSPApplicationsDataType\n");
+    printf(" \t\tSPFrameworksDataType\n");
+    printf(" \t\tDirectoryServices\n");
+    printf(" \t\tInternetPlugins\n");
+    printf(" \t\tAppUsage\n");
+    printf(" \t\tClientTasks\n");
+    printf(" \t\tDiskInfo\n");
+    printf(" \t\tUsers\n");
+    printf(" \t\tGroups\n");
+    printf(" \t\tFileVault\n");
+    printf(" \t\tPowerManagment\n");
+    printf(" \t\tBatteryInfo\n");
+    printf(" \t\tConfigProfiles\n");
+    printf(" \t\tAppStoreApps\n");
+    printf(" \t\tMPServerList\n");
+    printf(" -A \tCollect Audit data.\n\n");
+    printf(" -C \tDisplay client ID.\n");
 	printf(" -e \t --Echo \t\t\tEcho logging data to console.\n");
 	printf(" -V \tVerbose logging.\n");
 	printf("\n -v \tDisplay version info. \n");
