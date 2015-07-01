@@ -158,13 +158,6 @@
 			remoteGlobalIDString = 8F90C30B1700AF9D006E36D0;
 			remoteInfo = MPPrefMigrate;
 		};
-		8F7794031820401B008FA072 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F7793FF1820401A008FA072 /* MPAuthPlugin.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8F7793EE1820401A008FA072;
-			remoteInfo = MPAuthPlugin;
-		};
 		8F90C3211700AF9E006E36D0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */;
@@ -276,7 +269,6 @@
 		8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPProxySync.xcodeproj; path = MPProxySync/MPProxySync.xcodeproj; sourceTree = "<group>"; };
 		8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAgent.xcodeproj; path = MPAgent/MPAgent.xcodeproj; sourceTree = "<group>"; };
 		8F67E6531B320E3B00888EB9 /* MPLoginAgent.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPLoginAgent.xcodeproj; path = MPLoginAgent/MPLoginAgent.xcodeproj; sourceTree = "<group>"; };
-		8F7793FF1820401A008FA072 /* MPAuthPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAuthPlugin.xcodeproj; path = MPAuthPlugin/MPAuthPlugin.xcodeproj; sourceTree = "<group>"; };
 		8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPPrefMigrate.xcodeproj; path = MPPrefMigrate/MPPrefMigrate.xcodeproj; sourceTree = "<group>"; };
 		8FA7063F1700AC0E00A1C57C /* GetCurrentConsoleUser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GetCurrentConsoleUser.xcodeproj; path = CurrentConsoleUser/GetCurrentConsoleUser.xcodeproj; sourceTree = "<group>"; };
 		8FD88E2D16DFB40B00A870A3 /* MPAgentUp2Date.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAgentUp2Date.xcodeproj; path = MPAgentUp2Date/MPAgentUp2Date.xcodeproj; sourceTree = "<group>"; };
@@ -296,7 +288,6 @@
 			isa = PBXGroup;
 			children = (
 				8F67E6531B320E3B00888EB9 /* MPLoginAgent.xcodeproj */,
-				8F7793FF1820401A008FA072 /* MPAuthPlugin.xcodeproj */,
 				8FA7063F1700AC0E00A1C57C /* GetCurrentConsoleUser.xcodeproj */,
 				8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */,
 				8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */,
@@ -326,14 +317,6 @@
 			isa = PBXGroup;
 			children = (
 				8F67E6581B320E3C00888EB9 /* MPLoginAgent.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		8F7794001820401A008FA072 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8F7794041820401B008FA072 /* MPAuthPlugin.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -477,10 +460,6 @@
 					ProjectRef = 8FD88E2D16DFB40B00A870A3 /* MPAgentUp2Date.xcodeproj */;
 				},
 				{
-					ProductGroup = 8F7794001820401A008FA072 /* Products */;
-					ProjectRef = 8F7793FF1820401A008FA072 /* MPAuthPlugin.xcodeproj */;
-				},
-				{
 					ProductGroup = 8FD88FE816DFDD9200A870A3 /* Products */;
 					ProjectRef = 8FD88FE716DFDD9200A870A3 /* MPCatalog.xcodeproj */;
 				},
@@ -546,13 +525,6 @@
 			fileType = wrapper.application;
 			path = MPLoginAgent.app;
 			remoteRef = 8F67E6571B320E3C00888EB9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8F7794041820401B008FA072 /* MPAuthPlugin.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = MPAuthPlugin.bundle;
-			remoteRef = 8F7794031820401B008FA072 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8F90C3221700AF9E006E36D0 /* MPPrefMigrate */ = {
