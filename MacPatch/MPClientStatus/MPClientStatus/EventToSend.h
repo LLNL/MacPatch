@@ -1,5 +1,5 @@
 //
-//  CHMenuViewController.h
+// EventToSend.h
 /*
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -23,25 +23,9 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#import <Cocoa/Cocoa.h>
-
-@interface CHMenuViewController : NSViewController
-{
-    IBOutlet NSImageView *rebootImage;
-    IBOutlet NSTextField *ptitle;
-    IBOutlet NSTextField *pversion;
-    IBOutlet NSView *altView;
-    IBOutlet NSView *titleView;
-}
-
-@property (nonatomic, strong) NSString *xtitle;
-@property (nonatomic, strong) NSString *xversion;
-@property (nonatomic, strong) NSImage *ximage;
-
-@property (nonatomic, strong) IBOutlet NSView *altView;
-@property (nonatomic, strong) IBOutlet NSView *titleView;
-
-- (void)addTitle:(NSString *)aTitle version:(NSString *)aVer;
+#include <stdio.h>
+#include <CoreServices/CoreServices.h>
+#include <Carbon/Carbon.h>
 
 
-@end
+OSStatus SendAppleEventToSystemProcess(AEEventID EventToSend);

@@ -29,7 +29,7 @@
 
 @class MPDefaults, MPAsus, MPAppUsage;
 
-@interface MPClientStatusAppDelegate : NSObject <MPWorkerClient,VDKQueueDelegate>
+@interface MPClientStatusAppDelegate : NSObject <MPWorkerClient,VDKQueueDelegate,NSUserNotificationCenterDelegate>
 {
 	NSWindow *__unsafe_unretained window;
     
@@ -84,6 +84,10 @@
 @property (unsafe_unretained) IBOutlet NSWindow *clientInfoWindow;
 @property (unsafe_unretained) IBOutlet NSTableView *clientInfoTableView;
 @property (unsafe_unretained) IBOutlet NSArrayController *clientArrayController;
+
+// Patch Info
+@property (nonatomic, assign) NSInteger patchCount;
+@property (nonatomic, assign) BOOL patchNeedsReboot;
 
 // About Window
 @property (unsafe_unretained) IBOutlet NSWindow *aboutWindow;
