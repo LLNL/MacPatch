@@ -44,7 +44,6 @@ function setOwnerAndPerms {
 # Set owner & permissions
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.agent.plist
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.worker.plist
-setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPRebootD.plist
 setOwnerAndPerms /Library/LaunchAgents/gov.llnl.mp.status.plist
 setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPLoginAgent.plist
 
@@ -162,11 +161,6 @@ sleep 3
 
 if [ "$cUsr" != "null" ]; then
 	uPid=`ps -aex -o pid,user,comm | grep "loginwindow.app" | grep "$cUsr" | sed 's/^[ \t]*//' | cut -d " " -f 1`
-
-	chroot -u $cUsr / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist
-	/bin/sleep 2
-	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.MPRebootD.plist`
-	echo "MPRebootD($uPid)=$res"
 	
 	chroot -u $cUsr / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist
 	/bin/sleep 2

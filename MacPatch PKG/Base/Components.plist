@@ -44,18 +44,6 @@
 		<key>BundleOverwriteAction</key>
 		<string>upgrade</string>
 		<key>RootRelativeBundlePath</key>
-		<string>MacPatch/Client/MPReboot.app</string>
-	</dict>
-	<dict>
-		<key>BundleHasStrictIdentifier</key>
-		<true/>
-		<key>BundleIsRelocatable</key>
-		<false/>
-		<key>BundleIsVersionChecked</key>
-		<true/>
-		<key>BundleOverwriteAction</key>
-		<string>upgrade</string>
-		<key>RootRelativeBundlePath</key>
 		<string>MacPatch/Client/MPTaskEditor.app</string>
 	</dict>
 	<dict>

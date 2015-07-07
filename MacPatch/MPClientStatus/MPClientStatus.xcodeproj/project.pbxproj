@@ -38,6 +38,7 @@
 		8FD8909916DFE9CE00A870A3 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8909616DFE9CE00A870A3 /* FMResultSet.m */; };
 		8FD8909D16DFEC3100A870A3 /* MacPatchInstalleArtBlack.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8909C16DFEC3100A870A3 /* MacPatchInstalleArtBlack.png */; };
 		8FD890CE16E51BFB00A870A3 /* MPBaseRoundIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD890CD16E51BFB00A870A3 /* MPBaseRoundIcon.png */; };
+		8FE6B4831B4C79A1000A0471 /* warn.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE6B4821B4C79A1000A0471 /* warn.png */; };
 		8FF66A8E19BF5774002379BF /* VDKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF66A8D19BF5774002379BF /* VDKQueue.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
@@ -88,6 +89,7 @@
 		8FD8909A16DFEC0700A870A3 /* MPClientStatus-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MPClientStatus-Info.plist"; sourceTree = "<group>"; };
 		8FD8909C16DFEC3100A870A3 /* MacPatchInstalleArtBlack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MacPatchInstalleArtBlack.png; sourceTree = "<group>"; };
 		8FD890CD16E51BFB00A870A3 /* MPBaseRoundIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MPBaseRoundIcon.png; sourceTree = "<group>"; };
+		8FE6B4821B4C79A1000A0471 /* warn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = warn.png; sourceTree = "<group>"; };
 		8FF66A8C19BF5774002379BF /* VDKQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VDKQueue.h; sourceTree = "<group>"; };
 		8FF66A8D19BF5774002379BF /* VDKQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VDKQueue.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -200,6 +202,7 @@
 		8FD8907316DFE8BE00A870A3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8FE6B4821B4C79A1000A0471 /* warn.png */,
 				8FCCBA7319AFD40A001F4C3B /* RestartReq.tif */,
 				8FCCBA7419AFD40A001F4C3B /* empty.tif */,
 				8FD8907416DFE8D000A870A3 /* mpmenubar_alert2.png */,
@@ -281,6 +284,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FE6B4831B4C79A1000A0471 /* warn.png in Resources */,
 				8FCCBA7519AFD40A001F4C3B /* RestartReq.tif in Resources */,
 				8FCCBA7219AFD1BB001F4C3B /* CHMenuViewController.xib in Resources */,
 				8FD8905516DFE84600A870A3 /* InfoPlist.strings in Resources */,

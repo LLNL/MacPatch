@@ -77,11 +77,16 @@ NSString *const kRebootRequiredNotification = @"kRebootRequiredNotification";
 @synthesize patchCount;
 @synthesize patchNeedsReboot;
 
-// Aboiut Window
+// About Window
 @synthesize aboutWindow;
 @synthesize appIcon;
 @synthesize appName;
 @synthesize appVersion;
+
+// Reboot Window
+@synthesize rebootWindow;
+@synthesize rebootTitleText;
+@synthesize rebootBodyText;
 
 // Client CheckIn Data
 @synthesize queue;
@@ -406,6 +411,12 @@ done:
 	[appIcon setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
 	[aboutWindow makeKeyAndOrderFront:sender];
 	[aboutWindow center];
+}
+
+#pragma mark -
+#pragma mark Reboot Window
+- (IBAction)closeRebootWindow:(id)sender {
+    [self.rebootWindow close];
 }
 
 #pragma mark Checkin
@@ -892,11 +903,26 @@ done:
 
 - (void)logoutNow
 {
+    [self.rebootWindow makeKeyAndOrderFront:nil];
+    [self.rebootWindow setLevel:kCGMaximumWindowLevel];
+    [self.rebootWindow center];
+    [NSApp arrangeInFront:self];
+    [NSApp activateIgnoringOtherApps:YES];
+}
+
+- (IBAction)logoutAndPatch:(id)sender
+{
     /* reboot the system using Apple supplied code
      error = SendAppleEventToSystemProcess(kAERestart);
      error = SendAppleEventToSystemProcess(kAELogOut);
      error = SendAppleEventToSystemProcess(kAEReallyLogOut);
      */
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
+        NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
+        [ud setBool:NO forKey:@"patch"];
+        [ud setBool:NO forKey:@"reboot"];
+        ud = nil;
+    }
     
     OSStatus error = noErr;
 #ifdef DEBUG
@@ -904,7 +930,6 @@ done:
 #else
     error = SendAppleEventToSystemProcess(kAEReallyLogOut);
 #endif
-
 }
 
 #pragma mark - 
@@ -1046,12 +1071,6 @@ done:
             [self openSelfPatchApplications:nil];
         }
         if ([notification.actionButtonTitle isEqualToString:@"Reboot"]) {
-            if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
-                NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
-                [ud setBool:NO forKey:@"patch"];
-                [ud setBool:NO forKey:@"reboot"];
-                ud = nil;
-            }
             [self logoutNow];
         }
     } else {

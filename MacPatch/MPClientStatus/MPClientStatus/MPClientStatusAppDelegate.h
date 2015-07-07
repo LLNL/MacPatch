@@ -59,7 +59,12 @@
 	IBOutlet NSImageView *__unsafe_unretained appIcon;
 	IBOutlet NSTextField *appName;
 	IBOutlet NSTextField *appVersion;
-	
+    
+    // Reboot Window
+	NSWindow *__unsafe_unretained rebootWindow;
+    IBOutlet NSTextField *rebootTitleText;
+    IBOutlet NSTextField *rebootBodyText;
+    
 	// New CheckIn Methods
 	NSOperationQueue *queue;
 	NSURLConnection *showLastCheckInConnection;
@@ -95,6 +100,11 @@
 @property (nonatomic, strong) IBOutlet NSTextField *appName;
 @property (nonatomic, strong) IBOutlet NSTextField *appVersion;
 
+// Reboot Window
+@property (unsafe_unretained) IBOutlet NSWindow *rebootWindow;
+@property (nonatomic, strong) IBOutlet NSTextField *rebootTitleText;
+@property (nonatomic, strong) IBOutlet NSTextField *rebootBodyText;
+
 // Client CheckIn String
 @property (nonatomic, strong) NSOperationQueue *queue;
 
@@ -106,6 +116,9 @@
 
 // About Window
 - (IBAction)showAboutWindow:(id)sender;
+
+// Reboot Window
+- (IBAction)logoutAndPatch:(id)sender;
 
 // Client Checkin
 - (IBAction)showCheckinWindow:(id)sender;

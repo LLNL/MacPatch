@@ -1085,7 +1085,7 @@ done:
 	NSPredicate         *selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
 	NSMutableArray		*patchesToInstallArray    = [NSMutableArray arrayWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
 	
-    NSMutableArray      *rebootPatchesToDownload  = [[NSMutableArray alloc] init];
+    // NSMutableArray      *rebootPatchesToDownload  = [[NSMutableArray alloc] init];
 	NSDictionary		*patch;
 	NSDictionary		*currPatchToInstallDict;
 	NSArray				*patchPatchesArray;

@@ -108,9 +108,6 @@
 		8FE5609C16DE6D6D00BB7600 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608D16DE6CE100BB7600 /* IOKit.framework */; };
 		8FE5609D16DE6D6F00BB7600 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608B16DE6CD600BB7600 /* CoreFoundation.framework */; };
 		8FE5609E16DE6D7200BB7600 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608916DE6CD000BB7600 /* Cocoa.framework */; };
-		8FE5609F16DE6D7500BB7600 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608716DE6CC600BB7600 /* libicucore.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
-		8FE560A016DE6D7500BB7600 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608516DE6CBE00BB7600 /* libcrypto.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
-		8FE560A116DE6D7500BB7600 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608316DE6CB700BB7600 /* libz.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE560CD16DE899B00BB7600 /* MPSWInstaller.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8FE560D216DE899B00BB7600 /* MPSWInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE560CE16DE899B00BB7600 /* MPSWInstaller.m */; };
 		8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE560D316DE932900BB7600 /* MPAgentController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -257,9 +254,6 @@
 				8FE5609C16DE6D6D00BB7600 /* IOKit.framework in Frameworks */,
 				8FE5609D16DE6D6F00BB7600 /* CoreFoundation.framework in Frameworks */,
 				8FE5609E16DE6D7200BB7600 /* Cocoa.framework in Frameworks */,
-				8FE5609F16DE6D7500BB7600 /* libicucore.dylib in Frameworks */,
-				8FE560A016DE6D7500BB7600 /* libcrypto.dylib in Frameworks */,
-				8FE560A116DE6D7500BB7600 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,14 +285,14 @@
 				8F47F0EE18EDFD5A00158396 /* Networking */,
 				724EE9831698A57A007FD391 /* Constants.h */,
 				724EE9841698A57A007FD391 /* Constants.m */,
-				8FA7EA1C161DEF81001748EA /* MPNetworkUtils.h */,
-				8FA7EA1D161DEF81001748EA /* MPNetworkUtils.m */,
 				8FCB778C140C30AE00D86586 /* MPDefaults.h */,
 				8FCB778D140C30AE00D86586 /* MPDefaults.m */,
-				8F6BA41115C0E59A00F44501 /* MPDiskUtil.h */,
-				8F6BA41215C0E59A00F44501 /* MPDiskUtil.m */,
 				8FCB7ABD140D588F00D86586 /* MPLog.h */,
 				8FCB7ABE140D588F00D86586 /* MPLog.m */,
+				8FA7EA1C161DEF81001748EA /* MPNetworkUtils.h */,
+				8FA7EA1D161DEF81001748EA /* MPNetworkUtils.m */,
+				8F6BA41115C0E59A00F44501 /* MPDiskUtil.h */,
+				8F6BA41215C0E59A00F44501 /* MPDiskUtil.m */,
 				8FA7EA4A161E3B47001748EA /* MPSystemInfo.h */,
 				8FA7EA4B161E3B48001748EA /* MPSystemInfo.m */,
 				8FA7EA4C161E3B49001748EA /* MPDate.h */,
@@ -307,14 +301,7 @@
 				8FA7EA4F161E3B4D001748EA /* MPClientCheckInData.m */,
 				8F94627F16249D4E00969BCD /* MPNSTask.h */,
 				8F94628016249D4E00969BCD /* MPNSTask.m */,
-				8F7B15CC15068211005CEA32 /* MPCrypto.h */,
-				8F7B15CD15068211005CEA32 /* MPCrypto.m */,
-				8F00CD0317610F1D008CC39E /* MPCodeSign.h */,
-				8F00CD0417610F1D008CC39E /* MPCodeSign.m */,
-				8FF93F9C199A9205005A4EEB /* RSACrypto.h */,
-				8FF93F9D199A9205005A4EEB /* RSACrypto.m */,
-				8F50CB7C199D5DD0006AC537 /* MPKeychain.h */,
-				8F50CB7D199D5DD0006AC537 /* MPKeychain.m */,
+				8FE6B4811B4C7748000A0471 /* Crypto */,
 				8FAEF635145F1773006284B2 /* MPPatch+Scanner */,
 				8F4B1F3316DE64BF00E15A9E /* MacPatch+SWDist */,
 				8FAEF64E145F187C006284B2 /* WebServices */,
@@ -499,6 +486,21 @@
 				8F4B1F2916DE639100E15A9E /* NSData+Base64.m */,
 			);
 			name = Helpers;
+			sourceTree = "<group>";
+		};
+		8FE6B4811B4C7748000A0471 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				8F7B15CC15068211005CEA32 /* MPCrypto.h */,
+				8F7B15CD15068211005CEA32 /* MPCrypto.m */,
+				8FF93F9C199A9205005A4EEB /* RSACrypto.h */,
+				8FF93F9D199A9205005A4EEB /* RSACrypto.m */,
+				8F50CB7C199D5DD0006AC537 /* MPKeychain.h */,
+				8F50CB7D199D5DD0006AC537 /* MPKeychain.m */,
+				8F00CD0317610F1D008CC39E /* MPCodeSign.h */,
+				8F00CD0417610F1D008CC39E /* MPCodeSign.m */,
+			);
+			name = Crypto;
 			sourceTree = "<group>";
 		};
 		8FEA3EE51649726400103E80 /* Frameworks */ = {

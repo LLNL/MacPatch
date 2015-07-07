@@ -107,7 +107,7 @@
         res = [inv collectInventoryData];
         inv = nil;
         
-		logit(lcl_vDebug,@"[collectInventoryData]: Result =  %ld",res);
+		logit(lcl_vDebug,@"[collectInventoryData]: Result =  %d",(int)res);
 		logit(lcl_vInfo,@"Inventory collection has been completed.");
 		logit(lcl_vInfo,@"See the MPInventory.log file for more information.");
 	}
