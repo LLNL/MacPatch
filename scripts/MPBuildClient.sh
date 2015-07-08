@@ -39,7 +39,7 @@ if [ "$SIGNCODE" == "n" ] || [ "$SIGNCODE" == "N" ] || [ "$SIGNCODE" == "y" ] ||
 		if [ "${CODESIGNIDENTITY}" == "*" ]; then
 			read -p "Please enter you code sigining identity: " CODESIGNIDENTITY
 		fi
-		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target AGENT_BUILD SYMROOT=${BUILDROOT} CODE_SIGN_IDENTITY="*"
+		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target AGENT_BUILD SYMROOT=${BUILDROOT} CODE_SIGN_IDENTITY="${CODESIGNIDENTITY}"
 	else
 		# Compile the agent components
 		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target AGENT_BUILD SYMROOT=${BUILDROOT}
