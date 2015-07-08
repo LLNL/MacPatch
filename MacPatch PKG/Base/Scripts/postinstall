@@ -33,6 +33,12 @@ isIload () {
 	echo $pid
 }
 
+function setOwner {
+	if [ -f "$1" ]; then
+		/usr/sbin/chown -R root:wheel $1
+	fi
+}
+
 function setOwnerAndPerms {
 	if [ -f "$1" ]; then
 		/usr/sbin/chown root:wheel $1
@@ -46,6 +52,7 @@ setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.agent.plist
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.worker.plist
 setOwnerAndPerms /Library/LaunchAgents/gov.llnl.mp.status.plist
 setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPLoginAgent.plist
+setOwner /Library/PrivilegedHelperTools/MPLoginAgent.app
 
 if [ ! -d "/Library/Application Support/MPClientStatus" ]; then
 	mkdir "/Library/Application Support/MPClientStatus"
