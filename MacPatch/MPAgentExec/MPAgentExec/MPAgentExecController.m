@@ -51,6 +51,8 @@
 - (int)writeToFileViaProxy:(NSString *)aFile data:(id)data;
 - (int)writeArrayFileViaProxy:(NSString *)aFile data:(NSArray *)data;
 
+- (void)killTaskUsing:(NSString *)aTaskName;
+
 @end
 
 @implementation MPAgentExecController
@@ -1555,10 +1557,10 @@ done:
 	}
 
     NSDate *cdate; // CDate of File
-    NSDate *cdatePlus; // CDate of file plus 2 hrs
+    NSDate *cdatePlus; // CDate of file plus ... hrs
     NSDate *ndate = [NSDate date]; // Now
 
-	if ([aTaskName isEqualToString:@".mpScanRunning"]) {
+	if ([aTaskName isEqualToString:kMPPatchSCAN]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpScanRunning"]) {
             cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpScanRunning" error:nil] fileCreationDate];
             cdatePlus = [cdate dateByAddingTimeInterval:7200];
@@ -1568,6 +1570,7 @@ done:
                 return YES;
             } else if(result==NSOrderedDescending) {
                 // cdatePlus is in the past
+                [self killTaskUsing:kMPPatchSCAN];
                 logit(lcl_vError, @"Task file /tmp/.mpScanRunning found. File older than 2 hours. Deleting file.");
                 [self removeTaskRunning:@"/tmp/.mpScanRunning"];
                 return NO;
@@ -1576,17 +1579,18 @@ done:
 			return NO;
 		}
 	}
-	if ([aTaskName isEqualToString:@".mpUpdateRunning"]) {
+	if ([aTaskName isEqualToString:kMPPatchUPDATE]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpUpdateRunning"]) {
             cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpUpdateRunning" error:nil] fileCreationDate];
-			cdatePlus = [cdate dateByAddingTimeInterval:7200]; // Add 2 Hours
+			cdatePlus = [cdate dateByAddingTimeInterval:86400]; // Add 24 Hours
             NSComparisonResult result = [ndate compare:cdatePlus];
             if( result == NSOrderedAscending ) {
                 // cdatePlus is in the future
                 return YES;
             } else if(result==NSOrderedDescending) {
                 // cdatePlus is in the past
-                logit(lcl_vError, @"Task file /tmp/.mpUpdateRunning found. File older than 2 hours. Deleting file.");
+                [self killTaskUsing:kMPPatchUPDATE];
+                logit(lcl_vError, @"Task file /tmp/.mpUpdateRunning found. File older than 24 hours. Deleting file.");
                 [self removeTaskRunning:@"/tmp/.mpUpdateRunning"];
                 return NO;
             }
@@ -1594,17 +1598,18 @@ done:
 			return NO;
 		}
 	}
-	if ([aTaskName isEqualToString:@".mpInventoryRunning"]) {
+	if ([aTaskName isEqualToString:kMPInventory]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpInventoryRunning"]) {
             cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpInventoryRunning" error:nil] fileCreationDate];
-			cdatePlus = [cdate dateByAddingTimeInterval:7200]; // Add 2 Hours
+			cdatePlus = [cdate dateByAddingTimeInterval:14400]; // Add 4 Hours
             NSComparisonResult result = [ndate compare:cdatePlus];
             if( result == NSOrderedAscending ) {
                 // cdatePlus is in the future
                 return YES;
             } else if(result==NSOrderedDescending) {
                 // cdatePlus is in the past
-                logit(lcl_vError, @"Task file /tmp/.mpInventoryRunning found. File older than 2 hours. Deleting file.");
+                [self killTaskUsing:kMPInventory];
+                logit(lcl_vError, @"Task file /tmp/.mpInventoryRunning found. File older than 4 hours. Deleting file.");
                 [self removeTaskRunning:@"/tmp/.mpInventoryRunning"];
                 return NO;
             }
@@ -1612,17 +1617,18 @@ done:
 			return NO;
 		}
 	}
-	if ([aTaskName isEqualToString:@".mpAVUpdateRunning"]) {
+	if ([aTaskName isEqualToString:kMPAVUpdate]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpAVUpdateRunning"]) {
             cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpAVUpdateRunning" error:nil] fileCreationDate];
-			cdatePlus = [cdate dateByAddingTimeInterval:7200]; // Add 2 Hours
+			cdatePlus = [cdate dateByAddingTimeInterval:14400]; // Add 4 Hours
             NSComparisonResult result = [ndate compare:cdatePlus];
             if( result == NSOrderedAscending ) {
                 // cdatePlus is in the future
                 return YES;
             } else if(result==NSOrderedDescending) {
                 // cdatePlus is in the past
-                logit(lcl_vError, @"Task file /tmp/.mpAVUpdateRunning found. File older than 2 hours. Deleting file.");
+                [self killTaskUsing:kMPAVUpdate];
+                logit(lcl_vError, @"Task file /tmp/.mpAVUpdateRunning found. File older than 4 hours. Deleting file.");
                 [self removeTaskRunning:@"/tmp/.mpAVUpdateRunning"];
                 return NO;
             }
@@ -1637,7 +1643,7 @@ done:
 -(void)writeTaskRunning:(NSString *)aTaskName
 {
 	if (forceRun == NO) {
-		NSString *_id = [[NSProcessInfo processInfo] globallyUniqueString];
+		NSString *_id = [@([[NSProcessInfo processInfo] processIdentifier]) stringValue];
 		[_id writeToFile:[@"/tmp" stringByAppendingPathComponent:aTaskName] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 	}
 }
@@ -1660,6 +1666,42 @@ done:
 			logit(lcl_vInfo,@"Force run is set to true for %@. No file will be removed.",aTaskName);
 		}
 	}
+}
+
+- (void)killTaskUsing:(NSString *)aTaskName
+{
+    int taskPID = -99;
+    NSError *err = nil;
+    NSString *taskFile = [@"/private/tmp" stringByAppendingPathComponent:aTaskName];
+    // If File Does Not Exists, not PID to kill
+    if (![fm fileExistsAtPath:taskFile]) {
+        return;
+    } else {
+        NSString *strPID = [NSString stringWithContentsOfFile:taskFile encoding:NSUTF8StringEncoding error:&err];
+        if (err) {
+            logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+        }
+        if ([strPID intValue] > 0) {
+            taskPID = [strPID intValue];
+        }
+    }
+    
+    if (taskPID == -99) {
+        logit(lcl_vWarning,@"No task PID was defined");
+        return;
+    }
+    
+    // Make Sure it's running before we send a SIGKILL
+    NSArray *procArr = [MPSystemInfo bsdProcessList];
+    NSArray *filtered = [procArr filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"processID == %i", taskPID]];
+    if ([filtered count] <= 0) {
+        return;
+    } else if ([filtered count] == 1 ) {
+        kill( self.taskPID, SIGKILL );
+    } else {
+        logit(lcl_vError,@"Can not kill task using PID. Found to many using the predicate.");
+        logit(lcl_vDebug,@"%@",filtered);
+    }
 }
 
 - (BOOL)isLocalUserLoggedIn
