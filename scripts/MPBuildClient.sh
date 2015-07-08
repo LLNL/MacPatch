@@ -64,6 +64,7 @@ cp -R ${GITROOT}/MacPatch\ PKG/Combined ${BUILDROOT}
 mv ${BUILDROOT}/Release/ccusr ${BUILDROOT}/Base/Scripts/ccusr
 mv ${BUILDROOT}/Release/MPPrefMigrate ${BUILDROOT}/Base/Scripts/MPPrefMigrate
 mv ${BUILDROOT}/Release/MPAgentUp2Date ${BUILDROOT}/Updater/Files/Library/MacPatch/Updater/
+mv ${BUILDROOT}/Release/MPLoginAgent.app ${BUILDROOT}/Base/Files/Library/PrivilegedHelperTools/
 cp -R ${BUILDROOT}/Release/* ${BUILDROOT}/Base/Files/Library/MacPatch/Client/
 
 # Find and remove .mpRM files, these are here as place holders so that GIT will keep the
