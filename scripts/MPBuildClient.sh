@@ -31,7 +31,6 @@ fi
 echo "A valid code siginging identidy is required."
 read -p "Would you like to code sign all binaries (Y/N)? [N]: " SIGNCODE
 SIGNCODE=${SIGNCODE:-N}
-fi
 
 if [ "$SIGNCODE" == "n" ] || [ "$SIGNCODE" == "N" ] || [ "$SIGNCODE" == "y" ] || [ "$SIGNCODE" == "Y" ]; then
 
