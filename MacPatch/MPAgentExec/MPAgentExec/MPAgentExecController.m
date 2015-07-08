@@ -1697,7 +1697,7 @@ done:
     if ([filtered count] <= 0) {
         return;
     } else if ([filtered count] == 1 ) {
-        kill( self.taskPID, SIGKILL );
+        kill( taskPID, SIGKILL );
     } else {
         logit(lcl_vError,@"Can not kill task using PID. Found to many using the predicate.");
         logit(lcl_vDebug,@"%@",filtered);
