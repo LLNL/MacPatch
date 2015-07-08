@@ -16,8 +16,8 @@
 
 GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/Client"
-BASEPKGVER="2.5.0.0"
-UPDTPKGVER="2.5.0.0"
+BASEPKGVER="2.7.0.0"
+UPDTPKGVER="2.7.0.0"
 
 if [ -d "$BUILDROOT" ]; then
 	rm -rf ${BUILDROOT}
