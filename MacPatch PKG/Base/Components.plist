@@ -3,12 +3,16 @@
 <plist version="1.0">
 <array>
 	<dict>
+		<key>BundleHasStrictIdentifier</key>
+		<true/>
+		<key>BundleIsRelocatable</key>
+		<false/>
 		<key>BundleIsVersionChecked</key>
 		<true/>
 		<key>BundleOverwriteAction</key>
 		<string>upgrade</string>
 		<key>RootRelativeBundlePath</key>
-		<string>MacPatch/Client/MPAuthPlugin.bundle</string>
+		<string>PrivilegedHelperTools/MPLoginAgent.app</string>
 	</dict>
 	<dict>
 		<key>BundleHasStrictIdentifier</key>
