@@ -284,14 +284,33 @@ done:
 	qldebug(@"Found file version: =%@",localFileVer);
 	
 	NSString *regexString	= @"^(\\d+)(.\\d+)?(.\\d+)?(.\\d+)?(.\\d+)?(.\\d+)?$";
+    
+    /* Old RegexKit Lite Code
 	NSString *matchedString = [localFileVer stringByMatching:regexString];
 	if ([matchedString isEqualToString:localFileVer] == NO) {
 		qlerror(@"CFBundleShortVersionString (%@) is not valid version string format.",localFileVer);
         return fileVerPass;
 	}
-	
+	*/
+    
+    /*
+     Now that MacPatch Client is 10.7 and higher we can use NSRegularExpression
+    */
+    
+    NSError *err = nil;
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString options:0 error:&err];
+    if (err) {
+        qlerror(@"%@",err.localizedDescription);
+        return fileVerPass;
+    }
+    
+    NSTextCheckingResult *match = [regex firstMatchInString:localFileVer options:0 range:NSMakeRange(0, [localFileVer length])];
+    if (match == NO) {
+        qlerror(@"CFBundleShortVersionString (%@) is not valid version string format.",localFileVer);
+        return fileVerPass;
+    }
+    
 	fileVerPass = [self compareVersion:localFileVer operator:aOp compareTo:aPatchFileVer];
-
 	return fileVerPass;
 }
 

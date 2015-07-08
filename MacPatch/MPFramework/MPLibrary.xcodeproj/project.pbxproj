@@ -53,7 +53,6 @@
 		8F4B1E0C16DD1D6400E15A9E /* NSString-Base64Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAEF66C145F19AD006284B2 /* NSString-Base64Extensions.m */; };
 		8F4B1E1416DD1D6400E15A9E /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB7755140C2F0700D86586 /* lcl.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F4B1E1516DD1D6400E15A9E /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB775D140C2F0700D86586 /* LCLLogFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		8F4B1E1616DD1D6400E15A9E /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAEF65F145F1922006284B2 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F4B1E1716DD1D8C00E15A9E /* Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 724EE9831698A57A007FD391 /* Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E1816DD1D8C00E15A9E /* MPNetworkUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA7EA1C161DEF81001748EA /* MPNetworkUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E1A16DD1D8C00E15A9E /* MPDefaults.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB778C140C30AE00D86586 /* MPDefaults.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -700,7 +699,6 @@
 				8F4B1E1416DD1D6400E15A9E /* lcl.m in Sources */,
 				8F4B1E1516DD1D6400E15A9E /* LCLLogFile.m in Sources */,
 				8F315B9C19212DEB0031FF73 /* MPServerList.m in Sources */,
-				8F4B1E1616DD1D6400E15A9E /* RegexKitLite.m in Sources */,
 				8F4B1EC016DD5FB400E15A9E /* NSString+Hash.m in Sources */,
 				8F47F0FE18EDFD6D00158396 /* Reachability.m in Sources */,
 				8F47F0FA18EDFD6D00158396 /* MPNetServer.m in Sources */,
