@@ -204,6 +204,16 @@ chmod 0644 ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
 find ${MPSERVERBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
 
 # ------------------
+# Clean up un-needed files for binary distribution
+# ------------------
+rm -rf "${MPSERVERBASE}/conf/scripts/Linux"
+rm -rf "${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh"
+rm -rf "${MPSERVERBASE}/conf/scripts/_Old_"
+rm -rf "${MPSERVERBASE}/conf/src/openbd"
+rm -f "${MPSERVERBASE}/conf/src/*.gz"
+rm -f "${MPSERVERBASE}/conf/lib"
+
+# ------------------
 # Move Files For Packaging
 # ------------------
 PKG_FILES_ROOT_MP="${BUILDROOT}/Server/Files/Library/MacPatch"
