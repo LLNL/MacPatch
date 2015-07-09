@@ -189,7 +189,7 @@ jar cf "${MPSERVERBASE}/conf/app/war/site/ROOT.war" -C "${MPSERVERBASE}/conf/app
 
 # Tomcat Config - WSL
 MPCONFWSL="${MPSERVERBASE}/conf/tomcat/mpws"
-MPSRVTOMWSL="${MPSERVERBASE}/tomcat-mwsl"
+MPSRVTOMWSL="${MPSERVERBASE}/tomcat-mpws"
 cp "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" "${MPSRVTOMWSL}/webapps"
 cp "${MPCONFWSL}/bin/setenv.sh" "${MPSRVTOMWSL}/bin/setenv.sh"
 cp "${MPCONFWSL}/bin/launchdTomcat.sh" "${MPSRVTOMWSL}/bin/launchdTomcat.sh"
