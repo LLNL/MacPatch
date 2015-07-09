@@ -1,6 +1,6 @@
 #!/bin/sh
 
-Version="1.9"
+Version="2.0.0"
 mpBaseDir="/Library/MacPatch"
 mpClientDir="${mpBaseDir}/Client"
 mpUpdateDir="${mpBaseDir}/Updater"
@@ -147,17 +147,19 @@ if [ -d $mpBaseDir ]; then
 	
 	# If there is a user logged in ...
 	if [ ! -z "$curUser" ]; then
-			uPid=`ps -U $curUser -e | grep loginwindow.app | grep -v grep | awk '{ print $1 }'`
+			#uPid=`ps -U $curUser -e | grep loginwindow.app | grep -v grep | awk '{ print $1 }'`
 
 			if [ -f '/Library/LaunchAgents/gov.llnl.MPRebootD.plist' ]; then
-				res=`/bin/launchctl bsexec $uPid chroot -u $curUser / launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist`
-				echo "mpRBWatcher=$res"
+				#res=`/bin/launchctl bsexec $uPid chroot -u $curUser / launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist`
+				#echo "mpRBWatcher=$res"
+				su -l $curUser -c 'launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist'
 				sleep 2
 			fi
 
 			if [ -f '/Library/LaunchAgents/gov.llnl.mp.status.plist' ]; then
-				res=`/bin/launchctl bsexec $uPid chroot -u $curUser / launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist`
-				echo "mpStatus=$res"
+				#$res=`/bin/launchctl bsexec $uPid chroot -u $curUser / launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist`
+				#echo "mpStatus=$res"
+				su -l $curUser -c 'launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist'
 				sleep 2
 			fi 
 		fi	
@@ -209,7 +211,4 @@ if [ -d $mpBaseDir ]; then
 	
 	echo "MacPatch Software has been fully removed!"
 	echo "Please reboot the system..."
-	echo
 fi
-
-exit 0;
