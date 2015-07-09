@@ -205,12 +205,13 @@ find ${MPSERVERBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
 
 # ------------------
 # Clean up un-needed files for binary distribution
+# If src files are needed, they can be cloned
 # ------------------
 rm -rf "${MPSERVERBASE}/conf/scripts/Linux"
 rm -rf "${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh"
 rm -rf "${MPSERVERBASE}/conf/scripts/_Old_"
 rm -rf "${MPSERVERBASE}/conf/src/openbd"
-rm -f "${MPSERVERBASE}/conf/src/*.gz"
+find "${MPSERVERBASE}/conf/src" -name *.tar.gz -print | xargs -I{} rm {}
 rm -f "${MPSERVERBASE}/conf/lib"
 
 # ------------------
