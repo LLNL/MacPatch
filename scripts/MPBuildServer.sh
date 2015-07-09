@@ -214,6 +214,8 @@ chown -R $OWNERGRP "${MPSRVTOMSITE}"
 # Set Permissions
 chown -R $OWNERGRP ${MPSERVERBASE}/Logs
 chmod 0775 ${MPSERVERBASE}
+chown root:wheel ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
+chmod 0644 ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
 
 # ------------------
 # Clean up structure place holders
