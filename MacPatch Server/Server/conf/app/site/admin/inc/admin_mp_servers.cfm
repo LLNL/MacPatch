@@ -40,13 +40,14 @@
 			{
 				url:'admin_mp_servers.cfc?method=getMPServers', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
-				colNames:['','Server', 'Port', 'Use SSL', 'Use SSL Auth', 'Is Master', 'Is Proxy', 'Active'],
+				colNames:['','Server', 'Port', 'Use SSL', 'Use SSL Auth', 'Allow Self-Signed Cert', 'Is Master', 'Is Proxy', 'Active'],
 				colModel :[
 				  {name:'rid',index:'rid', width:1, align:"center", sortable:false, hidden:true},
 				  {name:'server', index:'server', width:160, editable:true, editoptions:{size:70}},
 				  {name:'port', index:'port', width:60, editable:true, formoptions:{align: 'left'}},
 				  {name:'useSSL', index:'useSSL', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}},
 				  {name:'useSSLAuth', index:'useSSLAuth', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}},
+				  {name:'allowSelfSignedCert', index:'allowSelfSignedCert', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}},
 				  {name:'isMaster', index:'isMaster', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}},
 				  {name:'isProxy', index:'isProxy', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}},
 				  {name:'active', index:'active', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}}

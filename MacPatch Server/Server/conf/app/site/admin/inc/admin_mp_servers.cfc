@@ -47,7 +47,7 @@
 		<cfset i = 1>
 
 		<cfloop query="qServers" startrow="#start#" endrow="#end#">
-			<cfset arrResults[i] = [#rid#, #server#, #port#, #useSSL#, #useSSLAuth#, #isMaster#, #isProxy#, #active#]>
+			<cfset arrResults[i] = [#rid#, #server#, #port#, #useSSL#, #useSSLAuth#, #allowSelfSignedCert#, #isMaster#, #isProxy#, #active#]>
 			<cfset i = i + 1>
 		</cfloop>
 
@@ -78,6 +78,7 @@
 						port = <cfqueryparam value="#Arguments.port#">,
 						useSSL = <cfqueryparam value="#Arguments.useSSL#">,
 						useSSLAuth = <cfqueryparam value="#Arguments.useSSLAuth#">,
+						allowSelfSignedCert = <cfqueryparam value="#Arguments.allowSelfSignedCert#">,
 						isMaster = <cfqueryparam value="#Arguments.isMaster#">,
 						isProxy = <cfqueryparam value="#Arguments.isProxy#">,
 						active = <cfqueryparam value="#Arguments.active#">

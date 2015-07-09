@@ -95,7 +95,20 @@ else
 	chmod 777 /Library/MacPatch/Client/lib
 fi
 
+# ******************************************************************
+# Get Server SSL Cert and trust it *********************************
+#
+SRVHOST = `defaults read $agentPrefs MPServerAddress`
+SRVPORT = `defaults read $agentPrefs MPServerPort`
+SRVSTR  = "$SRVHOST:$SRVPORT" 
+CRTFILE = "/Library/MacPatch/Client/lib/$SRVHOST.crt"
+
+openssl s_client -connect $SRVSTR 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ${CRTFILE}
+security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" "${CRTFILE}"
+
+# ******************************************************************
 # Run Client Check-in
+
 /Library/MacPatch/Client/MPAgent -c
 sleep 1
 
