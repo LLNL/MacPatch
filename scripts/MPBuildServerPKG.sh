@@ -152,6 +152,8 @@ cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.ws
 chmod -R 0775 "${MPSERVERBASE}/conf/app/.wsl"
 chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.wsl"
 jar cf "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" -C "${MPSERVERBASE}/conf/app/.wsl" .
+rm -rf "${MPSERVERBASE}/conf/app/.wsl"
+rm -rf "${MPSERVERBASE}/conf/app/wsl"
 
 # Admin Site - App
 mkdir -p "${MPSERVERBASE}/conf/app/war/site"
@@ -163,6 +165,8 @@ cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.si
 chmod -R 0775 "${MPSERVERBASE}/conf/app/.site"
 chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.site"
 jar cf "${MPSERVERBASE}/conf/app/war/site/ROOT.war" -C "${MPSERVERBASE}/conf/app/.site" .
+rm -rf "${MPSERVERBASE}/conf/app/.site"
+rm -rf "${MPSERVERBASE}/conf/app/site"
 
 # Tomcat Config - WSL
 MPCONFWSL="${MPSERVERBASE}/conf/tomcat/mpws"
