@@ -146,6 +146,7 @@ tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/apache-tomcat
 chmod +x ${MPSERVERBASE}/apache-tomcat/bin/*
 rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/docs
 rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/examples
+rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/ROOT
 
 # ------------------
 # Build Apache
@@ -189,7 +190,6 @@ jar cf "${MPSERVERBASE}/conf/app/war/site/ROOT.war" -C "${MPSERVERBASE}/conf/app
 # Tomcat Config - WSL
 MPCONFWSL="${MPSERVERBASE}/conf/tomcat/mpws"
 MPSRVTOMWSL="${MPSERVERBASE}/tomcat-mwsl"
-rm -rf  "${MPSRVTOMWSL}/webapps/ROOT"
 cp "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" "${MPSRVTOMWSL}/webapps"
 cp "${MPCONFWSL}/bin/setenv.sh" "${MPSRVTOMWSL}/bin/setenv.sh"
 cp "${MPCONFWSL}/bin/launchdTomcat.sh" "${MPSRVTOMWSL}/bin/launchdTomcat.sh"
@@ -202,7 +202,6 @@ chown -R $OWNERGRP "${MPSRVTOMWSL}"
 # Tomcat Config - Admin
 MPCONFSITE="${MPSERVERBASE}/conf/tomcat/mpsite"
 MPSRVTOMSITE="${MPSERVERBASE}/tomcat-mpsite"
-rm -rf "${MPSRVTOMSITE}/webapps/ROOT"
 cp "${MPSERVERBASE}/conf/app/war/site/ROOT.war" "${MPSRVTOMSITE}/webapps"
 cp "${MPCONFSITE}/bin/setenv.sh" "${MPSRVTOMSITE}/bin/setenv.sh"
 cp "${MPCONFSITE}/bin/launchdTomcat.sh" "${MPSRVTOMSITE}/bin/launchdTomcat.sh"
