@@ -70,7 +70,7 @@ mkdir -p ${TMP_DIR}
 cd ${TMP_DIR}
 
 HTTPD_SW="httpd-2.4.12.tar.gz"
-APR_SW="apr-1.5.1.tar.gz"
+APR_SW="apr-1.5.2.tar.gz"
 APRUTIL_SW="apr-util-1.5.4.tar.gz"
 PCRE_SW="pcre-8.36.tar.gz"
 
