@@ -11,25 +11,30 @@
 <script type="text/javascript" src="/admin/js/tablesorter/jquery.tablesorter.js"></script>
 <script type="text/javascript" src="/admin/js/tablesorter/pager/jquery.tablesorter.pager.js"></script>
 
-<script type="text/javascript">	
+<script type="text/javascript">
     $(function() {
         $("#rptTable").tablesorter({
             widgets: ['zebra']
         }).tablesorterPager({
             container: $("#pager")
         });
-    });	
+    });
 </script>
+
+<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+<cfheader name="Pragma" value="no-cache">
 
 <title></title>
 </head>
+<body>
+
 <cfparam name="Submit" default="Default">
 <cfparam name="theOrigQuery" default="Default">
 <cfparam name="BuildQuery" default="Default">
 <cfparam name="RunQuery" default="Default">
 <cfparam name="form.RefineQuery" default="no">
 
-<!--- ******* START Get TABLES START ******* --->	
+<!--- ******* START Get TABLES START ******* --->
 <cfif #Submit# EQ "Default" OR #Submit# EQ "Clear and Start Over">
 	<cfcookie name="oTables" expires="#now()#">
     <cfcookie name="oColumns" expires="#now()#">
@@ -40,13 +45,13 @@
 			<tr>
 				<th><div align="Left">Tables (<cfoutput>#listlen(tables)#</cfoutput>)</div></th>
 			</tr>
-			<tr>	
+			<tr>
 				<td>
 					<select name="tables" size="20" multiple="yes" style="min-width:300px;">
                     	<cfloop list="#tables#" index="table">
 						<cfoutput><option>#table#</option></cfoutput>
                         </cfloop>
-					</select>	
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -56,19 +61,19 @@
 				</td>
 			</tr>
 		</table>
-	</form>	
-<!--- ******* START Get Columns START ******* --->	
-<cfelseif #Submit# EQ "Get Columns">    
+	</form>
+<!--- ******* START Get Columns START ******* --->
+<cfelseif #Submit# EQ "Get Columns">
 	<!--- Filter Out Duplicate tables, can happen --->
 	<cfset formTablesArr = createObject("java", "java.util.HashSet").init(ListToArray(form.tables)).toArray() />
     <cfset formTablesLst = #ArrayToList(formTablesArr)#/>
-    
+
 	<cfset _tables = getDBTables()>
     <cfset _columns = "">
     <cfloop list="#formTablesLst#" index="_table">
     	<cfset _tCols = getColumnsForTable(_table)>
     	<cfloop list="#_tCols#" index="_tCol">
-    		<cfset _columns = ListAppend(_columns, _tCol ) /> 
+    		<cfset _columns = ListAppend(_columns, _tCol ) />
         </cfloop>
     </cfloop>
 	<form action="adhoc_report_new.cfm" method="post">
@@ -77,7 +82,7 @@
 				<th><div align="Left">Tables</div></th>
 				<th><div align="Left"><cfif #Submit# is "Get Columns">Columns</cfif></div></th>
 		  	</tr>
-			<tr>	
+			<tr>
 				<td>
 					<select name="tables" size="20" multiple="yes" style="min-width:300px;">
 						<cfloop list="#_tables#" index="table">
@@ -89,7 +94,7 @@
                             </cfif>
 						</cfoutput>
                         </cfloop>
-					</select>	
+					</select>
 				</td>
 				<td>
 					<select name="columns" size="20" multiple style="min-width:300px;">
@@ -113,38 +118,37 @@
 				</td>
 			</tr>
 		</table>
-	</form>	
-<!--- ******* START BuildQuery START ******* --->	
+	</form>
+<!--- ******* START BuildQuery START ******* --->
 <cfelseif #submit# is "Define Query">
 	<cfif #theOrigQuery# EQ "Default">
 		<!--- Global vars --->
 		<cfset columns = #form.columns#>
 		<cfset tables =  #form.tables#>
-		
+
 		<cfcookie name="oTables" value="#tables#">
 		<cfcookie name="oColumns" value="#columns#">
 		<cfcookie name="origQuery" value="SELECT #columns# FROM #tables#">
 		<cfset theQuery = "SELECT DISTINCT #columns# ">
 	<cfelse>
 		<cfset theQuery="#cookie.origQuery#">
-	</cfif>	
-	<table>		
-		<form action="adhoc_report_new.cfm" method="post">
-			<tr>
-				<table id="rptTable" class="tablesorter" border="0" cellpadding="0" cellspacing="1" width="100%">
-				<thead>	
+	</cfif>
+
+  <form action="adhoc_report_new.cfm" method="post" name="refine">
+			<table id="rptTable" class="tablesorter" border="0" cellpadding="0" cellspacing="1" width="100%">
+				<thead>
 					<tr>
 						<th><span class="white_plain_arial_12">Table.Column</span></th>
 						<th><span class="white_plain_arial_12">Option</span></th>
 						<th><span class="white_plain_arial_12">Value</span></th>
 					</tr>
-                 </thead>
-                 <tbody>
+        </thead>
+        <tbody>
 					<cfoutput>
 						<cfloop index="col" list="#columns#" delimiters=",">
 							<tr>
 								<td>
-									<input name="#col#" type="hidden" value="#col#">#col#
+									<input name="#col#_foo" type="hidden" value="#col#">#col#
 								</td>
 								<td>
 									<select name="#col#_opt">
@@ -155,19 +159,20 @@
 									</select>
 								</td>
 								<td>
-									<input name="#col#_val" type="text">
+                  <!---
+                  #evaluate("form." & col & "_val")#
+                  <input name="#col#_val" type="text">
+                  --->
+                  <cfset colName = #col# & "_val" />
+									<input name="#colName#" type="text">#colName#
 								</td>
 							</tr>
 						</cfloop>
 					</cfoutput>
-              	</tbody>
-			  </table>
-			</tr>
-			<tr>
-				<td>
-					<hr align="left" width="500" size="1" noshade>
-				</td>
-			</tr>
+        </tbody>
+			</table>
+      <hr align="left" size="1" noshade>
+			<table id="rptTableBottom">
 			<tr>
 				<td>
 					<input name="RefineQuery" type="hidden" value="Yes">
@@ -179,26 +184,27 @@
 					<input type="submit" name="Submit" value="Clear and Start Over">
 				</td>
 			</tr>
-		</form>
-	</table>
-<!--- ******* START RunQuery START ******* --->	
+      </table>
+	</form>
+
+<!--- ******* START RunQuery START ******* --->
 <cfelseif #submit# is "Run Query">
 	<!--- Global Varibales used by the if statements --->
     <cfif isDefined("Cookie.OCOLUMNS")>
-    <cfset theSelect = "SELECT #Cookie.OCOLUMNS#">
+      <cfset theSelect = "SELECT #Cookie.OCOLUMNS#">
     <cfelse>
-    <cfset theSelect = "SELECT #FORM.COLUMNS#">
+      <cfset theSelect = "SELECT #FORM.COLUMNS#">
     </cfif>
     <cfif isDefined("Cookie.oTables")>
-    <cfset theFrom = "FROM #cookie.oTables#">
+      <cfset theFrom = "FROM #cookie.oTables#">
     <cfelse>
-    <cfset theFrom = "FROM #form.TABLES#">
+      <cfset theFrom = "FROM #form.TABLES#">
     </cfif>
-	<cfset sqlWhere = "">
-	<cfset theWHERE = "">
-	<cfset theJoin = "">
+  	<cfset sqlWhere = "">
+  	<cfset theWHERE = "">
+  	<cfset theJoin = "">
     <cfset theQuery = #theSelect# & " " & theFrom>
-    
+
 	<!--- RefineQuery is set to yes, which means there are additional where clauses --->
     <cfif #form.RefineQuery# EQ "YES">
         <cfloop index="col" list="#cookie.oColumns#" delimiters=",">
@@ -226,15 +232,13 @@
             </cfif>
             </cfif>
         </cfloop>
-        
         <!--- If filtering on query results has been done, create the where for the columns --->
         <cfif #Len(sqlWhere)# GT 0>
-        	<cfdump var="#sqlWhere#">
             <cfset sqlWhere = Replace(sqlWhere,"@"," AND ","ALL")>
             <cfset sqlWhere = "WHERE #sqlWhere#">
             <cfset theQuery = #theQuery# & " " & sqlWhere>
         </cfif>
-    </cfif> 
+    </cfif>
 <!--- The else means that the end user clicked on run query vs. Define query --->
 <cfelse>
 	<cfif IsDefined("form.columns")>
@@ -253,16 +257,16 @@
     <cfset theQuery = "SELECT #columns# ">
     <cfset theWHERE = " WHERE ">
 </cfif>
-<body>
+
 <cfif #submit# is "Run Query">
 	<!--- Run the query --->
 	<cftry>
 		<CFQUERY NAME="qRun" DATASOURCE="#session.dbsource#">
 			<cfif NOT IsDefined("url.UseSessionQuery")>
-				#PreserveSingleQuotes(theQuery)# 
+				#PreserveSingleQuotes(theQuery)#
 			<cfelse>
 				#PreserveSingleQuotes(session.theQuery)#
-			</cfif>	 
+			</cfif>
 		</CFQUERY>
 		<cfcatch type = "Any">
 			<b>ERROR: There is an error in the query, please click on the back button and verify the query.</b>
@@ -274,7 +278,7 @@
 			<cfabort>
 		</cfcatch>
 	</cftry>
-		
+
 	<!--- Display the Query Results --->
 
 	<cfoutput>
@@ -305,7 +309,7 @@
         </thead>
         <tbody>
 		<cfoutput query="qRun">
-		<tr>				
+		<tr>
 			<cfloop list="#qRun.columnlist#" index="i">
 				<td>#evaluate(i)#</td>
 			</cfloop>
@@ -313,7 +317,7 @@
         </cfoutput>
         </tbody>
 	</table>
-	
+
     <div id="pager" class="pager">
     <br />
     <cfoutput>
@@ -344,42 +348,42 @@
 
 	<cfif structKeyExists(_db,"databasename")>
     	<cfset _dbName = #_db.databasename#>
-    <cfelseif structKeyExists(_db,"dbName")>	
+    <cfelseif structKeyExists(_db,"dbName")>
     	<cfset _dbName = #_db.dbName#>
     </cfif>
 
 	<CFQUERY NAME="q_Tables" DATASOURCE="#_db.dsName#">
-        SELECT TABLE_NAME as object_name, TABLE_TYPE as object_type 
-        FROM information_schema.`TABLES` 
-        WHERE TABLE_SCHEMA LIKE '#_dbName#' 
-        AND (TABLE_NAME like 'mpi_%' OR TABLE_NAME like 'mp_clients_view') 
+        SELECT TABLE_NAME as object_name, TABLE_TYPE as object_type
+        FROM information_schema.`TABLES`
+        WHERE TABLE_SCHEMA LIKE '#_dbName#'
+        AND (TABLE_NAME like 'mpi_%' OR TABLE_NAME like 'mp_clients_view')
     </CFQUERY>
-    
+
     <cfreturn ValueList(q_Tables.object_name)>
 </cffunction>
 
 <cffunction name="getColumnsForTable" access="private" returntype="any">
 	<cfargument name="table" required="yes">
-    
+
     <cfset var _db = #application.settings.database.ro#>
     <cfif structKeyExists(_db,"databasename")>
     	<cfset _dbName = #_db.databasename#>
-    <cfelseif structKeyExists(_db,"dbName")>	
+    <cfelseif structKeyExists(_db,"dbName")>
     	<cfset _dbName = #_db.dbName#>
     </cfif>
 
 	<cfset var colList = "">
-    
+
     <CFQUERY NAME="q_Columns" DATASOURCE="#_db.dsName#">
 		<cfoutput>
-            SELECT TABLE_NAME, COLUMN_NAME 
-            FROM INFORMATION_SCHEMA.COLUMNS 
+            SELECT TABLE_NAME, COLUMN_NAME
+            FROM INFORMATION_SCHEMA.COLUMNS
             WHERE TABLE_SCHEMA = '#_dbName#' AND TABLE_NAME = '#arguments.table#'
         </cfoutput>
 	</CFQUERY>
-    
+
     <cfoutput query="q_Columns">
-    	<cfset colList = ListAppend(colList, #arguments.table# & "." & #COLUMN_NAME# ) /> 
+    	<cfset colList = ListAppend(colList, #arguments.table# & "." & #COLUMN_NAME# ) />
     </cfoutput>
     <cfreturn colList>
 </cffunction>
@@ -393,7 +397,7 @@
     <cfset r=Currentrow>
     <cfloop index="i" list="#LCase(Arguments.q.columnList)#">
       <cfset o[r][i]=Evaluate(i)>
-    </cfloop>    
+    </cfloop>
   </cfloop>
   <cfreturn SerializeJSON(o)>
 </cffunction>
