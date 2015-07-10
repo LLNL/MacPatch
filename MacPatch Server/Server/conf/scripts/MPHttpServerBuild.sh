@@ -70,13 +70,13 @@ mkdir -p ${TMP_DIR}
 cd ${TMP_DIR}
 
 # "httpd-2.4.12.tar.gz"
-HTTPD_SW=`find "${GITROOT}/MacPatch Server" -name "httpd-2"* -type f -exec basename {} \; | head -n 1`
+HTTPD_SW=`find "${SRC_DIR}" -name "httpd-2"* -type f -exec basename {} \; | head -n 1`
 # "apr-1.5.2.tar.gz"
-APR_SW=`find "${GITROOT}/MacPatch Server" -name "apr-1"* -type f -exec basename {} \; | head -n 1`
+APR_SW=`find "${SRC_DIR}" -name "apr-1"* -type f -exec basename {} \; | head -n 1`
 # "apr-util-1.5.4.tar.gz"
-APRUTIL_SW=`find "${GITROOT}/MacPatch Server" -name "apr-util-1"* -type f -exec basename {} \; | head -n 1`
+APRUTIL_SW=`find "${SRC_DIR}" -name "apr-util-1"* -type f -exec basename {} \; | head -n 1`
 # "pcre-8.36.tar.gz"
-PCRE_SW=`find "${GITROOT}/MacPatch Server" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
+PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
 
 # Apache HTTPD
 mkdir ${TMP_DIR}/httpd
