@@ -110,7 +110,7 @@ fi
 # Setup Tomcat
 # ------------------
 
-mkdir -p "${MPSERVERBASE}/apache-tomcat"
+mkdir -p "${MPSERVERBASE}/tomcat-mpproxy"
 tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/tomcat-mpproxy
 chmod +x ${MPSERVERBASE}/tomcat-mpproxyt/bin/*
 rm -rf ${MPSERVERBASE}/tomcat-mpproxy/webapps/docs
