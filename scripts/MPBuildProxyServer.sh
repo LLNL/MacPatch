@@ -16,6 +16,7 @@ MPBASE="/Library/MacPatch"
 MPSERVERBASE="/Library/MacPatch/Server"
 GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/build/Server"
+SRC_DIR="${MPSERVERBASE}/conf/src"
 J2EE_SW=`find "${GITROOT}/MacPatch Server" -name "apache-tomcat-"* -type f -exec basename {} \; | head -n 1`
 
 XOSTYPE=`uname -s`
