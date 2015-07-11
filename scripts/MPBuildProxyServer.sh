@@ -129,10 +129,10 @@ rm -rf "${MPSERVERBASE}/conf/app/.proxy/WEB-INF/customtags"
 mkdir -p "${MPSERVERBASE}/conf/app/.proxy/WEB-INF/customtags"
 cp -r "${MPSERVERBASE}/conf/app/proxy/" "${MPSERVERBASE}/conf/app/.proxy"
 cp -r "${MPSERVERBASE}/conf/app/mods/proxy/" "${MPSERVERBASE}/conf/app/.proxy"
-cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.wsl/WEB-INF/lib/systemcommand.jar"
+cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.proxy/WEB-INF/lib/systemcommand.jar"
 chmod -R 0775 "${MPSERVERBASE}/conf/app/.proxy"
 chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.proxy"
-jar cf "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" -C "${MPSERVERBASE}/conf/app/.proxy" .
+jar cf "${MPSERVERBASE}/conf/app/war/proxy/ROOT.war" -C "${MPSERVERBASE}/conf/app/.proxy" .
 
 # Tomcat Config - WSL
 MPCONFWSL="${MPSERVERBASE}/conf/tomcat/proxy"
