@@ -15,7 +15,7 @@
 MPBASE="/Library/MacPatch"
 MPSERVERBASE="/Library/MacPatch/Server"
 GITROOT="/Library/MacPatch/tmp/MacPatch"
-BUILDROOT="/Library/MacPatch/tmp/build/ProxyServer"
+BUILDROOT="/Library/MacPatch/tmp/build/Server"
 J2EE_SW=`find "${GITROOT}/MacPatch Server" -name "apache-tomcat-"* -type f -exec basename {} \; | head -n 1`
 
 XOSTYPE=`uname -s`
