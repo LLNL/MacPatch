@@ -82,6 +82,11 @@ mkdir -p /Library/MacPatch/Server/lib
 mkdir -p /Library/MacPatch/Server/Logs
 
 # ------------------
+# Copy files
+# ------------------
+cp -R ${GITROOT}/MacPatch\ Server/Server ${MPBASE}
+
+# ------------------
 # Install required packages
 # ------------------
 
