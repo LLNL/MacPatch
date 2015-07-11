@@ -137,7 +137,7 @@ jar cf "${MPSERVERBASE}/conf/app/war/proxy/ROOT.war" -C "${MPSERVERBASE}/conf/ap
 # Tomcat Config - WSL
 MPCONFWSL="${MPSERVERBASE}/conf/tomcat/proxy"
 MPSRVTOMWSL="${MPSERVERBASE}/tomcat-mpproxy"
-cp "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" "${MPSRVTOMWSL}/webapps"
+cp "${MPSERVERBASE}/conf/app/war/proxy/ROOT.war" "${MPSRVTOMWSL}/webapps"
 cp "${MPCONFWSL}/bin/setenv.sh" "${MPSRVTOMWSL}/bin/setenv.sh"
 cp "${MPCONFWSL}/bin/launchdTomcat.sh" "${MPSRVTOMWSL}/bin/launchdTomcat.sh"
 cp -r "${MPCONFWSL}/conf/Catalina" "${MPSRVTOMWSL}/conf/"
