@@ -160,6 +160,21 @@ chown root:wheel ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
 chmod 0644 ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
 
 # ------------------
+# Remove Non Proxy Stuff
+# ------------------
+MPSRVCONF="${MPSERVERBASE}/conf"
+rm -rf "${MPSRVCONF}/app/.proxy"
+rm -rf "${MPSRVCONF}/app/site"
+rm -rf "${MPSRVCONF}/app/wsl"
+rm -rf "${MPSRVCONF}/app/mods/site"
+rm -rf "${MPSRVCONF}/app/mods/wsl"
+rm -rf "${MPSRVCONF}/app/mods/wsl"
+rm -rf "${MPSRVCONF}/Database"
+rm -rf "${MPSRVCONF}/Database"
+find "${MPSRVCONF}/src" -name *.tar.gz -print | xargs -I{} rm {}
+
+
+# ------------------
 # Clean up structure place holders
 # ------------------
 find ${MPSERVERBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
