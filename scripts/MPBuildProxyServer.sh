@@ -172,7 +172,15 @@ rm -rf "${MPSRVCONF}/app/mods/wsl"
 rm -rf "${MPSRVCONF}/Database"
 rm -rf "${MPSRVCONF}/Database"
 find "${MPSRVCONF}/src" -name *.tar.gz -print | xargs -I{} rm {}
-
+mv "${MPSRVCONF}/scripts" "${MPSRVCONF}/scripts_rm"
+mv "${MPSRVCONF}/scripts_rm/proxy" "${MPSRVCONF}/scripts"
+rm -rf "${MPSRVCONF}/scripts_rm"
+mv "${MPSRVCONF}/etc" "${MPSRVCONF}/etc_rm"
+mv "${MPSRVCONF}/etc_rm/proxy" "${MPSRVCONF}/etc"
+rm -rf "${MPSRVCONF}/etc_rm"
+mv "${MPSRVCONF}/LaunchDaemons" "${MPSRVCONF}/LaunchDaemons_rm"
+mv "${MPSRVCONF}/LaunchDaemons_rm/proxy" "${MPSRVCONF}/LaunchDaemons"
+rm -rf "${MPSRVCONF}/LaunchDaemons_rm"
 
 # ------------------
 # Clean up structure place holders
