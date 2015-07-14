@@ -52,7 +52,7 @@ def setup_startup_scripts(services):
     if OS_TYPE == "Darwin":
         for item in services:
             sys_file = "/Library/LaunchDaemons/" + item
-            mp_file = MP_SRV_CONF + sys_file
+            mp_file = MP_SRV_CONF + "/LaunchDaemons/" + item
 
             if os.path.exists(mp_file):
                 if os.path.exists(sys_file):
