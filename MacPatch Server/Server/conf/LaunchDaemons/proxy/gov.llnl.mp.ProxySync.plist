@@ -8,7 +8,7 @@
 	<string>MacPatch Proxy Content Sync</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Library/MacPatch/Server/bin/MPProxySync</string>
+		<string>/Library/MacPatch/Server/scripts/MPProxySync.py</string>
 		<string>-p</string>
 		<string>/Library/MacPatch/Server/conf/etc/gov.llnl.MPProxySync.plist</string>
 	</array>
