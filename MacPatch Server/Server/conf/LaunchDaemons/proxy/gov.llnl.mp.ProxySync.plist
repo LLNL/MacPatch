@@ -9,7 +9,7 @@
 	<key>ProgramArguments</key>
 	<array>
 		<string>/Library/MacPatch/Server/scripts/MPProxySync.py</string>
-		<string>-p</string>
+		<string>--plist</string>
 		<string>/Library/MacPatch/Server/conf/etc/gov.llnl.MPProxySync.plist</string>
 	</array>
 	<key>KeepAlive</key>
