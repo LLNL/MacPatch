@@ -5,19 +5,19 @@
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
  Written by Charles Heizer <heizer1 at llnl.gov>.
  LLNL-CODE-636469 All rights reserved.
- 
+
  This file is part of MacPatch, a program for installing and patching
  software.
- 
+
  MacPatch is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License (as published by the Free
  Software Foundation) version 2, dated June 1991.
- 
+
  MacPatch is distributed in the hope that it will be useful, but WITHOUT ANY
  WARRANTY; without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE. See the terms and conditions of the GNU General Public
  License for more details.
- 
+
  You should have received a copy of the GNU General Public License along
  with MacPatch; if not, write to the Free Software Foundation, Inc.,
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -29,8 +29,8 @@ Version : 1.0.0
 Description: Sync Content From Master Server
 
 Note:
-This script requires the "requests" python module. This is not 
-part of the base python deployment. To install it simply run 
+This script requires the "requests" python module. This is not
+part of the base python deployment. To install it simply run
 
 $ easy_install requests
 
@@ -59,8 +59,7 @@ except ImportError, e:
 # ------------------------------
 
 logger 				= logging.getLogger('MPProxySync')
-#logFile = "/Library/MacPatch/Server/Logs/MPProxySync.log"
-logFile 			= "/tmp/MPProxySync.log"
+logFile             = "/Library/MacPatch/Server/Logs/MPProxySync.log"
 apiURI 				= '/MPDistribution.cfc'
 tmp_sync_dir 		= '/private/tmp/sync'
 patch_sync_dir 		= '/private/tmp/Content/patches'
@@ -85,12 +84,12 @@ class ContentSync(object):
 		self.content_length	= 0
 		self.items_synced	= 0
 		self.sync_type		= 'Patches'
-	
+
 	def syncPatchContent(self):
 
 		logger.info("Syncing patch content")
 		logger.info("Download tmp dir " + self.sync_dir_tmp)
-		
+
 		# Verify Content Dir
 		_sync_dir 	= self.sync_dir + "/patches"
 		if not os.path.exists(_sync_dir):
@@ -144,7 +143,7 @@ class ContentSync(object):
 
 			else:
 				logger.error("Error, unable to get content. Return code " + str(r.status_code))
-		
+
 		except requests.exceptions.RequestException as e:    # This is the correct syntax
 			logger.error(e)
 			print e
@@ -216,7 +215,7 @@ class ContentSync(object):
 
 	def downloadItem(self,item,type='patch'):
 		''' Gen URL for download '''
-		
+
 		item_id 	= item['puuid']
 		item_hash	= item['pkg_hash']
 		item_url	= item['pkg_url']
@@ -227,7 +226,7 @@ class ContentSync(object):
 
 		url = self.hostString + "/mp-content" + item_url
 		logger.debug("Download " + url)
-		
+
 		''' Variables '''
 		local_file_name		= url.split('/')[-1]
 		local_file_path 	= self.sync_dir + "/" + item_type + "/" + item_id + "/" + local_file_name
@@ -249,12 +248,12 @@ class ContentSync(object):
 			logger.debug("Creating directory " + tmp_local_dir)
 			os.makedirs(tmp_local_dir)
 
-		
+
 		''' Download the patch and return its name '''
 		try:
 			r = requests.get(url, stream=True, verify=VERIFY_SELF_SIGN, timeout=MP_TIMEOUT)
 			with open(tmp_local_file_path, 'wb') as f:
-				for chunk in r.iter_content(chunk_size=1024): 
+				for chunk in r.iter_content(chunk_size=1024):
 					if chunk: # filter out keep-alive new chunks
 						f.write(chunk)
 						f.flush()
@@ -263,7 +262,7 @@ class ContentSync(object):
 			logger.error(e)
 			return None
 
-		return tmp_local_file_path 
+		return tmp_local_file_path
 
 	def md5sum(self, filename, blocksize=65536):
 		hash = hashlib.md5()
@@ -320,18 +319,18 @@ def readPlist(plist):
 	if confData.has_key("MPServerAddress"):
 		MP_SERVER = confData["MPServerAddress"]
 	else:
-		MP_SERVER = "localhost"	
+		MP_SERVER = "localhost"
 
-	if confData.has_key("MPServerPort"):	
+	if confData.has_key("MPServerPort"):
 		MP_PORT = str(confData["MPServerPort"])
 	else:
 		MP_PORT = "3601"
 
-	if confData.has_key("MPServerSSL"):		
+	if confData.has_key("MPServerSSL"):
 		if confData["MPServerSSL"] == True or confData["MPServerSSL"] == '1':
 			MP_USE_SSL = True
 		else:
-			MP_USE_SSL = False	
+			MP_USE_SSL = False
 	else:
 		MP_USE_SSL = False
 
@@ -352,7 +351,7 @@ def main():
 		hdlr = logging.FileHandler(logFile)
 		formatter = logging.Formatter('%(asctime)s %(levelname)s --- %(message)s')
 		hdlr.setFormatter(formatter)
-		logger.addHandler(hdlr) 
+		logger.addHandler(hdlr)
 
 		if args.plist:
 			readPlist(args.plist)
@@ -369,14 +368,14 @@ def main():
 
 		if not os.path.exists(patch_sync_dir):
 			os.makedirs(patch_sync_dir)
-		
+
 		contentSync = ContentSync(hostURL())
 		if args.type == 'All' or args.type == 'Patches':
 			contentSync.items_synced = 0
 			contentSync.syncPatchContent()
 			logger.info("Total numer of patches synced " + str(contentSync.items_synced))
 			contentSync.postResults()
-		
+
 		if args.type == 'All' or args.type == 'Software':
 			contentSync.items_synced = 0
 			contentSync.syncSoftwareContent()
@@ -389,7 +388,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
