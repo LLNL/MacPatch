@@ -25,9 +25,9 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2013 Lawrence Livremore National Laboratory. All rights reserved.</string>
+	<string>Copyright © 2015 Lawrence Livremore National Laboratory. All rights reserved.</string>
 	<key>MPInfo</key>
-	<string>MacPatch 2.5.0 Client Software</string>
+	<string>MacPatch 2.7.0 Client Software</string>
 	<key>NSMainNibFile</key>
 	<string>MPCatalog_MainMenu</string>
 	<key>NSPrincipalClass</key>

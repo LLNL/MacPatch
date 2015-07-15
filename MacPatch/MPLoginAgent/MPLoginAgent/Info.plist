@@ -32,5 +32,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>MPInfo</key>
+	<string>MacPatch v2.7.0 Client Software</string>
 </dict>
 </plist>

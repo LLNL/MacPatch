@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.1.0</string>
+	<string>2.1.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -27,9 +27,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>MPInfo</key>
-	<string>MacPatch v2.5.0 Client Software</string>
+	<string>MacPatch v2.7.0 Client Software</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2014 Lawrence Livremore National Laboratory. All rights reserved.</string>
+	<string>Copyright © 2015 Lawrence Livremore National Laboratory. All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>ClientStatusMainMenu</string>
 	<key>NSPrincipalClass</key>
