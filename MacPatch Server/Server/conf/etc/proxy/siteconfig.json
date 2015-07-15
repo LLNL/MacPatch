@@ -13,7 +13,7 @@
                 "email":"mpadmin@localhost"
             },
             "ip": {
-                "allow": "127.0.0.1",
+                "allow": "127.0.0.1"
             }
         },
         "mailserver": 

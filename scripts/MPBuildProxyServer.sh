@@ -152,14 +152,6 @@ chown -R $OWNERGRP "${MPSRVTOMWSL}"
 ${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh
 
 # ------------------
-# Link & Set Permissions
-# ------------------
-chown -R 79:70 ${MPSERVERBASE}
-chmod -R 0775 ${MPSERVERBASE}
-chown root:wheel ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
-chmod 0644 ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
-
-# ------------------
 # Remove Non Proxy Stuff
 # ------------------
 MPSRVCONF="${MPSERVERBASE}/conf"
@@ -181,6 +173,14 @@ rm -rf "${MPSRVCONF}/etc_rm"
 mv "${MPSRVCONF}/LaunchDaemons" "${MPSRVCONF}/LaunchDaemons_rm"
 mv "${MPSRVCONF}/LaunchDaemons_rm/proxy" "${MPSRVCONF}/LaunchDaemons"
 rm -rf "${MPSRVCONF}/LaunchDaemons_rm"
+
+# ------------------
+# Link & Set Permissions
+# ------------------
+chown -R 79:70 ${MPSERVERBASE}
+chmod -R 0775 ${MPSERVERBASE}
+chown root:wheel ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
+chmod 0644 ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
 
 # ------------------
 # Clean up structure place holders

@@ -157,7 +157,7 @@ def serviceControl(action,services):
                 os.chmod(theLaunchDaemonFile, 0644)
                 launchctl="launchctl " + action + " -w " + theLaunchDaemonFile
                 os.system(launchctl)
-                os.system(sleep(3))
+                os.system("sleep 3")
             else:
                 print("Error: Could not find %s" % theLaunchDaemonFile)
 
