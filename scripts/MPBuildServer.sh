@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.6
+# Version: 1.6.1
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,11 +12,12 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
-# 1.4: 	Remove Jetty Support
-#		Added Tomcat 7.0.57
-# 1.5:	Added Tomcat 7.0.63
-# 1.6:	Variableized the tomcat config
-#		removed all Jetty refs
+# 1.4: 		Remove Jetty Support
+#			Added Tomcat 7.0.57
+# 1.5:		Added Tomcat 7.0.63
+# 1.6:		Variableized the tomcat config
+#			removed all Jetty refs
+# 1.6.1: 	Now using InstallPyMods.sh script to install python modules
 #
 # -------------------------------------------------------------
 MPBASE="/Library/MacPatch"
@@ -216,6 +217,13 @@ chown -R $OWNERGRP ${MPSERVERBASE}/Logs
 chmod 0775 ${MPSERVERBASE}
 chown root:wheel ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
 chmod 0644 ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
+
+# ------------------------------------
+# Install Python Packages
+# ------------------------------------
+if [ -f "/usr/bin/easy_install" ]; then
+	${MPSERVERBASE}/conf/scripts/InstallPyMods.sh
+fi
 
 # ------------------
 # Clean up structure place holders
