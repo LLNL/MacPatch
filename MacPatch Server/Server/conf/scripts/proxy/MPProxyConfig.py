@@ -150,6 +150,7 @@ def isBinaryPlist(pathOrFile):
 def serviceControl(action,services):
     if OS_TYPE == "Darwin":
         for item in services:
+            print("Attempting to start %s service." % item)
             theLaunchDaemonFile="/Library/LaunchDaemons/" + item
 
             if os.path.exists(theLaunchDaemonFile):
