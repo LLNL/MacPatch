@@ -947,7 +947,7 @@ done:
         // Run Once, to show current status
         [self showMPUserNotificationCenterMethod];
         // 600.0 = 10 Minutes
-        NSTimer *timer = [NSTimer timerWithTimeInterval:20.0
+        NSTimer *timer = [NSTimer timerWithTimeInterval:1200.0
                                                  target:self
                                                selector:@selector(showMPUserNotificationCenterMethod)
                                                userInfo:nil
