@@ -48,7 +48,7 @@
         
         <cftry>
             <cfquery name="qGetClients" datasource="#session.dbsource#" result="res">
-                SELECT	cci.*, sav.defsDate
+                SELECT Distinct	cci.*, sav.defsDate
                 <cfif hasHWData EQ true>
                     , hw.mpa_Model_Name, hw.mpa_Model_Identifier
                 </cfif>
