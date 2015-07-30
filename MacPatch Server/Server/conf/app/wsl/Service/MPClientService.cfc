@@ -1415,10 +1415,10 @@
 
             <cfscript>
                 swDistCFC=CreateObject("component","cfc.softwareDistribution").init(arguments.GroupName);
-                if (arguments.osvers == "*") {
+                if (arguments.osver == "*") {
                     qGetGroupTasksData = swDistCFC.GetSoftwareGroupData();
                 } else {
-                    qGetGroupTasksData = swDistCFC.GetSoftwareGroupData(arguments.osvers);
+                    qGetGroupTasksData = swDistCFC.GetSoftwareGroupData(arguments.osver);
                 }
             </cfscript>
 
