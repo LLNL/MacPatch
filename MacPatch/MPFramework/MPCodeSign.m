@@ -77,6 +77,8 @@
     }
     
     CFURLRef pathURL = CFURLCreateWithString( kCFAllocatorDefault, pathStr, NULL );
+    CFRelease(pathStr);
+    
     if( pathURL == NULL ) {
         NSDictionary *userInfo = @{NSLocalizedDescriptionKey: NSLocalizedString(@"Unable to convert path to CFURL.", nil)};
         error = [NSError errorWithDomain:NSPOSIXErrorDomain code:-3 userInfo:userInfo];
@@ -85,6 +87,8 @@
     }
     
     OSStatus status = SecStaticCodeCreateWithPath( pathURL, kSecCSDefaultFlags, &code );
+    CFRelease(pathURL);
+    
     if( status ) {
         error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
         if (err != NULL) *err = error;

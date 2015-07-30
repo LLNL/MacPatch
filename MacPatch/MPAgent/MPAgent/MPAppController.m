@@ -47,7 +47,7 @@
 - (id)init 
 {
 	// Init plain is as daemon
-	return [self initWithArg:0];
+	return [self initWithArg:99];
 }
 
 - (id)initWithArg:(int)aArg
@@ -114,7 +114,6 @@
     }
     return self;
 }
-
 
 - (void)runAsDaemon
 {
@@ -235,11 +234,11 @@
                                         avOp = nil;
                                     } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPInvScan"]) {
                                         @autoreleasepool {
-                                            invOp = [[InventoryOperation alloc] init];
-                                            invOp.queuePriority = NSOperationQueuePriorityLow;
-                                            invOp.qualityOfService = NSOperationQualityOfServiceBackground;
-                                            [queue addOperation:invOp];
-                                            invOp = nil;
+                                            InventoryOperation __autoreleasing *invOps = [[InventoryOperation alloc] init];
+                                            invOps.queuePriority = NSOperationQueuePriorityLow;
+                                            invOps.qualityOfService = NSOperationQualityOfServiceBackground;
+                                            [queue addOperation:invOps];
+                                            invOps = nil;
                                         }
                                     } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPVulScan"]) {
                                         patchOp = [[PatchScanAndUpdateOperation alloc] init];
@@ -347,8 +346,19 @@
 
 -(void)scanAndUpdateAgentUpdater
 {
-	[MPTaskThread runAgentScanAndUpdate];
-	exit(0);
+    agentOp = [[AgentScanAndUpdateOperation alloc] init];
+    [queue addOperation:agentOp];
+    agentOp = nil;
+    
+    if ([NSThread isMainThread]) {
+        while ([[queue operations] count] > 0) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+    } else {
+        [queue waitUntilAllOperationsAreFinished];
+    }
+    
+    exit(0);
 }
 
 - (void)runSWDistScanAndInstall

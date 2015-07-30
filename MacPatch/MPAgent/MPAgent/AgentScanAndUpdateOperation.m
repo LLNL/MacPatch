@@ -26,6 +26,7 @@
 #import "AgentScanAndUpdateOperation.h"
 #import "MPAgent.h"
 #import "MacPatch.h"
+#import "MPAgentUpdater.h"
 
 @interface AgentScanAndUpdateOperation (Private)
 
@@ -97,34 +98,12 @@
 
 - (void)runAgentScanAndUpdate
 {
-	@autoreleasepool {
+	@autoreleasepool
+    {
 		logit(lcl_vInfo,@"Running agent update check.");
-		NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-		if (![fm fileExistsAtPath:appPath]) {
-			logit(lcl_vError,@"Unable to find MPAgentExec app.");
-		} else {
-            NSError *err = nil;
-            MPCodeSign *cs = [[MPCodeSign alloc] init];
-            BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
-            if (err) {
-                logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
-            }
-            cs = nil;
-			if (result == YES) {
-				NSError *error = nil;
-				NSString *result;
-                MPNSTask *mpr = [[MPNSTask alloc] init];
-				result = [mpr runTask:appPath binArgs:[NSArray arrayWithObjects:@"-G", nil] error:&error];
-				
-				if (error) {
-					logit(lcl_vError,@"%@",[error description]);
-				}
-				
-				logit(lcl_vDebug,@"%@",result);
-				logit(lcl_vInfo,@"Update Up2Date has been completed.");
-				logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
-			}
-		}	
+        MPAgentUpdater *mpu = [[MPAgentUpdater alloc] init];
+        [mpu scanAndUpdateAgentUpdater];
+        mpu = nil;
 	}
 }
 

@@ -33,7 +33,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"2.1.0.0"
+#define APPVERSION	@"2.1.0.2"
 #define APPNAME		@"MPAgent"
 
 void usage(void);
@@ -42,7 +42,7 @@ int main (int argc, char * argv[])
 {
 	@autoreleasepool {
     
-		int a_Type = 0;
+		int a_Type = 99;
 		BOOL echoToConsole = NO;
 		BOOL debugLogging = NO;
 		BOOL traceLogging = NO;
@@ -95,7 +95,7 @@ int main (int argc, char * argv[])
 			switch (c)
 			{
 				case 'd':
-					a_Type = 0;
+					a_Type = 99;
 					break;
 				case 'q':
 					a_Type = 99;

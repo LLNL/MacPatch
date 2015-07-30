@@ -208,7 +208,7 @@
     <cfargument name="table" required="yes">
 
     <cfquery datasource="#session.dbsource#" name="qGetColumns" cachedwithin="#CreateTimeSpan(0,0,0,2)#">
-        SELECT COLUMN_NAME
+        SELECT DISTINCT COLUMN_NAME
         FROM INFORMATION_SCHEMA.COLUMNS
         WHERE table_name = '#arguments.table#'
     </cfquery>

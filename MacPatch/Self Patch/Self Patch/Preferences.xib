@@ -185,6 +185,7 @@
 					<array key="NSToolbarIBSelectableItems" id="0"/>
 				</object>
 				<nil key="NSUserInterfaceItemIdentifier"/>
+				<string key="NSWindowContentMaxSize">{440, 286}</string>
 				<object class="NSView" key="NSWindowView" id="140914147">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>

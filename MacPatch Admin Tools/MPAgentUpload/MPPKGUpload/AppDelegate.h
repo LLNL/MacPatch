@@ -81,6 +81,7 @@
 @property (weak) IBOutlet NSTextField *writeConfStatus;
 @property (weak) IBOutlet NSTextField *flattenPkgStatus;
 @property (weak) IBOutlet NSTextField *compressPkgStatus;
+@property (weak) IBOutlet NSTextField *postPkgTitle;
 @property (weak) IBOutlet NSTextField *postPkgStatus;
 
 @property (weak) IBOutlet NSTextField *identityName;

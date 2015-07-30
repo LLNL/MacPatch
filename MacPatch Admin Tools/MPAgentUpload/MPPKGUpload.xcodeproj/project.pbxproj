@@ -21,6 +21,8 @@
 		8F6462E919081AC600230A97 /* mpInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F6462E819081AC600230A97 /* mpInfo.plist */; };
 		8F6462FF19082BB200230A97 /* MPCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6462FE19082BB200230A97 /* MPCrypto.m */; };
 		8F6463021908840700230A97 /* NSString+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6463011908840700230A97 /* NSString+Helper.m */; };
+		8F8A7C591B6161BF0036E98A /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F8A7C4B1B6161BF0036E98A /* lcl.m */; };
+		8F8A7C5B1B6161BF0036E98A /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F8A7C531B6161BF0036E98A /* LCLLogFile.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,23 @@
 		8F6462FE19082BB200230A97 /* MPCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCrypto.m; sourceTree = "<group>"; };
 		8F6463001908840700230A97 /* NSString+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Helper.h"; sourceTree = "<group>"; };
 		8F6463011908840700230A97 /* NSString+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Helper.m"; sourceTree = "<group>"; };
+		8F8A7C451B6161BF0036E98A /* lcl_config_components.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_components.h; sourceTree = "<group>"; };
+		8F8A7C461B6161BF0036E98A /* lcl_config_extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_extensions.h; sourceTree = "<group>"; };
+		8F8A7C471B6161BF0036E98A /* lcl_config_logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_logger.h; sourceTree = "<group>"; };
+		8F8A7C481B6161BF0036E98A /* LCLLogFileConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LCLLogFileConfig.h; sourceTree = "<group>"; };
+		8F8A7C4A1B6161BF0036E98A /* lcl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl.h; sourceTree = "<group>"; };
+		8F8A7C4B1B6161BF0036E98A /* lcl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = lcl.m; sourceTree = "<group>"; };
+		8F8A7C4C1B6161BF0036E98A /* lcl_config_components.template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_components.template.h; sourceTree = "<group>"; };
+		8F8A7C4D1B6161BF0036E98A /* lcl_config_extensions.template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_extensions.template.h; sourceTree = "<group>"; };
+		8F8A7C4E1B6161BF0036E98A /* lcl_config_logger.template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_logger.template.h; sourceTree = "<group>"; };
+		8F8A7C4F1B6161BF0036E98A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		8F8A7C511B6161BF0036E98A /* lcl_config_logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_logger.h; sourceTree = "<group>"; };
+		8F8A7C521B6161BF0036E98A /* LCLLogFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LCLLogFile.h; sourceTree = "<group>"; };
+		8F8A7C531B6161BF0036E98A /* LCLLogFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LCLLogFile.m; sourceTree = "<group>"; };
+		8F8A7C541B6161BF0036E98A /* LCLLogFileConfig.template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LCLLogFileConfig.template.h; sourceTree = "<group>"; };
+		8F8A7C551B6161BF0036E98A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		8F8A7C571B6161BF0036E98A /* qlog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qlog.h; sourceTree = "<group>"; };
+		8F8A7C581B6161BF0036E98A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +131,7 @@
 				8F18F44919DB58F400CF0733 /* PreferenceController.m */,
 				8F6463001908840700230A97 /* NSString+Helper.h */,
 				8F6463011908840700230A97 /* NSString+Helper.m */,
+				8F8A7C441B6161BF0036E98A /* Logging */,
 				8F60C1E718FEFB1D00D57C2E /* MainMenu.xib */,
 				8F18F44B19DB590900CF0733 /* Preferences.xib */,
 				8F60C1EA18FEFB1D00D57C2E /* Images.xcassets */,
@@ -132,6 +152,54 @@
 				8F6462E819081AC600230A97 /* mpInfo.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8F8A7C441B6161BF0036E98A /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				8F8A7C451B6161BF0036E98A /* lcl_config_components.h */,
+				8F8A7C461B6161BF0036E98A /* lcl_config_extensions.h */,
+				8F8A7C471B6161BF0036E98A /* lcl_config_logger.h */,
+				8F8A7C481B6161BF0036E98A /* LCLLogFileConfig.h */,
+				8F8A7C491B6161BF0036E98A /* LibComponentLogging-Core */,
+				8F8A7C501B6161BF0036E98A /* LibComponentLogging-LogFile */,
+				8F8A7C561B6161BF0036E98A /* LibComponentLogging-qlog */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		8F8A7C491B6161BF0036E98A /* LibComponentLogging-Core */ = {
+			isa = PBXGroup;
+			children = (
+				8F8A7C4A1B6161BF0036E98A /* lcl.h */,
+				8F8A7C4B1B6161BF0036E98A /* lcl.m */,
+				8F8A7C4C1B6161BF0036E98A /* lcl_config_components.template.h */,
+				8F8A7C4D1B6161BF0036E98A /* lcl_config_extensions.template.h */,
+				8F8A7C4E1B6161BF0036E98A /* lcl_config_logger.template.h */,
+				8F8A7C4F1B6161BF0036E98A /* README.md */,
+			);
+			path = "LibComponentLogging-Core";
+			sourceTree = "<group>";
+		};
+		8F8A7C501B6161BF0036E98A /* LibComponentLogging-LogFile */ = {
+			isa = PBXGroup;
+			children = (
+				8F8A7C511B6161BF0036E98A /* lcl_config_logger.h */,
+				8F8A7C521B6161BF0036E98A /* LCLLogFile.h */,
+				8F8A7C531B6161BF0036E98A /* LCLLogFile.m */,
+				8F8A7C541B6161BF0036E98A /* LCLLogFileConfig.template.h */,
+				8F8A7C551B6161BF0036E98A /* README.md */,
+			);
+			path = "LibComponentLogging-LogFile";
+			sourceTree = "<group>";
+		};
+		8F8A7C561B6161BF0036E98A /* LibComponentLogging-qlog */ = {
+			isa = PBXGroup;
+			children = (
+				8F8A7C571B6161BF0036E98A /* qlog.h */,
+				8F8A7C581B6161BF0036E98A /* README.md */,
+			);
+			path = "LibComponentLogging-qlog";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,7 +280,9 @@
 				8F60C1E618FEFB1D00D57C2E /* AppDelegate.m in Sources */,
 				8F18F44A19DB58F400CF0733 /* PreferenceController.m in Sources */,
 				8F60C1DF18FEFB1D00D57C2E /* main.m in Sources */,
+				8F8A7C591B6161BF0036E98A /* lcl.m in Sources */,
 				8F6463021908840700230A97 /* NSString+Helper.m in Sources */,
+				8F8A7C5B1B6161BF0036E98A /* LCLLogFile.m in Sources */,
 				8F2E697219226D2B001BF9D6 /* WebRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

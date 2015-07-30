@@ -103,7 +103,7 @@
 		logit(lcl_vInfo,@"Running client inventory scan.");
 
         int res = -1;
-        MPInv *inv = [[MPInv alloc] init];
+        MPInv __autoreleasing *inv = [[MPInv alloc] init];
         res = [inv collectInventoryData];
         inv = nil;
         

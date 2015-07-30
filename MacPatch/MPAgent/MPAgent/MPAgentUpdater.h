@@ -1,5 +1,5 @@
 //
-//  PreferenceController.m
+//  MPAgentUpdater.h
 /*
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -23,45 +23,14 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#import "PreferenceController.h"
+#import <Foundation/Foundation.h>
 
-#undef  ql_component
-#define ql_component lcl_cMain
+@interface MPAgentUpdater : NSObject
 
-@interface PreferenceController (Private)
+@property (nonatomic,readonly) NSString *agentUpdaterPath;
 
-@end
-
-@implementation PreferenceController
-
-- (id)init
-{
-    self = [super initWithWindowNibName:@"Preferences"];
-    if (self) {
-        // Initialization code here.
-    }
-    return self;
-}
-
-- (void)windowDidLoad
-{
-    [super windowDidLoad];
-}
-
-- (IBAction)toggleUpload:(id)sender
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"uploadPrefsStatus" object:self];
-}
-
-- (IBAction)toggleDebug:(id)sender
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"loggingPrefsStatus" object:self];
-}
-
-- (IBAction)toggleEcho:(id)sender
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"loggingPrefsStatus" object:self];
-}
-
+- (BOOL)scanForAgentyUpdater;
+- (BOOL)updateAgentyUpdater;
+- (BOOL)scanAndUpdateAgentUpdater;
 
 @end

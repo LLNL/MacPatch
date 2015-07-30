@@ -1,25 +1,27 @@
 {
   "images" : [
     {
-      "idiom" : "mac",
       "size" : "16x16",
-      "scale" : "1x"
-    },
-    {
-      "idiom" : "mac",
-      "size" : "16x16",
-      "scale" : "2x"
-    },
-    {
-      "size" : "32x32",
       "idiom" : "mac",
       "filename" : "MPLoginAgent-7.png",
       "scale" : "1x"
     },
     {
+      "size" : "16x16",
+      "idiom" : "mac",
+      "filename" : "MPLoginAgent-7-2.png",
+      "scale" : "2x"
+    },
+    {
       "size" : "32x32",
       "idiom" : "mac",
-      "filename" : "MPLoginAgent-6.png",
+      "filename" : "MPLoginAgent-7-1.png",
+      "scale" : "1x"
+    },
+    {
+      "size" : "32x32",
+      "idiom" : "mac",
+      "filename" : "MPLoginAgent-5-1.png",
       "scale" : "2x"
     },
     {
@@ -31,7 +33,7 @@
     {
       "size" : "128x128",
       "idiom" : "mac",
-      "filename" : "MPLoginAgent-4.png",
+      "filename" : "MPLoginAgent-2-1.png",
       "scale" : "2x"
     },
     {

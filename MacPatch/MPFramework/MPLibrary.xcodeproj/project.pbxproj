@@ -94,12 +94,12 @@
 		8F4B1EC616DD5FDD00E15A9E /* NSFileManager+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1EC216DD5FDD00E15A9E /* NSFileManager+Helper.m */; };
 		8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2616DE639100E15A9E /* NSDate+Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1F2D16DE639100E15A9E /* NSDate+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2716DE639100E15A9E /* NSDate+Helper.m */; };
-		8F4B1F2F16DE639100E15A9E /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2816DE639100E15A9E /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F4B1F3116DE639100E15A9E /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2916DE639100E15A9E /* NSData+Base64.m */; };
 		8F4B1F3716DE64DA00E15A9E /* MPSWTasks.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F3416DE64DA00E15A9E /* MPSWTasks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F3516DE64DA00E15A9E /* MPSWTasks.m */; };
 		8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F50CB7C199D5DD0006AC537 /* MPKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F50CB7D199D5DD0006AC537 /* MPKeychain.m */; };
+		8FE03DCC1B60020B005D39EE /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2816DE639100E15A9E /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FE03DCD1B60020E005D39EE /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2916DE639100E15A9E /* NSData+Base64.m */; };
 		8FE5609816DE6D6300BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609516DE6CFD00BB7600 /* Security.framework */; };
 		8FE5609916DE6D6600BB7600 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609316DE6CF700BB7600 /* Foundation.framework */; };
 		8FE5609A16DE6D6800BB7600 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609116DE6CF100BB7600 /* SystemConfiguration.framework */; };
@@ -153,8 +153,8 @@
 		8F4B1EC216DD5FDD00E15A9E /* NSFileManager+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Helper.m"; sourceTree = "<group>"; };
 		8F4B1F2616DE639100E15A9E /* NSDate+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Helper.h"; sourceTree = "<group>"; };
 		8F4B1F2716DE639100E15A9E /* NSDate+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Helper.m"; sourceTree = "<group>"; };
-		8F4B1F2816DE639100E15A9E /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
-		8F4B1F2916DE639100E15A9E /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		8F4B1F2816DE639100E15A9E /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "../NSData+Base64.h"; sourceTree = "<group>"; };
+		8F4B1F2916DE639100E15A9E /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Base64.m"; path = "../NSData+Base64.m"; sourceTree = "<group>"; };
 		8F4B1F3416DE64DA00E15A9E /* MPSWTasks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSWTasks.h; sourceTree = "<group>"; };
 		8F4B1F3516DE64DA00E15A9E /* MPSWTasks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSWTasks.m; sourceTree = "<group>"; };
 		8F50CB7C199D5DD0006AC537 /* MPKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPKeychain.h; sourceTree = "<group>"; };
@@ -413,6 +413,8 @@
 		8FAEF668145F19AC006284B2 /* Base64 */ = {
 			isa = PBXGroup;
 			children = (
+				8F4B1F2816DE639100E15A9E /* NSData+Base64.h */,
+				8F4B1F2916DE639100E15A9E /* NSData+Base64.m */,
 				8FAEF669145F19AD006284B2 /* NSData-Base64Extensions.h */,
 				8FAEF66A145F19AD006284B2 /* NSData-Base64Extensions.m */,
 				8FAEF66B145F19AD006284B2 /* NSString-Base64Extensions.h */,
@@ -481,8 +483,6 @@
 				8FBB10B9152F6D7900A45934 /* NSMutableDictionary+Helper.m */,
 				8F4B1F2616DE639100E15A9E /* NSDate+Helper.h */,
 				8F4B1F2716DE639100E15A9E /* NSDate+Helper.m */,
-				8F4B1F2816DE639100E15A9E /* NSData+Base64.h */,
-				8F4B1F2916DE639100E15A9E /* NSData+Base64.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -574,7 +574,6 @@
 				8F4B1EBE16DD5FB400E15A9E /* NSString+Hash.h in Headers */,
 				8F4B1EC416DD5FDD00E15A9E /* NSFileManager+Helper.h in Headers */,
 				8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */,
-				8F4B1F2F16DE639100E15A9E /* NSData+Base64.h in Headers */,
 				8F47F10118EE000100158396 /* MPNetConfig.h in Headers */,
 				8F47F0FB18EDFD6D00158396 /* MPJsonResult.h in Headers */,
 				8F47F0F718EDFD6D00158396 /* MPNetRequest.h in Headers */,
@@ -584,6 +583,7 @@
 				8F315B9B19212DEB0031FF73 /* MPServerList.h in Headers */,
 				8FEC938717CBFEFB00AA9C1C /* MPApplePatch.h in Headers */,
 				8F2E697B19229A85001BF9D6 /* MPFailedRequests.h in Headers */,
+				8FE03DCC1B60020B005D39EE /* NSData+Base64.h in Headers */,
 				8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */,
 				8F30D8791938FB3F006E55C2 /* MPNetReach.h in Headers */,
 				8FF93F9E199A9205005A4EEB /* RSACrypto.h in Headers */,
@@ -670,6 +670,7 @@
 				8F4B1DF116DD1D6400E15A9E /* MPDefaults.m in Sources */,
 				8F4B1DF216DD1D6400E15A9E /* MPDiskUtil.m in Sources */,
 				8F4B1DF316DD1D6400E15A9E /* MPLog.m in Sources */,
+				8FE03DCD1B60020E005D39EE /* NSData+Base64.m in Sources */,
 				8F4B1DF416DD1D6400E15A9E /* MPSystemInfo.m in Sources */,
 				8F4B1DF516DD1D6400E15A9E /* MPDate.m in Sources */,
 				8F4B1DF616DD1D6400E15A9E /* MPClientCheckInData.m in Sources */,
@@ -704,7 +705,6 @@
 				8F47F0FA18EDFD6D00158396 /* MPNetServer.m in Sources */,
 				8F4B1EC616DD5FDD00E15A9E /* NSFileManager+Helper.m in Sources */,
 				8F4B1F2D16DE639100E15A9E /* NSDate+Helper.m in Sources */,
-				8F4B1F3116DE639100E15A9E /* NSData+Base64.m in Sources */,
 				8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */,
 				8FE560D216DE899B00BB7600 /* MPSWInstaller.m in Sources */,
 				8F2E697C19229A85001BF9D6 /* MPFailedRequests.m in Sources */,

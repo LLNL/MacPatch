@@ -27,7 +27,7 @@
 #import "MPAgent.h"
 #import "MacPatch.h"
 
-@interface PatchScanAndUpdateOperation (Private)
+@interface PatchScanAndUpdateOperation ()
 
 @property (nonatomic, readwrite) NSString *taskFile;
 
@@ -113,7 +113,13 @@
 {
 	logit(lcl_vInfo,@"Running client vulnerability scan.");
 	@autoreleasepool {
-        [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:kMPPatchSCAN]];
+        @try {
+            [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:kMPPatchSCAN]];
+        }
+        @catch (NSException *exception) {
+            [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:@".mpScanRunning"]];
+        }
+        
 		NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
 		if (![fm fileExistsAtPath:appPath]) {
 			logit(lcl_vError,@"Unable to find MPAgentExec app.");
@@ -148,7 +154,13 @@
 {
 	logit(lcl_vInfo,@"Running client vulnerability update.");
 	@autoreleasepool {
-        [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:kMPPatchUPDATE]];
+        @try {
+            [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:kMPPatchUPDATE]];
+        }
+        @catch (NSException *exception) {
+            [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:@".mpUpdateRunning"]];
+        }
+
 		NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
 		if (![fm fileExistsAtPath:appPath]) {
 			logit(lcl_vError,@"Unable to find MPAgentExec app.");
