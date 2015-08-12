@@ -2,8 +2,8 @@
 <!---
         MPClientService
         Database type is MySQL
-        MacPatch Version 2.6.5.x
-        Rev 3
+        MacPatch Version 2.7.0.x
+        Rev 1
 --->
 <!---   Notes:
 --->
@@ -727,7 +727,11 @@
             </cfif>
 
             <cfset var patchData = DeserializeJSON(arguments.jsonData)>
-            <cfset pArr = #patchData['rows']# />
+            <cfif StructKeyExists(patchData,"rows")>
+                <cfset pArr = #patchData['rows']# />
+            <cfelse>
+                <cfset pArr = ArrayNew(1) />
+            </cfif>
 
             <!---  Apple Patches --->
             <cfif arguments.type EQ 1>

@@ -36,9 +36,9 @@
   <cfapplication>
     <clientstorage>cookie</clientstorage>
     <enabled>true</enabled>
-    <sessiontimeout>#CreateTimeSpan(0,5,0,0)#</sessiontimeout>
+    <sessiontimeout>#CreateTimeSpan(0,0,20,0)#</sessiontimeout>
     <applicationtimeout>#CreateTimeSpan(2,0,0,0)#</applicationtimeout>
-    <j2eesession>true</j2eesession>
+    <j2eesession>false</j2eesession>
   </cfapplication>
   <cfmail>
     <interval>240</interval>
