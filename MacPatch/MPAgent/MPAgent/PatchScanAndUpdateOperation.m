@@ -29,8 +29,6 @@
 
 @interface PatchScanAndUpdateOperation ()
 
-@property (nonatomic, readwrite) NSString *taskFile;
-
 - (void)runPatchScan;
 - (void)runPatchScanAndUpdate;
 
