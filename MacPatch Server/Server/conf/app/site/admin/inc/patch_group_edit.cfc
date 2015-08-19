@@ -290,11 +290,12 @@
         <cfset _d = RemovePatchGroupData(Arguments.id)>
 		<!--- JSON 2.2.x --->
         <cfset _x = xObj.GetPatchGroupPatches(Arguments.id)>
-        <!--- SOAP < 2.1.1 --->
-        <cfset _y = xObj.GetPatchGroupPatchesExtended(Arguments.id)>
         <cfset _a = AddPatchGroupData(Arguments.id,_x,'JSON')>
+        <!--- SOAP < 2.1.1 --->
+        <!--- No Longer Support XML
+        <cfset _y = xObj.GetPatchGroupPatchesExtended(Arguments.id)>
         <cfset _b = AddPatchGroupData(Arguments.id,_y,'SOAP')>
-        
+        --->
 		<cfset userdata  = {type='#strMsgType#',msg='#strMsg#'}>
 		<cfset strReturn = {userdata=#userdata#}>
 		<cfreturn strReturn>

@@ -3,7 +3,7 @@
         MPClientService
         Database type is MySQL
         MacPatch Version 2.7.0.x
-        Rev 1
+        Rev 2
 --->
 <!---   Notes:
 --->
@@ -528,6 +528,51 @@
                 <cfset l = elogit("[GetAVDefsFile]: #cfcatch.Detail# -- #cfcatch.Message#")>
                 <cfset response.errorno = "1">
                 <cfset response.errormsg = cfcatch.Message>
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response>
+    </cffunction>
+
+    <!---
+        Remote API
+        Type: Public/Remote
+        Description: Returns True/False if it's the latest revision
+    --->
+    <cffunction name="GetIsLatestRevisionForPatchGroup" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="no" default="0" type="string">
+        <cfargument name="PatchGroup" required="yes">
+        <cfargument name="revision" required="yes" type="numeric">
+    
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "0" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfset response[ "result" ] = 0 />
+
+        <cftry>
+            <!--- Get the Patch Group ID from the PatchGroup Name --->
+            <cfset pid = patchGroupIDFromName(arguments.PatchGroup)>
+            <cfquery datasource="#this.ds#" name="qGetGroupID">
+                SELECT mdate FROM mp_patch_group_data
+                WHERE pid = <cfqueryparam value="#pid#">
+                AND rev = <cfqueryparam value="#arguments.revision#">
+                AND data_type = 'JSON'
+            </cfquery>
+
+            <cfif qGetGroupID.RecordCount EQ 1>
+                <cfset response[ "result" ] = 1 />
+            <cfelse>
+                <cfset l = logit("Error","[GetIsLatestRevisionForPatchGroup][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: Matching data was not found.")>
+                <cfset response[ "errorno" ] = "1" />
+                <cfset response[ "errormsg" ] = "[GetIsLatestRevisionForPatchGroup][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: Matching data was not found." />
+                <cfreturn response>
+            </cfif>
+
+            <cfcatch>
+                <cfset l = logit("Error","[GetIsLatestRevisionForPatchGroup]: #cfcatch.Detail# -- #cfcatch.Message#")>
+                <cfset response[ "errorno" ] = "1" />
+                <cfset response[ "errormsg" ] = "[GetIsLatestRevisionForPatchGroup][qGetGroupID]: #cfcatch.Detail# -- #cfcatch.Message#" />
+                <cfreturn response>
             </cfcatch>
         </cftry>
 
