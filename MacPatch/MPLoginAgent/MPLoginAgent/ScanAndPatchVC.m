@@ -184,7 +184,7 @@ typedef NSUInteger MPInstallIconStatus;
         error = nil;
         resultApple = [self scanForAppleUpdates:&error];
         if (error) {
-            NSLog(@"%@",error.localizedDescription);
+            qlerror(@"%@",error.localizedDescription);
         }
         
         [statusText setStringValue:@"Scanning for Custom Updates..."];
@@ -192,7 +192,7 @@ typedef NSUInteger MPInstallIconStatus;
         error = nil;
         resultCustom = [self scanForCustomUpdates:&error];
         if (error) {
-            NSLog(@"%@",error.localizedDescription);
+            qlerror(@"%@",error.localizedDescription);
         }
         
         [statusText setStringValue:@"Compiling approved patches from scan list."];
@@ -1288,16 +1288,16 @@ typedef NSUInteger MPInstallIconStatus;
 - (void)rebootOrLogout:(int)action
 {
 #ifdef DEBUG
-    NSLog(@"Reboot would happen ...");
+    qldebug(@"Reboot would happen ...");
 #else
     int rb = 0;
     switch ( action ) {
         case 0:
             rb = reboot(RB_AUTOBOOT);
-            NSLog(@"MPAuthPlugin issued a reboot (%d)",rb);
+            qlinfo(@"MPAuthPlugin issued a reboot (%d)",rb);
             if (rb == -1) {
                 // Try Forcing it :-)
-                NSLog(@"Attempting to force reboot...");
+                qlinfo(@"Attempting to force reboot...");
                 execve("/sbin/reboot",0,0);
             }
             break;

@@ -101,11 +101,8 @@
 {
     NSError *err = nil;
     NSMutableDictionary *errInfo = [NSMutableDictionary dictionary];
-
-    
-    
     id jMsgResult = [NSJSONSerialization JSONObjectWithData:self.jsonData options:kNilOptions error:&err];
-    NSLog(@"returnJsonResult:[jMsgResult]: %@",jMsgResult);
+
     // Check for valid object
     if (err)
     {
@@ -143,7 +140,6 @@
 
         if ([[jMsgResult objectForKey:@"result"] isKindOfClass:[NSArray class]] || [[jMsgResult objectForKey:@"result"] isKindOfClass:[NSDictionary class]])
         {
-            NSLog(@"ARRAY or DICT");
             return [jMsgResult objectForKey:@"result"];
         }
         else if ([[jMsgResult objectForKey:@"result"] isKindOfClass:[NSNumber class]])
@@ -153,7 +149,6 @@
         }
         else
         {
-            NSLog(@"ALT");
             err = nil;
             NSData *altResult = [NSJSONSerialization JSONObjectWithData:[[jMsgResult objectForKey:@"result"] dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:&err];
             
@@ -170,12 +165,9 @@
             // No error, now check if it's a json object or string result.
             BOOL isValidJSONObj = [NSJSONSerialization isValidJSONObject:altResult];
             if (!isValidJSONObj) {
-                NSLog(@"altResult: %@",altResult);
                 return [jMsgResult objectForKey:@"result"];
             }
-            
-            //NSString *xj = [[NSString alloc] initWithData:altResult encoding:NSASCIIStringEncoding];
-            //NSLog(@"altResult: %@",xj);
+
             return altResult;
         }
 

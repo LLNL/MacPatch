@@ -1074,7 +1074,7 @@ done:
             [self logoutNow];
         }
     } else {
-        NSLog(@"Close");
+        //NSLog(@"Close");
     }
 }
 

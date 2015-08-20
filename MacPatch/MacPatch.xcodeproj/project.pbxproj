@@ -14,7 +14,6 @@
 			);
 			dependencies = (
 				8F2C7CCF17FC92E5008CE21A /* PBXTargetDependency */,
-				8FD7331F17FE277500AA71B7 /* PBXTargetDependency */,
 			);
 			name = PROXY_BUILD;
 			productName = PROXY_BUILD;
@@ -156,13 +155,6 @@
 			remoteGlobalIDString = 8DD76FA10486AA7600D96B5E;
 			remoteInfo = ccusr;
 		};
-		8FD7331E17FE277500AA71B7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F2C7CB017FC9252008CE21A;
-			remoteInfo = MPProxySync;
-		};
 		8FD88E3116DFB40C00A870A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FD88E2D16DFB40B00A870A3 /* MPAgentUp2Date.xcodeproj */;
@@ -205,13 +197,6 @@
 			remoteGlobalIDString = 8FD890A716DFEDB700A870A3;
 			remoteInfo = "Self Patch";
 		};
-		8FDDF2AB17FE0A4C00053F68 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8F2C7CB117FC9252008CE21A;
-			remoteInfo = MPProxySync;
-		};
 		8FE5610916DE9A7B00BB7600 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FE5610516DE9A7A00BB7600 /* MPAgentExec.xcodeproj */;
@@ -236,7 +221,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPProxySync.xcodeproj; path = MPProxySync/MPProxySync.xcodeproj; sourceTree = "<group>"; };
 		8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPAgent.xcodeproj; path = MPAgent/MPAgent.xcodeproj; sourceTree = "<group>"; };
 		8F67E6531B320E3B00888EB9 /* MPLoginAgent.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPLoginAgent.xcodeproj; path = MPLoginAgent/MPLoginAgent.xcodeproj; sourceTree = "<group>"; };
 		8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPPrefMigrate.xcodeproj; path = MPPrefMigrate/MPPrefMigrate.xcodeproj; sourceTree = "<group>"; };
@@ -267,7 +251,6 @@
 				8FD8906716DFE84600A870A3 /* MPClientStatus.xcodeproj */,
 				8FD890C716DFEDB700A870A3 /* Self Patch.xcodeproj */,
 				8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */,
-				8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -351,14 +334,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8FDDF2A717FE0A4C00053F68 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8FDDF2AC17FE0A4C00053F68 /* MPProxySync */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8FE5610616DE9A7A00BB7600 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -428,10 +403,6 @@
 				{
 					ProductGroup = 8F90C31E1700AF9D006E36D0 /* Products */;
 					ProjectRef = 8F90C31D1700AF9D006E36D0 /* MPPrefMigrate.xcodeproj */;
-				},
-				{
-					ProductGroup = 8FDDF2A717FE0A4C00053F68 /* Products */;
-					ProjectRef = 8F2C7D5517FDEA34008CE21A /* MPProxySync.xcodeproj */;
 				},
 				{
 					ProductGroup = 8FD88F5316DFD26C00A870A3 /* Products */;
@@ -525,13 +496,6 @@
 			remoteRef = 8FD890CB16DFEDB900A870A3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		8FDDF2AC17FE0A4C00053F68 /* MPProxySync */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = MPProxySync;
-			remoteRef = 8FDDF2AB17FE0A4C00053F68 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		8FE5610A16DE9A7B00BB7600 /* MPAgentExec */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -608,11 +572,6 @@
 			isa = PBXTargetDependency;
 			name = MPPrefMigrate;
 			targetProxy = 8F68EAFA1757D4D500982EF9 /* PBXContainerItemProxy */;
-		};
-		8FD7331F17FE277500AA71B7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPProxySync;
-			targetProxy = 8FD7331E17FE277500AA71B7 /* PBXContainerItemProxy */;
 		};
 		C5387B36179EE346001761D2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

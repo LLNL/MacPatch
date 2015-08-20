@@ -98,10 +98,10 @@ int main(int argc, char * argv[])
     }
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"CleanExit"]) {
-        NSLog(@"Installing SIGTERM handler");
+        //NSLog(@"Installing SIGTERM handler");
         InstallHandleSIGTERMFromRunLoop();
     } else {
-        NSLog(@"Not installing SIGTERM handler");
+        //NSLog(@"Not installing SIGTERM handler");
     }
 
     retVal = NSApplicationMain(argc, (const char **) argv);
