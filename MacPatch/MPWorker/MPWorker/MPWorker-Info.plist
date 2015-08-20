@@ -14,5 +14,10 @@
 	<string>1.6.2</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.6.2</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

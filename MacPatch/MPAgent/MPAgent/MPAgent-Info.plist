@@ -14,5 +14,10 @@
 	<string>2.1.0.0</string>
 	<key>MPInfo</key>
 	<string>MacPatch 2.7.0 Client Software</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>
