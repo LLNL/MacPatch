@@ -2,12 +2,13 @@
 #
 # -------------------------------------------------------------
 # Script: InstallPyMods.sh
-# Version: 1.0.0
+# Version: 1.0.1
 #
 # Description:
 # This script will test and install any missing python modules
 #
 # History:
+# Added python-crontab-1.9.3 for linux support
 #
 # -------------------------------------------------------------
 
@@ -20,8 +21,30 @@ if [ "`whoami`" != "root" ] ; then   # If not root user,
    exit 1;
 fi
 
+XOSTYPE=`uname -s`
+USELINUX=false
+USEMACOS=false
+
+# -----------------------------------
+# OS Check
+# -----------------------------------
+
+# Check and set os type
+if [ $XOSTYPE == "Linux" ]; then
+  USELINUX=true
+elif [ $XOSTYPE == "Darwin" ]; then
+  USEMACOS=true
+else
+    echo "OS Type $XOSTYPE is not supported. Now exiting."
+    exit 1; 
+fi
+
+# -----------------------------------
+# Main
+# -----------------------------------
+
 PY_MODS="/Library/MacPatch/Server/conf/src/python"
-MODS=('pip-7.1.0' 'argparse-1.3.0' 'mysql-connector-python-2.0.4' 'requests-2.7.0' 'biplist-0.9' 'wheel-0.24.0');
+MODS=('pip-7.1.0' 'argparse-1.3.0' 'mysql-connector-python-2.0.4' 'requests-2.7.0' 'biplist-0.9' 'wheel-0.24.0' 'python-crontab-1.9.3');
 
 install_module () {
 

@@ -1,0 +1,101 @@
+python-crontab (1.9.0) precise; urgency=low
+
+ * Added vixie cron compatability
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Fri, 02 Jan 2015 07:37:12 -0500
+
+python-crontab (1.4.4) precise; urgency=low
+
+ * Added every method to jobs for convience
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 11 Oct 2013 13:46:52 -0500
+
+python-crontab (1.4.1) precise; urgency=low
+
+ * Lots of bug fixes
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 28 May 2013 13:07:02 -0500
+
+python-crontab (1.3.0) precise; urgency=low
+
+ * Add optional croniter support
+ * Improvements in testing
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 05 Apr 2013 00:22:58 -0500
+
+python-crontab (1.2.0) precise; urgency=low
+
+  * Add test for enums (MON-SUN/JAN-DEC)
+  * Fix problems with enums
+  * Make sure enums are preserved
+  * Sort output for ranges and parts
+  * Allow compatability mode to be set when creating crontab object
+  * Allow tabs and tabfiles to be specified for opening
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 19 Sep 2012 12:12:31 -0400
+
+python-crontab (1.1.0) precise; urgency=low
+
+  * Add Python3 support and make sure it all works for both 2.7 and 3.2
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 19 Sep 2012 12:12:31 -0400
+
+python-crontab (1.0.0) precise; urgency=low
+
+  * Add many tests to complete the functionality
+  * Improve compatibility mode and test it
+  * Change API of slice calls to be properties instead of methods
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 16 Aug 2012 21:39:52 -0400
+
+python-crontab (0.9.7) precise; urgency=low
+
+  * Add unix/sunos compatibility mode
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 14 Aug 2012 21:39:17 -0400
+
+python-crontab (0.9.3) jaunty; urgency=low
+
+  * Fixed problem with crontab line endings
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Tue, 18 Sep 2009 06:36:24 -0500
+python-crontab (0.9.2) jaunty; urgency=low
+
+  * Fixed problem with comments and invalid line printing
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Tue, 06 Jul 2009 20:10:28 -0500
+python-crontab (0.9.1) intrepid; urgency=low
+
+  * Fixed an error with @reboot
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Tue, 07 Apr 2009 17:39:08 -0500
+python-crontab (0.9) hardy; urgency=low
+
+  * Fix lots of pylint errors and warnings.
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Sat, 13 Dec 2008 21:32:01 -0800
+python-crontab (0.8) hardy; urgency=low
+
+  * Fix a number of problems fixed as reported.
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 09 Oct 2008 20:50:01 -0500
+python-crontab (0.7) hardy; urgency=low
+
+  * Fix parsing of special entries
+  * Fix looping and printing of crons
+  * Updated documentation to reflect new features.
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Fri, 23 Aug 2008 00:57:20 -0400
+python-crontab (0.6) hardy; urgency=low
+
+  * Fix problems with clearing of cron tasks
+  * Don't let speacials mask cleared tasks
+  * Add some comments for crontab methods
+  * Add remove_all method to crontab
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 20 Aug 2008 19:00:00 -0500
+python-crontab (0.5) hardy; urgency=low
+
+  * Package created as base module for other packages.
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Thu, 12 Aug 2008 00:15:00 -0500
