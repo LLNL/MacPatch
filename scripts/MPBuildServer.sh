@@ -170,20 +170,18 @@ mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Processed
 
 # Web Services - App
 mkdir -p "${MPSERVERBASE}/conf/app/war/wsl"
-#mkdir -p "${MPSERVERBASE}/conf/app/.wsl"
-unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/.wsl"
-rm -rf "${MPSERVERBASE}/conf/app/.wsl/index.cfm"
-rm -rf "${MPSERVERBASE}/conf/app/.wsl/manual"
-if $USEMACOS; then
-	cp -r "${MPSERVERBASE}/conf/app/wsl" "${MPSERVERBASE}/conf/app/.wsl"
-	cp -r "${MPSERVERBASE}/conf/app/mods/wsl" "${MPSERVERBASE}/conf/app/.wsl"
-else
-	cp -r "${MPSERVERBASE}/conf/app/wsl" "${MPSERVERBASE}/conf/app/.wsl"
-	cp -r "${MPSERVERBASE}/conf/app/mods/wsl" "${MPSERVERBASE}/conf/app/.wsl"
-fi
-cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.wsl/WEB-INF/lib/systemcommand.jar"
-chmod -R 0775 "${MPSERVERBASE}/conf/app/.wsl"
-chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.wsl"
+mkdir -p "${MPSERVERBASE}/conf/app/wsl_tmp"
+unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/wsl_tmp"
+rm -rf "${MPSERVERBASE}/conf/app/wsl_tmp/index.cfm"
+rm -rf "${MPSERVERBASE}/conf/app/wsl_tmp/manual"
+
+cp -r "${MPSERVERBASE}/conf/app/wsl" "${MPSERVERBASE}/conf/app/wsl_tmp"
+cp -r "${MPSERVERBASE}/conf/app/mods/wsl" "${MPSERVERBASE}/conf/app/wsl_tmp"
+
+cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/wsl_tmp/WEB-INF/lib/systemcommand.jar"
+chmod -R 0775 "${MPSERVERBASE}/conf/app/wsl_tmp"
+chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/wsl_tmp"
+mv "${MPSERVERBASE}/conf/app/wsl_tmp" "${MPSERVERBASE}/conf/app/.wsl"
 jar cf "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" -C "${MPSERVERBASE}/conf/app/.wsl" .
 
 # Admin Site - App
