@@ -54,14 +54,14 @@ fi
 rm -rf "${MPSERVERBASE}/conf/app/wsl_tmp"
 
 mkdir -p "${MPSERVERBASE}/conf/app/war/wsl"
-mkdir -p "${MPSERVERBASE}/conf/app/wsl_tmp"
+mkdir -p "${MPSERVERBASE}/conf/app/.wsl"
 unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/wsl_tmp"
 rm -rf "${MPSERVERBASE}/conf/app/wsl_tmp/index.cfm"
 rm -rf "${MPSERVERBASE}/conf/app/wsl_tmp/manual"
 
 echo "${MPSERVERBASE}/conf/app/wsl ${MPSERVERBASE}/conf/app/wsl_tmp"
-cp -r "${MPSERVERBASE}"/conf/app/wsl/* "${MPSERVERBASE}"/conf/app/wsl_tmp
-cp -r "${MPSERVERBASE}"/conf/app/mods/wsl/* "${MPSERVERBASE}"/conf/app/wsl_tmp
+cp -r "${MPSERVERBASE}"/conf/app/wsl/* "${MPSERVERBASE}"/conf/app/.wsl
+cp -r "${MPSERVERBASE}"/conf/app/mods/wsl/* "${MPSERVERBASE}"/conf/app/.wsl
 
 cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/wsl_tmp/WEB-INF/lib/systemcommand.jar"
 chmod -R 0775 "${MPSERVERBASE}/conf/app/wsl_tmp"
