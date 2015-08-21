@@ -178,8 +178,8 @@ if $USEMACOS; then
 	cp -r "${MPSERVERBASE}/conf/app/wsl/" "${MPSERVERBASE}/conf/app/.wsl"
 	cp -r "${MPSERVERBASE}/conf/app/mods/wsl/" "${MPSERVERBASE}/conf/app/.wsl"
 else
-	cp -r "${MPSERVERBASE}/conf/app/wsl" "${MPSERVERBASE}/conf/app/.wsl"
-	cp -r "${MPSERVERBASE}/conf/app/mods/wsl" "${MPSERVERBASE}/conf/app/.wsl"
+	cp -r "${MPSERVERBASE}/conf/app/wsl/" "${MPSERVERBASE}/conf/app/.wsl/"
+	cp -r "${MPSERVERBASE}/conf/app/mods/wsl/" "${MPSERVERBASE}/conf/app/.wsl/"
 fi
 cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.wsl/WEB-INF/lib/systemcommand.jar"
 chmod -R 0775 "${MPSERVERBASE}/conf/app/.wsl"
