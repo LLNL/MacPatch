@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.6.2
+# Version: 1.6.3
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -19,6 +19,7 @@
 #			removed all Jetty refs
 # 1.6.1: 	Now using InstallPyMods.sh script to install python modules
 # 1.6.2:	Fix cp paths
+# 1.6.3:	Updated OpenJDK to 1.8.0
 #
 # -------------------------------------------------------------
 MPBASE="/Library/MacPatch"
@@ -126,7 +127,7 @@ fi
 if [ $XOSTYPE == "Linux" ]; then
 	if [ -f "/etc/redhat-release" ]; then
 		# Check if needed packges are installed or install
-		pkgs=("gcc-c++" "git" "openssl-devel" "java-1.7.0-openjdk-devel" "libxml2-devel" "bzip2-libs" "bzip2-devel" "bzip2" "python-pip" "mysql-connector-python")
+		pkgs=("gcc-c++" "git" "openssl-devel" "java-1.8.0-openjdk-devel" "libxml2-devel" "bzip2-libs" "bzip2-devel" "bzip2" "python-pip" "mysql-connector-python")
 	
 		for i in "${pkgs[@]}"
 		do
