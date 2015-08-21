@@ -175,14 +175,17 @@ unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/
 rm -rf "${MPSERVERBASE}/conf/app/wsl_tmp/index.cfm"
 rm -rf "${MPSERVERBASE}/conf/app/wsl_tmp/manual"
 
+echo "${MPSERVERBASE}/conf/app/wsl ${MPSERVERBASE}/conf/app/wsl_tmp"
 cp -r "${MPSERVERBASE}/conf/app/wsl" "${MPSERVERBASE}/conf/app/wsl_tmp"
 cp -r "${MPSERVERBASE}/conf/app/mods/wsl" "${MPSERVERBASE}/conf/app/wsl_tmp"
 
 cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/wsl_tmp/WEB-INF/lib/systemcommand.jar"
 chmod -R 0775 "${MPSERVERBASE}/conf/app/wsl_tmp"
 chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/wsl_tmp"
-mv "${MPSERVERBASE}/conf/app/wsl_tmp" "${MPSERVERBASE}/conf/app/.wsl"
-jar cf "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" -C "${MPSERVERBASE}/conf/app/.wsl" .
+#mv "${MPSERVERBASE}/conf/app/wsl_tmp" "${MPSERVERBASE}/conf/app/.wsl"
+#jar cf "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" -C "${MPSERVERBASE}/conf/app/.wsl" .
+
+exit
 
 # Admin Site - App
 mkdir -p "${MPSERVERBASE}/conf/app/war/site"
