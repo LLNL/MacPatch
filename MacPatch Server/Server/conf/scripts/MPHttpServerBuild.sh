@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPHttpServerBuild.sh
-# Version: 1.1
+# Version: 1.1.1
 #
 # Description:
 # Will Download and Compile PCRE & Apache 2.4.x for MacPatch Server
@@ -12,7 +12,8 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
-# 1.1:	Added New Httpd and Apr-Util and PCRE source
+# 1.1:		Added New Httpd and Apr-Util and PCRE source
+# 1.1.1:	Remove MPApache symlink if exists
 #
 # -------------------------------------------------------------
 
@@ -252,6 +253,9 @@ if $USELINUX; then
 		fi
 
 	if [ -f "$SFILE1" ]; then
+		if [ -f "/etc/init.d/MPApache" ]; then
+			rm -f /etc/init.d/MPApache
+		fi
 		chmod +x "$SFILE1"
 		ln -s "$SFILE1" /etc/init.d/MPApache
 		eval $SUSCP1
