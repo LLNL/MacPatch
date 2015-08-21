@@ -170,13 +170,13 @@ mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Processed
 
 # Web Services - App
 mkdir -p "${MPSERVERBASE}/conf/app/war/wsl"
-mkdir -p "${MPSERVERBASE}/conf/app/.wsl"
+#mkdir -p "${MPSERVERBASE}/conf/app/.wsl"
 unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/.wsl"
 rm -rf "${MPSERVERBASE}/conf/app/.wsl/index.cfm"
 rm -rf "${MPSERVERBASE}/conf/app/.wsl/manual"
 if $USEMACOS; then
-	cp -r "${MPSERVERBASE}/conf/app/wsl/" "${MPSERVERBASE}/conf/app/.wsl"
-	cp -r "${MPSERVERBASE}/conf/app/mods/wsl/" "${MPSERVERBASE}/conf/app/.wsl"
+	cp -r "${MPSERVERBASE}/conf/app/wsl" "${MPSERVERBASE}/conf/app/.wsl"
+	cp -r "${MPSERVERBASE}/conf/app/mods/wsl" "${MPSERVERBASE}/conf/app/.wsl"
 else
 	cp -r "${MPSERVERBASE}/conf/app/wsl" "${MPSERVERBASE}/conf/app/.wsl"
 	cp -r "${MPSERVERBASE}/conf/app/mods/wsl" "${MPSERVERBASE}/conf/app/.wsl"
