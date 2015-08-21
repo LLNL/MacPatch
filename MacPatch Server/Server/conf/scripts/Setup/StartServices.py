@@ -25,9 +25,9 @@
 
 '''
   MacPatch Patch Loader Setup Script
-  MacPatch Version 2.6.x
+  MacPatch Version 2.7.x
   
-  Script Version 1.6.0
+  Script Version 1.6.1
 '''
 
 import os
@@ -36,6 +36,7 @@ import platform
 import argparse
 import pwd
 import grp
+import shutil
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
 MP_SRV_CONF = MP_SRV_BASE+"/conf"
@@ -302,6 +303,7 @@ def setupServices():
 		if os_type == 'Darwin':
 			srvsList.append('gov.llnl.mp.httpd.plist')
 		else:
+			linkStartupScripts('MPApache')
 			srvsList.append('MPApache')
 	
 	# Web Services
@@ -313,7 +315,9 @@ def setupServices():
 			srvsList.append('gov.llnl.mp.wsl.plist')
 			srvsList.append('gov.llnl.mp.invd.plist')
 		else:
+			linkStartupScripts('MPTomcatWS')
 			srvsList.append('MPTomcatWS')
+			linkStartupScripts('MPInventoryD')
 			srvsList.append('MPInventoryD')
 
 	# Content Sync
@@ -332,6 +336,7 @@ def setupServices():
 		if os_type == 'Darwin':
 			srvsList.append('gov.llnl.mp.site.plist')
 		else:
+			linkStartupScripts('MPTomcatSite')
 			srvsList.append('MPTomcatSite')
 	
 	# Patch Loader
@@ -354,6 +359,18 @@ def setupServices():
 				srvsList.append('gov.llnl.mp.sync.plist')
 
 	return srvsList
+
+def linkStartupScripts(service):
+	_initFile = "/etc/init.d/"+service
+	if not os.path.exists(_initFile):
+		script = "/Library/MacPatch/Server/conf/init.d"+service
+		link = "/etc/init.d/"+service 
+		os.chown(script, 0, 0)
+		os.chmod(script, 0755)
+		os.symlink(script,link)
+		print "Copy Startup Script for "+service
+		
+
 
 def main():
 	'''Main command processing'''
