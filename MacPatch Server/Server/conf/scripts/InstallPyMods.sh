@@ -2,13 +2,14 @@
 #
 # -------------------------------------------------------------
 # Script: InstallPyMods.sh
-# Version: 1.0.1
+# Version: 1.0.2
 #
 # Description:
 # This script will test and install any missing python modules
 #
 # History:
 # Added python-crontab-1.9.3 for linux support
+# Fixed issue with mod name prefix python-
 #
 # -------------------------------------------------------------
 
@@ -48,7 +49,7 @@ MODS=('pip-7.1.0' 'argparse-1.3.0' 'mysql-connector-python-2.0.4' 'requests-2.7.
 
 install_module () {
 
-    MODNAME=`echo $1 | awk -F- '{print $1}'`
+    MODNAME=`echo $1 | sed 's/python-//' | awk -F- '{print $1}'`
     python -c "import $MODNAME" > /dev/null 2>&1
     if [ $? == 1 ]; then
         if [ -d "${PY_MODS}/$1" ]; then
