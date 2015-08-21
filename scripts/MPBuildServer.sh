@@ -170,22 +170,17 @@ mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Processed
 
 # Web Services - App
 mkdir -p "${MPSERVERBASE}/conf/app/war/wsl"
-mkdir -p "${MPSERVERBASE}/conf/app/wsl_tmp"
-unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/wsl_tmp"
-rm -rf "${MPSERVERBASE}/conf/app/wsl_tmp/index.cfm"
-rm -rf "${MPSERVERBASE}/conf/app/wsl_tmp/manual"
-
-echo "${MPSERVERBASE}/conf/app/wsl ${MPSERVERBASE}/conf/app/wsl_tmp"
-cp -r "${MPSERVERBASE}/conf/app/wsl" "${MPSERVERBASE}/conf/app/wsl_tmp"
-cp -r "${MPSERVERBASE}/conf/app/mods/wsl" "${MPSERVERBASE}/conf/app/wsl_tmp"
+mkdir -p "${MPSERVERBASE}/conf/app/.wsl"
+unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/.wsl"
+rm -rf "${MPSERVERBASE}/conf/app/.wsl/index.cfm"
+rm -rf "${MPSERVERBASE}/conf/app/.wsl/manual"
+cp -r "${MPSERVERBASE}"/conf/app/wsl/* "${MPSERVERBASE}"/conf/app/.wsl
+cp -r "${MPSERVERBASE}"/conf/app/mods/wsl/* "${MPSERVERBASE}"/conf/app/.wsl
 
 cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/wsl_tmp/WEB-INF/lib/systemcommand.jar"
-chmod -R 0775 "${MPSERVERBASE}/conf/app/wsl_tmp"
-chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/wsl_tmp"
-#mv "${MPSERVERBASE}/conf/app/wsl_tmp" "${MPSERVERBASE}/conf/app/.wsl"
-#jar cf "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" -C "${MPSERVERBASE}/conf/app/.wsl" .
-
-exit
+chmod -R 0775 "${MPSERVERBASE}/conf/app/.wsl"
+chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.wsl"
+jar cf "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" -C "${MPSERVERBASE}/conf/app/.wsl" .
 
 # Admin Site - App
 mkdir -p "${MPSERVERBASE}/conf/app/war/site"
@@ -193,8 +188,8 @@ mkdir -p "${MPSERVERBASE}/conf/app/.site"
 unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/.site"
 rm -rf "${MPSERVERBASE}/conf/app/.site/index.cfm"
 rm -rf "${MPSERVERBASE}/conf/app/.site/manual"
-cp -r "${MPSERVERBASE}/conf/app/site/" "${MPSERVERBASE}/conf/app/.site"
-cp -r "${MPSERVERBASE}/conf/app/mods/site/" "${MPSERVERBASE}/conf/app/.site"
+cp -r "${MPSERVERBASE}"/conf/app/site/* "${MPSERVERBASE}"/conf/app/.site
+cp -r "${MPSERVERBASE}"/conf/app/mods/site/* "${MPSERVERBASE}"/conf/app/.site
 cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.site/WEB-INF/lib/systemcommand.jar"
 chmod -R 0775 "${MPSERVERBASE}/conf/app/.site"
 chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.site"
