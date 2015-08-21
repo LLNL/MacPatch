@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 2.7.x
   
-  Script Version 1.6.1
+  Script Version 1.6.2
 '''
 
 import os
@@ -363,7 +363,7 @@ def setupServices():
 def linkStartupScripts(service):
 	_initFile = "/etc/init.d/"+service
 	if not os.path.exists(_initFile):
-		script = "/Library/MacPatch/Server/conf/init.d"+service
+		script = "/Library/MacPatch/Server/conf/init.d/"+service
 		link = "/etc/init.d/"+service 
 		os.chown(script, 0, 0)
 		os.chmod(script, 0755)
