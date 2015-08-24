@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 2.7.x
   
-  Script Version 1.6.2
+  Script Version 1.6.3
 '''
 
 import os
@@ -368,6 +368,15 @@ def linkStartupScripts(service):
 		os.chown(script, 0, 0)
 		os.chmod(script, 0755)
 		os.symlink(script,link)
+		if platform.dist()[0] == "redhat":
+			os.system("/bin/systemctl enable "+service)
+
+		elif platform.dist()[0] == "Ubuntu":
+			os.system("update-rc.d "+service+" defaults")
+
+		else:
+			print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."
+				
 		print "Copy Startup Script for "+service
 		
 
