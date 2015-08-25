@@ -53,7 +53,7 @@ install_module () {
     python -c "import $MODNAME" > /dev/null 2>&1
     if [ $? == 1 ]; then
         if [ -d "${PY_MODS}/$1" ]; then
-            easy_install "${PY_MODS}/$1"
+            easy_install -H None "${PY_MODS}/$1"
         fi
     else
         echo "Python Module $MODNAME is installed."
