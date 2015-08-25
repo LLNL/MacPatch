@@ -45,7 +45,8 @@ fi
 # -----------------------------------
 
 PY_MODS="/Library/MacPatch/Server/conf/src/python"
-MODS=('pip-7.1.0' 'argparse-1.3.0' 'mysql-connector-python-2.0.4' 'cffi-1.2.1' 'cryptography-1.0' 'pyOpenSSL-0.15.1' 'requests-2.7.0' 'biplist-0.9' 'wheel-0.24.0' 'six-1.9.0' 'python-crontab-1.9.3');
+#MODS=('pip-7.1.0' 'argparse-1.3.0' 'mysql-connector-python-2.0.4' 'cffi-1.2.1' 'cryptography-1.0' 'pyOpenSSL-0.15.1' 'requests-2.7.0' 'biplist-0.9' 'wheel-0.24.0' 'six-1.9.0' 'python-crontab-1.9.3');
+MODS=('pip-7.1.0' 'argparse-1.3.0' 'mysql-connector-python-2.0.4' 'requests-2.7.0' 'biplist-0.9' 'wheel-0.24.0' 'six-1.9.0' 'python-crontab-1.9.3');
 
 install_module () {
 
