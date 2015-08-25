@@ -148,7 +148,7 @@ if [ $XOSTYPE == "Linux" ]; then
 				p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
 				if [ -z $p ]; then
 					echo "Install $i"
-					apt-get install -f -y ${i}
+					apt-get install -q -f -y ${i}
 				fi
 			done
 	    fi
