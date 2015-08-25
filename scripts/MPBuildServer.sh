@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.6.3
+# Version: 1.6.4
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -20,6 +20,7 @@
 # 1.6.1: 	Now using InstallPyMods.sh script to install python modules
 # 1.6.2:	Fix cp paths
 # 1.6.3:	Updated OpenJDK to 1.8.0
+# 1.6.4:	Updated to install Ubuntu packages
 #
 # -------------------------------------------------------------
 MPBASE="/Library/MacPatch"
@@ -137,6 +138,23 @@ if [ $XOSTYPE == "Linux" ]; then
 				yum install -y ${i}
 			fi
 		done
+
+	elif [[ -r /etc/os-release ]]; then
+	    . /etc/os-release
+	    if [[ $ID = ubuntu ]]; then
+	        pkgs=("git" "build-essential" "openjdk-8-jdk" "zip" "libssl-dev" "libxml2-dev" "python-pip" "mysql-connector-python")
+	        for i in "${pkgs[@]}"
+			do
+				p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
+				if [ -z $p ]; then
+					echo "Install $i"
+					apt-get install -f ${i}
+				fi
+			done
+	    fi
+	else
+		echo "Not running a supported version of Linux."
+		exit 1;
 	fi
 fi
 
