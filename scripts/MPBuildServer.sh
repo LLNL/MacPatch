@@ -142,7 +142,7 @@ if [ $XOSTYPE == "Linux" ]; then
 	elif [[ -r /etc/os-release ]]; then
 	    . /etc/os-release
 	    if [[ $ID = ubuntu ]]; then
-	        pkgs=("git" "build-essential" "openjdk-8-jdk" "zip" "libssl-dev" "libxml2-dev" "python-pip" "mysql-connector-python")
+	        pkgs=("git" "build-essential" "openjdk-7-jre" "openjdk-7-jdk" "zip" "libssl-dev" "libxml2-dev" "python-pip" "mysql-connector-python")
 	        for i in "${pkgs[@]}"
 			do
 				p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
