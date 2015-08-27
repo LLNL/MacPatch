@@ -101,8 +101,8 @@
 {
     NSError *err = nil;
     NSMutableDictionary *errInfo = [NSMutableDictionary dictionary];
-
     id jMsgResult = [NSJSONSerialization JSONObjectWithData:self.jsonData options:kNilOptions error:&err];
+
     // Check for valid object
     if (err)
     {
@@ -150,7 +150,8 @@
         else
         {
             err = nil;
-            id altResult = [NSJSONSerialization JSONObjectWithData:[[jMsgResult objectForKey:@"result"] dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:&err];
+            NSData *altResult = [NSJSONSerialization JSONObjectWithData:[[jMsgResult objectForKey:@"result"] dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:&err];
+            
             // Check for a Error
             if (err) {
                 if (aError) {
@@ -216,6 +217,7 @@
         }
     }
     NSString *jString = [[NSString alloc] initWithBytes:[jData bytes] length:[jData length] encoding:NSUTF8StringEncoding];
+    jString = [jString stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
     return jString;
 }
 

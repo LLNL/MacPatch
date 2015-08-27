@@ -79,7 +79,7 @@
 
 - (NSArray *)collectDiskInfoForLocalDisks
 {
-    NSMutableArray *_disks = [NSMutableArray array];
+    NSMutableArray *_disks;
     CHDisk *cdisk;
     
     DADiskRef disk = NULL;
@@ -92,7 +92,8 @@
     }
     
     if ([bsdDiskArray count] >= 1) {
-        for (id item in bsdDiskArray) 
+        _disks = [[NSMutableArray alloc] init];
+        for (id item in bsdDiskArray)
         {
             disk = DADiskCreateFromBSDName(kCFAllocatorDefault, session, [item UTF8String]);
             diskDescription = DADiskCopyDescription(disk);
@@ -102,17 +103,22 @@
                 [cdisk populateDeviceDataFromDict:diskData];
                 [_disks addObject:[cdisk deviceData]];
                 cdisk = nil;
-            }   
+            }
+            if (diskDescription) {
+                CFRelease(diskDescription);
+            }
+            if (disk) {
+                CFRelease(disk);
+            }
         }
+        [self setDiskInfoArray:[NSArray arrayWithArray:[_disks copy]]];
+        _disks = nil;
     }
-    if (session)
-        CFRelease(session);
-    if (disk)
-        CFRelease(disk);
-    if (diskDescription)
-        CFRelease(diskDescription);
     
-    [self setDiskInfoArray:[NSArray arrayWithArray:_disks]];
+    if (session) {
+        CFRelease(session);
+    }
+
     return diskInfoArray;
 }
 

@@ -25,6 +25,9 @@
 
 #import "PreferenceController.h"
 
+#undef  ql_component
+#define ql_component lcl_cMain
+
 @interface PreferenceController (Private)
 
 @end
@@ -44,5 +47,21 @@
 {
     [super windowDidLoad];
 }
+
+- (IBAction)toggleUpload:(id)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"uploadPrefsStatus" object:self];
+}
+
+- (IBAction)toggleDebug:(id)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"loggingPrefsStatus" object:self];
+}
+
+- (IBAction)toggleEcho:(id)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"loggingPrefsStatus" object:self];
+}
+
 
 @end

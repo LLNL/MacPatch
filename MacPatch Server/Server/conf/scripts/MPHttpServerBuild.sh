@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPHttpServerBuild.sh
-# Version: 1.1
+# Version: 1.1.1
 #
 # Description:
 # Will Download and Compile PCRE & Apache 2.4.x for MacPatch Server
@@ -12,7 +12,8 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
-# 1.1:	Added New Httpd and Apr-Util and PCRE source
+# 1.1:		Added New Httpd and Apr-Util and PCRE source
+# 1.1.1:	Remove MPApache symlink if exists
 #
 # -------------------------------------------------------------
 
@@ -69,10 +70,14 @@ fi
 mkdir -p ${TMP_DIR}
 cd ${TMP_DIR}
 
-HTTPD_SW="httpd-2.4.12.tar.gz"
-APR_SW="apr-1.5.1.tar.gz"
-APRUTIL_SW="apr-util-1.5.4.tar.gz"
-PCRE_SW="pcre-8.36.tar.gz"
+# "httpd-2.4.12.tar.gz"
+HTTPD_SW=`find "${SRC_DIR}" -name "httpd-2"* -type f -exec basename {} \; | head -n 1`
+# "apr-1.5.2.tar.gz"
+APR_SW=`find "${SRC_DIR}" -name "apr-1"* -type f -exec basename {} \; | head -n 1`
+# "apr-util-1.5.4.tar.gz"
+APRUTIL_SW=`find "${SRC_DIR}" -name "apr-util-1"* -type f -exec basename {} \; | head -n 1`
+# "pcre-8.36.tar.gz"
+PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
 
 # Apache HTTPD
 mkdir ${TMP_DIR}/httpd
@@ -248,6 +253,9 @@ if $USELINUX; then
 		fi
 
 	if [ -f "$SFILE1" ]; then
+		if [ -f "/etc/init.d/MPApache" ]; then
+			rm -f /etc/init.d/MPApache
+		fi
 		chmod +x "$SFILE1"
 		ln -s "$SFILE1" /etc/init.d/MPApache
 		eval $SUSCP1

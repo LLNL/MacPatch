@@ -1028,12 +1028,18 @@ done:
 		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	} else {
         NSError *rmErr;
-        if ([fm fileExistsAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]]) {
-            rmErr = nil;
-            logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]);
-            [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] error:&rmErr];
-            if (rmErr) {
-                qlerror(@"%@",rmErr.localizedDescription);
+        NSString *approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
+        if ([fm fileExistsAtPath:approvedPatchesFile])
+        {
+            if (![fm isDeletableFileAtPath:approvedPatchesFile]) {
+                logit(lcl_vError,@"Unable to remove file (%@) due to permissions.",approvedPatchesFile);
+            } else {
+                rmErr = nil;
+                logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]);
+                [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] error:&rmErr];
+                if (rmErr) {
+                    qlerror(@"%@",rmErr.localizedDescription);
+                }
             }
         }
         if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
@@ -1085,7 +1091,7 @@ done:
 	NSPredicate         *selectedPatchesPredicate = [NSPredicate predicateWithFormat:@"select == 1"];
 	NSMutableArray		*patchesToInstallArray    = [NSMutableArray arrayWithArray:[[arrayController arrangedObjects] filteredArrayUsingPredicate:selectedPatchesPredicate]];
 	
-    NSMutableArray      *rebootPatchesToDownload  = [[NSMutableArray alloc] init];
+    // NSMutableArray      *rebootPatchesToDownload  = [[NSMutableArray alloc] init];
 	NSDictionary		*patch;
 	NSDictionary		*currPatchToInstallDict;
 	NSArray				*patchPatchesArray;

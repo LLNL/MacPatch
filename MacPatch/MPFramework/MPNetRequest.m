@@ -390,12 +390,6 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     [self.condition unlock];
 }
 
-- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
-{
-    //return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
-    return YES;
-}
-
 // https://developer.apple.com/library/mac/#documentation/security/conceptual/CertKeyTrustProgGuide/iPhone_Tasks/iPhone_Tasks.html
 OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIdentity, SecTrustRef *outTrust, CFStringRef keyPassword)
 {
@@ -533,8 +527,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
             SecIdentityRef identity;
             SecTrustRef trust;
             OSStatus status = extractIdentityAndTrust((__bridge CFDataRef) certData, &identity, &trust, (__bridge CFStringRef) self.tlsCertPass);
-            if(status == errSecSuccess)
-            {
+            if(status == errSecSuccess) {
                 SecCertificateRef certificate;
                 SecIdentityCopyCertificate(identity, &certificate);
                 const void *certs[] = { certificate };
@@ -551,22 +544,18 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
         }
         else if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust)
         {
-
-            if(challenge.previousFailureCount < 5)
-            {
+            if(challenge.previousFailureCount < 5) {
                 self.serverTrust = challenge.protectionSpace.serverTrust;
                 SecTrustResultType result;
                 SecTrustEvaluate(self.serverTrust, &result);
-
+                /*
+                 || result == kSecTrustResultRecoverableTrustFailure //The cert is invalid, but is invalid because of name mismatch. Ok to proceed (Ch 15: iOS PTL :Pg 269)
+                */
                 if(result == kSecTrustResultProceed ||
-                   result == kSecTrustResultUnspecified || //The cert is valid, but user has not explicitly accepted/denied. Ok to proceed (Ch 15: iOS PTL :Pg 269)
-                   result == kSecTrustResultRecoverableTrustFailure //The cert is invalid, but is invalid because of name mismatch. Ok to proceed (Ch 15: iOS PTL :Pg 269)
-                   )
+                   result == kSecTrustResultUnspecified ) //The cert is valid, but user has not explicitly accepted/denied. Ok to proceed (Ch 15: iOS PTL :Pg 269)
                 {
                     [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
-                }
-                else if(result == kSecTrustResultConfirm)
-                {
+                } else if(result == kSecTrustResultConfirm) {
                     if( self.mpServer.allowSelfSigned == YES )
                     {
                         // Cert not trusted, but user is OK with that
@@ -576,31 +565,26 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
                         qlerror(@"Certificate is not trusted, continuing without credentials. Might result in 401 Unauthorized");
                         [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
                     }
-                }
-                else
-                {
+                } else {
                     // invalid or revoked certificate
                     if(self.useUnTrustedCert) {
-                        qlerror(@"Certificate is invalid, but useUnTrustedCert is YES");
+                        qlinfo(@"Certificate is invalid, but useUnTrustedCert is YES");
+                        [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+                    } else if (self.mpServer.allowSelfSigned == YES ) {
+                        qlinfo(@"Certificate is invalid, but server has allowSelfSigned set to YES");
                         [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
                     } else {
                         qlerror(@"Certificate is invalid, continuing without credentials. Might result in 401 Unauthorized");
                         [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
                     }
                 }
-            }
-            else
-            {
+            } else {
                 [[challenge sender] cancelAuthenticationChallenge:challenge];
             }
-        }
-        else
-        {
+        } else {
             [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
         }
-    }
-    else
-    {
+    } else {
         [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
     }
 }
@@ -611,14 +595,12 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     if (statusCode >= 400)
     {
         [connection cancel];  // stop connecting; no more delegate messages
-        NSDictionary *errorInfo = [NSDictionary dictionaryWithObject:
-                                   [NSString stringWithFormat:@"Server returned status code %ld",(long)statusCode] forKey:NSLocalizedDescriptionKey];
+        NSString *errorString = [NSString stringWithFormat:@"Server returned status code %ld",(long)statusCode];
+        NSDictionary *errorInfo = [NSDictionary dictionaryWithObject:errorString forKey:NSLocalizedDescriptionKey];
         NSError *statusError = [NSError errorWithDomain:NSHTTPPropertyStatusCodeKey code:statusCode userInfo:errorInfo];
         [self connection:connection didFailWithError:statusError];
         return;
     }
-    
-    
     
     dlRecievedData = [NSNumber numberWithUnsignedInteger:0];
     dlSize = [NSNumber numberWithLongLong:[response expectedContentLength]];

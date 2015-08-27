@@ -48,6 +48,9 @@
 
 - (NSDictionary *)getCatalogURLSForHostOS:(NSError **)err;
 - (NSDictionary *)getPatchGroupContent:(NSError **)err;
+- (BOOL)isPatchGroupHashValid:(NSError **)err;
+- (BOOL)isPatchGroupDataCurrent:(NSError **)err;
+
 - (BOOL)postPatchScanResultsForType:(NSInteger)aPatchScanType results:(NSDictionary *)resultsDictionary error:(NSError **)err;
 - (BOOL)postPatchInstallResultsToWebService:(NSString *)aPatch patchType:(NSString *)aPatchType error:(NSError **)err;
 

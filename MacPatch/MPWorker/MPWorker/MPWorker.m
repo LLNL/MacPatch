@@ -1111,7 +1111,7 @@ done:
 - (void)patchScan:(MPPatchScan *)patchScan didReciveStatusData:(NSString *)data
 {
     [self postDataToClient:data type:kMPProcessStatus];
-    NSLog(@"%@",data);
+    //NSLog(@"%@",data);
 }
 
 // Proxy Method
@@ -1488,6 +1488,7 @@ done:
 - (void)removeStatusFilesViaHelper
 {
     [NSKeyedArchiver archiveRootObject:NULL toFile:PATCHES_NEEDED_PLIST];
+    [fm removeFileIfExistsAtPath:PATCHES_APPROVED_PLIST];
     return;
 }
 #pragma mark Inventory
@@ -1553,10 +1554,10 @@ done:
     switch ( taskAction ) {
         case 0:
             rb = reboot(RB_AUTOBOOT);
-            NSLog(@"MPAuthPlugin issued a reboot (%d)",rb);
+            qlinfo(@"MPAuthPlugin issued a reboot (%d)",rb);
             if (rb == -1) {
                 // Try Forcing it :-)
-                NSLog(@"Attempting to force reboot...");
+                qlinfo(@"Attempting to force reboot...");
                 execve("/sbin/reboot",0,0);
             }
             break;

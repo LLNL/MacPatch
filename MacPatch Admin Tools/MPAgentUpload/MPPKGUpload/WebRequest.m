@@ -25,6 +25,9 @@
 
 #import "WebRequest.h"
 
+#undef  ql_component
+#define ql_component lcl_cMain
+
 @interface WebRequest ()
 
 @property (nonatomic, assign, readwrite) BOOL isRunnng;
@@ -118,7 +121,7 @@
     self.connectionDidFinishLoading = YES;
     _responseData = [_receivedData copy];
     NSString *result = [[NSString alloc] initWithData:_receivedData encoding:_encoding];
-	NSLog(@"%@", result);
+	qldebug(@"%@", result);
 
     [self.condition signal];
     [self.condition unlock];

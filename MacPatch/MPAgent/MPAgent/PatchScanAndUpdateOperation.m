@@ -27,7 +27,7 @@
 #import "MPAgent.h"
 #import "MacPatch.h"
 
-@interface PatchScanAndUpdateOperation (Private)
+@interface PatchScanAndUpdateOperation ()
 
 - (void)runPatchScan;
 - (void)runPatchScanAndUpdate;
@@ -37,6 +37,8 @@
 @implementation PatchScanAndUpdateOperation
 
 @synthesize scanType;
+@synthesize taskPID;
+@synthesize taskFile;
 @synthesize isExecuting;
 @synthesize isFinished;
 
@@ -44,6 +46,7 @@
 {
 	if ((self = [super init])) {
 		scanType = 0;
+        taskPID = -99;
 		isExecuting = NO;
         isFinished  = NO;
 		si	= [MPAgent sharedInstance];
@@ -71,6 +74,8 @@
     isFinished = YES;
     [self didChangeValueForKey:@"isExecuting"];
     [self didChangeValueForKey:@"isFinished"];
+    
+    [self killTaskUsingPID];
 }
 
 - (void) start 
@@ -106,11 +111,26 @@
 {
 	logit(lcl_vInfo,@"Running client vulnerability scan.");
 	@autoreleasepool {
+        @try {
+            [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:kMPPatchSCAN]];
+        }
+        @catch (NSException *exception) {
+            [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:@".mpScanRunning"]];
+        }
+        
 		NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
 		if (![fm fileExistsAtPath:appPath]) {
 			logit(lcl_vError,@"Unable to find MPAgentExec app.");
 		} else {
-			if ([MPCodeSign checkSignature:appPath]) {
+            NSError *err = nil;
+            MPCodeSign *cs = [[MPCodeSign alloc] init];
+            BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
+            if (err) {
+                logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+            }
+            cs = nil;
+            if (result == YES)
+            {
 				NSError *error = nil;
 				NSString *result;
 				MPNSTask *mpr = [[MPNSTask alloc] init];
@@ -132,11 +152,26 @@
 {
 	logit(lcl_vInfo,@"Running client vulnerability update.");
 	@autoreleasepool {
+        @try {
+            [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:kMPPatchUPDATE]];
+        }
+        @catch (NSException *exception) {
+            [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:@".mpUpdateRunning"]];
+        }
+
 		NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
 		if (![fm fileExistsAtPath:appPath]) {
 			logit(lcl_vError,@"Unable to find MPAgentExec app.");
 		} else {
-			if ([MPCodeSign checkSignature:appPath]) {	
+            NSError *err = nil;
+            MPCodeSign *cs = [[MPCodeSign alloc] init];
+            BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
+            if (err) {
+                logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+            }
+            cs = nil;
+            if (result == YES)
+            {
 				NSError *error = nil;
 				NSString *result;
 				MPNSTask *mpr = [[MPNSTask alloc] init];
@@ -152,6 +187,40 @@
 			}
 		}	
 	}
+}
+
+- (void)killTaskUsingPID
+{
+    NSError *err = nil;
+    // If File Does Not Exists, not PID to kill
+    if (![fm fileExistsAtPath:self.taskFile]) {
+        return;
+    } else {
+        NSString *strPID = [NSString stringWithContentsOfFile:self.taskFile encoding:NSUTF8StringEncoding error:&err];
+        if (err) {
+            logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+        }
+        if ([strPID intValue] > 0) {
+            [self setTaskPID:[strPID intValue]];
+        }
+    }
+    
+    if (self.taskPID == -99) {
+        logit(lcl_vWarning,@"No task PID was defined");
+        return;
+    }
+    
+    // Make Sure it's running before we send a SIGKILL
+    NSArray *procArr = [MPSystemInfo bsdProcessList];
+    NSArray *filtered = [procArr filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"processID == %i", self.taskPID]];
+    if ([filtered count] <= 0) {
+        return;
+    } else if ([filtered count] == 1 ) {
+        kill( self.taskPID, SIGKILL );
+    } else {
+        logit(lcl_vError,@"Can not kill task using PID. Found to many using the predicate.");
+        logit(lcl_vDebug,@"%@",filtered);
+    }
 }
 
 @end

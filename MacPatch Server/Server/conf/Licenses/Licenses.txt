@@ -17,9 +17,6 @@ http://github.com/johnezang/JSONKit
 http://0xc0.de/trace
 https://github.com/aharren/LibComponentLogging-Core
 
-• RegexKitLite (BSD License)
-http://regexkit.sourceforge.net/
-
 • NSDate+Helper (AS IS)
 https://github.com/billymeltdown/nsdate-helper
 
@@ -33,10 +30,9 @@ http://javworld.com/Extreme/DirServ.html
 Web Components
 ------------------------------------------------------
 
-• OpenBD Ready-2-Run Jetty 7.5.4
+• OpenBD
 http://www.openbluedragon.org/
 OpenBD - GPL ( http://www.openbluedragon.org/zerocost/ )
-Jetty - LICENSE-APACHE-2.0 and LICENSE-ECLIPSE-1.0
 
 • JQuery (MIT License)
 http://jquery.com/

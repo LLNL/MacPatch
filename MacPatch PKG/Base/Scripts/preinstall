@@ -95,12 +95,20 @@ if [ -d "/Library/Frameworks/MPFramework.framework" ]; then
 fi	
 
 # AuthPlugin
+ClearAuthDB=0
 if [ -d "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle" ]; then	
 	rm -rf "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
+	ClearAuthDB=1
 fi	
 
 if [ -f "$MPClientDir/MPAuthPluginTool" ]; then	
 	"$MPClientDir/MPAuthPluginTool" -d
+else
+	# We do this to prevent issues with the system not 
+	# booting properly
+	if [ $ClearAuthDB == 1 ]; then
+		rm /private/var/db/auth.db
+	fi
 fi	
 
 if [ -d "$MPClientDir" ]; then

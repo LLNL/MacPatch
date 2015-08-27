@@ -2,7 +2,7 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Installer
-# ver 1.9
+# ver 2.0
 # Created By Charles Heizer
 # LLNL
 #
@@ -33,6 +33,12 @@ isIload () {
 	echo $pid
 }
 
+function setOwner {
+	if [ -f "$1" ]; then
+		/usr/sbin/chown -R root:wheel $1
+	fi
+}
+
 function setOwnerAndPerms {
 	if [ -f "$1" ]; then
 		/usr/sbin/chown root:wheel $1
@@ -44,8 +50,9 @@ function setOwnerAndPerms {
 # Set owner & permissions
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.agent.plist
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.worker.plist
-setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPRebootD.plist
 setOwnerAndPerms /Library/LaunchAgents/gov.llnl.mp.status.plist
+setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPLoginAgent.plist
+setOwner /Library/PrivilegedHelperTools/MPLoginAgent.app
 
 if [ ! -d "/Library/Application Support/MPClientStatus" ]; then
 	mkdir "/Library/Application Support/MPClientStatus"
@@ -88,7 +95,20 @@ else
 	chmod 777 /Library/MacPatch/Client/lib
 fi
 
+# ******************************************************************
+# Get Server SSL Cert and trust it *********************************
+#
+SRVHOST = `defaults read $agentPrefs MPServerAddress`
+SRVPORT = `defaults read $agentPrefs MPServerPort`
+SRVSTR  = "$SRVHOST:$SRVPORT" 
+CRTFILE = "/Library/MacPatch/Client/lib/$SRVHOST.crt"
+
+openssl s_client -connect $SRVSTR 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ${CRTFILE}
+security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" "${CRTFILE}"
+
+# ******************************************************************
 # Run Client Check-in
+
 /Library/MacPatch/Client/MPAgent -c
 sleep 1
 
@@ -127,22 +147,14 @@ fi
 # ******************************************************************
 # Install Auth Plugin **********************************************
 #
-if [ -d "/Library/MacPatch/Client/MPAuthPlugin.bundle" ]; then
-	mv "/Library/MacPatch/Client/MPAuthPlugin.bundle" "/System/Library/CoreServices/SecurityAgentPlugins/"
-	chown -R root:wheel "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
-	chmod -R 0755 "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
-	if [ -f "/Library/MacPatch/Client/MPAuthPluginTool" ]; then
-		/Library/MacPatch/Client/MPAuthPluginTool -a 
-	fi
-fi
-
-
-# ******************************************************************
-# Quick Clean Up from older release ********************************
-#
-if [ -f "/var/root/Library/Preferences/com.apple.loginwindow.plist" ]; then
-	/usr/bin/defaults delete /var/root/Library/Preferences/com.apple.loginwindow LogoutHook
-fi
+#if [ -d "/Library/MacPatch/Client/MPAuthPlugin.bundle" ]; then
+#	mv "/Library/MacPatch/Client/MPAuthPlugin.bundle" "/System/Library/CoreServices/SecurityAgentPlugins/"
+#	chown -R root:wheel "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
+#	chmod -R 0755 "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
+#	if [ -f "/Library/MacPatch/Client/MPAuthPluginTool" ]; then
+#		/Library/MacPatch/Client/MPAuthPluginTool -a 
+#	fi
+#fi
 
 # ******************************************************************
 # Launch the MPAgent service ***************************************
@@ -168,17 +180,13 @@ sleep 3
 #
 
 if [ "$cUsr" != "null" ]; then
-	uPid=`ps -aex -o pid,user,comm | grep "loginwindow.app" | grep "$cUsr" | sed 's/^[ \t]*//' | cut -d " " -f 1`
-
-	chroot -u $cUsr / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist
-	/bin/sleep 2
-	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.MPRebootD.plist`
-	echo "MPRebootD($uPid)=$res"
+	#uPid=`ps -aex -o pid,user,comm | grep "loginwindow.app" | grep "$cUsr" | sed 's/^[ \t]*//' | cut -d " " -f 1`
 	
-	chroot -u $cUsr / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist
-	/bin/sleep 2
-	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.mp.status.plist`
-	echo "mpStatus($uPid)=$res"
+	#chroot -u $cUsr / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist
+	#/bin/sleep 2
+	#res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.mp.status.plist`
+	#echo "mpStatus($uPid)=$res"
+	su -l $cUsr -c 'launchctl load -wF /Library/LaunchAgents/gov.llnl.mp.status.plist'
 fi
 
 /usr/bin/killall MPClientStatus

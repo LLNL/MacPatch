@@ -28,6 +28,9 @@
 #import "MPDirectoryServices.h"
 #import <OpenDirectory/OpenDirectory.h>
 
+#undef  ql_component
+#define ql_component lcl_cMPDirectoryServices
+
 @implementation MPDirectoryServices
 
 @synthesize searchNode = _searchNode;

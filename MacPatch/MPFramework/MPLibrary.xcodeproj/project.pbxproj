@@ -53,7 +53,6 @@
 		8F4B1E0C16DD1D6400E15A9E /* NSString-Base64Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAEF66C145F19AD006284B2 /* NSString-Base64Extensions.m */; };
 		8F4B1E1416DD1D6400E15A9E /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB7755140C2F0700D86586 /* lcl.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F4B1E1516DD1D6400E15A9E /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB775D140C2F0700D86586 /* LCLLogFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		8F4B1E1616DD1D6400E15A9E /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAEF65F145F1922006284B2 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F4B1E1716DD1D8C00E15A9E /* Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 724EE9831698A57A007FD391 /* Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E1816DD1D8C00E15A9E /* MPNetworkUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA7EA1C161DEF81001748EA /* MPNetworkUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E1A16DD1D8C00E15A9E /* MPDefaults.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB778C140C30AE00D86586 /* MPDefaults.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -95,12 +94,12 @@
 		8F4B1EC616DD5FDD00E15A9E /* NSFileManager+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1EC216DD5FDD00E15A9E /* NSFileManager+Helper.m */; };
 		8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2616DE639100E15A9E /* NSDate+Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1F2D16DE639100E15A9E /* NSDate+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2716DE639100E15A9E /* NSDate+Helper.m */; };
-		8F4B1F2F16DE639100E15A9E /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2816DE639100E15A9E /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F4B1F3116DE639100E15A9E /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2916DE639100E15A9E /* NSData+Base64.m */; };
 		8F4B1F3716DE64DA00E15A9E /* MPSWTasks.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F3416DE64DA00E15A9E /* MPSWTasks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F3516DE64DA00E15A9E /* MPSWTasks.m */; };
 		8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F50CB7C199D5DD0006AC537 /* MPKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F50CB7D199D5DD0006AC537 /* MPKeychain.m */; };
+		8FE03DCC1B60020B005D39EE /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2816DE639100E15A9E /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FE03DCD1B60020E005D39EE /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2916DE639100E15A9E /* NSData+Base64.m */; };
 		8FE5609816DE6D6300BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609516DE6CFD00BB7600 /* Security.framework */; };
 		8FE5609916DE6D6600BB7600 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609316DE6CF700BB7600 /* Foundation.framework */; };
 		8FE5609A16DE6D6800BB7600 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609116DE6CF100BB7600 /* SystemConfiguration.framework */; };
@@ -108,9 +107,6 @@
 		8FE5609C16DE6D6D00BB7600 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608D16DE6CE100BB7600 /* IOKit.framework */; };
 		8FE5609D16DE6D6F00BB7600 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608B16DE6CD600BB7600 /* CoreFoundation.framework */; };
 		8FE5609E16DE6D7200BB7600 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608916DE6CD000BB7600 /* Cocoa.framework */; };
-		8FE5609F16DE6D7500BB7600 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608716DE6CC600BB7600 /* libicucore.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
-		8FE560A016DE6D7500BB7600 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608516DE6CBE00BB7600 /* libcrypto.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
-		8FE560A116DE6D7500BB7600 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5608316DE6CB700BB7600 /* libz.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE560CD16DE899B00BB7600 /* MPSWInstaller.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8FE560D216DE899B00BB7600 /* MPSWInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE560CE16DE899B00BB7600 /* MPSWInstaller.m */; };
 		8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE560D316DE932900BB7600 /* MPAgentController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -157,8 +153,8 @@
 		8F4B1EC216DD5FDD00E15A9E /* NSFileManager+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Helper.m"; sourceTree = "<group>"; };
 		8F4B1F2616DE639100E15A9E /* NSDate+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Helper.h"; sourceTree = "<group>"; };
 		8F4B1F2716DE639100E15A9E /* NSDate+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Helper.m"; sourceTree = "<group>"; };
-		8F4B1F2816DE639100E15A9E /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
-		8F4B1F2916DE639100E15A9E /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		8F4B1F2816DE639100E15A9E /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "../NSData+Base64.h"; sourceTree = "<group>"; };
+		8F4B1F2916DE639100E15A9E /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Base64.m"; path = "../NSData+Base64.m"; sourceTree = "<group>"; };
 		8F4B1F3416DE64DA00E15A9E /* MPSWTasks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSWTasks.h; sourceTree = "<group>"; };
 		8F4B1F3516DE64DA00E15A9E /* MPSWTasks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSWTasks.m; sourceTree = "<group>"; };
 		8F50CB7C199D5DD0006AC537 /* MPKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPKeychain.h; sourceTree = "<group>"; };
@@ -257,9 +253,6 @@
 				8FE5609C16DE6D6D00BB7600 /* IOKit.framework in Frameworks */,
 				8FE5609D16DE6D6F00BB7600 /* CoreFoundation.framework in Frameworks */,
 				8FE5609E16DE6D7200BB7600 /* Cocoa.framework in Frameworks */,
-				8FE5609F16DE6D7500BB7600 /* libicucore.dylib in Frameworks */,
-				8FE560A016DE6D7500BB7600 /* libcrypto.dylib in Frameworks */,
-				8FE560A116DE6D7500BB7600 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,14 +284,14 @@
 				8F47F0EE18EDFD5A00158396 /* Networking */,
 				724EE9831698A57A007FD391 /* Constants.h */,
 				724EE9841698A57A007FD391 /* Constants.m */,
-				8FA7EA1C161DEF81001748EA /* MPNetworkUtils.h */,
-				8FA7EA1D161DEF81001748EA /* MPNetworkUtils.m */,
 				8FCB778C140C30AE00D86586 /* MPDefaults.h */,
 				8FCB778D140C30AE00D86586 /* MPDefaults.m */,
-				8F6BA41115C0E59A00F44501 /* MPDiskUtil.h */,
-				8F6BA41215C0E59A00F44501 /* MPDiskUtil.m */,
 				8FCB7ABD140D588F00D86586 /* MPLog.h */,
 				8FCB7ABE140D588F00D86586 /* MPLog.m */,
+				8FA7EA1C161DEF81001748EA /* MPNetworkUtils.h */,
+				8FA7EA1D161DEF81001748EA /* MPNetworkUtils.m */,
+				8F6BA41115C0E59A00F44501 /* MPDiskUtil.h */,
+				8F6BA41215C0E59A00F44501 /* MPDiskUtil.m */,
 				8FA7EA4A161E3B47001748EA /* MPSystemInfo.h */,
 				8FA7EA4B161E3B48001748EA /* MPSystemInfo.m */,
 				8FA7EA4C161E3B49001748EA /* MPDate.h */,
@@ -307,14 +300,7 @@
 				8FA7EA4F161E3B4D001748EA /* MPClientCheckInData.m */,
 				8F94627F16249D4E00969BCD /* MPNSTask.h */,
 				8F94628016249D4E00969BCD /* MPNSTask.m */,
-				8F7B15CC15068211005CEA32 /* MPCrypto.h */,
-				8F7B15CD15068211005CEA32 /* MPCrypto.m */,
-				8F00CD0317610F1D008CC39E /* MPCodeSign.h */,
-				8F00CD0417610F1D008CC39E /* MPCodeSign.m */,
-				8FF93F9C199A9205005A4EEB /* RSACrypto.h */,
-				8FF93F9D199A9205005A4EEB /* RSACrypto.m */,
-				8F50CB7C199D5DD0006AC537 /* MPKeychain.h */,
-				8F50CB7D199D5DD0006AC537 /* MPKeychain.m */,
+				8FE6B4811B4C7748000A0471 /* Crypto */,
 				8FAEF635145F1773006284B2 /* MPPatch+Scanner */,
 				8F4B1F3316DE64BF00E15A9E /* MacPatch+SWDist */,
 				8FAEF64E145F187C006284B2 /* WebServices */,
@@ -427,6 +413,8 @@
 		8FAEF668145F19AC006284B2 /* Base64 */ = {
 			isa = PBXGroup;
 			children = (
+				8F4B1F2816DE639100E15A9E /* NSData+Base64.h */,
+				8F4B1F2916DE639100E15A9E /* NSData+Base64.m */,
 				8FAEF669145F19AD006284B2 /* NSData-Base64Extensions.h */,
 				8FAEF66A145F19AD006284B2 /* NSData-Base64Extensions.m */,
 				8FAEF66B145F19AD006284B2 /* NSString-Base64Extensions.h */,
@@ -495,10 +483,23 @@
 				8FBB10B9152F6D7900A45934 /* NSMutableDictionary+Helper.m */,
 				8F4B1F2616DE639100E15A9E /* NSDate+Helper.h */,
 				8F4B1F2716DE639100E15A9E /* NSDate+Helper.m */,
-				8F4B1F2816DE639100E15A9E /* NSData+Base64.h */,
-				8F4B1F2916DE639100E15A9E /* NSData+Base64.m */,
 			);
 			name = Helpers;
+			sourceTree = "<group>";
+		};
+		8FE6B4811B4C7748000A0471 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				8F7B15CC15068211005CEA32 /* MPCrypto.h */,
+				8F7B15CD15068211005CEA32 /* MPCrypto.m */,
+				8FF93F9C199A9205005A4EEB /* RSACrypto.h */,
+				8FF93F9D199A9205005A4EEB /* RSACrypto.m */,
+				8F50CB7C199D5DD0006AC537 /* MPKeychain.h */,
+				8F50CB7D199D5DD0006AC537 /* MPKeychain.m */,
+				8F00CD0317610F1D008CC39E /* MPCodeSign.h */,
+				8F00CD0417610F1D008CC39E /* MPCodeSign.m */,
+			);
+			name = Crypto;
 			sourceTree = "<group>";
 		};
 		8FEA3EE51649726400103E80 /* Frameworks */ = {
@@ -573,7 +574,6 @@
 				8F4B1EBE16DD5FB400E15A9E /* NSString+Hash.h in Headers */,
 				8F4B1EC416DD5FDD00E15A9E /* NSFileManager+Helper.h in Headers */,
 				8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */,
-				8F4B1F2F16DE639100E15A9E /* NSData+Base64.h in Headers */,
 				8F47F10118EE000100158396 /* MPNetConfig.h in Headers */,
 				8F47F0FB18EDFD6D00158396 /* MPJsonResult.h in Headers */,
 				8F47F0F718EDFD6D00158396 /* MPNetRequest.h in Headers */,
@@ -583,6 +583,7 @@
 				8F315B9B19212DEB0031FF73 /* MPServerList.h in Headers */,
 				8FEC938717CBFEFB00AA9C1C /* MPApplePatch.h in Headers */,
 				8F2E697B19229A85001BF9D6 /* MPFailedRequests.h in Headers */,
+				8FE03DCC1B60020B005D39EE /* NSData+Base64.h in Headers */,
 				8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */,
 				8F30D8791938FB3F006E55C2 /* MPNetReach.h in Headers */,
 				8FF93F9E199A9205005A4EEB /* RSACrypto.h in Headers */,
@@ -620,7 +621,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0630;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "MPLibrary" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -669,6 +670,7 @@
 				8F4B1DF116DD1D6400E15A9E /* MPDefaults.m in Sources */,
 				8F4B1DF216DD1D6400E15A9E /* MPDiskUtil.m in Sources */,
 				8F4B1DF316DD1D6400E15A9E /* MPLog.m in Sources */,
+				8FE03DCD1B60020E005D39EE /* NSData+Base64.m in Sources */,
 				8F4B1DF416DD1D6400E15A9E /* MPSystemInfo.m in Sources */,
 				8F4B1DF516DD1D6400E15A9E /* MPDate.m in Sources */,
 				8F4B1DF616DD1D6400E15A9E /* MPClientCheckInData.m in Sources */,
@@ -698,13 +700,11 @@
 				8F4B1E1416DD1D6400E15A9E /* lcl.m in Sources */,
 				8F4B1E1516DD1D6400E15A9E /* LCLLogFile.m in Sources */,
 				8F315B9C19212DEB0031FF73 /* MPServerList.m in Sources */,
-				8F4B1E1616DD1D6400E15A9E /* RegexKitLite.m in Sources */,
 				8F4B1EC016DD5FB400E15A9E /* NSString+Hash.m in Sources */,
 				8F47F0FE18EDFD6D00158396 /* Reachability.m in Sources */,
 				8F47F0FA18EDFD6D00158396 /* MPNetServer.m in Sources */,
 				8F4B1EC616DD5FDD00E15A9E /* NSFileManager+Helper.m in Sources */,
 				8F4B1F2D16DE639100E15A9E /* NSDate+Helper.m in Sources */,
-				8F4B1F3116DE639100E15A9E /* NSData+Base64.m in Sources */,
 				8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */,
 				8FE560D216DE899B00BB7600 /* MPSWInstaller.m in Sources */,
 				8F2E697C19229A85001BF9D6 /* MPFailedRequests.m in Sources */,
@@ -731,6 +731,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -759,6 +760,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;

@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildClient.sh
-# Version: 1.0
+# Version: 1.1
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,21 +12,42 @@
 # Simply modify the GITROOT and BUILDROOT variables also
 # please set the component package version numbers as well.
 #
+# History:
+#	1.1		Added Code Signbing Support
+#
 # -------------------------------------------------------------
 
 GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/Client"
-BASEPKGVER="2.5.0.0"
-UPDTPKGVER="2.5.0.0"
+BASEPKGVER="2.7.0.0"
+UPDTPKGVER="2.7.0.0"
+CODESIGNIDENTITY="*"
 
 if [ -d "$BUILDROOT" ]; then
 	rm -rf ${BUILDROOT}
 else
 	mkdir -p ${BUILDROOT}	
 fi	
+echo "A valid code siginging identidy is required."
+read -p "Would you like to code sign all binaries (Y/N)? [N]: " SIGNCODE
+SIGNCODE=${SIGNCODE:-N}
 
-# Compile the agent components
-xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target AGENT_BUILD SYMROOT=${BUILDROOT}
+if [ "$SIGNCODE" == "n" ] || [ "$SIGNCODE" == "N" ] || [ "$SIGNCODE" == "y" ] || [ "$SIGNCODE" == "Y" ]; then
+
+	if [ "$SIGNCODE" == "y" ] || [ "$SIGNCODE" == "Y" ] ; then
+		# Compile the agent components
+		if [ "${CODESIGNIDENTITY}" == "*" ]; then
+			read -p "Please enter you code sigining identity: " CODESIGNIDENTITY
+		fi
+		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target AGENT_BUILD SYMROOT=${BUILDROOT} CODE_SIGN_IDENTITY="${CODESIGNIDENTITY}"
+	else
+		# Compile the agent components
+		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target AGENT_BUILD SYMROOT=${BUILDROOT}
+	fi
+else
+	echo "Invalid entry, now exiting."
+	exit 1
+fi
 
 # Remove the build and symbol files
 find ${BUILDROOT} -name "*.build" -print | xargs -I{} rm -rf {}
@@ -43,6 +64,7 @@ cp -R ${GITROOT}/MacPatch\ PKG/Combined ${BUILDROOT}
 mv ${BUILDROOT}/Release/ccusr ${BUILDROOT}/Base/Scripts/ccusr
 mv ${BUILDROOT}/Release/MPPrefMigrate ${BUILDROOT}/Base/Scripts/MPPrefMigrate
 mv ${BUILDROOT}/Release/MPAgentUp2Date ${BUILDROOT}/Updater/Files/Library/MacPatch/Updater/
+mv ${BUILDROOT}/Release/MPLoginAgent.app ${BUILDROOT}/Base/Files/Library/PrivilegedHelperTools/
 cp -R ${BUILDROOT}/Release/* ${BUILDROOT}/Base/Files/Library/MacPatch/Client/
 
 # Find and remove .mpRM files, these are here as place holders so that GIT will keep the

@@ -1161,7 +1161,7 @@
 
 - (void)appendDownloadProgressPercent:(NSString *)aPercent
 {
-    logit(lcl_vDebug,@"%@",[NSString stringWithFormat:@"%@%",aPercent]);
+    logit(lcl_vDebug,@"%@",[NSString stringWithFormat:@"%@%@",aPercent,@"%"]);
 }
 
 - (void)downloadStarted

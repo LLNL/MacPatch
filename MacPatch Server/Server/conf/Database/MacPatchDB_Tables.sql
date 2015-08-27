@@ -1,7 +1,7 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.6.6
+	Version 2.7.0.1
 	Rev 1
 */
 
@@ -762,6 +762,7 @@ CREATE TABLE `mp_patch_group_data` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `pid` varchar(50) NOT NULL,
   `hash` varchar(50) NOT NULL,
+  `rev` bigint(20) DEFAULT '-1',
   `data` longtext NOT NULL,
   `data_type` varchar(4) DEFAULT '',
   `mdate` datetime DEFAULT NULL,

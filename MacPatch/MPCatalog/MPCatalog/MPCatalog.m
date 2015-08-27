@@ -162,7 +162,9 @@ static MPCatalog *_instance;
 
 - (BOOL)validateAppHashes:(NSString *)aStringPath
 {
+    NSError *err = nil;
 	BOOL result = NO;
+    MPCodeSign *cs;
 	NSFileManager *fm = [NSFileManager defaultManager];
 	if (![fm fileExistsAtPath:aStringPath]) {
 		logit(lcl_vError,@"Path to %@ not found.",[aStringPath lastPathComponent]);
@@ -177,7 +179,15 @@ static MPCatalog *_instance;
 	}
 	
 	// Check Signature
-	if ([MPCodeSign checkSignature:aStringPath]) {
+    
+    cs = [[MPCodeSign alloc] init];
+    result = [cs verifyAppleDevBinary:aStringPath error:&err];
+    if (err) {
+        logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+    }
+    cs = nil;
+    if (result == YES)
+    {
 		[g_AppHashes setValue:[aStringPath getMD5FromFile] forKey:[aStringPath lastPathComponent]];
 		result = YES;
 		goto done;

@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 # -------------------------------------------------------------
-# Script: MPBuildServer.sh
-# Version: 1.2.2
+# Script: MPBuildServerPKG.sh
+# Version: 1.6
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -11,10 +11,13 @@
 # Info:
 # Simply modify the GITROOT and BUILDROOT variables
 #
+# History:
+# 1.6: 	Synced with MPBuildServer.sh file
+#
 # -------------------------------------------------------------
 clear
 
-MP_SERVER_PKG_VER="1.0.0.0"
+MP_SERVER_PKG_VER="1.1.0.0"
 MPBASE="/Library/MacPatch"
 MPSERVERBASE="/Library/MacPatch/Server"
 GITROOT="/Library/MacPatch/tmp/MacPatch"
@@ -119,6 +122,7 @@ tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/apache-tomcat
 chmod +x ${MPSERVERBASE}/apache-tomcat/bin/*
 rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/docs
 rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/examples
+rm -rf ${MPSERVERBASE}/apache-tomcat/webapps/ROOT
 
 # ------------------
 # Build Apache
@@ -132,52 +136,87 @@ chown -R $OWNERGRP ${MPSERVERBASE}/Apache2
 ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
 chown -R $OWNERGRP ${MPSERVERBASE}
 
-
 cp -r ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpws
-cp -r ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpsite
+mv ${MPSERVERBASE}/apache-tomcat ${MPSERVERBASE}/tomcat-mpsite
 mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Files
 mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Errors
 mkdir -p ${MPSERVERBASE}/tomcat-mpws/InvData/Processed
 
-cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl/WEB-INF/lib/systemcommand.jar"
-chmod -R 0775 "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
-chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl"
-rm -rf  "${MPSERVERBASE}/tomcat-mpws/webapps/ROOT"
-jar cf "${MPSERVERBASE}/conf/tomcat/mpws/ROOT.war" -C "${MPSERVERBASE}/jetty-mpwsl/webapps/mpwsl" .
-cp "${MPSERVERBASE}/conf/tomcat/mpws/ROOT.war" "${MPSERVERBASE}/tomcat-mpws/webapps"
-cp "${MPSERVERBASE}/conf/tomcat/mpws/bin/setenv.sh" "${MPSERVERBASE}/tomcat-mpws/bin/setenv.sh"
-cp "${MPSERVERBASE}/conf/tomcat/mpws/bin/launchdTomcat.sh" "${MPSERVERBASE}/tomcat-mpws/bin/launchdTomcat.sh"
-cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/Catalina" "${MPSERVERBASE}/tomcat-mpws/conf/"
-cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/server.xml" "${MPSERVERBASE}/tomcat-mpws/conf/server.xml"
-cp -r "${MPSERVERBASE}/conf/tomcat/mpws/conf/web.xml" "${MPSERVERBASE}/tomcat-mpws/conf/web.xml"
-rm -rf "${MPSERVERBASE}/jetty-mpwsl"
+# Web Services - App
+mkdir -p "${MPSERVERBASE}/conf/app/war/wsl"
+mkdir -p "${MPSERVERBASE}/conf/app/.wsl"
+unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/.wsl"
+rm -rf "${MPSERVERBASE}/conf/app/.wsl/index.cfm"
+rm -rf "${MPSERVERBASE}/conf/app/.wsl/manual"
+cp -r "${MPSERVERBASE}/conf/app/wsl/" "${MPSERVERBASE}/conf/app/.wsl"
+cp -r "${MPSERVERBASE}/conf/app/mods/wsl/" "${MPSERVERBASE}/conf/app/.wsl"
+cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.wsl/WEB-INF/lib/systemcommand.jar"
+chmod -R 0775 "${MPSERVERBASE}/conf/app/.wsl"
+chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.wsl"
+jar cf "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" -C "${MPSERVERBASE}/conf/app/.wsl" .
+rm -rf "${MPSERVERBASE}/conf/app/.wsl"
+rm -rf "${MPSERVERBASE}/conf/app/wsl"
 
-cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/jetty-mpsite/webapps/mp/WEB-INF/lib/systemcommand.jar"
-chmod -R 0775 "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
-chown -R $OWNERGRP "${MPSERVERBASE}/jetty-mpsite/webapps/mp"
-rm -rf "${MPSERVERBASE}/tomcat-mpsite/webapps/ROOT"
-jar cf "${MPSERVERBASE}/conf/tomcat/mpsite/ROOT.war" -C "${MPSERVERBASE}/jetty-mpsite/webapps/mp" .
-cp "${MPSERVERBASE}/conf/tomcat/mpsite/ROOT.war" "${MPSERVERBASE}/tomcat-mpsite/webapps"
-cp "${MPSERVERBASE}/conf/tomcat/mpsite/bin/setenv.sh" "${MPSERVERBASE}/tomcat-mpsite/bin/setenv.sh"
-cp "${MPSERVERBASE}/conf/tomcat/mpsite/bin/launchdTomcat.sh" "${MPSERVERBASE}/tomcat-mpsite/bin/launchdTomcat.sh"
-cp -r "${MPSERVERBASE}/conf/tomcat/mpsite/conf/Catalina" "${MPSERVERBASE}/tomcat-mpsite/conf/"
-cp -r "${MPSERVERBASE}/conf/tomcat/mpsite/conf/server.xml" "${MPSERVERBASE}/tomcat-mpsite/conf/server.xml"
-cp -r "${MPSERVERBASE}/conf/tomcat/mpsite/conf/web.xml" "${MPSERVERBASE}/tomcat-mpsite/conf/web.xml"
-rm -rf "${MPSERVERBASE}/jetty-mpsite"
+# Admin Site - App
+mkdir -p "${MPSERVERBASE}/conf/app/war/site"
+mkdir -p "${MPSERVERBASE}/conf/app/.site"
+unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/.site"
+rm -rf "${MPSERVERBASE}/conf/app/.site/index.cfm"
+rm -rf "${MPSERVERBASE}/conf/app/.site/manual"
+cp -r "${MPSERVERBASE}/conf/app/site/" "${MPSERVERBASE}/conf/app/.site"
+cp -r "${MPSERVERBASE}/conf/app/mods/site/" "${MPSERVERBASE}/conf/app/.site"
+cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.site/WEB-INF/lib/systemcommand.jar"
+chmod -R 0775 "${MPSERVERBASE}/conf/app/.site"
+chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.site"
+jar cf "${MPSERVERBASE}/conf/app/war/site/ROOT.war" -C "${MPSERVERBASE}/conf/app/.site" .
+rm -rf "${MPSERVERBASE}/conf/app/.site"
+rm -rf "${MPSERVERBASE}/conf/app/site"
 
-chmod -R 0775 ${MPSERVERBASE}/tomcat-mpws
-chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpws
-chmod -R 0775 ${MPSERVERBASE}/tomcat-mpsite
-chown -R $OWNERGRP ${MPSERVERBASE}/tomcat-mpsite
+# Tomcat Config - WSL
+MPCONFWSL="${MPSERVERBASE}/conf/tomcat/mpws"
+MPSRVTOMWSL="${MPSERVERBASE}/tomcat-mpws"
+cp "${MPSERVERBASE}/conf/app/war/wsl/ROOT.war" "${MPSRVTOMWSL}/webapps"
+cp "${MPCONFWSL}/bin/setenv.sh" "${MPSRVTOMWSL}/bin/setenv.sh"
+cp "${MPCONFWSL}/bin/launchdTomcat.sh" "${MPSRVTOMWSL}/bin/launchdTomcat.sh"
+cp -r "${MPCONFWSL}/conf/Catalina" "${MPSRVTOMWSL}/conf/"
+cp -r "${MPCONFWSL}/conf/server.xml" "${MPSRVTOMWSL}/conf/server.xml"
+cp -r "${MPCONFWSL}/conf/web.xml" "${MPSRVTOMWSL}/conf/web.xml"
+chmod -R 0775 "${MPSRVTOMWSL}"
+chown -R $OWNERGRP "${MPSRVTOMWSL}"
 
+# Tomcat Config - Admin
+MPCONFSITE="${MPSERVERBASE}/conf/tomcat/mpsite"
+MPSRVTOMSITE="${MPSERVERBASE}/tomcat-mpsite"
+cp "${MPSERVERBASE}/conf/app/war/site/ROOT.war" "${MPSRVTOMSITE}/webapps"
+cp "${MPCONFSITE}/bin/setenv.sh" "${MPSRVTOMSITE}/bin/setenv.sh"
+cp "${MPCONFSITE}/bin/launchdTomcat.sh" "${MPSRVTOMSITE}/bin/launchdTomcat.sh"
+cp -r "${MPCONFSITE}/conf/Catalina" "${MPSRVTOMSITE}/conf/"
+cp -r "${MPCONFSITE}/conf/server.xml" "${MPSRVTOMSITE}/conf/server.xml"
+cp -r "${MPCONFSITE}/conf/web.xml" "${MPSRVTOMSITE}/conf/web.xml"
+chmod -R 0775 "${MPSRVTOMSITE}"
+chown -R $OWNERGRP "${MPSRVTOMSITE}"
+
+# Set Permissions
 chown -R $OWNERGRP ${MPSERVERBASE}/Logs
 chmod 0775 ${MPSERVERBASE}
-rm -rf ${MPSERVERBASE}/apache-tomcat
+chown root:wheel ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
+chmod 0644 ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
 
 # ------------------
 # Clean up structure place holders
 # ------------------
 find ${MPSERVERBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
+
+# ------------------
+# Clean up un-needed files for binary distribution
+# If src files are needed, they can be cloned
+# ------------------
+rm -rf "${MPSERVERBASE}/conf/scripts/Linux"
+rm -rf "${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh"
+rm -rf "${MPSERVERBASE}/conf/scripts/_Old_"
+rm -rf "${MPSERVERBASE}/conf/src/openbd"
+find "${MPSERVERBASE}/conf/src" -name *.tar.gz -print | xargs -I{} rm {}
+rm -f "${MPSERVERBASE}/conf/lib"
 
 # ------------------
 # Move Files For Packaging

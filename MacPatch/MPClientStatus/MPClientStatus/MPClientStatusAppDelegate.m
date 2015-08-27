@@ -31,6 +31,7 @@
 #import "AppLaunchObject.h"
 #import "CHMenuViewController.h"
 #import "VDKQueue.h"
+#import "EventToSend.h"
 
 // Private Methods
 @interface MPClientStatusAppDelegate ()
@@ -53,6 +54,9 @@
 
 @implementation MPClientStatusAppDelegate
 
+NSString *const kShowPatchesRequiredNotification = @"kShowPatchesRequiredNotification";
+NSString *const kRebootRequiredNotification = @"kRebootRequiredNotification";
+
 #pragma mark Properties
 @synthesize window;
 @synthesize checkInStatusMenuItem;
@@ -69,11 +73,20 @@
 @synthesize clientInfoTableView;
 @synthesize clientArrayController;
 
-// Aboiut Window
+// Patch Info
+@synthesize patchCount;
+@synthesize patchNeedsReboot;
+
+// About Window
 @synthesize aboutWindow;
 @synthesize appIcon;
 @synthesize appName;
 @synthesize appVersion;
+
+// Reboot Window
+@synthesize rebootWindow;
+@synthesize rebootTitleText;
+@synthesize rebootBodyText;
 
 // Client CheckIn Data
 @synthesize queue;
@@ -95,10 +108,24 @@
 	[selfVersionInfoMenuItem setTitle:[NSString stringWithFormat:@"Status App Version: %@",[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
 	NSDictionary *_mpVerDict = [NSDictionary dictionaryWithContentsOfFile:AGENT_VER_PLIST];
 	[MPVersionInfoMenuItem setTitle:[NSString stringWithFormat:@"MacPatch Version: %@",[_mpVerDict objectForKey:@"version"]]];
+    
+    
+    [[NSDistributedNotificationCenter defaultCenter] addObserver: self
+                                                        selector: @selector(userNotificationReceived:)
+                                                            name: kShowPatchesRequiredNotification
+                                                          object: nil];
+    [[NSDistributedNotificationCenter defaultCenter] addObserver: self
+                                                        selector: @selector(userNotificationReceived:)
+                                                            name: kRebootRequiredNotification
+                                                          object: nil];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification 
 {
+    // Show/hide Quit Menu Item
+    NSTimer *t = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(updateMenu:) userInfo:statusMenu repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:t forMode:NSEventTrackingRunLoopMode];
+    
 	//Setup Defaults	
 	NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
 	[prefs registerDefaults:[NSDictionary dictionaryWithContentsOfFile:APP_PREFS_PLIST]];
@@ -131,6 +158,9 @@
 	
 	// This will monitor for hits, when to update the patch status flags
     [self displayPatchData];
+    
+    // Run Notification Thread
+    [self runMPUserNotificationCenter];
 	
 	[self setOpenASUS:NO];
 }
@@ -140,6 +170,44 @@
 	
 }
 
+#pragma mark -
+#pragma mark Main
+
+- (void)updateMenu:(NSTimer *)timer
+{
+    
+    static NSMenuItem *menuItem15 = nil;
+    static NSMenuItem *menuItem16 = nil;
+    static BOOL isShowing = YES;
+    
+    // Get global modifier key flag, [[NSApp currentEvent] modifierFlags] doesn't update while menus are down
+    CGEventRef event = CGEventCreate (NULL);
+    CGEventFlags flags = CGEventGetFlags (event);
+    BOOL optionKeyIsPressed = (flags & kCGEventFlagMaskAlternate) == kCGEventFlagMaskAlternate;
+    CFRelease(event);
+    
+    NSMenu *menu = [timer userInfo];
+    
+    if (!menuItem15 && !menuItem16) {
+        // View Batch Jobs...
+        menuItem15 = [menu itemAtIndex:15];
+        menuItem16 = [menu itemAtIndex:16];
+    }
+    
+    if (!isShowing && optionKeyIsPressed) {
+        [menu insertItem:menuItem15 atIndex:15];
+        [menuItem15 setEnabled:YES];
+        [menuItem15 setHidden:NO];
+        [menu insertItem:menuItem16 atIndex:16];
+        [menuItem16 setEnabled:YES];
+        [menuItem16 setHidden:NO];
+        isShowing = YES;
+    } else if (isShowing && !optionKeyIsPressed) {
+        [menu removeItem:menuItem15];
+        [menu removeItem:menuItem16];
+        isShowing = NO;
+    }
+}
 
 #pragma mark -
 #pragma mark MPWorker
@@ -345,6 +413,12 @@ done:
 	[aboutWindow center];
 }
 
+#pragma mark -
+#pragma mark Reboot Window
+- (IBAction)closeRebootWindow:(id)sender {
+    [self.rebootWindow close];
+}
+
 #pragma mark Checkin
 - (IBAction)showCheckinWindow:(id)sender
 {
@@ -548,79 +622,119 @@ done:
 
 - (void)displayPatchData
 {
-    NSArray  *data = [[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST] mutableCopy];
-    NSString *subMenuTitle = [NSString stringWithFormat:@"Patches Needed: %d ",(int)[data count]];
+    [NSThread detachNewThreadSelector:@selector(displayPatchDataThread) toTarget:self withObject:nil];
+}
 
-    // If No Patches ...
-    if (!data) {
-        [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
-        [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
-        [checkPatchStatusMenuItem setSubmenu:NULL];
-        return;
-    } else if ([data count] <= 0) {
-        [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
-        [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
-        [checkPatchStatusMenuItem setSubmenu:NULL];
-        return;
-    } else {
-        [statusItem setImage:[NSImage imageNamed:@"mpmenubar_alert2.png"]];
-    }
-
-    [checkPatchStatusMenuItem setTitle:subMenuTitle];
-    NSMenu *subMenu = [[NSMenu alloc] initWithTitle:subMenuTitle];
-    [checkPatchStatusMenuItem setSubmenu:subMenu];
-    [checkPatchStatusMenuItem setEnabled:YES];
-
-    NSMenuItem *newMenuItem;
-
-    // Add Header Menu Item
-    CHMenuViewController *vcTitle = [[CHMenuViewController alloc] init];
-    NSRect f = vcTitle.view.frame;
-    f.size.width = 337;
-    f.size.height = 26;
-    vcTitle.view.frame = f;
-
-    [vcTitle.view addSubview:vcTitle.titleView];
-    newMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""];
-    [newMenuItem setView:vcTitle.view];
-    [subMenu addItem:newMenuItem];
-
-    // Add Patches as menu item using views
-    CHMenuViewController *vc;
-    for (NSDictionary *d in data)
+- (void)displayPatchDataThread
+{
+    @autoreleasepool
     {
-        newMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
-        vc = [[CHMenuViewController alloc] init];
-        [vc addTitle:[d objectForKey:@"patch"] version:[d objectForKey:@"version"]];
-        if ([[[d objectForKey:@"restart"] uppercaseString] isEqualTo:@"TRUE"] || [[[d objectForKey:@"restart"] uppercaseString] isEqualTo:@"YES"])
-        {
-            vc.ximage = [NSImage imageNamed:@"RestartReq.tif"];
-        } else {
-            vc.ximage = [NSImage imageNamed:@"empty.tif"];
-        }
-        [newMenuItem setView:vc.view];
-        [subMenu addItem:newMenuItem];
+        // Run Once, to show current status
+        [self displayPatchDataMethod];
+        // 600.0 = 10 Minutes
+        NSTimer *timer = [NSTimer timerWithTimeInterval:180.0
+                                                 target:self
+                                               selector:@selector(displayPatchDataMethod)
+                                               userInfo:nil
+                                                repeats:YES];
+        
+        
+        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];  
+        [[NSRunLoop currentRunLoop] run];
     }
+}
 
-    //
-    // Add Bottom Menu Item thats says you need to use Self Patch to patch
-    //
-    CHMenuViewController *vc1 = [[CHMenuViewController alloc] init];
+- (void)displayPatchDataMethod
+{
+    @autoreleasepool
+    {
+        self.patchNeedsReboot = NO;
+        self.patchCount = 0;
+        
+        NSArray  *data = [[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST] mutableCopy];
+        NSString *subMenuTitle = [NSString stringWithFormat:@"Patches Needed: %d ",(int)[data count]];
 
-    f = vc1.view.frame;
-    f.size.width = 337;
-    f.size.height = 35;
-    vc1.view.frame = f;
-
-    [vc1.view addSubview:vc1.altView];
-
-    newMenuItem = [[NSMenuItem alloc] initWithTitle:@"Open Self Patch To Patch..." action:NULL keyEquivalent:@""];
-    [newMenuItem setView:vc1.view];
-    [subMenu addItem:newMenuItem];
-
-    NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:PATCHES_NEEDED_PLIST error:nil];
-    if (attrs != nil) {
-        [self setLastPatchStatusUpdate:(NSDate*)[attrs objectForKey: NSFileModificationDate]];
+        // This is for Mac OS X 10.8 support
+        // Display notification based on this value
+        NSArray *filteredarray = [data filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(restart == %@)", @"Yes"]];
+        if ([filteredarray count] >=1) {
+            self.patchNeedsReboot = YES;
+        }
+        
+        // If No Patches ...
+        if (!data) {
+            [self setPatchCount:0];
+            [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
+            [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
+            [checkPatchStatusMenuItem setSubmenu:NULL];
+            return;
+        } else if ([data count] <= 0) {
+            [self setPatchCount:[data count]];
+            [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
+            [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
+            [checkPatchStatusMenuItem setSubmenu:NULL];
+            return;
+        } else {
+            [self setPatchCount:[data count]];
+            [statusItem setImage:[NSImage imageNamed:@"mpmenubar_alert2.png"]];
+        }
+        
+        [checkPatchStatusMenuItem setTitle:subMenuTitle];
+        NSMenu *subMenu = [[NSMenu alloc] initWithTitle:subMenuTitle];
+        [checkPatchStatusMenuItem setSubmenu:subMenu];
+        [checkPatchStatusMenuItem setEnabled:YES];
+        
+        NSMenuItem *newMenuItem;
+        
+        // Add Header Menu Item
+        CHMenuViewController *vcTitle = [[CHMenuViewController alloc] init];
+        NSRect f = vcTitle.view.frame;
+        f.size.width = 337;
+        f.size.height = 26;
+        vcTitle.view.frame = f;
+        
+        [vcTitle.view addSubview:vcTitle.titleView];
+        newMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""];
+        [newMenuItem setView:vcTitle.view];
+        [subMenu addItem:newMenuItem];
+        
+        // Add Patches as menu item using views
+        CHMenuViewController *vc;
+        for (NSDictionary *d in data)
+        {
+            newMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
+            vc = [[CHMenuViewController alloc] init];
+            [vc addTitle:[d objectForKey:@"patch"] version:[d objectForKey:@"version"]];
+            if ([[[d objectForKey:@"restart"] uppercaseString] isEqualTo:@"TRUE"] || [[[d objectForKey:@"restart"] uppercaseString] isEqualTo:@"YES"])
+            {
+                vc.ximage = [NSImage imageNamed:@"RestartReq.tif"];
+            } else {
+                vc.ximage = [NSImage imageNamed:@"empty.tif"];
+            }
+            [newMenuItem setView:vc.view];
+            [subMenu addItem:newMenuItem];
+        }
+        
+        //
+        // Add Bottom Menu Item thats says you need to use Self Patch to patch
+        //
+        CHMenuViewController *vc1 = [[CHMenuViewController alloc] init];
+        
+        f = vc1.view.frame;
+        f.size.width = 337;
+        f.size.height = 35;
+        vc1.view.frame = f;
+        
+        [vc1.view addSubview:vc1.altView];
+        
+        newMenuItem = [[NSMenuItem alloc] initWithTitle:@"Open Self Patch To Patch..." action:NULL keyEquivalent:@""];
+        [newMenuItem setView:vc1.view];
+        [subMenu addItem:newMenuItem];
+        
+        NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:PATCHES_NEEDED_PLIST error:nil];
+        if (attrs != nil) {
+            [self setLastPatchStatusUpdate:(NSDate*)[attrs objectForKey: NSFileModificationDate]];
+        }
     }
 }
 
@@ -773,13 +887,203 @@ done:
                 NSDate *cdate = (NSDate*)[attrs objectForKey: NSFileModificationDate];
                 if ([cdate timeIntervalSince1970] > [self.lastPatchStatusUpdate timeIntervalSince1970])
                 {
-                    [self displayPatchData];
+                    [self displayPatchDataMethod];
                 }
             }
         }
         else
         {
             [self removeStatusFiles];
+        }
+    }
+}
+
+#pragma mark - 
+#pragma mark Logout Method
+
+- (void)logoutNow
+{
+    [self.rebootWindow makeKeyAndOrderFront:nil];
+    [self.rebootWindow setLevel:kCGMaximumWindowLevel];
+    [self.rebootWindow center];
+    [NSApp arrangeInFront:self];
+    [NSApp activateIgnoringOtherApps:YES];
+}
+
+- (IBAction)logoutAndPatch:(id)sender
+{
+    /* reboot the system using Apple supplied code
+     error = SendAppleEventToSystemProcess(kAERestart);
+     error = SendAppleEventToSystemProcess(kAELogOut);
+     error = SendAppleEventToSystemProcess(kAEReallyLogOut);
+     */
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
+        NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
+        [ud setBool:NO forKey:@"patch"];
+        [ud setBool:NO forKey:@"reboot"];
+        ud = nil;
+    }
+    
+    OSStatus error = noErr;
+#ifdef DEBUG
+    error = SendAppleEventToSystemProcess(kAELogOut);
+#else
+    error = SendAppleEventToSystemProcess(kAEReallyLogOut);
+#endif
+}
+
+#pragma mark - 
+#pragma mark NSUserNotificationCenter
+
+- (void)runMPUserNotificationCenter
+{
+    [NSThread detachNewThreadSelector:@selector(showMPUserNotificationCenter) toTarget:self withObject:nil];
+}
+
+- (void)showMPUserNotificationCenter
+{
+    @autoreleasepool
+    {
+        // Run Once, to show current status
+        [self showMPUserNotificationCenterMethod];
+        // 600.0 = 10 Minutes
+        NSTimer *timer = [NSTimer timerWithTimeInterval:1200.0
+                                                 target:self
+                                               selector:@selector(showMPUserNotificationCenterMethod)
+                                               userInfo:nil
+                                                repeats:YES];
+        
+        
+        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];  
+        [[NSRunLoop currentRunLoop] run];
+    }
+}
+
+- (void)showMPUserNotificationCenterMethod
+{
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9)
+    {
+        logit(lcl_vInfo,@"NSAppKitVersionNumber10_9");
+        // Code for 10.9+ goes here
+        NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
+        if ([ud objectForKey:@"patch"]) {
+            if ([ud boolForKey:@"patch"] == YES) {
+                if ([ud objectForKey:@"reboot"]) {
+                    if ([ud boolForKey:@"reboot"]) {
+                        [self postUserNotificationForReboot];
+                        return;
+                    }
+                }
+                if (self.patchCount >= 1) {
+                    [self postUserNotificationForPatchesWithCount:[@(self.patchCount) stringValue]];
+                }
+            }
+        }
+    } else if (floor(NSAppKitVersionNumber) == NSAppKitVersionNumber10_8) {
+        
+        logit(lcl_vInfo,@"NSAppKitVersionNumber10_8");
+        @try {
+            if (self.patchCount >= 1) {
+                if (self.patchNeedsReboot == YES) {
+                    [self postUserNotificationForReboot];
+                } else {
+                    [self postUserNotificationForPatchesWithCount:[@(self.patchCount) stringValue]];
+                }
+            }
+        }
+        @catch (NSException *exception) {
+            logit(lcl_vError,@"%@",exception);
+        }
+        
+    } else {
+        logit(lcl_vInfo,@"floor(NSAppKitVersionNumber): %f",floor(NSAppKitVersionNumber));
+        logit(lcl_vInfo,@"NSAppKitVersionNumber10_9:    %d",NSAppKitVersionNumber10_9);
+        logit(lcl_vWarning,@"Current OS does not support NSUserNotification");
+    }
+}
+
+- (void)postUserNotificationForReboot
+{
+    NSUserNotification *userNote = [[NSUserNotification alloc] init];
+    userNote.title = @"Reboot Patches Required";
+    //userNote.subtitle = @"Reboot Patches Required";
+    userNote.informativeText = [NSString stringWithFormat:@"This system requires patches that require a reboot."];
+    //userNote.soundName = NSUserNotificationDefaultSoundName;
+    userNote.actionButtonTitle = @"Reboot";
+    userNote.hasActionButton = YES;
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
+        [userNote setValue:@YES forKey:@"_showsButtons"];
+        [userNote setValue:@YES forKey:@"_ignoresDoNotDisturb"];
+    }
+    [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:userNote];
+}
+
+- (void)postUserNotificationForPatchesWithCount:(NSString *)aCount
+{
+    NSUserNotification *userNote = [[NSUserNotification alloc] init];
+    userNote.title = @"Patches Required";
+    //userNote.subtitle = @"Patches Required";
+    userNote.informativeText = [NSString stringWithFormat:@"This system requires %@ patche(s).",aCount];
+    //userNote.soundName = NSUserNotificationDefaultSoundName;
+    userNote.actionButtonTitle = @"Patch";
+    userNote.hasActionButton = YES;
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
+        [userNote setValue:@YES forKey:@"_showsButtons"];
+        [userNote setValue:@YES forKey:@"_ignoresDoNotDisturb"];
+    }
+    [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:userNote];
+}
+
+- (void)userNotificationReceived:(NSNotification *)notification
+{
+    if ([notification.name isEqualToString: kShowPatchesRequiredNotification])
+    {
+        NSString *pc = [@(self.patchCount) stringValue];
+        [self postUserNotificationForPatchesWithCount:pc];
+    }
+    else if ([notification.name isEqualToString: kRebootRequiredNotification])
+    {
+        [self postUserNotificationForReboot];
+    }
+    else
+    {
+        return;
+    }
+}
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification
+{
+    return YES;
+}
+
+- (void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
+{
+    if (notification.activationType == NSUserNotificationActivationTypeActionButtonClicked)
+    {
+        if ([notification.actionButtonTitle isEqualToString:@"Patch"]) {
+            if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
+                NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
+                [ud setBool:NO forKey:@"patch"];
+                ud = nil;
+            }
+            [self openSelfPatchApplications:nil];
+        }
+        if ([notification.actionButtonTitle isEqualToString:@"Reboot"]) {
+            [self logoutNow];
+        }
+    } else {
+        //NSLog(@"Close");
+    }
+}
+
+- (void)userNotificationCenter:(NSUserNotificationCenter *)center didDeliverNotification:(NSUserNotification *)notification
+{
+    if ([notification.actionButtonTitle isEqualToString:@"Patch"]) {
+        // Dont show patch info if reboot is required.
+        if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
+            [[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:notification];
         }
     }
 }

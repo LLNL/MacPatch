@@ -592,9 +592,8 @@
 - (BOOL)hasInvDataChanged:(NSString *)aInvType hash:(NSString *)aHash
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSMutableDictionary *invData = [NSMutableDictionary dictionary];
     if ([fm fileExistsAtPath:kInvHashData]) {
-        invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
+        NSMutableDictionary *invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
         if ([invData objectForKey:aInvType]) {
             if ([[[invData objectForKey:aInvType] lowercaseString] isEqualToString:[aHash lowercaseString]]) {
                 return NO;
@@ -612,14 +611,13 @@
 - (void)writeInvDataHashToFile:(NSString *)aInvType hash:(NSString *)aHash
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSMutableDictionary *invData = [NSMutableDictionary dictionary];
+    NSMutableDictionary *invData;
     if ([fm fileExistsAtPath:kInvHashData])
     {
         invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
+        [invData setObject:aHash forKey:aInvType];
+        [invData writeToFile:kInvHashData atomically:YES];
     }
-
-    [invData setObject:aHash forKey:aInvType];
-    [invData writeToFile:kInvHashData atomically:YES];
 }
 
 #pragma mark -
