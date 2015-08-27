@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 1.6.4
+# Version: 1.6.5
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -21,6 +21,7 @@
 # 1.6.2:	Fix cp paths
 # 1.6.3:	Updated OpenJDK to 1.8.0
 # 1.6.4:	Updated to install Ubuntu packages
+# 1.6.5:	More ubuntu updates
 #
 # -------------------------------------------------------------
 MPBASE="/Library/MacPatch"
@@ -142,13 +143,29 @@ if [ $XOSTYPE == "Linux" ]; then
 	elif [[ -r /etc/os-release ]]; then
 	    . /etc/os-release
 	    if [[ $ID = ubuntu ]]; then
-	        pkgs=("git" "build-essential" "openjdk-7-jre" "openjdk-7-jdk" "zip" "libssl-dev" "libxml2-dev" "python-pip" "mysql-connector-python")
+
+	    	# Install mysql python connector
+	    	DEBPKGDIR="${SRC_DIR}/linux/ubuntu"
+	    	MYDEBPYPKG="mysql-connector-python_2.0.4-1ubuntu14.10_all.deb"
+
+	    	for P in `ls $DEBPKGDIR/*.deb`
+	    	do
+	    		if [[ $P == *$VERSION_ID* ]]; then
+					MYDEBPYPKG=$P	    			
+	    		fi
+	    	done
+	    	dpkg -i ${DEBPKGDIR}/$MYDEBPYPKG
+
+
+	        pkgs=("git" "build-essential" "openjdk-7-jdk" "zip" "libssl-dev" "libxml2-dev" "python-pip")
 	        for i in "${pkgs[@]}"
 			do
 				p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
 				if [ -z $p ]; then
+					echo
 					echo "Install $i"
-					apt-get install -q -f -y ${i}
+					echo
+					apt-get build-dep -q -y ${i}
 				fi
 			done
 	    fi
