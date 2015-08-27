@@ -154,7 +154,7 @@ if [ $XOSTYPE == "Linux" ]; then
 					MYDEBPYPKG=$P	    			
 	    		fi
 	    	done
-	    	dpkg -i ${DEBPKGDIR}/$MYDEBPYPKG
+	    	dpkg -i $MYDEBPYPKG
 
 
 	        pkgs=("git" "build-essential" "openjdk-7-jdk" "zip" "libssl-dev" "libxml2-dev" "python-pip")
