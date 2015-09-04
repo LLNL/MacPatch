@@ -25,18 +25,6 @@
 		8F4B1F2316DE635200E15A9E /* MPTasks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1E16DE635200E15A9E /* MPTasks.m */; };
 		8F4B1F2416DE635200E15A9E /* MPTaskThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2016DE635200E15A9E /* MPTaskThread.m */; };
 		8F4B1F2516DE635200E15A9E /* MPTaskValidate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2216DE635200E15A9E /* MPTaskValidate.m */; };
-		8F530FE11B42ECE500B8D893 /* MPInv.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FC91B42ECE500B8D893 /* MPInv.m */; };
-		8F530FE21B42ECE500B8D893 /* NSDirectoryServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FCB1B42ECE500B8D893 /* NSDirectoryServices.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		8F530FE31B42ECE500B8D893 /* MPDirectoryServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FCD1B42ECE500B8D893 /* MPDirectoryServices.m */; };
-		8F530FE41B42ECE500B8D893 /* CHDisk.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FCF1B42ECE500B8D893 /* CHDisk.m */; };
-		8F530FE51B42ECE500B8D893 /* CHDiskInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FD11B42ECE500B8D893 /* CHDiskInfo.m */; };
-		8F530FE61B42ECE500B8D893 /* MPUsersAndGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FD31B42ECE500B8D893 /* MPUsersAndGroups.m */; };
-		8F530FE71B42ECE500B8D893 /* MPFileVaultInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FD51B42ECE500B8D893 /* MPFileVaultInfo.m */; };
-		8F530FE81B42ECE500B8D893 /* BatteryInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FD71B42ECE500B8D893 /* BatteryInfo.m */; };
-		8F530FE91B42ECE500B8D893 /* PowerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FD91B42ECE500B8D893 /* PowerProfile.m */; };
-		8F530FEA1B42ECE500B8D893 /* MacAppStoreDataItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FDB1B42ECE500B8D893 /* MacAppStoreDataItem.m */; };
-		8F530FEB1B42ECE500B8D893 /* NSMetadataQuery+Synchronous.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FDD1B42ECE500B8D893 /* NSMetadataQuery+Synchronous.m */; };
-		8F530FEC1B42ECE500B8D893 /* MPServerEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FDF1B42ECE500B8D893 /* MPServerEntry.m */; };
 		8F530FEE1B42ED2B00B8D893 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F530FED1B42ED2B00B8D893 /* libxml2.dylib */; };
 		8F530FF01B42ED5400B8D893 /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F530FEF1B42ED5400B8D893 /* OpenDirectory.framework */; };
 		8F530FF21B42ED5D00B8D893 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F530FF11B42ED5D00B8D893 /* DiskArbitration.framework */; };
@@ -45,6 +33,19 @@
 		8F530FFE1B42EEAC00B8D893 /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FF81B42EEAC00B8D893 /* FMDatabaseAdditions.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F530FFF1B42EEAC00B8D893 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FFA1B42EEAC00B8D893 /* FMResultSet.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F5310011B42EEE400B8D893 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5310001B42EEE400B8D893 /* libsqlite3.dylib */; };
+		8FA6A8771B9621BF006A329B /* BatteryInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8601B9621BF006A329B /* BatteryInfo.m */; };
+		8FA6A8781B9621BF006A329B /* CHDisk.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8621B9621BF006A329B /* CHDisk.m */; };
+		8FA6A8791B9621BF006A329B /* CHDiskInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8641B9621BF006A329B /* CHDiskInfo.m */; };
+		8FA6A87A1B9621BF006A329B /* MacAppStoreDataItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8661B9621BF006A329B /* MacAppStoreDataItem.m */; };
+		8FA6A87B1B9621BF006A329B /* MPDirectoryServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8681B9621BF006A329B /* MPDirectoryServices.m */; };
+		8FA6A87C1B9621BF006A329B /* MPFileVaultInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A86A1B9621BF006A329B /* MPFileVaultInfo.m */; };
+		8FA6A87D1B9621BF006A329B /* MPInv.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A86C1B9621BF006A329B /* MPInv.m */; };
+		8FA6A87E1B9621BF006A329B /* MPServerEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A86E1B9621BF006A329B /* MPServerEntry.m */; };
+		8FA6A87F1B9621BF006A329B /* MPUsersAndGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8701B9621BF006A329B /* MPUsersAndGroups.m */; };
+		8FA6A8801B9621BF006A329B /* NSDirectoryServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8721B9621BF006A329B /* NSDirectoryServices.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		8FA6A8811B9621BF006A329B /* NSMetadataQuery+Synchronous.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8741B9621BF006A329B /* NSMetadataQuery+Synchronous.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		8FA6A8821B9621BF006A329B /* PowerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8761B9621BF006A329B /* PowerProfile.m */; };
+		8FA6A8861B96230C006A329B /* MPInventoryPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8851B96230C006A329B /* MPInventoryPlugin.m */; };
 		8FE03DD11B600C5A005D39EE /* MPAgentUpdater.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD01B600C5A005D39EE /* MPAgentUpdater.m */; };
 		8FE03DD61B60195A005D39EE /* AntiVirus.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD51B60195A005D39EE /* AntiVirus.m */; };
 		8FE03DD91B601AC6005D39EE /* AVSoftware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD81B601AC6005D39EE /* AVSoftware.m */; };
@@ -111,30 +112,6 @@
 		8F4B1F2116DE635200E15A9E /* MPTaskValidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPTaskValidate.h; sourceTree = "<group>"; };
 		8F4B1F2216DE635200E15A9E /* MPTaskValidate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPTaskValidate.m; sourceTree = "<group>"; };
 		8F4B1F3216DE63F200E15A9E /* MPAgent-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MPAgent-Info.plist"; sourceTree = "<group>"; };
-		8F530FC81B42ECE500B8D893 /* MPInv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPInv.h; sourceTree = "<group>"; };
-		8F530FC91B42ECE500B8D893 /* MPInv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPInv.m; sourceTree = "<group>"; };
-		8F530FCA1B42ECE500B8D893 /* NSDirectoryServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDirectoryServices.h; sourceTree = "<group>"; };
-		8F530FCB1B42ECE500B8D893 /* NSDirectoryServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDirectoryServices.m; sourceTree = "<group>"; };
-		8F530FCC1B42ECE500B8D893 /* MPDirectoryServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDirectoryServices.h; sourceTree = "<group>"; };
-		8F530FCD1B42ECE500B8D893 /* MPDirectoryServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDirectoryServices.m; sourceTree = "<group>"; };
-		8F530FCE1B42ECE500B8D893 /* CHDisk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDisk.h; sourceTree = "<group>"; };
-		8F530FCF1B42ECE500B8D893 /* CHDisk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDisk.m; sourceTree = "<group>"; };
-		8F530FD01B42ECE500B8D893 /* CHDiskInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDiskInfo.h; sourceTree = "<group>"; };
-		8F530FD11B42ECE500B8D893 /* CHDiskInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDiskInfo.m; sourceTree = "<group>"; };
-		8F530FD21B42ECE500B8D893 /* MPUsersAndGroups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPUsersAndGroups.h; sourceTree = "<group>"; };
-		8F530FD31B42ECE500B8D893 /* MPUsersAndGroups.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPUsersAndGroups.m; sourceTree = "<group>"; };
-		8F530FD41B42ECE500B8D893 /* MPFileVaultInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPFileVaultInfo.h; sourceTree = "<group>"; };
-		8F530FD51B42ECE500B8D893 /* MPFileVaultInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPFileVaultInfo.m; sourceTree = "<group>"; };
-		8F530FD61B42ECE500B8D893 /* BatteryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatteryInfo.h; sourceTree = "<group>"; };
-		8F530FD71B42ECE500B8D893 /* BatteryInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BatteryInfo.m; sourceTree = "<group>"; };
-		8F530FD81B42ECE500B8D893 /* PowerProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerProfile.h; sourceTree = "<group>"; };
-		8F530FD91B42ECE500B8D893 /* PowerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PowerProfile.m; sourceTree = "<group>"; };
-		8F530FDA1B42ECE500B8D893 /* MacAppStoreDataItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacAppStoreDataItem.h; sourceTree = "<group>"; };
-		8F530FDB1B42ECE500B8D893 /* MacAppStoreDataItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MacAppStoreDataItem.m; sourceTree = "<group>"; };
-		8F530FDC1B42ECE500B8D893 /* NSMetadataQuery+Synchronous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMetadataQuery+Synchronous.h"; sourceTree = "<group>"; };
-		8F530FDD1B42ECE500B8D893 /* NSMetadataQuery+Synchronous.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMetadataQuery+Synchronous.m"; sourceTree = "<group>"; };
-		8F530FDE1B42ECE500B8D893 /* MPServerEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPServerEntry.h; sourceTree = "<group>"; };
-		8F530FDF1B42ECE500B8D893 /* MPServerEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPServerEntry.m; sourceTree = "<group>"; };
 		8F530FED1B42ED2B00B8D893 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		8F530FEF1B42ED5400B8D893 /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		8F530FF11B42ED5D00B8D893 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
@@ -146,6 +123,33 @@
 		8F530FF91B42EEAC00B8D893 /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMResultSet.h; sourceTree = "<group>"; };
 		8F530FFA1B42EEAC00B8D893 /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMResultSet.m; sourceTree = "<group>"; };
 		8F5310001B42EEE400B8D893 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		8FA6A85F1B9621BF006A329B /* BatteryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatteryInfo.h; sourceTree = "<group>"; };
+		8FA6A8601B9621BF006A329B /* BatteryInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BatteryInfo.m; sourceTree = "<group>"; };
+		8FA6A8611B9621BF006A329B /* CHDisk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDisk.h; sourceTree = "<group>"; };
+		8FA6A8621B9621BF006A329B /* CHDisk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDisk.m; sourceTree = "<group>"; };
+		8FA6A8631B9621BF006A329B /* CHDiskInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDiskInfo.h; sourceTree = "<group>"; };
+		8FA6A8641B9621BF006A329B /* CHDiskInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDiskInfo.m; sourceTree = "<group>"; };
+		8FA6A8651B9621BF006A329B /* MacAppStoreDataItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacAppStoreDataItem.h; sourceTree = "<group>"; };
+		8FA6A8661B9621BF006A329B /* MacAppStoreDataItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MacAppStoreDataItem.m; sourceTree = "<group>"; };
+		8FA6A8671B9621BF006A329B /* MPDirectoryServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDirectoryServices.h; sourceTree = "<group>"; };
+		8FA6A8681B9621BF006A329B /* MPDirectoryServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDirectoryServices.m; sourceTree = "<group>"; };
+		8FA6A8691B9621BF006A329B /* MPFileVaultInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPFileVaultInfo.h; sourceTree = "<group>"; };
+		8FA6A86A1B9621BF006A329B /* MPFileVaultInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPFileVaultInfo.m; sourceTree = "<group>"; };
+		8FA6A86B1B9621BF006A329B /* MPInv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPInv.h; sourceTree = "<group>"; };
+		8FA6A86C1B9621BF006A329B /* MPInv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPInv.m; sourceTree = "<group>"; };
+		8FA6A86D1B9621BF006A329B /* MPServerEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPServerEntry.h; sourceTree = "<group>"; };
+		8FA6A86E1B9621BF006A329B /* MPServerEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPServerEntry.m; sourceTree = "<group>"; };
+		8FA6A86F1B9621BF006A329B /* MPUsersAndGroups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPUsersAndGroups.h; sourceTree = "<group>"; };
+		8FA6A8701B9621BF006A329B /* MPUsersAndGroups.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPUsersAndGroups.m; sourceTree = "<group>"; };
+		8FA6A8711B9621BF006A329B /* NSDirectoryServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDirectoryServices.h; sourceTree = "<group>"; };
+		8FA6A8721B9621BF006A329B /* NSDirectoryServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDirectoryServices.m; sourceTree = "<group>"; };
+		8FA6A8731B9621BF006A329B /* NSMetadataQuery+Synchronous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMetadataQuery+Synchronous.h"; sourceTree = "<group>"; };
+		8FA6A8741B9621BF006A329B /* NSMetadataQuery+Synchronous.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMetadataQuery+Synchronous.m"; sourceTree = "<group>"; };
+		8FA6A8751B9621BF006A329B /* PowerProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerProfile.h; sourceTree = "<group>"; };
+		8FA6A8761B9621BF006A329B /* PowerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PowerProfile.m; sourceTree = "<group>"; };
+		8FA6A8831B9621DB006A329B /* InventoryPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InventoryPlugin.h; sourceTree = "<group>"; };
+		8FA6A8841B96230C006A329B /* MPInventoryPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPInventoryPlugin.h; sourceTree = "<group>"; };
+		8FA6A8851B96230C006A329B /* MPInventoryPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPInventoryPlugin.m; sourceTree = "<group>"; };
 		8FE03DCF1B600C5A005D39EE /* MPAgentUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentUpdater.h; sourceTree = "<group>"; };
 		8FE03DD01B600C5A005D39EE /* MPAgentUpdater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentUpdater.m; sourceTree = "<group>"; };
 		8FE03DD41B60195A005D39EE /* AntiVirus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AntiVirus.h; sourceTree = "<group>"; };
@@ -245,6 +249,8 @@
 				8F4B1F0316DD77FF00E15A9E /* MPAppController.m */,
 				8F4B1F0416DD77FF00E15A9E /* MPDefaultsWatcher.h */,
 				8F4B1F0516DD77FF00E15A9E /* MPDefaultsWatcher.m */,
+				8FA6A8841B96230C006A329B /* MPInventoryPlugin.h */,
+				8FA6A8851B96230C006A329B /* MPInventoryPlugin.m */,
 				8F4B1F0916DE633200E15A9E /* MPTasks */,
 				8FE03DD21B601926005D39EE /* Classes */,
 				8F530FFC1B42EEAC00B8D893 /* Third Party Classes */,
@@ -302,38 +308,6 @@
 			name = Operations;
 			sourceTree = "<group>";
 		};
-		8F530FE01B42ECE500B8D893 /* Inventory */ = {
-			isa = PBXGroup;
-			children = (
-				8F530FC81B42ECE500B8D893 /* MPInv.h */,
-				8F530FC91B42ECE500B8D893 /* MPInv.m */,
-				8F530FCA1B42ECE500B8D893 /* NSDirectoryServices.h */,
-				8F530FCB1B42ECE500B8D893 /* NSDirectoryServices.m */,
-				8F530FCC1B42ECE500B8D893 /* MPDirectoryServices.h */,
-				8F530FCD1B42ECE500B8D893 /* MPDirectoryServices.m */,
-				8F530FCE1B42ECE500B8D893 /* CHDisk.h */,
-				8F530FCF1B42ECE500B8D893 /* CHDisk.m */,
-				8F530FD01B42ECE500B8D893 /* CHDiskInfo.h */,
-				8F530FD11B42ECE500B8D893 /* CHDiskInfo.m */,
-				8F530FD21B42ECE500B8D893 /* MPUsersAndGroups.h */,
-				8F530FD31B42ECE500B8D893 /* MPUsersAndGroups.m */,
-				8F530FD41B42ECE500B8D893 /* MPFileVaultInfo.h */,
-				8F530FD51B42ECE500B8D893 /* MPFileVaultInfo.m */,
-				8F530FD61B42ECE500B8D893 /* BatteryInfo.h */,
-				8F530FD71B42ECE500B8D893 /* BatteryInfo.m */,
-				8F530FD81B42ECE500B8D893 /* PowerProfile.h */,
-				8F530FD91B42ECE500B8D893 /* PowerProfile.m */,
-				8F530FDA1B42ECE500B8D893 /* MacAppStoreDataItem.h */,
-				8F530FDB1B42ECE500B8D893 /* MacAppStoreDataItem.m */,
-				8F530FDC1B42ECE500B8D893 /* NSMetadataQuery+Synchronous.h */,
-				8F530FDD1B42ECE500B8D893 /* NSMetadataQuery+Synchronous.m */,
-				8F530FDE1B42ECE500B8D893 /* MPServerEntry.h */,
-				8F530FDF1B42ECE500B8D893 /* MPServerEntry.m */,
-			);
-			name = Inventory;
-			path = ../../MPAgentExec/MPAgentExec;
-			sourceTree = "<group>";
-		};
 		8F530FFB1B42EEAC00B8D893 /* FMDB */ = {
 			isa = PBXGroup;
 			children = (
@@ -356,6 +330,38 @@
 			path = ../../MPAgentExec/MPAgentExec;
 			sourceTree = "<group>";
 		};
+		8FA6A85E1B9621BF006A329B /* Inventory */ = {
+			isa = PBXGroup;
+			children = (
+				8FA6A8831B9621DB006A329B /* InventoryPlugin.h */,
+				8FA6A86B1B9621BF006A329B /* MPInv.h */,
+				8FA6A86C1B9621BF006A329B /* MPInv.m */,
+				8FA6A85F1B9621BF006A329B /* BatteryInfo.h */,
+				8FA6A8601B9621BF006A329B /* BatteryInfo.m */,
+				8FA6A8611B9621BF006A329B /* CHDisk.h */,
+				8FA6A8621B9621BF006A329B /* CHDisk.m */,
+				8FA6A8631B9621BF006A329B /* CHDiskInfo.h */,
+				8FA6A8641B9621BF006A329B /* CHDiskInfo.m */,
+				8FA6A8651B9621BF006A329B /* MacAppStoreDataItem.h */,
+				8FA6A8661B9621BF006A329B /* MacAppStoreDataItem.m */,
+				8FA6A8671B9621BF006A329B /* MPDirectoryServices.h */,
+				8FA6A8681B9621BF006A329B /* MPDirectoryServices.m */,
+				8FA6A8691B9621BF006A329B /* MPFileVaultInfo.h */,
+				8FA6A86A1B9621BF006A329B /* MPFileVaultInfo.m */,
+				8FA6A86D1B9621BF006A329B /* MPServerEntry.h */,
+				8FA6A86E1B9621BF006A329B /* MPServerEntry.m */,
+				8FA6A86F1B9621BF006A329B /* MPUsersAndGroups.h */,
+				8FA6A8701B9621BF006A329B /* MPUsersAndGroups.m */,
+				8FA6A8711B9621BF006A329B /* NSDirectoryServices.h */,
+				8FA6A8721B9621BF006A329B /* NSDirectoryServices.m */,
+				8FA6A8731B9621BF006A329B /* NSMetadataQuery+Synchronous.h */,
+				8FA6A8741B9621BF006A329B /* NSMetadataQuery+Synchronous.m */,
+				8FA6A8751B9621BF006A329B /* PowerProfile.h */,
+				8FA6A8761B9621BF006A329B /* PowerProfile.m */,
+			);
+			path = Inventory;
+			sourceTree = "<group>";
+		};
 		8FE03DCE1B600C26005D39EE /* AgentUpdater */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,7 +376,7 @@
 			children = (
 				8FE03DD31B601938005D39EE /* AntiVirus */,
 				8FE03DCE1B600C26005D39EE /* AgentUpdater */,
-				8F530FE01B42ECE500B8D893 /* Inventory */,
+				8FA6A85E1B9621BF006A329B /* Inventory */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -445,40 +451,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F530FE61B42ECE500B8D893 /* MPUsersAndGroups.m in Sources */,
-				8F530FE11B42ECE500B8D893 /* MPInv.m in Sources */,
 				8FE03DD11B600C5A005D39EE /* MPAgentUpdater.m in Sources */,
+				8FA6A8791B9621BF006A329B /* CHDiskInfo.m in Sources */,
 				8F4B1EF016DD77BD00E15A9E /* main.m in Sources */,
 				8FE03DD91B601AC6005D39EE /* AVSoftware.m in Sources */,
 				8F530FFD1B42EEAC00B8D893 /* FMDatabase.m in Sources */,
 				8F4B1F0616DD77FF00E15A9E /* MPAgent.m in Sources */,
+				8FA6A8821B9621BF006A329B /* PowerProfile.m in Sources */,
+				8FA6A87D1B9621BF006A329B /* MPInv.m in Sources */,
 				8FE03DD61B60195A005D39EE /* AntiVirus.m in Sources */,
 				8F530FFE1B42EEAC00B8D893 /* FMDatabaseAdditions.m in Sources */,
 				8F530FFF1B42EEAC00B8D893 /* FMResultSet.m in Sources */,
 				8F2E697F1922C330001BF9D6 /* PostFailedWSRequests.m in Sources */,
+				8FA6A8861B96230C006A329B /* MPInventoryPlugin.m in Sources */,
+				8FA6A87B1B9621BF006A329B /* MPDirectoryServices.m in Sources */,
 				8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */,
 				8F4B1F0716DD77FF00E15A9E /* MPAppController.m in Sources */,
-				8F530FE81B42ECE500B8D893 /* BatteryInfo.m in Sources */,
+				8FA6A87C1B9621BF006A329B /* MPFileVaultInfo.m in Sources */,
+				8FA6A87F1B9621BF006A329B /* MPUsersAndGroups.m in Sources */,
+				8FA6A8801B9621BF006A329B /* NSDirectoryServices.m in Sources */,
 				8F315B9819212A920031FF73 /* GetServerListOperation.m in Sources */,
 				8F4B1F0816DD77FF00E15A9E /* MPDefaultsWatcher.m in Sources */,
 				8F4B1F1716DE634600E15A9E /* ClientCheckInOperation.m in Sources */,
 				8F4B1F1816DE634600E15A9E /* AgentScanAndUpdateOperation.m in Sources */,
-				8F530FE31B42ECE500B8D893 /* MPDirectoryServices.m in Sources */,
+				8FA6A87E1B9621BF006A329B /* MPServerEntry.m in Sources */,
+				8FA6A8771B9621BF006A329B /* BatteryInfo.m in Sources */,
 				8F4B1F1916DE634600E15A9E /* AntiVirusScanAndUpdateOperation.m in Sources */,
-				8F530FE21B42ECE500B8D893 /* NSDirectoryServices.m in Sources */,
-				8F530FE41B42ECE500B8D893 /* CHDisk.m in Sources */,
+				8FA6A8781B9621BF006A329B /* CHDisk.m in Sources */,
 				8F4B1F1A16DE634600E15A9E /* InventoryOperation.m in Sources */,
+				8FA6A87A1B9621BF006A329B /* MacAppStoreDataItem.m in Sources */,
 				8F4B1F1B16DE634600E15A9E /* PatchScanAndUpdateOperation.m in Sources */,
-				8F530FE71B42ECE500B8D893 /* MPFileVaultInfo.m in Sources */,
 				8F4B1F1C16DE634600E15A9E /* MPSWDistTaskOperation.m in Sources */,
-				8F530FEA1B42ECE500B8D893 /* MacAppStoreDataItem.m in Sources */,
 				8F4B1F2316DE635200E15A9E /* MPTasks.m in Sources */,
-				8F530FEB1B42ECE500B8D893 /* NSMetadataQuery+Synchronous.m in Sources */,
-				8F530FE91B42ECE500B8D893 /* PowerProfile.m in Sources */,
 				8F4B1F2416DE635200E15A9E /* MPTaskThread.m in Sources */,
-				8F530FE51B42ECE500B8D893 /* CHDiskInfo.m in Sources */,
 				8F4B1F2516DE635200E15A9E /* MPTaskValidate.m in Sources */,
-				8F530FEC1B42ECE500B8D893 /* MPServerEntry.m in Sources */,
+				8FA6A8811B9621BF006A329B /* NSMetadataQuery+Synchronous.m in Sources */,
 				8F2D4F2C188EFFB50008853B /* Profiles.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

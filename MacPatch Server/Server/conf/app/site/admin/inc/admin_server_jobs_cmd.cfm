@@ -3,15 +3,15 @@
 
 	<!--- stick everything in form and url into a struct for easy reference --->
 	<cfset args = StructNew() />
-	
+
 	<cfloop collection="#url#" item="urlKey">
 	  <cfset args[urlKey] = url[urlKey] />
 	</cfloop>
-	
+
 	<cfloop collection="#form#" item="formKey">
 	  <cfset args[formKey] = form[formKey] />
 	</cfloop>
-	
+
 	<cfswitch expression="#args.action#">
 		<cfcase value="runScheduledTask,2">
 			<cftry>
@@ -22,7 +22,7 @@
 					<cflocation url="#session.cflocFix#/admin/inc/admin_server_jobs.cfm" addtoken="false" />
 				</cfcatch>
 			</cftry>
-			
+
 			<cfset session.message.text = "The scheduled task was run successfully." />
 			<cfset session.message.type = "info" />
 			<cflocation url="#session.cflocFix#/admin/inc/admin_server_jobs.cfm" addtoken="false" />
@@ -40,11 +40,11 @@
 					<cfelse>
 						<cfset xURL = "">
 					</cfif>
-		
+
 					<cfset theURL = "#args.URL#?#xURL#">
 				<cfelse>
 					<cfset theURL = "#args.URL#">
-				</cfif>	
+				</cfif>
 				<cfschedule action="UPDATE"
 							task="#args.TASKNAME#?#form.actionVarName#=#form.actionVar#"
 							URL="#args.URL#"
@@ -64,7 +64,7 @@
 					<cflocation url="#session.cflocFix#/admin/inc/admin_server_jobs.cfm" addtoken="false" />
 				</cfcatch>
 			</cftry>
-			
+
 			<cfset session.message.text = "The scheduled task was run successfully." />
 			<cfset session.message.type = "info" />
 			<cflocation url="#session.cflocFix#/admin/inc/admin_server_jobs.cfm" addtoken="false" />
@@ -77,10 +77,10 @@
 					<cfset session.message.type = "error" />
 					<cflocation url="#session.cflocFix#/admin/inc/admin_server_jobs.cfm" addtoken="false" />
 				</cfcatch>
-			</cftry>  
+			</cftry>
 			<cfset session.message.text = "The scheduled task was deleted successfully." />
 			<cfset session.message.type = "info" />
 			<cflocation url="#session.cflocFix#/admin/inc/admin_server_jobs.cfm" addtoken="false" />
 		</cfcase>
 	</cfswitch>
-</cfsilent>	
+</cfsilent>

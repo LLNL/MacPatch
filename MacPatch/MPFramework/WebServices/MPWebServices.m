@@ -1627,4 +1627,43 @@
     return result;
 }
 
+- (NSDictionary *)getHashForPlugin:(NSString *)bundleID pluginName:(NSString *)pName pluginVersion:(NSString *)pVer error:(NSError **)err
+{
+    // Request
+    NSError *error = nil;
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    [params setObject:self._cuuid forKey:@"clientID"];
+    [params setObject:pName forKey:@"pluginName"];
+    [params setObject:bundleID forKey:@"pluginBundle"];
+    [params setObject:pVer forKey:@"pluginVersion"];
+    NSData *res = [self requestWithMethodAndParams:@"GetPluginHash" params:(NSDictionary *)params error:&error];
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+    
+    // MPJsonResult does all of the error checking on the result
+    MPJsonResult *jres = [[MPJsonResult alloc] init];
+    [jres setJsonData:res];
+    error = nil;
+    id result = [jres returnResult:&error];
+    qldebug(@"JSON Result: %@",result);
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+    
+    return result;
+}
+
 @end

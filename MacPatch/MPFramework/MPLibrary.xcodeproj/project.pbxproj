@@ -111,6 +111,7 @@
 		8FE560D216DE899B00BB7600 /* MPSWInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE560CE16DE899B00BB7600 /* MPSWInstaller.m */; };
 		8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE560D316DE932900BB7600 /* MPAgentController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8FE560D816DE932900BB7600 /* MPAgentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE560D416DE932900BB7600 /* MPAgentController.m */; };
+		8FE6EEB81B9A035800E8F8E1 /* InventoryPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FE6EEB71B9A035800E8F8E1 /* InventoryPlugin.h */; };
 		8FEC938717CBFEFB00AA9C1C /* MPApplePatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEC938517CBFEFB00AA9C1C /* MPApplePatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FEC938817CBFEFB00AA9C1C /* MPApplePatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938617CBFEFB00AA9C1C /* MPApplePatch.m */; };
 		8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEC938917CBFF0F00AA9C1C /* MPCustomPatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -231,6 +232,7 @@
 		8FE560CE16DE899B00BB7600 /* MPSWInstaller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSWInstaller.m; sourceTree = "<group>"; };
 		8FE560D316DE932900BB7600 /* MPAgentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentController.h; sourceTree = "<group>"; };
 		8FE560D416DE932900BB7600 /* MPAgentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentController.m; sourceTree = "<group>"; };
+		8FE6EEB71B9A035800E8F8E1 /* InventoryPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InventoryPlugin.h; sourceTree = "<group>"; };
 		8FEC938517CBFEFB00AA9C1C /* MPApplePatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPApplePatch.h; sourceTree = "<group>"; };
 		8FEC938617CBFEFB00AA9C1C /* MPApplePatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPApplePatch.m; sourceTree = "<group>"; };
 		8FEC938917CBFF0F00AA9C1C /* MPCustomPatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCustomPatch.h; sourceTree = "<group>"; };
@@ -270,7 +272,6 @@
 		0867D691FE84028FC02AAC07 /* MPFramework */ = {
 			isa = PBXGroup;
 			children = (
-				08FB77AEFE84172EC02AAC07 /* Classes */,
 				8F4B1DE516DD1BC600E15A9E /* MacPatch */,
 				8FEA3EE51649726400103E80 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -282,6 +283,7 @@
 			isa = PBXGroup;
 			children = (
 				8F47F0EE18EDFD5A00158396 /* Networking */,
+				8FA6A76C1B90D6FE006A329B /* Inventory */,
 				724EE9831698A57A007FD391 /* Constants.h */,
 				724EE9841698A57A007FD391 /* Constants.m */,
 				8FCB778C140C30AE00D86586 /* MPDefaults.h */,
@@ -308,6 +310,7 @@
 				8FED881F1463165B00709F8E /* Third Party Classes */,
 			);
 			name = Classes;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		8F47F0EE18EDFD5A00158396 /* Networking */ = {
@@ -335,6 +338,7 @@
 			isa = PBXGroup;
 			children = (
 				8F4B1DE816DD1BC600E15A9E /* MacPatch.h */,
+				08FB77AEFE84172EC02AAC07 /* Classes */,
 				8F4B1DE616DD1BC600E15A9E /* Supporting Files */,
 			);
 			path = MacPatch;
@@ -359,6 +363,14 @@
 				8FE560D416DE932900BB7600 /* MPAgentController.m */,
 			);
 			name = "MacPatch+SWDist";
+			sourceTree = "<group>";
+		};
+		8FA6A76C1B90D6FE006A329B /* Inventory */ = {
+			isa = PBXGroup;
+			children = (
+				8FE6EEB71B9A035800E8F8E1 /* InventoryPlugin.h */,
+			);
+			name = Inventory;
 			sourceTree = "<group>";
 		};
 		8FAEF635145F1773006284B2 /* MPPatch+Scanner */ = {
@@ -572,6 +584,7 @@
 				8F4B1E4816DD1D8C00E15A9E /* MacPatch.h in Headers */,
 				8F4B1EA816DD267B00E15A9E /* lcl.h in Headers */,
 				8F4B1EBE16DD5FB400E15A9E /* NSString+Hash.h in Headers */,
+				8FE6EEB81B9A035800E8F8E1 /* InventoryPlugin.h in Headers */,
 				8F4B1EC416DD5FDD00E15A9E /* NSFileManager+Helper.h in Headers */,
 				8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */,
 				8F47F10118EE000100158396 /* MPNetConfig.h in Headers */,

@@ -1,8 +1,8 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.7.0.1
-	Rev 1
+	Version 2.7.0.2
+	Rev 2
 */
 
 SET NAMES utf8;
@@ -179,13 +179,29 @@ CREATE TABLE `mp_agent_config` (
 -- ----------------------------
 DROP TABLE IF EXISTS `mp_agent_config_data`;
 CREATE TABLE `mp_agent_config_data` (
-  `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `aid` varchar(50) NOT NULL,
   `aKey` varchar(255) NOT NULL,
   `aKeyValue` varchar(255) NOT NULL,
   `enforced` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`rid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `mp_agent_plugins`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_agent_plugins`;
+CREATE TABLE `mp_agent_plugins` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `pluginName` varchar(255) DEFAULT NULL,
+  `pluginBundleID` varchar(100) DEFAULT NULL,
+  `pluginVersion` varchar(20) DEFAULT NULL,
+  `hash` varchar(100) DEFAULT NULL,
+  `active` int(1) DEFAULT '0',
+  PRIMARY KEY (`rid`),
+  KEY `main_idx` (`pluginName`,`pluginBundleID`,`pluginVersion`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+
 
 -- ----------------------------
 --  Table structure for `mp_agent_upload`

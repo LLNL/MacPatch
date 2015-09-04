@@ -2179,4 +2179,60 @@
 
         <cfreturn #response#>
     </cffunction>
+
+    <!---
+        Remote API
+        Type: Public/Remote
+        Description: Get Agent Plugin Hash
+        New for MacPatch 2.7
+    --->
+    <cffunction name="GetPluginHash" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="true" default="0" />
+        <cfargument name="pluginName" required="true" default="NA" />
+        <cfargument name="pluginBundle" required="true" default="NA" />
+        <cfargument name="pluginVersion" required="true" default="0" />
+
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "0" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfset response[ "result" ] = "0" />
+        <cfset response[ "machineName" ] = "" />
+        <cfset response[ "hostName" ] = "" />
+
+        <cfscript>
+            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
+            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
+        </cfscript>
+
+        <cfset response[ "machineName" ] = "#machineName#" />
+        <cfset response[ "hostName" ] = "#hostaddress#" />
+
+        <cftry>
+            <cfif validClientID(arguments.clientID) EQ true>
+                <cfquery datasource="#this.ds#" name="qPluginHash">
+                    Select hash from mp_agent_plugins
+                    Where pluginName = <cfqueryparam value="#arguments.pluginName#">
+                    AND pluginBundle = <cfqueryparam value="#arguments.pluginBundle#">
+                    AND pluginVersion = <cfqueryparam value="#arguments.pluginVersion#">
+                    AND active = "1"
+                </cfquery>
+                <cfif qPluginHash.RecordCount EQ 1>
+                    <cfset response.result = #qPluginHash.hash#>
+                <cfelse>
+                    <cfset response.errorno = "2">
+                    <cfset response.errormsg = "Plugin not found.">
+                </cfif>
+            <cfelse>
+                <cfset response.errorno = "3">
+                <cfset response.errormsg = "Invalid data.">
+            </cfif>
+            <cfcatch>
+                <cfset l = elogit("[getServerListVersion]: #cfcatch.Detail# -- #cfcatch.Message#")>
+                <cfset response.errorno = "1">
+                <cfset response.errormsg = "#cfcatch.Detail# -- #cfcatch.Message#">
+            </cfcatch>
+        </cftry>
+
+        <cfreturn #response#>
+    </cffunction>
 </cfcomponent>

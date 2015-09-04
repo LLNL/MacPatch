@@ -54,6 +54,7 @@
 - (NSString *)hashForArray:(NSArray *)aArray;
 - (BOOL)hasInvDataChanged:(NSString *)aInvType hash:(NSString *)aHash;
 - (void)writeInvDataHashToFile:(NSString *)aInvType hash:(NSString *)aHash;
+- (BOOL)processInventoryData:(NSArray *)dataArray inventoryNode:(NSDictionary *)invNode;
 
 @end
 
@@ -140,25 +141,6 @@
 		}	
 		invColTypes = [NSArray arrayWithObject:aSPType];
 	}
-    NSArray *invPlugins = nil;
-    MPInventoryPlugin *mpip = [[MPInventoryPlugin alloc] init];
-    invPlugins = [mpip loadPlugins];
-    
-    if (invPlugins) {
-        for (NSDictionary *p in invPlugins)
-        {
-            InventoryPlugin *plugin = [p objectForKey:@"plugin"];
-            if (!plugin) continue;
-            [plugin setPluginName:[p objectForKey:@"pluginName"]];
-            [plugin setPluginVersion:[p objectForKey:@"pluginVersion"]];
-            NSDictionary *plugRes = [plugin runInventoryCollection];
-            NSLog(@"%@",plugRes);
-        }
-    }
-    
-    return 0;
-	
-	
 	
 	NSMutableArray *resultsArray = [[NSMutableArray alloc] init];
 	NSMutableDictionary *result;
@@ -211,16 +193,14 @@
 	}
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
-	MPDataMgr	*dataMgr	= [[MPDataMgr alloc] init];
 	NSDictionary *item;
-	NSString *dataMgrJSON;
 	NSArray *tmpArr = nil;
-    NSString *invCollectionHash;
 	
 	for (i=0;i<[resultsArray count];i++)
 	{
 		item = [NSDictionary dictionaryWithDictionary:[resultsArray objectAtIndex:i]];
-		if ([fm fileExistsAtPath:[item objectForKey:@"file"]]) {
+		if ([fm fileExistsAtPath:[item objectForKey:@"file"]])
+        {
 			// Get Array Object, then gen DataMgr String
 			if ([[item objectForKey:@"type"] isEqual:@"SPHardwareDataType"] ) {
 				tmpArr = [self parseHardwareOverview:[item objectForKey:@"file"]];
@@ -265,37 +245,46 @@
             }
 
 			if (tmpArr) {
-                // Gen a hash for the inv results, if it has not changed dont post it.
-                invCollectionHash = [self hashForArray:tmpArr];
-                if ([self hasInvDataChanged:[item objectForKey:@"type"] hash:invCollectionHash] == NO) {
-                    if (postCompleteInvData == NO) {
-                        logit(lcl_vInfo,@"Results for %@ have not changed. No need to post.",[item objectForKey:@"type"]);
-                        continue;
-                    }
-                }
-
-				dataMgrJSON = [dataMgr GenJSONForDataMgr:tmpArr
-											   dbTable:[item objectForKey:@"wstype"] 
-										 dbTablePrefix:@"mpi_" 
-										 dbFieldPrefix:@"mpa_"
-										  updateFields:@"rid,cuuid"
-											 deleteCol:@"cuuid"
-										deleteColValue:[self cUUID]];
-
-				if ([self sendResultsToWebService:dataMgrJSON]) {
-					logit(lcl_vInfo,@"Results for %@ posted.",[item objectForKey:@"wstype"]);
-                    [self writeInvDataHashToFile:[item objectForKey:@"type"] hash:invCollectionHash];
-				} else {
-					logit(lcl_vError,@"Results for %@ not posted.",[item objectForKey:@"wstype"]);
-				}
-
-                [dataMgrJSON writeToFile:[@"/private/tmp" stringByAppendingPathComponent:[item objectForKey:@"wstype"]] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-                [self writeInvDataHashToFile:[item objectForKey:@"type"] hash:invCollectionHash];
-				dataMgrJSON = NULL;
+                //
+                // Generate Datamgr JSON object and post results
+                //
+                [self processInventoryData:tmpArr inventoryNode:item];
 			}
 		}
 	}
-	
+    
+	// Process Inventory Plugins
+    if ([aSPType isEqual:@"All"] || [aSPType isEqual:@"Plugins"])
+    {    
+        NSArray *invPlugins = nil;
+        MPInventoryPlugin *mpip = [[MPInventoryPlugin alloc] init];
+        invPlugins = [mpip loadPlugins];
+        
+        if (invPlugins) {
+            for (NSDictionary *p in invPlugins)
+            {
+                logit(lcl_vDebug, @"Plugin Object: %@",p);
+                logit(lcl_vInfo, @"Load abnd process plugin %@ v.%@",[p objectForKey:@"pluginName"],[p objectForKey:@"pluginVersion"]);
+                Class invObj = [p objectForKey:@"plugin"];
+                [invObj setPluginName:[p objectForKey:@"pluginName"]];
+                [invObj setPluginVersion:[p objectForKey:@"pluginVersion"]];
+                NSDictionary *plugRes = [invObj runInventoryCollection];
+                if ([plugRes objectForKey:@"type"] && [plugRes objectForKey:@"wstype"] && [plugRes objectForKey:@"data"])
+                {
+                    if ([[plugRes objectForKey:@"data"] class] != [NSArray class]) {
+                        logit(lcl_vError,@"Inventory Plugin Result for data was not of the right type. No data will be sent.");
+                        continue;
+                    } else {
+                        [self processInventoryData:[plugRes objectForKey:@"data"] inventoryNode:plugRes];
+                    }
+                    
+                }
+                
+                NSLog(@"%@",plugRes);
+            }
+        }
+    }
+    
 	// Collect Audit Data
 	if ([aSPType isEqual:@"All"]) {
 		int x = 0;
@@ -309,15 +298,52 @@
 	return 0;
 }
 
-- (BOOL)sendResultsToWebService:(NSString *)aDataMgrXML
+- (BOOL)processInventoryData:(NSArray *)dataArray inventoryNode:(NSDictionary *)invNode
+{
+    MPDataMgr   *dataMgr = [[MPDataMgr alloc] init];
+    NSString    *dataMgrJSON;
+    NSString    *invCollectionHash;
+    
+    // Gen a hash for the inv results, if it has not changed dont post it.
+    invCollectionHash = [self hashForArray:dataArray];
+    if ([self hasInvDataChanged:[invNode objectForKey:@"type"] hash:invCollectionHash] == NO) {
+        logit(lcl_vInfo,@"Results for %@ have not changed. No need to post.",[invNode objectForKey:@"type"]);
+        return YES;
+    }
+    
+    dataMgrJSON = [dataMgr GenJSONForDataMgr:dataArray
+                                     dbTable:[invNode objectForKey:@"wstype"]
+                               dbTablePrefix:@"mpi_"
+                               dbFieldPrefix:@"mpa_"
+                                updateFields:@"rid,cuuid"
+                                   deleteCol:@"cuuid"
+                              deleteColValue:[self cUUID]];
+    
+    if ([self sendResultsToWebService:dataMgrJSON]) {
+        logit(lcl_vInfo,@"Results for %@ posted.",[invNode objectForKey:@"wstype"]);
+        [self writeInvDataHashToFile:[invNode objectForKey:@"type"] hash:invCollectionHash];
+    } else {
+        logit(lcl_vError,@"Results for %@ not posted.",[invNode objectForKey:@"wstype"]);
+    }
+    
+    /* Debug
+    [dataMgrJSON writeToFile:[@"/private/tmp" stringByAppendingPathComponent:[invNode objectForKey:@"wstype"]]
+                  atomically:YES
+                    encoding:NSUTF8StringEncoding
+                       error:NULL];
+    
+     */
+    return YES;
+}
+
+- (BOOL)sendResultsToWebService:(NSString *)aDataMgrData
 {
 	BOOL result = NO;
 
 	// Encode to base64 and send to web service
-	//NSString	*cleanXMLString = [aDataMgrXML validXMLString];
-    NSString    *b64String   = [[aDataMgrXML dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
+    NSString *b64String = [[aDataMgrData dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
 	if (!b64String) {
-		logit(lcl_vError,@"Unable to encode xml data.");
+		logit(lcl_vError,@"Unable to encode data.");
 		return result;
 	}
 
