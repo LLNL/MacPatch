@@ -1627,7 +1627,7 @@
     return result;
 }
 
-- (NSDictionary *)getHashForPlugin:(NSString *)bundleID pluginName:(NSString *)pName pluginVersion:(NSString *)pVer error:(NSError **)err
+- (NSString *)getHashForPluginName:(NSString *)pName pluginBunleID:(NSString *)bundleID pluginVersion:(NSString *)pVer error:(NSError **)err
 {
     // Request
     NSError *error = nil;

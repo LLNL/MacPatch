@@ -89,4 +89,7 @@
 // Profiles
 - (NSArray *)getProfileIDDataForClient:(NSError **)err;
 
+// Plugins
+- (NSString *)getHashForPluginName:(NSString *)pName pluginBunleID:(NSString *)bundleID pluginVersion:(NSString *)pVer error:(NSError **)err;
+
 @end
