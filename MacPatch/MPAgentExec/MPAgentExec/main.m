@@ -272,7 +272,6 @@ int main (int argc, char * argv[])
                 result = [controller installSoftwareTasksUsingPLIST:argType];
                 break;
             default:
-                i = nil;
                 logit(lcl_vError, @"should never have gotten here!");
                 break;
         }
