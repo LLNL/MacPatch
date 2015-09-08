@@ -138,7 +138,8 @@ fi
 
 echo "[STEP]: Build and Compile OpenSSL..."
 cd ${TMP_DIR}/openssl
-./configure --prefix=${MP_OSSL_DIR}
+./Configure darwin64-x86_64-cc -shared --prefix=${MP_OSSL_DIR} \
+--openssldir=${MP_OSSL_DIR}
 make
 make install
 
