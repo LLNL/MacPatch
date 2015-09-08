@@ -138,8 +138,14 @@ fi
 
 echo "[STEP]: Build and Compile OpenSSL..."
 cd ${TMP_DIR}/openssl
+if $USEMACOS; then
 ./Configure darwin64-x86_64-cc -shared --prefix=${MP_OSSL_DIR} \
 --openssldir=${MP_OSSL_DIR}
+fi
+if $USELINUX; then
+./Configure -shared --prefix=${MP_OSSL_DIR} \
+--openssldir=${MP_OSSL_DIR}
+fi
 make
 make install
 
@@ -176,14 +182,16 @@ if $USEMACOS; then
 ./configure -enable-layout=MPHttpServer \
 --prefix=/Library/MacPatch/Server/Apache2 \
 --with-pcre=/Library/MacPatch/Server/lib/pcre \
---enable-mods-shared=all --with-included-apr
+--enable-mods-shared=all --with-included-apr \
+--enable-ssl --with-ssl=${MP_OSSL_DIR}
 fi 
 
 if $USELINUX; then
 ./configure \
 --prefix=/Library/MacPatch/Server/Apache2 \
 --with-pcre=/Library/MacPatch/Server/lib/pcre \
---enable-mods-shared="all ssl proxy" --with-included-apr
+--enable-mods-shared="all ssl proxy" --with-included-apr \
+--enable-ssl --with-ssl=${MP_OSSL_DIR}
 fi 
 
 make
