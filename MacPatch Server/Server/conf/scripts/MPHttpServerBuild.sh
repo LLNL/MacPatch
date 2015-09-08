@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPHttpServerBuild.sh
-# Version: 1.1.1
+# Version: 1.2.0
 #
 # Description:
 # Will Download and Compile PCRE & Apache 2.4.x for MacPatch Server
@@ -14,6 +14,7 @@
 # History:
 # 1.1:		Added New Httpd and Apr-Util and PCRE source
 # 1.1.1:	Remove MPApache symlink if exists
+# 1.2.0		Added OpenSSL 
 #
 # -------------------------------------------------------------
 
@@ -21,6 +22,7 @@ MP_BUILD_DIR=/Library/MacPatch/Server
 MP_CONF_DIR=${MP_BUILD_DIR}/conf
 MP_HTTPD_DIR=/Library/MacPatch/Server/Apache2
 MP_PCRE_DIR=${MP_BUILD_DIR}/lib/pcre
+MP_OSSL_DIR=${MP_BUILD_DIR}/lib/openssl
 TMP_DIR=/private/var/tmp/MPApache
 SRC_DIR=${MP_BUILD_DIR}/conf/src
 XOSTYPE=`uname -s`
@@ -70,6 +72,7 @@ fi
 mkdir -p ${TMP_DIR}
 cd ${TMP_DIR}
 
+SSL_SW=`find "${SRC_DIR}" -name "openssl"* -type f -exec basename {} \; | head -n 1`
 # "httpd-2.4.12.tar.gz"
 HTTPD_SW=`find "${SRC_DIR}" -name "httpd-2"* -type f -exec basename {} \; | head -n 1`
 # "apr-1.5.2.tar.gz"
@@ -102,6 +105,10 @@ if $USEMACOS; then
 	cp ${MP_CONF_DIR}/httpd/layout/config.layout.apr ${TMP_DIR}/httpd/srclib/apr-util/config.layout
 fi
 
+# OpenSSL
+mkdir ${TMP_DIR}/openssl
+tar xvfz ${SRC_DIR}/${SSL_SW} --strip 1 -C ${TMP_DIR}/openssl
+
 # PCRE
 mkdir ${TMP_DIR}/pcre
 tar xvfz ${SRC_DIR}/${PCRE_SW} --strip 1 -C ${TMP_DIR}/pcre
@@ -119,6 +126,22 @@ if $USEMACOS; then
 		ln -s "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain" "/Applications/Xcode.app/Contents/Developer/Toolchains/OSX10.8.xctoolchain"
 	fi
 fi
+
+# ------------------------------------------------------------
+# Compile OpenSSL
+# ------------------------------------------------------------
+
+# Remove old PCRE before compile
+if [ -d "${MP_OSSL_DIR}" ]; then
+	rm -rf "${MP_OSSL_DIR}"
+fi
+
+echo "[STEP]: Build and Compile OpenSSL..."
+cd ${TMP_DIR}/openssl
+./configure --prefix=${MP_OSSL_DIR}
+make
+make install
+
 
 # ------------------------------------------------------------
 # Compile PCRE
