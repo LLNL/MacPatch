@@ -29,7 +29,7 @@
         {"title": "Client Agents", "expanded": false, "folder": true, "icon": "gear.png",
 		"children": [
 			{"title": "Deploy",      "icon": "text-list.png", "href": "/admin/inc/admin_client_agents.cfm"},
-			{"title": "Configure",   "icon": "text-list.png", "href": "/admin/inc/admin_client_agent_config.cfm"}
+			{"title": "Configure",   "icon": "text-list.png", "href": "/admin/inc/admin_client_agent_config.cfm"},
             {"title": "Plugins",     "icon": "text-list.png", "href": "/admin/inc/admin_agent_plugins.cfm"}
 		]},
 		{"title": "Patch Baseline", "icon": "gear.png", "href": "/admin/inc/admin_baseline_patches.cfm" },

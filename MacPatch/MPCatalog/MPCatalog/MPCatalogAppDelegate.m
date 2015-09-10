@@ -1734,7 +1734,13 @@ done:
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
         BOOL successful = [proxy registerClient:self];
         if (!successful) {
-            NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+            NSAlert *alert = [NSAlert alertWithMessageText:@"Error"
+                                             defaultButton:@"OK" alternateButton:nil
+                                               otherButton:nil
+                                 informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
+            
+            [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+            [alert runModal];
             [self cleanup];
         }
     }

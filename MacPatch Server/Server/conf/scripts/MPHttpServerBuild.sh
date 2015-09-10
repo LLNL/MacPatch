@@ -142,10 +142,12 @@ if $USEMACOS; then
 ./Configure darwin64-x86_64-cc -shared --prefix=${MP_OSSL_DIR} \
 --openssldir=${MP_OSSL_DIR}
 fi
+
 if $USELINUX; then
 ./Configure -shared --prefix=${MP_OSSL_DIR} \
 --openssldir=${MP_OSSL_DIR}
 fi
+
 make
 make install
 

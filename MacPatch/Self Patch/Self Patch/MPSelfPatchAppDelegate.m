@@ -294,7 +294,15 @@ static BOOL gDone = false;
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
         BOOL successful = [proxy registerClient:self];
         if (!successful) {
-            NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+            NSAlert *alert = [NSAlert alertWithMessageText:@"Error"
+                                             defaultButton:@"OK"
+                                           alternateButton:nil
+                                               otherButton:nil
+                                 informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
+            
+            [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+            [alert runModal];
+
             [self cleanup];
         }
     }
@@ -319,7 +327,15 @@ static BOOL gDone = false;
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
         BOOL successful = [proxy registerClient:self];
         if (!successful) {
-            NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+            NSAlert *alert = [NSAlert alertWithMessageText:@"Error"
+                                             defaultButton:@"OK"
+                                           alternateButton:nil
+                                               otherButton:nil
+                                 informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
+            
+            [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+            [alert runModal];
+
             NSMutableDictionary *details = [NSMutableDictionary dictionary];
 			[details setValue:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue." forKey:NSLocalizedDescriptionKey];
             if (err != NULL)  *err = [NSError errorWithDomain:@"world" code:1 userInfo:details];
@@ -792,7 +808,15 @@ done:
         logit(lcl_vError,@"%@",wsErr.localizedDescription);
     }
 	if (!patchGroupPatches) {
-		NSRunAlertPanel(@"Communications Error", @"There was a issue getting the approved patches for the patch group, scan will exit.", @"OK", nil,nil);
+        NSAlert *alert = [NSAlert alertWithMessageText:@"Communications Error"
+                                         defaultButton:@"OK"
+                                       alternateButton:nil
+                                           otherButton:nil
+                             informativeTextWithFormat:@"There was a issue getting the approved patches for the patch group, scan will exit."];
+        
+        [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+        [alert runModal];
+
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
 		goto done;
 	}
@@ -1055,7 +1079,13 @@ done:
 	
 	[spStatusProgress stopAnimation:self];
 	if  ([approvedUpdatesArray count] <= 0) {
-		NSRunAlertPanel(@"Patch Scan Complete", @"There are no patches needed at this time.", @"OK", nil,nil);
+        NSAlert *alert = [NSAlert alertWithMessageText:@"Patch Scan Complete"
+                                         defaultButton:@"OK" alternateButton:nil
+                                           otherButton:nil
+                             informativeTextWithFormat:@"There are no patches needed at this time."];
+        
+        [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+        [alert runModal];
 	} else {
 		logit(lcl_vInfo,@"Patches found %d",(int)[[arrayController arrangedObjects] count]);
 		[spStatusText setStringValue:[NSString stringWithFormat:@"%d patches needed.",(int)[[arrayController arrangedObjects] count]]];

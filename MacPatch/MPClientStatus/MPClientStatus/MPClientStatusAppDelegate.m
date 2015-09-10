@@ -230,7 +230,13 @@ NSString *const kRebootRequiredNotification = @"kRebootRequiredNotification";
             successful = [proxy registerClient:self];
             if (!successful) {
                 if (i == 3) {
-                    NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+                    NSAlert *alert = [NSAlert alertWithMessageText:@"Error"
+                                                     defaultButton:@"OK" alternateButton:nil
+                                                       otherButton:nil
+                                         informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
+                    
+                    [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+                    [alert runModal];
                 }
                 [self cleanup];
             } else {
@@ -263,7 +269,14 @@ NSString *const kRebootRequiredNotification = @"kRebootRequiredNotification";
             successful = [proxy registerClient:self];
             if (!successful) {
                 if (i == 3) {
-                    NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+                    NSAlert *alert = [NSAlert alertWithMessageText:@"Error"
+                                                     defaultButton:@"OK" alternateButton:nil
+                                                       otherButton:nil
+                                         informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
+                    
+                    [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+                    [alert runModal];
+                    
                     NSMutableDictionary *details = [NSMutableDictionary dictionary];
                     [details setValue:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue." forKey:NSLocalizedDescriptionKey];
                     if (err != NULL)  *err = [NSError errorWithDomain:@"world" code:1 userInfo:details];
