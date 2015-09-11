@@ -560,7 +560,8 @@
         }
         
         // Create Download URL
-        NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+        // NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+        NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
         logit(lcl_vInfo,@"Download software from: %@",_url);
         
         BOOL isDir;
@@ -902,7 +903,8 @@
                     }
                     
                     // Create Download URL
-                    NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+                    //NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+                    NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
                     logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
                     
                     [progressBar setDoubleValue:0.0];

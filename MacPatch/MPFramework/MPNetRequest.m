@@ -247,9 +247,11 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     }
 
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *theURL = [NSString stringWithFormat:@"%@://%@:%d%@?method=%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,URI,[wsMethodName urlEncodeString]];
+    //NSString *theURL = [NSString stringWithFormat:@"%@://%@:%d%@?method=%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,URI,[wsMethodName urlEncodeString]];
+    NSString *theURL = [NSString stringWithFormat:@"%@://%@:%d%@?method=%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,URI,wsMethodName];
     qldebug(@"%@",theURL);
-    [request setURL:[NSURL URLWithString:theURL]];
+    NSString *properlyEscapedURL = [theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [request setURL:[NSURL URLWithString:properlyEscapedURL]];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     [request setTimeoutInterval:URL_TIMEOUT];
     [request setHTTPMethod:self.httpMethod];
@@ -293,7 +295,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
 
     [theURL appendFormat:@"%@://%@:%d%@?method=%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,URI,[wsMethodName urlEncodeString]];
-
+    /* Old way to encode
     for (NSString *key in [paramDict allKeys])
     {
         if ([[paramDict objectForKey:key] isKindOfClass:[NSString class]]) {
@@ -303,10 +305,16 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
         }
 
     }
+     */
+    for (NSString *key in [paramDict allKeys])
+    {
+        [theURL appendFormat:@"&%@=%@",key,[paramDict objectForKey:key]];
+    }
     qldebug(@"%@",theURL);
+    NSString *properlyEscapedURL = [theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     [request setTimeoutInterval:URL_TIMEOUT];
-    [request setURL:[NSURL URLWithString:(NSString *)theURL]];
+    [request setURL:[NSURL URLWithString:(NSString *)properlyEscapedURL]];
     [request setHTTPMethod:@"GET"];
     return request;
 }
@@ -321,6 +329,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     }
     // Downloads use http only
     NSString *theURL = [NSString stringWithFormat:@"http://%@%@",mpServer.host,url];
+    NSString *properlyEscapedURL = [theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
     _dlFilePath = [self createTempDirFromURL:theURL];
     qldebug(@"buildDownloadRequest url: %@",theURL);
@@ -329,7 +338,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     [request setTimeoutInterval:URL_TIMEOUT];
     [request setValue:@"" forHTTPHeaderField:@"Accept-Encoding"];
-    [request setURL:[NSURL URLWithString:(NSString *)theURL]];
+    [request setURL:[NSURL URLWithString:(NSString *)properlyEscapedURL]];
     return request;
 }
 

@@ -60,7 +60,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-es"
+            argument = "-V -g &quot;CEHDev&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

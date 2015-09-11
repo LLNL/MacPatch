@@ -352,7 +352,8 @@
 
     // Request
     NSError *error = nil;
-    NSDictionary *param = [NSDictionary dictionaryWithObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
+    //NSDictionary *param = [NSDictionary dictionaryWithObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
+    NSDictionary *param = [NSDictionary dictionaryWithObject:[_defaults objectForKey:@"PatchGroup"] forKey:@"PatchGroup"];
     NSData *res = [self requestWithMethodAndParams:@"GetPatchGroupPatches" params:param error:&error];
 
     if (error)
@@ -451,7 +452,8 @@
     // Request
     NSError *error = nil;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    [params setObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
+    //[params setObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
+    [params setObject:[_defaults objectForKey:@"PatchGroup"] forKey:@"PatchGroup"];
     [params setObject:[NSNumber numberWithInt:patchGroupRevision] forKey:@"revision"];
     NSData *res = [self requestWithMethodAndParams:@"GetIsLatestRevisionForPatchGroup" params:(NSDictionary *)params error:&error];
     if (error)

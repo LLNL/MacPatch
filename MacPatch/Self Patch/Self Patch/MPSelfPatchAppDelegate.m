@@ -1190,7 +1190,8 @@ done:
 						[spStatusText setStringValue:[NSString stringWithFormat:@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
 						[spStatusText display];
 						//Pre Proxy Config
-						downloadURL = [NSString stringWithFormat:@"/mp-content%@",[[currPatchToInstallDict objectForKey:@"url"] urlEncode]];
+						//downloadURL = [NSString stringWithFormat:@"/mp-content%@",[[currPatchToInstallDict objectForKey:@"url"] urlEncode]];
+                        downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
 						logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
 						err = nil;
 						dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
@@ -1689,7 +1690,8 @@ done:
             @try
             {
                 qlinfo(@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]);
-                NSString *downloadURL = [NSString stringWithFormat:@"/mp-content%@",[[currPatchToInstallDict objectForKey:@"url"] urlEncode]];
+                //NSString *downloadURL = [NSString stringWithFormat:@"/mp-content%@",[[currPatchToInstallDict objectForKey:@"url"] urlEncode]];
+                NSString *downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
                 [reboot setObject:downloadURL forKey:@"downloadURL"];
                 qlinfo(@"Download patch from: %@",downloadURL);
                 

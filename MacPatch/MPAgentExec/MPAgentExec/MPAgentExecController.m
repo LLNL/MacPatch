@@ -1798,6 +1798,7 @@ done:
 {
     [self setUpSWDistProperties];
     needsReboot = 0;
+    int result = 1;
 
     MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
@@ -1812,32 +1813,36 @@ done:
         }
     } else {
         qlerror(@"No tasks for group %@ were found.",aGroupName);
-        return 1;
+        return result;
     }
     
     if (wsErr) {
         qlerror(@"There was an error getting software tasks for group %@.",aGroupName);
-        return 1;
+        return result;
     }
     if (!tasks) {
         qlerror(@"No tasks were found for group %@.",aGroupName);
-        return 1;
+        return result;
     }
 
     NSError *tErr = nil;
     for (NSDictionary *task in tasks) {
         tErr = nil;
         if ([self installSoftwareWithTask:task error:&tErr] == NO) {
-            return 1;
+            qlerror(@"FAILED to install task %@",[task objectForKey:@"name"]);
+            if (tErr) {
+                qlerror(@"%@",tErr.localizedDescription);
+            }
+             result = 1;
         }
     }
 
     if (needsReboot >= 1) {
         qlerror(@"Software has been installed that requires a reboot.");
-        return 2;
+        result = 2;
     }
 
-    return 0;
+    return result;
 }
 
 - (int)installSoftwareTasksUsingPLIST:(NSString *)aPlist
@@ -1904,7 +1909,7 @@ done:
 
     // Create Download URL
     [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Downloading [taskid:%@]: %@",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
-    NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[aTask valueForKeyPath:@"Software.sw_url"] urlEncode]];
+    NSString *_url = [@"/mp-content" stringByAppendingPathComponent:[aTask valueForKeyPath:@"Software.sw_url"]];
     logit(lcl_vDebug,@"Download software from: %@",[aTask valueForKeyPath:@"Software.sw_type"]);
 
     NSError *dlErr = nil;
@@ -2195,14 +2200,7 @@ done:
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
         BOOL successful = [proxy registerClient:self];
         if (!successful) {
-            NSAlert *alert = [NSAlert alertWithMessageText:@"Error"
-                                             defaultButton:@"OK" alternateButton:nil
-                                               otherButton:nil
-                                 informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
-            
-            [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-            [alert runModal];
-
+            logit(lcl_vError,@"Unable to connect to helper application.");
             [self cleanup];
         }
     }
