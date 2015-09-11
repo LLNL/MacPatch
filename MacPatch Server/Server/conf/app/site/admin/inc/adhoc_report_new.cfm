@@ -19,6 +19,13 @@
             container: $("#pager")
         });
     });
+
+    $('select.required').change(function() {
+      var total = $('select.required').length;
+      var selected = $('select.required option:selected').length;
+
+      $('#submitIt').attr('disabled', (selected == total));
+    });
 </script>
 
 <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
@@ -57,7 +64,7 @@
 			<tr>
 				<td>
 					<input type="hidden" name="tables_required" value="WARNING: You must select a table(s).">
-					<input type="submit" name="Submit" value="Get Columns">
+					<input type="submit" name="Submit" value="Get Columns" id="submitIt">
 				</td>
 			</tr>
 		</table>
