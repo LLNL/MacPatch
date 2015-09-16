@@ -54,8 +54,9 @@
 
 @implementation MPClientStatusAppDelegate
 
-NSString *const kShowPatchesRequiredNotification = @"kShowPatchesRequiredNotification";
-NSString *const kRebootRequiredNotification = @"kRebootRequiredNotification";
+NSString *const kShowPatchesRequiredNotification    = @"kShowPatchesRequiredNotification";
+NSString *const kRebootRequiredNotification         = @"kRebootRequiredNotification";
+NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotification";
 
 #pragma mark Properties
 @synthesize window;
@@ -748,6 +749,20 @@ done:
         if (attrs != nil) {
             [self setLastPatchStatusUpdate:(NSDate*)[attrs objectForKey: NSFileModificationDate]];
         }
+        
+        // Set User Notification for Reboot
+        if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
+            if ([self patchCount] >= 1) {
+                NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
+                [ud setBool:YES forKey:@"patch"];
+                if ([self patchNeedsReboot] == YES) {
+                    [ud setBool:YES forKey:@"reboot"];
+                } else {
+                    [ud setBool:NO forKey:@"reboot"];
+                }
+                ud = nil;
+            }
+        }
     }
 }
 
@@ -958,6 +973,7 @@ done:
     @autoreleasepool
     {
         // Run Once, to show current status
+        [NSThread sleepForTimeInterval:10.0];
         [self showMPUserNotificationCenterMethod];
         // 600.0 = 10 Minutes
         NSTimer *timer = [NSTimer timerWithTimeInterval:1200.0
@@ -1019,9 +1035,7 @@ done:
 {
     NSUserNotification *userNote = [[NSUserNotification alloc] init];
     userNote.title = @"Reboot Patches Required";
-    //userNote.subtitle = @"Reboot Patches Required";
     userNote.informativeText = [NSString stringWithFormat:@"This system requires patches that require a reboot."];
-    //userNote.soundName = NSUserNotificationDefaultSoundName;
     userNote.actionButtonTitle = @"Reboot";
     userNote.hasActionButton = YES;
     if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
@@ -1059,6 +1073,10 @@ done:
     else if ([notification.name isEqualToString: kRebootRequiredNotification])
     {
         [self postUserNotificationForReboot];
+    }
+    else if ([notification.name isEqualToString: kRefreshStatusIconNotification])
+    {
+        [self displayPatchDataMethod];
     }
     else
     {

@@ -18,7 +18,6 @@
 		8FD88E4216DFB46300A870A3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88E3816DFB46300A870A3 /* Security.framework */; };
 		8FD88E4316DFB46300A870A3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88E3916DFB46300A870A3 /* SystemConfiguration.framework */; };
 		8FD88E4416DFB46300A870A3 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88E3A16DFB46300A870A3 /* libz.dylib */; };
-		8FD88E4516DFB46300A870A3 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88E3B16DFB46300A870A3 /* libcrypto.dylib */; };
 		8FD88E4616DFB46300A870A3 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88E3C16DFB46300A870A3 /* libicucore.dylib */; };
 		8FD88E4A16DFB4BE00A870A3 /* MPAgentUp2DateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88E4916DFB4BE00A870A3 /* MPAgentUp2DateController.m */; };
 /* End PBXBuildFile section */
@@ -71,7 +70,6 @@
 				8FD88E4216DFB46300A870A3 /* Security.framework in Frameworks */,
 				8FD88E4316DFB46300A870A3 /* SystemConfiguration.framework in Frameworks */,
 				8FD88E4416DFB46300A870A3 /* libz.dylib in Frameworks */,
-				8FD88E4516DFB46300A870A3 /* libcrypto.dylib in Frameworks */,
 				8FD88E4616DFB46300A870A3 /* libicucore.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -257,6 +255,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPAgentUp2Date/MPAgentUp2Date-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"../openssl-xcode/openssl/include",
+				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
@@ -283,6 +286,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPAgentUp2Date/MPAgentUp2Date-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"../openssl-xcode/openssl/include",
+				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (

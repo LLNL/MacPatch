@@ -118,26 +118,9 @@
 	}
 	
     // 3. Post patches needed to web service
-    /*
-    MPDataMgr *dataMgr = [[MPDataMgr alloc] init];
-	NSString *resXML = [NSString stringWithString:[dataMgr GenJSONForDataMgr:patchesNeeded 
-                                                                    dbTable:@"client_patches_third"
-															  dbTablePrefix:@"mp_"
-															  dbFieldPrefix:@""
-															   updateFields:@"cuuid,patch"
-																  deleteCol:@"cuuid"
-                                                             deleteColValue:[MPSystemInfo clientUUID]]];
-
-	// Encode to base64 and send to web service    
-	qldebug(@"Patch scan info to send to web service:\n%@",resXML);
-	NSString *xmlBase64String = [[resXML dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
-    */
     MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
     [mpws postClientScanDataWithType:(NSArray *)patchesNeeded type:1 error:&wsErr];
-    /*
-    [mpws postDataMgrJSON:xmlBase64String error:&wsErr];
-    */
     if (wsErr) {
         qlerror(@"%@",wsErr.localizedDescription);
     } else {

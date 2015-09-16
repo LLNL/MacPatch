@@ -27,7 +27,6 @@
 		8FE561AF16DEB8EF00BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE561A616DEB8EF00BB7600 /* Security.framework */; };
 		8FE561B016DEB8EF00BB7600 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE561A716DEB8EF00BB7600 /* SystemConfiguration.framework */; };
 		8FE561B116DEB8EF00BB7600 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE561A816DEB8EF00BB7600 /* libz.dylib */; };
-		8FE561B216DEB8EF00BB7600 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE561A916DEB8EF00BB7600 /* libcrypto.dylib */; };
 		8FE561B316DEB8EF00BB7600 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE561AA16DEB8EF00BB7600 /* libicucore.dylib */; };
 		8FE561B616DEB99600BB7600 /* MPAgentExecController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE561B516DEB99500BB7600 /* MPAgentExecController.m */; };
 /* End PBXBuildFile section */
@@ -86,12 +85,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FE5611216DE9CB900BB7600 /* libMacPatch.a in Frameworks */,
 				8F5F91EE171C6342001C77D1 /* libxml2.dylib in Frameworks */,
 				8FD88E6E16DFC33600A870A3 /* libsqlite3.dylib in Frameworks */,
+				8FE561B116DEB8EF00BB7600 /* libz.dylib in Frameworks */,
+				8FE561B316DEB8EF00BB7600 /* libicucore.dylib in Frameworks */,
 				8FD88E6C16DFC31C00A870A3 /* DiskArbitration.framework in Frameworks */,
 				8FD88E6916DFC16400A870A3 /* DirectoryService.framework in Frameworks */,
 				8FD88E6A16DFC16400A870A3 /* OpenDirectory.framework in Frameworks */,
-				8FE5611216DE9CB900BB7600 /* libMacPatch.a in Frameworks */,
 				8FE560F816DE9A7A00BB7600 /* Foundation.framework in Frameworks */,
 				8FE561AB16DEB8EF00BB7600 /* Cocoa.framework in Frameworks */,
 				8FE561AC16DEB8EF00BB7600 /* CoreFoundation.framework in Frameworks */,
@@ -99,9 +100,6 @@
 				8FE561AE16DEB8EF00BB7600 /* CoreServices.framework in Frameworks */,
 				8FE561AF16DEB8EF00BB7600 /* Security.framework in Frameworks */,
 				8FE561B016DEB8EF00BB7600 /* SystemConfiguration.framework in Frameworks */,
-				8FE561B116DEB8EF00BB7600 /* libz.dylib in Frameworks */,
-				8FE561B216DEB8EF00BB7600 /* libcrypto.dylib in Frameworks */,
-				8FE561B316DEB8EF00BB7600 /* libicucore.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,8 +319,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPAgentExec/MPAgentExec-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					/usr/include/libxml2,
+					"../openssl-xcode/openssl/include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -347,8 +351,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPAgentExec/MPAgentExec-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					/usr/include/libxml2,
+					"../openssl-xcode/openssl/include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-ObjC",

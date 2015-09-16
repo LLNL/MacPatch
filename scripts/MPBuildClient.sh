@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildClient.sh
-# Version: 1.1
+# Version: 1.2
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -14,6 +14,7 @@
 #
 # History:
 #	1.1		Added Code Signbing Support
+#   1.2		Added ability to save CODESIGNIDENTITY
 #
 # -------------------------------------------------------------
 
@@ -22,6 +23,10 @@ BUILDROOT="/Library/MacPatch/tmp/Client"
 BASEPKGVER="2.7.0.0"
 UPDTPKGVER="2.7.0.0"
 CODESIGNIDENTITY="*"
+CODESIGNIDENTITYPLIST="/Library/Preferences/mp.build.client.plist"
+if [ -f "$CODESIGNIDENTITYPLIST" ]; then
+	CODESIGNIDENTITYALT=`defaults read ${CODESIGNIDENTITYPLIST} name`
+fi
 
 if [ -d "$BUILDROOT" ]; then
 	rm -rf ${BUILDROOT}
@@ -36,9 +41,15 @@ if [ "$SIGNCODE" == "n" ] || [ "$SIGNCODE" == "N" ] || [ "$SIGNCODE" == "y" ] ||
 
 	if [ "$SIGNCODE" == "y" ] || [ "$SIGNCODE" == "Y" ] ; then
 		# Compile the agent components
-		if [ "${CODESIGNIDENTITY}" == "*" ]; then
-			read -p "Please enter you code sigining identity: " CODESIGNIDENTITY
+		read -p "Please enter you code sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
+		CODESIGNIDENTITY=${CODESIGNIDENTITY:-$CODESIGNIDENTITYALT}
+		if [ "$CODESIGNIDENTITY" != "$CODESIGNIDENTITYALT" ]; then
+			defaults write ${CODESIGNIDENTITYPLIST} name "${CODESIGNIDENTITY}"
 		fi
+		
+		#if [ "${CODESIGNIDENTITY}" == "*" ]; then
+		#	read -p "Please enter you code sigining identity: " CODESIGNIDENTITY
+		#fi
 		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch/MacPatch.xcodeproj -target AGENT_BUILD SYMROOT=${BUILDROOT} CODE_SIGN_IDENTITY="${CODESIGNIDENTITY}"
 	else
 		# Compile the agent components
@@ -55,6 +66,8 @@ find ${BUILDROOT} -name "*.dSYM" -print | xargs -I{} rm -rf {}
 
 # Remove the static library and header files
 rm ${BUILDROOT}/Release/libMacPatch.a
+rm ${BUILDROOT}/Release/libcrypto.a
+rm ${BUILDROOT}/Release/libssl.a
 rm -r ${BUILDROOT}/Release/usr
 
 cp -R ${GITROOT}/MacPatch\ PKG/Base ${BUILDROOT}

@@ -51,7 +51,6 @@
 		8FE03DD91B601AC6005D39EE /* AVSoftware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD81B601AC6005D39EE /* AVSoftware.m */; };
 		8FE560CC16DE71A100BB7600 /* libMacPatch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560CB16DE71A100BB7600 /* libMacPatch.a */; };
 		8FE560DA16DE978B00BB7600 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560D916DE978B00BB7600 /* libz.dylib */; };
-		8FE560DC16DE979500BB7600 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560DB16DE979500BB7600 /* libcrypto.dylib */; };
 		8FE560DE16DE979E00BB7600 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560DD16DE979E00BB7600 /* libicucore.dylib */; };
 		8FE560E016DE97A900BB7600 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560DF16DE97A900BB7600 /* Cocoa.framework */; };
 		8FE560E216DE97B500BB7600 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E116DE97B500BB7600 /* CoreFoundation.framework */; };
@@ -175,8 +174,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F5310011B42EEE400B8D893 /* libsqlite3.dylib in Frameworks */,
 				8FE560CC16DE71A100BB7600 /* libMacPatch.a in Frameworks */,
+				8F5310011B42EEE400B8D893 /* libsqlite3.dylib in Frameworks */,
+				8F530FEE1B42ED2B00B8D893 /* libxml2.dylib in Frameworks */,
+				8FE560DE16DE979E00BB7600 /* libicucore.dylib in Frameworks */,
+				8FE560DA16DE978B00BB7600 /* libz.dylib in Frameworks */,
 				8F530FF41B42ED7000B8D893 /* DirectoryService.framework in Frameworks */,
 				8F530FF21B42ED5D00B8D893 /* DiskArbitration.framework in Frameworks */,
 				8F530FF01B42ED5400B8D893 /* OpenDirectory.framework in Frameworks */,
@@ -186,10 +188,6 @@
 				8FE560E616DE97C700BB7600 /* CoreServices.framework in Frameworks */,
 				8FE560EA16DE97DD00BB7600 /* Security.framework in Frameworks */,
 				8FE560E816DE97CF00BB7600 /* SystemConfiguration.framework in Frameworks */,
-				8F530FEE1B42ED2B00B8D893 /* libxml2.dylib in Frameworks */,
-				8FE560DE16DE979E00BB7600 /* libicucore.dylib in Frameworks */,
-				8FE560DC16DE979500BB7600 /* libcrypto.dylib in Frameworks */,
-				8FE560DA16DE978B00BB7600 /* libz.dylib in Frameworks */,
 				8F4B1EED16DD77BD00E15A9E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -577,6 +575,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/include/libxml2,
+					"../openssl-xcode/openssl/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -610,6 +609,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/include/libxml2,
+					"../openssl-xcode/openssl/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

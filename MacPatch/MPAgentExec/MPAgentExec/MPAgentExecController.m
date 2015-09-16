@@ -158,8 +158,6 @@
         }
     }
 
-    //NSString            *dataMgrJSON;
-    //NSString            *jsonBase64String;
     MPASUSCatalogs      *mpCatalog;
     NSArray             *applePatchesArray;
     NSArray             *approvedApplePatches = nil;
@@ -208,26 +206,7 @@
         applePatchesArray = [mpAsus scanForAppleUpdates];
         
         // post patches to web service
-        /*
-        dataMgrJSON = [mpDataMgr GenJSONForDataMgr:applePatchesArray
-                                           dbTable:@"client_patches_apple"
-                                     dbTablePrefix:@"mp_"
-                                     dbFieldPrefix:@""
-                                      updateFields:@"cuuid,patch"
-                                         deleteCol:@"cuuid"
-                                    deleteColValue:[MPSystemInfo clientUUID]];
-
-        
-        logit(lcl_vInfo,@"%%%%%%%%%%%%%%%%%%%%%%%%%%\n%@",dataMgrJSON);
-        */
-        // Encode to base64 and send to web service
-        /*
-        jsonBase64String = [[dataMgrJSON dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
-         */
         wsErr = nil;
-        /*
-        [mpws postDataMgrJSON:jsonBase64String error:&wsErr];
-         */
         [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
         if (wsErr) {
             logit(lcl_vError,@"Scan results posted to webservice returned false.");
@@ -356,9 +335,10 @@ done:
     } else {
         logit(lcl_vError,@"Unable to write approved patches file %@. Patch file will not be used.",_approvedPatchesFile);
     }
-
-
-
+    
+    // Added a global notification to update image icon of MPClientStatus
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"kRefreshStatusIconNotification" object:nil];
+    
 	[self setApprovedPatches:[NSArray arrayWithArray:approvedUpdatesArray]];
 	[self removeTaskRunning:kMPPatchSCAN];
     logit(lcl_vInfo,@"Patch Scan Completed.");
@@ -942,6 +922,9 @@ done:
 	}
 
 done:
+    // Added a global notification to update image icon of MPClientStatus
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"kRefreshStatusIconNotification" object:nil];
+    
 	[self removeTaskRunning:kMPPatchUPDATE];
 }
 

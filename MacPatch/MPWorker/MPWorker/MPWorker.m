@@ -748,8 +748,10 @@ typedef NSUInteger MPPostDataType;
 - (void)taskTimeoutThread
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-	logit(lcl_vDebug,@"Timeout is set to %d",taskTimeoutValue);
+
+    [_timeoutTimer invalidate];
+    
+	logit(lcl_vInfo,@"Timeout is set to %d",taskTimeoutValue);
 	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:taskTimeoutValue
 													  target:self
 													selector:@selector(taskTimeout:)

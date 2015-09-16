@@ -19,7 +19,6 @@
 		8FD88EDE16DFCDD100A870A3 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88ED416DFCDD100A870A3 /* CoreFoundation.framework */; };
 		8FD88EDF16DFCDD100A870A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88ED516DFCDD100A870A3 /* Cocoa.framework */; };
 		8FD88EE016DFCDD100A870A3 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88ED616DFCDD100A870A3 /* libicucore.dylib */; };
-		8FD88EE116DFCDD100A870A3 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88ED716DFCDD100A870A3 /* libcrypto.dylib */; };
 		8FD88EE216DFCDD100A870A3 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88ED816DFCDD100A870A3 /* libz.dylib */; };
 		8FD88EE316DFCDD100A870A3 /* libMacPatch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88ED916DFCDD100A870A3 /* libMacPatch.a */; };
 		8FD88EE516DFCE0100A870A3 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88EE416DFCE0100A870A3 /* AppKit.framework */; };
@@ -77,7 +76,6 @@
 				8FD88EDE16DFCDD100A870A3 /* CoreFoundation.framework in Frameworks */,
 				8FD88EDF16DFCDD100A870A3 /* Cocoa.framework in Frameworks */,
 				8FD88EE016DFCDD100A870A3 /* libicucore.dylib in Frameworks */,
-				8FD88EE116DFCDD100A870A3 /* libcrypto.dylib in Frameworks */,
 				8FD88EE216DFCDD100A870A3 /* libz.dylib in Frameworks */,
 				8FD88EE316DFCDD100A870A3 /* libMacPatch.a in Frameworks */,
 			);
@@ -268,6 +266,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPWorker/MPWorker-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"../openssl-xcode/openssl/include",
+				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -291,6 +294,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPWorker/MPWorker-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"../openssl-xcode/openssl/include",
+				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
