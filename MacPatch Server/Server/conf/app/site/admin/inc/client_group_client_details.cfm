@@ -1,16 +1,3 @@
-<!---
-<cfquery datasource="#session.dbsource#" name="qGetColumns">
-    select column_name from information_schema.columns where table_schema = schema() and table_name = 'ClientCheckIn'
-    Order By column_name ASC
-</cfquery> 
-
-<cfquery datasource="#session.dbsource#" name="qGet">
-    SELECT	*
-    FROM	ClientCheckIn
-    Where cuuid = '#url.cuuid#'
-</cfquery> 
---->
-
 <cfquery datasource="#session.dbsource#" name="qGetClientInfo" maxrows="1">
     SELECT	cuuid         as _Client_ID,
     		agent_version as Agent_Version,
@@ -32,12 +19,12 @@
     SELECT	*
     FROM	mp_clients_plist
     Where	cuuid = '#url.cuuid#'
-</cfquery>  
+</cfquery>
 
-<html> 
-<head> 
-<title><cfoutput query="qGetClientInfo">#hostname# Info...</cfoutput></title> 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
+<html>
+<head>
+<title><cfoutput query="qGetClientInfo">#hostname# Info...</cfoutput></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
 <style type="text/css">
 <!--
@@ -72,7 +59,7 @@ h3 {
 </head>
 <!---
 <cfoutput query="qGetColumns">
-    
+
     <cfif column_name NEQ "cXMLData" AND column_name NEQ "mdate" AND column_name NEQ "rid" AND column_name NEQ "p_AllowClient" AND column_name NEQ "rebootapp_ver">
     <cfset x =  ReplaceNoCase(column_name,"p_","","All")>
     <cfset x =  ReplaceNoCase(x,"cuuid","Client ID","All")>
@@ -85,8 +72,8 @@ h3 {
     <cfset x =  ReplaceNoCase(x,"CatalogURL"," SoftwareUpdate Server ","All")>
     <cfset x =  ReplaceNoCase(x,"Group"," Group","All")>
     <cfset x =  ReplaceNoCase(x,"Domain","Client Group","All")>
-    
-    
+
+
     <!--- #column_name# = #ucase(left(x, 1)) & removechars(x, 1, 1)# = #Evaluate("qGet."&column_name)#<br /> --->
     <cfif Evaluate("qGet."&column_name) EQ 0>
         <tr><th>#ucase(left(x, 1)) & removechars(x, 1, 1)#</th><td>False</td></tr>
@@ -104,13 +91,13 @@ h3 {
 <body>
 	<cfif IsDefined("url.cuuid")>
     <h3>Client Properties</h3>
-    <table border="0" cellpadding="0" cellspacing="0" width="100%"> 
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <cfloop index="col" list="#qGetClientInfo.columnList#" delimiters=",">
     <cfoutput>
 	<tr>
     	<th>#Replace(col,"_"," ","All")#</th>
         <td>#Evaluate("qGetClientInfo."&col)#</td>
-	</tr>	
+	</tr>
 	</cfoutput>
     </cfloop>
     </table>
@@ -120,15 +107,15 @@ h3 {
     <cfset plistCols = ListDeleteValue(plistCols,"rhash",",")>
     <cfset plistCols = ListDeleteValue(plistCols,"mdate",",")>
     <cfset plistCols = ListDeleteValue(plistCols,"cdate",",")>
-    
+
     <h3>Client Agent Plist</h3>
-    <table border="0" cellpadding="0" cellspacing="0" width="100%"> 
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <cfloop index="col" list="#plistCols#" delimiters=",">
     <cfoutput>
 	<tr>
     	<th>#Replace(col,"_"," ","All")#</th>
         <td><cfif #Evaluate("qGetClientPlist."&col)# EQ "NA">&nbsp;<cfelse>#Evaluate("qGetClientPlist."&col)#</cfif></td>
-	</tr>	
+	</tr>
 	</cfoutput>
     </cfloop>
     </table>
@@ -142,7 +129,7 @@ h3 {
 	returntype="string"
 	output="false"
 	hint="Deletes a given value (or list of values) from a list. This is not case sensitive.">
- 
+
 	<!--- Define arguments. --->
 	<cfargument
 		name="List"
@@ -150,14 +137,14 @@ h3 {
 		required="true"
 		hint="The list from which we want to delete values."
 		/>
- 
+
 	<cfargument
 		name="Value"
 		type="string"
 		required="true"
 		hint="The value or list of values that we want to delete from the first list."
 		/>
- 
+
 	<cfargument
 		name="Delimiters"
 		type="string"
@@ -165,18 +152,18 @@ h3 {
 		default=","
 		hint="The delimiting characters used in the given lists."
 		/>
- 
- 
+
+
 	<!--- Define the local scope. --->
 	<cfset var LOCAL = StructNew() />
- 
+
 	<!---
 		Create an array in which we will store our new list.
 		This will be faster than building a list via string
 		concatenation.
 	--->
 	<cfset LOCAL.Result = ArrayNew( 1 ) />
- 
+
 	<!---
 		Convert the target list into an array for faster
 		list iteration.
@@ -185,7 +172,7 @@ h3 {
 		ARGUMENTS.List,
 		ARGUMENTS.Delimiters
 		) />
- 
+
 	<!---
 		Convert our value list into struct. This will allow us
 		to do super fast value look ups to see if we have a
@@ -195,19 +182,19 @@ h3 {
 		values (and generally only one).
 	--->
 	<cfset LOCAL.ValueLookup = StructNew() />
- 
+
 	<!--- Loop over value list to create index. --->
 	<cfloop
 		index="LOCAL.ValueItem"
 		list="#ARGUMENTS.Value#"
 		delimiters="#ARGUMENTS.Delimiters#">
- 
+
 		<!--- Create index entry. --->
 		<cfset LOCAL.ValueLookup[ LOCAL.ValueItem ] = true />
- 
+
 	</cfloop>
- 
- 
+
+
 	<!---
 		Now that we have our index in place, it's time to start
 		looping over the target list and looking for target
@@ -219,16 +206,16 @@ h3 {
 		from="1"
 		to="#ArrayLen( LOCAL.ListArray )#"
 		step="1">
- 
+
 		<!--- Get a short hand to the current list value. --->
 		<cfset LOCAL.Value = LOCAL.ListArray[ LOCAL.ValueIndex ] />
- 
+
 		<!--- Check to see if this value is in the index. --->
 		<cfif NOT StructKeyExists(
 			LOCAL.ValueLookup,
 			LOCAL.Value
 			)>
- 
+
 			<!---
 				We are not deleting this value so add it to
 				the taret array.
@@ -237,12 +224,12 @@ h3 {
 				LOCAL.Result,
 				LOCAL.Value
 				) />
- 
+
 		</cfif>
- 
+
 	</cfloop>
- 
- 
+
+
 	<!---
 		At this point, our target list has been trimmed and
 		stored in the results array. Now, we have to convert

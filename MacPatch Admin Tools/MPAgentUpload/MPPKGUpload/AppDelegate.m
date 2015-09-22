@@ -366,6 +366,21 @@
     }];
 }
 
+- (IBAction)choosePluginFolder:(id)sender
+{
+    NSOpenPanel *openDlg = [NSOpenPanel openPanel];
+    [openDlg setMessage:@"Please select the MacPatch Client Installer zip file."];
+    [openDlg setCanChooseDirectories:YES];
+    [openDlg setCanChooseFiles:NO];
+    [openDlg beginWithCompletionHandler:^(NSInteger result) {
+        if(result==NSFileHandlingPanelOKButton) {
+            for (NSURL *url in openDlg.URLs) {
+                _pluginsPathField.stringValue = url.path;
+            }
+        }
+    }];
+}
+
 - (IBAction)uploadPackage:(id)sender
 {    
     if (!_authToken)
@@ -603,7 +618,7 @@
     NSMutableArray *pkgs = [[NSMutableArray alloc] init];
     
     NSArray *dirFiles = [fm contentsOfDirectoryAtPath:[_tmpDir stringByAppendingPathComponent:@"MPClientInstall"] error:nil];
-    NSArray *pkgFiles = [dirFiles filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self ENDSWITH '.pkg'"]];
+    NSArray *pkgFiles = [dirFiles filteredArrayUsingPredicate:[NSPredicate  predicateWithFormat:@"self ENDSWITH '.pkg'"]];
     NSString *fullPathScripts;
     NSString *fullPathPKG;
     for (NSString *pkg in pkgFiles)
@@ -618,6 +633,10 @@
             NSString *t;
             if ([[pkg lastPathComponent] isEqualToString:@"Base.pkg"]) {
                 t = @"Agent";
+                
+                // Add Plugins
+                NSString *pkgScriptPlugDir = [fullPathPKG stringByAppendingPathComponent:@"Scripts/Plugins"];
+                [self addPluginsToBasePackage:pkgScriptPlugDir pluginsPath:_pluginsPathField.stringValue];
             } else {
                 t = @"Updater";
             }
@@ -630,6 +649,20 @@
     [pkgs addObject:[_tmpDir stringByAppendingPathComponent:@"MPClientInstall"]];
     
     return (NSArray *)pkgs;
+}
+
+- (void)addPluginsToBasePackage:(NSString *)pkgPath pluginsPath:(NSString *)aPluginsPath
+{
+    NSArray *pFiles = [fm contentsOfDirectoryAtPath:aPluginsPath error:nil];
+    NSArray *pBundleFiles = [pFiles filteredArrayUsingPredicate:[NSPredicate  predicateWithFormat:@"self ENDSWITH '.bundle'"]];
+    NSError *err = nil;
+    for (NSString *plugin in pBundleFiles) {
+        err = nil;
+        [fm copyItemAtPath:[aPluginsPath stringByAppendingPathComponent:plugin] toPath:pkgPath error:&err];
+        if (err) {
+            NSLog(@"%@",err.localizedDescription);
+        }
+    }
 }
 
 - (void)readAndWriteVersionPlistToPath:(NSString *)aInfoPath writeTo:(NSString *)aVerPath pkgType:(NSString *)aType

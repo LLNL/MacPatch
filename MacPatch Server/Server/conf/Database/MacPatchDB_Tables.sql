@@ -1,8 +1,8 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.7.0.2
-	Rev 2
+	Version 2.7.0.3
+	Rev 3
 */
 
 SET NAMES utf8;
@@ -572,6 +572,8 @@ CREATE TABLE `mp_clients_plist` (
   `MPAgentExecDebug` varchar(255) DEFAULT 'NA',
   `MPAgentDebug` varchar(255) DEFAULT 'NA',
   `SWDistGroup` varchar(255) DEFAULT 'NA',
+  `CheckSignatures` varchar(255) DEFAULT 'NA',
+  `SWDistGroupState` varchar(255) DEFAULT 'NA',
   PRIMARY KEY (`rid`),
   UNIQUE KEY `idx_cuuid` (`cuuid`),
   KEY `idx_clientinfo` (`cuuid`,`Domain`,`PatchGroup`)

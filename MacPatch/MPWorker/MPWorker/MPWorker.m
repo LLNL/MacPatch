@@ -863,7 +863,7 @@ typedef NSUInteger MPPostDataType;
     
 	if (taskTimedOut == YES) {
 		logit(lcl_vError,@"Task was terminated due to timeout.");
-		[NSThread sleepForTimeInterval:2.0];
+		[NSThread sleepForTimeInterval:5.0];
 		taskResult = 1;
 		goto done;
 	}

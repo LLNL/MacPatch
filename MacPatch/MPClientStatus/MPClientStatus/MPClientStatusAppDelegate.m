@@ -940,17 +940,23 @@ done:
 
 - (IBAction)logoutAndPatch:(id)sender
 {
-    /* reboot the system using Apple supplied code
-     error = SendAppleEventToSystemProcess(kAERestart);
-     error = SendAppleEventToSystemProcess(kAELogOut);
-     error = SendAppleEventToSystemProcess(kAEReallyLogOut);
-     */
+    // Add .MPAuthRun so that the priv helpr tool runs
+    [[NSFileManager defaultManager] createFileAtPath:@"/private/tmp/.MPAuthRun"
+                                            contents:[@"Logout" dataUsingEncoding:NSUTF8StringEncoding]
+                                          attributes:nil];
+    
     if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
         NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
         [ud setBool:NO forKey:@"patch"];
         [ud setBool:NO forKey:@"reboot"];
         ud = nil;
     }
+    
+    /* reboot the system using Apple supplied code
+     error = SendAppleEventToSystemProcess(kAERestart);
+     error = SendAppleEventToSystemProcess(kAELogOut);
+     error = SendAppleEventToSystemProcess(kAEReallyLogOut);
+     */
     
     OSStatus error = noErr;
 #ifdef DEBUG

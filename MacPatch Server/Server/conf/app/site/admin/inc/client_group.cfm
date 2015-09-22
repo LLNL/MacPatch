@@ -7,9 +7,7 @@
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
-<!---
-<cfparam name="jqGridInfoData" default="ClientGroup">
---->
+
 <cfsilent>
 <cfset jqGridInfoData = "ClientGroup">
 <cfif IsDefined("gid")>
@@ -21,7 +19,7 @@
 	<cfargument name="structArray" required="yes">
 	<cfargument name="structKey" required="yes">
 	<cfargument name="quoted" required="no" default="false">
-	
+
 	<cfset keyArray = ArrayNew(1)>
 	<cfloop index="x" from="1" to="#arrayLen(arguments.structArray)#">
 		<cfif arguments.quoted>
@@ -30,7 +28,7 @@
 		<cfset _tmp =  ArrayAppend(keyArray,structArray[x][arguments.structKey])>
 		</cfif>
 	</cfloop>
-	
+
 	<cfreturn ArrayToList(keyArray,",")>
 </cffunction>
 
@@ -40,7 +38,7 @@
 	<cfloop index="x" from="1" to="#arrayLen(colDataStruct)#">
 		<cfset _tmp =  ArrayAppend(colsArray,"'"&colDataStruct[x]['dname']&"'")>
 	</cfloop>
-	
+
 	<cfsavecontent variable="jsCols">
 	colNames:[<cfoutput>#ArrayToList(colsArray,",")#</cfoutput>]
 	</cfsavecontent>
@@ -53,12 +51,12 @@
 	<cfloop index="x" from="1" to="#arrayLen(colDataStruct)#">
 		<cfset _tmp =  ArrayAppend(colsArray,"'"&colDataStruct[x]['dname']&"'")>
 	</cfloop>
-	
+
 	<cfsavecontent variable="jsCols">
 	colModel :[<cfoutput>{name:'#colDataStruct[1]['name']#',index:'#colDataStruct[1]['name']#', width:#colDataStruct[1]['width']#, align:"#colDataStruct[1]['align']#", sortable:false, resizable:false, search:false},</cfoutput>
 			<cfloop index="x" from="2" to="#arrayLen(colDataStruct)#"><cfoutput>
 			{name:'#colDataStruct[x]['name']#',index:'#colDataStruct[x]['name']#', width:#colDataStruct[x]['width']#, align:"#colDataStruct[x]['align']#", hidden:#colDataStruct[x]['hidden']#, #iif(colDataStruct[x]['name'] EQ 'defsDate',DE('search:false'),DE('search:true'))#}<cfif x NEQ arrayLen(colDataStruct)>,</cfif></cfoutput></cfloop>
-	]			
+	]
 	</cfsavecontent>
 	<cfreturn jsCols>
 </cffunction>
@@ -66,7 +64,7 @@
 <cffunction name="genColModelForTable" access="public" returntype="any">
 	<cfargument name="cols" required="yes">
 	<cfargument name="forFile" required="yes">
-	
+
 	<cfset var i = 2>
 	<cfxml variable="MyDoc">
 	<?xml version='1.0' encoding='utf-8' ?>
@@ -99,7 +97,7 @@
 	<cfset var astr = arguments.str />
 	<cfset var n = "" />
 	<cfset var tmpContainer = "" />
-	
+
 	<cfset axml = XmlSearch(XmlParse(arguments.xmlNode),"/node()")>
 	<cfset axml = axml[1] />
 	<!--- For each children of context node: --->
@@ -118,7 +116,7 @@
 				<cfset astr[n][1] = tmpContainer />
 			<cfelse>
 				<!--- Item is already an array: --->
-				
+
 			</cfif>
 			<cfif arrayLen(axml.XmlChildren[i].XmlChildren) gt 0>
 					<!--- recurse call: get complex item: --->
@@ -167,19 +165,19 @@
 <cfscript>
 /**
  * Sorts an array of structures based on a key in the structures.
- * 
- * @param aofS      Array of structures. 
- * @param key      Key to sort by. 
- * @param sortOrder      Order to sort by, asc or desc. 
- * @param sortType      Text, textnocase, or numeric. 
- * @param delim      Delimiter used for temporary data storage. Must not exist in data. Defaults to a period. 
- * @return Returns a sorted array. 
- * @author Nathan Dintenfass (nathan@changemedia.com) 
- * @version 1, December 10, 2001 
+ *
+ * @param aofS      Array of structures.
+ * @param key      Key to sort by.
+ * @param sortOrder      Order to sort by, asc or desc.
+ * @param sortType      Text, textnocase, or numeric.
+ * @param delim      Delimiter used for temporary data storage. Must not exist in data. Defaults to a period.
+ * @return Returns a sorted array.
+ * @author Nathan Dintenfass (nathan@changemedia.com)
+ * @version 1, December 10, 2001
  */
 function arrayOfStructsSort(aOfS,key){
         //by default we'll use an ascending sort
-        var sortOrder = "asc";        
+        var sortOrder = "asc";
         //by default, we'll use a textnocase sort
         var sortType = "textnocase";
         //by default, use ascii character 30 as the delim
@@ -220,7 +218,7 @@ function arrayOfStructsSort(aOfS,key){
         	, hw.mpa_Model_Name, hw.mpa_Model_Identifier
         </cfif>
         FROM	mp_clients_view cci
-        LEFT 	JOIN savav_info sav 
+        LEFT 	JOIN savav_info sav
         ON cci.cuuid = sav.cuuid
         <cfif hasHWData EQ true>
         	LEFT JOIN mpi_SPHardwareOverview hw ON
@@ -262,7 +260,7 @@ function arrayOfStructsSort(aOfS,key){
 <cfif _validXML EQ false>
 	<cffile action="write" file="#_xmlConfFile#" OUTPUT="#_xmlConfDataDefault#" NAMECONFLICT="overwrite">
 	<cfset _validConfData = _xmlConfDataDefault>
-</cfif>	
+</cfif>
 </cfsilent>
 <cfset columnsStruct = "#ConvertXmlToStruct(ToString(_validConfData), structnew())#">
 <cfset sortedColsStruct = #arrayOfStructsSort(columnsStruct.Columns.Column,"order","asc","numeric")#>
@@ -275,12 +273,12 @@ function dateDifference(strDate1,strDate2)
 {
 	var bits = strDate1.split(/\D/);
 	var datDate1 = new Date(bits[0], --bits[1], bits[2], bits[3], bits[4]);
-	return ((strDate2-datDate1)/(24*60*60*1000)); 
+	return ((strDate2-datDate1)/(24*60*60*1000));
 }
 //-->
 </SCRIPT>
 
-<script type="text/javascript">	
+<script type="text/javascript">
 	function loadContent(param, id) {
 		$("#dialog").load("available_patches_apple_description.cfm?pid="+id);
 		$("#dialog").dialog(
@@ -290,31 +288,31 @@ function dateDifference(strDate1,strDate2)
 			width: 600,
 			modal: true
 			}
-		); 
+		);
 		$("#dialog").dialog('open');
 	}
 </script>
-<!--- Over rides ---> 
+<!--- Over rides --->
 <style type="text/css">
 	.ui-jqgrid {font-size:12px;}
 	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
 	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}	
+	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
 	//.ui-jqgrid-btable .ui-state-highlight { background: #A5A9B6; }
-	
+
 	.ui-state-highlight, .ui-widget-content .ui-state-highlight {border: 1px solid #fff; background: #A5A9B6 50% 50% repeat-x; color: #000; }
 	.ui-state-highlight:hover, .ui-widget-content .ui-state-highlight:hover {border: 1px solid #fff; background: #A5A9B6 50% 50% repeat-x; color: #000; }
-	
+
 	.normal {
-		background-color: #FFFFFF;	
+		background-color: #FFFFFF;
 	}
 	.warn {
-		background-color: #FFCC00;	
+		background-color: #FFCC00;
 	}
 	.alert {
 		background-color: red;
 	}
-	
+
 	/* CLASS - Section */
 	.legendTable {
 		font-family: Arial, Helvetica, sans-serif;
@@ -324,19 +322,19 @@ function dateDifference(strDate1,strDate2)
 		border-width:0px;
 		*border-collapse: expression('separate', cellSpacing = '1px');
 	}
-	
+
 	.legendTable th {
 		background-color: #CCCCCC;
 		padding: 4px;
 		text-align:center;
 		font-size:14px;
 	}
-	
+
 	.legendTable td {
 		padding: 4px;
 		font-size:11px;
 	}
-	
+
 	table.generictable {
 		font-family: Arial, Helvetica, sans-serif;
 		margin:10px 0pt 15px;
@@ -344,7 +342,7 @@ function dateDifference(strDate1,strDate2)
 		font-size: 12px;
 		text-align: left;
 	}
-	
+
 	table.generictable a {
 		font-size: 11px;
 		color: #000000;
@@ -444,13 +442,13 @@ function dateDifference(strDate1,strDate2)
 				afterInsertRow: function(rowid, rowdata, rowelem) {
                 	$('#' + rowid).contextMenu('MenuJqGrid', eventsMenu);
                 },
-				loadComplete: function(){ 
+				loadComplete: function(){
 					var today = new Date();
-					var ids = jQuery("#list").getDataIDs();  
-					for(var i=0;i<ids.length;i++){ 
+					var ids = jQuery("#list").getDataIDs();
+					for(var i=0;i<ids.length;i++){
 						var cl = ids[i];
 						var avs = jQuery("#list").getCell(cl,'defsDate');
-						info = "<input type='image' style='padding-left:4px;' onclick=popUpWindow('client_group_client_details.cfm?cuuid="+ids[i]+"'); src='/admin/images/info_16.png' height='16' width='16' align='texttop' TITLE='Client Properties'>";					
+						info = "<input type='image' style='padding-left:4px;' onclick=popUpWindow('client_group_client_details.cfm?cuuid="+ids[i]+"'); src='/admin/images/info_16.png' height='16' width='16' align='texttop' TITLE='Client Properties'>";
 						/* Antivirus Config */
 						if (avs == "") {
 							avIcon = 'av_red2.png';
@@ -469,7 +467,7 @@ function dateDifference(strDate1,strDate2)
 							$(this).jqGrid('setRowData', ids[i], false, {'background': 'red', 'color': '#000'});
 						}
 						jQuery("#list").setRowData(ids[i],{cuuid:info,defsDate:av})
-					} 
+					}
 				},
 				onSelectRow: function(id){
 					/* This section of code fixes the highlight issues, with altRows */
@@ -477,8 +475,8 @@ function dateDifference(strDate1,strDate2)
 						var xyz = $("#list").getDataIDs().indexOf(lastsel);
 						if (xyz%2 != 0)
 						{
-						  $('#'+lastsel).addClass('ui-priority-secondary');	
-						} 							 
+						  $('#'+lastsel).addClass('ui-priority-secondary');
+						}
 
 					  $('#list').jqGrid('restoreRow',lastsel);
 					  lastsel=id;
@@ -499,13 +497,12 @@ function dateDifference(strDate1,strDate2)
 			// Page Setup
 			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:true,excel:true});
 			$('#list').jqGrid('navButtonAdd', '#pager',
-			{   
+			{
 				caption: "Columns",
 				title: "Edit Columns",
 				onClickButton: function() {
-					//window.location.href = 'gridSettings.cfm?data=<cfoutput>#Encrypt(jqGridInfoData,session.usrKey)#</cfoutput>';			
-					window.location.href = 'gridSettings.cfm?data=<cfoutput>#jqGridInfoData#</cfoutput>';	
-				} 
+					window.location.href = 'gridSettings.cfm?data=<cfoutput>#jqGridInfoData#</cfoutput>';
+				}
 			});
 			$('#list').jqGrid ('navSeparatorAdd','#pager')
 			$('#list').jqGrid ('navButtonAdd', '#pager', {
@@ -520,14 +517,14 @@ function dateDifference(strDate1,strDate2)
 			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
 			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
 			mygrid[0].toggleToolbar();
-			
+
 			$(window).bind('resize', function() {
 				$("#list").setGridWidth($(window).width()-20);
 			}).trigger('resize');
 		}
-	);	
+	);
 </script>
-<script type="text/javascript">	
+<script type="text/javascript">
 	var popUpWin=0;
 	function popUpWindow(URLStr, WindowName)
 	{
@@ -543,7 +540,7 @@ function dateDifference(strDate1,strDate2)
 <table id="list" cellpadding="0" cellspacing="0"></table>
 <div id="pager" style="text-align:center;"></div>
 <div id="dialog" title="Detailed Patch Information" style="text-align:left;" class="ui-dialog-titlebar"></div>
-<div class="contextMenu" id="MenuJqGrid">  
+<div class="contextMenu" id="MenuJqGrid">
      <ul>
         <li id="HardwareOverview" style="text-align:left">
             <img src="/admin/images/icons/report.png" />Hardware Overview
@@ -585,7 +582,7 @@ function dateDifference(strDate1,strDate2)
 	<tr>
     	<td align="center">Client Check-in Status</td>
     </tr>
-</table>    
+</table>
 <table class="legendTable" width="330">
 	<tr>
     <td class="normal" width="110"><b>Normal</b></td>
@@ -598,5 +595,3 @@ function dateDifference(strDate1,strDate2)
     <td class="alert">15 or more Days</td>
     </tr>
 </table>
-
-

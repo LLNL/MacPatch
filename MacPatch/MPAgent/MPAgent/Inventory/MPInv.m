@@ -42,7 +42,7 @@
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
-#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,SINetworkInfo,AppStoreApps,MPServerList,MPServerListInfo"
+#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,SINetworkInfo,AppStoreApps,MPServerList,MPServerListInfo,Plugins"
 #define kTasksPlist             @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
 #define kInvHashData            @"/Library/MacPatch/Client/Data/.gov.llnl.mp.inv.data.plist"
 
@@ -264,23 +264,22 @@
             for (NSDictionary *p in invPlugins)
             {
                 logit(lcl_vDebug, @"Plugin Object: %@",p);
-                logit(lcl_vInfo, @"Load abnd process plugin %@ v.%@",[p objectForKey:@"pluginName"],[p objectForKey:@"pluginVersion"]);
+                logit(lcl_vInfo, @"Load and process plugin %@ v.%@",[p objectForKey:@"pluginName"],[p objectForKey:@"pluginVersion"]);
                 Class invObj = [p objectForKey:@"plugin"];
                 [invObj setPluginName:[p objectForKey:@"pluginName"]];
                 [invObj setPluginVersion:[p objectForKey:@"pluginVersion"]];
                 NSDictionary *plugRes = [invObj runInventoryCollection];
                 if ([plugRes objectForKey:@"type"] && [plugRes objectForKey:@"wstype"] && [plugRes objectForKey:@"data"])
                 {
-                    if ([[plugRes objectForKey:@"data"] class] != [NSArray class]) {
+                    if ([[plugRes objectForKey:@"data"] isKindOfClass:[NSArray class]]) {
+                        [self processInventoryData:[plugRes objectForKey:@"data"] inventoryNode:plugRes];
+                    } else {
                         logit(lcl_vError,@"Inventory Plugin Result for data was not of the right type. No data will be sent.");
                         continue;
-                    } else {
-                        [self processInventoryData:[plugRes objectForKey:@"data"] inventoryNode:plugRes];
                     }
                     
                 }
-                
-                NSLog(@"%@",plugRes);
+                logit(lcl_vDebug,@"Results: %@",plugRes);
             }
         }
     }
@@ -487,130 +486,70 @@
 	id file;
 	while (file = [enumerator nextObject])
 	{
-		if ([[file pathExtension] isEqual:@"xml"])
+		if ([[file pathExtension] isEqual:@"inv"])
 		{
-			// Do something with file.xml
+			// Do something with file.inv
 			[files addObject:[thePath stringByAppendingPathComponent:file]];
 		}
 	}
 	
 	logit(lcl_vInfo,@"%d audit files found to process.",(int)[files count]);
 	int i = 0;
-	NSString *xmlText;
+    NSError *jErr = nil;
+	NSString *jsonString;
+    NSDictionary *jsonDict;
+    NSDictionary *invDict;
 	for (i=0; i<[files count]; i++)
 	{
-		if ([self validateDataMgrXML:[files objectAtIndex:i]]) {
-		 	xmlText = [self replaceXMLVariables:[files objectAtIndex:i]];
-			if ([self sendResultsToWebService:xmlText]) {
-				logit(lcl_vInfo,@"Results for %@ posted.",[[files objectAtIndex:i] lastPathComponent]);
-                NSError *rmError = nil;
-				[fm removeItemAtPath:[files objectAtIndex:i] error:&rmError];
-                if (rmError) {
-                    logit(lcl_vError,@"%@",[rmError localizedDescription]);
-                }
-			} else {
-				logit(lcl_vError,@"Results for %@ not posted.",[[files objectAtIndex:i] lastPathComponent]);
-			}
-		}
+        jErr = nil;
+        jsonString = [[NSString alloc] initWithContentsOfFile:[files objectAtIndex:i] encoding:NSUTF8StringEncoding error:&jErr];
+        if (jErr) {
+            qlerror(@"%@",jErr.localizedDescription);
+            continue;
+        }
+        jErr = nil;
+        jsonDict = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:&jErr];
+        if (jErr) {
+            qlerror(@"%@",jErr.localizedDescription);
+            continue;
+        }
+        
+        // Validate that the data contains the two attributes and their class types are correct
+        if ([jsonDict objectForKey:@"tableName"]) {
+            if (![[jsonDict objectForKey:@"tableName"] isKindOfClass:[NSString class]]) {
+                qlerror(@"JSON Parsing error, tableName attribute is not correct class type.");
+                continue;
+            }
+        } else {
+            qlerror(@"JSON Parsing error, tableName attribute not found.");
+            continue;
+        }
+        
+        if ([jsonDict objectForKey:@"dataRows"]) {
+            if (![[jsonDict objectForKey:@"dataRows"] isKindOfClass:[NSArray class]]) {
+                qlerror(@"JSON Parsing error, dataRows attribute is not correct class type.");
+                continue;
+            }
+        } else {
+            qlerror(@"JSON Parsing error, dataRows attribute not found.");
+            continue;
+        }
+        
+        invDict = @{ @"wstype":[jsonDict objectForKey:@"tableName"], @"type":[jsonDict objectForKey:@"tableName"]};
+        if ([self processInventoryData:[jsonDict objectForKey:@"dataRows"] inventoryNode:invDict]) {
+            qlinfo(@"Custom Inventory (%@) was processed successfully.",[jsonDict objectForKey:@"tableName"]);
+            jErr = nil;
+            [fm removeItemAtPath:[files objectAtIndex:i] error:&jErr];
+            if (jErr) {
+                qlerror(@"%@",jErr.localizedDescription);
+            }
+        } else {
+            qlerror(@"Custom Inventory (%@) was not processed successfully.",[jsonDict objectForKey:@"tableName"]);
+            [fm removeItemAtPath:[files objectAtIndex:i] error:&jErr];
+        }
 	}
 
 	return 0;	
-}
-
-- (NSString *)replaceXMLVariables:(NSString *)aFilePath
-{
-    NSString *tmpStr = NULL;
-    tmpStr = [NSString stringWithContentsOfFile:aFilePath encoding:NSUTF8StringEncoding error:NULL];
-    
-    NSString *_chkFields = @"rid,cuuid";
-    NSString *_length = @"255";
-    NSString *_dataType = @"CF_SQL_VARCHAR";
-    NSString *_mpColReq = @"<field Increment=\"true\" Length=\"11\" ColumnName=\"rid\" CF_DATATYPE=\"CF_SQL_INTEGER\" PrimaryKey=\"true\"></field> \
-    <field ColumnName=\"cuuid\" Length=\"50\" CF_DATATYPE=\"CF_SQL_VARCHAR\"></field> \
-    <field ColumnName=\"date\" Default=\"0000-00-00 00:00:00\" CF_DATATYPE=\"CF_SQL_DATE\"></field> \
-    <field ColumnName=\"mdate\" Default=\"0000-00-00 00:00:00\" CF_DATATYPE=\"CF_SQL_DATE\"></field>";
-	
-    NSString *_mpColRowReq = @"<field name=\"cuuid\" value=\"$cuuid\"></field>\
-    <field name=\"date\" value=\"$date\"></field>\
-    <field name=\"mdate\" value=\"$date\"></field>";
-    
-	// Replace variables for table, cuuid and ,date
-    tmpStr = [tmpStr replaceAll:@"<mpColReq />" replaceString:_mpColReq];
-    tmpStr = [tmpStr replaceAll:@"<mpColRowReq />" replaceString:_mpColRowReq];
-    tmpStr = [tmpStr replaceAll:@"$table" replaceString:[NSString stringWithFormat:@"mpi_%@",[[aFilePath lastPathComponent] stringByDeletingPathExtension]]];
-    tmpStr = [tmpStr replaceAll:@"$cuuid" replaceString:[self cUUID]];
-    tmpStr = [tmpStr replaceAll:@"$date" replaceString:[MPDate dateTimeStamp]];
-    tmpStr = [tmpStr replaceAll:@"$mdate" replaceString:[MPDate dateTimeStamp]];
-    tmpStr = [tmpStr replaceAll:@"$checkfields" replaceString:_chkFields];
-    tmpStr = [tmpStr replaceAll:@"$length" replaceString:_length];
-    tmpStr = [tmpStr replaceAll:@"$datatype" replaceString:_dataType];
-	
-    return tmpStr;
-}
-
-- (BOOL)validateDataMgrXML:(NSString *)aFilePath
-{
-    BOOL isValid = YES;
-	if ([[NSFileManager defaultManager] fileExistsAtPath:aFilePath] == NO) {
-		logit(lcl_vError,@"File (%@) to validate is missing.",aFilePath);
-		return NO;
-	}
-    
-    NSString *xsdFile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"mpAudit.xsd"];
-    [MP_XSD_AUDIT writeToFile:xsdFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-    
-    xmlDocPtr doc;
-    xmlSchemaPtr schema = NULL;
-    xmlSchemaParserCtxtPtr ctxt;
-    
-    xmlLineNumbersDefault(1);
-    
-    ctxt = xmlSchemaNewParserCtxt([xsdFile UTF8String]);
-    
-    xmlSchemaSetParserErrors(ctxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
-    schema = xmlSchemaParse(ctxt);
-    xmlSchemaFreeParserCtxt(ctxt);
-    //xmlSchemaDump(stdout, schema); //To print schema dump
-    
-    doc = xmlReadFile([aFilePath UTF8String], NULL, 0);
-    if (doc == NULL)
-    {
-        logit(lcl_vError,@"Could not parse XML file.");
-        return NO;
-    } else {
-        xmlSchemaValidCtxtPtr ctxt;
-        int ret;
-        
-        ctxt = xmlSchemaNewValidCtxt(schema);
-        xmlSchemaSetValidErrors(ctxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
-        ret = xmlSchemaValidateDoc(ctxt, doc);
-        if (ret == 0)
-        {
-            logit(lcl_vDebug,@"Valid Inventory XML file.");
-        }
-        else if (ret > 0)
-        {
-            logit(lcl_vError,@"Could not validate XML file.");
-            isValid = NO;
-        }
-        else
-        {
-            logit(lcl_vError,@"Validation generated an internal error.");
-            isValid = NO;
-        }
-        xmlSchemaFreeValidCtxt(ctxt);
-        xmlFreeDoc(doc);
-    }
-    
-    // free the resource
-    if(schema != NULL)
-        xmlSchemaFree(schema);
-    
-    xmlSchemaCleanupTypes();
-    xmlCleanupParser();
-    xmlMemoryDump();
-
-	return isValid;
 }
 
 - (NSString *)hashForArray:(NSArray *)aArray
@@ -1553,21 +1492,27 @@ done:
     /* Needs to be completed */
 	if ([fm fileExistsAtPath:pmPlist])
     {
-        NSDictionary *pmDataRaw = [NSDictionary dictionaryWithContentsOfFile:pmPlist];
-        if ([pmDataRaw objectForKey:@"Custom Profile"])
-        {
-            NSDictionary *customProfiles = [pmDataRaw objectForKey:@"Custom Profile"];
-            for (NSString *key in [customProfiles allKeys])
+        @try {
+            NSDictionary *pmDataRaw = [NSDictionary dictionaryWithContentsOfFile:pmPlist];
+            if ([pmDataRaw objectForKey:@"Custom Profile"])
             {
-                profile = [[PowerProfile alloc] initWithProfileName:key];
-                [_pwrDataProfiles addObject:[profile parseWithDictionary:[customProfiles objectForKey:key]]];
+                NSDictionary *customProfiles = [pmDataRaw objectForKey:@"Custom Profile"];
+                for (NSString *key in [customProfiles allKeys])
+                {
+                    profile = [[PowerProfile alloc] initWithProfileName:key];
+                    [_pwrDataProfiles addObject:[profile parseWithDictionary:[customProfiles objectForKey:key]]];
+                }
             }
         }
+        @catch (NSException *exception) {
+            logit(lcl_vError, @"%@",exception);
+        }
+        
 	} else {
         logit(lcl_vError, @"File %@ does not exist.",pmPlist);
 	}
     
-    pwrDataProfiles = [NSArray arrayWithArray:_pwrDataProfiles];
+    if (_pwrDataProfiles != nil) pwrDataProfiles = [NSArray arrayWithArray:_pwrDataProfiles];
     return pwrDataProfiles;
 }
 

@@ -139,8 +139,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		724EE9831698A57A007FD391 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
-		724EE9841698A57A007FD391 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		724EE9831698A57A007FD391 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = ../Constants.h; sourceTree = "<group>"; };
+		724EE9841698A57A007FD391 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Constants.m; path = ../Constants.m; sourceTree = "<group>"; };
 		8F00CD0317610F1D008CC39E /* MPCodeSign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCodeSign.h; sourceTree = "<group>"; };
 		8F00CD0417610F1D008CC39E /* MPCodeSign.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCodeSign.m; sourceTree = "<group>"; };
 		8F018296147839CF0013EDE0 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
@@ -305,8 +305,6 @@
 			children = (
 				8F47F0EE18EDFD5A00158396 /* Networking */,
 				8FA6A76C1B90D6FE006A329B /* Inventory */,
-				724EE9831698A57A007FD391 /* Constants.h */,
-				724EE9841698A57A007FD391 /* Constants.m */,
 				8FCB778C140C30AE00D86586 /* MPDefaults.h */,
 				8FCB778D140C30AE00D86586 /* MPDefaults.m */,
 				8FCB7ABD140D588F00D86586 /* MPLog.h */,
@@ -359,6 +357,8 @@
 			isa = PBXGroup;
 			children = (
 				8F4B1DE816DD1BC600E15A9E /* MacPatch.h */,
+				724EE9831698A57A007FD391 /* Constants.h */,
+				724EE9841698A57A007FD391 /* Constants.m */,
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				8F4B1DE616DD1BC600E15A9E /* Supporting Files */,
 			);

@@ -65,6 +65,7 @@
 @property (weak) IBOutlet NSButton *chooseButton;
 @property (weak) IBOutlet NSButton *uploadButton;
 @property (weak) IBOutlet NSTextField *packagePathField;
+@property (weak) IBOutlet NSTextField *pluginsPathField;
 @property (weak) IBOutlet NSImageView *extractImage;
 @property (weak) IBOutlet NSImageView *agentConfigImage;
 @property (weak) IBOutlet NSImageView *writeConfigImage;
