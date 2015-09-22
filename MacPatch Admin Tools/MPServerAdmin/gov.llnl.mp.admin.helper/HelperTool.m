@@ -637,7 +637,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"root",NSFileOwnerAccountName,
                           @"wheel",NSFileGroupOwnerAccountName,
-                          [NSNumber numberWithInt:420],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
+                          [NSNumber numberWithLong:0644],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
                           nil];
     
     err = nil;
