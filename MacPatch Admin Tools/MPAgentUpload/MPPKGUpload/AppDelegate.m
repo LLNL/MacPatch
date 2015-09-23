@@ -656,9 +656,14 @@
     NSArray *pFiles = [fm contentsOfDirectoryAtPath:aPluginsPath error:nil];
     NSArray *pBundleFiles = [pFiles filteredArrayUsingPredicate:[NSPredicate  predicateWithFormat:@"self ENDSWITH '.bundle'"]];
     NSError *err = nil;
+    if (![fm fileExistsAtPath:pkgPath]) {
+        [fm createDirectoryAtPath:pkgPath withIntermediateDirectories:YES attributes:nil error:NULL];
+    }
+    
     for (NSString *plugin in pBundleFiles) {
         err = nil;
-        [fm copyItemAtPath:[aPluginsPath stringByAppendingPathComponent:plugin] toPath:pkgPath error:&err];
+        NSLog(@"Copy %@ to %@",[aPluginsPath stringByAppendingPathComponent:plugin],[pkgPath stringByAppendingPathComponent:plugin]);
+        [fm copyItemAtPath:[aPluginsPath stringByAppendingPathComponent:plugin] toPath:[pkgPath stringByAppendingPathComponent:plugin] error:&err];
         if (err) {
             NSLog(@"%@",err.localizedDescription);
         }

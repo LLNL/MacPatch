@@ -110,7 +110,7 @@ CRTFILE="/Library/MacPatch/Client/lib/$SRVHOST.crt"
 # Add MacPatch Client Plugins if included **************************
 #
 if [ -d "${SRC}/Plugins" ]; then
-	/usr/bin/find "${SRC}"/Plugins -name '*.bundle' -exec /bin/cp {} /Library/MacPatch/Client/lib/PlugIns/ \;
+	/usr/bin/find "${SRC}"/Plugins -name '*.bundle' -exec /bin/cp -r {} /Library/MacPatch/Client/lib/PlugIns/ \;
 fi
 
 
