@@ -2,7 +2,7 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Installer
-# ver 2.0.1
+# ver 2.0.2
 # Created By Charles Heizer
 # LLNL
 #
@@ -100,10 +100,10 @@ fi
 #
 SRVHOST=`/usr/bin/defaults read "${agentPrefs}" MPServerAddress`
 SRVPORT=`/usr/bin/defaults read "${agentPrefs}" MPServerPort`
-SRVSTR="$SRVHOST:$SRVPORT" 
+SRVSTR="$SRVHOST:443" 
 CRTFILE="/Library/MacPatch/Client/lib/$SRVHOST.crt"
 
-/usr/bin/openssl s_client -connect $SRVSTR 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ${CRTFILE}
+/usr/bin/openssl s_client -tls1 -connect $SRVSTR 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ${CRTFILE}
 /usr/bin/security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" "${CRTFILE}"
 
 # ******************************************************************

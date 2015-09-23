@@ -2212,7 +2212,7 @@
                 <cfquery datasource="#this.ds#" name="qPluginHash">
                     Select hash from mp_agent_plugins
                     Where pluginName = <cfqueryparam value="#arguments.pluginName#">
-                    AND pluginBundle = <cfqueryparam value="#arguments.pluginBundle#">
+                    AND pluginBundleID = <cfqueryparam value="#arguments.pluginBundle#">
                     AND pluginVersion = <cfqueryparam value="#arguments.pluginVersion#">
                     AND active = "1"
                 </cfquery>
