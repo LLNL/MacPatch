@@ -503,6 +503,7 @@ done:
 - (int)installAppleSoftwareUpdate:(NSString *)appleUpdate
 {
 	int result = -1;
+    [self cleanup];
 	if (!proxy) {
         [self connect];
         if (!proxy) goto done;
