@@ -236,7 +236,10 @@
                                         @autoreleasepool {
                                             InventoryOperation __autoreleasing *invOps = [[InventoryOperation alloc] init];
                                             invOps.queuePriority = NSOperationQueuePriorityLow;
-                                            invOps.qualityOfService = NSOperationQualityOfServiceBackground;
+                                            NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
+                                            if (version.minorVersion >= 10) {
+                                                invOps.qualityOfService = NSOperationQualityOfServiceBackground;
+                                            }
                                             [queue addOperation:invOps];
                                             invOps = nil;
                                         }

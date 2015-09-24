@@ -1073,7 +1073,7 @@ done:
             if ([fm fileExistsAtPath:approvedPatchesFile])
             {
                 if (![fm isDeletableFileAtPath:approvedPatchesFile]) {
-                    logit(lcl_vError,@"Unable to remove file (%@) due to permissions.",approvedPatchesFile);
+                    logit(lcl_vDebug,@"Unable to remove file (%@) due to permissions.",approvedPatchesFile);
                 } else {
                     rmErr = nil;
                     logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]);
