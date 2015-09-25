@@ -157,7 +157,7 @@
 						<div id="row">
 							<div id="left">Software Task ID</div>
 							<div id="center">
-								<input type='text' size='50' name='tuuid' id='tuuid' disabled value="<cfoutput>#swTaskID#/cfoutput>">
+								<input type='text' size='50' name='tuuid' id='tuuid' disabled value="<cfoutput>#swTaskID#</cfoutput>">
 							</div>
 							<div id="right">(e.g. "FireFox")</div>
 						</div>
