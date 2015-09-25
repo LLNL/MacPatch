@@ -402,11 +402,17 @@
     /* Had a problem with the hash, will now use
        revision instead
     */
-    return [self isPatchGroupDataCurrent:err];
+    
+    // Data is not complete from web service will fix this in 2.7.1
+    return NO;
+    //return [self isPatchGroupDataCurrent:err];
 }
 
 - (BOOL)isPatchGroupDataCurrent:(NSError **)err
 {
+    // Data is not complete from web service will fix this in 2.7.1
+    return NO;
+    
     /* 
      Switching to isPatchGroupDataCurrent from isPatchGroupHashValid
      NSJSONSerialization was reordering the JSON causing the hash to 
