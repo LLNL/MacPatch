@@ -51,14 +51,14 @@
     NSTask              *spTask;
 }
 
-@property (nonatomic, retain) id<MPWorkerClient> _client;
+@property (nonatomic, strong) id<MPWorkerClient> _client;
 
-@property (retain)              NSTimer     *_timeoutTimer;
+@property (strong)              NSTimer     *_timeoutTimer;
 @property (nonatomic, assign)   int         taskTimeoutValue;
 @property (nonatomic, assign)   BOOL        taskTimedOut;
 @property (nonatomic, assign)   BOOL        taskIsRunning;
 @property (nonatomic, assign)   int         installtaskResult;
-@property (nonatomic, retain)   NSURL       *mp_SOFTWARE_DATA_DIR;
+@property (nonatomic, strong)   NSURL       *mp_SOFTWARE_DATA_DIR;
 
 // Software Dist
 - (int)installSoftware:(NSDictionary *)aSWDict;
