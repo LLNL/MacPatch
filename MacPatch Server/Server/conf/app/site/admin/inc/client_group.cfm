@@ -384,7 +384,7 @@ function dateDifference(strDate1,strDate2)
 				popUpInvWindow('client_group_inv_details.cfm?type=clienttasks&cuuid='+t.id+'','Client Info');
 			},
 			'DiskInfo': function(t) {
-				popUpInvWindow('inventory/client_group_inv_details.cfm?type=diskinfo&cuuid='+t.id+'','Client Info');
+				popUpInvWindow('client_group_inv_details.cfm?type=diskinfo&cuuid='+t.id+'','Client Info');
 			},
 			'SWInstalls': function(t) {
 				popUpInvWindow('client_group_inv_details.cfm?type=swinstalls&cuuid='+t.id+'','Client Info');
