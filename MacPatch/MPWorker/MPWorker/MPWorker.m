@@ -1093,9 +1093,10 @@ done:
 - (int)installAppleSoftwareUpdateViaHelper:(in bycopy NSString *)approvedUpdate
 {
     NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
-    if (!aASUSUpdate) {
-        [errorDetail setValue:@"Variable aASUSUpdate was nil." forKey:NSLocalizedDescriptionKey];
-        *err = [NSError errorWithDomain:@"gov.llnl.mp.cmd" code:1001 userInfo:errorDetail];
+    if (!approvedUpdate) {
+        logit(lcl_vError,@"Variable aASUSUpdate was nil.");
+        //[errorDetail setValue:@"Variable aASUSUpdate was nil." forKey:NSLocalizedDescriptionKey];
+        //*err = [NSError errorWithDomain:@"gov.llnl.mp.cmd" code:1001 userInfo:errorDetail];
         return 1;
     }
     
@@ -1133,7 +1134,7 @@ done:
                     logit(lcl_vError,@"Task was terminated due to timeout.");
                     [NSThread sleepForTimeInterval:2.0];
                     taskResult = 1;
-                    goto done:
+                    goto done;
                 }
                 
                 while (fgets(buffer, MAX_BUFFER, stream) != NULL )
@@ -1160,15 +1161,15 @@ done:
             } // runBufferLoop
 
             int stat = pclose(stream);
-            taskResult = (int)WEXITSTATUS(stat)
+            taskResult = (int)WEXITSTATUS(stat);
             logit(lcl_vInfo,@"Task exited with %d exit code",taskResult);
         }
     }
     @catch (NSException *e)
     {
-        //logit(lcl_vError,@"Install returned error. %@\n%@",[e reason],[e userInfo]);
-        [errorDetail setValue:e forKey:NSLocalizedDescriptionKey];
-        *err = [NSError errorWithDomain:@"gov.llnl.mp.cmd" code:1002 userInfo:errorDetail];
+        logit(lcl_vError,@"Install returned error. %@\n%@",[e reason],[e userInfo]);
+        //[errorDetail setValue:e forKey:NSLocalizedDescriptionKey];
+        //*err = [NSError errorWithDomain:@"gov.llnl.mp.cmd" code:1002 userInfo:errorDetail];
         taskResult = 1;
     }
     
