@@ -95,6 +95,9 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
 #pragma mark UI Events
 -(void)awakeFromNib
 {
+    // Remove all notifications, will get re-added if needed.
+    [[NSUserNotificationCenter defaultUserNotificationCenter] removeAllDeliveredNotifications];
+    
     // Turn off Scheduled Software Updates
     [self setupWatchedFolder];
     [self setAsusAlertOpen:NO];
