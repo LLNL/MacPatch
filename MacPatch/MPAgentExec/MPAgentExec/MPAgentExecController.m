@@ -1868,6 +1868,14 @@ done:
 
 - (BOOL)installSoftwareWithTask:(NSDictionary *)aTask error:(NSError **)err
 {
+    BOOL taskCanBeInstalled = [self softwareTaskCriteriaCheck:aTask];
+    if (!taskCanBeInstalled) {
+        NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
+        [errorDetail setValue:@"Software Task failed basic criteria check." forKey:NSLocalizedDescriptionKey];
+        *err = [NSError errorWithDomain:@"gov.llnl.mp.sw.install" code:1001 userInfo:errorDetail];
+        return NO;
+    }
+    
     NSString *noteName = @"MPSWInstallStatus";
     NSString *tID = [aTask objectForKey:@"id"];
     [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Installing [taskid:%@]: %@",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
@@ -2032,6 +2040,41 @@ done:
 
     return task;
 }
+// Private
+- (BOOL)softwareTaskCriteriaCheck:(NSDictionary *)aTask
+{
+    logit(lcl_vInfo,@"Checking %@ criteria.",[aTask objectForKey:@"name"]);
+    
+    MPOSCheck *mpos = [[MPOSCheck alloc] init];
+    NSDictionary *_SoftwareCriteria = [aTask objectForKey:@"SoftwareCriteria"];
+    
+    // OSArch
+    if ([mpos checkOSArch:[_SoftwareCriteria objectForKey:@"arch_type"]]) {
+        logit(lcl_vDebug,@"OSArch=TRUE: %@",[_SoftwareCriteria objectForKey:@"arch_type"]);
+    } else {
+        logit(lcl_vInfo,@"OSArch=FALSE: %@",[_SoftwareCriteria objectForKey:@"arch_type"]);
+        return NO;
+    }
+    
+    // OSType
+    if ([mpos checkOSType:[_SoftwareCriteria objectForKey:@"os_type"]]) {
+        logit(lcl_vDebug,@"OSType=TRUE: %@",[_SoftwareCriteria objectForKey:@"os_type"]);
+    } else {
+        logit(lcl_vInfo,@"OSType=FALSE: %@",[_SoftwareCriteria objectForKey:@"os_type"]);
+        return NO;
+    }
+    // OSVersion
+    if ([mpos checkOSVer:[_SoftwareCriteria objectForKey:@"os_vers"]]) {
+        logit(lcl_vDebug,@"OSVersion=TRUE: %@",[_SoftwareCriteria objectForKey:@"os_vers"]);
+    } else {
+        logit(lcl_vInfo,@"OSVersion=FALSE: %@",[_SoftwareCriteria objectForKey:@"os_vers"]);
+        return NO;
+    }
+    
+    mpos = nil;
+    return YES;
+}
+
 
 #pragma mark MPNetRequestController Callbacks
 - (void)appendDownloadProgress:(double)aNumber

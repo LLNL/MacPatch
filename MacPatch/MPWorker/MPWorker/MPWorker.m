@@ -1092,6 +1092,97 @@ done:
 // Proxy Method
 - (int)installAppleSoftwareUpdateViaHelper:(in bycopy NSString *)approvedUpdate
 {
+    NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
+    if (!aASUSUpdate) {
+        [errorDetail setValue:@"Variable aASUSUpdate was nil." forKey:NSLocalizedDescriptionKey];
+        *err = [NSError errorWithDomain:@"gov.llnl.mp.cmd" code:1001 userInfo:errorDetail];
+        return 1;
+    }
+    
+    setenv("NSUnbufferedIO", "YES", 1);
+    setenv("COMMAND_LINE_INSTALL", "1", 1);
+    
+    NSString *cmd;
+    NSString *asusBin = @"/usr/sbin/softwareupdate";
+    
+    if ((int)NSAppKitVersionNumber >= 1187) {
+        cmd = [NSString stringWithFormat:@"%@ -v -i %@",asusBin,approvedUpdate];
+    } else {
+        cmd = [NSString stringWithFormat:@"%@ -i %@",asusBin,approvedUpdate];
+    }
+    
+    int taskResult = -1;
+    
+    // Launch The NSTask
+    @try {
+        if (taskTimeoutValue >= 1) {
+            [NSThread detachNewThreadSelector:@selector(taskTimeoutThread) toTarget:self withObject:nil];
+        }
+
+        int MAX_BUFFER = 1024;
+        char buffer[MAX_BUFFER];
+        FILE *stream = popen([cmd UTF8String], "r");
+        if (stream != NULL)
+        {
+            //reads data if present at stdout
+            BOOL runBufferLoop = YES;
+            while (runBufferLoop)
+            {
+                if (taskTimedOut == YES) {
+                    pclose(stream);
+                    logit(lcl_vError,@"Task was terminated due to timeout.");
+                    [NSThread sleepForTimeInterval:2.0];
+                    taskResult = 1;
+                    goto done:
+                }
+                
+                while (fgets(buffer, MAX_BUFFER, stream) != NULL )
+                {
+                    //append data if valid
+                    if (sizeof(buffer)>0)
+                    {
+                        NSString *tmpStr = [NSString stringWithCString:buffer encoding:NSUTF8StringEncoding];
+                        if ([[tmpStr trim] length] != 0)
+                        {
+                            if ([tmpStr containsString:@"PackageKit: Missing bundle path"] == NO) {
+                                logit(lcl_vDebug,@"%@",tmpStr);
+                                [self postDataToClient:tmpStr type:kMPInstallStatus];
+                            } else {
+                                logit(lcl_vDebug,@"%@",tmpStr);
+                            }
+                        } // trimmed buffer
+                    } // buffer
+                } // while fgets
+                
+                if (ferror(stream)) {
+                    logit(lcl_vError,@"Error stream closed with error");
+                }
+            } // runBufferLoop
+
+            int stat = pclose(stream);
+            taskResult = (int)WEXITSTATUS(stat)
+            logit(lcl_vInfo,@"Task exited with %d exit code",taskResult);
+        }
+    }
+    @catch (NSException *e)
+    {
+        //logit(lcl_vError,@"Install returned error. %@\n%@",[e reason],[e userInfo]);
+        [errorDetail setValue:e forKey:NSLocalizedDescriptionKey];
+        *err = [NSError errorWithDomain:@"gov.llnl.mp.cmd" code:1002 userInfo:errorDetail];
+        taskResult = 1;
+    }
+    
+    
+done:
+    unsetenv("NSUnbufferedIO");
+    unsetenv("COMMAND_LINE_INSTALL");
+    return taskResult;
+}
+
+
+/* Old way via NSTask
+- (int)installAppleSoftwareUpdateViaHelper:(in bycopy NSString *)approvedUpdate
+{
     BOOL            foundDone = NO;
     NSString		*tmpStr;
     NSMutableData	*data;
@@ -1115,7 +1206,8 @@ done:
 	
     NSArray *appArgs;
     // Parse the Environment variables for the install
-    if ((int)NSAppKitVersionNumber >= 1187 /* 10.8 */) {
+    // 1187 = 10.8
+    if ((int)NSAppKitVersionNumber >= 1187) {
         appArgs = [NSArray arrayWithObjects:@"-v",@"-i", approvedUpdate, nil];
     } else {
         appArgs = [NSArray arrayWithObjects:@"-i", approvedUpdate, nil];
@@ -1209,6 +1301,8 @@ done:
 	[self setTaskIsRunning:NO];
     return taskResult;
 }
+ */
+
 // Proxy Method
 - (int)installPkgToRootViaHelper:(in bycopy NSString *)pkgPath
 {
