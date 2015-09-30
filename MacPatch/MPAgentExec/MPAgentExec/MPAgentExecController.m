@@ -2120,7 +2120,7 @@ done:
 		results = [proxy installSoftwareViaHelper:aInstallDict];
     }
     @catch (NSException *e) {
-        logit(lcl_vError,@"runTaskUsingHelper [Custom Scan] error: %@", e);
+        logit(lcl_vError,@"runTaskUsingHelper [installSoftwareViaHelper] error: %@", e);
     }
 
 	[self cleanup];
@@ -2144,7 +2144,7 @@ done:
 		results = [proxy patchSoftwareViaHelper:aInstallDict];
     }
     @catch (NSException *e) {
-        logit(lcl_vError,@"runTaskUsingHelper [Custom Scan] error: %@", e);
+        logit(lcl_vError,@"runTaskUsingHelper [patchSoftwareViaProxy] error: %@", e);
     }
 
 	[self cleanup];

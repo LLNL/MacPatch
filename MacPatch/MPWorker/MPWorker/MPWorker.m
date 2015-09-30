@@ -28,7 +28,7 @@
 #import "MacPatch.h"
 #import "NSFileManager+DirectoryLocations.h"
 #import <AppKit/AppKit.h>
-
+#import <Foundation/Foundation.h>
 #include <unistd.h>
 #include <sys/reboot.h>
 
@@ -748,9 +748,11 @@ typedef NSUInteger MPPostDataType;
 	[self setTaskTimedOut:YES];
 	[swTask terminate];
 }
-
+/*
 - (int)runTask:(NSString *)aBinPath binArgs:(NSArray *)aBinArgs environment:(NSString *)env
 {
+    logit(lcl_vInfo,@"runTask");
+    
     // Parse the Environment variables for the install
     setenv("NSUnbufferedIO", "YES", 1);
     setenv("COMMAND_LINE_INSTALL", "1", 1);
@@ -776,9 +778,10 @@ typedef NSUInteger MPPostDataType;
         }
     }
     
-    logit(lcl_vDebug,@"[task][setLaunchPath]: %@",aBinPath);
-    logit(lcl_vDebug,@"[task][setArguments]: %@",aBinArgs);
-    NSString *cmd = [NSString stringWithFormat:@"%@ %@",aBinPath,[aBinArgs componentsJoinedByString:@""]];
+    logit(lcl_vInfo,@"[task][setLaunchPath]: %@",aBinPath);
+    logit(lcl_vInfo,@"[task][setArguments]: %@",aBinArgs);
+    NSString *cmd = [NSString stringWithFormat:@"%@ %@",aBinPath,[aBinArgs componentsJoinedByString:@" "]];
+    logit(lcl_vInfo,@"[task][cmd]: %@",cmd);
     
     int taskResult = -1;
     
@@ -848,7 +851,8 @@ done:
 
     return taskResult;
 }
-/*
+ */
+
 - (int)runTask:(NSString *)aBinPath binArgs:(NSArray *)aBinArgs environment:(NSString *)env
 {
     NSString		*tmpStr;
@@ -943,13 +947,31 @@ done:
 	if (taskTimedOut == YES) {
 		logit(lcl_vError,@"Task was terminated due to timeout.");
 		[NSThread sleepForTimeInterval:5.0];
+        [swTask terminate];
 		taskResult = 1;
 		goto done;
 	}
 	
     if([data length] && error == nil)
     {
-        if ([swTask terminationStatus] == 0) {
+        if ([swTask isRunning])
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                if ([swTask isRunning]) {
+                    [NSThread sleepForTimeInterval:1.0];
+                } else {
+                    break;
+                }
+            }
+            // Task should be complete
+            logit(lcl_vInfo,@"Terminate Software Task.");
+            [swTask terminate];
+        }
+        
+        int status = [swTask terminationStatus];
+        logit(lcl_vInfo,@"swTask terminationStatus: %d",status);
+        if (status == 0) {
             taskResult = 0;
         } else {
             taskResult = 1;
@@ -970,7 +992,7 @@ done:
 	[self setTaskIsRunning:NO];
     return taskResult;
 }
-*/
+
 - (NSString *)downloadedSWPath:(NSDictionary *)dict
 {
     NSString *swFile;
