@@ -686,20 +686,22 @@ done:
             [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
             [checkPatchStatusMenuItem setSubmenu:NULL];
             
-            NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
-            if ([ud objectForKey:@"reboot"] && [ud objectForKey:@"patch"]) {
-                if ([ud boolForKey:@"reboot"] == YES) {
-                    [ud setBool:NO forKey:@"patch"];
-                    [ud setBool:NO forKey:@"reboot"];
-                    for (NSUserNotification *nox in [[NSUserNotificationCenter defaultUserNotificationCenter] deliveredNotifications]) {
-                        if ([nox.title isEqualToString:@"Reboot Patches Required"]) {
-                            [[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:nox];
+            if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9)
+            {
+                NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
+                if ([ud objectForKey:@"reboot"] && [ud objectForKey:@"patch"]) {
+                    if ([ud boolForKey:@"reboot"] == YES) {
+                        [ud setBool:NO forKey:@"patch"];
+                        [ud setBool:NO forKey:@"reboot"];
+                        for (NSUserNotification *nox in [[NSUserNotificationCenter defaultUserNotificationCenter] deliveredNotifications]) {
+                            if ([nox.title isEqualToString:@"Reboot Patches Required"]) {
+                                [[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:nox];
+                            }
                         }
                     }
                 }
+                ud = nil;
             }
-            
-            ud = nil;
             return;
         } else if ([data count] <= 0) {
             [self setPatchCount:[data count]];

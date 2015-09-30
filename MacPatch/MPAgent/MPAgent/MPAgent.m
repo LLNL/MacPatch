@@ -107,16 +107,17 @@ static MPAgent *_instance;
 - (NSDictionary *)systemVersionDictionary
 {
 	NSDictionary *sysVer = NULL;
-	
-	SInt32 OSmajor, OSminor, OSrevision;
-	OSErr err1 = Gestalt(gestaltSystemVersionMajor, &OSmajor);
-	OSErr err2 = Gestalt(gestaltSystemVersionMinor, &OSminor);
-	OSErr err3 = Gestalt(gestaltSystemVersionBugFix, &OSrevision);
-	if (!err1 && !err2 && !err3)
-	{
-		sysVer = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[NSNumber numberWithInt:OSmajor],[NSNumber numberWithInt:OSminor],[NSNumber numberWithInt:OSrevision],nil]
-											 forKeys:[NSArray arrayWithObjects:@"major",@"minor",@"revision",nil]];
-	}
+
+    SInt32 OSmajor, OSminor, OSrevision;
+    OSErr err1 = Gestalt(gestaltSystemVersionMajor, &OSmajor);
+    OSErr err2 = Gestalt(gestaltSystemVersionMinor, &OSminor);
+    OSErr err3 = Gestalt(gestaltSystemVersionBugFix, &OSrevision);
+    if (!err1 && !err2 && !err3)
+    {
+        sysVer = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[NSNumber numberWithInt:OSmajor],[NSNumber numberWithInt:OSminor],[NSNumber numberWithInt:OSrevision],nil]
+                                             forKeys:[NSArray arrayWithObjects:@"major",@"minor",@"revision",nil]];
+    }
+    
 	return sysVer;
 }
 
