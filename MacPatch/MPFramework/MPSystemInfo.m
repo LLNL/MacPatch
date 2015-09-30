@@ -217,19 +217,23 @@ done:
 
 + (NSDictionary *)osVersionOctets
 {
-    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    NSDictionary *sysVer;
 
-    SInt32 verMajor=10, verMinor=0, verRev=0;
-    Gestalt(gestaltSystemVersionMajor, &verMajor);
-    Gestalt(gestaltSystemVersionMinor, &verMinor);
-    Gestalt(gestaltSystemVersionBugFix, &verRev);
-
-    [result setObject:[NSNumber numberWithInt:verMajor] forKey:@"major"];
-    [result setObject:[NSNumber numberWithInt:verMinor] forKey:@"minor"];
-    [result setObject:[NSNumber numberWithInt:verRev] forKey:@"revision"];
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_10) {
+        NSOperatingSystemVersion os = [[NSProcessInfo processInfo] operatingSystemVersion];
+        sysVer = @{@"major":[NSNumber numberWithInt:(int)os.majorVersion],@"minor":[NSNumber numberWithInt:(int)os.minorVersion],@"revision":[NSNumber numberWithInt:(int)os.patchVersion]};
+    } else {
+        SInt32 OSmajor, OSminor, OSrevision;
+        OSErr err1 = Gestalt(gestaltSystemVersionMajor, &OSmajor);
+        OSErr err2 = Gestalt(gestaltSystemVersionMinor, &OSminor);
+        OSErr err3 = Gestalt(gestaltSystemVersionBugFix, &OSrevision);
+        if (!err1 && !err2 && !err3)
+        {
+            sysVer = @{@"major":[NSNumber numberWithInt:OSmajor],@"minor":[NSNumber numberWithInt:OSminor],@"revision":[NSNumber numberWithInt:OSrevision]};
+        }
+    }
     
-    NSDictionary *octets = [NSDictionary dictionaryWithDictionary:result];
-    return octets;
+    return sysVer;
 }
 
 + (NSString *)hostArchitectureType

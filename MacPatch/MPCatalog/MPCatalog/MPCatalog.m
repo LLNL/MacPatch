@@ -103,17 +103,22 @@ static MPCatalog *_instance;
 
 - (NSDictionary *)systemVersionDictionary
 {
-	NSDictionary *sysVer = NULL;
-	
-	SInt32 OSmajor, OSminor, OSrevision;
-	OSErr err1 = Gestalt(gestaltSystemVersionMajor, &OSmajor);
-	OSErr err2 = Gestalt(gestaltSystemVersionMinor, &OSminor);
-	OSErr err3 = Gestalt(gestaltSystemVersionBugFix, &OSrevision);
-	if (!err1 && !err2 && !err3)
-	{
-		sysVer = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[NSNumber numberWithInt:OSmajor],[NSNumber numberWithInt:OSminor],[NSNumber numberWithInt:OSrevision],nil]
-											 forKeys:[NSArray arrayWithObjects:@"major",@"minor",@"revision",nil]];
-	}
+	NSDictionary *sysVer;
+    
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_10) {
+        NSOperatingSystemVersion os = [[NSProcessInfo processInfo] operatingSystemVersion];
+        sysVer = @{@"major":[NSNumber numberWithInt:(int)os.majorVersion],@"minor":[NSNumber numberWithInt:(int)os.minorVersion],@"revision":[NSNumber numberWithInt:(int)os.patchVersion]};
+    } else {
+        SInt32 OSmajor, OSminor, OSrevision;
+        OSErr err1 = Gestalt(gestaltSystemVersionMajor, &OSmajor);
+        OSErr err2 = Gestalt(gestaltSystemVersionMinor, &OSminor);
+        OSErr err3 = Gestalt(gestaltSystemVersionBugFix, &OSrevision);
+        if (!err1 && !err2 && !err3)
+        {
+            sysVer = @{@"major":[NSNumber numberWithInt:OSmajor],@"minor":[NSNumber numberWithInt:OSminor],@"revision":[NSNumber numberWithInt:OSrevision]};
+        }
+    }
+    
 	return sysVer;
 }
 

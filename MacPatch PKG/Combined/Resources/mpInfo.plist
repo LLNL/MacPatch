@@ -5,26 +5,26 @@
 	<key>Agent</key>
 	<dict>
 		<key>version</key>
-		<string>2.1.0</string>
+		<string>2.1.1</string>
 		<key>agent_version</key>
-		<string>2.7.0</string>
+		<string>2.7.1</string>
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>
-		<string>0</string>
+		<string>1</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>
 	<key>Updater</key>
 	<dict>
 		<key>version</key>
-		<string>2.1.0</string>
+		<string>2.1.1</string>
 		<key>agent_version</key>
-		<string>2.7.0</string>
+		<string>2.7.1</string>
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>
-		<string>0</string>
+		<string>1</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>

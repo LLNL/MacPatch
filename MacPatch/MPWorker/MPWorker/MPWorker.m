@@ -878,13 +878,11 @@ typedef NSUInteger MPPostDataType;
 	}
 	
 done:
-	if(_timeoutTimer) {
+
+    if(_timeoutTimer) {
 		[_timeoutTimer invalidate];
 	}
-	if (data) {
-		//[data autorelease];
-        data = nil;
-	}
+
 	[self setTaskIsRunning:NO];
     return taskResult;
 }
@@ -1104,102 +1102,7 @@ done:
 - (void)patchScan:(MPPatchScan *)patchScan didReciveStatusData:(NSString *)data
 {
     [self postDataToClient:data type:kMPProcessStatus];
-    //NSLog(@"%@",data);
 }
-
-// Test
-/*
-- (int)installAppleSoftwareUpdateViaHelper:(in bycopy NSString *)approvedUpdate
-{
-    NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
-    if (!approvedUpdate) {
-        logit(lcl_vError,@"Variable aASUSUpdate was nil.");
-        //[errorDetail setValue:@"Variable aASUSUpdate was nil." forKey:NSLocalizedDescriptionKey];
-        //*err = [NSError errorWithDomain:@"gov.llnl.mp.cmd" code:1001 userInfo:errorDetail];
-        return 1;
-    }
-    
-    setenv("NSUnbufferedIO", "YES", 1);
-    setenv("COMMAND_LINE_INSTALL", "1", 1);
-    
-    NSString *cmd;
-    NSString *asusBin = @"/usr/sbin/softwareupdate";
-    
-    if ((int)NSAppKitVersionNumber >= 1187) {
-        cmd = [NSString stringWithFormat:@"%@ -v -i %@",asusBin,approvedUpdate];
-    } else {
-        cmd = [NSString stringWithFormat:@"%@ -i %@",asusBin,approvedUpdate];
-    }
-    
-    int taskResult = -1;
-    
-    // Launch The NSTask
-    @try {
-        if (taskTimeoutValue >= 1) {
-            [NSThread detachNewThreadSelector:@selector(taskTimeoutThread) toTarget:self withObject:nil];
-        }
-
-        int MAX_BUFFER = 1024;
-        char buffer[MAX_BUFFER];
-        FILE *stream = popen([cmd UTF8String], "r");
-        if (stream != NULL)
-        {
-            //reads data if present at stdout
-            BOOL runBufferLoop = YES;
-            while (runBufferLoop)
-            {
-                if (taskTimedOut == YES) {
-                    pclose(stream);
-                    logit(lcl_vError,@"Task was terminated due to timeout.");
-                    [NSThread sleepForTimeInterval:2.0];
-                    taskResult = 1;
-                    goto done;
-                }
-                
-                while (fgets(buffer, MAX_BUFFER, stream) != NULL )
-                {
-                    //append data if valid
-                    if (sizeof(buffer)>0)
-                    {
-                        NSString *tmpStr = [NSString stringWithCString:buffer encoding:NSUTF8StringEncoding];
-                        if ([[tmpStr trim] length] != 0)
-                        {
-                            if ([tmpStr containsString:@"PackageKit: Missing bundle path"] == NO) {
-                                logit(lcl_vDebug,@"%@",tmpStr);
-                                [self postDataToClient:tmpStr type:kMPInstallStatus];
-                            } else {
-                                logit(lcl_vDebug,@"%@",tmpStr);
-                            }
-                        } // trimmed buffer
-                    } // buffer
-                } // while fgets
-                
-                if (ferror(stream)) {
-                    logit(lcl_vError,@"Error stream closed with error");
-                }
-            } // runBufferLoop
-
-            int stat = pclose(stream);
-            taskResult = (int)WEXITSTATUS(stat);
-            logit(lcl_vInfo,@"Task exited with %d exit code",taskResult);
-        }
-    }
-    @catch (NSException *e)
-    {
-        logit(lcl_vError,@"Install returned error. %@\n%@",[e reason],[e userInfo]);
-        //[errorDetail setValue:e forKey:NSLocalizedDescriptionKey];
-        //*err = [NSError errorWithDomain:@"gov.llnl.mp.cmd" code:1002 userInfo:errorDetail];
-        taskResult = 1;
-    }
-    
-    
-done:
-    unsetenv("NSUnbufferedIO");
-    unsetenv("COMMAND_LINE_INSTALL");
-    return taskResult;
-}
-*/
-
 
 - (int)installAppleSoftwareUpdateViaHelper:(in bycopy NSString *)approvedUpdate
 {
@@ -1285,39 +1188,50 @@ done:
     
 	[[aPipe fileHandleForReading] closeFile];
     
-	if (taskTimedOut == YES) {
-		logit(lcl_vError,@"Task was terminated due to timeout.");
-		[NSThread sleepForTimeInterval:2.0];
-		taskResult = 1;
-		goto done;
-	}
-
-    // A number of Apple Patches have a termination status other than 0
-    // Using "Done."
-	if (foundDone == YES) {
-        taskResult = 0;
-    } else {
-        if([data length] && error == nil)
+    
+    if (taskTimedOut == YES) {
+        logit(lcl_vError,@"Task was terminated due to timeout.");
+        [NSThread sleepForTimeInterval:5.0];
+        [swTask terminate];
+        taskResult = 1;
+        goto done;
+    }
+    
+    if([data length] && error == nil)
+    {
+        if ([swTask isRunning])
         {
-            if ([swTask terminationStatus] == 0) {
-                taskResult = 0;
-            } else {
-                taskResult = 1;
+            for (int i = 0; i < 30; i++)
+            {
+                if ([swTask isRunning]) {
+                    [NSThread sleepForTimeInterval:1.0];
+                } else {
+                    break;
+                }
             }
+            // Task should be complete
+            logit(lcl_vInfo,@"Terminate Software Task.");
+            [swTask terminate];
+        }
+        
+        int status = [swTask terminationStatus];
+        logit(lcl_vInfo,@"swTask terminationStatus: %d",status);
+        if (status == 0) {
+            taskResult = 0;
         } else {
-            logit(lcl_vError,@"Install returned error. Code:[%d]",[swTask terminationStatus]);
             taskResult = 1;
         }
+    } else {
+        logit(lcl_vError,@"Install returned error. Code:[%d]",[swTask terminationStatus]);
+        taskResult = 1;
     }
 	
 done:
-	if(_timeoutTimer) {
+
+    if(_timeoutTimer) {
 		[_timeoutTimer invalidate];
 	}
-	if (data) {
-		//[data autorelease];
-        data = nil;
-	}
+
 	[self setTaskIsRunning:NO];
     return taskResult;
 }
