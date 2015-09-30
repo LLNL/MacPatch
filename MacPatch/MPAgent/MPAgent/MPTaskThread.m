@@ -61,10 +61,6 @@ NSLock *lock;
 			} else if ([l_cmd isEqualToString:@"kMPAVCheck"]) {
 				logit(lcl_vInfo,@"Running client AV scan and update.");
 				[self runAVInfoScanAndDefsUpdate];
-				
-			} else if ([l_cmd isEqualToString:@"kMPInvScan"]) {
-				logit(lcl_vInfo,@"Running client inventory scan.");
-				[self runInventoryCollection];
 
 			} else if ([l_cmd isEqualToString:@"kMPCMD"]) {
 				logit(lcl_vInfo,@"Running custom client command.");
@@ -178,13 +174,6 @@ NSLock *lock;
         }
         
     }
-}
-
-+ (void)runInventoryCollection
-{
-    [MPTaskThread runExecTaskUsingArgs:[NSArray arrayWithObjects:@"-t", @"All", nil]];
-    logit(lcl_vInfo,@"Inventory collection has been completed.");
-    logit(lcl_vInfo,@"See the MPAgentExec.log file for more information.");
 }
 
 + (void)runPatchScan 

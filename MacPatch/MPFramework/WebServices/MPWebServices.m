@@ -352,7 +352,8 @@
 
     // Request
     NSError *error = nil;
-    NSDictionary *param = [NSDictionary dictionaryWithObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
+    //NSDictionary *param = [NSDictionary dictionaryWithObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
+    NSDictionary *param = [NSDictionary dictionaryWithObject:[_defaults objectForKey:@"PatchGroup"] forKey:@"PatchGroup"];
     NSData *res = [self requestWithMethodAndParams:@"GetPatchGroupPatches" params:param error:&error];
 
     if (error)
@@ -398,18 +399,40 @@
 
 - (BOOL)isPatchGroupHashValid:(NSError **)err
 {
-    NSDictionary *PatchGroupCacheFileData;
-    NSString *PatchGroupCacheFile = @"/Library/MacPatch/Client/Data/.gov.llnl.mp.patchgroup.data.plist";
-    NSString *PatchGroupHash = @"NA";
+    /* Had a problem with the hash, will now use
+       revision instead
+    */
+    
+    // Data is not complete from web service will fix this in 2.7.1
+    return NO;
+    //return [self isPatchGroupDataCurrent:err];
+}
+
+- (BOOL)isPatchGroupDataCurrent:(NSError **)err
+{
+    // Data is not complete from web service will fix this in 2.7.1
+    return NO;
+    
+    /* 
+     Switching to isPatchGroupDataCurrent from isPatchGroupHashValid
+     NSJSONSerialization was reordering the JSON causing the hash to 
+     not match.
+    */
+    NSDictionary    *PatchGroupCacheFileData;
+    NSString        *PatchGroupCacheFile = @"/Library/MacPatch/Client/Data/.gov.llnl.mp.patchgroup.data.plist";
+    int             patchGroupRevision = -1;
     /*
      PatchGroup Cache File Layout
      NSDictionary:
-     PatchGroupName: Default
-     hash: xxxx
-     data: ....
-     PatchGroupName: QA
-     hash: xxxx
-     data: ....
+        PatchGroupName: Default
+        hash: xxxx
+        data: ....
+        rev: ###
+     NSDictionary:
+        PatchGroupName: QA
+        hash: xxxx
+        data: ....
+        rev: ###
      */
     if ([[NSFileManager defaultManager] fileExistsAtPath:PatchGroupCacheFile])
     {
@@ -419,36 +442,42 @@
         } else {
             if ([PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]])
             {
-                if ([[PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]] objectForKey:@"hash"]) {
-                    PatchGroupHash = [[PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]] objectForKey:@"hash"];
-                    qlinfo(@"[isPatchGroupHashValid]: Hash = %@",PatchGroupHash);
+                if ([[PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]] objectForKey:@"rev"]) {
+                    patchGroupRevision = (int)[[PatchGroupCacheFileData objectForKey:[_defaults objectForKey:@"PatchGroup"]] objectForKey:@"rev"];
+                    qlinfo(@"[isPatchGroupDataCurrent]: Revision = %d",patchGroupRevision);
                 }
             }
         }
     }
-
+    if (patchGroupRevision == -1)
+    {
+        qlinfo(@"Cached data did not contain a revision.");
+        return NO;
+    }
+    
     // Request
     NSError *error = nil;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    [params setObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
-    [params setObject:PatchGroupHash forKey:@"Hash"];
-    NSData *res = [self requestWithMethodAndParams:@"GetIsHashValidForPatchGroup" params:(NSDictionary *)params error:&error];
+    //[params setObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
+    [params setObject:[_defaults objectForKey:@"PatchGroup"] forKey:@"PatchGroup"];
+    [params setObject:[NSNumber numberWithInt:patchGroupRevision] forKey:@"revision"];
+    NSData *res = [self requestWithMethodAndParams:@"GetIsLatestRevisionForPatchGroup" params:(NSDictionary *)params error:&error];
     if (error)
     {
-		if (err != NULL) {
+        if (err != NULL) {
             *err = error;
         } else {
             qlerror(@"%@",error.localizedDescription);
         }
         return NO;
     }
-
+    
     // Parse Main JSON Result
     // MPJsonResult does all of the error checking on the result
     MPJsonResult *jres = [[MPJsonResult alloc] init];
     [jres setJsonData:res];
     error = nil;
-    id result = [jres returnJsonResult:&error];
+    id result = [jres returnResult:&error];
     qldebug(@"JSON Result: %@",result);
     if (error)
     {
@@ -459,7 +488,7 @@
         }
         return NO;
     }
-
+    
     // Has Object
     if ([result objectForKey:@"result"]) {
         if ([[result objectForKey:@"result"] integerValue] == 1) {
@@ -470,9 +499,9 @@
             return NO;
         }
     }
-
+    
     // Should not get here
-	return NO;
+    return NO;
 }
 
 - (void)writePatchGroupCacheFileData:(NSString *)jData
@@ -496,10 +525,12 @@
     {
         PatchGroupCacheFileData = [NSMutableDictionary dictionaryWithContentsOfFile:PatchGroupCacheFile];
     }
-
+    [jData writeToFile:@"/tmp/fooMD" atomically:NO];
     [PatchGroupInfo setObject:[mpc getHashFromStringForType:jData type:@"MD5"] forKey:@"hash"];
     [PatchGroupInfo setObject:jData forKey:@"data"];
+    [PatchGroupInfo setObject:jData forKey:@"version"];
     qlinfo(@"Write patch group hash and data to filesystem.");
+    
     [PatchGroupCacheFileData setObject:PatchGroupInfo forKey:[_defaults objectForKey:@"PatchGroup"]];
     [PatchGroupCacheFileData writeToFile:PatchGroupCacheFile atomically:YES];
 
@@ -1008,47 +1039,8 @@
 // deprecated as of 2.5 release
 - (BOOL)postDataMgrXML:(NSString *)aDataMgrXML error:(NSError **)err __deprecated
 {
-    // Request
-    NSError *error = nil;
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    [params setObject:self._cuuid forKey:@"clientID"];
-    [params setObject:aDataMgrXML forKey:@"encodedXML"];
-    NSData *res = [self requestWithMethodAndParams:@"PostDataMgrXML" params:(NSDictionary *)params error:&error];
-    if (error)
-    {
-        NSMutableDictionary *errDict = [[NSMutableDictionary alloc] init];
-        [errDict setObject:aDataMgrXML forKey:@"aDataMgrXML"];
-        MPFailedRequests *mpf = [[MPFailedRequests alloc] init];
-        [mpf addFailedRequest:@"postDataMgrXML" params:errDict errorNo:error.code errorMsg:error.localizedDescription];
-        mpf = nil;
-
-		if (err != NULL) {
-            *err = error;
-        } else {
-            qlerror(@"%@",error.localizedDescription);
-        }
-        return NO;
-    }
-
-    // Parse Main JSON Result
-    // MPJsonResult does all of the error checking on the result
-    MPJsonResult *jres = [[MPJsonResult alloc] init];
-    [jres setJsonData:res];
-    error = nil;
-    id result = [jres returnJsonResult:&error];
-    qldebug(@"JSON Result: %@",result);
-    if (error)
-    {
-        if (err != NULL) {
-            *err = error;
-        } else {
-            qlerror(@"%@",error.localizedDescription);
-        }
-        return NO;
-    }
-
-    qlinfo(@"Data was successfully posted.");
-    return YES;
+    qlerror(@"[postDataMgrXML]: has been removed.");
+    return NO;
 }
 
 - (BOOL)postDataMgrJSON:(NSString *)aDataMgrJSON error:(NSError **)err
@@ -1629,6 +1621,45 @@
     [jres setJsonData:res];
     error = nil;
     id result = [jres returnJsonResult:&error];
+    qldebug(@"JSON Result: %@",result);
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+    
+    return result;
+}
+
+- (NSString *)getHashForPluginName:(NSString *)pName pluginBunleID:(NSString *)bundleID pluginVersion:(NSString *)pVer error:(NSError **)err
+{
+    // Request
+    NSError *error = nil;
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    [params setObject:self._cuuid forKey:@"clientID"];
+    [params setObject:pName forKey:@"pluginName"];
+    [params setObject:bundleID forKey:@"pluginBundle"];
+    [params setObject:pVer forKey:@"pluginVersion"];
+    NSData *res = [self requestWithMethodAndParams:@"GetPluginHash" params:(NSDictionary *)params error:&error];
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+    
+    // MPJsonResult does all of the error checking on the result
+    MPJsonResult *jres = [[MPJsonResult alloc] init];
+    [jres setJsonData:res];
+    error = nil;
+    id result = [jres returnResult:&error];
     qldebug(@"JSON Result: %@",result);
     if (error)
     {

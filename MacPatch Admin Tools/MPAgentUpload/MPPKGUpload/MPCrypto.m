@@ -26,6 +26,9 @@
 #import "MPCrypto.h"
 #import <CommonCrypto/CommonDigest.h>
 
+#undef  ql_component
+#define ql_component lcl_cMain
+
 @interface MPCrypto (hidden)
 
 - (NSString *)MD5HashForFile:(NSString *)aFilePath;
@@ -56,7 +59,7 @@
 -(NSString *)getHashForFileForType:(NSString *)aFile type:(NSString *)aType
 {
 	if ([[NSFileManager defaultManager] fileExistsAtPath:aFile] == FALSE) {
-		NSLog(@"Unable to get file hash for %@, file does not exist.",aFile);
+		qlerror(@"Unable to get file hash for %@, file does not exist.",aFile);
 		return @"ERROR_FILE_MISSING";
 	}
     

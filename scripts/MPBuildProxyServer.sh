@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildProxyServer.sh
-# Version: 1.0
+# Version: 1.1
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -16,19 +16,57 @@ MPBASE="/Library/MacPatch"
 MPSERVERBASE="/Library/MacPatch/Server"
 GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/build/Server"
+SRC_DIR="${MPSERVERBASE}/conf/src"
+J2EE_SW=`find "${GITROOT}/MacPatch Server" -name "apache-tomcat-"* -type f -exec basename {} \; | head -n 1`
+
+XOSTYPE=`uname -s`
+USELINUX=false
+USEMACOS=false
+OWNERGRP="79:70"
+
+if [ "`whoami`" != "root" ] ; then   # If not root user,
+   # Run this script again as root
+   echo
+   echo "You must be an admin user to run this script."
+   echo "Please re-run the script using sudo."
+   echo
+   exit 1;
+fi
+
+# -----------------------------------
+# OS Check
+# -----------------------------------
+
+# Check and set os type
+if [ $XOSTYPE == "Linux" ]; then
+	USELINUX=true
+	OWNERGRP="www-data:www-data"
+	getent passwd www-data > /dev/null 2&>1
+	if [ $? -eq 0 ]; then
+		echo "www-data user exists"
+	else
+    	echo "Create user www-data"
+		useradd -r -M -s /dev/null -U www-data
+	fi
+elif [ $XOSTYPE == "Darwin" ]; then
+	USEMACOS=true
+else
+  	echo "OS Type $XOSTYPE is not supported. Now exiting."
+  	exit 1;
+fi
 
 if [ -d "$BUILDROOT" ]; then
 	rm -rf ${BUILDROOT}
 else
-	mkdir -p ${BUILDROOT}	
-fi	
+	mkdir -p ${BUILDROOT}
+fi
 
 if [ ! -d "$GITROOT" ]; then
 	echo "$GITROOT is missing. Please clone MacPatch repo to /Library/MacPatch/tmp"
 	echo
 	echo "cd /Library/MacPatch/tmp; git clone https://github.com/SMSG-MAC-DEV/MacPatch.git"
 	exit
-fi	
+fi
 
 # ------------------
 # Create Skeleton Dir Structure
@@ -45,38 +83,68 @@ mkdir -p /Library/MacPatch/Server/lib
 mkdir -p /Library/MacPatch/Server/Logs
 
 # ------------------
-# Compile the agent components
+# Copy files
 # ------------------
-xcodebuild -project ${GITROOT}/MacPatch/MPFramework/MPLibrary.xcodeproj clean
-xcodebuild -project ${GITROOT}/MacPatch/MPFramework/MPLibrary.xcodeproj SYMROOT=${BUILDROOT}
+cp -R ${GITROOT}/MacPatch\ Server/Server ${MPBASE}
 
-if [ ! -f "${BUILDROOT}/Release/libMacPatch.a" ] ; then
-	echo "Error: MacPatch static library compiler error"
-	exit 1
+# ------------------
+# Install required packages
+# ------------------
+
+if [ $XOSTYPE == "Linux" ]; then
+	if [ -f "/etc/redhat-release" ]; then
+		# Check if needed packges are installed or install
+		pkgs=("gcc-c++" "git" "openssl-devel" "java-1.7.0-openjdk-devel" "libxml2-devel" "bzip2-libs" "bzip2-devel" "bzip2" "python-pip" "mysql-connector-python")
+
+		for i in "${pkgs[@]}"
+		do
+			p=`rpm -qa --qf '%{NAME}\n' | grep -e ${i}$`
+			if [ -z $p ]; then
+				echo "Install $i"
+				yum install -y ${i}
+			fi
+		done
+	fi
 fi
 
-xcodebuild clean build -project ${GITROOT}/MacPatch/MPProxySync/MPProxySync.xcodeproj SYMROOT=${BUILDROOT} HEADER_SEARCH_PATHS="${BUILDROOT}/usr/local/include"
-
-if [ ! -f "${BUILDROOT}/Release/MPProxySync" ] ; then
-	echo "Error: MPProxySync compiler error"
-	exit 1
-fi
-
 # ------------------
-# Remove the build and symbol files
+# Setup Tomcat
 # ------------------
-find ${BUILDROOT} -name "*.build" -print | xargs -I{} rm -rf {}
-find ${BUILDROOT} -name "*.dSYM" -print | xargs -I{} rm -rf {}
 
-# ------------------
-# Copy compiled files
-# ------------------
-# Remove the static library and header files
-rm ${BUILDROOT}/Release/libMacPatch.a
-rm -r ${BUILDROOT}/Release/usr
+mkdir -p "${MPSERVERBASE}/tomcat-mpproxy"
+tar xvfz ${SRC_DIR}/${J2EE_SW} --strip 1 -C ${MPSERVERBASE}/tomcat-mpproxy
+chmod +x ${MPSERVERBASE}/tomcat-mpproxyt/bin/*
+rm -rf ${MPSERVERBASE}/tomcat-mpproxy/webapps/docs
+rm -rf ${MPSERVERBASE}/tomcat-mpproxy/webapps/examples
+rm -rf ${MPSERVERBASE}/tomcat-mpproxy/webapps/ROOT
 
-cp -R ${GITROOT}/MacPatch\ Proxy\ Server/Server ${MPBASE}
-cp -R ${BUILDROOT}/Release/ ${MPSERVERBASE}/bin
+# Web Services - App
+mkdir -p "${MPSERVERBASE}/conf/app/war/proxy"
+mkdir -p "${MPSERVERBASE}/conf/app/.proxy"
+unzip "${MPSERVERBASE}/conf/src/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/.proxy"
+rm -rf "${MPSERVERBASE}/conf/app/.proxy/manual"
+rm -rf "${MPSERVERBASE}/conf/app/.proxy/bluedragon"
+rm -rf "${MPSERVERBASE}/conf/app/.proxy/WEB-INF/classes/com"
+rm -rf "${MPSERVERBASE}/conf/app/.proxy/WEB-INF/customtags"
+mkdir -p "${MPSERVERBASE}/conf/app/.proxy/WEB-INF/customtags"
+cp -r "${MPSERVERBASE}/conf/app/proxy/" "${MPSERVERBASE}/conf/app/.proxy"
+cp -r "${MPSERVERBASE}/conf/app/mods/proxy/" "${MPSERVERBASE}/conf/app/.proxy"
+cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.proxy/WEB-INF/lib/systemcommand.jar"
+chmod -R 0775 "${MPSERVERBASE}/conf/app/.proxy"
+chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.proxy"
+jar cf "${MPSERVERBASE}/conf/app/war/proxy/ROOT.war" -C "${MPSERVERBASE}/conf/app/.proxy" .
+
+# Tomcat Config - WSL
+MPCONFWSL="${MPSERVERBASE}/conf/tomcat/proxy"
+MPSRVTOMWSL="${MPSERVERBASE}/tomcat-mpproxy"
+cp "${MPSERVERBASE}/conf/app/war/proxy/ROOT.war" "${MPSRVTOMWSL}/webapps"
+cp "${MPCONFWSL}/bin/setenv.sh" "${MPSRVTOMWSL}/bin/setenv.sh"
+cp "${MPCONFWSL}/bin/launchdTomcat.sh" "${MPSRVTOMWSL}/bin/launchdTomcat.sh"
+cp -r "${MPCONFWSL}/conf/Catalina" "${MPSRVTOMWSL}/conf/"
+cp -r "${MPCONFWSL}/conf/server.xml" "${MPSRVTOMWSL}/conf/server.xml"
+cp -r "${MPCONFWSL}/conf/web.xml" "${MPSRVTOMWSL}/conf/web.xml"
+chmod -R 0775 "${MPSRVTOMWSL}"
+chown -R $OWNERGRP "${MPSRVTOMWSL}"
 
 # ------------------
 # Build Apache
@@ -84,12 +152,35 @@ cp -R ${BUILDROOT}/Release/ ${MPSERVERBASE}/bin
 ${MPSERVERBASE}/conf/scripts/MPHttpServerBuild.sh
 
 # ------------------
+# Remove Non Proxy Stuff
+# ------------------
+MPSRVCONF="${MPSERVERBASE}/conf"
+rm -rf "${MPSRVCONF}/app/.proxy"
+rm -rf "${MPSRVCONF}/app/site"
+rm -rf "${MPSRVCONF}/app/wsl"
+rm -rf "${MPSRVCONF}/app/mods/site"
+rm -rf "${MPSRVCONF}/app/mods/wsl"
+rm -rf "${MPSRVCONF}/app/mods/wsl"
+rm -rf "${MPSRVCONF}/Database"
+rm -rf "${MPSRVCONF}/Database"
+find "${MPSRVCONF}/src" -name *.tar.gz -print | xargs -I{} rm {}
+mv "${MPSRVCONF}/scripts" "${MPSRVCONF}/scripts_rm"
+mv "${MPSRVCONF}/scripts_rm/proxy" "${MPSRVCONF}/scripts"
+rm -rf "${MPSRVCONF}/scripts_rm"
+mv "${MPSRVCONF}/etc" "${MPSRVCONF}/etc_rm"
+mv "${MPSRVCONF}/etc_rm/proxy" "${MPSRVCONF}/etc"
+rm -rf "${MPSRVCONF}/etc_rm"
+mv "${MPSRVCONF}/LaunchDaemons" "${MPSRVCONF}/LaunchDaemons_rm"
+mv "${MPSRVCONF}/LaunchDaemons_rm/proxy" "${MPSRVCONF}/LaunchDaemons"
+rm -rf "${MPSRVCONF}/LaunchDaemons_rm"
+
+# ------------------
 # Link & Set Permissions
 # ------------------
-chown -R root:admin ${MPSERVERBASE}
-chown -R 79:70 ${MPSERVERBASE}/jetty-mpproxy
-chown -R 79:70 ${MPSERVERBASE}/Logs
+chown -R 79:70 ${MPSERVERBASE}
 chmod -R 0775 ${MPSERVERBASE}
+chown root:wheel ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
+chmod 0644 ${MPSERVERBASE}/conf/LaunchDaemons/*.plist
 
 # ------------------
 # Clean up structure place holders

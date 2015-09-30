@@ -1,8 +1,8 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.6.6
-	Rev 1
+	Version 2.7.0.3
+	Rev 3
 */
 
 SET NAMES utf8;
@@ -179,13 +179,29 @@ CREATE TABLE `mp_agent_config` (
 -- ----------------------------
 DROP TABLE IF EXISTS `mp_agent_config_data`;
 CREATE TABLE `mp_agent_config_data` (
-  `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `aid` varchar(50) NOT NULL,
   `aKey` varchar(255) NOT NULL,
   `aKeyValue` varchar(255) NOT NULL,
   `enforced` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`rid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `mp_agent_plugins`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_agent_plugins`;
+CREATE TABLE `mp_agent_plugins` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `pluginName` varchar(255) DEFAULT NULL,
+  `pluginBundleID` varchar(100) DEFAULT NULL,
+  `pluginVersion` varchar(20) DEFAULT NULL,
+  `hash` varchar(100) DEFAULT NULL,
+  `active` int(1) DEFAULT '0',
+  PRIMARY KEY (`rid`),
+  KEY `main_idx` (`pluginName`,`pluginBundleID`,`pluginVersion`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+
 
 -- ----------------------------
 --  Table structure for `mp_agent_upload`
@@ -556,6 +572,8 @@ CREATE TABLE `mp_clients_plist` (
   `MPAgentExecDebug` varchar(255) DEFAULT 'NA',
   `MPAgentDebug` varchar(255) DEFAULT 'NA',
   `SWDistGroup` varchar(255) DEFAULT 'NA',
+  `CheckSignatures` varchar(255) DEFAULT 'NA',
+  `SWDistGroupState` varchar(255) DEFAULT 'NA',
   PRIMARY KEY (`rid`),
   UNIQUE KEY `idx_cuuid` (`cuuid`),
   KEY `idx_clientinfo` (`cuuid`,`Domain`,`PatchGroup`)
@@ -762,6 +780,7 @@ CREATE TABLE `mp_patch_group_data` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `pid` varchar(50) NOT NULL,
   `hash` varchar(50) NOT NULL,
+  `rev` bigint(20) DEFAULT '-1',
   `data` longtext NOT NULL,
   `data_type` varchar(4) DEFAULT '',
   `mdate` datetime DEFAULT NULL,

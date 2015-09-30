@@ -94,21 +94,26 @@ def main():
         
         # ReadPlist and create config Object
         rConfig = plistlib.readPlist(args.plist)
+    else:
+        # Read Default plist
+        rConfig = plistlib.readPlist(MP_SYNC_PLIST)
         
 
     logger.info('# ------------------------------------------------------')
     logger.info('# Starting content sync  '                               )
     logger.info('# ------------------------------------------------------')
     
-    if args.server == None and args.plist != None:
+    # If both args are empty, use the default plist
+    if args.server == None and args.plist == None:
         if rConfig != None:
-            print rConfig
             if rConfig.has_key('MPServerAddress'):
                 MASTER_SERVER = rConfig['MPServerAddress']
     
-    if args.server:
+    # Use only the server arg
+    if args.server != None and args.plist == None:
         MASTER_SERVER = args.server
 
+    # We dont allow localhost
     if MASTER_SERVER == "localhost":
         logger.error("Error, localhost is not supported.")
         sys.exit(1)

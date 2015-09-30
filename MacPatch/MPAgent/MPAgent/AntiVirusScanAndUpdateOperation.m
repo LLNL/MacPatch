@@ -29,14 +29,19 @@
 
 @interface AntiVirusScanAndUpdateOperation (Private)
 
+@property (nonatomic, readwrite) NSString *taskFile;
+
 - (void)runAVInfoScan;
 - (void)runAVInfoScanAndDefsUpdate;
 - (int)runAVDefsUpdate;
+
 @end
 
 @implementation AntiVirusScanAndUpdateOperation
 
 @synthesize scanType;
+@synthesize taskPID;
+@synthesize taskFile;
 @synthesize isExecuting;
 @synthesize isFinished;
 
@@ -44,10 +49,12 @@
 {
 	if ((self = [super init])) {
 		scanType = 0;
+        taskPID = -99;
 		isExecuting = NO;
         isFinished  = NO;
 		si	= [MPAgent sharedInstance];
 		fm	= [NSFileManager defaultManager];
+        taskFile = [@"/private/tmp" stringByAppendingPathComponent:kMPAVUpdate];
 	}	
 	
 	return self;
@@ -71,6 +78,8 @@
     isFinished = YES;
     [self didChangeValueForKey:@"isExecuting"];
     [self didChangeValueForKey:@"isFinished"];
+
+    [self killTaskUsingPID];
 }
 
 - (void)start 
@@ -111,7 +120,15 @@
 		if (![fm fileExistsAtPath:appPath]) {
 			logit(lcl_vError,@"Unable to find MPAgentExec app.");
 		} else {
-			if ([MPCodeSign checkSignature:appPath]) {
+            NSError *err = nil;
+            MPCodeSign *cs = [[MPCodeSign alloc] init];
+            BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
+            if (err) {
+                logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+            }
+            cs = nil;
+            if (result == YES)
+            {
 				NSError *error = nil;
 				NSString *result;
 				MPNSTask *mpr = [[MPNSTask alloc] init];
@@ -139,8 +156,15 @@
 			logit(lcl_vError,@"Unable to find MPAgentExec app.");
 		}
 
-		if ([MPCodeSign checkSignature:appPath]) 
-		{	
+        NSError *err = nil;
+        MPCodeSign *cs = [[MPCodeSign alloc] init];
+        BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
+        if (err) {
+            logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+        }
+        cs = nil;
+        if (result == YES)
+		{
 			NSError *error = nil;
 			NSString *result;
 			MPNSTask *mpr = [[MPNSTask alloc] init];
@@ -160,6 +184,40 @@
 - (int)runAVDefsUpdate
 {
     return 0;
+}
+
+- (void)killTaskUsingPID
+{
+    NSError *err = nil;
+    // If File Does Not Exists, not PID to kill
+    if (![fm fileExistsAtPath:self.taskFile]) {
+        return;
+    } else {
+        NSString *strPID = [NSString stringWithContentsOfFile:self.taskFile encoding:NSUTF8StringEncoding error:&err];
+        if (err) {
+            logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+        }
+        if ([strPID intValue] > 0) {
+            [self setTaskPID:[strPID intValue]];
+        }
+    }
+    
+    if (self.taskPID == -99) {
+        logit(lcl_vWarning,@"No task PID was defined");
+        return;
+    }
+    
+    // Make Sure it's running before we send a SIGKILL
+    NSArray *procArr = [MPSystemInfo bsdProcessList];
+    NSArray *filtered = [procArr filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"processID == %i", self.taskPID]];
+    if ([filtered count] <= 0) {
+        return;
+    } else if ([filtered count] == 1 ) {
+        kill( self.taskPID, SIGKILL );
+    } else {
+        logit(lcl_vError,@"Can not kill task using PID. Found to many using the predicate.");
+        logit(lcl_vDebug,@"%@",filtered);
+    }
 }
 
 @end

@@ -48,6 +48,9 @@
 
 - (NSDictionary *)getCatalogURLSForHostOS:(NSError **)err;
 - (NSDictionary *)getPatchGroupContent:(NSError **)err;
+- (BOOL)isPatchGroupHashValid:(NSError **)err;
+- (BOOL)isPatchGroupDataCurrent:(NSError **)err;
+
 - (BOOL)postPatchScanResultsForType:(NSInteger)aPatchScanType results:(NSDictionary *)resultsDictionary error:(NSError **)err;
 - (BOOL)postPatchInstallResultsToWebService:(NSString *)aPatch patchType:(NSString *)aPatchType error:(NSError **)err;
 
@@ -85,5 +88,8 @@
 
 // Profiles
 - (NSArray *)getProfileIDDataForClient:(NSError **)err;
+
+// Plugins
+- (NSString *)getHashForPluginName:(NSString *)pName pluginBunleID:(NSString *)bundleID pluginVersion:(NSString *)pVer error:(NSError **)err;
 
 @end

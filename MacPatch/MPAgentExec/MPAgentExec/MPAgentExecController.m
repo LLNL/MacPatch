@@ -51,6 +51,8 @@
 - (int)writeToFileViaProxy:(NSString *)aFile data:(id)data;
 - (int)writeArrayFileViaProxy:(NSString *)aFile data:(NSArray *)data;
 
+- (void)killTaskUsing:(NSString *)aTaskName;
+
 @end
 
 @implementation MPAgentExecController
@@ -156,8 +158,6 @@
         }
     }
 
-    //NSString            *dataMgrJSON;
-    //NSString            *jsonBase64String;
     MPASUSCatalogs      *mpCatalog;
     NSArray             *applePatchesArray;
     NSArray             *approvedApplePatches = nil;
@@ -206,26 +206,7 @@
         applePatchesArray = [mpAsus scanForAppleUpdates];
         
         // post patches to web service
-        /*
-        dataMgrJSON = [mpDataMgr GenJSONForDataMgr:applePatchesArray
-                                           dbTable:@"client_patches_apple"
-                                     dbTablePrefix:@"mp_"
-                                     dbFieldPrefix:@""
-                                      updateFields:@"cuuid,patch"
-                                         deleteCol:@"cuuid"
-                                    deleteColValue:[MPSystemInfo clientUUID]];
-
-        
-        logit(lcl_vInfo,@"%%%%%%%%%%%%%%%%%%%%%%%%%%\n%@",dataMgrJSON);
-        */
-        // Encode to base64 and send to web service
-        /*
-        jsonBase64String = [[dataMgrJSON dataUsingEncoding:NSUTF8StringEncoding] base64Encoding];
-         */
         wsErr = nil;
-        /*
-        [mpws postDataMgrJSON:jsonBase64String error:&wsErr];
-         */
         [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
         if (wsErr) {
             logit(lcl_vError,@"Scan results posted to webservice returned false.");
@@ -354,9 +335,10 @@ done:
     } else {
         logit(lcl_vError,@"Unable to write approved patches file %@. Patch file will not be used.",_approvedPatchesFile);
     }
-
-
-
+    
+    // Added a global notification to update image icon of MPClientStatus
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"kRefreshStatusIconNotification" object:nil];
+    
 	[self setApprovedPatches:[NSArray arrayWithArray:approvedUpdatesArray]];
 	[self removeTaskRunning:kMPPatchSCAN];
     logit(lcl_vInfo,@"Patch Scan Completed.");
@@ -940,6 +922,9 @@ done:
 	}
 
 done:
+    // Added a global notification to update image icon of MPClientStatus
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"kRefreshStatusIconNotification" object:nil];
+    
 	[self removeTaskRunning:kMPPatchUPDATE];
 }
 
@@ -1521,7 +1506,15 @@ done:
 	MPNSTask *mpr = [[MPNSTask alloc] init];
 
 	// If no or valid MP signature, replace and install
-	if ([MPCodeSign checkSignature:updateAppPath]) {
+    NSError *err = nil;
+    MPCodeSign *cs = [[MPCodeSign alloc] init];
+    BOOL verifyDevBin = [cs verifyAppleDevBinary:updateAppPath error:&err];
+    if (err) {
+        logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+    }
+    cs = nil;
+    if (verifyDevBin == YES)
+    {
 		verString = [mpr runTask:updateAppPath binArgs:[NSArray arrayWithObjects:@"-v", nil] error:&error];
 		if (error) {
 			logit(lcl_vError,@"%@",[error description]);
@@ -1547,10 +1540,10 @@ done:
 	}
 
     NSDate *cdate; // CDate of File
-    NSDate *cdatePlus; // CDate of file plus 2 hrs
+    NSDate *cdatePlus; // CDate of file plus ... hrs
     NSDate *ndate = [NSDate date]; // Now
 
-	if ([aTaskName isEqualToString:@".mpScanRunning"]) {
+	if ([aTaskName isEqualToString:kMPPatchSCAN]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpScanRunning"]) {
             cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpScanRunning" error:nil] fileCreationDate];
             cdatePlus = [cdate dateByAddingTimeInterval:7200];
@@ -1560,6 +1553,7 @@ done:
                 return YES;
             } else if(result==NSOrderedDescending) {
                 // cdatePlus is in the past
+                [self killTaskUsing:kMPPatchSCAN];
                 logit(lcl_vError, @"Task file /tmp/.mpScanRunning found. File older than 2 hours. Deleting file.");
                 [self removeTaskRunning:@"/tmp/.mpScanRunning"];
                 return NO;
@@ -1568,17 +1562,18 @@ done:
 			return NO;
 		}
 	}
-	if ([aTaskName isEqualToString:@".mpUpdateRunning"]) {
+	if ([aTaskName isEqualToString:kMPPatchUPDATE]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpUpdateRunning"]) {
             cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpUpdateRunning" error:nil] fileCreationDate];
-			cdatePlus = [cdate dateByAddingTimeInterval:7200]; // Add 2 Hours
+			cdatePlus = [cdate dateByAddingTimeInterval:86400]; // Add 24 Hours
             NSComparisonResult result = [ndate compare:cdatePlus];
             if( result == NSOrderedAscending ) {
                 // cdatePlus is in the future
                 return YES;
             } else if(result==NSOrderedDescending) {
                 // cdatePlus is in the past
-                logit(lcl_vError, @"Task file /tmp/.mpUpdateRunning found. File older than 2 hours. Deleting file.");
+                [self killTaskUsing:kMPPatchUPDATE];
+                logit(lcl_vError, @"Task file /tmp/.mpUpdateRunning found. File older than 24 hours. Deleting file.");
                 [self removeTaskRunning:@"/tmp/.mpUpdateRunning"];
                 return NO;
             }
@@ -1586,17 +1581,18 @@ done:
 			return NO;
 		}
 	}
-	if ([aTaskName isEqualToString:@".mpInventoryRunning"]) {
+	if ([aTaskName isEqualToString:kMPInventory]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpInventoryRunning"]) {
             cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpInventoryRunning" error:nil] fileCreationDate];
-			cdatePlus = [cdate dateByAddingTimeInterval:7200]; // Add 2 Hours
+			cdatePlus = [cdate dateByAddingTimeInterval:14400]; // Add 4 Hours
             NSComparisonResult result = [ndate compare:cdatePlus];
             if( result == NSOrderedAscending ) {
                 // cdatePlus is in the future
                 return YES;
             } else if(result==NSOrderedDescending) {
                 // cdatePlus is in the past
-                logit(lcl_vError, @"Task file /tmp/.mpInventoryRunning found. File older than 2 hours. Deleting file.");
+                [self killTaskUsing:kMPInventory];
+                logit(lcl_vError, @"Task file /tmp/.mpInventoryRunning found. File older than 4 hours. Deleting file.");
                 [self removeTaskRunning:@"/tmp/.mpInventoryRunning"];
                 return NO;
             }
@@ -1604,17 +1600,18 @@ done:
 			return NO;
 		}
 	}
-	if ([aTaskName isEqualToString:@".mpAVUpdateRunning"]) {
+	if ([aTaskName isEqualToString:kMPAVUpdate]) {
 		if ([fm fileExistsAtPath:@"/tmp/.mpAVUpdateRunning"]) {
             cdate = [[fm attributesOfItemAtPath:@"/tmp/.mpAVUpdateRunning" error:nil] fileCreationDate];
-			cdatePlus = [cdate dateByAddingTimeInterval:7200]; // Add 2 Hours
+			cdatePlus = [cdate dateByAddingTimeInterval:14400]; // Add 4 Hours
             NSComparisonResult result = [ndate compare:cdatePlus];
             if( result == NSOrderedAscending ) {
                 // cdatePlus is in the future
                 return YES;
             } else if(result==NSOrderedDescending) {
                 // cdatePlus is in the past
-                logit(lcl_vError, @"Task file /tmp/.mpAVUpdateRunning found. File older than 2 hours. Deleting file.");
+                [self killTaskUsing:kMPAVUpdate];
+                logit(lcl_vError, @"Task file /tmp/.mpAVUpdateRunning found. File older than 4 hours. Deleting file.");
                 [self removeTaskRunning:@"/tmp/.mpAVUpdateRunning"];
                 return NO;
             }
@@ -1629,7 +1626,7 @@ done:
 -(void)writeTaskRunning:(NSString *)aTaskName
 {
 	if (forceRun == NO) {
-		NSString *_id = [[NSProcessInfo processInfo] globallyUniqueString];
+		NSString *_id = [@([[NSProcessInfo processInfo] processIdentifier]) stringValue];
 		[_id writeToFile:[@"/tmp" stringByAppendingPathComponent:aTaskName] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 	}
 }
@@ -1652,6 +1649,42 @@ done:
 			logit(lcl_vInfo,@"Force run is set to true for %@. No file will be removed.",aTaskName);
 		}
 	}
+}
+
+- (void)killTaskUsing:(NSString *)aTaskName
+{
+    int taskPID = -99;
+    NSError *err = nil;
+    NSString *taskFile = [@"/private/tmp" stringByAppendingPathComponent:aTaskName];
+    // If File Does Not Exists, not PID to kill
+    if (![fm fileExistsAtPath:taskFile]) {
+        return;
+    } else {
+        NSString *strPID = [NSString stringWithContentsOfFile:taskFile encoding:NSUTF8StringEncoding error:&err];
+        if (err) {
+            logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
+        }
+        if ([strPID intValue] > 0) {
+            taskPID = [strPID intValue];
+        }
+    }
+    
+    if (taskPID == -99) {
+        logit(lcl_vWarning,@"No task PID was defined");
+        return;
+    }
+    
+    // Make Sure it's running before we send a SIGKILL
+    NSArray *procArr = [MPSystemInfo bsdProcessList];
+    NSArray *filtered = [procArr filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"processID == %i", taskPID]];
+    if ([filtered count] <= 0) {
+        return;
+    } else if ([filtered count] == 1 ) {
+        kill( taskPID, SIGKILL );
+    } else {
+        logit(lcl_vError,@"Can not kill task using PID. Found to many using the predicate.");
+        logit(lcl_vDebug,@"%@",filtered);
+    }
 }
 
 - (BOOL)isLocalUserLoggedIn
@@ -1748,6 +1781,7 @@ done:
 {
     [self setUpSWDistProperties];
     needsReboot = 0;
+    int result = 1;
 
     MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
@@ -1762,32 +1796,36 @@ done:
         }
     } else {
         qlerror(@"No tasks for group %@ were found.",aGroupName);
-        return 1;
+        return result;
     }
     
     if (wsErr) {
         qlerror(@"There was an error getting software tasks for group %@.",aGroupName);
-        return 1;
+        return result;
     }
     if (!tasks) {
         qlerror(@"No tasks were found for group %@.",aGroupName);
-        return 1;
+        return result;
     }
 
     NSError *tErr = nil;
     for (NSDictionary *task in tasks) {
         tErr = nil;
         if ([self installSoftwareWithTask:task error:&tErr] == NO) {
-            return 1;
+            qlerror(@"FAILED to install task %@",[task objectForKey:@"name"]);
+            if (tErr) {
+                qlerror(@"%@",tErr.localizedDescription);
+            }
+             result = 1;
         }
     }
 
     if (needsReboot >= 1) {
         qlerror(@"Software has been installed that requires a reboot.");
-        return 2;
+        result = 2;
     }
 
-    return 0;
+    return result;
 }
 
 - (int)installSoftwareTasksUsingPLIST:(NSString *)aPlist
@@ -1830,6 +1868,14 @@ done:
 
 - (BOOL)installSoftwareWithTask:(NSDictionary *)aTask error:(NSError **)err
 {
+    BOOL taskCanBeInstalled = [self softwareTaskCriteriaCheck:aTask];
+    if (!taskCanBeInstalled) {
+        NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
+        [errorDetail setValue:@"Software Task failed basic criteria check." forKey:NSLocalizedDescriptionKey];
+        *err = [NSError errorWithDomain:@"gov.llnl.mp.sw.install" code:1001 userInfo:errorDetail];
+        return NO;
+    }
+    
     NSString *noteName = @"MPSWInstallStatus";
     NSString *tID = [aTask objectForKey:@"id"];
     [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Installing [taskid:%@]: %@",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
@@ -1854,7 +1900,7 @@ done:
 
     // Create Download URL
     [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Downloading [taskid:%@]: %@",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
-    NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[aTask valueForKeyPath:@"Software.sw_url"] urlEncode]];
+    NSString *_url = [@"/mp-content" stringByAppendingPathComponent:[aTask valueForKeyPath:@"Software.sw_url"]];
     logit(lcl_vDebug,@"Download software from: %@",[aTask valueForKeyPath:@"Software.sw_type"]);
 
     NSError *dlErr = nil;
@@ -1994,6 +2040,41 @@ done:
 
     return task;
 }
+// Private
+- (BOOL)softwareTaskCriteriaCheck:(NSDictionary *)aTask
+{
+    logit(lcl_vInfo,@"Checking %@ criteria.",[aTask objectForKey:@"name"]);
+    
+    MPOSCheck *mpos = [[MPOSCheck alloc] init];
+    NSDictionary *_SoftwareCriteria = [aTask objectForKey:@"SoftwareCriteria"];
+    
+    // OSArch
+    if ([mpos checkOSArch:[_SoftwareCriteria objectForKey:@"arch_type"]]) {
+        logit(lcl_vDebug,@"OSArch=TRUE: %@",[_SoftwareCriteria objectForKey:@"arch_type"]);
+    } else {
+        logit(lcl_vInfo,@"OSArch=FALSE: %@",[_SoftwareCriteria objectForKey:@"arch_type"]);
+        return NO;
+    }
+    
+    // OSType
+    if ([mpos checkOSType:[_SoftwareCriteria objectForKey:@"os_type"]]) {
+        logit(lcl_vDebug,@"OSType=TRUE: %@",[_SoftwareCriteria objectForKey:@"os_type"]);
+    } else {
+        logit(lcl_vInfo,@"OSType=FALSE: %@",[_SoftwareCriteria objectForKey:@"os_type"]);
+        return NO;
+    }
+    // OSVersion
+    if ([mpos checkOSVer:[_SoftwareCriteria objectForKey:@"os_vers"]]) {
+        logit(lcl_vDebug,@"OSVersion=TRUE: %@",[_SoftwareCriteria objectForKey:@"os_vers"]);
+    } else {
+        logit(lcl_vInfo,@"OSVersion=FALSE: %@",[_SoftwareCriteria objectForKey:@"os_vers"]);
+        return NO;
+    }
+    
+    mpos = nil;
+    return YES;
+}
+
 
 #pragma mark MPNetRequestController Callbacks
 - (void)appendDownloadProgress:(double)aNumber
@@ -2039,7 +2120,7 @@ done:
 		results = [proxy installSoftwareViaHelper:aInstallDict];
     }
     @catch (NSException *e) {
-        logit(lcl_vError,@"runTaskUsingHelper [Custom Scan] error: %@", e);
+        logit(lcl_vError,@"runTaskUsingHelper [installSoftwareViaHelper] error: %@", e);
     }
 
 	[self cleanup];
@@ -2063,7 +2144,7 @@ done:
 		results = [proxy patchSoftwareViaHelper:aInstallDict];
     }
     @catch (NSException *e) {
-        logit(lcl_vError,@"runTaskUsingHelper [Custom Scan] error: %@", e);
+        logit(lcl_vError,@"runTaskUsingHelper [patchSoftwareViaProxy] error: %@", e);
     }
 
 	[self cleanup];
@@ -2145,7 +2226,7 @@ done:
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
         BOOL successful = [proxy registerClient:self];
         if (!successful) {
-            NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+            logit(lcl_vError,@"Unable to connect to helper application.");
             [self cleanup];
         }
     }

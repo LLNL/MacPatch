@@ -49,5 +49,7 @@
 // Client Info
 + (NSDictionary *)getMPApplicationVersions;
 
+// BSD Process List
++ (NSArray *)bsdProcessList;
 
 @end

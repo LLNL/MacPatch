@@ -33,39 +33,38 @@ static void setUpLogging();
 
 int main(int argc, const char * argv[])
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSPort *receivePort = nil;
-    if (argc >= 2) {
+    @autoreleasepool
+    {
+        NSPort *receivePort = nil;
+        if (argc >= 2) {
 		if (strcmp(argv[1], "-v") == 0) {
-            printf("1.6.2\n");
+                printf("1.6.4\n");
 			return (0);
+            }
         }
-    }
-    
-    setUpLogging();
+        
+        setUpLogging();
 	
-	WorkerConnectionMonitor *monitor = [[WorkerConnectionMonitor alloc] init];
-    MPWorker *worker = [[MPWorker alloc] init];
-    
-    if (receivePort == nil) {
-        receivePort = [NSMachPort port];
-    }
-    if (receivePort == nil) {
-        NSLog(@"Receive port could not be made");
-    }
-    
-    NSConnection *connection = [NSConnection connectionWithReceivePort:receivePort sendPort:nil];
-    if (![connection registerName: kMPWorkerPortName]) {
-        NSLog(@"Could not register name");
+        WorkerConnectionMonitor *monitor = [[WorkerConnectionMonitor alloc] init];
+        MPWorker *worker = [[MPWorker alloc] init];
+        
+        if (receivePort == nil) {
+            receivePort = [NSMachPort port];
+        }
+        if (receivePort == nil) {
+            NSLog(@"Receive port could not be made");
+        }
+        
+        NSConnection *connection = [NSConnection connectionWithReceivePort:receivePort sendPort:nil];
+        if (![connection registerName: kMPWorkerPortName]) {
+            NSLog(@"Could not register name");
+            
+        }
+        
+        [connection setRootObject: worker];
+        [[NSRunLoop currentRunLoop] run];
         
     }
-    
-    [connection setRootObject: worker];
-    [[NSRunLoop currentRunLoop] run];
-    
-    [worker release];
-    [monitor release];
-    [pool drain];
     return 0;
 }
 

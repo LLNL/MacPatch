@@ -2,7 +2,7 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Installer
-# ver 1.9
+# ver 2.0.2
 # Created By Charles Heizer
 # LLNL
 #
@@ -33,6 +33,12 @@ isIload () {
 	echo $pid
 }
 
+function setOwner {
+	if [ -f "$1" ]; then
+		/usr/sbin/chown -R root:wheel $1
+	fi
+}
+
 function setOwnerAndPerms {
 	if [ -f "$1" ]; then
 		/usr/sbin/chown root:wheel $1
@@ -44,8 +50,9 @@ function setOwnerAndPerms {
 # Set owner & permissions
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.agent.plist
 setOwnerAndPerms /Library/LaunchDaemons/gov.llnl.mp.worker.plist
-setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPRebootD.plist
 setOwnerAndPerms /Library/LaunchAgents/gov.llnl.mp.status.plist
+setOwnerAndPerms /Library/LaunchAgents/gov.llnl.MPLoginAgent.plist
+setOwner /Library/PrivilegedHelperTools/MPLoginAgent.app
 
 if [ ! -d "/Library/Application Support/MPClientStatus" ]; then
 	mkdir "/Library/Application Support/MPClientStatus"
@@ -88,7 +95,28 @@ else
 	chmod 777 /Library/MacPatch/Client/lib
 fi
 
+# ******************************************************************
+# Get Server SSL Cert and trust it *********************************
+#
+SRVHOST=`/usr/bin/defaults read "${agentPrefs}" MPServerAddress`
+SRVPORT=`/usr/bin/defaults read "${agentPrefs}" MPServerPort`
+SRVSTR="$SRVHOST:443" 
+CRTFILE="/Library/MacPatch/Client/lib/$SRVHOST.crt"
+
+/usr/bin/openssl s_client -tls1 -connect $SRVSTR 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ${CRTFILE}
+/usr/bin/security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" "${CRTFILE}"
+
+# ******************************************************************
+# Add MacPatch Client Plugins if included **************************
+#
+if [ -d "${SRC}/Plugins" ]; then
+	/usr/bin/find "${SRC}"/Plugins -name '*.bundle' -exec /bin/cp -r {} /Library/MacPatch/Client/lib/PlugIns/ \;
+fi
+
+
+# ******************************************************************
 # Run Client Check-in
+
 /Library/MacPatch/Client/MPAgent -c
 sleep 1
 
@@ -124,25 +152,6 @@ else
 		INT=`expr $INT + 1`
 	done
 fi
-# ******************************************************************
-# Install Auth Plugin **********************************************
-#
-if [ -d "/Library/MacPatch/Client/MPAuthPlugin.bundle" ]; then
-	mv "/Library/MacPatch/Client/MPAuthPlugin.bundle" "/System/Library/CoreServices/SecurityAgentPlugins/"
-	chown -R root:wheel "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
-	chmod -R 0755 "/System/Library/CoreServices/SecurityAgentPlugins/MPAuthPlugin.bundle"
-	if [ -f "/Library/MacPatch/Client/MPAuthPluginTool" ]; then
-		/Library/MacPatch/Client/MPAuthPluginTool -a 
-	fi
-fi
-
-
-# ******************************************************************
-# Quick Clean Up from older release ********************************
-#
-if [ -f "/var/root/Library/Preferences/com.apple.loginwindow.plist" ]; then
-	/usr/bin/defaults delete /var/root/Library/Preferences/com.apple.loginwindow LogoutHook
-fi
 
 # ******************************************************************
 # Launch the MPAgent service ***************************************
@@ -168,17 +177,7 @@ sleep 3
 #
 
 if [ "$cUsr" != "null" ]; then
-	uPid=`ps -aex -o pid,user,comm | grep "loginwindow.app" | grep "$cUsr" | sed 's/^[ \t]*//' | cut -d " " -f 1`
-
-	chroot -u $cUsr / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist
-	/bin/sleep 2
-	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.MPRebootD.plist`
-	echo "MPRebootD($uPid)=$res"
-	
-	chroot -u $cUsr / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist
-	/bin/sleep 2
-	res=`/bin/launchctl bsexec $uPid chroot -u $cUsr / launchctl load -wF -S Aqua /Library/LaunchAgents/gov.llnl.mp.status.plist`
-	echo "mpStatus($uPid)=$res"
+	su -l $cUsr -c 'launchctl load -wF /Library/LaunchAgents/gov.llnl.mp.status.plist'
 fi
 
 /usr/bin/killall MPClientStatus

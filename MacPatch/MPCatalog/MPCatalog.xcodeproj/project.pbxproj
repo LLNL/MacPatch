@@ -25,7 +25,6 @@
 		8FD8901616DFDE2E00A870A3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8900C16DFDE2D00A870A3 /* IOKit.framework */; };
 		8FD8901716DFDE2E00A870A3 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8900D16DFDE2D00A870A3 /* CoreFoundation.framework */; };
 		8FD8901816DFDE2E00A870A3 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8900E16DFDE2D00A870A3 /* libicucore.dylib */; };
-		8FD8901916DFDE2E00A870A3 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8900F16DFDE2D00A870A3 /* libcrypto.dylib */; };
 		8FD8901A16DFDE2E00A870A3 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8901016DFDE2D00A870A3 /* libz.dylib */; };
 		8FD8901B16DFDE2E00A870A3 /* libMacPatch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8901116DFDE2D00A870A3 /* libMacPatch.a */; };
 		8FD8901E16DFE0C400A870A3 /* EventToSend.c in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8901D16DFE0C400A870A3 /* EventToSend.c */; };
@@ -103,6 +102,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FD8901B16DFDE2E00A870A3 /* libMacPatch.a in Frameworks */,
+				8FD8901816DFDE2E00A870A3 /* libicucore.dylib in Frameworks */,
+				8FD8901A16DFDE2E00A870A3 /* libz.dylib in Frameworks */,
 				8FD8901616DFDE2E00A870A3 /* IOKit.framework in Frameworks */,
 				8FD88FCB16DFDD9200A870A3 /* Cocoa.framework in Frameworks */,
 				8FD8901216DFDE2E00A870A3 /* Carbon.framework in Frameworks */,
@@ -110,10 +112,6 @@
 				8FD8901416DFDE2E00A870A3 /* SystemConfiguration.framework in Frameworks */,
 				8FD8901516DFDE2E00A870A3 /* CoreServices.framework in Frameworks */,
 				8FD8901716DFDE2E00A870A3 /* CoreFoundation.framework in Frameworks */,
-				8FD8901816DFDE2E00A870A3 /* libicucore.dylib in Frameworks */,
-				8FD8901916DFDE2E00A870A3 /* libcrypto.dylib in Frameworks */,
-				8FD8901A16DFDE2E00A870A3 /* libz.dylib in Frameworks */,
-				8FD8901B16DFDE2E00A870A3 /* libMacPatch.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,8 +397,16 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPCatalog/MPCatalog-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"../openssl-xcode/openssl/include",
+				);
 				INFOPLIST_FILE = "MPCatalog/MPCatalog-Info.plist";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
@@ -417,8 +423,16 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPCatalog/MPCatalog-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"../openssl-xcode/openssl/include",
+				);
 				INFOPLIST_FILE = "MPCatalog/MPCatalog-Info.plist";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";

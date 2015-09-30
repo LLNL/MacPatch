@@ -37,6 +37,7 @@
 	NSArrayController *arrayController;
 	IBOutlet NSTextField *spStatusText;
 	IBOutlet NSTextField *patchGroupLabel;
+    IBOutlet NSTextField *patchNoteLabel;
 	IBOutlet NSButton *spScanAndPatchButton;
 	IBOutlet NSButton *spCancelButton;
 	IBOutlet NSButton *spUpdateButton;
@@ -73,6 +74,7 @@
 @property (nonatomic, retain) IBOutlet NSButton *spCancelButton;
 @property (nonatomic, retain) IBOutlet NSTextField *allowRebootInstallsWarningLabel;
 @property (nonatomic, retain) IBOutlet NSImageView *allowRebootInstallsWarningImage;
+@property (nonatomic, assign) IBOutlet NSProgressIndicator *spStatusProgress;
 
 @property (nonatomic, assign) NSThread *runTaskThread;
 @property (nonatomic, assign) BOOL killTaskThread;

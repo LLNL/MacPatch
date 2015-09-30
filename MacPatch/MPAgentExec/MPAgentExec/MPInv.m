@@ -37,6 +37,8 @@
 #import "MacAppStoreDataItem.h"
 #import "NSMetadataQuery+Synchronous.h"
 #import "MPServerEntry.h"
+#import "MPInventoryPlugin.h"
+#import "InventoryPlugin.h"
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
@@ -138,6 +140,23 @@
 		}	
 		invColTypes = [NSArray arrayWithObject:aSPType];
 	}
+    NSArray *invPlugins = nil;
+    MPInventoryPlugin *mpip = [[MPInventoryPlugin alloc] init];
+    invPlugins = [mpip loadPlugins];
+    
+    if (invPlugins) {
+        for (NSDictionary *p in invPlugins)
+        {
+            InventoryPlugin *plugin = [p objectForKey:@"plugin"];
+            if (!plugin) continue;
+            [plugin setPluginName:[p objectForKey:@"pluginName"]];
+            [plugin setPluginVersion:[p objectForKey:@"pluginVersion"]];
+            NSDictionary *plugRes = [plugin runInventoryCollection];
+            NSLog(@"%@",plugRes);
+        }
+    }
+    
+    return 0;
 	
 	
 	
@@ -592,9 +611,8 @@
 - (BOOL)hasInvDataChanged:(NSString *)aInvType hash:(NSString *)aHash
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSMutableDictionary *invData = [NSMutableDictionary dictionary];
     if ([fm fileExistsAtPath:kInvHashData]) {
-        invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
+        NSMutableDictionary *invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
         if ([invData objectForKey:aInvType]) {
             if ([[[invData objectForKey:aInvType] lowercaseString] isEqualToString:[aHash lowercaseString]]) {
                 return NO;
@@ -612,14 +630,13 @@
 - (void)writeInvDataHashToFile:(NSString *)aInvType hash:(NSString *)aHash
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSMutableDictionary *invData = [NSMutableDictionary dictionary];
+    NSMutableDictionary *invData;
     if ([fm fileExistsAtPath:kInvHashData])
     {
         invData = [NSMutableDictionary dictionaryWithContentsOfFile:kInvHashData];
+        [invData setObject:aHash forKey:aInvType];
+        [invData writeToFile:kInvHashData atomically:YES];
     }
-
-    [invData setObject:aHash forKey:aInvType];
-    [invData writeToFile:kInvHashData atomically:YES];
 }
 
 #pragma mark -

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2013 Lawrence Livremore National Laboratory. All rights reserved.</string>
+	<string>Copyright © 2015 Lawrence Livremore National Laboratory. All rights reserved.</string>
 	<key>MPInfo</key>
-	<string>MacPatch 2.5.0 Client Software</string>
+	<string>MacPatch 2.7.0 Client Software</string>
 	<key>CFBundleIdentifier</key>
 	<string>gov.llnl.mp.worker</string>
 	<key>CFBundleName</key>
@@ -14,5 +14,10 @@
 	<string>1.6.2</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.6.2</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

@@ -30,7 +30,8 @@
 @interface AntiVirusScanAndUpdateOperation : NSOperation 
 {
 	int scanType;
-	
+    int taskPID;
+    
 	BOOL isExecuting;
 	BOOL isFinished;
 	
@@ -40,6 +41,8 @@
 }
 
 @property (nonatomic, assign) int scanType;
+@property (nonatomic, assign) int taskPID;
+@property (nonatomic, readonly) NSString *taskFile;
 
 @property (nonatomic, readonly) BOOL isExecuting;
 @property (nonatomic, readonly) BOOL isFinished;

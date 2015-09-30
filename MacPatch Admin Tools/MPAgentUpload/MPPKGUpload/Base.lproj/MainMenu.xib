@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="14A379a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6246"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -31,8 +31,10 @@
                 <outlet property="getAgentConfStatus" destination="soM-Bv-MfZ" id="Tdo-Mm-gAb"/>
                 <outlet property="identityName" destination="uxb-hx-Oik" id="biC-Oy-3Hj"/>
                 <outlet property="packagePathField" destination="NEh-Ap-7Kd" id="2kd-4a-RzE"/>
+                <outlet property="pluginsPathField" destination="Myl-hm-IS2" id="xGu-J7-N3d"/>
                 <outlet property="postPackagesImage" destination="MnC-fq-7ee" id="djs-Jc-PQc"/>
                 <outlet property="postPkgStatus" destination="iSB-qj-2zZ" id="uV9-Zm-1vv"/>
+                <outlet property="postPkgTitle" destination="MFh-dI-lgG" id="jhB-5R-GtK"/>
                 <outlet property="progressBar" destination="wVB-Fm-O0h" id="lVA-VE-ORq"/>
                 <outlet property="serverAddress" destination="0hu-eS-t7U" id="v0Y-zR-r8k"/>
                 <outlet property="serverPort" destination="h8b-KK-JsZ" id="yrt-YR-SzI"/>
@@ -700,29 +702,16 @@
         </menu>
         <window title="MacPatch - Agent Uploader" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <rect key="contentRect" x="335" y="390" width="547" height="459"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="contentRect" x="335" y="390" width="547" height="514"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1577"/>
             <value key="minSize" type="size" width="547" height="459"/>
             <value key="maxSize" type="size" width="547" height="459"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="547" height="459"/>
+                <rect key="frame" x="0.0" y="5" width="547" height="514"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Iuf-Cj-Tge">
-                        <rect key="frame" x="447" y="13" width="85" height="32"/>
-                        <buttonCell key="cell" type="push" title="Upload" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Qg5-dh-EpZ">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="uploadPackage:" target="Voe-Tx-rLC" id="dDu-C8-dd8"/>
-                        </connections>
-                    </button>
-                    <progressIndicator fixedFrame="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="wVB-Fm-O0h">
-                        <rect key="frame" x="21" y="20" width="416" height="20"/>
-                    </progressIndicator>
                     <box autoresizesSubviews="NO" fixedFrame="YES" title="MacPatch Server Info" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="FLv-2e-968">
-                        <rect key="frame" x="17" y="350" width="511" height="94"/>
+                        <rect key="frame" x="17" y="405" width="511" height="94"/>
                         <view key="contentView">
                             <rect key="frame" x="1" y="1" width="509" height="78"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -791,8 +780,117 @@
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
+                    <box autoresizesSubviews="NO" fixedFrame="YES" title="Options" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="Bpy-Qd-XbP">
+                        <rect key="frame" x="17" y="304" width="511" height="97"/>
+                        <view key="contentView">
+                            <rect key="frame" x="1" y="1" width="509" height="81"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NEh-Ap-7Kd">
+                                    <rect key="frame" x="84" y="49" width="317" height="22"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="DVe-f0-GFD">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fl6-Fj-50H">
+                                    <rect key="frame" x="16" y="51" width="62" height="17"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Package:" id="Wor-Ye-coU">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PZj-a7-AZv">
+                                    <rect key="frame" x="410" y="43" width="87" height="32"/>
+                                    <buttonCell key="cell" type="push" title="Choose" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sOO-FC-vDL">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="choosePackage:" target="Voe-Tx-rLC" id="pfm-0f-pLU"/>
+                                    </connections>
+                                </button>
+                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxb-hx-Oik">
+                                    <rect key="frame" x="84" y="14" width="317" height="22"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="AVr-y4-9aj">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                    <connections>
+                                        <binding destination="12j-su-5KB" name="value" keyPath="values.dIdentity" id="YZS-n7-6bP"/>
+                                    </connections>
+                                </textField>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yTU-fg-HjW">
+                                    <rect key="frame" x="16" y="17" width="54" height="17"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Identity:" id="VIB-6l-SyH">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n8U-GE-uS9">
+                                    <rect key="frame" x="411" y="15" width="82" height="18"/>
+                                    <buttonCell key="cell" type="check" title="Sign PKG" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="K1F-Ob-r4E">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <binding destination="12j-su-5KB" name="value" keyPath="values.dSignPKG" id="gis-jV-C2z">
+                                            <dictionary key="options">
+                                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                                <integer key="NSNullPlaceholder" value="0"/>
+                                            </dictionary>
+                                        </binding>
+                                    </connections>
+                                </button>
+                            </subviews>
+                        </view>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </box>
+                    <box autoresizesSubviews="NO" fixedFrame="YES" title="Plugins" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="szd-bx-Wqt">
+                        <rect key="frame" x="17" y="238" width="511" height="62"/>
+                        <view key="contentView">
+                            <rect key="frame" x="1" y="1" width="509" height="46"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Myl-hm-IS2">
+                                    <rect key="frame" x="86" y="14" width="315" height="22"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="lWM-R8-0np">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZA8-Xe-sf5">
+                                    <rect key="frame" x="410" y="8" width="87" height="32"/>
+                                    <buttonCell key="cell" type="push" title="Choose" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="tHh-5C-lzB">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="choosePluginFolder:" target="Voe-Tx-rLC" id="8f9-xr-66G"/>
+                                    </connections>
+                                </button>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NH4-Cl-u5q">
+                                    <rect key="frame" x="16" y="17" width="47" height="17"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Folder:" id="ylI-do-8Zc">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </subviews>
+                        </view>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </box>
                     <box autoresizesSubviews="NO" fixedFrame="YES" title="Progress" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="Qkr-6q-TIB">
-                        <rect key="frame" x="17" y="62" width="513" height="183"/>
+                        <rect key="frame" x="17" y="45" width="513" height="183"/>
                         <view key="contentView">
                             <rect key="frame" x="1" y="1" width="511" height="167"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -922,87 +1020,28 @@
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
-                    <box autoresizesSubviews="NO" fixedFrame="YES" title="Options" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="Bpy-Qd-XbP">
-                        <rect key="frame" x="17" y="249" width="511" height="97"/>
-                        <view key="contentView">
-                            <rect key="frame" x="1" y="1" width="509" height="81"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NEh-Ap-7Kd">
-                                    <rect key="frame" x="84" y="49" width="317" height="22"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="DVe-f0-GFD">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fl6-Fj-50H">
-                                    <rect key="frame" x="16" y="51" width="62" height="17"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Package:" id="Wor-Ye-coU">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PZj-a7-AZv">
-                                    <rect key="frame" x="410" y="43" width="87" height="32"/>
-                                    <buttonCell key="cell" type="push" title="Choose" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sOO-FC-vDL">
-                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="choosePackage:" target="Voe-Tx-rLC" id="pfm-0f-pLU"/>
-                                    </connections>
-                                </button>
-                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxb-hx-Oik">
-                                    <rect key="frame" x="84" y="14" width="317" height="22"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="AVr-y4-9aj">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                    <connections>
-                                        <binding destination="12j-su-5KB" name="value" keyPath="values.dIdentity" id="YZS-n7-6bP"/>
-                                    </connections>
-                                </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yTU-fg-HjW">
-                                    <rect key="frame" x="16" y="17" width="54" height="17"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Identity:" id="VIB-6l-SyH">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n8U-GE-uS9">
-                                    <rect key="frame" x="411" y="15" width="82" height="18"/>
-                                    <buttonCell key="cell" type="check" title="Sign PKG" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="K1F-Ob-r4E">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <binding destination="12j-su-5KB" name="value" keyPath="values.dSignPKG" id="gis-jV-C2z">
-                                            <dictionary key="options">
-                                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                                <integer key="NSNullPlaceholder" value="0"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </button>
-                            </subviews>
-                        </view>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </box>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Iuf-Cj-Tge">
+                        <rect key="frame" x="447" y="13" width="85" height="32"/>
+                        <buttonCell key="cell" type="push" title="Upload" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Qg5-dh-EpZ">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="uploadPackage:" target="Voe-Tx-rLC" id="dDu-C8-dd8"/>
+                        </connections>
+                    </button>
+                    <progressIndicator fixedFrame="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="wVB-Fm-O0h">
+                        <rect key="frame" x="21" y="20" width="416" height="20"/>
+                    </progressIndicator>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="642.5" y="303.5"/>
+            <point key="canvasLocation" x="113.5" y="309"/>
         </window>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="GL5-3w-hvc" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="272" y="172" width="460" height="165"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1577"/>
             <view key="contentView" id="ps2-e5-lAX">
                 <rect key="frame" x="0.0" y="0.0" width="460" height="165"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1028,6 +1067,9 @@
                         <buttonCell key="cell" type="push" title="Authenticate" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Vbw-1J-AFx">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
                         </buttonCell>
                         <connections>
                             <action selector="makeAuthRequest:" target="Voe-Tx-rLC" id="zw8-V2-ZHE"/>

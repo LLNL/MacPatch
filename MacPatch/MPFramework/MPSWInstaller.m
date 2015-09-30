@@ -142,11 +142,11 @@ typedef NSUInteger MPPostDataType;
     return self;
 }
 
-
 - (int)installSoftware:(NSDictionary *)aSWDict
 {
     return [self installSoftware:aSWDict error:NULL];
 }
+
 - (int)installSoftware:(NSDictionary *)aSWDict error:(NSError **)error
 {
     int result = 0;
@@ -344,6 +344,7 @@ typedef NSUInteger MPPostDataType;
 {
     return [self patchSoftware:aSWDict error:NULL];
 }
+
 - (int)patchSoftware:(NSDictionary *)aSWDict error:(NSError **)error
 {
     int result = 0;
@@ -352,7 +353,6 @@ typedef NSUInteger MPPostDataType;
     result = [ma errorCode];
     return result;
 }
-
 
 #pragma mark - Private Methods
 - (int)mountDMG:(NSString *)aDMG packageID:(NSString *)pkgID

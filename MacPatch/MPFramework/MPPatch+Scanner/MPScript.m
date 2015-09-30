@@ -112,14 +112,14 @@
 	
 	if (status == 0) {
 		result = TRUE;
+        NSError *delErr = nil;
+        [[NSFileManager defaultManager] removeItemAtPath:tmpFile error:&delErr];
+        if (delErr) {
+            qlerror(@"Error removing file %@",tmpFile);
+        }
 	} else {
 		qldebug(@"Exit Code: %d.\nScript Result: %@\nScript: %@",status,string,tmpFile);
 	}
-	
-	NSError *delErr = nil;
-	//[[NSFileManager defaultManager] removeItemAtPath:tmpFile error:&delErr]; 
-	if (delErr)
-		qlerror(@"Error removing file %@",tmpFile);
 	
 	return result;
 }

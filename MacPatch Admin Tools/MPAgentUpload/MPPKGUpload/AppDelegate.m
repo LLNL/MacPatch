@@ -30,6 +30,9 @@
 
 #define MPADM_URI @"Service/MPAdminService.cfc"
 
+#undef  ql_component
+#define ql_component lcl_cMain
+
 @interface AppDelegate (Private)
 
 - (IBAction)showPreferencePanel:(id)sender;
@@ -78,13 +81,41 @@
 
 - (void)awakeFromNib
 {
+    NSString *_logFile = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Logs/MPAgentUploader.log"];
+    [LCLLogFile setPath:_logFile];
+    
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    if ([d objectForKey:@"Debug"]) {
+        if ([[d objectForKey:@"Debug"] integerValue] == 1)
+        {
+            lcl_configure_by_name("*", lcl_vDebug);
+            if ([d objectForKey:@"Echo"]) {
+                if ([[d objectForKey:@"Echo"] integerValue] == 1) {
+                    [LCLLogFile setMirrorsToStdErr:YES];
+                }
+            }
+            logit(lcl_vInfo,@"***** %@ v.%@ started -- Debug Enabled *****", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"],
+                  [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]);
+        } else {
+            lcl_configure_by_name("*", lcl_vInfo);
+            logit(lcl_vInfo,@"***** %@ v.%@ started *****", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"],
+                  [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]);
+        }
+    } else {
+        lcl_configure_by_name("*", lcl_vInfo);
+        logit(lcl_vInfo,@"***** %@ v.%@ started *****", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"],
+              [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]);
+    }
+
     fm = [NSFileManager defaultManager];
     [uploadButton setEnabled:NO];
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(authTextDidChange:) name:NSControlTextDidChangeNotification object:authUserPass];
     [center addObserver:self selector:@selector(hostTextDidChange:) name:NSControlTextDidChangeNotification object:serverAddress];
-    //[self populateFromDefaults];
+    [center addObserver:self selector:@selector(uploadDisabledPref:) name:@"uploadPrefsStatus" object:nil];
+    [center addObserver:self selector:@selector(loggingPref:) name:@"loggingPrefsStatus" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"uploadPrefsStatus" object:self];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -197,7 +228,7 @@
     NSData *responseData = [req sendSynchronousRequest:request returningResponse:&response error:&error];
     if (error)
     {
-        NSLog(@"%@",error.localizedDescription);
+        qlerror(@"%@",error.localizedDescription);
         [self.authStatus setStringValue:error.localizedDescription];
         [self.authStatus setToolTip:error.localizedDescription];
         [self.authStatus performSelectorOnMainThread:@selector(needsDisplay) withObject:nil waitUntilDone:YES];
@@ -208,7 +239,7 @@
     //-- JSON Parsing with response data
     error = nil;
     NSDictionary *result = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
-    NSLog(@"[makeAuthRequest]: %@",result);
+    qldebug(@"[makeAuthRequest]: %@",result);
     if ([result objectForKey:@"result"]) {
         if ([result objectForKey:@"errorno"]) {
             if ([[result objectForKey:@"errorno"] intValue] == 0)
@@ -252,6 +283,46 @@
      */
 }
 
+- (void)uploadDisabledPref:(NSNotification *)aNotification
+{
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    if ([d objectForKey:@"dDoNotUpload"]) {
+        if ([[d objectForKey:@"dDoNotUpload"] integerValue] == 1)
+        {
+            [postPkgStatus setStringValue:@"Upload is disabled for testing. Will open folder."];
+            [postPkgStatus display];
+        }
+        else
+        {
+            [postPkgStatus setStringValue:@""];
+            [postPkgStatus display];
+        }
+        [postPkgStatus performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:YES];
+    }
+}
+
+- (void)loggingPref:(NSNotification *)aNotification
+{
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    if ([d objectForKey:@"Debug"]) {
+        if ([[d objectForKey:@"Debug"] integerValue] == 1)
+        {
+            lcl_configure_by_name("*", lcl_vDebug);
+            qldebug(@"Debug logging is enabled.");
+            if ([d objectForKey:@"Echo"]) {
+                if ([[d objectForKey:@"Echo"] integerValue] == 1) {
+                    [LCLLogFile setMirrorsToStdErr:YES];
+                    qldebug(@"Echo STDERR to console is enabled.");
+                }
+            }
+        } else {
+            lcl_configure_by_name("*", lcl_vInfo);
+        }
+    } else {
+        lcl_configure_by_name("*", lcl_vInfo);
+    }
+}
+
 #pragma mark - Main
 
 - (void)resetInterface
@@ -281,31 +352,37 @@
 
 - (IBAction)choosePackage:(id)sender
 {
-    NSString *fileName;
-    int i; // Loop counter.
-    
-    // Create the File Open Dialog class.
     NSOpenPanel *openDlg = [NSOpenPanel openPanel];
+    [openDlg setMessage:@"Please select the MacPatch Client Installer zip file."];
     [openDlg setCanChooseFiles:YES];
-    [openDlg setCanChooseDirectories:NO];
-    
-    // Display the dialog.  If the OK button was pressed,
-    // process the files.
-    if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
-    {
-        NSArray* files = [openDlg filenames];
-        for( i = 0; i < [files count]; i++ )
-        {
-            fileName = [files objectAtIndex:i];
+    [openDlg setAllowedFileTypes:@[@"zip"]];
+    [openDlg beginWithCompletionHandler:^(NSInteger result) {
+        if(result==NSFileHandlingPanelOKButton) {
+            for (NSURL *url in openDlg.URLs) {
+                _packagePathField.stringValue = url.path;
+                [uploadButton setEnabled:YES];
+            }
         }
-        
-        _packagePathField.stringValue = fileName;
-        [uploadButton setEnabled:YES];
-    }
+    }];
+}
+
+- (IBAction)choosePluginFolder:(id)sender
+{
+    NSOpenPanel *openDlg = [NSOpenPanel openPanel];
+    [openDlg setMessage:@"Please select the MacPatch Client Installer zip file."];
+    [openDlg setCanChooseDirectories:YES];
+    [openDlg setCanChooseFiles:NO];
+    [openDlg beginWithCompletionHandler:^(NSInteger result) {
+        if(result==NSFileHandlingPanelOKButton) {
+            for (NSURL *url in openDlg.URLs) {
+                _pluginsPathField.stringValue = url.path;
+            }
+        }
+    }];
 }
 
 - (IBAction)uploadPackage:(id)sender
-{
+{    
     if (!_authToken)
     {
         [NSApp beginSheet:authSheet modalForWindow:(NSWindow *)_window modalDelegate:self didEndSelector:@selector(beginUploadPackage) contextInfo:nil];
@@ -326,6 +403,8 @@
 {
     @autoreleasepool
     {
+        NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+
         if (signPKG.state == NSOnState) {
             if ([identityName.stringValue length] <= 0) {
                 NSAlert *alert = [[NSAlert alloc] init];
@@ -339,6 +418,7 @@
         }
         
         [self resetInterface];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"uploadPrefsStatus" object:self];
         
         NSString *_host = serverAddress.stringValue;
         NSString *_port = serverPort.stringValue;
@@ -374,7 +454,7 @@
         NSData *responseData = [req sendSynchronousRequest:request returningResponse:&response error:&error];
         if (error)
         {
-            NSLog(@"%@",error.localizedDescription);
+            qlerror(@"%@",error.localizedDescription);
             [progressBar stopAnimation:progressBar];
             [agentConfigImage setImage:[NSImage imageNamed:@"NoIcon"]];
             [uploadButton setEnabled:YES];
@@ -446,7 +526,7 @@
             [compressPackgesImage setImage:[NSImage imageNamed:@"YesIcon"]];
         }
         
-        NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+        d = [NSUserDefaults standardUserDefaults];
         if ([d objectForKey:@"dDoNotUpload"]) {
             if ([[d objectForKey:@"dDoNotUpload"] integerValue] == 1)
             {
@@ -538,7 +618,7 @@
     NSMutableArray *pkgs = [[NSMutableArray alloc] init];
     
     NSArray *dirFiles = [fm contentsOfDirectoryAtPath:[_tmpDir stringByAppendingPathComponent:@"MPClientInstall"] error:nil];
-    NSArray *pkgFiles = [dirFiles filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self ENDSWITH '.pkg'"]];
+    NSArray *pkgFiles = [dirFiles filteredArrayUsingPredicate:[NSPredicate  predicateWithFormat:@"self ENDSWITH '.pkg'"]];
     NSString *fullPathScripts;
     NSString *fullPathPKG;
     for (NSString *pkg in pkgFiles)
@@ -546,13 +626,17 @@
         fullPathPKG = [[_tmpDir stringByAppendingPathComponent:@"MPClientInstall"] stringByAppendingPathComponent:pkg];
         fullPathScripts = [fullPathPKG stringByAppendingPathComponent:@"Scripts/gov.llnl.mpagent.plist"];
         [aPlist writeToFile:fullPathScripts atomically:NO encoding:NSUTF8StringEncoding error:NULL];
-        NSLog(@"Write plist to %@",fullPathScripts);
+        qlinfo(@"Write plist to %@",fullPathScripts);
         
         if ([fm fileExistsAtPath:[fullPathPKG stringByAppendingPathComponent:@"Scripts"]])
         {
             NSString *t;
             if ([[pkg lastPathComponent] isEqualToString:@"Base.pkg"]) {
                 t = @"Agent";
+                
+                // Add Plugins
+                NSString *pkgScriptPlugDir = [fullPathPKG stringByAppendingPathComponent:@"Scripts/Plugins"];
+                [self addPluginsToBasePackage:pkgScriptPlugDir pluginsPath:_pluginsPathField.stringValue];
             } else {
                 t = @"Updater";
             }
@@ -565,6 +649,25 @@
     [pkgs addObject:[_tmpDir stringByAppendingPathComponent:@"MPClientInstall"]];
     
     return (NSArray *)pkgs;
+}
+
+- (void)addPluginsToBasePackage:(NSString *)pkgPath pluginsPath:(NSString *)aPluginsPath
+{
+    NSArray *pFiles = [fm contentsOfDirectoryAtPath:aPluginsPath error:nil];
+    NSArray *pBundleFiles = [pFiles filteredArrayUsingPredicate:[NSPredicate  predicateWithFormat:@"self ENDSWITH '.bundle'"]];
+    NSError *err = nil;
+    if (![fm fileExistsAtPath:pkgPath]) {
+        [fm createDirectoryAtPath:pkgPath withIntermediateDirectories:YES attributes:nil error:NULL];
+    }
+    
+    for (NSString *plugin in pBundleFiles) {
+        err = nil;
+        NSLog(@"Copy %@ to %@",[aPluginsPath stringByAppendingPathComponent:plugin],[pkgPath stringByAppendingPathComponent:plugin]);
+        [fm copyItemAtPath:[aPluginsPath stringByAppendingPathComponent:plugin] toPath:[pkgPath stringByAppendingPathComponent:plugin] error:&err];
+        if (err) {
+            NSLog(@"%@",err.localizedDescription);
+        }
+    }
 }
 
 - (void)readAndWriteVersionPlistToPath:(NSString *)aInfoPath writeTo:(NSString *)aVerPath pkgType:(NSString *)aType
@@ -633,7 +736,7 @@
 - (void)postFiles:(NSArray *)aFiles requestID:(NSString *)aReqID userID:(NSString *)aUserID
 {
     if (!aReqID) {
-        NSLog(@"Error: request id was nil.");
+        qlerror(@"Error: request id was nil.");
         [postPackagesImage setImage:[NSImage imageNamed:@"NoIcon"]];
         return;
     }
@@ -707,7 +810,7 @@
     if (error)
     {
         if (error) {
-            NSLog(@"%@",error.localizedDescription);
+            qlerror(@"%@",error.localizedDescription);
         }
         
         [postPackagesImage setImage:[NSImage imageNamed:@"NoIcon"]];
@@ -716,7 +819,7 @@
     
     //-- JSON Parsing with response data
     NSDictionary *result = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:nil];
-    NSLog(@"[postFiles]: %@",result);
+    qlinfo(@"[postFiles]: %@",result);
     if ([result objectForKey:@"errorno"]) {
         if ([[result objectForKey:@"errorno"] intValue] != 0) {
             [postPkgStatus setStringValue:[result objectForKey:@"errormsg"]];
@@ -794,14 +897,14 @@
     if (error)
     {
         if (error) {
-            NSLog(@"%@",error.localizedDescription);
+            qlerror(@"%@",error.localizedDescription);
         }
         return NO;
     }
     
     //-- JSON Parsing with response data
     NSDictionary *result = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:nil];
-    NSLog(@"[postAgentData]: %@",result);
+    qlinfo(@"[postAgentData]: %@",result);
     if ([result objectForKey:@"errorno"]) {
         if ([[result objectForKey:@"errorno"] intValue] != 0) {
             [postPkgStatus setStringValue:[result objectForKey:@"errormsg"]];
@@ -842,14 +945,14 @@
     if (error)
     {
         if (error) {
-            NSLog(@"%@",error.localizedDescription);
+            qlerror(@"%@",error.localizedDescription);
         }
         return nil;
     }
     
     //-- JSON Parsing with response data
     NSDictionary *result = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:nil];
-    NSLog(@"[getRequestID]: %@",result);
+    qlinfo(@"[getRequestID]: %@",result);
     if ([result objectForKey:@"errorno"]) {
         if ([[result objectForKey:@"errorno"] intValue] != 0) {
             NSMutableDictionary *errDetails = [NSMutableDictionary dictionary];

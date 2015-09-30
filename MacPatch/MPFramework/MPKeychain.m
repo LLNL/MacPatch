@@ -44,10 +44,10 @@
         OSStatus res = noErr;
         res = [self openKeychainRefFromFile:aKeychain];
         if (noErr != res) {
-            NSString *errStr = (__bridge NSString *)SecCopyErrorMessageString(res, NULL);
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errStr forKey:NSLocalizedDescriptionKey];
+            CFStringRef errMsg = SecCopyErrorMessageString(res, NULL);
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:(__bridge NSString *)errMsg forKey:NSLocalizedDescriptionKey];
             self.error = [NSError errorWithDomain:@"gov.llnl.mp.keychain" code:-1001 userInfo:userInfo];
-
+            CFRelease(errMsg);
         }
         self.accessLabel = aAccessLabel;
     }
@@ -61,7 +61,9 @@
     io_service_t platformExpert = IOServiceGetMatchingService(kIOMasterPortDefault,IOServiceMatching("IOPlatformExpertDevice"));
     CFTypeRef serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert,CFSTR(kIOPlatformUUIDKey),kCFAllocatorDefault, 0);
     IOObjectRelease(platformExpert);
-	return (__bridge NSString *)(serialNumberAsCFString);
+    NSString __strong *serialNumber = (__bridge NSString *)(serialNumberAsCFString);
+    CFRelease(serialNumberAsCFString);
+	return serialNumber;
 }
 
 - (SecAccessRef)createDefaultAccessRef
@@ -109,7 +111,8 @@
 
 - (OSStatus)openKeychainRefFromFile:(NSString *)aKeychainFilePath
 {
-    OSStatus result = noErr;
+    OSStatus result;
+    
     NSFileManager *fm = [NSFileManager defaultManager];
     const char *uuid = [[self clientUUID] UTF8String];
     // If KeyChain Exists
@@ -184,10 +187,11 @@
                                            (UInt32)strlen([aPassword UTF8String]),[aPassword UTF8String],
                                            NULL);
     if (noErr != result) {
-        NSString *errStr = (__bridge NSString *)SecCopyErrorMessageString(result, NULL);
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errStr forKey:NSLocalizedDescriptionKey];
+        CFStringRef errMsg = SecCopyErrorMessageString(result, NULL);
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:(__bridge NSString *)errMsg forKey:NSLocalizedDescriptionKey];
         self.error = nil;
         self.error = [NSError errorWithDomain:@"gov.llnl.mp.keychain" code:-1002 userInfo:userInfo];
+        CFRelease(errMsg);
     }
 
     return result;
@@ -225,10 +229,11 @@
                                    &outItems);                    // CFArrayRef *outItems
 
     if (noErr != result) {
-        NSString *errStr = (__bridge NSString *)SecCopyErrorMessageString(result, NULL);
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errStr forKey:NSLocalizedDescriptionKey];
+        CFStringRef errMsg = SecCopyErrorMessageString(result, NULL);
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:(__bridge NSString *)errMsg forKey:NSLocalizedDescriptionKey];
         self.error = nil;
         self.error = [NSError errorWithDomain:@"gov.llnl.mp.keychain" code:-1002 userInfo:userInfo];
+        CFRelease(errMsg);
     }
 
     return result;
@@ -252,35 +257,34 @@
 
 - (NSString *)passwordForGenericService:(NSString*)service forAccount:(NSString*)account
 {
-    OSStatus result = noErr;
+    int err, errFind;
     char *passData;
     UInt32 passLength;
     SecKeychainItemRef itemRef = nil;
-    //SecKeychainRef kychain;
-    //const char *uuid = [[self clientUUID] UTF8String];
-    //result = SecKeychainOpen([DEFAULT_KEYCHAIN UTF8String], &kychain);
-    //result = SecKeychainUnlock(kychain, (UInt32)strlen(uuid), uuid, true);
     SecKeychainStatus keychainStatus;
-    result = SecKeychainGetStatus(keychainItem,&keychainStatus);
+    err = SecKeychainGetStatus(keychainItem,&keychainStatus);
+    /*
     NSLog(@"unlocked: %@", (keychainStatus & kSecUnlockStateStatus) ? @"YES" : @"NO");
     NSLog(@"    read: %@", (keychainStatus & kSecReadPermStatus) ? @"YES" : @"NO");
     NSLog(@"   write: %@", (keychainStatus & kSecWritePermStatus) ? @"YES" : @"NO");
-
+     */
 
     SecKeychainSetUserInteractionAllowed(FALSE);
 
-    result = SecKeychainFindGenericPassword(keychainItem,
+    errFind = SecKeychainFindGenericPassword(keychainItem,
                                             (UInt32)strlen([service UTF8String]),[service UTF8String],
                                             (UInt32)strlen([account UTF8String]), [account UTF8String],
                                             &passLength, (void**)&passData, &itemRef);
-
-    if (result == noErr) {
-        return [[NSString alloc] initWithCStringNoCopy:passData length:passLength freeWhenDone:YES];
+    if (errFind == CSSM_OK) {
+        NSString __strong *pass = [[NSString alloc] initWithCStringNoCopy:passData length:passLength freeWhenDone:YES];
+        SecKeychainItemFreeContent(NULL, passData);
+        return pass;
     } else {
-        NSString *errStr = (__bridge NSString *)SecCopyErrorMessageString(result, NULL);
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errStr forKey:NSLocalizedDescriptionKey];
+        CFStringRef errMsg = SecCopyErrorMessageString(errFind, NULL);
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:(__bridge NSString *)errMsg forKey:NSLocalizedDescriptionKey];
         self.error = nil;
         self.error = [NSError errorWithDomain:@"gov.llnl.mp.keychain" code:-1005 userInfo:userInfo];
+        CFRelease(errMsg);
         return nil;
     }
 }

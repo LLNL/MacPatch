@@ -87,9 +87,15 @@
 
 - (NSString *)MD5HashForFile:(NSString *)aFilePath
 {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:aFilePath]) {
+        qlerror(@"Unable to find %@, MD5HashForFile failed.",aFilePath);
+        return @"ERROR FILE MISSING";
+    }
+    
     NSMutableString *hashStr = [NSMutableString string];
     size_t blockSize = BUF_SIZE;
-    
+ 
     // Declare needed variables
     CFReadStreamRef readStream = NULL;
     
@@ -145,6 +151,12 @@ done:
 
 - (NSString *)SHA1HashForFile:(NSString *)aFilePath
 {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:aFilePath]) {
+        qlerror(@"Unable to find %@, MD5HashForFile failed.",aFilePath);
+        return @"ERROR FILE MISSING";
+    }
+    
     NSMutableString *hashStr = [NSMutableString string];
     size_t blockSize = BUF_SIZE;
     

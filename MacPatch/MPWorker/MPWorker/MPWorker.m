@@ -28,7 +28,7 @@
 #import "MacPatch.h"
 #import "NSFileManager+DirectoryLocations.h"
 #import <AppKit/AppKit.h>
-
+#import <Foundation/Foundation.h>
 #include <unistd.h>
 #include <sys/reboot.h>
 
@@ -171,12 +171,6 @@ typedef NSUInteger MPPostDataType;
     return self;
 }
 
-- (void)dealloc
-{
-    [swTask release];
-    [connections release];
-    [super dealloc];
-}
 
 #pragma mark - Protocol Methods
 // Methods called by clients
@@ -202,7 +196,7 @@ typedef NSUInteger MPPostDataType;
     int result = 0;
     NSString *pkgType = [[aSWDict valueForKeyPath:@"Software.sw_type"] uppercaseString];
     NSError *err = nil;
-    MPCrypto *mpCrypto = [[[MPCrypto alloc] init] autorelease];
+    MPCrypto *mpCrypto = [[MPCrypto alloc] init];
     NSString *fHash;
     MPAsus *mpa = [[MPAsus alloc] init];
     
@@ -215,7 +209,6 @@ typedef NSUInteger MPPostDataType;
         logit(lcl_vInfo,@"== %@",[aSWDict valueForKeyPath:@"Software.sw_hash"]);
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[zipFile lastPathComponent]);
-            [mpa release];
             return 1;
         }
 
@@ -224,14 +217,12 @@ typedef NSUInteger MPPostDataType;
         [mpa unzip:zipFile error:&err];
         if (err) {
             logit(lcl_vError,@"Error unzipping file %@. %@",zipFile,[err description]);
-            [mpa release];
             return 1;
         }
         
         // Run Pre Install Script
         if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
             result = 1;
-            [mpa release];
             return result;
         }
         
@@ -256,7 +247,6 @@ typedef NSUInteger MPPostDataType;
         fHash = [mpCrypto md5HashForFile:zipFile];
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[zipFile lastPathComponent]);
-            [mpa release];
             return 1;
         }
 
@@ -265,13 +255,11 @@ typedef NSUInteger MPPostDataType;
         [mpa unzip:zipFile error:&err];
         if (err) {
             logit(lcl_vError,@"Error unzipping file %@. %@",zipFile,[err description]);
-            [mpa release];
             return 1;
         }
         // Run Pre Install Script
         if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
             result = 1;
-            [mpa release];
             return result;
         }
         
@@ -291,7 +279,6 @@ typedef NSUInteger MPPostDataType;
         fHash = [mpCrypto md5HashForFile:zipFile];
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[zipFile lastPathComponent]);
-            [mpa release];
             return 1;
         }
 
@@ -300,14 +287,12 @@ typedef NSUInteger MPPostDataType;
         [mpa unzip:zipFile error:&err];
         if (err) {
             logit(lcl_vError,@"Error unzipping file %@. %@",zipFile,[err description]);
-            [mpa release];
             return 1;
         }
         
         // Run Pre Install Script
         if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
             result = 1;
-            [mpa release];
             return result;
         }
         
@@ -333,7 +318,6 @@ typedef NSUInteger MPPostDataType;
         logit(lcl_vInfo,@"== %@",[aSWDict valueForKeyPath:@"Software.sw_hash"]);
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[dmgFile lastPathComponent]);
-            [mpa release];
             return 1;
         }
 
@@ -343,7 +327,6 @@ typedef NSUInteger MPPostDataType;
             // Run Pre Install Script
             if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
                 result = 1;
-                [mpa release];
                 return result;
             }
             
@@ -366,7 +349,6 @@ typedef NSUInteger MPPostDataType;
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[dmgFile lastPathComponent]);
             logit(lcl_vError,@"%@: %@ (%@)",dmgFile,fHash,[aSWDict valueForKeyPath:@"Software.sw_hash"]);
-            [mpa release];
             return 1;
         }
 
@@ -376,7 +358,6 @@ typedef NSUInteger MPPostDataType;
             // Run Pre Install Script
             if ([self runInstallScript:[aSWDict objectForKey:@"Software"] type:0] == NO) {
                 result = 1;
-                [mpa release];
                 return result;
             }
             
@@ -405,7 +386,6 @@ typedef NSUInteger MPPostDataType;
             sleep(2);
         }
     }
-    [mpa release];
     return result;
 }
 
@@ -417,7 +397,7 @@ typedef NSUInteger MPPostDataType;
 - (int)patchSoftwareViaHelper:(in bycopy NSDictionary *)aSWDict
 {
     int result = 0;
-    MPAgentController *ma = [[[MPAgentController alloc] initForBundleUpdate] autorelease];
+    MPAgentController *ma = [[MPAgentController alloc] initForBundleUpdate];
     [ma scanAndUpdateCustomWithPatchBundleID:[aSWDict valueForKeyPath:@"Software.patch_bundle_id"]];
     result = [ma errorCode];
     return result;
@@ -428,7 +408,6 @@ typedef NSUInteger MPPostDataType;
     BOOL scriptResult = NO;
     MPScript *mps = [[MPScript alloc] init];
     scriptResult = [mps runScript:aScript];
-    [mps release];
     return (int)scriptResult;
 }
 // Proxy Method
@@ -492,7 +471,6 @@ typedef NSUInteger MPPostDataType;
     if (result == 0) {
         [self postDataToClient:@"DMG Mounted..." type:kMPProcessStatus];
     }
-    [aTask release];
     return result;
 }
 
@@ -522,7 +500,6 @@ typedef NSUInteger MPPostDataType;
     if (result == 0) {
         [self postDataToClient:@"DMG Un-Mounted..." type:kMPProcessStatus];
     }
-    [aTask release];
     return result;
 }
 
@@ -593,7 +570,7 @@ typedef NSUInteger MPPostDataType;
 
 - (BOOL)runInstallScript:(NSDictionary *)aSWDict type:(int)aScriptType
 {
-    MPScript *mps = [[[MPScript alloc] init] autorelease];
+    MPScript *mps = [[MPScript alloc] init];
     NSString *_script;
     if (aScriptType == 0) {
         if ([aSWDict hasKey:@"sw_pre_install"]) {
@@ -678,10 +655,9 @@ typedef NSUInteger MPPostDataType;
             result = 0;
         } else {
             result = 1;
-            [mps release];
             break;
         }
-        [mps release], mps = nil;
+        mps = nil;
     }
     
     return result;
@@ -747,9 +723,11 @@ typedef NSUInteger MPPostDataType;
 
 - (void)taskTimeoutThread
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-	logit(lcl_vDebug,@"Timeout is set to %d",taskTimeoutValue);
+	@autoreleasepool {
+
+        [_timeoutTimer invalidate];
+        
+	logit(lcl_vInfo,@"Timeout is set to %d",taskTimeoutValue);
 	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:taskTimeoutValue
 													  target:self
 													selector:@selector(taskTimeout:)
@@ -759,7 +737,7 @@ typedef NSUInteger MPPostDataType;
 	
 	while (taskTimedOut == NO && [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]);
 	
-	[pool drain];
+	}
 	
 }
 
@@ -773,13 +751,18 @@ typedef NSUInteger MPPostDataType;
 
 - (int)runTask:(NSString *)aBinPath binArgs:(NSArray *)aBinArgs environment:(NSString *)env
 {
+    NSString		*tmpStr;
+    NSMutableData	*data;
+    NSData			*dataChunk = nil;
+    NSException		*error = nil;
+    
+    
 	[self setTaskIsRunning:YES];
 	[self setTaskTimedOut:NO];
 	
 	int taskResult = -1;
     
     if (swTask) {
-        [swTask release];
         swTask = nil;
     }
     swTask = [[NSTask alloc] init];
@@ -790,7 +773,7 @@ typedef NSUInteger MPPostDataType;
 	
     // Parse the Environment variables for the install
     NSDictionary *defaultEnvironment = [[NSProcessInfo processInfo] environment];
-	NSMutableDictionary *environment = [[[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment] autorelease];
+	NSMutableDictionary *environment = [[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment];
 	[environment setObject:@"YES" forKey:@"NSUnbufferedIO"];
 	[environment setObject:@"1" forKey:@"COMMAND_LINE_INSTALL"];
 	
@@ -833,10 +816,9 @@ typedef NSUInteger MPPostDataType;
         goto done;
 	}
 	
-	NSString		*tmpStr;
-    NSMutableData	*data = [[NSMutableData alloc] init];
-    NSData			*dataChunk = nil;
-    NSException		*error = nil;
+    data = [[NSMutableData alloc] init];
+    dataChunk = nil;
+    error = nil;
     
 	while(taskTimedOut == NO && ((dataChunk = [[aPipe fileHandleForReading] availableDataOrError:&error]) && [dataChunk length] && error == nil))
 	{
@@ -853,7 +835,6 @@ typedef NSUInteger MPPostDataType;
 		}
 		
 		[data appendData:dataChunk];
-		[tmpStr release];
 		tmpStr = nil;
 	}
     
@@ -861,14 +842,32 @@ typedef NSUInteger MPPostDataType;
     
 	if (taskTimedOut == YES) {
 		logit(lcl_vError,@"Task was terminated due to timeout.");
-		[NSThread sleepForTimeInterval:2.0];
+		[NSThread sleepForTimeInterval:5.0];
+        [swTask terminate];
 		taskResult = 1;
 		goto done;
 	}
 	
     if([data length] && error == nil)
     {
-        if ([swTask terminationStatus] == 0) {
+        if ([swTask isRunning])
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                if ([swTask isRunning]) {
+                    [NSThread sleepForTimeInterval:1.0];
+                } else {
+                    break;
+                }
+            }
+            // Task should be complete
+            logit(lcl_vInfo,@"Terminate Software Task.");
+            [swTask terminate];
+        }
+        
+        int status = [swTask terminationStatus];
+        logit(lcl_vInfo,@"swTask terminationStatus: %d",status);
+        if (status == 0) {
             taskResult = 0;
         } else {
             taskResult = 1;
@@ -879,12 +878,11 @@ typedef NSUInteger MPPostDataType;
 	}
 	
 done:
-	if(_timeoutTimer) {
+
+    if(_timeoutTimer) {
 		[_timeoutTimer invalidate];
 	}
-	if (data) {
-		[data autorelease];
-	}
+
 	[self setTaskIsRunning:NO];
     return taskResult;
 }
@@ -900,7 +898,6 @@ done:
 {
     MPCrypto *mpCrypto = [[MPCrypto alloc] init];
     NSString *fHash = [mpCrypto getHashForFileForType:aPath type:hashType];
-    [mpCrypto release];
     
     if (![[fHash uppercaseString] isEqualToString:[kHash uppercaseString]])
     {
@@ -972,7 +969,6 @@ done:
 	if ([m checkAndSetCatalogURL]) {
 		result = 0;
 	}
-    [m release];
     return result;
 }
 // Proxy Method
@@ -1004,16 +1000,14 @@ done:
 	int status = [spTask terminationStatus];
 	if (status != 0) {
 		logit(lcl_vError,@"Error: softwareupdate exit code = %d",status);
-		[spTask release];
 		return appleUpdates;
 	} else {
 		logit(lcl_vInfo,@"Apple software update scan was completed.");
 	}
     
-	[spTask release];
 	
 	NSData *data = [file readDataToEndOfFile];
-    NSString *string = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+    NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 	
 	logit(lcl_vInfo,@"Apple software update full scan results\n%@",string);
 	
@@ -1061,12 +1055,10 @@ done:
 				}
 				
 				[tmpAppleUpdates addObject:tmpDict];
-				[tmpDict release];
 			} // if is an update
 		} // if / empty lines
 	} // for loop
 	appleUpdates = [NSArray arrayWithArray:tmpAppleUpdates];
-	[tmpAppleUpdates release];
 	
 	logit(lcl_vDebug,@"Apple Updates Found, %@",appleUpdates);
 	return appleUpdates;
@@ -1093,7 +1085,6 @@ done:
     [patchScanObj setDelegate:self];
     [patchScanObj setUseDistributedNotification:YES];
 	result = [NSArray arrayWithArray:[patchScanObj scanForPatches]];
-	[patchScanObj release];
     
 	return result;
 }
@@ -1111,19 +1102,23 @@ done:
 - (void)patchScan:(MPPatchScan *)patchScan didReciveStatusData:(NSString *)data
 {
     [self postDataToClient:data type:kMPProcessStatus];
-    NSLog(@"%@",data);
 }
 
-// Proxy Method
 - (int)installAppleSoftwareUpdateViaHelper:(in bycopy NSString *)approvedUpdate
 {
+    BOOL            foundDone = NO;
+    NSString		*tmpStr;
+    NSMutableData	*data;
+    NSData			*dataChunk = nil;
+    NSException		*error = nil;
+    
+    
     [self setTaskIsRunning:YES];
 	[self setTaskTimedOut:NO];
 	
 	int taskResult = -1;
     
     if (swTask) {
-        [swTask release];
         swTask = nil;
     }
     swTask = [[NSTask alloc] init];
@@ -1134,14 +1129,15 @@ done:
 	
     NSArray *appArgs;
     // Parse the Environment variables for the install
-    if ((int)NSAppKitVersionNumber >= 1187 /* 10.8 */) {
+    // 1187 = 10.8
+    if ((int)NSAppKitVersionNumber >= 1187) {
         appArgs = [NSArray arrayWithObjects:@"-v",@"-i", approvedUpdate, nil];
     } else {
         appArgs = [NSArray arrayWithObjects:@"-i", approvedUpdate, nil];
     }
     
     NSDictionary *defaultEnvironment = [[NSProcessInfo processInfo] environment];
-	NSMutableDictionary *environment = [[[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment] autorelease];
+	NSMutableDictionary *environment = [[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment];
 	[environment setObject:@"YES" forKey:@"NSUnbufferedIO"];
 	[environment setObject:@"1" forKey:@"COMMAND_LINE_INSTALL"];
     
@@ -1164,11 +1160,10 @@ done:
         goto done;
 	}
 
-    BOOL            foundDone = NO;
-	NSString		*tmpStr;
-    NSMutableData	*data = [[NSMutableData alloc] init];
-    NSData			*dataChunk = nil;
-    NSException		*error = nil;
+    foundDone = NO;
+    data = [[NSMutableData alloc] init];
+    dataChunk = nil;
+    error = nil;
     
 	while(taskTimedOut == NO && ((dataChunk = [[aPipe fileHandleForReading] availableDataOrError:&error]) && [dataChunk length] && error == nil))
 	{
@@ -1188,47 +1183,59 @@ done:
 		}
 		
 		[data appendData:dataChunk];
-		[tmpStr release];
 		tmpStr = nil;
 	}
     
 	[[aPipe fileHandleForReading] closeFile];
     
-	if (taskTimedOut == YES) {
-		logit(lcl_vError,@"Task was terminated due to timeout.");
-		[NSThread sleepForTimeInterval:2.0];
-		taskResult = 1;
-		goto done;
-	}
-
-    // A number of Apple Patches have a termination status other than 0
-    // Using "Done."
-	if (foundDone == YES) {
-        taskResult = 0;
-    } else {
-        if([data length] && error == nil)
+    
+    if (taskTimedOut == YES) {
+        logit(lcl_vError,@"Task was terminated due to timeout.");
+        [NSThread sleepForTimeInterval:5.0];
+        [swTask terminate];
+        taskResult = 1;
+        goto done;
+    }
+    
+    if([data length] && error == nil)
+    {
+        if ([swTask isRunning])
         {
-            if ([swTask terminationStatus] == 0) {
-                taskResult = 0;
-            } else {
-                taskResult = 1;
+            for (int i = 0; i < 30; i++)
+            {
+                if ([swTask isRunning]) {
+                    [NSThread sleepForTimeInterval:1.0];
+                } else {
+                    break;
+                }
             }
+            // Task should be complete
+            logit(lcl_vInfo,@"Terminate Software Task.");
+            [swTask terminate];
+        }
+        
+        int status = [swTask terminationStatus];
+        logit(lcl_vInfo,@"swTask terminationStatus: %d",status);
+        if (status == 0) {
+            taskResult = 0;
         } else {
-            logit(lcl_vError,@"Install returned error. Code:[%d]",[swTask terminationStatus]);
             taskResult = 1;
         }
+    } else {
+        logit(lcl_vError,@"Install returned error. Code:[%d]",[swTask terminationStatus]);
+        taskResult = 1;
     }
 	
 done:
-	if(_timeoutTimer) {
+
+    if(_timeoutTimer) {
 		[_timeoutTimer invalidate];
 	}
-	if (data) {
-		[data autorelease];
-	}
+
 	[self setTaskIsRunning:NO];
     return taskResult;
 }
+
 // Proxy Method
 - (int)installPkgToRootViaHelper:(in bycopy NSString *)pkgPath
 {
@@ -1262,7 +1269,7 @@ done:
     [swTask setArguments: appArgs];
 	
 	NSDictionary *defaultEnvironment = [[NSProcessInfo processInfo] environment];
-	NSMutableDictionary *environment = [[[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment] autorelease];
+	NSMutableDictionary *environment = [[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment];
 	[environment setObject:@"YES" forKey:@"NSUnbufferedIO"];
 	[environment setObject:@"1" forKey:@"COMMAND_LINE_INSTALL"];
 	
@@ -1304,7 +1311,6 @@ done:
 	
 	[self setTaskIsRunning:YES];
 	[swTask launch];
-	[swTask release];
 	[fh_task readInBackgroundAndNotify];
 }
 
@@ -1318,7 +1324,6 @@ done:
         logit(lcl_vDebug,@"%@",incomingText);
 		
         [fh_task readInBackgroundAndNotify];
-        [incomingText release];
         return;
     }
 }
@@ -1336,7 +1341,7 @@ done:
 	logit(lcl_vDebug,@"Running script\n%@",scriptText);
 	int retCode = 1;
 	BOOL result = NO;
-	MPScript *mps = [[[MPScript alloc] init] autorelease];
+	MPScript *mps = [[MPScript alloc] init];
 	result = [mps runScript:scriptText];
 	if (result == YES) {
 		retCode = 0;
@@ -1488,6 +1493,7 @@ done:
 - (void)removeStatusFilesViaHelper
 {
     [NSKeyedArchiver archiveRootObject:NULL toFile:PATCHES_NEEDED_PLIST];
+    [fm removeFileIfExistsAtPath:PATCHES_APPROVED_PLIST];
     return;
 }
 #pragma mark Inventory
@@ -1553,10 +1559,10 @@ done:
     switch ( taskAction ) {
         case 0:
             rb = reboot(RB_AUTOBOOT);
-            NSLog(@"MPAuthPlugin issued a reboot (%d)",rb);
+            qlinfo(@"MPAuthPlugin issued a reboot (%d)",rb);
             if (rb == -1) {
                 // Try Forcing it :-)
-                NSLog(@"Attempting to force reboot...");
+                qlinfo(@"Attempting to force reboot...");
                 execve("/sbin/reboot",0,0);
             }
             break;

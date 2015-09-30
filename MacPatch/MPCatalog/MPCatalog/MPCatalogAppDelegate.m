@@ -560,7 +560,8 @@
         }
         
         // Create Download URL
-        NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+        // NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+        NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
         logit(lcl_vInfo,@"Download software from: %@",_url);
         
         BOOL isDir;
@@ -902,7 +903,8 @@
                     }
                     
                     // Create Download URL
-                    NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+                    //NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+                    NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
                     logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
                     
                     [progressBar setDoubleValue:0.0];
@@ -1161,7 +1163,7 @@
 
 - (void)appendDownloadProgressPercent:(NSString *)aPercent
 {
-    logit(lcl_vDebug,@"%@",[NSString stringWithFormat:@"%@%",aPercent]);
+    logit(lcl_vDebug,@"%@",[NSString stringWithFormat:@"%@%@",aPercent,@"%"]);
 }
 
 - (void)downloadStarted
@@ -1734,7 +1736,13 @@ done:
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
         BOOL successful = [proxy registerClient:self];
         if (!successful) {
-            NSRunAlertPanel(@"Error", @"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue.", nil, nil, nil);
+            NSAlert *alert = [NSAlert alertWithMessageText:@"Error"
+                                             defaultButton:@"OK" alternateButton:nil
+                                               otherButton:nil
+                                 informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
+            
+            [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+            [alert runModal];
             [self cleanup];
         }
     }

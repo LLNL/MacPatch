@@ -26,13 +26,12 @@
 #import <Foundation/Foundation.h>
 #import "MPAgentExecController.h"
 #import "MacPatch.h"
-#import "MPInv.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"2.0.3"
+#define APPVERSION	@"2.1.1.0"
 #define APPNAME		@"MPAgentExec"
 
 void usage(void);
@@ -129,12 +128,20 @@ int main (int argc, char * argv[])
                         _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"AllowServer"];
                         break;
                     case 't':
+                    /*
                         argType = [NSString stringWithUTF8String:optarg];
                         a_Type = 6;
+                     */
+                        printf("Inventory has been moved to MPAgent.");
+                        return 0;
                         break;
                     case 'A':
+                    /*
                         argType = @"Custom";
                         a_Type = 6;
+                     */
+                        printf("Inventory has been moved to MPAgent.");
+                        return 0;
                         break;
                     case 'c':
                         printf("%s\n",[[MPSystemInfo clientUUID] UTF8String]);
@@ -225,9 +232,7 @@ int main (int argc, char * argv[])
             [controller setForceRun:YES];
         }
 
-        MPInv *i = [[MPInv alloc] init];
         int result = NO;
-
         switch (a_Type) {
             case 1:
                 [controller scanForPatches];
@@ -252,14 +257,7 @@ int main (int argc, char * argv[])
                 [controller scanAndUpdateAgentUpdater];
                 break;
             case 6:
-                if ([argType isEqual:@"Custom"]) {
-                    int x = 0;
-                    x = [i collectAuditTypeData];
-                } else if ([argType isEqual:@"All"]) {
-                    result = [i collectInventoryData];
-                } else {
-                    result = [i collectInventoryDataForType:argType];
-                }
+                // Inventory has been moved to MPAgent
                 break;
             case 7:
                 // Install Using SW Group Name ID
@@ -274,7 +272,6 @@ int main (int argc, char * argv[])
                 result = [controller installSoftwareTasksUsingPLIST:argType];
                 break;
             default:
-                i = nil;
                 logit(lcl_vError, @"should never have gotten here!");
                 break;
         }
