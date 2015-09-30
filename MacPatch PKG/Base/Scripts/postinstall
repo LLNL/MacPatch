@@ -125,7 +125,7 @@ sleep 1
 sleep 1
 
 # Run Client Inventory Scan
-/Library/MacPatch/Client/MPAgentExec -t All
+/Library/MacPatch/Client/MPAgent -t All
 sleep 1
 
 # If iLoadAssitant is not running, scan for patches, AV, and inventory
