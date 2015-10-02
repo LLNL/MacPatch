@@ -35,6 +35,7 @@ extern NSString * const AGENT_VER_PLIST;
 extern NSString * const AGENT_PREFS_PLIST;
 extern NSString * const AGENT_FRAMEWORK_PATH;
 extern NSString * const AGENT_SERVERS_PLIST;
+extern NSString * const AGENT_SUS_SERVERS_PLIST;
 extern NSString * const APP_PREFS_PLIST;
 extern NSString * const PATCHES_NEEDED_PLIST;
 extern NSString * const PATCHES_APPROVED_PLIST;
@@ -65,8 +66,6 @@ extern NSString * const kMPPatchSCAN;
 extern NSString * const kMPPatchUPDATE;
 extern NSString * const kMPInventory;
 extern NSString * const kMPAVUpdate;
-
-extern NSString * const MP_XSD_AUDIT;
 
 @interface Constants : NSObject {
 

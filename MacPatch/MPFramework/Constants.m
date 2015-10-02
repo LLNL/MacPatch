@@ -35,6 +35,7 @@ NSString * const AGENT_VER_PLIST			= @"/Library/MacPatch/Client/.mpVersion.plist
 NSString * const AGENT_PREFS_PLIST			= @"/Library/Preferences/gov.llnl.mpagent.plist";
 NSString * const AGENT_FRAMEWORK_PATH		= @"/Library/Frameworks/MPFramework.framework/Resources/Info.plist";
 NSString * const AGENT_SERVERS_PLIST        = @"/Library/MacPatch/Client/lib/Servers.plist";
+NSString * const AGENT_SUS_SERVERS_PLIST        = @"/Library/MacPatch/Client/lib/Servers.plist";
 NSString * const APP_PREFS_PLIST			= @"/Library/Preferences/gov.llnl.MPClientStatus.plist";
 NSString * const PATCHES_NEEDED_PLIST       = @"/Library/MacPatch/Client/Data/.neededPatches.plist";
 NSString * const PATCHES_APPROVED_PLIST     = @"/Library/MacPatch/Client/Data/.approvedPatches.plist";
@@ -65,76 +66,6 @@ NSString * const kMPPatchSCAN               = @".mpScanRunning";
 NSString * const kMPPatchUPDATE             = @".mpUpdateRunning";
 NSString * const kMPInventory               = @".mpInventoryRunning";
 NSString * const kMPAVUpdate                = @".mpAVUpdateRunning";
-
-NSString * const MP_XSD_AUDIT                = @"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
-<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" attributeFormDefault=\"unqualified\" elementFormDefault=\"qualified\">\
-<xs:element name=\"tables\">\
-<xs:complexType>\
-<xs:sequence>\
-<xs:element name=\"remove\" minOccurs=\"0\" maxOccurs=\"unbounded\">\
-<xs:complexType>\
-<xs:simpleContent>\
-<xs:extension base=\"xs:string\">\
-<xs:attribute type=\"xs:string\" name=\"valueEQ\"/>\
-<xs:attribute type=\"xs:string\" name=\"column\"/>\
-</xs:extension>\
-</xs:simpleContent>\
-</xs:complexType>\
-</xs:element>\
-<xs:element name=\"table\">\
-<xs:complexType>\
-<xs:sequence>\
-<xs:element type=\"xs:string\" name=\"mpColReq\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>\
-<xs:element name=\"field\" minOccurs=\"0\" maxOccurs=\"unbounded\">\
-<xs:complexType>\
-<xs:simpleContent>\
-<xs:extension base=\"xs:string\">\
-<xs:attribute type=\"xs:string\" name=\"Increment\" use=\"optional\"/>\
-<xs:attribute type=\"xs:string\" name=\"PrimaryKey\" use=\"optional\"/>\
-<xs:attribute type=\"xs:string\" name=\"Default\" use=\"optional\"/>\
-<xs:attribute type=\"xs:string\" name=\"ColumnName\"/>\
-<xs:attribute type=\"xs:short\" name=\"Length\"/>\
-<xs:attribute type=\"xs:string\" name=\"CF_DATATYPE\"/>\
-</xs:extension>\
-</xs:simpleContent>\
-</xs:complexType>\
-</xs:element>\
-</xs:sequence>\
-<xs:attribute type=\"xs:string\" name=\"name\"/>\
-</xs:complexType>\
-</xs:element>\
-<xs:element name=\"data\">\
-<xs:complexType>\
-<xs:sequence>\
-<xs:element name=\"row\" maxOccurs=\"unbounded\">\
-<xs:complexType>\
-<xs:sequence>\
-<xs:element type=\"xs:string\" name=\"mpColRowReq\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>\
-<xs:element name=\"field\" minOccurs=\"0\" maxOccurs=\"unbounded\">\
-<xs:complexType>\
-<xs:simpleContent>\
-<xs:extension base=\"xs:string\">\
-<xs:attribute type=\"xs:string\" name=\"name\"/>\
-<xs:attribute type=\"xs:string\" name=\"value\"/>\
-</xs:extension>\
-</xs:simpleContent>\
-</xs:complexType>\
-</xs:element>\
-</xs:sequence>\
-</xs:complexType>\
-</xs:element>\
-</xs:sequence>\
-<xs:attribute type=\"xs:string\" name=\"permanentRows\"/>\
-<xs:attribute type=\"xs:string\" name=\"checkFields\"/>\
-<xs:attribute type=\"xs:string\" name=\"table\"/>\
-<xs:attribute type=\"xs:string\" name=\"onexists\"/>\
-</xs:complexType>\
-</xs:element>\
-</xs:sequence>\
-</xs:complexType>\
-</xs:element>\
-</xs:schema>";
-
 
 @implementation Constants
 

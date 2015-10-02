@@ -1,5 +1,5 @@
 //
-//  MPASUSCatalogs.h
+//  GetASUSListOperation.h
 /*
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -25,33 +25,20 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class MPNetworkUtils;
+@class MPAgent;
 
-@interface MPASUSCatalogs : NSObject 
+@interface GetASUSListOperation : NSOperation
 {
-    MPNetworkUtils      *mpNetworkUtils;
-    NSFileManager       *fm;
+    BOOL isExecuting;
+    BOOL isFinished;
+    
+@private
+    
+    MPAgent *si;
+    NSFileManager *fm;
 }
 
-// Methods
-- (BOOL)writeCatalogURL:(NSString *)aCatalogURL;
-- (BOOL)disableCatalogURL;
-
-/* Gets a JSON Object converted to Dictionary of all of the 
-   SUS catalogs for all of the OS's */
-- (NSDictionary *)getSUCatalogsFromServer;
-
-/* Check and set the CatalogURL from the randomized array 
-   of CatalogURLs from the plist on disk */
-- (BOOL)checkAndSetCatalogURL;
-
-/* Checks with the server to see if the agent has the latest
-   version of the SUS Catalogs data */
-- (BOOL)usingCurrentSUSList:(NSError **)err;
-
-/* Takes the Dictionary result from getSUCatalogsFromServer
-   and randomizes each list of catalogURLS and writes the 
-   result to /L/MP/C/lib */
-- (BOOL)writeSUServerListToDisk:(NSDictionary *)susDict error:(NSError **)err;
+@property (nonatomic, readonly) BOOL isExecuting;
+@property (nonatomic, readonly) BOOL isFinished;
 
 @end

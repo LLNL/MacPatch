@@ -1,5 +1,5 @@
 //
-//  MPASUSCatalogs.h
+//  MPSUServerList.h
 /*
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -23,35 +23,23 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
-@class MPNetworkUtils;
-
-@interface MPASUSCatalogs : NSObject 
-{
-    MPNetworkUtils      *mpNetworkUtils;
-    NSFileManager       *fm;
+@interface MPSUServerList : NSObject {
+    
+@private
+    NSFileManager *fm;
 }
 
-// Methods
-- (BOOL)writeCatalogURL:(NSString *)aCatalogURL;
-- (BOOL)disableCatalogURL;
+// Init
+- (id)init;
+- (id)initAndGetListFromServer;
 
-/* Gets a JSON Object converted to Dictionary of all of the 
-   SUS catalogs for all of the OS's */
-- (NSDictionary *)getSUCatalogsFromServer;
+- (NSDictionary *)readPlistFromHost;
 
-/* Check and set the CatalogURL from the randomized array 
-   of CatalogURLs from the plist on disk */
-- (BOOL)checkAndSetCatalogURL;
-
-/* Checks with the server to see if the agent has the latest
-   version of the SUS Catalogs data */
-- (BOOL)usingCurrentSUSList:(NSError **)err;
-
-/* Takes the Dictionary result from getSUCatalogsFromServer
-   and randomizes each list of catalogURLS and writes the 
-   result to /L/MP/C/lib */
-- (BOOL)writeSUServerListToDisk:(NSDictionary *)susDict error:(NSError **)err;
+// Network Methods for Getting the Data
+- (BOOL)usingCurrentList:(NSError **)err;
+- (BOOL)getListFromServer:(NSError **)err;
+- (NSArray *)randomizeArray:(NSArray *)arrayToRandomize;
 
 @end
