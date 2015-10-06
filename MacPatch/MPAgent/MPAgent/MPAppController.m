@@ -236,9 +236,11 @@
                                         @autoreleasepool {
                                             InventoryOperation __autoreleasing *invOps = [[InventoryOperation alloc] init];
                                             invOps.queuePriority = NSOperationQueuePriorityLow;
-                                            NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
-                                            if (version.minorVersion >= 10) {
-                                                invOps.qualityOfService = NSOperationQualityOfServiceBackground;
+                                            if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_10) {
+                                                NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
+                                                if (version.minorVersion >= 10) {
+                                                    invOps.qualityOfService = NSOperationQualityOfServiceBackground;
+                                                }
                                             }
                                             [queue addOperation:invOps];
                                             invOps = nil;
