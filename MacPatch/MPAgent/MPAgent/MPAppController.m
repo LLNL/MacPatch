@@ -183,7 +183,8 @@
 		{
 			@autoreleasepool
             {
-                @try {
+                @try
+                {
                     NSDictionary *taskDict;
                     NSArray *tmpArr = [NSArray arrayWithArray:[si g_Tasks]];
                     
@@ -435,7 +436,5 @@
 
     exit(0);
 }
-
-
 
 @end
