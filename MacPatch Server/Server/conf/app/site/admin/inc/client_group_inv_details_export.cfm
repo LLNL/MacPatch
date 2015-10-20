@@ -15,7 +15,7 @@
         from mpi_SPHardwareOverview
         </cfif>
         <cfif url.type EQ "networkoverview">
-        from mpi_SPNetwork
+        from mpi_SINetworkInfo
         </cfif>
 		<cfif url.type EQ "directoryoverview">
         from mpi_DirectoryServices
@@ -32,6 +32,15 @@
 		<cfif url.type EQ "diskinfo">
 	    from mpi_DiskInfo
 	    </cfif>
+        <cfif url.type EQ "batteryinfo">
+        from mpi_DiskInfo
+        </cfif>
+        <cfif url.type EQ "powerinfo">
+        from mpi_PowerManagment
+        </cfif>
+        <cfif url.type EQ "fileVault">
+        from mpi_FileVault
+        </cfif>
         Where cuuid = <cfqueryparam value="#url.cuuid#">
     </cfquery> 
     </cfsilent>

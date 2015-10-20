@@ -388,6 +388,15 @@ function dateDifference(strDate1,strDate2)
 			},
 			'SWInstalls': function(t) {
 				popUpInvWindow('client_group_inv_details.cfm?type=swinstalls&cuuid='+t.id+'','Client Info');
+			},
+			'BatteryInfo': function(t) {
+				popUpInvWindow('client_group_inv_details.cfm?type=batteryinfo&cuuid='+t.id+'','Client Info');
+			},
+			'PowerManagment': function(t) {
+				popUpInvWindow('client_group_inv_details.cfm?type=powerinfo&cuuid='+t.id+'','Client Info');
+			},
+			'FileVault': function(t) {
+				popUpInvWindow('client_group_inv_details.cfm?type=fileVault&cuuid='+t.id+'','Client Info');
 			}
 		}
 	};
@@ -574,6 +583,15 @@ function dateDifference(strDate1,strDate2)
         </li>
 		<li id="DiskInfo" style="text-align:left">
             <img src="/admin/images/icons/report.png" />Disk Usage
+        </li>
+        <li id="BatteryInfo" style="text-align:left">
+            <img src="/admin/images/icons/report.png" />Battery Status
+        </li>
+        <li id="PowerManagment" style="text-align:left">
+            <img src="/admin/images/icons/report.png" />Power Managment
+        </li>
+        <li id="FileVault" style="text-align:left">
+            <img src="/admin/images/icons/report.png" />FileVault Status
         </li>
     </ul>
 </div>
