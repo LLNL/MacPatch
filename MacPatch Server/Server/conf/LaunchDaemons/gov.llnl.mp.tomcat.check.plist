@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>Label</key>
+        <string>gov.llnl.mp.tomcat.check</string>
+        <key>ProgramArguments</key>
+        <array>
+                <string>/Library/MacPatch/Server/conf/scripts/TCATCPUCheck.sh</string>
+        </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>ServiceDescription</key>
+        <string>invd_healthcheck</string>
+        <key>StandardOutPath</key>
+        <string>/Library/MacPatch/Server/Logs/tomcat_check.log</string>
+        <key>StartInterval</key>
+        <integer>3600</integer>
+        <key>AbandonProcessGroup</key>
+        <true/>
+</dict>
+</plist>
