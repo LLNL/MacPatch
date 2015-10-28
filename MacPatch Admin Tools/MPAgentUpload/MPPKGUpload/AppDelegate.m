@@ -653,9 +653,21 @@
 
 - (void)addPluginsToBasePackage:(NSString *)pkgPath pluginsPath:(NSString *)aPluginsPath
 {
-    NSArray *pFiles = [fm contentsOfDirectoryAtPath:aPluginsPath error:nil];
+    if (!aPluginsPath) return;
+    if (![fm fileExistsAtPath:aPluginsPath]) return;
+    
+    NSError *pFileErr = nil;
+    NSArray *pFiles = [fm contentsOfDirectoryAtPath:aPluginsPath error:&pFileErr];
+    if (pFileErr) {
+        NSLog(@"%@",pFileErr.localizedDescription);
+        return;
+    }
+    
+    if (!pFiles || ([pFiles count] <= 0) ) return;
+    
     NSArray *pBundleFiles = [pFiles filteredArrayUsingPredicate:[NSPredicate  predicateWithFormat:@"self ENDSWITH '.bundle'"]];
     NSError *err = nil;
+    
     if (![fm fileExistsAtPath:pkgPath]) {
         [fm createDirectoryAtPath:pkgPath withIntermediateDirectories:YES attributes:nil error:NULL];
     }
