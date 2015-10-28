@@ -234,8 +234,6 @@ CREATE TABLE `mp_apple_patch_criteria` (
 delimiter ;;
 CREATE TRIGGER `cDateTime_Trig` BEFORE INSERT ON `mp_apple_patch_criteria` FOR EACH ROW SET new.cdate = now(), new.mdate = now();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mDateTime_Trig` BEFORE UPDATE ON `mp_apple_patch_criteria` FOR EACH ROW SET new.mdate = now();
  ;;
 delimiter ;
@@ -339,8 +337,6 @@ CREATE TABLE `mp_client_agents` (
 delimiter ;;
 CREATE TRIGGER `mdate_agnt_in` BEFORE INSERT ON `mp_client_agents` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mdate_agnt_up` BEFORE UPDATE ON `mp_client_agents` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -523,8 +519,6 @@ CREATE TABLE `mp_clients` (
 delimiter ;;
 CREATE TRIGGER `mdate_insrt01` BEFORE INSERT ON `mp_clients` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mdate_updt01` BEFORE UPDATE ON `mp_clients` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -544,8 +538,6 @@ CREATE TABLE `mp_clients_key` (
 delimiter ;;
 CREATE TRIGGER `insrt_key01` BEFORE INSERT ON `mp_clients_key` FOR EACH ROW SET NEW.mdate = NOW(), New.cdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `updt_key01` BEFORE UPDATE ON `mp_clients_key` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -779,8 +771,6 @@ CREATE TABLE `mp_patch_group` (
 delimiter ;;
 CREATE TRIGGER `mdate_isrt_grp01` BEFORE INSERT ON `mp_patch_group` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mdate_updt_grp01` BEFORE UPDATE ON `mp_patch_group` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -804,8 +794,6 @@ CREATE TABLE `mp_patch_group_data` (
 delimiter ;;
 CREATE TRIGGER `trg_insrt_mdate_data1` BEFORE INSERT ON `mp_patch_group_data` FOR EACH ROW Set NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `trg_update_mdate_data1` BEFORE UPDATE ON `mp_patch_group_data` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -1067,8 +1055,6 @@ CREATE TABLE `mp_software` (
 delimiter ;;
 CREATE TRIGGER `mps_trg_insrt1` BEFORE INSERT ON `mp_software` FOR EACH ROW SET NEW.cdate = NOW(), NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mps_trg_updt1` BEFORE UPDATE ON `mp_software` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -1102,14 +1088,6 @@ CREATE TABLE `mp_software_group_tasks` (
   KEY `sw_task_idx` (`sw_task_id`),
   KEY `sw_grp_idx` (`sw_group_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
-delimiter ;;
-CREATE TRIGGER `msg_insrt_trg1` BEFORE INSERT ON `mp_software_groups` FOR EACH ROW SET NEW.cdate = NOW(), NEW.mdate = NOW();
- ;;
-delimiter ;
-delimiter ;;
-CREATE TRIGGER `msg_updt_trg1` BEFORE UPDATE ON `mp_software_groups` FOR EACH ROW SET NEW.mdate = NOW();
- ;;
-delimiter ;
 
 -- ----------------------------
 --  Table structure for `mp_software_groups`
@@ -1130,11 +1108,10 @@ CREATE TABLE `mp_software_groups` (
   KEY `name_idx` (`gName`),
   KEY `state_idx` (`state`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
 delimiter ;;
 CREATE TRIGGER `msg_insrt_trg1` BEFORE INSERT ON `mp_software_groups` FOR EACH ROW SET NEW.cdate = NOW(), NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `msg_updt_trg1` BEFORE UPDATE ON `mp_software_groups` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -1206,8 +1183,6 @@ CREATE TABLE `mp_software_task` (
 delimiter ;;
 CREATE TRIGGER `mpst_trg_insrt1` BEFORE INSERT ON `mp_software_task` FOR EACH ROW SET NEW.cdate = NOW(), NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mpst_trg_updt1` BEFORE UPDATE ON `mp_software_task` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -1228,8 +1203,6 @@ CREATE TABLE `mp_software_tasks_data` (
 delimiter ;;
 CREATE TRIGGER `mdate_insrt_trg` BEFORE INSERT ON `mp_software_tasks_data` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mdate_updt_trg` BEFORE UPDATE ON `mp_software_tasks_data` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
