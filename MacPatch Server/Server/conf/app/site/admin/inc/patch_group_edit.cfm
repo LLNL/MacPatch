@@ -14,11 +14,11 @@
 	</cfquery>
 	<cfif getSrvInfo.RecordCount GTE 1>
 		<cfset mpServer = IIF(getSrvInfo.useSSL EQ 1,DE('https://'),DE('http://')) & getSrvInfo.server >
-	<cfelse>	
+	<cfelse>
 		<cfset mpServer = "https://localhost" >
 	</cfif>
 </cfsilent>
-<script type="text/javascript">	
+<script type="text/javascript">
 	function loadContent(param, id) {
 		$("#dialog").load("available_patches_apple_description.cfm?id="+id);
 		$("#dialog").dialog(
@@ -28,7 +28,7 @@
 			width: 600,
 			modal: true
 			}
-		); 
+		);
 		$("#dialog").dialog('open');
 	}
 </script>
@@ -39,12 +39,12 @@
 	  iframe = document.getElementById("hiddenDownloader");
 	  if (iframe === null)
 	  {
-		iframe = document.createElement('iframe');  
+		iframe = document.createElement('iframe');
 		iframe.id = "hiddenDownloader";
 		iframe.style.visibility = 'hidden';
 		document.body.appendChild(iframe);
 	  }
-	  iframe.src = "<cfoutput>#mpServer#</cfoutput>" + url;   
+	  iframe.src = "<cfoutput>#mpServer#</cfoutput>" + url;
 	}
 </script>
 <script type="text/Javascript">
@@ -59,7 +59,7 @@
 	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
 	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
 	.ui-jqgrid-btable .ui-state-highlight { background: yellow; }
-	
+
 	.dimImg {
 		filter: url(filters.svg#grayscale); /* Firefox 3.5+ */
 		filter: gray; /* IE6-9 */
@@ -70,7 +70,7 @@
 		width:100%;
     	height:100%;
 		background-color: black;
-		
+
 		position: fixed;
 		top: 0; right: 0; bottom: 0; left: 0;
 		/*
@@ -100,7 +100,7 @@
     	Error occured.
     	<cfabort>
     </cfif>
-	
+
 	<!--- Has Rights To Edit --->
 	<cfquery name="qHasRights" datasource="#session.dbsource#">
 		select is_owner from mp_patch_group_members
@@ -121,7 +121,7 @@
 				var MyCellData = $("#list").jqGrid('getCell', rowid, 'p_name');
 				return MyCellData;
 			}
-			
+
 			var selMe = 0;
 			var lastsel=-1;
 			var getColumnIndexByName = function(grid, columnName) {
@@ -151,11 +151,11 @@
 				},
 				</cfif>
 				colNames:['','', 'Patch', 'Description', 'Reboot', 'Type', 'Patch State', 'Baseline', 'Release Date'],
-				colModel :[ 
+				colModel :[
 				  {name:'rid',index:'rid', width:36, align:"center", sortable:false, resizable:false, hidden:true, search : false},
-				  {name:'enbl', index:'enbl', width: 30, align:'center', search : false, sortable:true, sorttype:'int', formatter:'checkbox', editoptions:{value:'1:0'}, 
-				  formatoptions:{disabled:<cfif session.IsAdmin IS true>false<cfelseif hasEditRights IS true>false<cfelse>true</cfif>}},		
-				  {name:'name', index:'name', width:200}, 
+				  {name:'enbl', index:'enbl', width: 30, align:'center', search : false, sortable:true, sorttype:'int', formatter:'checkbox', editoptions:{value:'1:0'},
+				  formatoptions:{disabled:<cfif session.IsAdmin IS true>false<cfelseif hasEditRights IS true>false<cfelse>true</cfif>}},
+				  {name:'name', index:'name', width:200},
 				  {name:'title', index:'title', width:300},
 				  {name:'reboot', index:'reboot', width:40, align:"center"},
 				  {name:'type', index:'type', width:40, align:"center"},
@@ -183,9 +183,9 @@
 				multiboxonly: false,
 				editurl:"patch_group_edit.cfc?method=addEditPatchGroupPatches",//Not used right now.
 				toolbar:[false,"top"],
-				loadComplete: function(){ 
-					var ids = jQuery("#list").getDataIDs(); 
-					for(var i=0;i<ids.length;i++){ 
+				loadComplete: function(){
+					var ids = jQuery("#list").getDataIDs();
+					for(var i=0;i<ids.length;i++){
 						var cl = ids[i];
 					}
 					// Auto Enable Disable on Checkbox
@@ -194,7 +194,7 @@
                         $(rows[i].cells[iCol]).click(function (e) {
                             var id = $(e.target).closest('tr')[0].id,
                                 isChecked = $(e.target).is(':checked');
-								
+
                             $.ajax({
 							    url: "patch_group_edit.cfc"
 							  , type: "get"
@@ -212,7 +212,7 @@
 							});
                         });
                     }
-				}, 
+				},
 				onSelectRow: function(id){
 					/* This section of code fixes the highlight issues, with altRows */
 					selMe = id;
@@ -220,8 +220,8 @@
 						var xyz = $("#list").getDataIDs().indexOf(lastsel);
 						if (xyz%2 != 0)
 						{
-						  $('#'+lastsel).addClass('ui-priority-secondary');	
-						} 							 
+						  $('#'+lastsel).addClass('ui-priority-secondary');
+						}
 
 					  $('#list').jqGrid('restoreRow',lastsel);
 					  lastsel=id;
@@ -239,8 +239,8 @@
 					}
 				}
 			);
-			
-			
+
+
 			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false},
 				{}, // default settings for edit
 				{}, // default settings for add
@@ -250,16 +250,13 @@
 			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
 			$("#list").navButtonAdd("#pager",
 				{	caption:"",
-					title:"Save Patch Data", 
-			   		buttonicon:'ui-icon-disk', 
-					onClickButton: function() 
+					title:"Save Patch Data",
+			   		buttonicon:'ui-icon-disk',
+					onClickButton: function()
 					{
-						/*
-						load("patch_group_data_save.cfm?pID="+ <cfoutput>#pID#</cfoutput>);
-						*/
-						$.ajax({	
+						$.ajax({
 						 	url: "patch_group_edit.cfc",
-							type: "get", 
+							type: "get",
 							dataType: "json",
 							data: {
 							      method: "savePatchGroupData",
@@ -276,25 +273,129 @@
 							},
 							/* after success  */
 							success: function(response) {
-							   /*  simply hide the image */   
+							   /*  simply hide the image */
 							   $('#overlay').hide();
 							   /*  your code here   */
 							}
 						});
 					}
 			});
+
+			<cfif session.IsAdmin IS true>
+			$("#list").navButtonAdd('#pager',{
+				caption:"Select All",
+				buttonicon:"ui-icon-gear",
+				title:"Select All Patches",
+				onClickButton: function() {
+					$.ajax({
+						url: "patch_group_edit.cfc",
+						type: "get",
+						dataType: "json",
+						data: {
+							  method: "SelectAll",
+							  patchgroup: "<cfoutput>#pID#</cfoutput>"
+						},
+						// this runs if an error
+						error: function (xhr, textStatus, errorThrown) {
+							// show error
+							$('#overlay').hide();
+							alert(errorThrown);
+						},
+						beforeSend: function() {
+							$('#overlay').show();    /*showing  a div with spinning image */
+						},
+						/* after success  */
+						success: function(response) {
+						   /*  simply hide the image */
+						   $('#overlay').hide();
+						   $("#list").trigger("reloadGrid");
+						   /*  your code here   */
+						}
+					});
+				}
+			});
+			$("#list").navButtonAdd('#pager',{
+				caption:"Select All (Apple)",
+			   	buttonicon:"ui-icon-gear",
+			   	title:"Select Only Apple Patches",
+				onClickButton: function() {
+					$.ajax({
+						url: "patch_group_edit.cfc",
+						type: "get",
+						dataType: "json",
+						data: {
+							  method: "SelectApple",
+							  patchgroup: "<cfoutput>#pID#</cfoutput>"
+						},
+						// this runs if an error
+						error: function (xhr, textStatus, errorThrown) {
+							// show error
+							$('#overlay').hide();
+							alert(errorThrown);
+						},
+						beforeSend: function() {
+							$('#overlay').show();    /*showing  a div with spinning image */
+						},
+						/* after success  */
+						success: function(response) {
+						   /*  simply hide the image */
+						   $('#overlay').hide();
+						   $("#list").trigger("reloadGrid");
+						   /*  your code here   */
+						}
+					});
+				},
+			   	position:"last"
+			});
+			$("#list").navButtonAdd('#pager',{
+				caption:"Select All (Custom)",
+			   	buttonicon:"ui-icon-gear",
+			   	title:"Select Only Custom Patches",
+				onClickButton: function() {
+					$.ajax({
+						url: "patch_group_edit.cfc",
+						type: "get",
+						dataType: "json",
+						data: {
+							  method: "SelectCustom",
+							  patchgroup: "<cfoutput>#pID#</cfoutput>"
+						},
+						// this runs if an error
+						error: function (xhr, textStatus, errorThrown) {
+							// show error
+							$('#overlay').hide();
+							alert(errorThrown);
+						},
+						beforeSend: function() {
+							$('#overlay').show();    /*showing  a div with spinning image */
+						},
+						/* after success  */
+						success: function(response) {
+						   /*  simply hide the image */
+						   $('#overlay').hide();
+						   $("#list").trigger("reloadGrid");
+						   /*  your code here   */
+						}
+					});
+				},
+			   	position:"last"
+			});
+			</cfif>
+
+
+
 			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
 			mygrid[0].toggleToolbar();
-			
+
 			$(window).bind('resize', function() {
 				$("#list").setGridWidth($(window).width()-20);
 			}).trigger('resize');
 
 		}
 	);
-	
+
 	function deleteGridRow(){
-		var id = jQuery("#list").jqGrid('getGridParam','selrow'); 
+		var id = jQuery("#list").jqGrid('getGridParam','selrow');
 		var pName = $('#list').jqGrid('getCell', id, 1);
 		if( id != null ) {
 			jQuery("#list").jqGrid('delGridRow',id,
@@ -307,7 +408,7 @@
 		} else {
 			alert("Please Select Row to delete!");
 		}
-	
+
 	}
 </script>
 <div align="center">
