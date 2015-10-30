@@ -1,8 +1,8 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.7.0.3
-	Rev 3
+	Version 2.7.3.0
+	Rev 0
 */
 
 SET NAMES utf8;
@@ -200,8 +200,7 @@ CREATE TABLE `mp_agent_plugins` (
   `active` int(1) DEFAULT '0',
   PRIMARY KEY (`rid`),
   KEY `main_idx` (`pluginName`,`pluginBundleID`,`pluginVersion`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
-
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COMMENT='New for MacPatch 2.7';
 
 -- ----------------------------
 --  Table structure for `mp_agent_upload`
@@ -231,15 +230,25 @@ CREATE TABLE `mp_apple_patch_criteria` (
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`),
   KEY `idx_puuid` (`puuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 delimiter ;;
 CREATE TRIGGER `cDateTime_Trig` BEFORE INSERT ON `mp_apple_patch_criteria` FOR EACH ROW SET new.cdate = now(), new.mdate = now();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mDateTime_Trig` BEFORE UPDATE ON `mp_apple_patch_criteria` FOR EACH ROW SET new.mdate = now();
  ;;
 delimiter ;
+
+-- ----------------------------
+--  Table structure for `mp_asus_catalog_list`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_asus_catalog_list`;
+CREATE TABLE `mp_asus_catalog_list` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `listid` int(10) unsigned DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `version` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 --  Table structure for `mp_asus_catalogs`
@@ -247,16 +256,18 @@ delimiter ;
 DROP TABLE IF EXISTS `mp_asus_catalogs`;
 CREATE TABLE `mp_asus_catalogs` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `listid` int(11) DEFAULT '1',
   `catalog_url` varchar(255) NOT NULL,
   `os_minor` int(2) NOT NULL,
   `os_major` int(2) NOT NULL,
   `c_order` int(2) DEFAULT NULL,
   `proxy` int(1) NOT NULL DEFAULT '0',
+  `active` int(1) DEFAULT '0',
   `catalog_group_name` varchar(255) NOT NULL,
   PRIMARY KEY (`rid`),
   UNIQUE KEY `idx_rid` (`rid`),
   KEY `idx_minor_os` (`os_minor`,`c_order`,`proxy`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_baseline`
@@ -326,8 +337,6 @@ CREATE TABLE `mp_client_agents` (
 delimiter ;;
 CREATE TRIGGER `mdate_agnt_in` BEFORE INSERT ON `mp_client_agents` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mdate_agnt_up` BEFORE UPDATE ON `mp_client_agents` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -344,7 +353,7 @@ CREATE TABLE `mp_client_agents_filters` (
   `attribute_filter` varchar(255) NOT NULL,
   `attribute_condition` varchar(10) NOT NULL,
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_client_errors`
@@ -418,7 +427,7 @@ CREATE TABLE `mp_client_patches_apple` (
   PRIMARY KEY (`rid`),
   UNIQUE KEY `idx_no_dups` (`cuuid`,`patch`,`type`),
   KEY `idx_cuuid` (`cuuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_client_patches_third`
@@ -441,7 +450,7 @@ CREATE TABLE `mp_client_patches_third` (
   PRIMARY KEY (`rid`),
   UNIQUE KEY `idx_no_dups` (`cuuid`,`type`,`patch_id`),
   KEY `idx_cuuid` (`cuuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_client_register_conf`
@@ -479,7 +488,7 @@ CREATE TABLE `mp_client_register_log` (
   `client_cert_pass` varchar(255) DEFAULT NULL,
   `cdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`,`cuuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COMMENT='New for MacPatch 2.5.x';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New for MacPatch 2.5.x';
 
 -- ----------------------------
 --  Table structure for `mp_clients`
@@ -510,8 +519,6 @@ CREATE TABLE `mp_clients` (
 delimiter ;;
 CREATE TRIGGER `mdate_insrt01` BEFORE INSERT ON `mp_clients` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mdate_updt01` BEFORE UPDATE ON `mp_clients` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -531,8 +538,6 @@ CREATE TABLE `mp_clients_key` (
 delimiter ;;
 CREATE TRIGGER `insrt_key01` BEFORE INSERT ON `mp_clients_key` FOR EACH ROW SET NEW.mdate = NOW(), New.cdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `updt_key01` BEFORE UPDATE ON `mp_clients_key` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -636,11 +641,11 @@ CREATE TABLE `mp_installed_patches` (
   `date` datetime DEFAULT NULL,
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`),
-  KEY `idx_cuuid` (`cuuid`) COMMENT '(null)',
-  KEY `idx_patch` (`patch`) COMMENT '(null)',
-  KEY `idx_type` (`type`) COMMENT '(null)',
-  KEY `idx_date` (`date`) COMMENT '(null)',
-  KEY `idx_all` (`cuuid`,`date`,`patch`,`type`) COMMENT '(null)'
+  KEY `idx_cuuid` (`cuuid`),
+  KEY `idx_patch` (`patch`),
+  KEY `idx_type` (`type`),
+  KEY `idx_date` (`date`),
+  KEY `idx_all` (`cuuid`,`date`,`patch`,`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT 'Updated for 2.5';
 delimiter ;;
 CREATE TRIGGER `typeToIntTrig` BEFORE INSERT ON `mp_installed_patches` FOR EACH ROW IF new.type = 'apple' THEN
@@ -745,7 +750,7 @@ CREATE TABLE `mp_os_config_profiles_assigned` (
   `profileID` varchar(50) NOT NULL,
   `groupID` varchar(50) NOT NULL,
   PRIMARY KEY (`rid`,`profileID`,`groupID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New for MacPatch 2.5.x';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New for MacPatch 2.5.x';
 
 -- ----------------------------
 --  Table structure for `mp_patch_group`
@@ -766,8 +771,6 @@ CREATE TABLE `mp_patch_group` (
 delimiter ;;
 CREATE TRIGGER `mdate_isrt_grp01` BEFORE INSERT ON `mp_patch_group` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mdate_updt_grp01` BEFORE UPDATE ON `mp_patch_group` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -786,14 +789,11 @@ CREATE TABLE `mp_patch_group_data` (
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`,`pid`),
   KEY `hash_idx` (`hash`),
-  KEY `pid_idx` (`pid`) USING BTREE,
-  KEY `pid_type` (`pid`,`data_type`) USING BTREE
+  KEY `pid_type` (`pid`,`data_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 delimiter ;;
 CREATE TRIGGER `trg_insrt_mdate_data1` BEFORE INSERT ON `mp_patch_group_data` FOR EACH ROW Set NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `trg_update_mdate_data1` BEFORE UPDATE ON `mp_patch_group_data` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -859,7 +859,7 @@ CREATE TABLE `mp_patches` (
   UNIQUE KEY `puuid_idx` (`puuid`),
   KEY `bundle_idx` (`bundle_id`),
   KEY `patch_idx` (`patch_name`,`patch_ver`,`active`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_patches_criteria`
@@ -875,7 +875,7 @@ CREATE TABLE `mp_patches_criteria` (
   PRIMARY KEY (`rid`,`puuid`),
   UNIQUE KEY `rid_idx` (`rid`),
   KEY `puuid_idx` (`puuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_patches_queries`
@@ -908,7 +908,7 @@ CREATE TABLE `mp_patches_requisits` (
   UNIQUE KEY `rid_idx` (`rid`),
   UNIQUE KEY `insert_idx` (`puuid`,`type`,`type_order`,`puuid_ref`),
   KEY `puuid` (`puuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_proxy_conf`
@@ -923,7 +923,7 @@ CREATE TABLE `mp_proxy_conf` (
   `cdate` datetime DEFAULT NULL,
   `mdate` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_proxy_key`
@@ -936,7 +936,7 @@ CREATE TABLE `mp_proxy_key` (
   `type` int(1) NOT NULL,
   PRIMARY KEY (`rid`,`proxy_key`),
   UNIQUE KEY `type_idx` (`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_proxy_logs`
@@ -949,7 +949,7 @@ CREATE TABLE `mp_proxy_logs` (
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`),
   KEY `log_type_idx` (`log_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 delimiter ;;
 CREATE TRIGGER `proxy_log_date` BEFORE INSERT ON `mp_proxy_logs` FOR EACH ROW Set new.mdate = now();
  ;;
@@ -991,7 +991,7 @@ CREATE TABLE `mp_selfupdate_filters` (
   `attribute_filter` varchar(255) NOT NULL,
   `attribute_condition` varchar(10) NOT NULL,
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_server_list`
@@ -1003,7 +1003,7 @@ CREATE TABLE `mp_server_list` (
   `name` varchar(255) NOT NULL,
   `version` int(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`rid`,`listid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_servers`
@@ -1051,12 +1051,10 @@ CREATE TABLE `mp_software` (
   `cdate` datetime DEFAULT NULL,
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`,`suuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 delimiter ;;
 CREATE TRIGGER `mps_trg_insrt1` BEFORE INSERT ON `mp_software` FOR EACH ROW SET NEW.cdate = NOW(), NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mps_trg_updt1` BEFORE UPDATE ON `mp_software` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -1075,7 +1073,7 @@ CREATE TABLE `mp_software_criteria` (
   PRIMARY KEY (`rid`,`suuid`),
   UNIQUE KEY `rid_idx` (`rid`),
   KEY `puuid_idx` (`suuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_software_group_tasks`
@@ -1089,7 +1087,7 @@ CREATE TABLE `mp_software_group_tasks` (
   PRIMARY KEY (`rid`),
   KEY `sw_task_idx` (`sw_task_id`),
   KEY `sw_grp_idx` (`sw_group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mp_software_groups`
@@ -1110,11 +1108,10 @@ CREATE TABLE `mp_software_groups` (
   KEY `name_idx` (`gName`),
   KEY `state_idx` (`state`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
 delimiter ;;
 CREATE TRIGGER `msg_insrt_trg1` BEFORE INSERT ON `mp_software_groups` FOR EACH ROW SET NEW.cdate = NOW(), NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `msg_updt_trg1` BEFORE UPDATE ON `mp_software_groups` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -1186,8 +1183,6 @@ CREATE TABLE `mp_software_task` (
 delimiter ;;
 CREATE TRIGGER `mpst_trg_insrt1` BEFORE INSERT ON `mp_software_task` FOR EACH ROW SET NEW.cdate = NOW(), NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mpst_trg_updt1` BEFORE UPDATE ON `mp_software_task` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -1208,8 +1203,6 @@ CREATE TABLE `mp_software_tasks_data` (
 delimiter ;;
 CREATE TRIGGER `mdate_insrt_trg` BEFORE INSERT ON `mp_software_tasks_data` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
-delimiter ;
-delimiter ;;
 CREATE TRIGGER `mdate_updt_trg` BEFORE UPDATE ON `mp_software_tasks_data` FOR EACH ROW SET NEW.mdate = NOW();
  ;;
 delimiter ;
@@ -1243,7 +1236,7 @@ CREATE TABLE `mpi_AppStoreApps` (
   `cuuid` varchar(50) NOT NULL,
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB AUTO_INCREMENT=1976857 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 --  Table structure for `mpi_AppUsage`
@@ -1297,7 +1290,7 @@ DROP TABLE IF EXISTS `mpi_ClientTasks`;
 CREATE TABLE `mpi_ClientTasks` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `mdate` datetime DEFAULT '0000-00-00 00:00:00',
   `mpa_id` varchar(255) DEFAULT NULL,
   `mpa_description` varchar(255) DEFAULT NULL,
@@ -1363,27 +1356,27 @@ DROP TABLE IF EXISTS `mpi_DiskInfo`;
 CREATE TABLE `mpi_DiskInfo` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_MediaName` varchar(255) NULL,
-  `mpa_MediaUUID` varchar(255) NULL,
-  `mpa_VolumePath` varchar(255) NULL,
-  `mpa_MediaSize` varchar(255) NULL,
-  `mpa_MediaWritable` varchar(255) NULL,
-  `mpa_DeviceModel` varchar(255) NULL,
-  `mpa_MediaRemovable` varchar(255) NULL,
-  `mpa_DeviceRevision` varchar(255) NULL,
-  `mpa_VolumeMountable` varchar(255) NULL,
-  `mpa_MediaEjectable` varchar(255) NULL,
-  `mpa_MediaPath` varchar(255) NULL,
-  `mpa_MediaBSDName` varchar(255) NULL,
-  `mpa_DeviceInternal` varchar(255) NULL,
-  `mpa_MediaFreeSpace` varchar(255) NULL,
-  `mpa_DeviceProtocol` varchar(255) NULL,
-  `mpa_MediaBlockSize` varchar(255) NULL,
-  `mpa_VolumeKind` varchar(255) NULL,
-  `mpa_UNIXPath` varchar(255) NULL,
-  `mpa_VolumeUUID` varchar(255) NULL,
+  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_MediaName` varchar(255) DEFAULT NULL,
+  `mpa_MediaUUID` varchar(255) DEFAULT NULL,
+  `mpa_VolumePath` varchar(255) DEFAULT NULL,
+  `mpa_MediaSize` varchar(255) DEFAULT NULL,
+  `mpa_MediaWritable` varchar(255) DEFAULT NULL,
+  `mpa_DeviceModel` varchar(255) DEFAULT NULL,
+  `mpa_MediaRemovable` varchar(255) DEFAULT NULL,
+  `mpa_DeviceRevision` varchar(255) DEFAULT NULL,
+  `mpa_VolumeMountable` varchar(255) DEFAULT NULL,
+  `mpa_MediaEjectable` varchar(255) DEFAULT NULL,
+  `mpa_MediaPath` varchar(255) DEFAULT NULL,
+  `mpa_MediaBSDName` varchar(255) DEFAULT NULL,
+  `mpa_DeviceInternal` varchar(255) DEFAULT NULL,
+  `mpa_MediaFreeSpace` varchar(255) DEFAULT NULL,
+  `mpa_DeviceProtocol` varchar(255) DEFAULT NULL,
+  `mpa_MediaBlockSize` varchar(255) DEFAULT NULL,
+  `mpa_VolumeKind` varchar(255) DEFAULT NULL,
+  `mpa_UNIXPath` varchar(255) DEFAULT NULL,
+  `mpa_VolumeUUID` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
@@ -1410,15 +1403,15 @@ DROP TABLE IF EXISTS `mpi_Groups`;
 CREATE TABLE `mpi_Groups` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_FullName` varchar(255) NULL,
-  `mpa_GroupMembership` varchar(255) NULL,
-  `mpa_GroupName` varchar(255) NULL,
-  `mpa_GroupID` varchar(255) NULL,
-  `mpa_RecordType` varchar(255) NULL,
-  `mpa_GroupMembers` varchar(255) NULL,
-  `mpa_MetaNodeLocation` varchar(255) NULL,
+  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_FullName` varchar(255) DEFAULT NULL,
+  `mpa_GroupMembership` varchar(255) DEFAULT NULL,
+  `mpa_GroupName` varchar(255) DEFAULT NULL,
+  `mpa_GroupID` varchar(255) DEFAULT NULL,
+  `mpa_RecordType` varchar(255) DEFAULT NULL,
+  `mpa_GroupMembers` varchar(255) DEFAULT NULL,
+  `mpa_MetaNodeLocation` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
   KEY `cuuid_idx` (`cuuid`),
   KEY `date_idx` (`mdate`)
@@ -1431,15 +1424,15 @@ DROP TABLE IF EXISTS `mpi_InternetPlugins`;
 CREATE TABLE `mpi_InternetPlugins` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_BundleIdentifier` varchar(255) NULL,
-  `mpa_path_real` varchar(255) NULL,
-  `mpa_WebPluginName` varchar(255) NULL,
-  `mpa_path` varchar(255) NULL,
-  `mpa_version` varchar(255) NULL,
-  `mpa_name` varchar(255) NULL,
-  `mpa_lastModified` varchar(255) NULL,
+  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_BundleIdentifier` varchar(255) DEFAULT NULL,
+  `mpa_path_real` varchar(255) DEFAULT NULL,
+  `mpa_WebPluginName` varchar(255) DEFAULT NULL,
+  `mpa_path` varchar(255) DEFAULT NULL,
+  `mpa_version` varchar(255) DEFAULT NULL,
+  `mpa_name` varchar(255) DEFAULT NULL,
+  `mpa_lastModified` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
   KEY `idx_cuuid` (`cuuid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
@@ -1460,7 +1453,7 @@ CREATE TABLE `mpi_MPServerList` (
   `cuuid` varchar(50) NOT NULL,
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB AUTO_INCREMENT=6982010 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 --  Table structure for `mpi_MPServerListInfo`
@@ -1474,7 +1467,21 @@ CREATE TABLE `mpi_MPServerListInfo` (
   `cuuid` varchar(50) NOT NULL,
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB AUTO_INCREMENT=1137870 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+--  Table structure for `mpi_Plugins`
+-- ----------------------------
+DROP TABLE IF EXISTS `mpi_Plugins`;
+CREATE TABLE `mpi_Plugins` (
+  `mpa_name` varchar(255) DEFAULT NULL,
+  `mpa_version` varchar(255) DEFAULT NULL,
+  `mpa_id` varchar(255) DEFAULT NULL,
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `cuuid` varchar(50) NOT NULL,
+  `mdate` datetime DEFAULT NULL,
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 --  Table structure for `mpi_PowerManagment`
@@ -1485,23 +1492,23 @@ CREATE TABLE `mpi_PowerManagment` (
   `cuuid` varchar(50) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `mdate` datetime DEFAULT NULL,
-  `mpa_Wake_On_LAN` varchar(255) DEFAULT NULL,
-  `mpa_System_Sleep_Timer` varchar(255) DEFAULT NULL,
-  `mpa_Wake_On_AC_Change` varchar(255) DEFAULT NULL,
-  `mpa_Hibernate_File` varchar(255) DEFAULT NULL,
-  `mpa_AutoPowerOff_Enabled` varchar(255) DEFAULT NULL,
-  `mpa_DarkWakeBackgroundTasks` varchar(255) DEFAULT NULL,
-  `mpa_GPUSwitch` varchar(255) DEFAULT NULL,
-  `mpa_Display_Sleep_Timer` varchar(255) DEFAULT NULL,
-  `mpa_Disk_Sleep_Timer` varchar(255) DEFAULT NULL,
-  `mpa_PrioritizeNetworkReachabilityOverSleep` varchar(255) DEFAULT NULL,
-  `mpa_AutoPowerOff_Delay` varchar(255) DEFAULT NULL,
-  `mpa_Hibernate_Mode` varchar(255) DEFAULT NULL,
-  `mpa_Wake_On_Clamshell_Open` varchar(255) DEFAULT NULL,
-  `mpa_ProfileName` varchar(255) DEFAULT NULL,
-  `mpa_TTYSPreventSleep` varchar(255) DEFAULT NULL,
-  `mpa_Sisplay_Sleep_Uses_Dim` varchar(255) DEFAULT NULL,
-  `mpa_Standby_Enabled` varchar(255) DEFAULT NULL,
+  `mpa_wake_on_lan` varchar(255) DEFAULT NULL,
+  `mpa_system_sleep_timer` varchar(255) DEFAULT NULL,
+  `mpa_wake_on_ac_change` varchar(255) DEFAULT NULL,
+  `mpa_hibernate_file` varchar(255) DEFAULT NULL,
+  `mpa_autopoweroff_enabled` varchar(255) DEFAULT NULL,
+  `mpa_darkwakebackgroundtasks` varchar(255) DEFAULT NULL,
+  `mpa_gpuswitch` varchar(255) DEFAULT NULL,
+  `mpa_display_sleep_timer` varchar(255) DEFAULT NULL,
+  `mpa_disk_sleep_timer` varchar(255) DEFAULT NULL,
+  `mpa_prioritizenetworkreachabilityoversleep` varchar(255) DEFAULT NULL,
+  `mpa_autopoweroff_delay` varchar(255) DEFAULT NULL,
+  `mpa_hibernate_mode` varchar(255) DEFAULT NULL,
+  `mpa_wake_on_clamshell_open` varchar(255) DEFAULT NULL,
+  `mpa_profilename` varchar(255) DEFAULT NULL,
+  `mpa_ttyspreventsleep` varchar(255) DEFAULT NULL,
+  `mpa_sisplay_sleep_uses_dim` varchar(255) DEFAULT NULL,
+  `mpa_standby_enabled` varchar(255) DEFAULT NULL,
   `mpa_reducebrightness` varchar(255) DEFAULT NULL,
   `mpa_standby_delay` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
@@ -1513,23 +1520,23 @@ CREATE TABLE `mpi_PowerManagment` (
 -- ----------------------------
 DROP TABLE IF EXISTS `mpi_SINetworkInfo`;
 CREATE TABLE `mpi_SINetworkInfo` (
-  `mpa_ConfigurationType` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_AllDNSServers` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_IsPrimary` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_PrimaryDNSServer` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_AllIPAddresses` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_RouterAddress` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_InterfaceName` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_HardwareAddress` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_ConfigurationName` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_IsActive` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_PrimaryIPAddress` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mpa_DomainName` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mpa_ConfigurationType` varchar(255) DEFAULT NULL,
+  `mpa_AllDNSServers` varchar(255) DEFAULT NULL,
+  `mpa_IsPrimary` varchar(255) DEFAULT NULL,
+  `mpa_PrimaryDNSServer` varchar(255) DEFAULT NULL,
+  `mpa_AllIPAddresses` varchar(255) DEFAULT NULL,
+  `mpa_RouterAddress` varchar(255) DEFAULT NULL,
+  `mpa_InterfaceName` varchar(255) DEFAULT NULL,
+  `mpa_HardwareAddress` varchar(255) DEFAULT NULL,
+  `mpa_ConfigurationName` varchar(255) DEFAULT NULL,
+  `mpa_IsActive` varchar(255) DEFAULT NULL,
+  `mpa_PrimaryIPAddress` varchar(255) DEFAULT NULL,
+  `mpa_DomainName` varchar(255) DEFAULT NULL,
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
   `mdate` datetime DEFAULT NULL,
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 --  Table structure for `mpi_SPApplications`
@@ -1538,17 +1545,17 @@ DROP TABLE IF EXISTS `mpi_SPApplications`;
 CREATE TABLE `mpi_SPApplications` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_Name` varchar(255) NULL,
-  `mpa_Version` varchar(255) NULL,
-  `mpa_Last_Modified` varchar(255) NULL,
-  `mpa_Kind` varchar(255) NULL,
-  `mpa_Get_Info_String` varchar(255) NULL,
-  `mpa_Location` varchar(255) NULL,
+  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_Name` varchar(255) DEFAULT NULL,
+  `mpa_Version` varchar(255) DEFAULT NULL,
+  `mpa_Last_Modified` varchar(255) DEFAULT NULL,
+  `mpa_Kind` varchar(255) DEFAULT NULL,
+  `mpa_Get_Info_String` varchar(255) DEFAULT NULL,
+  `mpa_Location` varchar(255) DEFAULT NULL,
   `cdateInt` bigint(20) unsigned DEFAULT '0',
   `dateInt` int(11) DEFAULT '0',
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`rid`),
+  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`rid`,`cuuid`),
   UNIQUE KEY `idx_rid` (`rid`),
   KEY `idx_cuuid` (`cuuid`),
   KEY `idx_date` (`date`),
@@ -1570,16 +1577,16 @@ DROP TABLE IF EXISTS `mpi_SPFrameworks`;
 CREATE TABLE `mpi_SPFrameworks` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mpa_has64BitIntelCode` varchar(255) NULL,
-  `mpa_Version` varchar(255) NULL,
-  `mpa_Kind` varchar(255) NULL,
-  `mpa_Location` varchar(255) NULL,
-  `mpa_Name` varchar(255) NULL,
-  `mpa_Private_Framework` varchar(255) NULL,
-  `mpa_lastModified` varchar(255) NULL,
-  PRIMARY KEY (`rid`),
+  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mpa_has64BitIntelCode` varchar(255) DEFAULT NULL,
+  `mpa_Version` varchar(255) DEFAULT NULL,
+  `mpa_Kind` varchar(255) DEFAULT NULL,
+  `mpa_Location` varchar(255) DEFAULT NULL,
+  `mpa_Name` varchar(255) DEFAULT NULL,
+  `mpa_Private_Framework` varchar(255) DEFAULT NULL,
+  `mpa_lastModified` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`rid`,`cuuid`),
   KEY `cuuid_idx` (`cuuid`),
   KEY `idx_all` (`cuuid`,`mpa_Name`),
   KEY `idx_date` (`date`)
@@ -1592,7 +1599,7 @@ DROP TABLE IF EXISTS `mpi_SPHardwareOverview`;
 CREATE TABLE `mpi_SPHardwareOverview` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT NULL,
   `mpa_Model_Name` varchar(255) DEFAULT NULL,
   `mpa_Model_Identifier` varchar(255) DEFAULT NULL,
   `mpa_Processor_Name` varchar(255) DEFAULT NULL,
@@ -1621,14 +1628,14 @@ CREATE TABLE `mpi_SPHardwareOverview` (
   `mpa_CPU_Type` varchar(255) DEFAULT NULL,
   `mpa_CPU_Speed` varchar(255) DEFAULT NULL,
   `mpa_L3_Cache_(per_CPU)` varchar(255) DEFAULT NULL,
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT NULL,
   `mpa_serial_number_processor_tray` varchar(255) DEFAULT NULL,
   `mpa_l3_cache_per_processor` varchar(255) DEFAULT NULL,
   `mpa_smc_version_processor_tray` varchar(255) DEFAULT NULL,
   `mpa_illumination_version` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
-  UNIQUE KEY `idx_cuuid` (`cuuid`) COMMENT '(null)',
-  KEY `idx_find` (`rid`,`cuuid`,`date`) COMMENT '(null)'
+  UNIQUE KEY `idx_cuuid` (`cuuid`),
+  KEY `idx_find` (`rid`,`cuuid`,`date`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -1763,7 +1770,7 @@ CREATE TABLE `mpi_SPNetwork` (
   `mpa_destinationaddress` varchar(255) DEFAULT NULL,
   `mpa_dhcp_client_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
-  KEY `idx_cuuid` (`cuuid`) COMMENT '(null)'
+  KEY `idx_cuuid` (`cuuid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -1788,7 +1795,7 @@ CREATE TABLE `mpi_SPSystemOverview` (
   `mdate` datetime DEFAULT '0000-00-00 00:00:00',
   `mpa_64bit_kernel_and_extensions` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
-  UNIQUE KEY `idx_cuuid` (`cuuid`) COMMENT '(null)'
+  UNIQUE KEY `idx_cuuid` (`cuuid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -1811,7 +1818,7 @@ CREATE TABLE `mpi_Users` (
   `mpa_GroupID` varchar(255) DEFAULT NULL,
   `mpa_MetaNodeLocation` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`)
-) ENGINE=InnoDB AUTO_INCREMENT=28440 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `profiles`
@@ -1939,7 +1946,7 @@ CREATE TABLE `ws_srv_logs` (
   PRIMARY KEY (`rid`),
   UNIQUE KEY `rid_idx` (`rid`),
   KEY `ws_idx` (`event_type`,`cdate`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `ws_log_jobs`

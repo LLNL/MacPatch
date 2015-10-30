@@ -2,7 +2,7 @@
 <!---
         MPClientService Proxy File
         Database type is MySQL
-        MacPatch Version 2.6.5.x
+        MacPatch Version 2.7.3.x
 --->
 <!---   Notes:
 --->
@@ -1202,6 +1202,53 @@
                 <cfhttpparam type="formfield" name="method" value="#_methodName#">
                 <cfhttpparam type="formfield" name="clientID" value="#arguments.clientID#">
                 <cfhttpparam type="formfield" name="listID" value="#arguments.listID#">
+            </cfhttp>
+               
+            <cfif cfhttp.responseheader.STATUS_CODE NEQ "200">
+               <cflog type="error" file="#this.logFile#" text="#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#">
+               <cfset response[ "errorMsg" ] = "#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#" />
+               <cfset result = response>
+            </cfif>
+            <cfset result = "#deserializejson(cfhttp.fileContent)#">    
+            
+            <cfcatch>
+                <cflog type="error" file="#this.logFile#" text="#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #cfcatch.message# #cfcatch.detail#">
+                <cfset response[ "errorMsg" ] = "#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#" />
+                <cfset result = response>
+            </cfcatch>
+        </cftry>
+
+        <cfreturn #result#>        
+    </cffunction>
+
+    <!---
+        Remote API
+        Type: Public/Remote
+        Description: Get Agent Plugin Hash
+        New for MacPatch 2.7
+    --->
+    <cffunction name="GetPluginHash" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="true" default="0" />
+        <cfargument name="pluginName" required="true" default="NA" />
+        <cfargument name="pluginBundle" required="true" default="NA" />
+        <cfargument name="pluginVersion" required="true" default="0" />
+
+        <cfset var result = "" />
+        <cfset var _methodName = "GetPluginHash"/>
+    
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "1" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfset response[ "result" ] = "" />
+
+        <cftry>
+            <cfhttp url="#this.wsURL#" method="POST" resolveurl="NO">
+                <cfhttpparam type="header" name="charset" value="utf-8">
+                <cfhttpparam type="formfield" name="method" value="#_methodName#">
+                <cfhttpparam type="formfield" name="clientID" value="#arguments.clientID#">
+                <cfhttpparam type="formfield" name="pluginName" value="#arguments.pluginName#">
+                <cfhttpparam type="formfield" name="pluginBundle" value="#arguments.pluginBundle#">
+                <cfhttpparam type="formfield" name="pluginVersion" value="#arguments.pluginVersion#">
             </cfhttp>
                
             <cfif cfhttp.responseheader.STATUS_CODE NEQ "200">

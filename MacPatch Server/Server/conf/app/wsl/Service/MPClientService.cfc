@@ -2,8 +2,8 @@
 <!---
         MPClientService
         Database type is MySQL
-        MacPatch Version 2.7.0.x
-        Rev 2
+        MacPatch Version 2.7.3.x
+        Rev 1
 --->
 <!---   Notes:
 --->
@@ -2178,6 +2178,186 @@
         </cftry>
 
         <cfreturn #response#>
+    </cffunction>
+
+    <!---
+        Remote API
+        Type: Public/Remote
+        Description: Get SU Server List
+    --->
+    <cffunction name="getSUServerList" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="false" default="0" />
+        <cfargument name="listID" required="false" default="1" />
+
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "0" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfset response[ "result" ] = 0 />
+        <cfset response[ "machineName" ] = "" />
+        <cfset response[ "hostName" ] = "" />
+
+        <cfscript>
+            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
+            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
+        </cfscript>
+
+        <cfset response[ "machineName" ] = "#machineName#" />
+        <cfset response[ "hostName" ] = "#hostaddress#" />
+
+        <cfset _server = {} />
+        <cfset _server.name = "NA">
+        <cfset _server.version = "0">
+        <cfset _server.servers = "">
+        <cfset _server.id = "">
+        <cfset response.result = serializeJSON(_server)>
+
+        <cftry>
+            <cfif validClientID(arguments.clientID) EQ true>
+                <cfquery datasource="#this.ds#" name="qGetServerList">
+                    Select * from mp_asus_catalog_list
+                    Where name = 'Default' AND listid = <cfqueryparam value="#arguments.listID#">
+                </cfquery>
+                <cfif qGetServerList.RecordCount EQ 1>
+                    <cfset _server.name = qGetServerList.name>
+                    <cfset _server.version = qGetServerList.version>
+                    <cfset _server.id = qGetServerList.listid>
+                    <cfset _listID = qGetServerList.listid>
+                </cfif>
+
+                <!--- Get a List of all the OS --->
+                <cfquery datasource="#this.ds#" name="qGetOSVersions">
+                    Select Distinct os_minor from mp_asus_catalogs
+                </cfquery>
+                
+                <cfif qGetOSVersions.RecordCount GTE 1>
+                    <cfset _Servers = arrayNew(1)>
+
+                    <cfoutput query="qGetOSVersions">
+                        <cfset _result = {} />
+                        <cfset _result[ "os" ] = "#os_minor#" />
+                        <cfset _result[ "servers" ] = "" />
+                        <cfset res = serverListForOSVersion(os_minor)>
+                        <cfif res NEQ "ERR" OR res NEQ "NONE">
+                            <cfset _result[ "servers" ] = res />
+                            <cfset a = ArrayAppend(_Servers,_result)>
+                        </cfif> 
+                    </cfoutput>
+                    
+                    <cfset _server.servers = _Servers>
+                <cfelse>
+                    <cfset response.errorno = "2">
+                    <cfset response.errormsg = "No servers found.">
+                </cfif>
+
+                <cfset response.result = serializeJSON(_server)>
+            <cfelse>
+                <cfset response.errorno = "3">
+                <cfset response.errormsg = "Invalid data.">
+            </cfif>
+            <cfcatch>
+                <cfset l = elogit("[getServerList]: #cfcatch.Detail# -- #cfcatch.Message#")>
+                <cfset response.errorno = "1">
+                <cfset response.errormsg = "#cfcatch.Detail# -- #cfcatch.Message#">
+            </cfcatch>
+        </cftry>
+
+        <cfreturn #response#>
+    </cffunction>
+
+    <!---
+        Remote API
+        Type: Public/Remote
+        Description: Get SU Server List for Version
+    --->
+    <cffunction name="getSUServerListVersion" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="false" default="0" />
+        <cfargument name="listID" required="false" default="1" />
+
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "0" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfset response[ "result" ] = "0" />
+        <cfset response[ "machineName" ] = "" />
+        <cfset response[ "hostName" ] = "" />
+
+        <cfscript>
+            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
+            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
+        </cfscript>
+
+        <cfset response[ "machineName" ] = "#machineName#" />
+        <cfset response[ "hostName" ] = "#hostaddress#" />
+
+        <cfset _server = {}>
+        <cfset _server.version = "0">
+        <cfset _server.listid = "0">
+        <cfset response.result = serializeJSON(_server)>
+
+        <cftry>
+            <cfif validClientID(arguments.clientID) EQ true>
+                <cfquery datasource="#this.ds#" name="qGetServerList">
+                    Select * from mp_asus_catalog_list
+                    Where listid = <cfqueryparam value="#arguments.listID#">
+                </cfquery>
+                <cfif qGetServerList.RecordCount EQ 1>
+                    <cfset _server.version = #qGetServerList.version#>
+                    <cfset _server.listid = #qGetServerList.listid#>
+                    <cfset response.result = serializeJSON(_server)>
+                <cfelse>
+                    <cfset response.errorno = "2">
+                    <cfset response.errormsg = "No server list found.">
+                </cfif>
+            <cfelse>
+                <cfset response.errorno = "3">
+                <cfset response.errormsg = "Invalid data.">
+            </cfif>
+            <cfcatch>
+                <cfset l = elogit("[getSUServerListVersion]: #cfcatch.Detail# -- #cfcatch.Message#")>
+                <cfset response.errorno = "1">
+                <cfset response.errormsg = "#cfcatch.Detail# -- #cfcatch.Message#">
+            </cfcatch>
+        </cftry>
+
+        <cfreturn #response#>
+    </cffunction>
+
+    <!---
+        Type: Private
+        Used By: getSUServerList
+        Description: 
+    --->
+    <cffunction name="serverListForOSVersion" access="private" returntype="any" output="no">
+        <cfargument name="osMinor">
+
+        <cftry>
+            <cfquery datasource="#this.ds#" name="qGetServers">
+                Select * from mp_asus_catalogs
+                Where os_minor = <cfqueryparam value="#arguments.osMinor#">
+            </cfquery>
+            
+            <cfif qGetServers.RecordCount GTE 1>
+                <cfset _Servers = arrayNew(1)>
+
+                <cfoutput query="qGetServers">
+                    <cfset _result = {} />
+                    <cfset _result[ "CataLogURL" ] = "#catalog_url#" />
+                    <cfif proxy EQ "1">
+                        <cfset _result[ "serverType" ] = "1" />
+                    <cfelse>
+                        <cfset _result[ "serverType" ] = "0" />
+                    </cfif>
+                    <cfset a = ArrayAppend(_Servers,_result)>
+                </cfoutput>
+            <cfelse>
+                <cfreturn "NONE">
+            </cfif>
+
+            <cfcatch type="any">
+                <cfset l = elogit("[serverListForOSVersion]: #cfcatch.Detail# #cfcatch.Message#")>
+            </cfcatch>
+        </cftry>
+
+        <cfreturn "ERR">
     </cffunction>
 
     <!---

@@ -46,6 +46,9 @@
 - (NSDictionary *)getMPServerList:(NSError **)err;
 - (NSDictionary *)getMPServerListVersion:(NSString *)aVersion listid:(NSString *)aListID error:(NSError **)err;
 
+- (NSDictionary *)getSUSServerList:(NSError **)err;
+- (NSDictionary *)getSUSServerListVersion:(NSString *)aVersion listid:(NSString *)aListID error:(NSError **)err;
+
 - (NSDictionary *)getCatalogURLSForHostOS:(NSError **)err;
 - (NSDictionary *)getPatchGroupContent:(NSError **)err;
 - (BOOL)isPatchGroupHashValid:(NSError **)err;

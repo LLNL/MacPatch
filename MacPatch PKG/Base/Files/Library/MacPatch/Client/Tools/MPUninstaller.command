@@ -1,6 +1,6 @@
 #!/bin/sh
 
-Version="2.0.0"
+Version="2.0.1"
 mpBaseDir="/Library/MacPatch"
 mpClientDir="${mpBaseDir}/Client"
 mpUpdateDir="${mpBaseDir}/Updater"
@@ -147,23 +147,17 @@ if [ -d $mpBaseDir ]; then
 	
 	# If there is a user logged in ...
 	if [ ! -z "$curUser" ]; then
-			#uPid=`ps -U $curUser -e | grep loginwindow.app | grep -v grep | awk '{ print $1 }'`
 
-			if [ -f '/Library/LaunchAgents/gov.llnl.MPRebootD.plist' ]; then
-				#res=`/bin/launchctl bsexec $uPid chroot -u $curUser / launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist`
-				#echo "mpRBWatcher=$res"
-				su -l $curUser -c 'launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist'
-				sleep 2
-			fi
+		if [ -f '/Library/LaunchAgents/gov.llnl.MPRebootD.plist' ]; then
+			su -l $curUser -c 'launchctl unload /Library/LaunchAgents/gov.llnl.MPRebootD.plist'
+			sleep 2
+		fi
 
-			if [ -f '/Library/LaunchAgents/gov.llnl.mp.status.plist' ]; then
-				#$res=`/bin/launchctl bsexec $uPid chroot -u $curUser / launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist`
-				#echo "mpStatus=$res"
-				su -l $curUser -c 'launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist'
-				sleep 2
-			fi 
-		fi	
-	fi
+		if [ -f '/Library/LaunchAgents/gov.llnl.mp.status.plist' ]; then
+			su -l $curUser -c 'launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist'
+			sleep 2
+		fi 
+	fi	
 	
 	# Remove Auth Plugin 
 	if [ -f "/Library/MacPatch/Client/MPAuthPluginTool" ]; then
@@ -195,6 +189,9 @@ if [ -d $mpBaseDir ]; then
 	
 	# Older Framework
 	existsAndDelete "/Library/Frameworks/MPFramework.framework"
+
+	# Priv Helper Tool
+	existsAndDelete "/Library/PrivilegedHelperTools/MPLoginAgent.app"	
 	
 	# Delete Receipts Files
 	echo "Delete Receipts"

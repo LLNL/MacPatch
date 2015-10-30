@@ -46,6 +46,7 @@
 		8FA6A8811B9621BF006A329B /* NSMetadataQuery+Synchronous.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8741B9621BF006A329B /* NSMetadataQuery+Synchronous.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8FA6A8821B9621BF006A329B /* PowerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8761B9621BF006A329B /* PowerProfile.m */; };
 		8FA6A8861B96230C006A329B /* MPInventoryPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8851B96230C006A329B /* MPInventoryPlugin.m */; };
+		8FC5C8AE1BBEEFC800F18BD8 /* GetASUSListOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC5C8AD1BBEEFC800F18BD8 /* GetASUSListOperation.m */; };
 		8FE03DD11B600C5A005D39EE /* MPAgentUpdater.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD01B600C5A005D39EE /* MPAgentUpdater.m */; };
 		8FE03DD61B60195A005D39EE /* AntiVirus.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD51B60195A005D39EE /* AntiVirus.m */; };
 		8FE03DD91B601AC6005D39EE /* AVSoftware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD81B601AC6005D39EE /* AVSoftware.m */; };
@@ -149,6 +150,8 @@
 		8FA6A8831B9621DB006A329B /* InventoryPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InventoryPlugin.h; sourceTree = "<group>"; };
 		8FA6A8841B96230C006A329B /* MPInventoryPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPInventoryPlugin.h; sourceTree = "<group>"; };
 		8FA6A8851B96230C006A329B /* MPInventoryPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPInventoryPlugin.m; sourceTree = "<group>"; };
+		8FC5C8AC1BBEEFC800F18BD8 /* GetASUSListOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetASUSListOperation.h; sourceTree = "<group>"; };
+		8FC5C8AD1BBEEFC800F18BD8 /* GetASUSListOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetASUSListOperation.m; sourceTree = "<group>"; };
 		8FE03DCF1B600C5A005D39EE /* MPAgentUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentUpdater.h; sourceTree = "<group>"; };
 		8FE03DD01B600C5A005D39EE /* MPAgentUpdater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentUpdater.m; sourceTree = "<group>"; };
 		8FE03DD41B60195A005D39EE /* AntiVirus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AntiVirus.h; sourceTree = "<group>"; };
@@ -302,6 +305,8 @@
 				8F315B9719212A920031FF73 /* GetServerListOperation.m */,
 				8F2E697D1922C330001BF9D6 /* PostFailedWSRequests.h */,
 				8F2E697E1922C330001BF9D6 /* PostFailedWSRequests.m */,
+				8FC5C8AC1BBEEFC800F18BD8 /* GetASUSListOperation.h */,
+				8FC5C8AD1BBEEFC800F18BD8 /* GetASUSListOperation.m */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -461,6 +466,7 @@
 				8F530FFE1B42EEAC00B8D893 /* FMDatabaseAdditions.m in Sources */,
 				8F530FFF1B42EEAC00B8D893 /* FMResultSet.m in Sources */,
 				8F2E697F1922C330001BF9D6 /* PostFailedWSRequests.m in Sources */,
+				8FC5C8AE1BBEEFC800F18BD8 /* GetASUSListOperation.m in Sources */,
 				8FA6A8861B96230C006A329B /* MPInventoryPlugin.m in Sources */,
 				8FA6A87B1B9621BF006A329B /* MPDirectoryServices.m in Sources */,
 				8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */,

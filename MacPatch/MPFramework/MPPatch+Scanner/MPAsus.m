@@ -35,7 +35,6 @@
 
 @implementation MPAsus
 
-@synthesize catalogURLArray;
 @synthesize defaults;
 @synthesize patchGroup;
 @synthesize allowClient;
@@ -56,8 +55,6 @@
         mpNetworkUtils = [[MPNetworkUtils alloc] init];
         MPDefaults *mpDefaults = [[MPDefaults alloc] init];
         defaults = [mpDefaults defaults];
-
-        [self setCatalogURLArray:[defaults objectForKey:@"CatalogURL"]];
 
         if ([defaults objectForKey:@"PatchGroup"]) {
 			[self setPatchGroup:[defaults objectForKey:@"PatchGroup"]];
@@ -105,52 +102,7 @@
 #pragma mark Class Methods
 //=========================================================== 
 //  methods
-//=========================================================== 
-
-- (BOOL)checkAndSetCatalogURL:(NSArray *)aCatalogArray
-{
-	BOOL returnVal = 0;
-	
-	NSString *currentCatalogURL = [self readCatalogURLFromPlist];
-	NSString *newCatalogURL = NULL;
-	if ([aCatalogArray count] > 0 ) {
-		for(int i=0;i<[aCatalogArray count];i++) {
-			// Check to make sure host is reachable and we get a vaild return code
-			if ([mpNetworkUtils isHostURLReachable:[aCatalogArray objectAtIndex:i]]) {
-				if ([mpNetworkUtils isURLValid:[aCatalogArray objectAtIndex:i] returnCode:200]) {
-					newCatalogURL = [aCatalogArray objectAtIndex:i];
-					break;
-				} else {
-					continue;
-				}
-			} else {
-				continue;	
-			}
-		}
-		
-		if ([currentCatalogURL isEqualToString:newCatalogURL] == FALSE) {
-			
-			if ([self writeCatalogURL:newCatalogURL]) {
-				returnVal = YES;
-			}
-			
-		} else {
-			returnVal = YES;
-		}
-	} else {
-		// CatalogURL is not defined, use the default Apple Config
-		returnVal = YES;
-	}
-
-	return returnVal;
-}
-
-- (NSString *)readCatalogURLFromPlist
-{
-	NSDictionary *tmpDict = [NSDictionary dictionaryWithContentsOfFile:ASUS_PLIST_PATH];
-	NSString *result = [tmpDict valueForKey:@"CatalogURL"];
-	return result;
-}
+//===========================================================
 
 -(BOOL)writeCatalogURL:(NSString *)CatalogURL
 {
@@ -259,12 +211,6 @@
 	qlinfo(@"Scanning for Apple software updates.");
 	
 	NSArray *appleUpdates = nil;
-	// Check & Set CatalogURL
-	// Not to be handled here
-	//if (![self checkAndSetCatalogURL:[self catalogURLArray]]) {
-	//	logit(lcl_vError,@"Error: unable to verify and set CatalogURL.");
-	//	return appleUpdates;
-	//}
 	
 	NSTask *task = [[NSTask alloc] init];
     [task setLaunchPath: ASUS_BIN_PATH];

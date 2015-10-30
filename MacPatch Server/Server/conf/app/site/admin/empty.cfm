@@ -3,7 +3,7 @@
     Session user was set.
     <cfcatch>
         <cfoutput>
-            Oh, Crap! Something bad happened! (#cfcatch.message#)
+            Oh, Darn! Something bad happened! (#cfcatch.message#)
         </cfoutput>
     </cfcatch>
 </cftry>

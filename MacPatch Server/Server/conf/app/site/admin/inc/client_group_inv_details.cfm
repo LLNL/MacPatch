@@ -84,7 +84,7 @@
                 <cfset _cols = getColsForTable('mpi_SPHardwareOverview')>
             </cfcase> 
             <cfcase value="networkoverview"> 
-                <cfset _cols = getColsForTable('mpi_SPNetwork')>
+                <cfset _cols = getColsForTable('mpi_SINetworkInfo')>
             </cfcase> 
             <cfcase value="directoryoverview"> 
                 <cfset _cols = getColsForTable('mpi_DirectoryServices')>
@@ -100,6 +100,15 @@
             </cfcase> 
             <cfcase value="diskinfo"> 
                 <cfset _cols = getColsForTable('mpi_DiskInfo')>
+            </cfcase> 
+            <cfcase value="batteryinfo"> 
+                <cfset _cols = getColsForTable('mpi_BatteryInfo')>
+            </cfcase> 
+            <cfcase value="powerinfo"> 
+                <cfset _cols = getColsForTable('mpi_PowerManagment')>
+            </cfcase> 
+            <cfcase value="fileVault"> 
+                <cfset _cols = getColsForTable('mpi_FileVault')>
             </cfcase> 
             <cfdefaultcase> 
                 <cfset _cols = "">
@@ -134,7 +143,7 @@
             from mpi_SPHardwareOverview
             </cfif>
             <cfif url.type EQ "networkoverview">
-            from mpi_SPNetwork
+            from mpi_SINetworkInfo
             </cfif>
             <cfif url.type EQ "directoryoverview">
             from mpi_DirectoryServices
@@ -150,6 +159,15 @@
             </cfif>
             <cfif url.type EQ "diskinfo">
             from mpi_DiskInfo
+            </cfif>
+            <cfif url.type EQ "batteryinfo">
+            from mpi_BatteryInfo
+            </cfif>
+            <cfif url.type EQ "powerinfo">
+            from mpi_PowerManagment
+            </cfif>
+            <cfif url.type EQ "fileVault">
+            from mpi_FileVault
             </cfif>
             Where cuuid = <cfqueryparam value="#url.cuuid#">
         </cfquery>

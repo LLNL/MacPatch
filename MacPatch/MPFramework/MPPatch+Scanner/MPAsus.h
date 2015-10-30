@@ -49,7 +49,6 @@
 	NSFileHandle *fh_installTask;
 }
 
-@property (nonatomic, strong) NSArray *catalogURLArray;
 @property (nonatomic, strong) NSDictionary *defaults;
 @property (nonatomic, strong) NSString *patchGroup;
 @property (nonatomic, assign) BOOL allowClient;
@@ -57,10 +56,6 @@
 
 
 - (id)initWithServerConnection:(MPServerConnection *)srvObj;
-
-- (BOOL)checkAndSetCatalogURL:(NSArray *)aCatalogArray;
-- (NSString *)readCatalogURLFromPlist;
-- (BOOL)writeCatalogURL:(NSString *)CatalogURL;
 
 - (NSArray *)scanForCustomUpdates;
 - (NSArray *)scanForCustomUpdateUsingBundleID:(NSString *)aBundleID;

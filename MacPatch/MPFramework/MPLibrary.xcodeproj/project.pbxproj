@@ -99,6 +99,8 @@
 		8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F50CB7C199D5DD0006AC537 /* MPKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F50CB7D199D5DD0006AC537 /* MPKeychain.m */; };
 		8F72BBB21BA3A16800BDCABB /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F72BBAF1BA39E7C00BDCABB /* libcrypto.a */; };
+		8FC5C8B11BBEF11B00F18BD8 /* MPSUServerList.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC5C8AF1BBEF11B00F18BD8 /* MPSUServerList.h */; };
+		8FC5C8B21BBEF11B00F18BD8 /* MPSUServerList.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC5C8B01BBEF11B00F18BD8 /* MPSUServerList.m */; };
 		8FE03DCC1B60020B005D39EE /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2816DE639100E15A9E /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE03DCD1B60020E005D39EE /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2916DE639100E15A9E /* NSData+Base64.m */; };
 		8FE5609816DE6D6300BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE5609516DE6CFD00BB7600 /* Security.framework */; };
@@ -219,6 +221,8 @@
 		8FBB10B9152F6D7900A45934 /* NSMutableDictionary+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+Helper.m"; sourceTree = "<group>"; };
 		8FBB10BD152F712400A45934 /* NSDictionary+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Helper.h"; sourceTree = "<group>"; };
 		8FBB10BE152F712400A45934 /* NSDictionary+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Helper.m"; sourceTree = "<group>"; };
+		8FC5C8AF1BBEF11B00F18BD8 /* MPSUServerList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSUServerList.h; sourceTree = "<group>"; };
+		8FC5C8B01BBEF11B00F18BD8 /* MPSUServerList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSUServerList.m; sourceTree = "<group>"; };
 		8FCB774F140C2F0700D86586 /* lcl_config_components.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_components.h; sourceTree = "<group>"; };
 		8FCB7750140C2F0700D86586 /* lcl_config_extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_extensions.h; sourceTree = "<group>"; };
 		8FCB7751140C2F0700D86586 /* lcl_config_logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcl_config_logger.h; sourceTree = "<group>"; };
@@ -321,6 +325,8 @@
 				8FA7EA4F161E3B4D001748EA /* MPClientCheckInData.m */,
 				8F94627F16249D4E00969BCD /* MPNSTask.h */,
 				8F94628016249D4E00969BCD /* MPNSTask.m */,
+				8FC5C8AF1BBEF11B00F18BD8 /* MPSUServerList.h */,
+				8FC5C8B01BBEF11B00F18BD8 /* MPSUServerList.m */,
 				8FE6B4811B4C7748000A0471 /* Crypto */,
 				8FAEF635145F1773006284B2 /* MPPatch+Scanner */,
 				8F4B1F3316DE64BF00E15A9E /* MacPatch+SWDist */,
@@ -613,6 +619,7 @@
 				8F4B1E4816DD1D8C00E15A9E /* MacPatch.h in Headers */,
 				8F4B1EA816DD267B00E15A9E /* lcl.h in Headers */,
 				8F4B1EBE16DD5FB400E15A9E /* NSString+Hash.h in Headers */,
+				8FC5C8B11BBEF11B00F18BD8 /* MPSUServerList.h in Headers */,
 				8FE6EEB81B9A035800E8F8E1 /* InventoryPlugin.h in Headers */,
 				8F4B1EC416DD5FDD00E15A9E /* NSFileManager+Helper.h in Headers */,
 				8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */,
@@ -735,6 +742,7 @@
 				8F4B1DF616DD1D6400E15A9E /* MPClientCheckInData.m in Sources */,
 				8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */,
 				8F4B1DF716DD1D6400E15A9E /* MPNSTask.m in Sources */,
+				8FC5C8B21BBEF11B00F18BD8 /* MPSUServerList.m in Sources */,
 				8F4B1DF916DD1D6400E15A9E /* MPCrypto.m in Sources */,
 				8F4B1DFA16DD1D6400E15A9E /* MPAsus.m in Sources */,
 				8F4B1DFB16DD1D6400E15A9E /* MPPatchScan.m in Sources */,

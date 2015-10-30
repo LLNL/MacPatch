@@ -9,9 +9,9 @@
 	<key>CFBundleName</key>
 	<string>MPAgent</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.1.0.0</string>
+	<string>2.1.3.0</string>
 	<key>CFBundleVersion</key>
-	<string>2.1.0.0</string>
+	<string>2.1.3.0</string>
 	<key>MPInfo</key>
 	<string>MacPatch 2.7.0 Client Software</string>
 	<key>NSAppTransportSecurity</key>

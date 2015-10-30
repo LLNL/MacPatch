@@ -3,10 +3,11 @@
 	server settings scope.
 	Settings are gathered in the settings.cfc file.
 
-	Version: 1.1.0
+	Version: 1.2.0
 	History:
 	- Initial XML Support
 	- Added JSON support
+    - Added additional default data to database (SUSList, ServerList)
 --->
 <cfcomponent output="false">
   <cffunction name="onServerStart">
@@ -106,16 +107,39 @@
     <cffunction name="hasDefaultDBData" access="private" returntype="struct">
 
         <cfset var dbData = structNew() />
+
+        <!--- Query Default Config Data --->
+        
+        <cfset dbData["ServerListConf"] = serverListConf('query') />
+        <cflog file="Server" application="no" text="Check ServerListConf: #dbData["ServerListConf"]#">
+
         <cfset dbData["ServerConf"] = serverConf('query') />
 		<cflog file="Server" application="no" text="Check ServerConf: #dbData["ServerConf"]#">
+        
+        <cfset dbData["SUSListConf"] = susListConf('query') />
+        <cflog file="Server" application="no" text="Check SUSListConf: #dbData["susListConf"]#">
+        
         <cfset dbData["ClientConf"] = clientConf('query') />
 		<cflog file="Server" application="no" text="Check ClientConf: #dbData["ClientConf"]#">
+        
         <cfset dbData["PatchGroupConf"] = patchGroupConf('query') />
 		<cflog file="Server" application="no" text="Check PatchGroupConf: #dbData["PatchGroupConf"]#">
 
+        <!--- Queries are done, apply conf if any are false --->
+
+        <cfif dbData["ServerListConf"] EQ false>
+            <cfset loadSrvLstConf = serverListConf('populate') />
+			<cflog file="Server" application="no" text="Populate ServerListConf: #loadSrvLstConf#">
+        </cfif>
+
         <cfif dbData["ServerConf"] EQ false>
             <cfset loadSrvConf = serverConf('populate') />
-			<cflog file="Server" application="no" text="Populate ServerConf: #loadSrvConf#">
+            <cflog file="Server" application="no" text="Populate ServerConf: #loadSrvConf#">
+        </cfif>
+
+        <cfif dbData["SUSListConf"] EQ false>
+            <cfset loadSUSConf = susListConf('populate') />
+            <cflog file="Server" application="no" text="Populate SUSListConf: #loadSUSConf#">
         </cfif>
 
         <cfif dbData["ClientConf"] EQ false>
@@ -129,6 +153,40 @@
         </cfif>
 
         <cfreturn>
+    </cffunction>
+
+    <cffunction name="serverListConf" access="private" returntype="any">
+        <cfargument name="action" required="true">
+
+        <cfif arguments.action EQ "query">
+            <cftry>
+                <cfquery name="queryServer" datasource="mpds">
+                    select *
+                    from mp_server_list
+                    where listid = '1'
+                </cfquery>
+                <cfif queryServer.recordcount == 0>
+                    <cfreturn false>
+                <cfelse>
+                    <cfreturn true>
+                </cfif>
+                <cfcatch>
+                    <cfreturn false>
+                </cfcatch>
+            </cftry>
+        </cfif>
+        <cfif arguments.action EQ "populate">
+            <cftry>
+                <cfquery name="qAddServer" datasource="mpds">
+                    Insert Into mp_server_list ( listid, name, version)
+                    Values ( '1', 'Default', 0)
+                </cfquery>
+                    <cfreturn true>
+                <cfcatch>
+                    <cfreturn false>
+                </cfcatch>
+            </cftry>
+        </cfif>
     </cffunction>
 
     <cffunction name="serverConf" access="private" returntype="any">
@@ -156,6 +214,40 @@
                 <cfquery name="qAddServer" datasource="mpds">
                     Insert Into mp_servers ( listid, server, port, useSSL, useSSLAuth, allowSelfSignedCert, isMaster, isProxy, active)
                     Values ( '1', 'localhost', 2600, 1, 0, 1, 1, 0, 0)
+                </cfquery>
+                    <cfreturn true>
+                <cfcatch>
+                    <cfreturn false>
+                </cfcatch>
+            </cftry>
+        </cfif>
+    </cffunction>
+
+    <cffunction name="susListConf" access="private" returntype="any">
+        <cfargument name="action" required="true">
+
+        <cfif arguments.action EQ "query">
+            <cftry>
+                <cfquery name="queryServer" datasource="mpds">
+                    select *
+                    from mp_asus_catalog_list
+                    where listid = '1'
+                </cfquery>
+                <cfif queryServer.recordcount == 0>
+                    <cfreturn false>
+                <cfelse>
+                    <cfreturn true>
+                </cfif>
+                <cfcatch>
+                    <cfreturn false>
+                </cfcatch>
+            </cftry>
+        </cfif>
+        <cfif arguments.action EQ "populate">
+            <cftry>
+                <cfquery name="qAddServer" datasource="mpds">
+                    Insert Into mp_asus_catalog_list ( listid, name, version)
+                    Values ( '1', 'Default', 0)
                 </cfquery>
                     <cfreturn true>
                 <cfcatch>

@@ -1024,7 +1024,6 @@ done:
 {
     if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9)
     {
-        logit(lcl_vInfo,@"NSAppKitVersionNumber10_9");
         // Code for 10.9+ goes here
         NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
         if ([ud objectForKey:@"patch"]) {
@@ -1045,8 +1044,6 @@ done:
             }
         }
     } else if (floor(NSAppKitVersionNumber) == NSAppKitVersionNumber10_8) {
-        
-        logit(lcl_vInfo,@"NSAppKitVersionNumber10_8");
         @try {
             if (self.patchCount >= 1) {
                 if (self.patchNeedsReboot == YES) {
