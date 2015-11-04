@@ -188,6 +188,7 @@
     {
         if ([[s objectForKey:@"Label"] isEqualToString:SERVICE_CONTENT_SYNC])
         {
+            /*
             if (![s objectForKey:@"PID"])
             {
                 _serviceStatusText1.stringValue = SRVS_OFF_CLIENT;
@@ -200,6 +201,11 @@
                 _serviceButton1.title = @"Stop Service";
                 _serviceStatusImage1.image = [NSImage imageNamed:@"NSStatusAvailable"];
             }
+             */
+            _serviceStatusText1.stringValue = SRVS_ON_CLIENT;
+            _serviceState1 = 1;
+            _serviceButton1.title = @"Stop Service";
+            _serviceStatusImage1.image = [NSImage imageNamed:@"NSStatusAvailable"];
             break;
         } else {
             _serviceStatusText1.stringValue = SRVS_OFF_CLIENT;
@@ -562,7 +568,12 @@
         {
             NSDictionary *syncDict = @{@"MPServerAddress": _masterHostName.stringValue};
             BOOL lDEnabled = ([self.startOnBootCheckBox1 state] == NSOnState);
-            NSDictionary *launchDDict = @{@"RunAtLoad": [NSNumber numberWithBool:lDEnabled],@"StartInterval": [NSNumber numberWithInt:[_masterSyncInterval.stringValue intValue]]};
+            
+            NSLocale *locale = [NSLocale currentLocale];
+            NSString *thousandSeparator = [locale objectForKey:NSLocaleGroupingSeparator];
+            NSString *_masterSyncIntervalNew = [_masterSyncInterval.stringValue stringByReplacingOccurrencesOfString:thousandSeparator withString:@""];
+            
+            NSDictionary *launchDDict = @{@"RunAtLoad": [NSNumber numberWithBool:lDEnabled],@"StartInterval": [NSNumber numberWithInt:[_masterSyncIntervalNew intValue]]};
             [self writeSyncConfChanges:syncDict launchdConf:launchDDict];
         }
         

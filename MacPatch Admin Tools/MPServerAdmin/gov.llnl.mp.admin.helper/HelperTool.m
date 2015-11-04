@@ -647,7 +647,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         return NO;
     }
     
-    qltrace(@"Set Permissions on %@ to %@",aFile,dict);
+    qldebug(@"Set Permissions on %@ to %@",aFile,dict);
     return YES;
 }
 
@@ -844,8 +844,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     // Write the changes
     [md writeToFile:LAUNCHD_FILE_PATCH_SYNC atomically:NO];
     
-    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"stop",SERVICE_CONTENT_SYNC, nil]];
-    
+    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"unload",LAUNCHD_FILE_PATCH_SYNC, nil]];
+    NSLog(@"/bin/launchctl unload %@",LAUNCHD_FILE_PATCH_SYNC);
     reply(error, licenseKey);
 }
 
@@ -918,6 +918,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         [d writeToFile:launchDFile atomically:NO];
+        [self setLaunchDFilePermissions:launchDFile];
     } else {
         NSMutableDictionary* details = [NSMutableDictionary dictionary];
         [details setValue:[NSString stringWithFormat:@"Unable to write to file %@",launchDFile] forKey:NSLocalizedDescriptionKey];
