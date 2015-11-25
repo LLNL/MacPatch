@@ -1,0 +1,11 @@
+name: "LLNL OneLab"
+author: "Ian Lee <lee1001@llnl.gov>"
+description: "LLNL OneLab Jekyll Template"
+
+url: "http://localhost:4000"
+
+# paginate: 10
+
+markdown: rdiscount
+permalink: pretty
+highlighter: pygments
