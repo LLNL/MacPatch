@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ site.name }}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/static/assets/images/favicon.ico">
+
+    <link rel="stylesheet" href="/static/bootstrap-2.3.2/css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="/static/onelab/css/bootstrap.mods.css" media="screen">
+    <link rel="stylesheet" href="/static/onelab/css/main.css" media="screen">
+    <link rel="stylesheet" href="/static/onelab/css/print.css" media="print">
+    <link rel="stylesheet" href="/static/plugins/shadowbox/shadowbox.css" media="screen">
+    <link rel="stylesheet" href="/static/font-awesome-4.4.0/css/font-awesome.min.css" media="screen">
+  </head>
+
+  <body>
+
+    {% include header.html %}
+
+    <div class="container">
+
+      {{ content }}
+
+    </div>
+
+    {% include footer.html %}
+
+  </body>
+</html>

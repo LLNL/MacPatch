@@ -1,0 +1,9 @@
+@import url("../../css/bootstrap.min.css");
+@import url("bootstrap.mods.css");
+@import url("main.css");
+
+.noprint, .sortmarker, #llnl-menu-tab, .navbar-search, .navbar .nav, .btn, .socialmedia, .footernav, noscript, #sb-container, .carousel-bullets {display:none !important}
+th a {color: #000}
+a[href]:after{content:"";}
+.hero-unit.hero-full-image {height: auto}
+.hero-unit.hero-full-image > .container > .row > .caption {margin-top:auto; margin-bottom:auto;}
