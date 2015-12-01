@@ -1,5 +1,5 @@
 #MacPatch - Quick Start Guide for Mac OS X
-Version 1.0 for MacPatch v2.5.x
+Version 1.0 for MacPatch v2.8.x
 
 This is a quick start guide to getting MacPatch installed and running on a Mac OS X based system. For the purpose of this guide we will be installing on a Mac OS X 10.9.x system.
 
@@ -8,7 +8,7 @@ This is a quick start guide to getting MacPatch installed and running on a Mac O
 There are two prerequisites to installing the MacPatch server software. Java and Xcode command line tools need to be installed.
 
 ###Java
-Java can be downloaded from Oracle at http://www.oracle.com/technetwork/java/javase/downloads/index.html. Java 7 (JDK) is recommended. Java 8 has not been tested at this time. Once the Java 7 JDK has been installed the "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7" are needed as well. These files can be found on the same location. 
+Java can be downloaded from Oracle at http://www.oracle.com/technetwork/java/javase/downloads/index.html. Java 8 (JDK) or higher is required.
 
 ###Xcode
 Xcode is required to build the MacPatch software for Mac OS X. While you can install the GUI version of Xcode and download and install the command line tools from within Xcode. You will be installing the Xcode command line tools from the Terminal.app.
@@ -47,31 +47,10 @@ MacPatch requires the use of MySQL database. The database can be installed on th
 
 Run the following commands via the Terminal.app.
 
-**Log in as the MySQL root user**
+	/Library/MacPatch/Server/conf/scripts/Setup/MPDBSetup.sh
 
-	mysql -u root -p
-	
-**Run the following MySQL commands**<br>
-*Replace the word "Password" with your own password.*
+This script will walk you through the process of setting up the MacPatch database.
 
-	mysql> CREATE DATABASE MacPatchDB;
-	mysql> CREATE USER 'mpdbadm'@'%' IDENTIFIED BY 'Password';
-	mysql> GRANT ALL ON MacPatchDB.* TO 'mpdbadm'@'%' IDENTIFIED BY 'Password';
-	mysql> GRANT ALL PRIVILEGES ON MacPatchDB.* TO 'mpdbadm'@'localhost' IDENTIFIED BY 'Password';
-	mysql> CREATE USER 'mpdbro'@'%' IDENTIFIED BY 'Password';
-	mysql> GRANT SELECT ON MacPatchDB.* TO 'mpdbro'@'%';
-	mysql> SET GLOBAL log_bin_trust_function_creators = 1;
-	mysql> FLUSH PRIVILEGES;**Delete MySQL anonymous accounts**
-
-	mysql> DROP USER ''@'localhost';
-	mysql> DROP USER ''@'host_name';
-	mysql> quit
-	**Load Database Schema**
-
-The database schema files are located on the MacPatch server in the **/Library/MacPatch/Server/conf/Database/** directory. To load the tables and the views, copy the **MacPatchDB_Tables.sql** and **MacPatchDB_Views.sql** files to the Database host. The following commands are for a server that is also hosting the MacPatch database.
-
-	% mysql MacPatchDB -u mpdbadm -p < /Library/MacPatch/Server/conf/Database/MacPatchDB_Tables.sql
-	% mysql MacPatchDB -u mpdbadm -p < /Library/MacPatch/Server/conf/Database/MacPatchDB_Views.sql
 
 	
 <hr>
@@ -91,21 +70,6 @@ The MacPatch server has five configuration script and should be run in the given
 		<td>Master/Required</td>
 	</tr>
 	<tr>
-		<td>WebAdminSetup.sh </td>
-		<td>The MacPatch admin web console is required to use MacPatch. This section is an option for those who wish to setup additional servers for large environments.</td>
-		<td>Master/Required</td>
-	</tr>
-	<tr>
-		<td>WebServicesSetup.sh</td>
-		<td>The MacPatch web services are required to use MacPatch.</td>
-		<td>Master, Distribution/Required</td>
-	</tr>
-	<tr>
-		<td>PatchLoaderSetup.py</td>
-		<td>MacPatch requires gathering all of Apple Software updates from an Apple Software Update server, so that Apple patches can be assigned to a patch group for patching.</td>
-		<td>Master, Distribution/Recommended</td>
-	</tr>
-	<tr>
 		<td>SymantecAntivirusSetup.py</td>
 		<td>MacPatch supports patching Symantec Antivirus definitions. Not all sites use SAV/SEP so this step is optional.</td>
 		<td>Master/Optional</td>
@@ -123,7 +87,11 @@ The MacPatch server has five configuration script and should be run in the given
 
 ### Download Content - 
 
-##### Apple UpdatesApple patch content will download eventually on it's own cycle, but for the first time it's recommended to download it manually.Run the following command via the Terminal.app on the *Master* MacPatch server.
+##### Apple Updates
+
+Apple patch content will download eventually on it's own cycle, but for the first time it's recommended to download it manually.
+
+Run the following command via the Terminal.app on the *Master* MacPatch server.
 
 	sudo -s _appserver /Library/MacPatch/Server/conf/scripts/MPSUSPatchSync.py --plist /Library/MacPatch/Server/conf/etc/gov.llnl.mp.patchloader.plist
 

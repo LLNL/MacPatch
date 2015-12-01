@@ -27,7 +27,7 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 * Linux Fedora (19 and higher), RHEL 7, Ubuntu 12.x
 * Using Intel Hardware, PPC is not supported
 * 4 GB of RAM, 8 GB is recommended
-* Java v1.6 or higher
+* Java v1.8 or higher
 * MySQL version 5.1 or higher, MySQL 5.6.x is recommended.
 
 ## Install and Setup

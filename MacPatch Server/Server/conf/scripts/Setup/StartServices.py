@@ -25,9 +25,9 @@
 
 '''
   MacPatch Patch Loader Setup Script
-  MacPatch Version 2.7.x
+  MacPatch Version 2.8.x
   
-  Script Version 1.6.4
+  Script Version 1.7.0
 '''
 
 import os
@@ -43,8 +43,8 @@ MP_SRV_CONF = MP_SRV_BASE+"/conf"
 os_type = platform.system()
 system_name = platform.uname()[1]
 dist_type = "Mac"
-macServices=["gov.llnl.mp.wsl.plist","gov.llnl.mp.invd.plist","gov.llnl.mp.site.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.httpd.plist","gov.llnl.mp.rsync.plist","gov.llnl.mp.sync.plist"]
-lnxServices=["MPApache","MPTomcatSite","MPTomcatWS","MPInventoryD"]
+macServices=["gov.llnl.mp.tomcat.plist","gov.llnl.mp.invd.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.rsync.plist","gov.llnl.mp.sync.plist"]
+lnxServices=["MPApache","MPTomcat","MPInventoryD"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader"]
 gUID = 79
 gGID = 70
