@@ -12,9 +12,10 @@
 
 MP_BUILD_DIR=/Library/MacPatch/Reposado
 TMP_DIR=/private/var/tmp/MPReposado
-BAS_DIR=$(cd $(dirname "$0"); pwd)
-SRC_DIR="$BAS_DIR/src"
-FLS_DIR="$BAS_DIR/Reposado"
+#BAS_DIR=$(cd $(dirname "$0"); pwd)
+BAS_DIR=/Library/MacPatch/Server
+SRC_DIR="$BAS_DIR/conf/src"
+FLS_DIR="$BAS_DIR/conf/Reposado"
 OWNERGRP="79:70"
 
 if [ "`whoami`" != "root" ] ; then   # If not root user,
