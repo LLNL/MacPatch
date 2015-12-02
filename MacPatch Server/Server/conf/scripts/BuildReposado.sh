@@ -41,6 +41,7 @@ cd ${TMP_DIR}
 
 HTTP_SW=`find "${SRC_DIR}" -name "nginx"* -type f -exec basename {} \; | head -n 1`
 PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
+OSSL_SW=`find "${SRC_DIR}" -name "openssl-"* -type f -exec basename {} \; | head -n 1`
 
 # PCRE
 mkdir ${TMP_DIR}/pcre
@@ -50,6 +51,10 @@ tar xvfz ${SRC_DIR}/${PCRE_SW} --strip 1 -C ${TMP_DIR}/pcre
 mkdir ${TMP_DIR}/nginx
 tar xvfz ${SRC_DIR}/${HTTP_SW} --strip 1 -C ${TMP_DIR}/nginx
 
+# OpenSSL
+mkdir ${TMP_DIR}/openssl
+tar xvfz ${SRC_DIR}/${OSSL_SW} --strip 1 -C ${TMP_DIR}/openssl
+
 if [ ! -d "${MP_BUILD_DIR}" ]; then
 	mkdir -p "${MP_BUILD_DIR}"
 fi
@@ -57,10 +62,12 @@ fi
 echo "[STEP]: Build and Compile HTTPD..."
 cd ${TMP_DIR}/nginx
 
+export KERNEL_BITS=64
 ./configure --prefix=${MP_BUILD_DIR}/nginx \
 --without-http_autoindex_module \
 --without-http_ssi_module \
 --with-http_ssl_module \
+--with-openssl=${TMP_DIR}/openssl \
 --with-pcre=${TMP_DIR}/pcre
 
 make
