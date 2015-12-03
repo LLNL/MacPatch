@@ -7,7 +7,7 @@
         <key>ServiceDescription</key>
         <string>MacPatch Tomcat Container</string>
         <key>WorkingDirectory</key>
-        <string>/Library/MacPatch/Server/tomcat-mpsite</string>
+        <string>/Library/MacPatch/Server/apache-tomcat</string>
         <key>EnvironmentVariables</key>
         <dict>
                 <key>CATALINA_HOME</key>

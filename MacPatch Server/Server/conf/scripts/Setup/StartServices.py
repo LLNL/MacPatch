@@ -51,6 +51,26 @@ lnxCronSrvs=["MPPatchLoader","MPAVLoader"]
 gUID = 79
 gGID = 70
 
+def readJSON(filename):
+	returndata = {}
+	try:
+		fd = open(filename, 'r+')
+		returndata = json.load(fd)
+		fd.close()
+	except: 
+		print 'COULD NOT LOAD:', filename
+
+	return returndata
+
+def writeJSON(data, filename):
+	try:
+		fd = open(filename, 'w')
+		json.dump(data,fd, indent=4)
+		fd.close()
+	except:
+		print 'ERROR writing', filename
+		pass
+
 if os_type == "Linux":
 	# OS is Linux, I need the dist type...
 	dist_type = platform.dist()[0]
@@ -197,6 +217,16 @@ def osxLoadServices(service):
 		if os.path.exists(_launchdFile):
 			print "Loading service "+srvc
 			os.system("/bin/launchctl load -w /Library/LaunchDaemons/"+srvc)
+		else:
+			if os.path.exists("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc):
+				if os.path.exists("/Library/LaunchDaemons/"+srvc):
+					os.remove("/Library/LaunchDaemons/"+srvc)
+			
+			os.chown("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0, 0)
+			os.chmod("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0644)
+			os.symlink("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc,"/Library/LaunchDaemons/"+srvc)
+			
+
 			
 def osxUnLoadServices(service):
 
@@ -304,51 +334,49 @@ def setupServices():
 	_WEBSERVICES = 'Y' 
 	webService = raw_input('Enable Web Services [%s]' % _WEBSERVICES)
 	webService = webService or _WEBSERVICES
+	jData = readJSON(MP_CONF_FILE)
 	if webService.lower() == 'y':
-		with open(MP_CONF_FILE, 'r+') as f:
-			    data = json.load(f)
-			    data['settings']['services']['mpwsl'] = true
-			    f.seek(0)        
-			    json.dump(data, f, indent=4)
+
+		jData['settings']['services']['mpwsl'] = True
 
 		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.tomcat.plist')
-			srvsList.append('gov.llnl.mp.invd.plist')
+			if 'gov.llnl.mp.tomcat.plist' not in srvsList:
+				srvsList.append('gov.llnl.mp.tomcat.plist')
+			if 'gov.llnl.mp.invd.plist' not in srvsList:
+				srvsList.append('gov.llnl.mp.invd.plist')
 		else:
 			linkStartupScripts('MPTomcat')
 			srvsList.append('MPTomcat')
 			linkStartupScripts('MPInventoryD')
 			srvsList.append('MPInventoryD')
 	else:
-		with open(MP_CONF_FILE, 'r+') as f:
-		    data = json.load(f)
-		    data['settings']['services']['mpwsl'] = false
-		    f.seek(0)        
-		    json.dump(data, f, indent=4)
+		jData['settings']['services']['mpwsl'] = False
+
+	writeJSON(jData,MP_CONF_FILE)
 	
 	# Web Admin Console
+	
 	_ADMINCONSOLE = 'Y' if masterType else 'N'  
 	adminConsole = raw_input('Enable Admin Console Application [%s]' % _ADMINCONSOLE)
 	adminConsole = adminConsole or _ADMINCONSOLE
+	jData = readJSON(MP_CONF_FILE)
 	if adminConsole.lower() == 'y':
+
+		jData['settings']['services']['console'] = True
+
 		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.tomcat.plist')
+			if 'gov.llnl.mp.tomcat.plist' not in srvsList:
+				srvsList.append('gov.llnl.mp.tomcat.plist')
 		else:
 			linkStartupScripts('MPTomcat')
 			srvsList.append('MPTomcat')
 
-		with open(MP_CONF_FILE, 'r+') as f:
-			    data = json.load(f)
-			    data['settings']['services']['console'] = true
-			    f.seek(0)        
-			    json.dump(data, f, indent=4)
 	else:
-		with open(MP_CONF_FILE, 'r+') as f:
-			    data = json.load(f)
-			    data['settings']['services']['console'] = false
-			    f.seek(0)        
-			    json.dump(data, f, indent=4)
-	
+		
+		jData['settings']['services']['console'] = False
+
+	writeJSON(jData,MP_CONF_FILE)
+
 	# Content Sync
 	_CONTENT = 'Y' if masterType else 'N'  
 	print "Content sync allows distribution servers to sync from the master server."
@@ -364,7 +392,7 @@ def setupServices():
 	if patchLoader.lower() == 'y':
 		setupPatchLoader()
 		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.mploader.plist')
+			srvsList.append('gov.llnl.mploader.plist')
 	
 	# Sync From Master
 	if masterType == False:
