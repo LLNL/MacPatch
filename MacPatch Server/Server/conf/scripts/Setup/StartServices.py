@@ -37,9 +37,11 @@ import argparse
 import pwd
 import grp
 import shutil
+import json
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
 MP_SRV_CONF = MP_SRV_BASE+"/conf"
+MP_CONF_FILE = MP_SRV_CONF+"/etc/siteconfig.json"
 os_type = platform.system()
 system_name = platform.uname()[1]
 dist_type = "Mac"
@@ -298,32 +300,55 @@ def setupServices():
 	elif srvType.lower() == "d" or srvType.lower() == "distribution":
 		masterType = False
 
-	# Web Server
-	'''
-	_HTTPD = 'Y'
-	webServer = raw_input('Start Web Server [%s]' % _HTTPD)
-	webServer = webServer or _HTTPD
-	if webServer.lower() == 'y':
-		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.httpd.plist')
-		else:
-			linkStartupScripts('MPApache')
-			srvsList.append('MPApache')
-	'''
 	# Web Services
 	_WEBSERVICES = 'Y' 
-	webService = raw_input('Start Web Services [%s]' % _WEBSERVICES)
+	webService = raw_input('Enable Web Services [%s]' % _WEBSERVICES)
 	webService = webService or _WEBSERVICES
 	if webService.lower() == 'y':
+		with open(MP_CONF_FILE, 'r+') as f:
+			    data = json.load(f)
+			    data['settings']['services']['mpwsl'] = true
+			    f.seek(0)        
+			    json.dump(data, f, indent=4)
+
 		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.wsl.plist')
+			srvsList.append('gov.llnl.mp.tomcat.plist')
 			srvsList.append('gov.llnl.mp.invd.plist')
 		else:
-			linkStartupScripts('MPTomcatWS')
-			srvsList.append('MPTomcatWS')
+			linkStartupScripts('MPTomcat')
+			srvsList.append('MPTomcat')
 			linkStartupScripts('MPInventoryD')
 			srvsList.append('MPInventoryD')
+	else:
+		with open(MP_CONF_FILE, 'r+') as f:
+		    data = json.load(f)
+		    data['settings']['services']['mpwsl'] = false
+		    f.seek(0)        
+		    json.dump(data, f, indent=4)
+	
+	# Web Admin Console
+	_ADMINCONSOLE = 'Y' if masterType else 'N'  
+	adminConsole = raw_input('Enable Admin Console Application [%s]' % _ADMINCONSOLE)
+	adminConsole = adminConsole or _ADMINCONSOLE
+	if adminConsole.lower() == 'y':
+		if os_type == 'Darwin':
+			srvsList.append('gov.llnl.mp.tomcat.plist')
+		else:
+			linkStartupScripts('MPTomcat')
+			srvsList.append('MPTomcat')
 
+		with open(MP_CONF_FILE, 'r+') as f:
+			    data = json.load(f)
+			    data['settings']['services']['console'] = true
+			    f.seek(0)        
+			    json.dump(data, f, indent=4)
+	else:
+		with open(MP_CONF_FILE, 'r+') as f:
+			    data = json.load(f)
+			    data['settings']['services']['console'] = false
+			    f.seek(0)        
+			    json.dump(data, f, indent=4)
+	
 	# Content Sync
 	_CONTENT = 'Y' if masterType else 'N'  
 	print "Content sync allows distribution servers to sync from the master server."
@@ -331,18 +356,7 @@ def setupServices():
 	cRsync = cRsync or _CONTENT
 	if cRsync.lower() == 'y':
 		srvsList.append('gov.llnl.mp.rsync.plist')
-		
-	# Web Admin Console
-	_ADMINCONSOLE = 'Y' if masterType else 'N'  
-	adminConsole = raw_input('Start Admin Console Application [%s]' % _ADMINCONSOLE)
-	adminConsole = adminConsole or _ADMINCONSOLE
-	if adminConsole.lower() == 'y':
-		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.site.plist')
-		else:
-			linkStartupScripts('MPTomcatSite')
-			srvsList.append('MPTomcatSite')
-	
+
 	# Patch Loader
 	_PATCHLOAD = 'Y' if masterType else 'N'
 	patchLoader = raw_input('ASUS Patch Content Loader [%s]' % _PATCHLOAD)
