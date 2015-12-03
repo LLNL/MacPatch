@@ -32,8 +32,14 @@
 				<cfinvokeargument name="cFile" value="#jFile#">
 			</cfinvoke>
         <cfelse>
-        	<cfthrow message="No App Settings file found.">
-        	<cfreturn>
+        	<cfoutput>No App Settings file found.</cfoutput>
+        	<cfabort>
+        </cfif>
+
+        <!--- Simple Way to disable the application --->
+        <cfif _AppSettings.services.console EQ false>
+        	<cfoutput>Console not enabled.</cfoutput>
+        	<cfabort>
         </cfif>
 
 	    <cfset application.settings = _AppSettings>

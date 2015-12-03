@@ -1,10 +1,15 @@
 {
     "settings": 
     {
+        "services":
+        {
+            "console":true,
+            "mpwsl":true
+        },
         "paths": 
         {
-                "base":"/Library/MacPatch",
-                "content":"/Library/MacPatch/Content/Web"
+            "base":"/Library/MacPatch",
+            "content":"/Library/MacPatch/Content/Web"
         },
         "users": 
         {

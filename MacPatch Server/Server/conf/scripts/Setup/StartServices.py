@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 2.8.x
   
-  Script Version 1.7.0
+  Script Version 1.8.0
 '''
 
 import os
@@ -179,13 +179,16 @@ def removeCronJob(comment):
 			cron.remove (job)
 
 def osxLoadServices(service):
-	_services = None
+	_services = list()
 	
 	if service == "All":
 		_services = macServices
 	else:
 		if service in macServices:
-			_services = service
+			_services.append(service)
+		else:
+			print service + " was not found. Service will not load."
+			return
 			
 	for srvc in _services:
 		_launchdFile = "/Library/LaunchDaemons/"+srvc
@@ -296,6 +299,7 @@ def setupServices():
 		masterType = False
 
 	# Web Server
+	'''
 	_HTTPD = 'Y'
 	webServer = raw_input('Start Web Server [%s]' % _HTTPD)
 	webServer = webServer or _HTTPD
@@ -305,7 +309,7 @@ def setupServices():
 		else:
 			linkStartupScripts('MPApache')
 			srvsList.append('MPApache')
-	
+	'''
 	# Web Services
 	_WEBSERVICES = 'Y' 
 	webService = raw_input('Start Web Services [%s]' % _WEBSERVICES)
