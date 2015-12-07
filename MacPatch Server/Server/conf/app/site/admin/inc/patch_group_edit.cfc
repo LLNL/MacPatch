@@ -48,7 +48,7 @@
 
             <cfquery datasource="#session.dbsource#" name="qGetPatches">
                 SELECT DISTINCT
-                    b.*, IFNULL(ui.baseline_enabled, '0') AS baseline_enabled, IFNULL(p.patch_id,'NA') as Enabled
+                    b.*, IFNULL(p.patch_id,'NA') as Enabled
                 FROM
                     combined_patches_view b
                 LEFT JOIN (
@@ -68,8 +68,7 @@
             </cfquery>
 
             <cfcatch type="any">
-                <cfset strMsgType = "Error">
-                <cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support. #cfcatch.Detail#">
+            	<cfset logError("patch_group_edit","getPatchGroupPatches",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
                 <cfset totalPages = 0>
 				<cfset stcReturn = {}>
                 <cfreturn stcReturn>
@@ -243,6 +242,7 @@
                 </cfquery>
             </cfif>
         	<cfcatch type="any">
+        		<cfset logError("patch_group_edit","togglePatch",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
             	<cfset strMsgType = "Error">
             	<cfset strMsg = "Error occured while setting baseline state. #cfcatch.detail# -- #cfcatch.message#">
             </cfcatch>
@@ -286,7 +286,9 @@
             Where
                 pid = '#arguments.PatchGroupID#'
         </cfquery>
-        <cfcatch></cfcatch>
+        <cfcatch>
+        	<cfset logError("patch_group_edit","RemovePatchGroupData",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
+    	</cfcatch>
         </cftry>
     </cffunction>
 
@@ -301,7 +303,9 @@
                 Insert Into mp_patch_group_data (pid, hash, data, data_type)
                 Values ('#arguments.PatchGroupID#', '#_hash#', '#arguments.PatchGroupData#', '#arguments.PatchGroupDataType#')
             </cfquery>
-        <cfcatch></cfcatch>
+        <cfcatch>
+        	<cfset logError("patch_group_edit","AddPatchGroupData",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
+    	</cfcatch>
         </cftry>
     </cffunction>
 
@@ -335,6 +339,7 @@
 			</cfoutput>
 
         	<cfcatch type="any">
+        		<cfset logError("patch_group_edit","SelectAll",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
 				<cfset strMsgType = "Error">
 				<cfset strMsg = "<cfoutput>#cfcatch.message##cfcatch.detail#</cfoutput>">
 			</cfcatch>
@@ -376,6 +381,7 @@
 			</cfoutput>
 
         	<cfcatch type="any">
+        		<cfset logError("patch_group_edit","SelectApple",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
 				<cfset strMsgType = "Error">
 				<cfset strMsg = "<cfoutput>#cfcatch.message##cfcatch.detail#</cfoutput>">
 			</cfcatch>
@@ -417,6 +423,7 @@
 			</cfoutput>
 
         	<cfcatch type="any">
+        		<cfset logError("patch_group_edit","SelectCustom",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
 				<cfset strMsgType = "Error">
 				<cfset strMsg = "<cfoutput>#cfcatch.message##cfcatch.detail#</cfoutput>">
 			</cfcatch>
@@ -444,10 +451,23 @@
 				</cfquery>
 			</cfif>
 			<cfcatch type="any">
+				<cfset logError("patch_group_edit","selectPatch",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
 				<cfset strMsgType = "Error">
 				<cfset strMsg = "There was an issue with the Edit. An Error Report has been submitted to Support.">
 			</cfcatch>
 		</cftry>
+	</cffunction>
+
+	<cffunction name="logError" access="private">
+		<cfargument name="log" required="yes">
+		<cfargument name="method" required="yes">
+	    <cfargument name="message" required="yes">
+	    <cfargument name="detail" required="no" default="Detail: NA">
+	    <cfargument name="type" required="no" default="Type: NA">
+		
+		<cflog file="#arguments.log#" type="error" application="no" text="[#arguments.method#] - Type: #arguments.type#">
+    	<cflog file="#arguments.log#" type="error" application="no" text="[#arguments.method#] - Message: #arguments.message#">
+        <cflog file="#arguments.log#" type="error" application="no" text="[#arguments.method#] - Detail: #arguments.detail#">
 	</cffunction>
 
 </cfcomponent>
