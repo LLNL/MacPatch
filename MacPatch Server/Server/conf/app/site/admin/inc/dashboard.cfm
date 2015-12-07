@@ -150,15 +150,6 @@ p.solid {border-style: solid;}
     Order By Count Desc
 </cfquery>
 
-<cfquery datasource="#session.dbsource#" name="qGetOSType">
-    SELECT	
-	mpc.ostype AS OSType, Count(mpc.ostype) As Count
-    FROM mp_clients mpc
-	LEFT JOIN mpi_SPHardwareOverview hw ON hw.cuuid = mpc.cuuid
-    Group By mpc.ostype
-    Order By Count Desc
-</cfquery>
-
 <cfquery datasource="#session.dbsource#" name="qGetRebootInfo">
     SELECT	CASE needsReboot
             WHEN '0' THEN 'False' 
@@ -362,15 +353,6 @@ p.solid {border-style: solid;}
                                     </cfchartseries>
                                 </cfchart>
                             </div>
-                            <div id="os4" style="display:none;">
-                                <cfchart format="png" title="OS Type Break Down" showlegend="no" chartheight="400" chartwidth="480" xaxistitle="Model Type" yaxistitle="Count" url="dashboard.cfm?Series=$SERIESLABEL$&Item=$ITEMLABEL$">
-                                    <cfchartseries type="bar" serieslabel="OSTypeBreakDown">
-                                    <cfoutput query="qGetOSType">
-                                        <cfchartdata item="#OSType#" value="#Count#">
-                                    </cfoutput>
-                                    </cfchartseries>
-                                </cfchart>
-                            </div>
 							<cfoutput>
                             <div class="dashLink">
                                 <a href="javascript:toggle('os1','os2','os3','os4')">OS Breakdown</a>
@@ -378,8 +360,6 @@ p.solid {border-style: solid;}
 								<a href="javascript:toggle('os2','os1','os3','os4')">OS Breakdown Minor</a>
                                 &nbsp;|&nbsp;
                                 <a href="javascript:toggle('os3','os1','os2','os4')">Model Types</a>
-                                &nbsp;|&nbsp;
-                                <a href="javascript:toggle('os4','os1','os2','os3')">OS Types</a>
                             </div>
                             </cfoutput>    
                         </div>
