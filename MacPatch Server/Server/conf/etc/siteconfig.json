@@ -3,8 +3,8 @@
     {
         "services":
         {
-            "console":true,
-            "mpwsl":true
+            "console":false,
+            "mpwsl":false
         },
         "paths": 
         {
