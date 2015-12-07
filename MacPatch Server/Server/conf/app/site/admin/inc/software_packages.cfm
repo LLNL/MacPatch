@@ -42,7 +42,7 @@
 	$(document).ready(function()
 		{
 			var lastsel=-1;
-			$("#list").jqGrid(
+			var mygrid = $("#list").jqGrid(
 			{
 				url:'software_packages.cfc?method=getMPSoftware', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON

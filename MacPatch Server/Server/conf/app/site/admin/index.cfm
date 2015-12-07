@@ -201,6 +201,6 @@
             </iframe>
 		</div>
 	</div> 
-	<div class="ui-layout-south">MacPatch Version 2.7.0</div> 
+	<div class="ui-layout-south">MacPatch Version 2.8.0a</div> 
 </body>
 </html>
