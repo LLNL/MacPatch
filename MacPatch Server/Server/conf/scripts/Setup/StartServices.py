@@ -222,9 +222,15 @@ def osxLoadServices(service):
 				if os.path.exists("/Library/LaunchDaemons/"+srvc):
 					os.remove("/Library/LaunchDaemons/"+srvc)
 			
-			os.chown("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0, 0)
-			os.chmod("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0644)
-			os.symlink("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc,"/Library/LaunchDaemons/"+srvc)
+				os.chown("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0, 0)
+				os.chmod("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0644)
+				os.symlink("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc,"/Library/LaunchDaemons/"+srvc)
+				
+				print "Loading service "+srvc
+				os.system("/bin/launchctl load -w /Library/LaunchDaemons/"+srvc)
+				
+			else:
+				print srvc + " was not found in MacPatch Server directory. Service will not load."
 			
 
 			
