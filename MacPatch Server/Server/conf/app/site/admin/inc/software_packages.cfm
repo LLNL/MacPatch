@@ -149,6 +149,10 @@
 			<cfelse>
 				$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false},{closeOnEscape:true});
 			</cfif>
+
+			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
+			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
+			mygrid[0].toggleToolbar();
 			
 			$(window).bind('resize', function() {
 				$("#list").setGridWidth($(window).width()-20);
