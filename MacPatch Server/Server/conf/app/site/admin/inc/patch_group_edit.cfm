@@ -150,7 +150,7 @@
 					searchOper: function() { return "cn"; }
 				},
 				</cfif>
-				colNames:['','', 'Patch', 'Description', 'Reboot', 'Type', 'Patch State', 'Baseline', 'Release Date'],
+				colNames:['','', 'Patch', 'Description', 'Reboot', 'Type', 'Patch State', 'Release Date'],
 				colModel :[
 				  {name:'rid',index:'rid', width:36, align:"center", sortable:false, resizable:false, hidden:true, search : false},
 				  {name:'enbl', index:'enbl', width: 30, align:'center', search : false, sortable:true, sorttype:'int', formatter:'checkbox', editoptions:{value:'1:0'},
@@ -160,7 +160,6 @@
 				  {name:'reboot', index:'reboot', width:40, align:"center"},
 				  {name:'type', index:'type', width:40, align:"center"},
 				  {name:'patch_state', index:'patch_state', width:40},
-				  {name:'baseline_enabled', index:'baseline_enabled', width:40},
 				  {name:'postdate', index:'postdate', width:100}
 				],
 				altRows:true,

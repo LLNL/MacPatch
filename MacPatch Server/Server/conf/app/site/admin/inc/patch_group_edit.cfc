@@ -45,37 +45,12 @@
             <cfelse>
                 <cfset gType = "'Production'">
             </cfif>
-            <cfsavecontent variable="one">
-            <cfoutput>
-				SELECT DISTINCT
-                    b.*, IFNULL(ui.baseline_enabled, '0') AS baseline_enabled, IFNULL(p.patch_id,'NA') as Enabled
-                FROM
-                    combined_patches_view b
-                LEFT JOIN baseline_prod_view ui ON ui.p_id = b.id
-                LEFT JOIN (
-                    SELECT patch_id FROM mp_patch_group_patches
-                    Where patch_group_id = '#Arguments.patchgroup#'
-                ) p ON p.patch_id = b.id
-
-                <cfif blnSearch AND strSearch NEQ "">
-                    #PreserveSingleQuotes(strSearch)#
-                    AND
-                    b.patch_state IN (#PreserveSingleQuotes(gType)#)
-                <cfelse>
-                    WHERE
-                    b.patch_state IN (#PreserveSingleQuotes(gType)#)
-                </cfif>
-                ORDER BY #sidx# #sord#
-			</cfoutput>
-            </cfsavecontent>
-            <cflog application="yes" type="error" text="#one#">
 
             <cfquery datasource="#session.dbsource#" name="qGetPatches">
                 SELECT DISTINCT
                     b.*, IFNULL(ui.baseline_enabled, '0') AS baseline_enabled, IFNULL(p.patch_id,'NA') as Enabled
                 FROM
                     combined_patches_view b
-                LEFT JOIN baseline_prod_view ui ON ui.p_id = b.id
                 LEFT JOIN (
                     SELECT patch_id FROM mp_patch_group_patches
                     Where patch_group_id = '#Arguments.patchgroup#'
@@ -108,7 +83,7 @@
 		<cfset i = 1>
 		<cfloop query="qGetPatches" startrow="#start#" endrow="#end#">
         	<cfset selected = #IIF(Enabled EQ "NA",DE('0'),DE('1'))#>
-            <cfset arrUsers[i] = [#id#, #selected#, #name#, #title#, #Reboot#, #type#, #patch_state#, #iif( baseline_enabled EQ 1,DE('Required'),DE(''))#, #DateTimeFormat( postdate, "yyyy-MM-dd HH:mm:ss" )#]>
+            <cfset arrUsers[i] = [#id#, #selected#, #name#, #title#, #Reboot#, #type#, #patch_state#, #DateTimeFormat( postdate, "yyyy-MM-dd HH:mm:ss" )#]>
 			<cfset i = i + 1>
 		</cfloop>
 

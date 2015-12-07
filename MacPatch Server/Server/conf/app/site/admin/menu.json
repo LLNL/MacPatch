@@ -32,7 +32,6 @@
 			{"title": "Configure",   "icon": "text-list.png", "href": "/admin/inc/admin_client_agent_config.cfm"},
             {"title": "Plugins",     "icon": "text-list.png", "href": "/admin/inc/admin_agent_plugins.cfm"}
 		]},
-		{"title": "Patch Baseline", "icon": "gear.png", "href": "/admin/inc/admin_baseline_patches.cfm" },
 		{"title": "Server", "folder": true, "icon": "gear.png",
 		"children": [
 			{"title": "MacPatch Servers",	  	"icon": "text-list.png", "href": "/admin/inc/admin_mp_servers.cfm"},
