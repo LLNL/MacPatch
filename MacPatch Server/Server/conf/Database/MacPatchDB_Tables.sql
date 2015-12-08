@@ -1,7 +1,7 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.7.3.0
+	Version 2.8.0.0
 	Rev 0
 */
 
@@ -1967,6 +1967,32 @@ CREATE TABLE `ws_log_jobs` (
   UNIQUE KEY `rid_idx` (`rid`),
   KEY `ws_idx` (`event_type`,`cdate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `mp_patch_selection_history`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_patch_selection_history`;
+CREATE TABLE `mp_patch_selection_history` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `patch` varchar(255) DEFAULT NULL,
+  `patchid` varchar(255) DEFAULT NULL,
+  `patchgroup` varchar(255) DEFAULT NULL,
+  `state` int(1) DEFAULT NULL,
+  `userid` varchar(255) DEFAULT NULL,
+  `cdate` datetime DEFAULT NULL,
+  `patchtype` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`rid`),
+  KEY `main` (`patch`,`patchid`,`patchgroup`,`userid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COMMENT='New for MacPatch 2.8.0';;
+
+-- ----------------------------
+--  Triggers structure for table mp_patch_selection_history
+-- ----------------------------
+DROP TRIGGER IF EXISTS `p_hist_date`;
+delimiter ;;
+CREATE TRIGGER `p_hist_date` BEFORE INSERT ON `mp_patch_selection_history` FOR EACH ROW set NEW.cdate = now()
+ ;;
+delimiter ;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
