@@ -244,15 +244,15 @@ clear
 MP_OSSL_DIR=${MPSERVERBASE}/lib/openssl
 
 SSL_SW=`find "${SRC_DIR}" -name "openssl"* -type f -exec basename {} \; | head -n 1`
-mkdir ${TMP_DIR}/openssl
-tar xvfz ${SRC_DIR}/${SSL_SW} --strip 1 -C ${TMP_DIR}/openssl
+mkdir ${BUILDROOT}/openssl
+tar xvfz ${SRC_DIR}/${SSL_SW} --strip 1 -C ${BUILDROOT}/openssl
 
 if [ -d "${MP_OSSL_DIR}" ]; then
 	rm -rf "${MP_OSSL_DIR}"
 fi
 
 echo "[STEP]: Build and Compile OpenSSL..."
-cd ${TMP_DIR}/openssl
+cd ${BUILDROOT}/openssl
 if [ $XOSTYPE == "Linux" ]; then
 	make clean && make dclean
 	export CFLAGS=-fPIC
@@ -273,9 +273,9 @@ MP_APR_DIR=${MPSERVERBASE}/lib/apr
 APR_SW=`find "${SRC_DIR}" -name "apr-"* -type f -exec basename {} \; | head -n 1`
 
 # APR
-mkdir ${TMP_DIR}/apr
-tar xvfz ${SRC_DIR}/${APR_SW} --strip 1 -C ${TMP_DIR}/apr
-cd ${TMP_DIR}/apr
+mkdir ${BUILDROOT}/apr
+tar xvfz ${SRC_DIR}/${APR_SW} --strip 1 -C ${BUILDROOT}/apr
+cd ${BUILDROOT}/apr
 
 if [ $XOSTYPE == "Linux" ]; then
 	./configure --prefix=${MP_APR_DIR}
