@@ -6,11 +6,6 @@
 	    <cfargument name="sord" required="no" default="ASC" hint="Sort Order">
 	    <cfargument name="nd" required="no" default="0">
 	    <cfargument name="_search" required="no" default="false" hint="Whether search is performed by user on data grid">
-	    <!---
-	    <cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
-	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
-	    <cfargument name="searchString" required="no" default="" hint="Search Text">
-	    --->
 	    <cfargument name="filters" required="no" default="">
 		
 		<cfset var arrSW = ArrayNew(1)>
@@ -43,38 +38,6 @@
                 <cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">
             </cfcatch>
         </cftry>
-        
-        <!---
-		<cfif Arguments._search>
-			<cfset strSearch = buildSearchString(Arguments.searchField,Arguments.searchOper,Arguments.searchString)>
-			<cfset blnSearch = true>
-			<cftry>
-				<cfquery name="qSelSW" datasource="#session.dbsource#" result="res">
-					select *
-					From mp_software
-					WHERE 
-						#PreserveSingleQuotes(strSearch)#
-				</cfquery>
-				
-                <cfcatch type="any">
-					<cfset blnSearch = false>					
-					<cfset strMsgType = "Error">
-					<cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">					
-				</cfcatch>		
-			</cftry>
-		<cfelse>
-            <cfquery name="qSelSW" datasource="#session.dbsource#" result="res">
-                select *
-				From mp_software
-                Where 0=0
-                <cfif blnSearch>
-                    AND 
-                        #PreserveSingleQuotes(strSearch)#
-                </cfif>
-                ORDER BY #sidx# #sord#				
-            </cfquery>
-		</cfif>
-        --->
 
 		<cfset records = qSelSW>
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
