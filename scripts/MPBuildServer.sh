@@ -244,7 +244,7 @@ clear
 MP_OSSL_DIR=${MPSERVERBASE}/lib/openssl
 
 SSL_SW=`find "${SRC_DIR}" -name "openssl"* -type f -exec basename {} \; | head -n 1`
-mkdir ${BUILDROOT}/openssl
+mkdir -p ${BUILDROOT}/openssl
 tar xvfz ${SRC_DIR}/${SSL_SW} --strip 1 -C ${BUILDROOT}/openssl
 
 if [ -d "${MP_OSSL_DIR}" ]; then
@@ -273,7 +273,7 @@ MP_APR_DIR=${MPSERVERBASE}/lib/apr
 APR_SW=`find "${SRC_DIR}" -name "apr-"* -type f -exec basename {} \; | head -n 1`
 
 # APR
-mkdir ${BUILDROOT}/apr
+mkdir -p ${BUILDROOT}/apr
 tar xvfz ${SRC_DIR}/${APR_SW} --strip 1 -C ${BUILDROOT}/apr
 cd ${BUILDROOT}/apr
 
