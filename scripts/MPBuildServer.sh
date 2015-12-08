@@ -346,7 +346,7 @@ rm -rf "${MPSERVERBASE}/conf/app/.wsl/manual"
 cp -r "${MPSERVERBASE}"/conf/app/wsl/* "${MPSERVERBASE}"/conf/app/.wsl
 cp -r "${MPSERVERBASE}"/conf/app/mods/wsl/* "${MPSERVERBASE}"/conf/app/.wsl
 
-cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/wsl_tmp/WEB-INF/lib/systemcommand.jar"
+cp -r "${MPSERVERBASE}/conf/lib/systemcommand.jar" "${MPSERVERBASE}/conf/app/.wsl/WEB-INF/lib/systemcommand.jar"
 chmod -R 0775 "${MPSERVERBASE}/conf/app/.wsl"
 chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.wsl"
 jar cf "${MPSERVERBASE}/conf/app/war/wsl/mpws.war" -C "${MPSERVERBASE}/conf/app/.wsl" .
@@ -413,7 +413,7 @@ LOCATION="Country"
 
 cd /Library/MacPatch/Server/conf/apacheCerts
 OPTS=(/C="$COUNTRY"/ST="$STATE"/L="$LOCATION"/O="$ORG"/OU="$USER"/CN="$DOMAIN"/emailAddress="$EMAIL")
-COMMAND=(openssl req -new -x509 -nodes -days 999 -subj "${OPTS[@]}" -newkey rsa:2048 -keyout server.key -out server.crt)
+COMMAND=(openssl req -new -sha256 -x509 -nodes -days 999 -subj "${OPTS[@]}" -newkey rsa:2048 -keyout server.key -out server.crt)
 
 "${COMMAND[@]}"
 if (( $? )) ; then
