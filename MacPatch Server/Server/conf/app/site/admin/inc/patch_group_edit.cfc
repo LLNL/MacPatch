@@ -216,7 +216,8 @@
 	</cffunction>
 
 	<cffunction name="togglePatch" access="remote" returnformat="json">
-		<cfargument name="id" required="no" hint="Field that was editted">
+		<cfargument name="id" required="true">
+		<cfargument name="gid" required="true">
 
 		<cfset var strMsg = "">
 		<cfset var strMsgType = "Success">
@@ -233,6 +234,8 @@
                     Insert Into mp_patch_group_patches (patch_id,patch_group_id)
                     Values (<cfqueryparam value="#Arguments.id#">,<cfqueryparam value="#Arguments.gid#">)
                 </cfquery>
+                <!--- Record Patch History --->
+				<cfset r = recordHistory(Arguments.id,Arguments.gid,"1")>
             </cfif>
 			<cfif checkIt.RecordCount EQ 1>
                 <cfquery name="remIt" datasource="#session.dbsource#">
@@ -240,6 +243,8 @@
                     where patch_id = <cfqueryparam value="#Arguments.id#">
                 	AND patch_group_id = <cfqueryparam value="#Arguments.gid#">
                 </cfquery>
+                <!--- Record Patch History --->
+				<cfset r = recordHistory(Arguments.id,Arguments.gid,"0")>
             </cfif>
         	<cfcatch type="any">
         		<cfset logError("patch_group_edit","togglePatch",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
@@ -449,6 +454,9 @@
 					Insert Into mp_patch_group_patches (patch_id,patch_group_id)
 					Values (<cfqueryparam value="#Arguments.id#">,<cfqueryparam value="#Arguments.gid#">)
 				</cfquery>
+
+				<!--- Record Patch History --->
+				<cfset r = recordHistory(Arguments.id,Arguments.gid,"1")>
 			</cfif>
 			<cfcatch type="any">
 				<cfset logError("patch_group_edit","selectPatch",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
@@ -458,6 +466,41 @@
 		</cftry>
 	</cffunction>
 
+	<cffunction name="recordHistory" access="private">
+		<cfargument name="patch_id" required="yes">
+		<cfargument name="patchgroup_id" required="yes">
+		<cfargument name="patch_state" required="yes" hint="0=Disabled, 1=Enabled">
+
+		<cftry>
+			<cfset var pName = "NA">
+			<cfset var pType = "NA">
+
+			<cfquery name="qPInfo" datasource="#session.dbsource#" result="res">
+				SELECT DISTINCT id, name, type
+				FROM combined_patches_view
+				Where id = <cfqueryparam value="#Arguments.patch_id#">
+			</cfquery>
+
+			<cfif qPInfo.RecordCount EQ 1>
+				<cfset pName = "#qPInfo.name#">
+				<cfset pType = "#qPInfo.type#">
+			<cfelse>
+				<cfset logError("patch_group_edit","recordHistory","#Arguments.patch_id# was not found.")>
+			</cfif>
+
+			<cfquery name="setIt" datasource="#session.dbsource#">
+				Insert Into mp_patch_selection_history (patch,patchid,patchgroup,patchtype,state,userid)
+				Values ("#pName#",<cfqueryparam value="#Arguments.patch_id#">,<cfqueryparam value="#Arguments.patchgroup_id#">,
+						"#pType#",<cfqueryparam value="#Arguments.patch_state#">,<cfqueryparam value="#session.Username#">)
+			</cfquery>
+
+			<cfcatch type="any">
+				<cfset logError("patch_group_edit","recordHistory",#cfcatch.message#,#cfcatch.Detail#,#cfcatch.type#)>
+			</cfcatch>
+		</cftry>
+
+	</cffunction>
+
 	<cffunction name="logError" access="private">
 		<cfargument name="log" required="yes">
 		<cfargument name="method" required="yes">
@@ -465,9 +508,13 @@
 	    <cfargument name="detail" required="no" default="Detail: NA">
 	    <cfargument name="type" required="no" default="Type: NA">
 		
-		<cflog file="#arguments.log#" type="error" application="no" text="[#arguments.method#] - Type: #arguments.type#">
+		<cfif #arguments.type# NEQ "NA">
+			<cflog file="#arguments.log#" type="error" application="no" text="[#arguments.method#] - Type: #arguments.type#">
+		</cfif>
     	<cflog file="#arguments.log#" type="error" application="no" text="[#arguments.method#] - Message: #arguments.message#">
-        <cflog file="#arguments.log#" type="error" application="no" text="[#arguments.method#] - Detail: #arguments.detail#">
+    	<cfif #arguments.detail# NEQ "NA">
+        	<cflog file="#arguments.log#" type="error" application="no" text="[#arguments.method#] - Detail: #arguments.detail#">
+        </cfif>
 	</cffunction>
 
 </cfcomponent>
