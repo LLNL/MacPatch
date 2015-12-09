@@ -8,6 +8,8 @@
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
 
 <cfsilent>
+	<cfset hasEditRights = false>
+
 	<cfquery name="getSrvInfo" datasource="#session.dbsource#" result="res">
 		select server, useSSL from mp_servers
 		Where isMaster = '1' and active = '1'
@@ -18,23 +20,24 @@
 		<cfset mpServer = "https://localhost" >
 	</cfif>
 </cfsilent>
-<script type="text/javascript">
-	function loadContent(param, id) {
-		$("#dialog").load("available_patches_apple_description.cfm?id="+id);
+
+<script type="text/javascript">	
+	function loadContent(param, id, type) {
+		$("#dialog").load("/admin/inc/patch_description.cfm?id="+id+"&type="+type);
 		$("#dialog").dialog(
 		 	{
 			bgiframe: false,
-			height: 300,
+			height: 400,
 			width: 600,
 			modal: true
 			}
-		);
+		); 
 		$("#dialog").dialog('open');
 	}
 </script>
+
 <script type="text/Javascript">
-	function downloadURL(url)
-	{
+	function downloadURL(url) {
 	  var iframe;
 	  iframe = document.getElementById("hiddenDownloader");
 	  if (iframe === null)
@@ -48,8 +51,7 @@
 	}
 </script>
 <script type="text/Javascript">
-	function load(url,id)
-	{
+	function load(url,id) {
 		window.open(url,'_self') ;
 	}
 </script>
@@ -87,6 +89,7 @@
 <style type="text/css">
     .xAltRow { background-color: #F0F8FF; background-image: none; }
 </style>
+
 <cfif isDefined("url.pgid")>
 	<cfquery name="qInfo" datasource="#session.dbsource#">
         select id, name
@@ -107,8 +110,8 @@
 		Where user_id = '#session.Username#'
 		AND patch_group_id = <cfqueryparam value="#pID#">
 	</cfquery>
-	<cfset hasEditRights = false>
-	<cfif qHasRights.RecordCount EQ 1>
+	
+	<cfif qHasRights.RecordCount EQ 1 OR session.IsAdmin EQ True>
     	<cfset hasEditRights = true>
     </cfif>
 </cfif>
@@ -150,9 +153,10 @@
 					searchOper: function() { return "cn"; }
 				},
 				</cfif>
-				colNames:['','', 'Patch', 'Description', 'Reboot', 'Type', 'Patch State', 'Release Date'],
+				colNames:['','', '', 'Patch', 'Description', 'Reboot', 'Type', 'Patch State', 'Release Date'],
 				colModel :[
 				  {name:'rid',index:'rid', width:36, align:"center", sortable:false, resizable:false, hidden:true, search : false},
+				  {name:'info',index:'info', width:36, align:"center", sortable:false, resizable:false, hidden:false, search : false},
 				  {name:'enbl', index:'enbl', width: 30, align:'center', search : false, sortable:true, sorttype:'int', formatter:'checkbox', editoptions:{value:'1:0'},
 				  formatoptions:{disabled:<cfif session.IsAdmin IS true>false<cfelseif hasEditRights IS true>false<cfelse>true</cfif>}},
 				  {name:'name', index:'name', width:200},
@@ -186,6 +190,11 @@
 					var ids = jQuery("#list").getDataIDs();
 					for(var i=0;i<ids.length;i++){
 						var cl = ids[i];
+						
+						var pType = encodeURI(jQuery("#list").getCell(cl,'type'));
+						infoOpt = "<input type='image' style='padding-left:4px;' onclick=loadContent('info','"+cl+"','"+pType+"'); src='/admin/images/info_16.png'>";
+						jQuery("#list").setRowData(ids[i],{info:infoOpt})
+						
 					}
 					// Auto Enable Disable on Checkbox
                     var iCol = getColumnIndexByName ($(this), 'enbl'), rows = this.rows, i, c = rows.length;
@@ -193,7 +202,7 @@
                         $(rows[i].cells[iCol]).click(function (e) {
                             var id = $(e.target).closest('tr')[0].id,
                                 isChecked = $(e.target).is(':checked');
-
+                            <cfif hasEditRights IS true>
                             $.ajax({
 							    url: "patch_group_edit.cfc"
 							  , type: "get"
@@ -209,6 +218,7 @@
 							    alert(errorThrown);
 							  }
 							});
+							</cfif>
                         });
                     }
 				},
@@ -246,7 +256,15 @@
 				{}, // delete
 				{ sopt:['cn','bw','eq','ne','lt','gt','ew'], closeOnEscape: true, multipleSearch: true, closeAfterSearch: true }, // search options
 				{closeOnEscape:true});
-			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
+			$("#list").navButtonAdd("#pager",
+				{	caption:"",
+					title:"Toggle Search Toolbar", 
+					buttonicon:'ui-icon-pin-s', 
+					onClickButton:function(){ mygrid[0].toggleToolbar() 
+				} 
+			});
+
+			<cfif hasEditRights IS true>
 			$("#list").navButtonAdd("#pager",
 				{	caption:"",
 					title:"Save Patch Data",
@@ -279,8 +297,6 @@
 						});
 					}
 			});
-
-			<cfif session.IsAdmin IS true>
 			$("#list").navButtonAdd('#pager',{
 				caption:"Select All",
 				buttonicon:"ui-icon-gear",
@@ -421,6 +437,7 @@
 
 	}
 </script>
+
 <div align="center">
 <table id="list" cellpadding="0" cellspacing="0"></table>
 <div id="pager" style="text-align:center;font-size:11px;"></div>

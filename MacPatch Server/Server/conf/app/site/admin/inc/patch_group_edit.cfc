@@ -82,7 +82,7 @@
 		<cfset i = 1>
 		<cfloop query="qGetPatches" startrow="#start#" endrow="#end#">
         	<cfset selected = #IIF(Enabled EQ "NA",DE('0'),DE('1'))#>
-            <cfset arrUsers[i] = [#id#, #selected#, #name#, #title#, #Reboot#, #type#, #patch_state#, #DateTimeFormat( postdate, "yyyy-MM-dd HH:mm:ss" )#]>
+            <cfset arrUsers[i] = [#id#, #id#, #selected#, #name#, #title#, #Reboot#, #type#, #patch_state#, #DateTimeFormat( postdate, "yyyy-MM-dd HH:mm:ss" )#]>
 			<cfset i = i + 1>
 		</cfloop>
 

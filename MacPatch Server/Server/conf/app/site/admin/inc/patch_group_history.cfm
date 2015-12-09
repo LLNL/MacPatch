@@ -90,9 +90,9 @@
 	  border-radius: 8px;
 	  font-family: Arial;
 	  color: #ffffff;
-	  font-size: 12px;
+	  font-size: 11px;
 	  background: #5c5c5c;
-	  padding: 6px 10px 6px 10px;
+	  padding: 4px 8px 4px 8px;
 	  border: solid #5c5c5c 1px;
 	  text-decoration: none;
 	}

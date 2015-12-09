@@ -48,16 +48,17 @@
 			{
 				url:'patch_groups.cfc?method=getPatchGroups',
 				datatype: 'json',
-				colNames:['','Patch Group','Owner', 'Is Owner', 'Type', 'Rights', 'Total Clients', 'Release Date'],
+				colNames:['','Patch Group','Owner', 'Is Owner', 'Type', 'Rights', 'Total Clients', 'Release Date', 'Delete'],
 				colModel :[ 
-				  {name:'patch_group_id',index:'patch_group_id', width:30, align:"center", sortable:false, resizable:false, search:false, hidden: false},				  
-				  {name:'name', index:'name', width:120,editable:true}, 
+				  {name:'patch_group_id',index:'patch_group_id', width:14, align:"center", sortable:false, resizable:false, search:false, hidden: false},				  
+				  {name:'name', index:'name', width:200,editable:true}, 
 				  {name:'user_id', index:'user_id', width:90, editable:true, editoptions:{defaultValue: '<cfoutput>#session.Username#</cfoutput>'}},
-				  {name:'is_owner', index:'is_owner', width:90, align:"left", hidden: true},
-				  {name:'type', index:'type', width:50, align:"center",editable:true,edittype:"select", editoptions:{value:"0:Production;1:QA;2:Dev"}},
+				  {name:'is_owner', index:'is_owner', width:60, align:"left", hidden: true},
+				  {name:'type', index:'type', width:60, align:"center",editable:true,edittype:"select", editoptions:{value:"0:Production;1:QA;2:Dev"}},
 				  {name:'rights', index:'rights', width:90, align:"left", hidden: true},
-				  {name:'cTotal', index:'cTotal', width:30, align:"center"},
-				  {name:'mdate', index:'mdate', width:70, align:"center", hidden: true}
+				  {name:'cTotal', index:'cTotal', width:60, align:"center"},
+				  {name:'mdate', index:'mdate', width:70, align:"center", hidden: true},
+				  {name:'pgrm',index:'pgrm', width:14, align:"center", sortable:false, resizable:false, search:false, hidden: false},
 				],
 				altRows:true,
 				altclass:'xAltRow',
@@ -82,18 +83,20 @@
 					for(var i=0;i<ids.length;i++){ 
 						var cl = ids[i];
 						var myCellData = encodeURI(jQuery("#list").getCell(cl,'rights'));
-						option = "<input type=\'image\' style=\'padding-left:4px;\' onclick=load(\'patch_group_view.cfm?pgid="+ids[i]+"\') src=\'/admin/images/info_16.png\'>";
+						//option = "<input type=\'image\' style=\'padding-left:4px;\' onclick=load(\'patch_group_view.cfm?pgid="+ids[i]+"\') src=\'/admin/images/info_16.png\'>";
 						if (myCellData >= 1) {
-							option += "<input type=\'image\' style=\'padding-left:4px;\' onclick=load(\'patch_group_edit.cfm?pgid="+ids[i]+"\') src=\'/admin/images/edit_16.png\'>";
+							option = "<input type=\'image\' style=\'padding-left:4px;\' onclick=load(\'patch_group_edit.cfm?pgid="+ids[i]+"\') src=\'/admin/images/edit_16.png\'>";
 						} else {
-							option += "<img class=\'dimImg\' style=\'padding-left:4px;\') src=\'/admin/images/edit_16.png\'>";
+							//option = "<img class=\'dimImg\' style=\'padding-left:4px;\') src=\'/admin/images/edit_16.png\'>";
+							option = "<input type=\'image\' style=\'padding-left:4px;\' onclick=load(\'patch_group_edit.cfm?pgid="+ids[i]+"\') src=\'/admin/images/info_16.png\'>"
 						}
 						if (myCellData >= 2) {
-							option += "<input type=\'image\' style=\'padding-left:4px;\' onclick=jQuery(\'#list\').jqGrid(\'delGridRow\',\'" + ids[i] + "\',{reloadAfterSubmit:false}); src=\'/admin/images/delete_16.png\'>";
+							remove = "<input type=\'image\' style=\'padding-left:4px;\' onclick=jQuery(\'#list\').jqGrid(\'delGridRow\',\'" + ids[i] + "\',{reloadAfterSubmit:false}); src=\'/admin/images/delete_16.png\'>";
 						} else {
-							option += "<img class=\'dimImg\' style=\'padding-left:4px;\') src=\'/admin/images/delete_16.png\'>";
+							remove = "<img class=\'dimImg\' style=\'padding-left:4px;\') src=\'/admin/images/delete_16.png\'>";
 						}
-						jQuery("#list").setRowData(ids[i],{patch_group_id:option})
+						//remove = "<img class=\'dimImg\' style=\'padding-left:4px;\') src=\'/admin/images/delete_16.png\'>";
+						jQuery("#list").setRowData(ids[i],{patch_group_id:option,pgrm:remove})
 					} 
 				},
 				onSelectRow: function(id)
