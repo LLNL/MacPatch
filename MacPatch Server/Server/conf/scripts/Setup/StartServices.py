@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 2.8.x
   
-  Script Version 1.8.0
+  Script Version 1.8.1
 '''
 
 import os
@@ -114,7 +114,7 @@ def linuxLoadServices(service):
 	_services = None
 	_servicesC = None
 	
-	if service == "All":
+	if service.lower() == "all":
 		_services = lnxServices
 		_servicesC = lnxCronSrvs
 	else:
@@ -138,7 +138,7 @@ def linuxUnLoadServices(service):
 	_services = None
 	_servicesC = None
 	
-	if service == "All":
+	if service.lower() == "all":
 		_services = lnxServices
 		_servicesC = lnxCronSrvs
 	else:
@@ -198,12 +198,14 @@ def removeCronJob(comment):
 	for job in cron:
 		if job.comment == comment:
 			print "Removing Cron Job" + comment
-			cron.remove (job)
+			cJobRm = raw_input('Are you sure you want to remove this cron job (Y/N)?')
+			if cJobRm.lower() == "y" or cJobRm.lower() == "yes":
+				cron.remove (job)
 
 def osxLoadServices(service):
 	_services = list()
 	
-	if service == "All":
+	if service.lower() == "all":
 		_services = macServices
 	else:
 		if service in macServices:
@@ -237,7 +239,7 @@ def osxLoadServices(service):
 def osxUnLoadServices(service):
 
 	_services = []
-	if service == "All":
+	if service.lower() == "all":
 		_services = macServices
 	else:
 		if service in macServices:
