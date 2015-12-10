@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 2.8.x
   
-  Script Version 1.8.1
+  Script Version 1.8.5
 '''
 
 import os
@@ -46,7 +46,7 @@ os_type = platform.system()
 system_name = platform.uname()[1]
 dist_type = "Mac"
 macServices=["gov.llnl.mp.tomcat.plist","gov.llnl.mp.invd.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.rsync.plist","gov.llnl.mp.sync.plist"]
-lnxServices=["MPApache","MPTomcat","MPInventoryD"]
+lnxServices=["MPTomcat","MPInventoryD"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader"]
 gUID = 79
 gGID = 70
@@ -158,18 +158,44 @@ def linuxUnLoadServices(service):
 			removeCronJob(srvs)
 
 def linuxLoadInitServices(service):
-	# Load Init Services
-	_initFile = "/etc/init.d/"+service
-	if os.path.exists(_initFile):
-		print "Loading service "+service
-		os.system("/etc/init.d/"+service+" start")
+	
+	print "Loading service "+service
+
+	if platform.dist()[0] == "Ubuntu":
+		_initFile = "/etc/init.d/"+service
+		if os.path.exists(_initFile):
+			os.system("/etc/init.d/"+service+" start")
+		else:
+			print "Unable to find " + _initFile
+
+	elif platform.dist()[0] == "redhat":
+		serviceName=service+".service"
+		etcServiceConf="/etc/systemd/system/"+serviceName
+
+		if os.path.exists(etcServiceConf):
+			os.system("/bin/systemctl start "+serviceName)
+		else:
+			print "Unable to find " + etcServiceConf
 
 def linuxUnLoadInitServices(service):
 	# UnLoad Init Services
-	_initFile = "/etc/init.d/"+service
-	if os.path.exists(_initFile):
-		print "UnLoading service "+service
-		os.system("/etc/init.d/"+service+" stop")
+	print "UnLoading service "+service
+
+	if platform.dist()[0] == "Ubuntu":
+		_initFile = "/etc/init.d/"+service
+		if os.path.exists(_initFile):
+			os.system("/etc/init.d/"+service+" stop")
+		else:
+			print "Unable to find " + _initFile
+
+	elif platform.dist()[0] == "redhat":
+		serviceName=service+".service"
+		etcServiceConf="/etc/systemd/system/"+serviceName
+
+		if os.path.exists(etcServiceConf):
+			os.system("/bin/systemctl stop "+serviceName)
+		else:
+			print "Unable to find " + etcServiceConf
 
 def linuxLoadCronServices(service):
 	from crontab import CronTab
@@ -233,9 +259,7 @@ def osxLoadServices(service):
 				
 			else:
 				print srvc + " was not found in MacPatch Server directory. Service will not load."
-			
-
-			
+						
 def osxUnLoadServices(service):
 
 	_services = []
@@ -415,28 +439,37 @@ def setupServices():
 	return srvsList
 
 def linkStartupScripts(service):
-	_initFile = "/etc/init.d/"+service
-	if not os.path.exists(_initFile):
-		if platform.dist()[0] == "Ubuntu":
-			script = "/Library/MacPatch/Server/conf/init.d/Ubuntu/"+service
-		else:	
-			script = "/Library/MacPatch/Server/conf/init.d/"+service
+	
+	print "Copy Startup Script for "+service
 
-		link = "/etc/init.d/"+service 
-		os.chown(script, 0, 0)
-		os.chmod(script, 0755)
-		os.symlink(script,link)
-		if platform.dist()[0] == "redhat":
-			os.system("/bin/systemctl enable "+service)
+	# Link or copy startup script/conf
+	if platform.dist()[0] == "Ubuntu":
+		_initFile = "/etc/init.d/"+service
 
-		elif platform.dist()[0] == "Ubuntu":
-			os.system("update-rc.d "+service+" defaults")
-
+		if os.path.exists(_initFile):
+			return
 		else:
-			print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."
-				
-		print "Copy Startup Script for "+service
-		
+			script = "/Library/MacPatch/Server/conf/init.d/Ubuntu/"+service
+			link = "/etc/init.d/"+service 
+
+			os.chown(script, 0, 0)
+			os.chmod(script, 0755)
+			os.symlink(script,link)
+
+		os.system("update-rc.d "+service+" defaults")
+
+	elif platform.dist()[0] == "redhat":
+
+		serviceName=service+".service"
+		serviceConf="/Library/MacPatch/Server/conf/systemd"+serviceName
+		etcServiceConf="/etc/systemd/system/"+serviceName
+		shutil.copy2(serviceConf, etcServiceConf)
+
+		os.system("/bin/systemctl enable "+serviceName)
+
+	else:
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		return
 
 
 def main():

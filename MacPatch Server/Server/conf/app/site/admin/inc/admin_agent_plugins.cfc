@@ -1,4 +1,7 @@
-<cfcomponent output="false">
+<cfcomponent output="false" extends="jqGrid">
+
+	<cfset this.logName = "admin_agent_plugins" />
+
 	<cffunction name="getAgentPlugins" access="remote" returnformat="json">
 		<cfargument name="page" required="no" default="1" hint="Page user is on">
 	    <cfargument name="rows" required="no" default="10" hint="Number of Rows to display per page">
@@ -122,45 +125,4 @@
 		<cfreturn strReturn>
 	</cffunction>
 
-    <cffunction name="buildSearchString" access="private" hint="Returns the Search Opeator based on Short Form Value">
-		<cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
-	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
-	    <cfargument name="searchString" required="no" default="" hint="Search Text">
-
-		<cfset var searchVal = "">
-        <cfscript>
-            switch(Arguments.searchOper)
-            {
-                case "eq":
-                    searchVal = "#Arguments.searchField# = '#Arguments.searchString#'";
-                    break;
-                case "ne":
-                    searchVal = "#Arguments.searchField# <> '#Arguments.searchString#'";
-                    break;
-                case "lt":
-                    searchVal = "#Arguments.searchField# < '#Arguments.searchString#'";
-                    break;
-                case "le":
-                    searchVal = "#Arguments.searchField# <= '#Arguments.searchString#'";
-                    break;
-                case "gt":
-                    searchVal = "#Arguments.searchField# > '#Arguments.searchString#'";
-                    break;
-                case "ge":
-                    searchVal = "#Arguments.searchField# >= '#Arguments.searchString#'";
-                    break;
-                case "bw":
-                    searchVal = "#Arguments.searchField# LIKE '#Arguments.searchString#%'";
-                    break;
-                case "ew":
-                    //Purposefully breaking ends with operator (no leading ')
-                    searchVal = "#Arguments.searchField# LIKE %#Arguments.searchString#'";
-                    break;
-                case "cn":
-                    searchVal = "#Arguments.searchField# LIKE '%#Arguments.searchString#%'";
-                    break;
-            }
-        </cfscript>
-		<cfreturn searchVal>
-	</cffunction>
 </cfcomponent>
