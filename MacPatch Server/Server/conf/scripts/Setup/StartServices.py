@@ -45,7 +45,7 @@ MP_CONF_FILE = MP_SRV_CONF+"/etc/siteconfig.json"
 os_type = platform.system()
 system_name = platform.uname()[1]
 dist_type = "Mac"
-macServices=["gov.llnl.mp.tomcat.plist","gov.llnl.mp.invd.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.rsync.plist","gov.llnl.mp.sync.plist"]
+macServices=["gov.llnl.mp.tomcat.plist","gov.llnl.mp.invd.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.rsync.plist","gov.llnl.mp.sync.plist","gov.llnl.mp.pfctl.plist"]
 lnxServices=["MPTomcat","MPInventoryD"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader"]
 gUID = 79
@@ -435,6 +435,18 @@ def setupServices():
 			setupRsyncFromMaster()
 			if os_type == 'Darwin':
 				srvsList.append('gov.llnl.mp.sync.plist')
+
+	# Firewall Config / Port Forwarding
+	if os_type == 'Darwin':
+		_PFLOAD = 'Y'
+		print "MacPatch Tomcat Runs on several tcp ports (8080,8443,2600)"
+		print "Port forwading forwards the following ports"
+		print "80 -> 8080"
+		print "443 -> 8443"
+		pfConf = raw_input('Enable port forwading (Recommended) [%s]' % _PFLOAD)
+		if pfConf.lower() == 'y':
+			srvsList.append('gov.llnl.mp.pfctl.plist')
+
 
 	return srvsList
 

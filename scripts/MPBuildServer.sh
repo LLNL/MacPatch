@@ -430,9 +430,7 @@ fi
 # ------------------------------------------------------------
 # Firewall TCP port redirect 8443 to 443, 8080 to 80
 # ------------------------------------------------------------
-if $USEMACOS; then
-	echo "Setup Mac OS X port forwarding..."
-else
+if $USELINUX; then
 	if $USERHEL; then
 		echo "Setup Redhat port forwarding..."
 	fi
