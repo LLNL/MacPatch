@@ -444,6 +444,7 @@ def setupServices():
 		print "80 -> 8080"
 		print "443 -> 8443"
 		pfConf = raw_input('Enable port forwading (Recommended) [%s]' % _PFLOAD)
+		pfConf = pfConf or _PFLOAD
 		if pfConf.lower() == 'y':
 			srvsList.append('gov.llnl.mp.pfctl.plist')
 
