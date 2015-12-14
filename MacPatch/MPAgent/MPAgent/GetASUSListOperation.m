@@ -24,7 +24,6 @@
  */
 
 #import "GetASUSListOperation.h"
-
 #import "MPAgent.h"
 #import "MPDefaultsWatcher.h"
 
@@ -115,8 +114,8 @@
         }
         
         NSError *slErr = nil;
-        MPServerList *mpsl = [[MPServerList alloc] init];
-        BOOL isCurrent = [mpsl usingCurrentMPHostList:&slErr];
+        MPSUServerList *mpsl = [[MPSUServerList alloc] init];
+        BOOL isCurrent = [mpsl usingCurrentList:&slErr];
         if (slErr) {
             qlerror(@"%@",slErr.localizedDescription);
             return;
@@ -124,7 +123,7 @@
         
         if (isCurrent == NO) {
             slErr = nil;
-            BOOL didGetList = [mpsl getServerListFromServer:&slErr];
+            BOOL didGetList = [mpsl getListFromServer:&slErr];
             if (slErr) {
                 qlerror(@"%@",slErr.localizedDescription);
                 return;

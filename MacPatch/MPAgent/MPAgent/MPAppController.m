@@ -39,6 +39,7 @@
 #import "Profiles.h"
 #import "GetServerListOperation.h"
 #import "PostFailedWSRequests.h"
+#import "GetASUSListOperation.h"
 
 @implementation MPAppController
 
@@ -101,6 +102,9 @@
                 break;
             case 11:
                 [self runPostFailedWSRequests];
+                break;
+            case 13:
+                [self runGetSUServerListOperation];
                 break;
 			case 99:
 				// Run as daemon
@@ -265,6 +269,10 @@
                                             serverListOp = [[GetServerListOperation alloc] init];
                                             [queue addOperation:serverListOp];
                                             serverListOp = nil;
+                                        } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPSUSrvList"]) {
+                                            suServerListOp = [[GetASUSListOperation alloc] init];
+                                            [queue addOperation:suServerListOp];
+                                            suServerListOp = nil;
                                         } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPWSPost"]) {
                                             postFailedWSRequestsOp = [[PostFailedWSRequests alloc] init];
                                             [queue addOperation:postFailedWSRequestsOp];
@@ -434,6 +442,23 @@
         [queue waitUntilAllOperationsAreFinished];
     }
 
+    exit(0);
+}
+
+- (void)runGetSUServerListOperation
+{
+    suServerListOp = [[GetASUSListOperation alloc] init];
+    [queue addOperation:suServerListOp];
+    suServerListOp = nil;
+    
+    if ([NSThread isMainThread]) {
+        while ([[queue operations] count] > 0) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+    } else {
+        [queue waitUntilAllOperationsAreFinished];
+    }
+    
     exit(0);
 }
 

@@ -43,9 +43,6 @@
 
 // Audit Data Collection
 - (int)collectAuditTypeData;
-- (NSString *)replaceXMLVariables:(NSString *)aFilePath;
-- (BOOL)validateDataMgrXML:(NSString *)aFilePath;
-
 
 // Parse Profiler Data
 - (NSArray *)parseHardwareOverview:(NSString *)fileToParse;

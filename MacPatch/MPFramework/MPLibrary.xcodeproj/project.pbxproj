@@ -99,7 +99,7 @@
 		8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F50CB7C199D5DD0006AC537 /* MPKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F50CB7D199D5DD0006AC537 /* MPKeychain.m */; };
 		8F72BBB21BA3A16800BDCABB /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F72BBAF1BA39E7C00BDCABB /* libcrypto.a */; };
-		8FC5C8B11BBEF11B00F18BD8 /* MPSUServerList.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC5C8AF1BBEF11B00F18BD8 /* MPSUServerList.h */; };
+		8FC5C8B11BBEF11B00F18BD8 /* MPSUServerList.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC5C8AF1BBEF11B00F18BD8 /* MPSUServerList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FC5C8B21BBEF11B00F18BD8 /* MPSUServerList.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC5C8B01BBEF11B00F18BD8 /* MPSUServerList.m */; };
 		8FE03DCC1B60020B005D39EE /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4B1F2816DE639100E15A9E /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE03DCD1B60020E005D39EE /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2916DE639100E15A9E /* NSData+Base64.m */; };
@@ -619,7 +619,6 @@
 				8F4B1E4816DD1D8C00E15A9E /* MacPatch.h in Headers */,
 				8F4B1EA816DD267B00E15A9E /* lcl.h in Headers */,
 				8F4B1EBE16DD5FB400E15A9E /* NSString+Hash.h in Headers */,
-				8FC5C8B11BBEF11B00F18BD8 /* MPSUServerList.h in Headers */,
 				8FE6EEB81B9A035800E8F8E1 /* InventoryPlugin.h in Headers */,
 				8F4B1EC416DD5FDD00E15A9E /* NSFileManager+Helper.h in Headers */,
 				8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */,
@@ -635,6 +634,7 @@
 				8FE03DCC1B60020B005D39EE /* NSData+Base64.h in Headers */,
 				8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */,
 				8F30D8791938FB3F006E55C2 /* MPNetReach.h in Headers */,
+				8FC5C8B11BBEF11B00F18BD8 /* MPSUServerList.h in Headers */,
 				8FF93F9E199A9205005A4EEB /* RSACrypto.h in Headers */,
 				8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */,
 				8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */,

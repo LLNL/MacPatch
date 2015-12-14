@@ -2185,7 +2185,7 @@
         Type: Public/Remote
         Description: Get SU Server List
     --->
-    <cffunction name="getSUServerList" access="remote" returnType="struct" returnFormat="json" output="false">
+    <cffunction name="getSUServerList" access="remote" returnType="any" returnFormat="json" output="false">
         <cfargument name="clientID" required="false" default="0" />
         <cfargument name="listID" required="false" default="1" />
 
@@ -2209,19 +2209,23 @@
         <cfset _server.version = "0">
         <cfset _server.servers = "">
         <cfset _server.id = "">
-        <cfset response.result = serializeJSON(_server)>
-
+        <cfset response.result = _server>
+        
         <cftry>
             <cfif validClientID(arguments.clientID) EQ true>
                 <cfquery datasource="#this.ds#" name="qGetServerList">
                     Select * from mp_asus_catalog_list
                     Where name = 'Default' AND listid = <cfqueryparam value="#arguments.listID#">
                 </cfquery>
+
                 <cfif qGetServerList.RecordCount EQ 1>
                     <cfset _server.name = qGetServerList.name>
                     <cfset _server.version = qGetServerList.version>
                     <cfset _server.id = qGetServerList.listid>
                     <cfset _listID = qGetServerList.listid>
+                <cfelse>
+                    <!--- Should not get here, with a configured list --->
+                    <cfreturn #response#>
                 </cfif>
 
                 <!--- Get a List of all the OS --->
@@ -2230,26 +2234,29 @@
                 </cfquery>
                 
                 <cfif qGetOSVersions.RecordCount GTE 1>
-                    <cfset _Servers = arrayNew(1)>
+                    <cfset _SUSServers = arrayNew(1)>
 
                     <cfoutput query="qGetOSVersions">
-                        <cfset _result = {} />
-                        <cfset _result[ "os" ] = "#os_minor#" />
-                        <cfset _result[ "servers" ] = "" />
+                        <cfset _resultOS = {} />
+                        <cfset _resultOS[ "os" ] = "#os_minor#" />
+                        <cfset _resultOS[ "servers" ] = "" />
                         <cfset res = serverListForOSVersion(os_minor)>
-                        <cfif res NEQ "ERR" OR res NEQ "NONE">
-                            <cfset _result[ "servers" ] = res />
-                            <cfset a = ArrayAppend(_Servers,_result)>
+
+                        <!--- <cfif res NEQ "ERR" OR res NEQ "NONE"> --->
+                        <cfif IsArray(res)>
+                            <cfset _resultOS[ "servers" ] = res />
+                            <cfset a = ArrayAppend(_SUSServers,_resultOS)>
                         </cfif> 
+
                     </cfoutput>
-                    
-                    <cfset _server.servers = _Servers>
+                    <cfset _server.servers = _SUSServers>
                 <cfelse>
                     <cfset response.errorno = "2">
                     <cfset response.errormsg = "No servers found.">
                 </cfif>
-
-                <cfset response.result = serializeJSON(_server)>
+                
+                <cfset response.result = _server>
+                
             <cfelse>
                 <cfset response.errorno = "3">
                 <cfset response.errormsg = "Invalid data.">
@@ -2340,7 +2347,7 @@
 
                 <cfoutput query="qGetServers">
                     <cfset _result = {} />
-                    <cfset _result[ "CataLogURL" ] = "#catalog_url#" />
+                    <cfset _result[ "CatalogURL" ] = "#catalog_url#" />
                     <cfif proxy EQ "1">
                         <cfset _result[ "serverType" ] = "1" />
                     <cfelse>
@@ -2348,6 +2355,8 @@
                     </cfif>
                     <cfset a = ArrayAppend(_Servers,_result)>
                 </cfoutput>
+
+                <cfreturn _Servers>
             <cfelse>
                 <cfreturn "NONE">
             </cfif>

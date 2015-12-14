@@ -134,7 +134,8 @@
     if (!_curInfo) {
         
     }
-    NSMutableDictionary *jData = [NSMutableDictionary dictionaryWithDictionary:[mpws getMPServerList:&wsErr]];
+
+    NSMutableDictionary *jData = [NSMutableDictionary dictionaryWithDictionary:[mpws getSUSServerList:&wsErr]];
     if (wsErr) {
         qlerror(@"%@",wsErr.localizedDescription);
         return NO;
