@@ -31,7 +31,13 @@
 	font-weight:bold;
   }
   
-	.dlTitle {
+	.dlTitleLeft {
+		font-size: 12px;
+		text-align:left;
+		margin-bottom:10px;
+	}
+
+	.dlTitleRight {
 		font-size: 12px;
 		text-align:right;
 		margin-bottom:10px;
@@ -289,9 +295,14 @@
 		} 	
 	);
 </script>
-<div class="dlTitle">
-To upload a new version of the MacPatch agent please download the MacPatch Agent Uploader.<br>
-<a class="btn medium gray" href="/mp-content/tools/MPAgentUploader.app.zip" target="_new">Download</a>
+<div>
+	<div class="dlTitleLeft">
+		<a class="btn medium gray" href="/mp-content/clients/MPClientInstall.pkg.zip" target="_new">Client Download</a>
+	</div>
+	<div class="dlTitleRight">
+		To upload a new version of the MacPatch agent please download the MacPatch Agent Uploader.<br>
+		<a class="btn medium gray" href="/mp-content/tools/MPAgentUploader.app.zip" target="_new">Download</a>
+	</div>
 </div>
 <table id="agent" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="agent_pager"></div>
