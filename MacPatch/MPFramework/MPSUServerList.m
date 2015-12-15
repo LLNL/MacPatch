@@ -69,10 +69,10 @@
 
 - (BOOL)usingCurrentList:(NSError **)err
 {
-    if ([fm fileExistsAtPath:AGENT_SERVERS_PLIST])
+    if ([fm fileExistsAtPath:AGENT_SUS_SERVERS_PLIST])
     {
         
-        NSDictionary *_curFile = [NSDictionary dictionaryWithContentsOfFile:AGENT_SERVERS_PLIST];
+        NSDictionary *_curFile = [NSDictionary dictionaryWithContentsOfFile:AGENT_SUS_SERVERS_PLIST];
         if (![_curFile objectForKey:@"version"] || ![_curFile objectForKey:@"id"]) {
             qlerror(@"Error, could not find objects version and listid.");
             return NO;
@@ -94,7 +94,7 @@
         
         NSError *wsErr = nil;
         MPWebServices *mpws = [[MPWebServices alloc] init];
-        NSDictionary *jData = [mpws getMPServerListVersion:_curVerNo listid:_curLstID error:&wsErr];
+        NSDictionary *jData = [mpws getSUSServerListVersion:_curVerNo listid:_curLstID error:&wsErr];
         if (wsErr) {
             qlerror(@"%@",wsErr.localizedDescription);
             return NO;
