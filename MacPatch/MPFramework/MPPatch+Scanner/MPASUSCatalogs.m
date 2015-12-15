@@ -73,10 +73,13 @@
         if ([[osVerInfo objectForKey:@"minor"] intValue] >= 9)
         {
             // For Mac OS X 10.9
+            qlinfo(@"Setting catalog using softwareupdate, to %@",aCatalogURL);
             [NSTask launchedTaskWithLaunchPath:@"/usr/sbin/softwareupdate" arguments:[NSArray arrayWithObjects:@"--set-catalog",aCatalogURL,nil]];
         }
         else
         {
+            qlinfo(@"Setting catalog using writeToFile.");
+            qldebug(@"%@",tmpDefaults);
             [tmpDefaults writeToFile:ASUS_PLIST_PATH atomically:NO];
         }
 	}
@@ -145,12 +148,15 @@
         }
     }
     
+    qldebug(@"SU Catalogs for OS: %@",catalogs);
+    
     NSString *newCatalogURL = NULL;
     if ([catalogs count] > 0 ) {
         for(int i=0;i<[catalogs count];i++) {
             // Check to make sure host is reachable and we get a vaild return code
             if ([mpNetworkUtils isHostURLReachable:[catalogs objectAtIndex:i]]) {
                 if ([mpNetworkUtils isURLValid:[catalogs objectAtIndex:i] returnCode:200]) {
+                    qldebug(@"SU Catalog verified: %@",[catalogs objectAtIndex:i]);
                     newCatalogURL = [catalogs objectAtIndex:i];
                     break;
                 } else {
