@@ -130,10 +130,10 @@
     // Get Array of apporpriate OS Catalogs
     NSDictionary *osVers = [MPSystemInfo osVersionOctets];
     NSString *osMinor = [[osVers objectForKey:@"minor"] stringValue];
-    if ([susDict objectForKey:@"server"]) {
-        if ([[susDict objectForKey:@"server"] isKindOfClass:[NSArray class]]) {
-            for (NSDictionary *server in [susDict objectForKey:@"server"]) {
-                if ([[server objectForKey:@"os"] isEqualToString:osMinor]) {
+    if ([susDict objectForKey:@"servers"]) {
+        if ([[susDict objectForKey:@"servers"] isKindOfClass:[NSArray class]]) {
+            for (NSDictionary *server in [susDict objectForKey:@"servers"]) {
+                if ([[[server objectForKey:@"os"] stringValue] isEqualToString:osMinor]) {
                     if ([server objectForKey:@"servers"]) {
                         if ([[server objectForKey:@"servers"] isKindOfClass:[NSArray class]]) {
                             for (NSDictionary *item in [server objectForKey:@"servers"]) {
@@ -141,7 +141,6 @@
                             }
                         }
                     }
-                    
                     break;
                 }
             }
