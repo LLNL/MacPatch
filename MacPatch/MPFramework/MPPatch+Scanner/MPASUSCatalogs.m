@@ -70,9 +70,9 @@
 	@try
     {
         NSDictionary *osVerInfo = [MPSystemInfo osVersionOctets];
-        if ([[osVerInfo objectForKey:@"minor"] intValue] >= 9)
+        if ([[osVerInfo objectForKey:@"minor"] intValue] >= 10)
         {
-            // For Mac OS X 10.9
+            // For Mac OS X 10.10 or higher
             qlinfo(@"Setting catalog using softwareupdate, to %@",aCatalogURL);
             [NSTask launchedTaskWithLaunchPath:@"/usr/sbin/softwareupdate" arguments:[NSArray arrayWithObjects:@"--set-catalog",aCatalogURL,nil]];
         }
