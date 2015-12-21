@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 2.0.0
+# Version: 2.0.1
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -24,6 +24,7 @@
 # 1.6.5:	More ubuntu updates
 # 2.0.0:	Apache HTTPD removed
 #			Single Tomcat Instance, supports webservices and console
+# 2.0.1:	Updated java version check
 #
 # -------------------------------------------------------------
 MPBASE="/Library/MacPatch"
@@ -469,7 +470,7 @@ if $USELINUX; then
 	VERSION=`expr "$JAVA_VER_RAW" : '.*"\(1.[0-9\.]*\)["_]'`
 	let VERMINOR=`echo "$VERSION" | awk -F. '{print $2}'`
 
-	if [ $VERMINOR -le 8 ]; then
+	if [ $VERMINOR -le 7 ]; then
 		echo
 		echo "The version of Java installed is $VERSION"
 		echo "MacPatch has a minimum Java requirement of Java 1.8."
