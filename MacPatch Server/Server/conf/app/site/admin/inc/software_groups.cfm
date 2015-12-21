@@ -32,9 +32,10 @@
 			{
 				url:'software_groups.cfc?method=getMPSoftwareGroups', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
-				colNames:['', 'Name', 'Description', 'Owner', 'State', 'Modify Date'],
+				colNames:['', 'Filter', 'Name', 'Description', 'Owner', 'State', 'Modify Date'],
 				colModel :[
 				  {name:'gid',index:'gid', width:22, align:"center", sortable:false, resizable:false, search:false},
+				  {name:'gfid',index:'gfid', width:22, align:"center", sortable:false, resizable:false, search:false},
 				  {name:'gName',index:'gName', width:120, align:"left", editable: true, edittype:'text'},
 				  {name:'gDescription',index:'gDescription', width:180, align:"left", editable: true, edittype:'text'},
 				  <cfif session.IsAdmin IS true>
@@ -69,12 +70,15 @@
 					for(var i=0;i<ids.length;i++){
 						var cl = ids[i];
 						var xl = jQuery("#list").getCell(ids[i],'gid'); // get tuuid
+						var el = jQuery("#list").getCell(ids[i],'gfid'); // get tuuid
 						<cfif session.IsAdmin IS true>
 						edit = "<input type='image' style='padding-left:0px;' onclick=load('software_group_edit.cfm?group="+xl+"'); src='/admin/images/edit_16.png'>";
+						filter = "<input type='image' style='padding-left:0px;' onclick=load('software_groups_filter.cfm?group="+xl+"'); src='/admin/images/funnel-pencil-icon_16.png'>";
 						<cfelse>
 						edit = "<input type='image' style='padding-left:4px;' onclick=load('software_group_edit.cfm?group="+xl+"'); src='/admin/images/info_16.png'>";
+						filter = "<input type='image' style='padding-left:4px;' onclick=load('software_groups_filter.cfm?group="+xl+"'); src='/admin/images/16x16-filter.png'>";
 						</cfif>
-						jQuery("#list").setRowData(ids[i],{gid:edit})
+						jQuery("#list").setRowData(ids[i],{gid:edit,gfid:filter})
 					}
 				},
 				onSelectRow: function(id)
