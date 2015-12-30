@@ -76,12 +76,10 @@
     --->
     <cffunction name="WSLTest" access="remote" returnType="struct" returnFormat="json" output="false">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = #CreateODBCDateTime(now())# />
+        <cfset response = new response() />
+        <cfset response.result = #CreateODBCDateTime(now())# />
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -91,10 +89,7 @@
     --->
     <cffunction name="clearCache" access="remote" returnType="struct" returnFormat="json" output="false">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cftry>
             <cfobjectcache action="CLEAR">
@@ -103,11 +98,11 @@
                 <cfset l = lErr("clearCache", "#cfcatch.Message#", "#cfcatch.Detail#") />
                 <cfset response.errorno = "1">
                 <cfset response.errormsg = "[clearCache]: #cfcatch.Detail# -- #cfcatch.Message#">
-                <cfreturn response>
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -119,18 +114,16 @@
         <cfargument name="data">
         <cfargument name="type">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cfset aObj = CreateObject( "component", "cfc.client_checkin" ) />
         <cfset res = aObj._base(arguments.data, arguments.type) />
 
-        <cfset response[ "errorno" ] = res.errorCode />
-        <cfset response[ "errormsg" ] = res.errorMessage />
-        <cfset response[ "result" ] = res.result />
-        <cfreturn response>
+        <cfset response.errorno = res.errorCode />
+        <cfset response.errormsg = res.errorMessage />
+        <cfset response.result = res.result />
+
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -142,19 +135,16 @@
         <cfargument name="data">
         <cfargument name="type">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cfset aObj = CreateObject( "component", "cfc.client_checkin" ) />
         <cfset res = aObj._plist(arguments.data, arguments.type) />
 
-        <cfset response[ "errorno" ] = res.errorCode />
-        <cfset response[ "errormsg" ] = res.errorMessage />
-        <cfset response[ "result" ] = res.result />
+        <cfset response.errorno = res.errorCode />
+        <cfset response.errormsg = res.errorMessage />
+        <cfset response.result = res.result />
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -167,10 +157,7 @@
         <cfargument name="clientID">
         <cfargument name="agentUp2DateVer">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetLatestVersion">
@@ -188,7 +175,7 @@
                 <cfset l = lErr("GetAgentUpdaterUpdates", "#cfcatch.Message#", "#cfcatch.Detail#") />
                 <cfset response.errorno = "1">
                 <cfset response.errormsg = "[GetAgentUpdaterUpdates][qGetLatestVersion]: #cfcatch.Detail# -- #cfcatch.Message#">
-                <cfreturn response>
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
@@ -249,8 +236,8 @@
             <cfset update[ "SelfUpdate" ] = #SelfUpdate# />
         </cfif>
 
-        <cfset response[ "result" ] = #update# />
-        <cfreturn response>
+        <cfset response.result = #update# />
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -332,10 +319,7 @@
         <cfargument name="agentVersion" default="0">
         <cfargument name="agentBuild" default="0">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetLatestVersion" maxrows="1">
@@ -353,7 +337,7 @@
                 <cfset l = lErr("GetAgentUpdates", "[GetAgentUpdates][#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
                 <cfset response.errorno = "1">
                 <cfset response.errormsg = "[GetAgentUpdates]: #cfcatch.Detail# -- #cfcatch.Message#">
-                <cfreturn response>
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
@@ -374,7 +358,7 @@
             <cfset l = lErr("GetAgentUpdates", "[qGetLatestVersion][#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
             <cfset response.errorno = "2">
             <cfset response.errormsg = "[GetAgentUpdates]: Found #qGetLatestVersion.RecordCount# records. Should only find 1.">
-            <cfreturn response>
+            <cfreturn response.AsStruct()>
         </cfif>
 
         <!--- If a Version Number is Higher check filter --->
@@ -418,8 +402,8 @@
             <cfset update[ "SelfUpdate" ] = #SelfUpdate# />
         </cfif>
 
-        <cfset response[ "result" ] = #update# />
-        <cfreturn response>
+        <cfset response.result = #update# />
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -457,16 +441,13 @@
         <cfargument name="avAgent" required="true">
         <cfargument name="theArch" required="false" default="x86">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cfif arguments.avAgent NEQ "SEP" AND arguments.avAgent NEQ "SAV">
             <cfset l = lErr("GetAVDefsDate", "[#arguments.clientID#]: Unknown avAgent config. Schema may de out of date.") />
-            <cfset response[ "errorno" ] = "1" />
-            <cfset response[ "errormsg" ] = "[GetAVDefsDate]: Unknown avAgent config. Schema may de out of date." />
-            <cfreturn response>
+            <cfset response.errorno = "1" />
+            <cfset response.errormsg = "[GetAVDefsDate]: Unknown avAgent config. Schema may de out of date." />
+            <cfreturn response.AsStruct()>
         </cfif>
 
         <cftry>
@@ -489,7 +470,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -502,16 +483,13 @@
         <cfargument name="avAgent" required="true">
         <cfargument name="theArch" required="false" default="x86">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cfif arguments.avAgent NEQ "SEP" AND arguments.avAgent NEQ "SAV">
             <cfset l = lErr("GetAVDefsFile", "[#arguments.clientID#]: Unknown avAgent config. Schema may de out of date.") />
-            <cfset response[ "errorno" ] = "1" />
-            <cfset response[ "errormsg" ] = "[GetAVDefsFile]: Unknown avAgent config. Schema may de out of date." />
-            <cfreturn response>
+            <cfset response.errorno = "1" />
+            <cfset response.errormsg = "[GetAVDefsFile]: Unknown avAgent config. Schema may de out of date." />
+            <cfreturn response.AsStruct()>
         </cfif>
 
         <cftry>
@@ -534,7 +512,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -547,10 +525,8 @@
         <cfargument name="PatchGroup" required="yes">
         <cfargument name="revision" required="yes" type="numeric">
     
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = 0 />
+        <cfset response = new response() />
+        <cfset response.result = 0 />
 
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
@@ -563,23 +539,23 @@
             </cfquery>
 
             <cfif qGetGroupID.RecordCount EQ 1>
-                <cfset response[ "result" ] = 1 />
+                <cfset response.result = 1 />
             <cfelse>
                 <cfset l = lErr("GetIsLatestRevisionForPatchGroup", "[qGetGroupID][#arguments.clientID#][PatchGroup=#arguments.PatchGroup#]: Matching data was not found.") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetIsLatestRevisionForPatchGroup][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: Matching data was not found." />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[GetIsLatestRevisionForPatchGroup][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: Matching data was not found." />
+                <cfreturn response.AsStruct()>
             </cfif>
 
             <cfcatch>
                 <cfset l = lErr("GetIsLatestRevisionForPatchGroup", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetIsLatestRevisionForPatchGroup][qGetGroupID]: #cfcatch.Detail# -- #cfcatch.Message#" />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[GetIsLatestRevisionForPatchGroup][qGetGroupID]: #cfcatch.Detail# -- #cfcatch.Message#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -592,10 +568,7 @@
         <cfargument name="PatchGroup" required="yes">
         <cfargument name="Hash" required="yes" type="string">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
@@ -608,23 +581,23 @@
             </cfquery>
 
             <cfif qGetGroupID.RecordCount EQ 1>
-                <cfset response[ "result" ] = "1" />
+                <cfset response.result = "1" />
             <cfelse>
                 <cfset l = lErr("GetIsHashValidForPatchGroup", "[#arguments.clientID#]: No group was found for #arguments.PatchGroup#") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetIsHashValidForPatchGroup][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: No group was found for #arguments.PatchGroup#" />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[GetIsHashValidForPatchGroup][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: No group was found for #arguments.PatchGroup#" />
+                <cfreturn response.AsStruct()>
             </cfif>
 
             <cfcatch>
                 <cfset l = lErr("GetIsHashValidForPatchGroup", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetIsHashValidForPatchGroup][qGetGroupID]: #cfcatch.Detail# -- #cfcatch.Message#" />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[GetIsHashValidForPatchGroup][qGetGroupID]: #cfcatch.Detail# -- #cfcatch.Message#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -661,10 +634,7 @@
         <cfargument name="PatchGroup" required="yes">
         <cfargument name="DataType" required="no" default="JSON" type="string">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
@@ -673,15 +643,15 @@
                 Where name = <cfqueryparam value="#arguments.PatchGroup#">
             </cfquery>
             <cfif qGetGroupID.RecordCount NEQ 1>
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: No group was found for #arguments.PatchGroup#" />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[GetPatchGroupPatches][qGetGroupID][#qGetGroupID.RecordCount#][#arguments.ClientID#][#arguments.PatchGroup#]: No group was found for #arguments.PatchGroup#" />
+                <cfreturn response.AsStruct()>
             </cfif>
             <cfcatch>
                 <cfset l = lErr("GetPatchGroupPatches", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupID]: #cfcatch.Detail# -- #cfcatch.Message#" />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[GetPatchGroupPatches][qGetGroupID]: #cfcatch.Detail# -- #cfcatch.Message#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
@@ -693,25 +663,25 @@
             </cfquery>
 
             <cfif qGetGroupData.RecordCount EQ 0>
-                <cfset response[ "errorno" ] = "0" />
-                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupData]: No group data was found for #arguments.PatchGroup#" />
-                <cfset response[ "result" ] = {"AppleUpdates":[],"CustomUpdates":[]} />
+                <cfset response.errorno = "0" />
+                <cfset response.errormsg = "[GetPatchGroupPatches][qGetGroupData]: No group data was found for #arguments.PatchGroup#" />
+                <cfset response.result = {"AppleUpdates":[],"CustomUpdates":[]} />
             <cfelseif qGetGroupData.RecordCount EQ 1>
                 <cfset response.result  =  #qGetGroupData.data#> />    
             <cfelse>
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupData]: Data found found, but wrong amount." />
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[GetPatchGroupPatches][qGetGroupData]: Data found found, but wrong amount." />
             </cfif>
 
             <cfcatch>
                 <cfset l = lErr("GetPatchGroupPatches", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetPatchGroupPatches][qGetGroupData]: #cfcatch.Detail# -- #cfcatch.Message#" />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[GetPatchGroupPatches][qGetGroupData]: #cfcatch.Detail# -- #cfcatch.Message#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -724,10 +694,7 @@
         <cfargument name="state" required="no" default="all" type="string">
         <cfargument name="active" required="no" default="1" type="string">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cfset var jData = "">
         <cftry>
@@ -737,12 +704,12 @@
 
             <cfcatch type="any">
                 <cfset l = lErr("GetScanList", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[GetScanList][qGetPatches]: #cfcatch.Detail# -- #cfcatch.Message#" />
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[GetScanList][qGetPatches]: #cfcatch.Detail# -- #cfcatch.Message#" />
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -756,17 +723,14 @@
         <cfargument name="type" required="true" default="0" hint="0 = error, 1 = Apple, 2 = Third" />
         <cfargument name="jsonData" required="true">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cftry>
             <!--- Type should not be 0 --->
             <cfif arguments.type EQ 0>
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[PostClientScanData]: Missing type." />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[PostClientScanData]: Missing type." />
+                <cfreturn response.AsStruct()>
             </cfif>
 
             <cfset var patchData = DeserializeJSON(arguments.jsonData)>
@@ -785,9 +749,9 @@
                 </cfquery>
 
                 <cfif ArrayLen(pArr) EQ 0>
-                    <cfset response[ "errorno" ] = "0" />
-                    <cfset response[ "errormsg" ] = "[PostClientScanData][Apple]: Patches posted successfully." />
-                    <cfreturn response>
+                    <cfset response.errorno = "0" />
+                    <cfset response.errormsg = "[PostClientScanData][Apple]: Patches posted successfully." />
+                    <cfreturn response.AsStruct()>
                 </cfif>
                 <cfloop array=#patchData['rows']# index="p">
                     <!--- Add row object check --->
@@ -805,7 +769,7 @@
                             <cfqueryparam value="#p['description']#">,<cfqueryparam value="#p['size']#">,
                             <cfqueryparam value="#p['recommended']#">,<cfqueryparam value="#p['restart']#">,<cfqueryparam value="#p['version']#">)
                     </cfquery>
-                    <cfset response[ "errormsg" ] = "[PostClientScanData][Apple]: Patches posted successfully." />
+                    <cfset response.errormsg = "[PostClientScanData][Apple]: Patches posted successfully." />
                 </cfloop>
 
             </cfif>
@@ -819,9 +783,9 @@
                 </cfquery>
 
                 <cfif ArrayLen(pArr) EQ 0>
-                    <cfset response[ "errorno" ] = "0" />
-                    <cfset response[ "errormsg" ] = "[PostClientScanData][Third]: Patches posted successfully." />
-                    <cfreturn response>
+                    <cfset response.errorno = "0" />
+                    <cfset response.errormsg = "[PostClientScanData][Third]: Patches posted successfully." />
+                    <cfreturn response.AsStruct()>
                 </cfif>
                 <cfloop array=#patchData['rows']# index="p">
                     <!--- Add row object check --->
@@ -839,20 +803,20 @@
                             <cfqueryparam value="#p['size']#">,<cfqueryparam value="#p['recommended']#">,<cfqueryparam value="#p['restart']#">,
                             <cfqueryparam value="#p['version']#">,<cfqueryparam value="#p['bundleID']#">)
                     </cfquery>
-                    <cfset response[ "errormsg" ] = "[PostClientScanData][Third]: Patches posted successfully." />
+                    <cfset response.errormsg = "[PostClientScanData][Third]: Patches posted successfully." />
                 </cfloop>
 
             </cfif>
 
             <cfcatch>
                 <cfset l = lErr("PostClientScanData", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1004" />
-                <cfset response[ "errormsg" ] = "[PostClientScanData]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
-                <cfreturn response>
+                <cfset response.errorno = "1004" />
+                <cfset response.errormsg = "[PostClientScanData]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -913,25 +877,22 @@
         <cfargument name="avAgent" required="true">
         <cfargument name="jsonData" required="true">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cfif Trim(arguments.avAgent) NEQ "SEP" AND Trim(arguments.avAgent) NEQ "SAV">
             <cfset l = elogit("[PostClientAVData]: Unknown avAgent config. Schema may be out of date.")>
-            <cfset response[ "errorno" ] = "1" />
-            <cfset response[ "errormsg" ] = "[PostClientAVData]: Unknown avAgent #arguments.avAgent# config. Schema may be out of date." />
-            <cfreturn response>
+            <cfset response.errorno = "1" />
+            <cfset response.errormsg = "[PostClientAVData]: Unknown avAgent #arguments.avAgent# config. Schema may be out of date." />
+            <cfreturn response.AsStruct()>
         </cfif>
 
         <cftry>
             <cfset var avData = DeserializeJSON(arguments.jsonData)>
             <cfcatch type="any">
                 <cfset l = lErr("PostClientAVData", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "0" />
-                <cfset response[ "errormsg" ] = "[PostClientAVData][Deserializejson]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
-                <cfreturn response>
+                <cfset response.errorno = "0" />
+                <cfset response.errormsg = "[PostClientAVData][Deserializejson]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
@@ -973,14 +934,14 @@
                         Where cuuid = <cfqueryparam value="#trim(arguments.clientID)#">
                     </cfquery>
                 </cfif>
-                <cfreturn response>
+                <cfreturn response.AsStruct()>
             </cfif>
 
             <cfcatch type="any">
                 <cfset l = lErr("PostClientAVData", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "2" />
-                <cfset response[ "errormsg" ] = "[PostClientAVData]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
-                <cfreturn response>
+                <cfset response.errorno = "2" />
+                <cfset response.errormsg = "[PostClientAVData]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
@@ -999,9 +960,9 @@
                 </cfquery>
             <cfcatch type="any">
                 <cfset l = lErr("PostClientAVData", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[PostClientAVData][qPut]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[PostClientAVData][qPut]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
             </cftry>
         <cfelse>
@@ -1019,14 +980,14 @@
                 </cfquery>
             <cfcatch type="any">
                 <cfset l = lErr("PostClientAVData", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[PostClientAVData][qPut]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[PostClientAVData][qPut]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
             </cftry>
         </cfif>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -1038,15 +999,7 @@
         <cfargument name="clientID">
         <cfargument name="encodedData">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
-
-        <!---
-        <cflog file="PostDataMgrJSON" type="error" application="no" text="#arguments.clientID#">
-        <cflog file="PostDataMgrJSON" type="error" application="no" text="#arguments.encodedData#">
-        --->
+        <cfset response = new response() />
 
         <!--- Clean a bit of the XML char before parsing --->
         <cfset var theJSON = ToString(ToBinary(Trim(arguments.encodedData)))>
@@ -1074,13 +1027,13 @@
 
             <cfcatch type="any">
                 <cfset l = lErr("PostDataMgrJSON", "[#arguments.clientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1" />
-                <cfset response[ "errormsg" ] = "[PostDataMgrJSON][WriteFile]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
-                <cfreturn response>
+                <cfset response.errorno = "1" />
+                <cfset response.errormsg = "[PostDataMgrJSON][WriteFile]: #cfcatch.Detail#, #cfcatch.message#, #cfcatch.ExtendedInfo#" />
+                <cfreturn response.AsStruct()>
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -1094,10 +1047,7 @@
         <cfargument name="patch" required="false" default="0" />
         <cfargument name="patchType" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qAddPatchInstall">
@@ -1122,7 +1072,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -1213,10 +1163,7 @@
         <cfargument name="osminor" required="yes" type="string">
         <cfargument name="clientKey" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetCatalogs" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
@@ -1254,7 +1201,7 @@
         </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -1266,10 +1213,7 @@
         <cfargument name="clientID" required="false" default="0" />
         <cfargument name="clientKey" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cfset _result = {} />
         <cfset _result[ "totalPatchesNeeded" ] = "NA" />
@@ -1303,7 +1247,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -1315,10 +1259,7 @@
         <cfargument name="clientID" required="false" default="0" />
         <cfargument name="clientKey" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cfset _result = {} />
         <cfset _result[ "mdate" ] = "NA" />
@@ -1340,7 +1281,7 @@
         </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -1354,17 +1295,14 @@
         <cfargument name="GroupName">
         <cfargument name="ClientID" required="no" default="NA">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "1" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cftry>
             <cfset gid = softwareGroupID(arguments.GroupName)>
         <cfif gid EQ 0>
                 <cfset l = lErr("GetSoftwareTasksForGroup","[arguments.ClientID]: No group data found for #arguments.GroupName# (#gid#).") />
-                <cfset response[ "errormsg" ] = "No group data found for #arguments.GroupName# (#gid#). " />
-                <cfreturn response>
+                <cfset response.errormsg = "No group data found for #arguments.GroupName# (#gid#). " />
+                <cfreturn response.AsStruct()>
             </cfif>
 
             <cfquery datasource="#this.ds#" name="qGetGroupTasksData" cachedwithin="#CreateTimeSpan(0,0,0,1)#">
@@ -1375,21 +1313,21 @@
             <cfif qGetGroupTasksData.RecordCount EQ 1>
                 <!--- Response is already stored in DB, fully formatted, have to rename keys app wants lowercase --->
                 <cfset x = #DeserializeJSON(qGetGroupTasksData.gData)#>
-                <cfset response[ "errorno" ] = #x.errorno# />
-                <cfset response[ "errormsg" ] = #x.errormsg# />
-                <cfset response[ "result" ] = #x.result# />
-                <cfreturn response>
+                <cfset response.errorno = #x.errorno# />
+                <cfset response.errormsg = #x.errormsg# />
+                <cfset response.result = #x.result# />
+                <cfreturn response.AsStruct()>
             <cfelse>
                 <cfset l = lErr("GetSoftwareTasksForGroup","[arguments.ClientID]: No task group data found for #arguments.GroupName#(#gid#).") />
-                <cfset response[ "errormsg" ] = "No task group data found for #arguments.GroupName#(#gid#)." />
-                <cfset response[ "result" ] = {} />
+                <cfset response.errormsg = "No task group data found for #arguments.GroupName#(#gid#)." />
+                <cfset response.result = {} />
             </cfif>
         <cfcatch>
             <cfset l = lErr("GetSoftwareTasksForGroup","[arguments.ClientID]: #cfcatch.Detail# -- #cfcatch.Message#") />
-            <cfset response[ "errormsg" ] = "[GetSoftwareTasksForGroup]: #cfcatch.Detail# -- #cfcatch.Message#" />
+            <cfset response.errormsg = "[GetSoftwareTasksForGroup]: #cfcatch.Detail# -- #cfcatch.Message#" />
         </cfcatch>
         </cftry>
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -1822,17 +1760,14 @@
         <cfargument name="GroupName">
         <cfargument name="osver" required="no" default="*">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "1" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cftry>
             <cfset gid = softwareGroupID(arguments.GroupName)>
             <cfif gid EQ 0>
                 <cfset l = lErr("GetSoftwareTasksForGroupUsingOSVer", "No group data found for #arguments.GroupName#.") />
-                <cfset response[ "errormsg" ] = "No group data found for #arguments.GroupName#." />
-                <cfreturn response>
+                <cfset response.errormsg = "No group data found for #arguments.GroupName#." />
+                <cfreturn response.AsStruct()>
             </cfif>
 
             <cfscript>
@@ -1845,23 +1780,23 @@
             </cfscript>
 
             <cfif qGetGroupTasksData.errorno EQ 0>
-                <cfset response[ "errorno" ] = #qGetGroupTasksData.errorno# />
-                <cfset response[ "errormsg" ] = #qGetGroupTasksData.errormsg# />
-                <cfset response[ "result" ] = #qGetGroupTasksData.result# />
-                <cfreturn response>
+                <cfset response.errorno = #qGetGroupTasksData.errorno# />
+                <cfset response.errormsg = #qGetGroupTasksData.errormsg# />
+                <cfset response.result = #qGetGroupTasksData.result# />
+                <cfreturn response.AsStruct()>
             <cfelse>
                 <cfset l = lErr("GetSoftwareTasksForGroupUsingOSVer", "No task group data found for #arguments.GroupName#.") />
-                <cfset response[ "errormsg" ] = "No task group data found for #arguments.GroupName#." />
-                <cfset response[ "result" ] = {} />
+                <cfset response.errormsg = "No task group data found for #arguments.GroupName#." />
+                <cfset response.result = {} />
             </cfif>
             <cfcatch>
                 <cfset l = lErr("GetSoftwareTasksForGroupUsingOSVer", "#cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "2" />
-                <cfset response[ "errormsg" ] = "[GetSoftwareTasksForGroup]: (#cfcatch.Detail#) -- #cfcatch.Message#" />
+                <cfset response.errorno = "2" />
+                <cfset response.errormsg = "[GetSoftwareTasksForGroup]: (#cfcatch.Detail#) -- #cfcatch.Message#" />
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -1874,10 +1809,7 @@
     <cffunction name="GetSoftwareTasksUsingID" access="remote" returnType="struct" returnFormat="json" output="false">
         <cfargument name="TaskID">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cfset _task = {} />
         <cfset _task = softwareTaskData(arguments.TaskID)>
@@ -1889,8 +1821,8 @@
         <cfset _task[ "SoftwareRequisistsPost" ] = {} />
         --->
 
-        <cfset response[ "result" ] = _task />
-        <cfreturn response>
+        <cfset response.result = _task />
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -2094,10 +2026,7 @@
             <cfset l = lErr("GetSWDistGroups", "State arguments was not of numeric value. Setting state to Production.") />
         </cfif>
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "" />
+        <cfset response = new response() />
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetHosts">
@@ -2137,7 +2066,7 @@
         </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -2153,16 +2082,13 @@
         <cfargument name="ResultString">
         <cfargument name="Action">
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cfif NOT validClientID(arguments.ClientID)>
             <cfset l = lErr("PostSoftwareInstallResults", "[#arguments.ClientID#]: Invalid client id, unable to add software install results.") />
-            <cfset response[ "errorno" ] = "1000" />
-            <cfset response[ "errormsg" ] = "Unable to add software install results for #arguments.ClientID#" />
-            <cfreturn response>
+            <cfset response.errorno = "1000" />
+            <cfset response.errormsg = "Unable to add software install results for #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
         </cfif>
 
         <cftry>
@@ -2174,12 +2100,12 @@
             </cfquery>
             <cfcatch type="any">
                 <cfset l = lErr("PostSoftwareInstallResults", "[#arguments.ClientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-                <cfset response[ "errorno" ] = "1001" />
-                <cfset response[ "errormsg" ] = "Error inserting results for #arguments.ClientID#" />
+                <cfset response.errorno = "1001" />
+                <cfset response.errormsg = "Error inserting results for #arguments.ClientID#" />
             </cfcatch>
         </cftry>
 
-        <cfreturn response>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -2219,10 +2145,7 @@
         <cfargument name="clientID" required="true" default="0" />
         <cfargument name="clientKey" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = {} />
+        <cfset response = new response() />
 
         <cftry>
             <cfset clientGroup = clientGroupForClient(arguments.clientID)>
@@ -2254,7 +2177,7 @@
         </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -2320,28 +2243,15 @@
     <cffunction name="clientHasInventoryData" access="remote" returnType="struct" returnFormat="json" output="false">
         <cfargument name="clientID" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = 0 />
-        <cfset response[ "machineName" ] = "" />
-        <cfset response[ "hostName" ] = "" />
-
-        <cfscript>
-            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
-            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
-        </cfscript>
-
-        <cfset response[ "machineName" ] = "#machineName#" />
-        <cfset response[ "hostName" ] = "#hostaddress#" />
+        <cfset response = new response() />
 
         <cftry>
             <cfset invState = clientInventoryState(arguments.clientID)>
 
             <cfif invState EQ true>
-                <cfset response[ "result" ] = 1>
+                <cfset response.result = 1>
             <cfelse>
-                <cfset response[ "result" ] = 0>
+                <cfset response.result = 0>
             </cfif>
 
             <cfcatch>
@@ -2351,7 +2261,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <cffunction name="clientInventoryState" access="private" returnType="boolean" output="false">
@@ -2386,20 +2296,7 @@
     <cffunction name="postClientHasInventoryData" access="remote" returnType="struct" returnFormat="json" output="false">
         <cfargument name="clientID" required="false" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = 0 />
-        <cfset response[ "machineName" ] = "" />
-        <cfset response[ "hostName" ] = "" />
-
-        <cfscript>
-            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
-            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
-        </cfscript>
-
-        <cfset response[ "machineName" ] = "#machineName#" />
-        <cfset response[ "hostName" ] = "#hostaddress#" />
+        <cfset response = new response() />
 
         <cftry>
             <cfif validClientID(arguments.clientID) EQ true>
@@ -2417,7 +2314,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -2429,20 +2326,7 @@
         <cfargument name="clientID" required="false" default="0" />
         <cfargument name="listID" required="false" default="1" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = 0 />
-        <cfset response[ "machineName" ] = "" />
-        <cfset response[ "hostName" ] = "" />
-
-        <cfscript>
-            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
-            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
-        </cfscript>
-
-        <cfset response[ "machineName" ] = "#machineName#" />
-        <cfset response[ "hostName" ] = "#hostaddress#" />
+        <cfset response = new response() />
 
         <cfset _server = {} />
         <cfset _server.name = "NA">
@@ -2508,7 +2392,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -2520,20 +2404,7 @@
         <cfargument name="clientID" required="false" default="0" />
         <cfargument name="listID" required="false" default="1" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "0" />
-        <cfset response[ "machineName" ] = "" />
-        <cfset response[ "hostName" ] = "" />
-
-        <cfscript>
-            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
-            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
-        </cfscript>
-
-        <cfset response[ "machineName" ] = "#machineName#" />
-        <cfset response[ "hostName" ] = "#hostaddress#" />
+        <cfset response = new response() />
 
         <cfset _server = {}>
         <cfset _server.version = "0">
@@ -2565,7 +2436,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -2577,20 +2448,7 @@
         <cfargument name="clientID" required="false" default="0" />
         <cfargument name="listID" required="false" default="1" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = 0 />
-        <cfset response[ "machineName" ] = "" />
-        <cfset response[ "hostName" ] = "" />
-
-        <cfscript>
-            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
-            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
-        </cfscript>
-
-        <cfset response[ "machineName" ] = "#machineName#" />
-        <cfset response[ "hostName" ] = "#hostaddress#" />
+        <cfset response = new response() />
 
         <cfset _server = {} />
         <cfset _server.name = "NA">
@@ -2613,7 +2471,7 @@
                     <cfset _listID = qGetServerList.listid>
                 <cfelse>
                     <!--- Should not get here, with a configured list --->
-                    <cfreturn #response#>
+                    <cfreturn response.AsStruct()>
                 </cfif>
 
                 <!--- Get a List of all the OS --->
@@ -2656,7 +2514,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -2668,20 +2526,7 @@
         <cfargument name="clientID" required="false" default="0" />
         <cfargument name="listID" required="false" default="1" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "0" />
-        <cfset response[ "machineName" ] = "" />
-        <cfset response[ "hostName" ] = "" />
-
-        <cfscript>
-            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
-            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
-        </cfscript>
-
-        <cfset response[ "machineName" ] = "#machineName#" />
-        <cfset response[ "hostName" ] = "#hostaddress#" />
+        <cfset response = new response() />
 
         <cfset _server = {}>
         <cfset _server.version = "0">
@@ -2713,7 +2558,7 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 
     <!---
@@ -2769,20 +2614,7 @@
         <cfargument name="pluginBundle" required="true" default="NA" />
         <cfargument name="pluginVersion" required="true" default="0" />
 
-        <cfset response = {} />
-        <cfset response[ "errorno" ] = "0" />
-        <cfset response[ "errormsg" ] = "" />
-        <cfset response[ "result" ] = "0" />
-        <cfset response[ "machineName" ] = "" />
-        <cfset response[ "hostName" ] = "" />
-
-        <cfscript>
-            machineName = createObject("java", "java.net.InetAddress").localhost.getCanonicalHostName();
-            hostaddress = createObject("java", "java.net.InetAddress").localhost.getHostAddress();
-        </cfscript>
-
-        <cfset response[ "machineName" ] = "#machineName#" />
-        <cfset response[ "hostName" ] = "#hostaddress#" />
+        <cfset response = new response() />
 
         <cftry>
             <cfif validClientID(arguments.clientID) EQ true>
@@ -2810,6 +2642,6 @@
             </cfcatch>
         </cftry>
 
-        <cfreturn #response#>
+        <cfreturn response.AsStruct()>
     </cffunction>
 </cfcomponent>
