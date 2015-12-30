@@ -65,6 +65,20 @@
                 "connectionretries":2
             }
         },
+        "ldap_filters": 
+        [
+            {   "config_name":"DEMO_CONFIG",
+                "config_ldap": { 
+                    "server": "SERVERNAME.COM",
+                    "port": 636,
+                    "secure": "CF_SSL", 
+                    "searchbase": "SEARCH-BASE",  
+                    "attributes": "givenname,initials,sn,mail,memberOf,dn,samAccountName,userPrincipalName",
+                    "userDN": "USER DN PATH",
+                    "userPas": "USER PASSWORD"
+                }
+            }
+        ],
         "mailserver": 
         {
             "enabled": "YES",

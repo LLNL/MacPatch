@@ -43,8 +43,8 @@
 				colNames:['','Name', 'Bundle ID', 'Version', 'Hash', 'Active'],
 				colModel :[
 				  {name:'rid',index:'rid', width:1, align:"center", sortable:false, hidden:true},
-				  {name:'pluginName', index:'pluginName', width:160, editable:true, editoptions:{size:70}},
-				  {name:'pluginBundleID', index:'pluginBundleID', width:60, editable:true, formoptions:{align: 'left'}},
+				  {name:'pluginName', index:'pluginName', width:120, editable:true, editoptions:{size:70}},
+				  {name:'pluginBundleID', index:'pluginBundleID', width:100, editable:true, formoptions:{align: 'left'}},
 				  {name:'pluginVersion', index:'pluginVersion', width:60, editable:true, formoptions:{align: 'left'}},
 				  {name:'hash', index:'hash', width:60, editable:true, formoptions:{align: 'left'}},
 				  {name:'active', index:'active', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}}

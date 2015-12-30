@@ -54,7 +54,7 @@
 			<cfelse>
 				<cfset txtState = "Disabled">
 			</cfif>
-			<cfset arrSW[i] = [#gid#, #gName#, #gDescription#, #owner#, #txtState#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#] >
+			<cfset arrSW[i] = [#gid#, #gid#, #gName#, #gDescription#, #owner#, #txtState#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#] >
 			<cfset i = i + 1>
 		</cfloop>
 
@@ -165,7 +165,7 @@
 			<cfset i = 1>
 
 			<cfloop query="qSWFilters" startrow="#start#" endrow="#end#">
-				<cfset arrRows[i] = [#rid#, #attribute#, #attribute_oper#, #attribute_filter#, #attribute_condition#]>
+				<cfset arrRows[i] = [#rid#, #attribute#, "Database", #attribute_oper#, #attribute_filter#, #attribute_condition#]>
 				<cfset i = i + 1>
 			</cfloop>
 

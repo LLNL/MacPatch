@@ -117,6 +117,8 @@
     <cffunction name="PopulateSoftwareGroupData" access="public" returnType="any" output="false">
 		<cfargument name="SWGroupID">
 
+		<cfset l = logInfo("PopulateSoftwareGroupData","SWGroupID: #SWGroupID#") />
+
 		<!--- Response Struct --->
 		<cfset response = {} />
 		<cfset response[ "errorNo" ] = "0" />

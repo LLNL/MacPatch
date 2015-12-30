@@ -172,11 +172,12 @@
 			{
 				url:'software_groups.cfc?method=getGroupFilters&gid=<cfoutput>#url.group#</cfoutput>', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
-				colNames:['', 'Type', 'Operator', 'Filter Value', 'Condition'],
+				colNames:['', 'Type', 'DataSource', 'Operator', 'Filter Value', 'Condition'],
 				colModel :[ 
 				  {name:'rid',index:'rid', width:20, align:"center", sortable:true, hidden:true},
 				  {name:'attribute', index:'attribute', width:60, editable:true, edittype:"select", 
 				  editoptions:{value:"ldap:LDAP Query; cuuid:Client ID;ipaddr:IP Address;Domain:Client Group;agent_version:Agent Version;client_version:Client Version;osver:OS Version;Model_Identifier:Model Identifier;Model_Name:Model Name"}},
+				  {name:'datasource', index:'datasource', width:60,editable:true, edittype:"select", editoptions:{value:"Database:Database"}},
 				  {name:'attribute_oper', index:'attribute_oper', width:60,editable:true, edittype:"select", editoptions:{value:"In:In;EQ:Equal;NEQ:Not Equal;Contains:Contains"}},
 				  {name:'attribute_filter', index:'attribute_filter', width:200, editable:true}, 
 				  {name:'attribute_condition', index:'attribute_condition', width:60, editable:true, edittype:"select", editoptions:{value:"AND:AND;OR:OR;None:None"}}
