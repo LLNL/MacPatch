@@ -29,8 +29,10 @@
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/admin/css/mp.css" />
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="/admin/js/mp-jqgrid-common.js" type="text/javascript"></script>
 
 <style>
   fieldset
@@ -127,38 +129,7 @@
 	    margin-left: -200px;
 	}
 </style>
-	
-<script type="text/javascript">	
-	function loadContent(param, id) {
-		$("#dialog").load("includes/available_patches_apple_description.cfm?id="+id);
-		$("#dialog").dialog(
-		 	{
-			bgiframe: false,
-			height: 300,
-			width: 600,
-			modal: true
-			}
-		); 
-		$("#dialog").dialog('open');
-	}
-</script>
-<script type="text/Javascript">
-	function load(url)
-	{
-		window.open(url,'_self') ;
-	}
-</script>
-<style type="text/css">
-	.ui-jqgrid {font-size:12px;}
-	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
-	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
-	.ui-jqgrid-btable .ui-state-highlight { background: yellow; }
-</style>
 
-<style type="text/css">
-    .xAltRow { background-color: #F0F8FF; background-image: none; }
-</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
@@ -254,6 +225,7 @@
 		} 	
 	);
 </script>
+<div id="btn"></div>
 <table id="swGrpFilter" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="agentFilterPager"></div>
 <div id="dialog" title="Detailed Patch Information" style="text-align:left;" class="ui-dialog-titlebar"></div>

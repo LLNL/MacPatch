@@ -4,81 +4,19 @@
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/admin/css/mp.css" />
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="/admin/js/mp-jqgrid-common.js" type="text/javascript"></script>
 
-<cfsilent>
-	<cfquery name="getSrvInfo" datasource="#session.dbsource#" result="res">
-		select server, useSSL from mp_servers
-		Where isMaster = '1' and active = '1'
-	</cfquery>
-	<cfif getSrvInfo.RecordCount GTE 1>
-		<cfset mpServer = IIF(getSrvInfo.useSSL EQ 1,DE('https://'),DE('http://')) & getSrvInfo.server >
-	<cfelse>
-		<cfset mpServer = "https://localhost" >
-	</cfif>
-</cfsilent>
-<script type="text/javascript">
-	function loadContent(param, id) {
-		$("#dialog").load("available_patches_apple_description.cfm?id="+id);
-		$("#dialog").dialog(
-		 	{
-			bgiframe: false,
-			height: 300,
-			width: 600,
-			modal: true
-			}
-		);
-		$("#dialog").dialog('open');
-	}
-</script>
-<script type="text/Javascript">
-	function downloadURL(url)
-	{
-	  var iframe;
-	  iframe = document.getElementById("hiddenDownloader");
-	  if (iframe === null)
-	  {
-		iframe = document.createElement('iframe');
-		iframe.id = "hiddenDownloader";
-		iframe.style.visibility = 'hidden';
-		document.body.appendChild(iframe);
-	  }
-	  iframe.src = "<cfoutput>#mpServer#</cfoutput>" + url;
-	}
-</script>
-<script type="text/Javascript">
-	function load(url,id)
-	{
-		window.open(url,'_self') ;
-	}
-</script>
 <style type="text/css">
-	.ui-jqgrid {font-size:12px;}
-	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
-	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
-	.ui-jqgrid-btable .ui-state-highlight { background: yellow; }
-
-	.dimImg {
-		filter: url(filters.svg#grayscale); /* Firefox 3.5+ */
-		filter: gray; /* IE6-9 */
-		-webkit-filter: grayscale(1); /* Google Chrome & Safari 6+ */
-	}
 	#overlay {
-		/*width:100%; float:center; */
 		width:100%;
     	height:100%;
 		background-color: black;
 
 		position: fixed;
 		top: 0; right: 0; bottom: 0; left: 0;
-		/*
-		position:fixed;
-		left:50%;
-		top:50%;
-		margin:-50px 0 0 -50px;
-		*/
 		opacity: 0.7; /* also -moz-opacity, etc. */
 		z-index: 10;
 		display:none;
@@ -103,9 +41,7 @@
 	  text-decoration: none;
 	}
 </style>
-<style type="text/css">
-    .xAltRow { background-color: #F0F8FF; background-image: none; }
-</style>
+
 <cfif isDefined("url.pgid")>
 	<cfquery name="qInfo" datasource="#session.dbsource#">
         select id, name
@@ -189,53 +125,6 @@
 				multiboxonly: false,
 				editurl:"patch_group_history.cfc?method=showHistoryForGroup&patchgroup=<cfoutput>#pID#</cfoutput>",//Not used right now.
 				toolbar:[false,"top"],
-				/*
-				loadComplete: function(){
-					var ids = jQuery("#list").getDataIDs();
-					for(var i=0;i<ids.length;i++){
-						var cl = ids[i];
-					}
-					// Auto Enable Disable on Checkbox
-                    var iCol = getColumnIndexByName ($(this), 'enbl'), rows = this.rows, i, c = rows.length;
-                    for (i = 0; i < c; i += 1) {
-                        $(rows[i].cells[iCol]).click(function (e) {
-                            var id = $(e.target).closest('tr')[0].id,
-                                isChecked = $(e.target).is(':checked');
-
-                            $.ajax({
-							    url: "patch_group_edit.cfc"
-							  , type: "get"
-							  , dataType: "json"
-							  , data: {
-							      method: "togglePatch",
-							  	  id: id,
-								  gid: "<cfoutput>#pID#</cfoutput>"
-							  }
-							  // this runs if an error
-							  , error: function (xhr, textStatus, errorThrown){
-							    // show error
-							    alert(errorThrown);
-							  }
-							});
-                        });
-                    }
-				},
-				onSelectRow: function(id){
-					// This section of code fixes the highlight issues, with altRows
-					selMe = id;
-					if(id && id!==lastsel){
-						var xyz = $("#list").getDataIDs().indexOf(lastsel);
-						if (xyz%2 != 0)
-						{
-						  $('#'+lastsel).addClass('ui-priority-secondary');
-						}
-
-					  $('#list').jqGrid('restoreRow',lastsel);
-					  lastsel=id;
-					}
-					$('#'+id).removeClass('ui-priority-secondary');
-				},
-				*/
 				jsonReader: {
 					total: "total",
 					page: "page",
@@ -247,7 +136,6 @@
 					}
 				}
 			);
-
 
 			$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false},
 				{}, // default settings for edit

@@ -5,42 +5,23 @@
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
 <link rel="stylesheet" type="text/css" href="/admin/js/multiselect/css/ui.multiselect.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/admin/css/mp.css" />
 <script type="text/javascript" src="/admin/js/multiselect/ui.multiselect.js"></script>
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="/admin/js/mp-jqgrid-common.js" type="text/javascript"></script>
 
 <script type="text/javascript">	
 	function loadContent(param, id, type) 
 	{
 		$("#dialog").load("/admin/inc/patch_description.cfm?id="+id+"&type="+type);
-		$("#dialog").dialog(
-		 	{
-			bgiframe: false,
-			height: 400,
-			width: 600,
-			modal: true
-			}
-		); 
+		$("#dialog").dialog( {
+			bgiframe: false, height: 400, width: 600, modal: true 
+		} ); 
 		$("#dialog").dialog('open');
 	}
 </script>
-<script type="text/Javascript">
-	function load(url,id)
-	{
-		window.open(url,'_self') ;
-	}
-</script>
-<!--- Over rides ---> 
-<style type="text/css">
-	.ui-jqgrid {font-size:12px;}
-	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
-	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
-	.ui-jqgrid-btable .ui-state-highlight { background: yellow; }
-</style>
-<style type="text/css">
-    .xAltRow { background-color: #F0F8FF; background-image: none; }
-</style>
+
 <script type="text/javascript">
 	$(document).ready(function()
 		{

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/admin/js/smartwizard/css/style_wizard.css" type="text/css">
     <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
     
-<script type="text/javascript" src="/admin/js/jquery-latest.js"></script>
+    <script type="text/javascript" src="/admin/js/jquery-latest.js"></script>
     <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
     <script type="text/javascript" src="/admin/js/smartwizard/js/SmartWizard.js"></script>
     
