@@ -993,7 +993,7 @@
     <!---
         Remote API
         Type: Public/Remote
-        Description: Post DataMgr XML and write it out for inventory app to pick it up
+        Description: Post DataMgr JSON and write it out for inventory app to pick it up
     --->
     <cffunction name="PostDataMgrJSON" access="remote" returnType="struct" returnFormat="json" output="false">
         <cfargument name="clientID">
@@ -1388,6 +1388,7 @@
                 <cfset _result[ "attribute_oper" ] = "#attribute_oper#" />
                 <cfset _result[ "attribute_filter" ] = "#attribute_filter#" />
                 <cfset _result[ "attribute_condition" ] = "#attribute_condition#" />
+                <cfset _result[ "datasource" ] = "#datasource#" />
                 <cfset a = ArrayAppend(_Filters,_result)>
             </cfoutput>
 
