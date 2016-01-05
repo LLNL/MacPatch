@@ -134,12 +134,30 @@ p.solid {border-style: solid;}
     Order By Count Desc
 </cfquery>
 
-<cfquery datasource="#session.dbsource#" name="qGetOSNumbersMinor">
-    SELECT	Left(osver,4) as OSMinorVer, Count(Left(osver,4)) As Count
-	FROM	mp_clients_view
-	Group By OSMinorVer
-	Order By Count Desc
+<cfquery datasource="#session.dbsource#" name="qGetOSNumbersMinorPre">
+    SELECT  Left(osver,5) as OSMinorVer, Count(Left(osver,5)) As Count
+    FROM    mp_clients_view
+    Group By OSMinorVer
+    Order By Count Desc
 </cfquery>
+
+<cfset qGetOSNumbersMinor = QueryNew("OSMinorVer, Count")> 
+<cfset newRows = QueryAddRow(qGetOSNumbersMinor, qGetOSNumbersMinorPre.RecordCount)>
+
+<cfset rowIDX = 1>  
+<cfif  qGetOSNumbersMinorPre.RecordCount GTE 1>
+    <cfoutput query="qGetOSNumbersMinorPre">
+        <cfif Right(OSMinorVer, 1) is ".">
+            <cfset OSMinorVerAlt = Left(OSMinorVer, Len(OSMinorVer)-1) />
+        <cfelse>
+            <cfset OSMinorVerAlt = OSMinorVer />
+        </cfif>
+        <cfset temp = QuerySetCell(qGetOSNumbersMinor, "OSMinorVer", OSMinorVerAlt, rowIDX)> 
+        <cfset temp = QuerySetCell(qGetOSNumbersMinor, "Count", Count, rowIDX)> 
+        <cfset rowIDX = rowIDX + 1>
+    </cfoutput>
+</cfif>
+
 
 <cfquery datasource="#session.dbsource#" name="qGetModelNumbers" maxrows="10">
 	SELECT
