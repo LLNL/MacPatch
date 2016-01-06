@@ -1456,11 +1456,9 @@
                         
                     <cfelseif _filter EQ "ldap">
 
-                        <cfif filter["attribute_oper"] EQ "In">
-                            <!--- Need to Implment --->
-                        </cfif>
-
-                        <cfset res = true>
+                        <cfset ldapObj = createObject("component", "cfc.ldapFilter").init() />
+                        <cfset ldapRes = ldapObj.clientExistsInLDAP(arguments.ClientID,filter["datasource"],filter["attribute_filter"]) />
+                        <cfset res = ldapRes>
                     
                     <cfelseif _filter EQ "Model_Name">
 
