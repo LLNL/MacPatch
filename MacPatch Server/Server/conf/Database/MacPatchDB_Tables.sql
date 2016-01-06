@@ -1117,6 +1117,21 @@ CREATE TRIGGER `msg_updt_trg1` BEFORE UPDATE ON `mp_software_groups` FOR EACH RO
 delimiter ;
 
 -- ----------------------------
+--  Table structure for `mp_software_groups_filters`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_software_groups_filters`;
+CREATE TABLE `mp_software_groups_filters` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `gid` varchar(50) NOT NULL,
+  `attribute` varchar(255) NOT NULL,
+  `attribute_oper` varchar(255) NOT NULL,
+  `attribute_filter` varchar(255) NOT NULL,
+  `attribute_condition` varchar(255) NOT NULL,
+  `datasource` varchar(255) DEFAULT 'Database',
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New MacPatch 2.8.x';
+
+-- ----------------------------
 --  Table structure for `mp_software_groups_privs`
 -- ----------------------------
 DROP TABLE IF EXISTS `mp_software_groups_privs`;
