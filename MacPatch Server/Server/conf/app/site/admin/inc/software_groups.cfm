@@ -13,6 +13,9 @@
 <script type="text/javascript">
 	$(document).ready(function()
 		{
+			$.jgrid.nav.addtitle = "Add New Group";
+			$.jgrid.nav.edittitle = "Edit Group Info";
+			
 			var lastsel=-1;
 			var mygrid = $("#list").jqGrid(
 			{
@@ -98,8 +101,8 @@
 			);
 			<cfif session.IsAdmin IS true>
 				$("#list").jqGrid('navGrid',"#pager",{edit:true,add:true,del:true},
-					{}, // default settings for edit
-					{}, // default settings for add
+					{editCaption: "Edit Software Group"}, // default settings for edit
+					{addCaption: "Add New Software Group"}, // default settings for add
 					{}, // delete
 					{ sopt:['cn','bw','eq','ne','lt','gt','ew'], closeOnEscape: true, multipleSearch: true, closeAfterSearch: true }, // search options
 					{closeOnEscape:true}
