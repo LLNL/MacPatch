@@ -36,7 +36,7 @@
 		"children": [
 			{"title": "MacPatch Servers",	  	"icon": "text-list.png", "href": "/admin/inc/admin_mp_servers.cfm"},
 			{"title": "Softwareupdate Servers", "icon": "text-list.png", "href": "/admin/inc/admin_sus_servers.cfm"},
-			{"title": "Database Info",	  		"icon": "text-list.png", "href": "/admin/inc/admin_db_config.cfm"},
+			{"title": "Datasources",	  		"icon": "text-list.png", "href": "/admin/inc/admin_db_config.cfm"},
 			{"title": "Jobs",	  				"icon": "text-list.png", "href": "/admin/inc/admin_server_jobs.cfm"}
 		]},
 		{"title": "Accounts", "icon": "text-list.png", "href": "/admin/inc/admin_accounts.cfm" }
