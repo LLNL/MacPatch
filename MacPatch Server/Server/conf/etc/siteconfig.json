@@ -71,9 +71,9 @@
                 "config_ldap": { 
                     "server": "SERVERNAME.COM",
                     "port": 636,
-                    "secure": "CF_SSL", 
+                    "secure": "1", 
                     "searchbase": "SEARCH-BASE",  
-                    "attributes": "givenname,initials,sn,mail,memberOf,dn,samAccountName,userPrincipalName",
+                    "attributes": "cn,name,dn,samAccountName,memberOf",
                     "userDN": "USER DN PATH",
                     "userPas": "USER PASSWORD"
                 }
