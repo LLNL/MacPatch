@@ -27,7 +27,7 @@
 				  {name:'rights', index:'rights', width:90, align:"left", hidden: true},
 				  {name:'cTotal', index:'cTotal', width:60, align:"center"},
 				  {name:'mdate', index:'mdate', width:70, align:"center", hidden: true},
-				  {name:'pgrm',index:'pgrm', width:14, align:"center", sortable:false, resizable:false, search:false, hidden: false},
+				  {name:'pgrm',index:'pgrm', width:20, align:"center", sortable:false, resizable:false, search:false, hidden: false}
 				],
 				altRows:true,
 				altclass:'xAltRow',
