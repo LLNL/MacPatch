@@ -2,7 +2,7 @@
 #
 #
 ### BEGIN INIT INFO
-# Provides: MPTomcatWS
+# Provides: MPTomcat
 # Required-Start: $network $syslog
 # Required-Stop: $network $syslog
 # Default-Start: 2 3 4 5
@@ -24,7 +24,7 @@ elif [ -d  "/usr/lib/jvm/java" ]; then
 	export JAVA_HOME=/usr/lib/jvm/java
 fi	
 export PATH=$JAVA_HOME/bin:$PATH
-TOMCAT_HOME=/Library/MacPatch/Server/tomcat-mpws
+TOMCAT_HOME=/Library/MacPatch/Server/apache-tomcat
 SHUTDOWN_WAIT=20
  
 start() 
