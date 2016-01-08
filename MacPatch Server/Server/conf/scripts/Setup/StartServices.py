@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 2.8.x
   
-  Script Version 1.8.5
+  Script Version 1.8.6
 '''
 
 import os
@@ -111,8 +111,8 @@ def repairPermissions():
 				
 def linuxLoadServices(service):
 
-	_services = None
-	_servicesC = None
+	_services = list()
+	_servicesC = list()
 	
 	if service.lower() == "all":
 		_services = lnxServices
@@ -135,8 +135,8 @@ def linuxLoadServices(service):
 
 def linuxUnLoadServices(service):
 
-	_services = None
-	_servicesC = None
+	_services = list()
+	_servicesC = list()
 	
 	if service.lower() == "all":
 		_services = lnxServices
