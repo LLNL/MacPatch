@@ -211,10 +211,8 @@ if [ $XOSTYPE == "Linux" ]; then
 		fi
 	fi
 	if $USEUBUNTU; then
-		echo "Ubuntu not configured."
-		exit 1;
-		JHOME="/usr/lib/jvm/java-openjdk"
-		if [ ! -d "/usr/lib/jvm/java-openjdk" ]; then
+		JHOME=$(readlink -f /usr/bin/javac | sed "s:/bin/javac::")
+		if [ ! -d $JHOME ]; then
 			read -p "Unable to find JAVA Home, please enter JAVA Home path: " JHOME
 			if [ ! -d "$JHOME" ]; then
 				echo "$JHOME not found. Please verify your JDK path and start again."
