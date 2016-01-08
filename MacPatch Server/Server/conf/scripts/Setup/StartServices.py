@@ -119,9 +119,9 @@ def linuxLoadServices(service):
 		_servicesC = lnxCronSrvs
 	else:
 		if service in lnxServices:
-			_services = service
+			_services.append(service)
 		elif service in lnxCronSrvs:
-			_servicesC = service
+			_servicesC.append(service)
 
 	# Load Init.d Services
 	if _services != None:
@@ -143,9 +143,9 @@ def linuxUnLoadServices(service):
 		_servicesC = lnxCronSrvs
 	else:
 		if service in lnxServices:
-			_services = service
+			_services.append(service)
 		elif service in lnxCronSrvs:
-			_servicesC = service
+			_servicesC.append(service)
 
 	# Load Init.d Services
 	if _services != None:
