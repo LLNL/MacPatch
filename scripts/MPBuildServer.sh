@@ -25,6 +25,7 @@
 # 2.0.0:	Apache HTTPD removed
 #			Single Tomcat Instance, supports webservices and console
 # 2.0.1:	Updated java version check
+# 2.0.2:	Updated linux package requirements
 #
 # -------------------------------------------------------------
 MPBASE="/Library/MacPatch"
@@ -149,7 +150,7 @@ if [ $XOSTYPE == "Linux" ]; then
 	if [ -f "/etc/redhat-release" ]; then
 		USERHEL=true
 		# Check if needed packges are installed or install
-		pkgs=("gcc-c++" "git" "openssl-devel" "java-1.8.0-openjdk-devel" "libxml2-devel" "bzip2-libs" "bzip2-devel" "bzip2" "python-pip" "mysql-connector-python")
+		pkgs=("gcc-c++" "python-pip" "mysql-connector-python")
 	
 		for i in "${pkgs[@]}"
 		do
@@ -176,8 +177,7 @@ if [ $XOSTYPE == "Linux" ]; then
 	    	done
 	    	dpkg -i $MYDEBPYPKG
 
-
-	        pkgs=("git" "build-essential" "openjdk-8-jdk" "zip" "libssl-dev" "libxml2-dev" "python-pip")
+	        pkgs=("build-essential" "python-pip")
 	        for i in "${pkgs[@]}"
 			do
 				p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`

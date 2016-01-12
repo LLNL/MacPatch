@@ -449,7 +449,7 @@ def setupServices():
 			srvsList.append('gov.llnl.mp.pfctl.plist')
 
 
-	return srvsList
+	return set(srvsList)
 
 def linkStartupScripts(service):
 	
