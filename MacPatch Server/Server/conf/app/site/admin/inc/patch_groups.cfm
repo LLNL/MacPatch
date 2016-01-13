@@ -1,45 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-
 <script type="text/javascript" src="/admin/js/jquery-latest.js"></script>
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/admin/css/mp.css" />
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="/admin/js/mp-jqgrid-common.js" type="text/javascript"></script>
 
-<cfsilent>
-	<cfquery name="getSrvInfo" datasource="#session.dbsource#" result="res">
-		select server, useSSL from mp_servers
-		Where isMaster = '1' and active = '1'
-	</cfquery>
-	<cfif getSrvInfo.RecordCount GTE 1>
-		<cfset mpServer = IIF(getSrvInfo.useSSL EQ 1,DE('https://'),DE('http://')) & getSrvInfo.server >
-	<cfelse>	
-		<cfset mpServer = "https://localhost" >
-	</cfif>
-</cfsilent>
-<script type="text/Javascript">
-	function load(url,id)
-	{
-		window.open(url,'_self') ;
-	}
-</script>
-<style type="text/css">
-	.ui-jqgrid {font-size:12px;}
-	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
-	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
-	.ui-jqgrid-btable .ui-state-highlight { background: yellow; }
-	.dimImg {
-		filter: url(filters.svg#grayscale); /* Firefox 3.5+ */
-		filter: gray; /* IE6-9 */
-		-webkit-filter: grayscale(1); /* Google Chrome & Safari 6+ */
-	}
-</style>
-<style type="text/css">
-    .xAltRow { background-color: #F0F8FF; background-image: none; }
-</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
@@ -48,16 +17,17 @@
 			{
 				url:'patch_groups.cfc?method=getPatchGroups',
 				datatype: 'json',
-				colNames:['','Patch Group','Owner', 'Is Owner', 'Type', 'Rights', 'Total Clients', 'Release Date'],
+				colNames:['','Patch Group','Owner', 'Is Owner', 'Type', 'Rights', 'Total Clients', 'Release Date', 'Delete'],
 				colModel :[ 
-				  {name:'patch_group_id',index:'patch_group_id', width:30, align:"center", sortable:false, resizable:false, search:false, hidden: false},				  
-				  {name:'name', index:'name', width:120,editable:true}, 
+				  {name:'patch_group_id',index:'patch_group_id', width:14, align:"center", sortable:false, resizable:false, search:false, hidden: false},				  
+				  {name:'name', index:'name', width:200,editable:true}, 
 				  {name:'user_id', index:'user_id', width:90, editable:true, editoptions:{defaultValue: '<cfoutput>#session.Username#</cfoutput>'}},
-				  {name:'is_owner', index:'is_owner', width:90, align:"left", hidden: true},
-				  {name:'type', index:'type', width:50, align:"center",editable:true,edittype:"select", editoptions:{value:"0:Production;1:QA;2:Dev"}},
+				  {name:'is_owner', index:'is_owner', width:60, align:"left", hidden: true},
+				  {name:'type', index:'type', width:60, align:"center",editable:true,edittype:"select", editoptions:{value:"0:Production;1:QA;2:Dev"}},
 				  {name:'rights', index:'rights', width:90, align:"left", hidden: true},
-				  {name:'cTotal', index:'cTotal', width:30, align:"center"},
-				  {name:'mdate', index:'mdate', width:70, align:"center", hidden: true}
+				  {name:'cTotal', index:'cTotal', width:60, align:"center"},
+				  {name:'mdate', index:'mdate', width:70, align:"center", hidden: true},
+				  {name:'pgrm',index:'pgrm', width:20, align:"center", sortable:false, resizable:false, search:false, hidden: false}
 				],
 				altRows:true,
 				altclass:'xAltRow',
@@ -82,18 +52,20 @@
 					for(var i=0;i<ids.length;i++){ 
 						var cl = ids[i];
 						var myCellData = encodeURI(jQuery("#list").getCell(cl,'rights'));
-						option = "<input type=\'image\' style=\'padding-left:4px;\' onclick=load(\'patch_group_view.cfm?pgid="+ids[i]+"\') src=\'/admin/images/info_16.png\'>";
+
 						if (myCellData >= 1) {
-							option += "<input type=\'image\' style=\'padding-left:4px;\' onclick=load(\'patch_group_edit.cfm?pgid="+ids[i]+"\') src=\'/admin/images/edit_16.png\'>";
+							option = "<input type=\'image\' style=\'padding-left:4px;\' onclick=load(\'patch_group_edit.cfm?pgid="+ids[i]+"\') src=\'/admin/images/edit_16.png\'>";
 						} else {
-							option += "<img class=\'dimImg\' style=\'padding-left:4px;\') src=\'/admin/images/edit_16.png\'>";
+							//option = "<img class=\'dimImg\' style=\'padding-left:4px;\') src=\'/admin/images/edit_16.png\'>";
+							option = "<input type=\'image\' style=\'padding-left:4px;\' onclick=load(\'patch_group_edit.cfm?pgid="+ids[i]+"\') src=\'/admin/images/info_16.png\'>"
 						}
 						if (myCellData >= 2) {
-							option += "<input type=\'image\' style=\'padding-left:4px;\' onclick=jQuery(\'#list\').jqGrid(\'delGridRow\',\'" + ids[i] + "\',{reloadAfterSubmit:false}); src=\'/admin/images/delete_16.png\'>";
+							remove = "<input type=\'image\' style=\'padding-left:4px;\' onclick=jQuery(\'#list\').jqGrid(\'delGridRow\',\'" + ids[i] + "\',{reloadAfterSubmit:false}); src=\'/admin/images/delete_16.png\'>";
 						} else {
-							option += "<img class=\'dimImg\' style=\'padding-left:4px;\') src=\'/admin/images/delete_16.png\'>";
+							remove = "<img class=\'dimImg\' style=\'padding-left:4px;\') src=\'/admin/images/delete_16.png\'>";
 						}
-						jQuery("#list").setRowData(ids[i],{patch_group_id:option})
+
+						jQuery("#list").setRowData(ids[i],{patch_group_id:option,pgrm:remove})
 					} 
 				},
 				onSelectRow: function(id)

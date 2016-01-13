@@ -1,4 +1,7 @@
-<cfcomponent output="false">
+<cfcomponent output="false" extends="jqGrid">
+
+	<cfset this.logName = "software_packages" />
+
 	<cffunction name="getMPSoftware" access="remote" returnformat="json">
 		<cfargument name="page" required="no" default="1" hint="Page user is on">
 	    <cfargument name="rows" required="no" default="10" hint="Number of Rows to display per page">
@@ -6,47 +9,39 @@
 	    <cfargument name="sord" required="no" default="ASC" hint="Sort Order">
 	    <cfargument name="nd" required="no" default="0">
 	    <cfargument name="_search" required="no" default="false" hint="Whether search is performed by user on data grid">
-	    <cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
-	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
-	    <cfargument name="searchString" required="no" default="" hint="Search Text">
+	    <cfargument name="filters" required="no" default="">
 		
 		<cfset var arrSW = ArrayNew(1)>
 		<cfset var strMsg = "">
 		<cfset var strMsgType = "Success">
 		<cfset var records = "">
-		<cfset var blnSearch = false>
+		<cfset var blnSearch = Arguments._search>
 		<cfset var strSearch = "">	
-        
-		<cfif Arguments._search>
-			<cfset strSearch = buildSearchString(Arguments.searchField,Arguments.searchOper,Arguments.searchString)>
-			<cfset blnSearch = true>
-			<cftry>
-				<cfquery name="qSelSW" datasource="#session.dbsource#" result="res">
-					select *
-					From mp_software
-					WHERE 
-						#PreserveSingleQuotes(strSearch)#
-				</cfquery>
-				
-                <cfcatch type="any">
-					<cfset blnSearch = false>					
-					<cfset strMsgType = "Error">
-					<cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">					
-				</cfcatch>		
-			</cftry>
-		<cfelse>
-            <cfquery name="qSelSW" datasource="#session.dbsource#" result="res">
-                select *
+
+		<cfif Arguments.filters NEQ "" AND blnSearch>
+			<cfset stcSearch = DeserializeJSON(Arguments.filters)>
+            <cfif isDefined("stcSearch.groupOp")>
+            	<cfset strSearch = buildSearch(stcSearch)>
+            </cfif>            
+        </cfif>
+
+        <cftry>
+        	<cfquery name="qSelSW" datasource="#session.dbsource#" result="res">
+				select *
 				From mp_software
-                Where 0=0
-                <cfif blnSearch>
-                    AND 
-                        #PreserveSingleQuotes(strSearch)#
-                </cfif>
-                ORDER BY #sidx# #sord#				
-            </cfquery>
-		</cfif>
-        
+				<cfif blnSearch AND strSearch NEQ "">
+                    #PreserveSingleQuotes(strSearch)#
+            	</cfif>
+                ORDER BY #sidx# #sord#
+			</cfquery>
+
+            <cfcatch type="any">
+                <cfset blnSearch = false>
+                <cfset strMsgType = "Error">
+                <cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">
+            </cfcatch>
+        </cftry>
+
 		<cfset records = qSelSW>
 		<cfset start = ((arguments.page-1)*arguments.rows)+1>
 		<cfset end = (start-1) + arguments.rows>
@@ -138,52 +133,5 @@
 		<cfset strReturn = {userdata=#userdata#}>
 		
 		<cfreturn strReturn>
-		
-	</cffunction>
-    
-    <cffunction name="buildSearchString" access="private" hint="Returns the Search Opeator based on Short Form Value">
-		<cfargument name="searchField" required="no" default="" hint="Field to perform Search on">
-	    <cfargument name="searchOper" required="no" default="" hint="Search Operator Short Form">
-	    <cfargument name="searchString" required="no" default="" hint="Search Text">
-		
-			<cfset var searchVal = "">
-		
-			<cfscript>
-				switch(Arguments.searchOper)
-				{
-					case "eq":
-						searchVal = "#Arguments.searchField# = '#Arguments.searchString#'";
-						break;
-					case "ne":
-						searchVal = "#Arguments.searchField# <> '#Arguments.searchString#'";
-						break;
-					case "lt":
-						searchVal = "#Arguments.searchField# < '#Arguments.searchString#'";
-						break;
-					case "le":
-						searchVal = "#Arguments.searchField# <= '#Arguments.searchString#'";
-						break;
-					case "gt":
-						searchVal = "#Arguments.searchField# > '#Arguments.searchString#'";
-						break;
-					case "ge":
-						searchVal = "#Arguments.searchField# >= '#Arguments.searchString#'";
-						break;
-					case "bw":
-						searchVal = "#Arguments.searchField# LIKE '#Arguments.searchString#%'";
-						break;
-					case "ew":
-						//Purposefully breaking ends with operator (no leading ')
-						searchVal = "#Arguments.searchField# LIKE %#Arguments.searchString#'";
-						break;
-					case "cn":
-						searchVal = "#Arguments.searchField# LIKE '%#Arguments.searchString#%'";
-						break;
-				}	
-			
-			</cfscript>
-			
-			<cfreturn searchVal>
-		
 	</cffunction>
 </cfcomponent>	

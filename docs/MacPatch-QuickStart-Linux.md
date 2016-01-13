@@ -17,7 +17,7 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 	sudo apt-get update
 	sudo apt-get install git
 	sudo apt-get install build-essential
-	sudo apt-get install openjdk-7-jdk
+	sudo apt-get install openjdk-8-jdk
 	sudo apt-get install zip
 	sudo apt-get install libssl-dev
 	sudo apt-get install libxml2-dev
@@ -31,7 +31,7 @@ There are two prerequisites to installing the MacPatch server software on Linux.
 	sudo yum install gcc-c++
 	sudo yum install git
 	sudo yum install openssl-devel
-	sudo yum install java-1.7.0-openjdk-devel
+	sudo yum install java-1.8.0-openjdk-devel
 	sudo yum install libxml2-devel
 	sudo yum install bzip2
 	sudo yum install bzip2-libs

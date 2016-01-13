@@ -1,0 +1,11 @@
+[Unit]
+Description=MP Inventory Processing
+
+[Service]
+Type=forking
+
+ExecStart=/Library/MacPatch/Server/conf/scripts/MPInventoryD.sh start
+ExecStop=/Library/MacPatch/Server/conf/scripts/MPInventoryD.sh stop
+
+[Install]
+WantedBy=multi-user.target

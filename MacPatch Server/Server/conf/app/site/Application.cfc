@@ -1,7 +1,7 @@
 <cfcomponent output="false">
 	<cfscript>
 		// The name of the application
-		this.name				= "MP_ADMIN";
+		this.name				= "MP_ADMIN_2800";
 		// We wish to enable the session managment
 		this.sessionmanagement 	= true;
 		// Sets the session timeout to be 15minutes
@@ -25,7 +25,6 @@
 		<cfargument name="uri" required="true"/>
 		<cfset StructDelete( application, "settings" )>
 
-		<cfset var xFile = "/Library/MacPatch/Server/conf/etc/siteconfig.xml">
   		<cfset var jFile = "/Library/MacPatch/Server/conf/etc/siteconfig.json">
   		
   		<cfif fileExists(jFile)>
@@ -33,14 +32,14 @@
 				<cfinvokeargument name="cFile" value="#jFile#">
 			</cfinvoke>
         <cfelse>
-            <cfif fileExists(xFile)>
-                <cfinvoke component="Server.settings" method="getAppSettings" returnvariable="_AppSettings">
-                    <cfinvokeargument name="cFile" value="#xFile#">
-                </cfinvoke>
-            <cfelse>
-            	<cfthrow message="No App Settings file found.">
-            	<cfreturn>
-            </cfif>
+        	<cfoutput>No App Settings file found.</cfoutput>
+        	<cfabort>
+        </cfif>
+
+        <!--- Simple Way to disable the application --->
+        <cfif _AppSettings.services.console EQ false>
+        	<cfoutput>Console not enabled.</cfoutput>
+        	<cfabort>
         </cfif>
 
 	    <cfset application.settings = _AppSettings>

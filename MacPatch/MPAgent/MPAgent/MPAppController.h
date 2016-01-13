@@ -34,6 +34,7 @@
 @class Profiles;
 @class GetServerListOperation;
 @class PostFailedWSRequests;
+@class GetASUSListOperation;
 
 @interface MPAppController : NSObject {
     
@@ -50,6 +51,7 @@
     Profiles *profilesOp;
     GetServerListOperation *serverListOp;
 	PostFailedWSRequests *postFailedWSRequestsOp;
+    GetASUSListOperation *suServerListOp;
 
 	BOOL useOperationQueue;
 }

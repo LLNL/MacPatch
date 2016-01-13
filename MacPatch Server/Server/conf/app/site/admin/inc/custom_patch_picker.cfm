@@ -13,8 +13,6 @@
     <SCRIPT LANGUAGE="JavaScript">
 		function pick(pgid,pName) {
 		  if (window.opener && !window.opener.closed)
-			//window.opener.document.stepIt.tester.value = symbol;
-			//window.opener.document.getElementById('<cfoutput>#URL.INName#</cfoutput>').value = pgid;
 			window.opener.document.getElementById('<cfoutput>#pName##pID#</cfoutput>').value = pgid;
 			window.opener.document.getElementById('<cfoutput>pName#pName#:#pID#</cfoutput>').value = pName;
 		  	window.close();

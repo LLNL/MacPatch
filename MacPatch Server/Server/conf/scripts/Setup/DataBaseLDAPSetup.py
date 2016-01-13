@@ -27,7 +27,7 @@
   MacPatch Patch Database Setup Script
   MacPatch Version 2.5.43 and higher
   
-  Script Version 1.0.0
+  Script Version 1.0.1
 '''
 
 import os
@@ -105,7 +105,7 @@ if use_ldap == "Y":
 	use_ldap_ssl = raw_input("Active Directory/LDAP use ssl? [Y]: ").upper() or "Y"
 	
 	if use_ldap_ssl == "Y":
-		print "Please note, you will need to run the addRemoteCert.sh script prior to starting the MacPatch Web Admin Console."
+		print "Please note, you will need to run the addRemoteCert.py script prior to starting the MacPatch Web Admin Console."
 		ldap_ssl = "CFSSL_BASIC"
 		cData["settings"]["ldap"]["secure"] = ldap_ssl
 	else:

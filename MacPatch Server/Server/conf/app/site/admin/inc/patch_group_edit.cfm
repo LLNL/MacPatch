@@ -4,67 +4,31 @@
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/admin/css/mp.css" />
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="/admin/js/mp-jqgrid-common.js" type="text/javascript"></script>
 
 <cfsilent>
-	<cfquery name="getSrvInfo" datasource="#session.dbsource#" result="res">
-		select server, useSSL from mp_servers
-		Where isMaster = '1' and active = '1'
-	</cfquery>
-	<cfif getSrvInfo.RecordCount GTE 1>
-		<cfset mpServer = IIF(getSrvInfo.useSSL EQ 1,DE('https://'),DE('http://')) & getSrvInfo.server >
-	<cfelse>
-		<cfset mpServer = "https://localhost" >
-	</cfif>
+	<cfset hasEditRights = false>
 </cfsilent>
-<script type="text/javascript">
-	function loadContent(param, id) {
-		$("#dialog").load("available_patches_apple_description.cfm?id="+id);
+
+<script type="text/javascript">	
+	function loadContent(param, id, type) {
+		$("#dialog").load("/admin/inc/patch_description.cfm?id="+id+"&type="+type);
 		$("#dialog").dialog(
 		 	{
 			bgiframe: false,
-			height: 300,
+			height: 400,
 			width: 600,
 			modal: true
 			}
-		);
+		); 
 		$("#dialog").dialog('open');
 	}
 </script>
-<script type="text/Javascript">
-	function downloadURL(url)
-	{
-	  var iframe;
-	  iframe = document.getElementById("hiddenDownloader");
-	  if (iframe === null)
-	  {
-		iframe = document.createElement('iframe');
-		iframe.id = "hiddenDownloader";
-		iframe.style.visibility = 'hidden';
-		document.body.appendChild(iframe);
-	  }
-	  iframe.src = "<cfoutput>#mpServer#</cfoutput>" + url;
-	}
-</script>
-<script type="text/Javascript">
-	function load(url,id)
-	{
-		window.open(url,'_self') ;
-	}
-</script>
-<style type="text/css">
-	.ui-jqgrid {font-size:12px;}
-	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
-	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
-	.ui-jqgrid-btable .ui-state-highlight { background: yellow; }
 
-	.dimImg {
-		filter: url(filters.svg#grayscale); /* Firefox 3.5+ */
-		filter: gray; /* IE6-9 */
-		-webkit-filter: grayscale(1); /* Google Chrome & Safari 6+ */
-	}
+<style type="text/css">
 	#overlay {
 		/*width:100%; float:center; */
 		width:100%;
@@ -84,9 +48,7 @@
 		display:none;
 	}
 </style>
-<style type="text/css">
-    .xAltRow { background-color: #F0F8FF; background-image: none; }
-</style>
+
 <cfif isDefined("url.pgid")>
 	<cfquery name="qInfo" datasource="#session.dbsource#">
         select id, name
@@ -107,8 +69,8 @@
 		Where user_id = '#session.Username#'
 		AND patch_group_id = <cfqueryparam value="#pID#">
 	</cfquery>
-	<cfset hasEditRights = false>
-	<cfif qHasRights.RecordCount EQ 1>
+	
+	<cfif qHasRights.RecordCount EQ 1 OR session.IsAdmin EQ True>
     	<cfset hasEditRights = true>
     </cfif>
 </cfif>
@@ -150,9 +112,10 @@
 					searchOper: function() { return "cn"; }
 				},
 				</cfif>
-				colNames:['','', 'Patch', 'Description', 'Reboot', 'Type', 'Patch State', 'Baseline', 'Release Date'],
+				colNames:['','', '', 'Patch', 'Description', 'Reboot', 'Type', 'Patch State', 'Release Date'],
 				colModel :[
 				  {name:'rid',index:'rid', width:36, align:"center", sortable:false, resizable:false, hidden:true, search : false},
+				  {name:'info',index:'info', width:36, align:"center", sortable:false, resizable:false, hidden:false, search : false},
 				  {name:'enbl', index:'enbl', width: 30, align:'center', search : false, sortable:true, sorttype:'int', formatter:'checkbox', editoptions:{value:'1:0'},
 				  formatoptions:{disabled:<cfif session.IsAdmin IS true>false<cfelseif hasEditRights IS true>false<cfelse>true</cfif>}},
 				  {name:'name', index:'name', width:200},
@@ -160,7 +123,6 @@
 				  {name:'reboot', index:'reboot', width:40, align:"center"},
 				  {name:'type', index:'type', width:40, align:"center"},
 				  {name:'patch_state', index:'patch_state', width:40},
-				  {name:'baseline_enabled', index:'baseline_enabled', width:40},
 				  {name:'postdate', index:'postdate', width:100}
 				],
 				altRows:true,
@@ -187,6 +149,11 @@
 					var ids = jQuery("#list").getDataIDs();
 					for(var i=0;i<ids.length;i++){
 						var cl = ids[i];
+						
+						var pType = encodeURI(jQuery("#list").getCell(cl,'type'));
+						infoOpt = "<input type='image' style='padding-left:4px;' onclick=loadContent('info','"+cl+"','"+pType+"'); src='/admin/images/info_16.png'>";
+						jQuery("#list").setRowData(ids[i],{info:infoOpt})
+						
 					}
 					// Auto Enable Disable on Checkbox
                     var iCol = getColumnIndexByName ($(this), 'enbl'), rows = this.rows, i, c = rows.length;
@@ -194,7 +161,7 @@
                         $(rows[i].cells[iCol]).click(function (e) {
                             var id = $(e.target).closest('tr')[0].id,
                                 isChecked = $(e.target).is(':checked');
-
+                            <cfif hasEditRights IS true>
                             $.ajax({
 							    url: "patch_group_edit.cfc"
 							  , type: "get"
@@ -210,6 +177,7 @@
 							    alert(errorThrown);
 							  }
 							});
+							</cfif>
                         });
                     }
 				},
@@ -247,7 +215,15 @@
 				{}, // delete
 				{ sopt:['cn','bw','eq','ne','lt','gt','ew'], closeOnEscape: true, multipleSearch: true, closeAfterSearch: true }, // search options
 				{closeOnEscape:true});
-			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
+			$("#list").navButtonAdd("#pager",
+				{	caption:"",
+					title:"Toggle Search Toolbar", 
+					buttonicon:'ui-icon-pin-s', 
+					onClickButton:function(){ mygrid[0].toggleToolbar() 
+				} 
+			});
+
+			<cfif hasEditRights IS true>
 			$("#list").navButtonAdd("#pager",
 				{	caption:"",
 					title:"Save Patch Data",
@@ -280,8 +256,6 @@
 						});
 					}
 			});
-
-			<cfif session.IsAdmin IS true>
 			$("#list").navButtonAdd('#pager',{
 				caption:"Select All",
 				buttonicon:"ui-icon-gear",
@@ -315,7 +289,7 @@
 				}
 			});
 			$("#list").navButtonAdd('#pager',{
-				caption:"Select All (Apple)",
+				caption:"Select (Apple)",
 			   	buttonicon:"ui-icon-gear",
 			   	title:"Select Only Apple Patches",
 				onClickButton: function() {
@@ -348,7 +322,7 @@
 			   	position:"last"
 			});
 			$("#list").navButtonAdd('#pager',{
-				caption:"Select All (Custom)",
+				caption:"Select (Custom)",
 			   	buttonicon:"ui-icon-gear",
 			   	title:"Select Only Custom Patches",
 				onClickButton: function() {
@@ -382,6 +356,17 @@
 			});
 			</cfif>
 
+			$("#list").navButtonAdd('#pager',{
+				caption:"History",
+			   	buttonicon:"ui-icon-calculator",
+			   	title:"Patch History",
+				onClickButton: function() 
+				{
+					load('patch_group_history.cfm?pgid=<cfoutput>#pID#</cfoutput>')
+				},
+			   	position:"last"
+			});
+
 
 
 			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
@@ -411,6 +396,7 @@
 
 	}
 </script>
+
 <div align="center">
 <table id="list" cellpadding="0" cellspacing="0"></table>
 <div id="pager" style="text-align:center;font-size:11px;"></div>

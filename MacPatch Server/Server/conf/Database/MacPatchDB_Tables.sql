@@ -1,7 +1,7 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.7.3.0
+	Version 2.8.0.0
 	Rev 0
 */
 
@@ -415,7 +415,7 @@ DROP TABLE IF EXISTS `mp_client_patches_apple`;
 CREATE TABLE `mp_client_patches_apple` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
   `patch` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
@@ -436,7 +436,7 @@ DROP TABLE IF EXISTS `mp_client_patches_third`;
 CREATE TABLE `mp_client_patches_third` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
   `patch` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
@@ -1117,6 +1117,21 @@ CREATE TRIGGER `msg_updt_trg1` BEFORE UPDATE ON `mp_software_groups` FOR EACH RO
 delimiter ;
 
 -- ----------------------------
+--  Table structure for `mp_software_groups_filters`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_software_groups_filters`;
+CREATE TABLE `mp_software_groups_filters` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `gid` varchar(50) NOT NULL,
+  `attribute` varchar(255) NOT NULL,
+  `attribute_oper` varchar(255) NOT NULL,
+  `attribute_filter` varchar(255) NOT NULL,
+  `attribute_condition` varchar(255) NOT NULL,
+  `datasource` varchar(255) DEFAULT 'Database',
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New MacPatch 2.8.x';
+
+-- ----------------------------
 --  Table structure for `mp_software_groups_privs`
 -- ----------------------------
 DROP TABLE IF EXISTS `mp_software_groups_privs`;
@@ -1245,8 +1260,8 @@ DROP TABLE IF EXISTS `mpi_AppUsage`;
 CREATE TABLE `mpi_AppUsage` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NULL DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime NULL DEFAULT '0000-00-00 00:00:00',
+  `date` datetime NULL DEFAULT '1970-01-01 01:00:00',
+  `mdate` datetime NULL DEFAULT '1970-01-01 01:00:00',
   `mpa_app_version` varchar(255) NULL,
   `mpa_app_name` varchar(255) NULL,
   `mpa_last_launched` varchar(255) NULL,
@@ -1290,8 +1305,8 @@ DROP TABLE IF EXISTS `mpi_ClientTasks`;
 CREATE TABLE `mpi_ClientTasks` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime NOT NULL DEFAULT '1970-01-01 01:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_id` varchar(255) DEFAULT NULL,
   `mpa_description` varchar(255) DEFAULT NULL,
   `mpa_startdate` varchar(255) DEFAULT NULL,
@@ -1335,8 +1350,8 @@ DROP TABLE IF EXISTS `mpi_DirectoryServices`;
 CREATE TABLE `mpi_DirectoryServices` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_cn` varchar(255) DEFAULT NULL,
   `mpa_AD_Kerberos_ID` varchar(255) DEFAULT NULL,
   `mpa_HasSLAM` varchar(255) DEFAULT NULL,
@@ -1356,8 +1371,8 @@ DROP TABLE IF EXISTS `mpi_DiskInfo`;
 CREATE TABLE `mpi_DiskInfo` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_MediaName` varchar(255) DEFAULT NULL,
   `mpa_MediaUUID` varchar(255) DEFAULT NULL,
   `mpa_VolumePath` varchar(255) DEFAULT NULL,
@@ -1403,8 +1418,8 @@ DROP TABLE IF EXISTS `mpi_Groups`;
 CREATE TABLE `mpi_Groups` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_FullName` varchar(255) DEFAULT NULL,
   `mpa_GroupMembership` varchar(255) DEFAULT NULL,
   `mpa_GroupName` varchar(255) DEFAULT NULL,
@@ -1424,8 +1439,8 @@ DROP TABLE IF EXISTS `mpi_InternetPlugins`;
 CREATE TABLE `mpi_InternetPlugins` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_BundleIdentifier` varchar(255) DEFAULT NULL,
   `mpa_path_real` varchar(255) DEFAULT NULL,
   `mpa_WebPluginName` varchar(255) DEFAULT NULL,
@@ -1545,7 +1560,7 @@ DROP TABLE IF EXISTS `mpi_SPApplications`;
 CREATE TABLE `mpi_SPApplications` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_Name` varchar(255) DEFAULT NULL,
   `mpa_Version` varchar(255) DEFAULT NULL,
   `mpa_Last_Modified` varchar(255) DEFAULT NULL,
@@ -1554,7 +1569,7 @@ CREATE TABLE `mpi_SPApplications` (
   `mpa_Location` varchar(255) DEFAULT NULL,
   `cdateInt` bigint(20) unsigned DEFAULT '0',
   `dateInt` int(11) DEFAULT '0',
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   PRIMARY KEY (`rid`,`cuuid`),
   UNIQUE KEY `idx_rid` (`rid`),
   KEY `idx_cuuid` (`cuuid`),
@@ -1577,8 +1592,8 @@ DROP TABLE IF EXISTS `mpi_SPFrameworks`;
 CREATE TABLE `mpi_SPFrameworks` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_has64BitIntelCode` varchar(255) DEFAULT NULL,
   `mpa_Version` varchar(255) DEFAULT NULL,
   `mpa_Kind` varchar(255) DEFAULT NULL,
@@ -1645,7 +1660,7 @@ DROP TABLE IF EXISTS `mpi_SPNetwork`;
 CREATE TABLE `mpi_SPNetwork` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_Name` varchar(255) DEFAULT NULL,
   `mpa_Type` varchar(255) DEFAULT NULL,
   `mpa_Hardware` varchar(255) DEFAULT NULL,
@@ -1741,7 +1756,7 @@ CREATE TABLE `mpi_SPNetwork` (
   `mpa_Proxies_IPv6_Address` varchar(255) DEFAULT NULL,
   `mpa_Ethernet_ipv6_address` varchar(255) DEFAULT NULL,
   `dateInt` int(11) DEFAULT '0',
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_DHCP_Routers` varchar(255) DEFAULT NULL,
   `mpa_DHCP_Domain_Name_Servers` varchar(255) DEFAULT NULL,
   `mpa_DHCP_Lease_Duration_seconds` varchar(255) DEFAULT NULL,
@@ -1780,7 +1795,7 @@ DROP TABLE IF EXISTS `mpi_SPSystemOverview`;
 CREATE TABLE `mpi_SPSystemOverview` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_Name` varchar(255) DEFAULT NULL,
   `mpa_System_Version` varchar(255) DEFAULT NULL,
   `mpa_Kernel_Version` varchar(255) DEFAULT NULL,
@@ -1792,7 +1807,7 @@ CREATE TABLE `mpi_SPSystemOverview` (
   `mpa_Secure_Virtual_Memory` varchar(255) DEFAULT NULL,
   `mpa_64-bit_Kernel_and_Extensions` varchar(255) DEFAULT NULL,
   `mpa_Server_Configuration` varchar(255) DEFAULT NULL,
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_64bit_kernel_and_extensions` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rid`),
   UNIQUE KEY `idx_cuuid` (`cuuid`)
@@ -1805,8 +1820,8 @@ DROP TABLE IF EXISTS `mpi_Users`;
 CREATE TABLE `mpi_Users` (
   `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cuuid` varchar(50) NOT NULL,
-  `date` datetime DEFAULT '0000-00-00 00:00:00',
-  `mdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `date` datetime DEFAULT '1970-01-01 01:00:00',
+  `mdate` datetime DEFAULT '1970-01-01 01:00:00',
   `mpa_FullName` varchar(255) DEFAULT NULL,
   `mpa_OriginalNodeName` varchar(255) DEFAULT NULL,
   `mpa_UserID` varchar(255) DEFAULT NULL,
@@ -1967,6 +1982,32 @@ CREATE TABLE `ws_log_jobs` (
   UNIQUE KEY `rid_idx` (`rid`),
   KEY `ws_idx` (`event_type`,`cdate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `mp_patch_selection_history`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_patch_selection_history`;
+CREATE TABLE `mp_patch_selection_history` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `patch` varchar(255) DEFAULT NULL,
+  `patchid` varchar(255) DEFAULT NULL,
+  `patchgroup` varchar(255) DEFAULT NULL,
+  `state` int(1) DEFAULT NULL,
+  `userid` varchar(255) DEFAULT NULL,
+  `cdate` datetime DEFAULT NULL,
+  `patchtype` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`rid`),
+  KEY `main` (`patch`,`patchid`,`patchgroup`,`userid`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COMMENT='New for MacPatch 2.8.0';;
+
+-- ----------------------------
+--  Triggers structure for table mp_patch_selection_history
+-- ----------------------------
+DROP TRIGGER IF EXISTS `p_hist_date`;
+delimiter ;;
+CREATE TRIGGER `p_hist_date` BEFORE INSERT ON `mp_patch_selection_history` FOR EACH ROW set NEW.cdate = now()
+ ;;
+delimiter ;
 
 SET FOREIGN_KEY_CHECKS = 1;
 

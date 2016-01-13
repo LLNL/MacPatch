@@ -24,7 +24,6 @@
  */
 
 #import "GetASUSListOperation.h"
-
 #import "MPAgent.h"
 #import "MPDefaultsWatcher.h"
 
@@ -101,13 +100,13 @@
 {
     @autoreleasepool
     {
-        logit(lcl_vInfo,@"Running server list scan and verify.");
+        logit(lcl_vInfo,@"Running SU server list scan and verify.");
         
-        if (![fm fileExistsAtPath:[AGENT_SERVERS_PLIST stringByDeletingLastPathComponent]])
+        if (![fm fileExistsAtPath:[AGENT_SUS_SERVERS_PLIST stringByDeletingLastPathComponent]])
         {
             NSError *fmErr = nil;
             NSDictionary *attributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithShort:0775] forKey:NSFilePosixPermissions];
-            [fm createDirectoryAtPath:[AGENT_SERVERS_PLIST stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:attributes error:&fmErr];
+            [fm createDirectoryAtPath:[AGENT_SUS_SERVERS_PLIST stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:attributes error:&fmErr];
             if (fmErr) {
                 qlerror(@"%@",fmErr.localizedDescription);
                 return;
@@ -115,8 +114,8 @@
         }
         
         NSError *slErr = nil;
-        MPServerList *mpsl = [[MPServerList alloc] init];
-        BOOL isCurrent = [mpsl usingCurrentMPHostList:&slErr];
+        MPSUServerList *mpsl = [[MPSUServerList alloc] init];
+        BOOL isCurrent = [mpsl usingCurrentList:&slErr];
         if (slErr) {
             qlerror(@"%@",slErr.localizedDescription);
             return;
@@ -124,19 +123,19 @@
         
         if (isCurrent == NO) {
             slErr = nil;
-            BOOL didGetList = [mpsl getServerListFromServer:&slErr];
+            BOOL didGetList = [mpsl getListFromServer:&slErr];
             if (slErr) {
                 qlerror(@"%@",slErr.localizedDescription);
                 return;
             }
             if (didGetList) {
-                qldebug(@"Server list was retrieved successfully.");
+                qldebug(@"SU Server list was retrieved successfully.");
             } else {
-                qlerror(@"Server list was not retrieved successfully.");
+                qlerror(@"SU Server list was not retrieved successfully.");
             }
         }
         
-        logit(lcl_vInfo,@"Server list scan and verify completed.");
+        logit(lcl_vInfo,@"SU Server list scan and verify completed.");
     }
 }
 

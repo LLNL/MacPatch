@@ -57,36 +57,6 @@ h3 {
 -->
 </style>
 </head>
-<!---
-<cfoutput query="qGetColumns">
-
-    <cfif column_name NEQ "cXMLData" AND column_name NEQ "mdate" AND column_name NEQ "rid" AND column_name NEQ "p_AllowClient" AND column_name NEQ "rebootapp_ver">
-    <cfset x =  ReplaceNoCase(column_name,"p_","","All")>
-    <cfset x =  ReplaceNoCase(x,"cuuid","Client ID","All")>
-    <cfset x =  ReplaceNoCase(x,"_ver"," Ver.","All")>
-    <cfset x =  ReplaceNoCase(x,"MP","MacPatch ","All")>
-    <cfset x =  ReplaceNoCase(x,"sdate","Last CheckIn","All")>
-    <cfset x =  ReplaceNoCase(x,"needsreboot","Needs Reboot","All")>
-    <cfset x =  ReplaceNoCase(x,"Allow","Allow ","All")>
-    <cfset x =  ReplaceNoCase(x,"scan"," Scan ","All")>
-    <cfset x =  ReplaceNoCase(x,"CatalogURL"," SoftwareUpdate Server ","All")>
-    <cfset x =  ReplaceNoCase(x,"Group"," Group","All")>
-    <cfset x =  ReplaceNoCase(x,"Domain","Client Group","All")>
-
-
-    <!--- #column_name# = #ucase(left(x, 1)) & removechars(x, 1, 1)# = #Evaluate("qGet."&column_name)#<br /> --->
-    <cfif Evaluate("qGet."&column_name) EQ 0>
-        <tr><th>#ucase(left(x, 1)) & removechars(x, 1, 1)#</th><td>False</td></tr>
-    <cfelseif Evaluate("qGet."&column_name) EQ 1>
-        <tr><th>#ucase(left(x, 1)) & removechars(x, 1, 1)#</th><td>True</td></tr>
-    <cfelse>
-        <tr><th>#ucase(left(x, 1)) & removechars(x, 1, 1)#</th><td>#Evaluate("qGet."&column_name)#</td></tr>
-    </cfif>
-    <cfset x = "">
-    </cfif>
-    </cfoutput>
-
---->
 
 <body>
 	<cfif IsDefined("url.cuuid")>

@@ -5,8 +5,10 @@
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/admin/css/mp.css" />
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="/admin/js/mp-jqgrid-common.js" type="text/javascript"></script>
 
 <cfset session.mp_sw_gid = url.group>
 <cffunction name="getGroupName" access="private">
@@ -32,34 +34,13 @@
 <script type="text/javascript">
 	function taskInfo(id) {
 		$("#TaskInfoDialog").load("software_description.cfm?id="+id);
-		$("#TaskInfoDialog").dialog(
-		 	{
-			bgiframe: false,
-			height: 500,
-			width: 760,
-			modal: true
-			}
-		);
+		$("#TaskInfoDialog").dialog( {
+			bgiframe: false, height: 500, width: 760, modal: true
+		} );
 		$("#TaskInfoDialog").dialog('open');
 	}
 </script>
-<script type="text/Javascript">
-	function load(url,id)
-	{
-		window.open(url,'_self') ;
-	}
-</script>
-<style type="text/css">
-	.ui-jqgrid {font-size:12px;}
-	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
-	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
-	.ui-jqgrid-btable .ui-state-highlight { background: yellow; }
-</style>
 
-<style type="text/css">
-    .xAltRow { background-color: #F0F8FF; background-image: none; }
-</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
@@ -123,11 +104,6 @@
                         $(rows[i].cells[iCol]).click(function (e) {
                             var id = $(e.target).closest('tr')[0].id,
                                 isChecked = $(e.target).is(':checked');
-                            /*
-                            alert('clicked on the checkbox in the row with id=' + id +
-                                  '\nNow the checkbox is ' +
-                                  (isChecked? 'checked': 'not checked'));
-							*/
                             $.ajax({
 							    url: "software_group_edit.cfc"
 							  , type: "get"

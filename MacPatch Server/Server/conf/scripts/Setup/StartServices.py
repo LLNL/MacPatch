@@ -25,9 +25,9 @@
 
 '''
   MacPatch Patch Loader Setup Script
-  MacPatch Version 2.7.x
+  MacPatch Version 2.8.x
   
-  Script Version 1.6.4
+  Script Version 1.8.7
 '''
 
 import os
@@ -37,17 +37,40 @@ import argparse
 import pwd
 import grp
 import shutil
+import json
+from distutils.version import LooseVersion
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
 MP_SRV_CONF = MP_SRV_BASE+"/conf"
+MP_CONF_FILE = MP_SRV_CONF+"/etc/siteconfig.json"
 os_type = platform.system()
 system_name = platform.uname()[1]
 dist_type = "Mac"
-macServices=["gov.llnl.mp.wsl.plist","gov.llnl.mp.invd.plist","gov.llnl.mp.site.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.httpd.plist","gov.llnl.mp.rsync.plist","gov.llnl.mp.sync.plist"]
-lnxServices=["MPApache","MPTomcatSite","MPTomcatWS","MPInventoryD"]
+macServices=["gov.llnl.mp.tomcat.plist","gov.llnl.mp.invd.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.rsync.plist","gov.llnl.mp.sync.plist","gov.llnl.mp.pfctl.plist"]
+lnxServices=["MPTomcat","MPInventoryD"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader"]
 gUID = 79
 gGID = 70
+
+def readJSON(filename):
+	returndata = {}
+	try:
+		fd = open(filename, 'r+')
+		returndata = json.load(fd)
+		fd.close()
+	except: 
+		print 'COULD NOT LOAD:', filename
+
+	return returndata
+
+def writeJSON(data, filename):
+	try:
+		fd = open(filename, 'w')
+		json.dump(data,fd, indent=4)
+		fd.close()
+	except:
+		print 'ERROR writing', filename
+		pass
 
 if os_type == "Linux":
 	# OS is Linux, I need the dist type...
@@ -89,17 +112,17 @@ def repairPermissions():
 				
 def linuxLoadServices(service):
 
-	_services = None
-	_servicesC = None
+	_services = list()
+	_servicesC = list()
 	
-	if service == "All":
+	if service.lower() == "all":
 		_services = lnxServices
 		_servicesC = lnxCronSrvs
 	else:
 		if service in lnxServices:
-			_services = service
+			_services.append(service)
 		elif service in lnxCronSrvs:
-			_servicesC = service
+			_servicesC.append(service)
 
 	# Load Init.d Services
 	if _services != None:
@@ -113,17 +136,17 @@ def linuxLoadServices(service):
 
 def linuxUnLoadServices(service):
 
-	_services = None
-	_servicesC = None
+	_services = list()
+	_servicesC = list()
 	
-	if service == "All":
+	if service.lower() == "all":
 		_services = lnxServices
 		_servicesC = lnxCronSrvs
 	else:
 		if service in lnxServices:
-			_services = service
+			_services.append(service)
 		elif service in lnxCronSrvs:
-			_servicesC = service
+			_servicesC.append(service)
 
 	# Load Init.d Services
 	if _services != None:
@@ -136,18 +159,59 @@ def linuxUnLoadServices(service):
 			removeCronJob(srvs)
 
 def linuxLoadInitServices(service):
-	# Load Init Services
-	_initFile = "/etc/init.d/"+service
-	if os.path.exists(_initFile):
-		print "Loading service "+service
-		os.system("/etc/init.d/"+service+" start")
+	
+	print "Loading service "+service
+
+	useSYSTEMD=False
+	if platform.dist()[0] == "Ubuntu" and LooseVersion(platform.dist()[1]) >= LooseVersion("15.0"):
+		useSYSTEMD=True
+	elif platform.dist()[0] == "redhat":
+		useSYSTEMD=True
+	else:
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		return
+
+	if useSYSTEMD == True:
+		serviceName=service+".service"
+		etcServiceConf="/etc/systemd/system/"+serviceName
+
+		if os.path.exists(etcServiceConf):
+			os.system("/bin/systemctl start "+serviceName)
+		else:
+			print "Unable to find " + etcServiceConf
+	else:
+		_initFile = "/etc/init.d/"+service
+		if os.path.exists(_initFile):
+			os.system("/etc/init.d/"+service+" start")
+		else:
+			print "Unable to find " + _initFile
 
 def linuxUnLoadInitServices(service):
 	# UnLoad Init Services
-	_initFile = "/etc/init.d/"+service
-	if os.path.exists(_initFile):
-		print "UnLoading service "+service
-		os.system("/etc/init.d/"+service+" stop")
+	print "UnLoading service "+service
+	useSYSTEMD=False
+	if platform.dist()[0] == "Ubuntu" and LooseVersion(platform.dist()[1]) >= LooseVersion("15.0"):
+		useSYSTEMD=True
+	elif platform.dist()[0] == "redhat":
+		useSYSTEMD=True
+	else:
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		return
+
+	if useSYSTEMD == True:
+		serviceName=service+".service"
+		etcServiceConf="/etc/systemd/system/"+serviceName
+
+		if os.path.exists(etcServiceConf):
+			os.system("/bin/systemctl stop "+serviceName)
+		else:
+			print "Unable to find " + etcServiceConf
+	else:
+		_initFile = "/etc/init.d/"+service
+		if os.path.exists(_initFile):
+			os.system("/etc/init.d/"+service+" stop")
+		else:
+			print "Unable to find " + _initFile
 
 def linuxLoadCronServices(service):
 	from crontab import CronTab
@@ -176,27 +240,46 @@ def removeCronJob(comment):
 	for job in cron:
 		if job.comment == comment:
 			print "Removing Cron Job" + comment
-			cron.remove (job)
+			cJobRm = raw_input('Are you sure you want to remove this cron job (Y/N)?')
+			if cJobRm.lower() == "y" or cJobRm.lower() == "yes":
+				cron.remove (job)
 
 def osxLoadServices(service):
-	_services = None
+	_services = list()
 	
-	if service == "All":
+	if service.lower() == "all":
 		_services = macServices
 	else:
 		if service in macServices:
-			_services = service
+			_services.append(service)
+		else:
+			print service + " was not found. Service will not load."
+			return
 			
 	for srvc in _services:
 		_launchdFile = "/Library/LaunchDaemons/"+srvc
 		if os.path.exists(_launchdFile):
 			print "Loading service "+srvc
 			os.system("/bin/launchctl load -w /Library/LaunchDaemons/"+srvc)
+		else:
+			if os.path.exists("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc):
+				if os.path.exists("/Library/LaunchDaemons/"+srvc):
+					os.remove("/Library/LaunchDaemons/"+srvc)
 			
+				os.chown("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0, 0)
+				os.chmod("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0644)
+				os.symlink("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc,"/Library/LaunchDaemons/"+srvc)
+				
+				print "Loading service "+srvc
+				os.system("/bin/launchctl load -w /Library/LaunchDaemons/"+srvc)
+				
+			else:
+				print srvc + " was not found in MacPatch Server directory. Service will not load."
+						
 def osxUnLoadServices(service):
 
 	_services = []
-	if service == "All":
+	if service.lower() == "all":
 		_services = macServices
 	else:
 		if service in macServices:
@@ -295,30 +378,52 @@ def setupServices():
 	elif srvType.lower() == "d" or srvType.lower() == "distribution":
 		masterType = False
 
-	# Web Server
-	_HTTPD = 'Y'
-	webServer = raw_input('Start Web Server [%s]' % _HTTPD)
-	webServer = webServer or _HTTPD
-	if webServer.lower() == 'y':
-		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.httpd.plist')
-		else:
-			linkStartupScripts('MPApache')
-			srvsList.append('MPApache')
-	
 	# Web Services
 	_WEBSERVICES = 'Y' 
-	webService = raw_input('Start Web Services [%s]' % _WEBSERVICES)
+	webService = raw_input('Enable Web Services [%s]' % _WEBSERVICES)
 	webService = webService or _WEBSERVICES
+	jData = readJSON(MP_CONF_FILE)
 	if webService.lower() == 'y':
+
+		jData['settings']['services']['mpwsl'] = True
+
 		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.wsl.plist')
-			srvsList.append('gov.llnl.mp.invd.plist')
+			if 'gov.llnl.mp.tomcat.plist' not in srvsList:
+				srvsList.append('gov.llnl.mp.tomcat.plist')
+			if 'gov.llnl.mp.invd.plist' not in srvsList:
+				srvsList.append('gov.llnl.mp.invd.plist')
 		else:
-			linkStartupScripts('MPTomcatWS')
-			srvsList.append('MPTomcatWS')
+			linkStartupScripts('MPTomcat')
+			srvsList.append('MPTomcat')
 			linkStartupScripts('MPInventoryD')
 			srvsList.append('MPInventoryD')
+	else:
+		jData['settings']['services']['mpwsl'] = False
+
+	writeJSON(jData,MP_CONF_FILE)
+	
+	# Web Admin Console
+	
+	_ADMINCONSOLE = 'Y' if masterType else 'N'  
+	adminConsole = raw_input('Enable Admin Console Application [%s]' % _ADMINCONSOLE)
+	adminConsole = adminConsole or _ADMINCONSOLE
+	jData = readJSON(MP_CONF_FILE)
+	if adminConsole.lower() == 'y':
+
+		jData['settings']['services']['console'] = True
+
+		if os_type == 'Darwin':
+			if 'gov.llnl.mp.tomcat.plist' not in srvsList:
+				srvsList.append('gov.llnl.mp.tomcat.plist')
+		else:
+			linkStartupScripts('MPTomcat')
+			srvsList.append('MPTomcat')
+
+	else:
+		
+		jData['settings']['services']['console'] = False
+
+	writeJSON(jData,MP_CONF_FILE)
 
 	# Content Sync
 	_CONTENT = 'Y' if masterType else 'N'  
@@ -327,18 +432,7 @@ def setupServices():
 	cRsync = cRsync or _CONTENT
 	if cRsync.lower() == 'y':
 		srvsList.append('gov.llnl.mp.rsync.plist')
-		
-	# Web Admin Console
-	_ADMINCONSOLE = 'Y' if masterType else 'N'  
-	adminConsole = raw_input('Start Admin Console Application [%s]' % _ADMINCONSOLE)
-	adminConsole = adminConsole or _ADMINCONSOLE
-	if adminConsole.lower() == 'y':
-		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.site.plist')
-		else:
-			linkStartupScripts('MPTomcatSite')
-			srvsList.append('MPTomcatSite')
-	
+
 	# Patch Loader
 	_PATCHLOAD = 'Y' if masterType else 'N'
 	patchLoader = raw_input('ASUS Patch Content Loader [%s]' % _PATCHLOAD)
@@ -346,7 +440,7 @@ def setupServices():
 	if patchLoader.lower() == 'y':
 		setupPatchLoader()
 		if os_type == 'Darwin':
-			srvsList.append('gov.llnl.mp.mploader.plist')
+			srvsList.append('gov.llnl.mploader.plist')
 	
 	# Sync From Master
 	if masterType == False:
@@ -358,32 +452,55 @@ def setupServices():
 			if os_type == 'Darwin':
 				srvsList.append('gov.llnl.mp.sync.plist')
 
-	return srvsList
+	# Firewall Config / Port Forwarding
+	if os_type == 'Darwin':
+		_PFLOAD = 'Y'
+		print "MacPatch Tomcat Runs on several tcp ports (8080,8443,2600)"
+		print "Port forwading forwards the following ports"
+		print "80 -> 8080"
+		print "443 -> 8443"
+		pfConf = raw_input('Enable port forwading (Recommended) [%s]' % _PFLOAD)
+		pfConf = pfConf or _PFLOAD
+		if pfConf.lower() == 'y':
+			srvsList.append('gov.llnl.mp.pfctl.plist')
+
+
+	return set(srvsList)
 
 def linkStartupScripts(service):
-	_initFile = "/etc/init.d/"+service
-	if not os.path.exists(_initFile):
-		if platform.dist()[0] == "Ubuntu":
-			script = "/Library/MacPatch/Server/conf/init.d/Ubuntu/"+service
-		else:	
-			script = "/Library/MacPatch/Server/conf/init.d/"+service
+	
+	print "Copy Startup Script for "+service
+	useSYSTEMD=False
 
-		link = "/etc/init.d/"+service 
-		os.chown(script, 0, 0)
-		os.chmod(script, 0755)
-		os.symlink(script,link)
-		if platform.dist()[0] == "redhat":
-			os.system("/bin/systemctl enable "+service)
+	if platform.dist()[0] == "Ubuntu" and LooseVersion(platform.dist()[1]) >= LooseVersion("15.0"):
+		useSYSTEMD=True
+	elif platform.dist()[0] == "redhat":
+		useSYSTEMD=True
+	else:
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		return
 
-		elif platform.dist()[0] == "Ubuntu":
-			os.system("update-rc.d "+service+" defaults")
+	if useSYSTEMD == True:
+		serviceName=service+".service"
+		serviceConf="/Library/MacPatch/Server/conf/systemd/"+serviceName
+		etcServiceConf="/etc/systemd/system/"+serviceName
+		shutil.copy2(serviceConf, etcServiceConf)
 
+		os.system("/bin/systemctl enable "+serviceName)
+
+	else:
+		_initFile = "/etc/init.d/"+service
+		if os.path.exists(_initFile):
+			return
 		else:
-			print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."
-				
-		print "Copy Startup Script for "+service
-		
+			script = "/Library/MacPatch/Server/conf/init.d/Ubuntu/"+service
+			link = "/etc/init.d/"+service 
 
+			os.chown(script, 0, 0)
+			os.chmod(script, 0755)
+			os.symlink(script,link)
+
+		os.system("update-rc.d "+service+" defaults")
 
 def main():
 	'''Main command processing'''
