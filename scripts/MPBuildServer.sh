@@ -172,10 +172,10 @@ if [ $XOSTYPE == "Linux" ]; then
 	    	for P in `ls $DEBPKGDIR/*.deb`
 	    	do
 	    		if [[ $P == *$VERSION_ID* ]]; then
-					MYDEBPYPKG=$P	    			
+					MYDEBPYPKG=$P
+					dpkg -i $MYDEBPYPKG   			
 	    		fi
 	    	done
-	    	dpkg -i $MYDEBPYPKG
 
 	        pkgs=("build-essential" "python-pip")
 	        for i in "${pkgs[@]}"
