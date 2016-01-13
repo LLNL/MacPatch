@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 2.8.x
   
-  Script Version 1.8.6
+  Script Version 1.8.7
 '''
 
 import os
@@ -38,6 +38,7 @@ import pwd
 import grp
 import shutil
 import json
+from distutils.version import LooseVersion
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
 MP_SRV_CONF = MP_SRV_BASE+"/conf"
@@ -161,14 +162,16 @@ def linuxLoadInitServices(service):
 	
 	print "Loading service "+service
 
-	if platform.dist()[0] == "Ubuntu":
-		_initFile = "/etc/init.d/"+service
-		if os.path.exists(_initFile):
-			os.system("/etc/init.d/"+service+" start")
-		else:
-			print "Unable to find " + _initFile
-
+	useSYSTEMD=False
+	if platform.dist()[0] == "Ubuntu" and LooseVersion(platform.dist()[1]) >= LooseVersion("15.0"):
+		useSYSTEMD=True
 	elif platform.dist()[0] == "redhat":
+		useSYSTEMD=True
+	else:
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		return
+
+	if useSYSTEMD == True:
 		serviceName=service+".service"
 		etcServiceConf="/etc/systemd/system/"+serviceName
 
@@ -176,19 +179,26 @@ def linuxLoadInitServices(service):
 			os.system("/bin/systemctl start "+serviceName)
 		else:
 			print "Unable to find " + etcServiceConf
+	else:
+		_initFile = "/etc/init.d/"+service
+		if os.path.exists(_initFile):
+			os.system("/etc/init.d/"+service+" start")
+		else:
+			print "Unable to find " + _initFile
 
 def linuxUnLoadInitServices(service):
 	# UnLoad Init Services
 	print "UnLoading service "+service
-
-	if platform.dist()[0] == "Ubuntu":
-		_initFile = "/etc/init.d/"+service
-		if os.path.exists(_initFile):
-			os.system("/etc/init.d/"+service+" stop")
-		else:
-			print "Unable to find " + _initFile
-
+	useSYSTEMD=False
+	if platform.dist()[0] == "Ubuntu" and LooseVersion(platform.dist()[1]) >= LooseVersion("15.0"):
+		useSYSTEMD=True
 	elif platform.dist()[0] == "redhat":
+		useSYSTEMD=True
+	else:
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		return
+
+	if useSYSTEMD == True:
 		serviceName=service+".service"
 		etcServiceConf="/etc/systemd/system/"+serviceName
 
@@ -196,6 +206,12 @@ def linuxUnLoadInitServices(service):
 			os.system("/bin/systemctl stop "+serviceName)
 		else:
 			print "Unable to find " + etcServiceConf
+	else:
+		_initFile = "/etc/init.d/"+service
+		if os.path.exists(_initFile):
+			os.system("/etc/init.d/"+service+" stop")
+		else:
+			print "Unable to find " + _initFile
 
 def linuxLoadCronServices(service):
 	from crontab import CronTab
@@ -454,11 +470,26 @@ def setupServices():
 def linkStartupScripts(service):
 	
 	print "Copy Startup Script for "+service
+	useSYSTEMD=False
 
-	# Link or copy startup script/conf
-	if platform.dist()[0] == "Ubuntu":
+	if platform.dist()[0] == "Ubuntu" and LooseVersion(platform.dist()[1]) >= LooseVersion("15.0"):
+		useSYSTEMD=True
+	elif platform.dist()[0] == "redhat":
+		useSYSTEMD=True
+	else:
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		return
+
+	if useSYSTEMD == True:
+		serviceName=service+".service"
+		serviceConf="/Library/MacPatch/Server/conf/systemd"+serviceName
+		etcServiceConf="/etc/systemd/system/"+serviceName
+		shutil.copy2(serviceConf, etcServiceConf)
+
+		os.system("/bin/systemctl enable "+serviceName)
+
+	else:
 		_initFile = "/etc/init.d/"+service
-
 		if os.path.exists(_initFile):
 			return
 		else:
@@ -470,20 +501,6 @@ def linkStartupScripts(service):
 			os.symlink(script,link)
 
 		os.system("update-rc.d "+service+" defaults")
-
-	elif platform.dist()[0] == "redhat":
-
-		serviceName=service+".service"
-		serviceConf="/Library/MacPatch/Server/conf/systemd"+serviceName
-		etcServiceConf="/etc/systemd/system/"+serviceName
-		shutil.copy2(serviceConf, etcServiceConf)
-
-		os.system("/bin/systemctl enable "+serviceName)
-
-	else:
-		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
-		return
-
 
 def main():
 	'''Main command processing'''
