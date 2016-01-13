@@ -482,7 +482,7 @@ def linkStartupScripts(service):
 
 	if useSYSTEMD == True:
 		serviceName=service+".service"
-		serviceConf="/Library/MacPatch/Server/conf/systemd"+serviceName
+		serviceConf="/Library/MacPatch/Server/conf/systemd/"+serviceName
 		etcServiceConf="/etc/systemd/system/"+serviceName
 		shutil.copy2(serviceConf, etcServiceConf)
 
