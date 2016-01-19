@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: buildLinuxPKG.sh
-# Version: 1.0.1
+# Version: 1.0.2
 #
 # Description:
 # This script will create a binary distribution package for
@@ -113,7 +113,7 @@ if [ "$LNXDISTRO" == "ubuntu" ]; then
 	--after-install "${MPGITDIR}/MacPatch PKG/Linux/scripts/postinstall.sh" \
 	-p "$PKGBUILDDIR" \
 	--prefix /Library \
-	-C /Library MacPatch
+	-C /Library/MacPatch Server Content
 
 elif [ "$LNXDISTRO" == "redhat" ]; then
 
@@ -132,8 +132,7 @@ elif [ "$LNXDISTRO" == "redhat" ]; then
 	--depends "java-1.8.0-openjdk-devel" \
 	--after-install "${MPGITDIR}/MacPatch PKG/Linux/scripts/postinstall.sh" \
 	-p "$PKGBUILDDIR" \
-	--prefix /Library \
-	-C /Library MacPatch
+	-C /Library/MacPatch Server Content
 	
 else
 	echo
