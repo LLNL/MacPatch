@@ -17,7 +17,7 @@
 usage() { echo "Usage: $0 [-n <pkg name>] [-v <pkg version>] [-a <pkg author name>] [-e <pkg author email>]" 1>&2; exit 1; }
 
 # Defaults
-PKG_NAME="MacPatch Server"
+PKG_NAME="MacPatch-Server"
 PKG_VERSION="2.8.0"
 PKG_AUTHOR="John Smith"
 PKG_AUTHOR_EMAIL="jsmith@example.com"
@@ -26,6 +26,7 @@ LNXDISTRO="NA"
 XOSTYPE=`uname -s`
 MPBASE="/Library/MacPatch"
 MPGITDIR="${MPBASE}/tmp/MacPatch"
+PKGBUILDDIR="${MPBASE}/tmp/build/Linux"
 
 if [ "`whoami`" != "root" ] ; then   # If not root user,
    # Run this script again as root
@@ -94,6 +95,10 @@ done
 
 if [ "$LNXDISTRO" == "ubuntu" ]; then
 
+	if [ ! -d "$PKGBUILDDIR" ]; then
+		mkdir -p "$PKGBUILDDIR"
+	fi
+
 	fpm -s dir -t deb \
 	-a amd64 \
 	-n "$PKG_NAME" \
@@ -106,21 +111,27 @@ if [ "$LNXDISTRO" == "ubuntu" ]; then
 	--depends "python-pip" \
 	--depends "openjdk-8-jdk" \
 	--after-install "${MPGITDIR}/MacPatch PKG/Linux/scripts/postinstall.sh" \
+	-p "$PKGBUILDDIR" \
 	--prefix /Library \
 	-C /Library MacPatch
 
 elif [ "$LNXDISTRO" == "redhat" ]; then
 
+	if [ ! -d "$PKGBUILDDIR" ]; then
+		mkdir -p "$PKGBUILDDIR"
+	fi
+
 	fpm -s dir -t rpm \
 	-a amd64 \
 	-n "$PKG_NAME" \
-	-v "$PKG_VERSION-ubuntu" \
+	-v "$PKG_VERSION" \
 	-m "$PKG_AUTHOR <$PKG_AUTHOR_EMAIL>" \
 	--license "$PKG_LICENSE" \
 	--depends "python" \
 	--depends "python-pip" \
 	--depends "java-1.8.0-openjdk-devel" \
 	--after-install "${MPGITDIR}/MacPatch PKG/Linux/scripts/postinstall.sh" \
+	-p "$PKGBUILDDIR" \
 	--prefix /Library \
 	-C /Library MacPatch
 	
