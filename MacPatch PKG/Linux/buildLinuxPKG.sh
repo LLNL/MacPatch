@@ -132,6 +132,7 @@ elif [ "$LNXDISTRO" == "redhat" ]; then
 	--depends "java-1.8.0-openjdk-devel" \
 	--after-install "${MPGITDIR}/MacPatch PKG/Linux/scripts/postinstall.sh" \
 	-p "$PKGBUILDDIR" \
+	--prefix /Library/MacPatch \
 	-C /Library/MacPatch Server Content
 	
 else
