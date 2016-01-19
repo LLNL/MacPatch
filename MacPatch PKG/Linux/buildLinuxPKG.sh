@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: buildLinuxPKG.sh
-# Version: 1.0.0
+# Version: 1.0.1
 #
 # Description:
 # This script will create a binary distribution package for
@@ -10,6 +10,7 @@
 #
 # History:
 # 1.0.0:	Initial Creation
+# 1.0.1:	Added RPM
 #
 # -------------------------------------------------------------
 
@@ -92,6 +93,7 @@ while getopts ":n:v:a:e:h" opt; do
 done
 
 if [ "$LNXDISTRO" == "ubuntu" ]; then
+
 	fpm -s dir -t deb \
 	-a amd64 \
 	-n "$PKG_NAME" \
@@ -100,7 +102,7 @@ if [ "$LNXDISTRO" == "ubuntu" ]; then
 	--deb-no-default-config-files \
 	--license "$PKG_LICENSE" \
 	--category misc \
-	--depends "python-x2" \
+	--depends "python" \
 	--depends "python-pip" \
 	--depends "openjdk-8-jdk" \
 	--after-install "${MPGITDIR}/MacPatch PKG/Linux/scripts/postinstall.sh" \
@@ -109,20 +111,15 @@ if [ "$LNXDISTRO" == "ubuntu" ]; then
 
 elif [ "$LNXDISTRO" == "redhat" ]; then
 
-	echo "Not Done Yet"
-	exit 1
-
-	fpm -s dir -t deb \
+	fpm -s dir -t rpm \
 	-a amd64 \
 	-n "$PKG_NAME" \
 	-v "$PKG_VERSION-ubuntu" \
 	-m "$PKG_AUTHOR <$PKG_AUTHOR_EMAIL>" \
-	--deb-no-default-config-files \
 	--license "$PKG_LICENSE" \
-	--category misc \
-	--depends "python-x2" \
+	--depends "python" \
 	--depends "python-pip" \
-	--depends "openjdk-8-jdk" \
+	--depends "java-1.8.0-openjdk-devel" \
 	--after-install "${MPGITDIR}/MacPatch PKG/Linux/scripts/postinstall.sh" \
 	--prefix /Library \
 	-C /_Library MacPatch
