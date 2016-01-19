@@ -99,7 +99,7 @@ if [ "$LNXDISTRO" == "ubuntu" ]; then
 		mkdir -p "$PKGBUILDDIR"
 	fi
 
-	fpm -s dir -t deb \
+	fpm -s dir -t deb -f \
 	-a amd64 \
 	-n "$PKG_NAME" \
 	-v "$PKG_VERSION-ubuntu" \
@@ -121,7 +121,7 @@ elif [ "$LNXDISTRO" == "redhat" ]; then
 		mkdir -p "$PKGBUILDDIR"
 	fi
 
-	fpm -s dir -t rpm \
+	fpm -s dir -t rpm -f \
 	-a amd64 \
 	-n "$PKG_NAME" \
 	-v "$PKG_VERSION" \
