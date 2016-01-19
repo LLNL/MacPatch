@@ -107,7 +107,7 @@ if [ "$LNXDISTRO" == "ubuntu" ]; then
 	--depends "openjdk-8-jdk" \
 	--after-install "${MPGITDIR}/MacPatch PKG/Linux/scripts/postinstall.sh" \
 	--prefix /Library \
-	-C /_Library MacPatch
+	-C /Library MacPatch
 
 elif [ "$LNXDISTRO" == "redhat" ]; then
 
@@ -122,7 +122,7 @@ elif [ "$LNXDISTRO" == "redhat" ]; then
 	--depends "java-1.8.0-openjdk-devel" \
 	--after-install "${MPGITDIR}/MacPatch PKG/Linux/scripts/postinstall.sh" \
 	--prefix /Library \
-	-C /_Library MacPatch
+	-C /Library MacPatch
 	
 else
 	echo
