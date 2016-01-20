@@ -176,6 +176,8 @@
 		}
 	</script>
 
+	<cfset dbObj = CreateObject("component","cfc.db").init()>
+	<cfset result = dbObj.checkSchemaVersion() />
 </head>
 <body>
 	<div class="ui-layout-north">
@@ -197,10 +199,21 @@
 	<div class="ui-layout-center">
 		<div class="wrapper">
         	<!--- inc/dashboard.cfm --->
-			<iframe src="inc/dashboard.cfm" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
-            </iframe>
+        	<cfif result.pass EQ false>
+        		<h3>WARNING</h3>
+        		<cfoutput>
+        		The current database schema (#result.runningVersion#) does not match the required version (#result.requiredVersion#).<br>
+        		Please upgrade the database to the latest version of the database schema.
+        		</cfoutput>
+        	<cfelse>
+	        	<iframe src="inc/dashboard.cfm" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
+	            </iframe>
+        	</cfif>
+
+
+			
 		</div>
 	</div> 
-	<div class="ui-layout-south">MacPatch Version 2.8.0a</div> 
+	<div class="ui-layout-south">MacPatch Version 2.8.0 <br> Database Schema <cfoutput>#result.runningVersion#</cfoutput></div> 
 </body>
 </html>

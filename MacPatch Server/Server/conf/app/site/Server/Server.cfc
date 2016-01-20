@@ -11,9 +11,10 @@
     - Removed XML conf support
 --->
 <cfcomponent output="false">
-  <cffunction name="onServerStart">
+    <cffunction name="onServerStart">
 
   		<cfset var jFile = "/Library/MacPatch/Server/conf/etc/siteconfig.json">
+        <cfset var dFile = "/Library/MacPatch/Server/conf/etc/db/db_schema.json">
 
   		<cfif fileExists(jFile)>
 			<cfinvoke component="Server.settings" method="getJSONAppSettings" returnvariable="_AppSettings">
@@ -24,8 +25,26 @@
         	<cfreturn>
         </cfif>
 
-		<!--- main settings --->
-		<cfset srvconf.settings = _AppSettings>
+        <!--- main settings --->
+        <cfset srvconf.settings = _AppSettings>
+
+        <!--- DB Schema --->
+        <cfset _dbSchema = structNew() />
+        <cfif fileExists(dFile)>
+            <cfset dbData = DeserializeJSON(file=dFile)>
+            <cfset _schemaVersion = dbData.schemaVersion />
+            <cfset _schemaNotes = dbData.schemaNotes />
+            <cfset dbData = {} />
+        <cfelse>
+            <cfthrow message="No Database Schema Config File Found.">
+            <cfset _schemaVersion = "1.0.0.0" />
+            <cfset _schemaNotes = "" />
+        </cfif>
+
+        <cfset _dbSchema.schemaVersion = _schemaVersion />
+        <cfset _dbSchema.schemaNotes = _schemaNotes />
+        <cfset srvconf.settings.dbSchema = _dbSchema />
+
 
 		<!--- Validate users settings - user --->
 		<cfif not structKeyExists(srvconf.settings.users,"admin")>
