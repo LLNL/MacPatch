@@ -218,7 +218,7 @@
         	<cfif _checkSchema EQ true>
 	        	<cfif result.pass EQ false>
 	        		<cfoutput>
-	        		<iframe src="inc/dashboard.cfm?runningVersion=#result.runningVersion#&requiredVersion=#result.requiredVersion#" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
+	        		<iframe src="db_status.cfm?runningVersion=#result.runningVersion#&requiredVersion=#result.requiredVersion#" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
 		            </iframe>
 		            </cfoutput>
 	        	<cfelse>
