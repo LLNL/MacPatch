@@ -15,10 +15,7 @@
 
     <!--- Create mapping for cfc objects --->
     <cfmapping logicalpath="/root" relativepath="/">
-    <!---
-    <cfmapping logicalpath="/admin" relativepath="/admin">
-    <cfmapping logicalpath="/inc" relativepath="/admin/includes">
-    --->
+
     <!--- ---------------------------------------------
     	This is where we can set some variables for the application scope
     	http://openbd.org/manual/?/app_application
@@ -117,9 +114,6 @@
             	<cfset session.cflocFix = "http://#cgi.HTTP_HOST#">    
             </cfif>                        
         	<cfset application.settings = _AppSettings>
-            <!---
-            <cfset application.settings.dbSchema = server.mpsettings.settings.dbschema>
-            --->
             <cfset application.settings.users.admin.pass = "">
 
             <!--- Clear the login form variables, so they dont get re-used --->
@@ -175,7 +169,6 @@
     	Error handeling for the app.
     ----------------------------------------------------------------------
     --->	
-        
     <cffunction name="onError">
         <cfargument name="Exception" required=true/>
         <cfargument type="String" name="EventName" required=true/>

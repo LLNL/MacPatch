@@ -25,11 +25,10 @@
             </cfquery>
 
             <cfif qGetSchema.recordcount EQ 1>
-                <cfset runningVersion = qGetSchema[1].schemaVersion />
+                <cfset runningVersion = qGetSchema.schemaVersion[1] />
             <cfelseif qGetSchema.recordcount GTE 2>
                 <!--- Should Have Only One Record, but if not then report last entry --->
-                <cfset idx = qGetSchema.recordcount>
-                <cfset runningVersion = qGetSchema[idx].schemaVersion />
+                <cfset runningVersion = qGetSchema.schemaVersion[1] />
             </cfif>
 
             <cfset _vCompare = versionCompare(arguments.schemaConfVersion, runningVersion) />

@@ -189,6 +189,8 @@
 	<cfelse>
 		<cfset result = dbObj.checkSchemaVersion("0.0.0.0") />
 	</cfif>
+
+	<cfset session.myRes = result>
 </cfsilent>
 <body>
 	<div class="ui-layout-north">
