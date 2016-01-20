@@ -8,13 +8,13 @@
         <cfargument name="schemaConfVersion" required=true/>
 
         <cfset result = {}>
-        <cfset result.runningVersion = 0 />
-        <cfset result.requiredVersion = 0 />
+        <cfset result.runningVersion = "0" />
+        <cfset result.requiredVersion = "0" />
         <cfset result.pass = false />
-        <cfset result.errno = 0 />
+        <cfset result.errno = "0" />
         <cfset result.errmsg = "" />
 
-        <cfset var runningVersion = 0.0.0.0 />
+        <cfset var runningVersion = "0.0.0.0" />
 
         <cftry>
             <cfquery datasource="mpds" name="qGetSchema">

@@ -175,10 +175,17 @@
 			window.open('logout.cfm','_self') ;
 		}
 	</script>
-
-	<cfset dbObj = CreateObject("component","cfc.db").init()>
-	<cfset result = dbObj.checkSchemaVersion() />
 </head>
+<cfsilent>
+	<cfset dbObj = CreateObject("component","cfc.db").init()>
+	<cfif StructKeyExists( application.settings, "dbSchema" )>
+		<cfif StructKeyExists( application.settings.dbSchema, "schemaVersion" )>
+			<cfset result = dbObj.checkSchemaVersion(application.settings.dbSchema.schemaVersion) />
+		<cfelse>
+			<cfset result = dbObj.checkSchemaVersion("0.0.0.0") />
+		</cfif>
+	</cfif>
+</cfsilent>
 <body>
 	<div class="ui-layout-north">
 		<div id="image">
@@ -206,11 +213,13 @@
         	</cfif>
         	<cfif _checkSchema EQ true>
 	        	<cfif result.pass EQ false>
-	        		<h3>WARNING</h3>
-	        		<cfoutput>
-	        		The current database schema (#result.runningVersion#) does not match the required version (#result.requiredVersion#).<br>
-	        		Please upgrade the database to the latest version of the database schema.
-	        		</cfoutput>
+	        		<iframe name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
+	        			<h3>WARNING</h3>
+		        		<cfoutput>
+		        		The current database schema (#result.runningVersion#) does not match the required version (#result.requiredVersion#).<br>
+		        		Please upgrade the database to the latest version of the database schema.
+		        		</cfoutput>
+		            </iframe>
 	        	<cfelse>
 		        	<iframe src="inc/dashboard.cfm" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
 		            </iframe>

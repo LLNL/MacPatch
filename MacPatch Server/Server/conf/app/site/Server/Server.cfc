@@ -36,9 +36,10 @@
             <cfset _schemaNotes = dbData.schemaNotes />
             <cfset dbData = {} />
         <cfelse>
-            <cfthrow message="No Database Schema Config File Found.">
             <cfset _schemaVersion = "1.0.0.0" />
             <cfset _schemaNotes = "" />
+            <cfthrow message="No Database Schema Config File Found.">
+            <cfreturn>
         </cfif>
 
         <cfset _dbSchema.schemaVersion = _schemaVersion />
