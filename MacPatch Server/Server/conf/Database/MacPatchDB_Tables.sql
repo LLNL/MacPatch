@@ -9,6 +9,17 @@ SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
+--  Table structure for `mp_db_schema`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_db_schema`;
+CREATE TABLE `mp_db_schema` (
+  `rid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `schemaVersion` varchar(255) DEFAULT '2.8.0.0',
+  `schemaNotes` mediumtext,
+  PRIMARY KEY (`rid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
 --  Table structure for `acl_computer_group_members`
 -- ----------------------------
 DROP TABLE IF EXISTS `acl_computer_group_members`;
