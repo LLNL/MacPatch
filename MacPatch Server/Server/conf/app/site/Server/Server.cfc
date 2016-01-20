@@ -93,6 +93,7 @@
             <cfset dbDefTmp = hasDefaultDBData() />
 
             <cfcatch type="any">
+                <cfset server.mpsettings = srvconf>
                 <cfthrow message="Error trying to create datasource.">
             </cfcatch>
         </cftry>

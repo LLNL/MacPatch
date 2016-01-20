@@ -178,12 +178,16 @@
 </head>
 <cfsilent>
 	<cfset dbObj = CreateObject("component","cfc.db").init()>
-	<cfif StructKeyExists( application.settings, "dbSchema" )>
-		<cfif StructKeyExists( application.settings.dbSchema, "schemaVersion" )>
-			<cfset result = dbObj.checkSchemaVersion(application.settings.dbSchema.schemaVersion) />
-		<cfelse>
-			<cfset result = dbObj.checkSchemaVersion("0.0.0.0") />
+	<cfif StructKeyExists( server, "mpsettings" )>
+		<cfif StructKeyExists( server.mpsettings.settings, "dbSchema" )>
+			<cfif StructKeyExists( server.mpsettings.settings.dbSchema, "schemaVersion" )>
+				<cfset result = dbObj.checkSchemaVersion(server.mpsettings.settings.dbSchema.schemaVersion) />
+			<cfelse>
+				<cfset result = dbObj.checkSchemaVersion("0.0.0.0") />
+			</cfif>
 		</cfif>
+	<cfelse>
+		<cfset result = dbObj.checkSchemaVersion("0.0.0.0") />
 	</cfif>
 </cfsilent>
 <body>
@@ -213,13 +217,10 @@
         	</cfif>
         	<cfif _checkSchema EQ true>
 	        	<cfif result.pass EQ false>
-	        		<iframe name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
-	        			<h3>WARNING</h3>
-		        		<cfoutput>
-		        		The current database schema (#result.runningVersion#) does not match the required version (#result.requiredVersion#).<br>
-		        		Please upgrade the database to the latest version of the database schema.
-		        		</cfoutput>
+	        		<cfoutput>
+	        		<iframe src="inc/dashboard.cfm?runningVersion=#result.runningVersion#&requiredVersion=#result.requiredVersion#" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
 		            </iframe>
+		            </cfoutput>
 	        	<cfelse>
 		        	<iframe src="inc/dashboard.cfm" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
 		            </iframe>
