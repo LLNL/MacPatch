@@ -117,7 +117,9 @@
             	<cfset session.cflocFix = "http://#cgi.HTTP_HOST#">    
             </cfif>                        
         	<cfset application.settings = _AppSettings>
-            <cfset application.settings.dbSchema = server.mpsettings.dbschema>
+            <!---
+            <cfset application.settings.dbSchema = server.mpsettings.settings.dbschema>
+            --->
             <cfset application.settings.users.admin.pass = "">
 
             <!--- Clear the login form variables, so they dont get re-used --->
