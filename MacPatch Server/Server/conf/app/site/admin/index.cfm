@@ -233,6 +233,6 @@
         	</cfif>
 		</div>
 	</div> 
-	<div class="ui-layout-south">MacPatch Version 2.8.0 <br> Database Schema <cfoutput>#result.runningVersion#</cfoutput></div> 
+	<div class="ui-layout-south">MacPatch Version 2.8.0, Database Schema <cfoutput>#result.runningVersion#</cfoutput></div> 
 </body>
 </html>
