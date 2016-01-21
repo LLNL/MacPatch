@@ -39,6 +39,11 @@ J2EE_SW=`find "${GITROOT}/MacPatch Server" -name "apache-tomcat-"* -type f -exec
 # PKG Variables
 MP_MAC_PKG=false
 MP_SERVER_PKG_VER="1.2.0.0"
+CODESIGNIDENTITY="*"
+CODESIGNIDENTITYPLIST="/Library/Preferences/mp.build.server.plist"
+if [ -f "$CODESIGNIDENTITYPLIST" ]; then
+	CODESIGNIDENTITYALT=`defaults read ${CODESIGNIDENTITYPLIST} name`
+fi
 
 XOSTYPE=`uname -s`
 USELINUX=false
@@ -557,32 +562,27 @@ if $MP_MAC_PKG; then
 
 	if [ "$SIGNPKG" == "Y" ] || [ "$SIGNPKG" == "y" ] ; then
 		clear
+
+		read -p "Please enter you sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
+		CODESIGNIDENTITY=${CODESIGNIDENTITY:-$CODESIGNIDENTITYALT}
+		if [ "$CODESIGNIDENTITY" != "$CODESIGNIDENTITYALT" ]; then
+			defaults write ${CODESIGNIDENTITYPLIST} name "${CODESIGNIDENTITY}"
+		fi
+
 		echo
-		read -p "The name of the identity to use for signing the package: " IDENTNAME
-		IDENTNAME=${IDENTNAME:-None}
 		echo  "Signing package..."
-		if [ "$IDENTNAME" == "None" ] ; then
-			echo
-			echo "There was an issue with the identity."
+		/usr/bin/productsign --sign "${CODESIGNIDENTITY}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
+		if [ $? -eq 0 ]; then
+			# GOOD
+			rm ${BUILDROOT}/PKG/_MPServer.pkg
+		else
+			# FAILED
+			echo "The signing process failed."
+			echo 
 			echo "Please sign the package by hand."
 			echo 
 			echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
 			echo
-		else
-			/usr/bin/productsign --sign "${IDENTNAME}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
-			if [ $? -eq 0 ]; then
-				# GOOD
-				rm ${BUILDROOT}/PKG/_MPServer.pkg
-			else
-				# FAILED
-				echo "The signing process failed."
-				echo 
-				echo "Please sign the package by hand."
-				echo 
-				echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
-				echo
-			fi
-			#
 		fi
 
 	else
