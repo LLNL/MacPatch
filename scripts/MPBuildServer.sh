@@ -504,10 +504,12 @@ MKARC=${MKARC:-0}
 if [ $MKARC == 1 ]; then
 	zip -r ${MPBASE}/MacPatch_Server.zip ${MPSERVERBASE}
 fi
+clear
 
 # ------------------
 # Set Permissions
 # ------------------
+echo "Setting Permissions..."
 /Library/MacPatch/Server/conf/scripts/Permissions.sh
 
 # ------------------
@@ -533,7 +535,10 @@ fi
 # Create Mac OS X, MacPatch Server PKG
 # ------------------------------------------------------------
 if $MP_MAC_PKG; then
-
+	clear
+	echo "Begin creating MacPatch Server PKG for Mac OS X..."
+	echo
+	echo
 	# ------------------
 	# Move Files For Packaging
 	# ------------------
@@ -547,6 +552,7 @@ if $MP_MAC_PKG; then
 	# ------------------
 	# Clean up structure place holders
 	# ------------------
+	echo "Clean up place holder files"
 	find ${PKG_FILES_ROOT_MP} -name ".mpRM" -print | xargs -I{} rm -rf {}
 
 	# ------------------
@@ -555,6 +561,7 @@ if $MP_MAC_PKG; then
 	mkdir -p "${BUILDROOT}/PKG"
 
 	# Create Server base package
+	echo "Create Server base package"
 	pkgbuild --root "${BUILDROOT}/Server/Files/Library" \
 	--identifier gov.llnl.mp.server \
 	--install-location /Library \
@@ -563,6 +570,7 @@ if $MP_MAC_PKG; then
 	${BUILDROOT}/PKG/Server.pkg
 
 	# Create the final package with scripts and resources
+	echo "Run product build on MPServer.pkg"
 	productbuild --distribution ${BUILDROOT}/Server/Distribution \
 	--resources ${BUILDROOT}/Server/Resources \
 	--package-path ${BUILDROOT}/PKG \
