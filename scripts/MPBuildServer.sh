@@ -525,6 +525,11 @@ if $MP_MAC_PKG; then
 	mv "${MPBASE}/Content" "${PKG_FILES_ROOT_MP}/"
 
 	# ------------------
+	# Clean up structure place holders
+	# ------------------
+	find ${PKG_FILES_ROOT_MP} -name ".mpRM" -print | xargs -I{} rm -rf {}
+
+	# ------------------
 	# Create the Server pkg
 	# ------------------
 	mkdir -p "${BUILDROOT}/PKG"
