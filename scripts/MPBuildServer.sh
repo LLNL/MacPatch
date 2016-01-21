@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 2.0.1
+# Version: 2.0.3
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -26,6 +26,7 @@
 #			Single Tomcat Instance, supports webservices and console
 # 2.0.1:	Updated java version check
 # 2.0.2:	Updated linux package requirements
+# 2.0.3:	Added Mac PKG support
 #
 # -------------------------------------------------------------
 MPBASE="/Library/MacPatch"
@@ -34,6 +35,10 @@ GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/build/Server"
 SRC_DIR="${MPSERVERBASE}/conf/src"
 J2EE_SW=`find "${GITROOT}/MacPatch Server" -name "apache-tomcat-"* -type f -exec basename {} \; | head -n 1`
+
+# PKG Variables
+MP_MAC_PKG=false
+MP_SERVER_PKG_VER="1.2.0.0"
 
 XOSTYPE=`uname -s`
 USELINUX=false
@@ -50,6 +55,33 @@ if [ "`whoami`" != "root" ] ; then   # If not root user,
    echo
    exit 1;
 fi
+
+usage() { echo "Usage: $0 [-p Build Mac PKG]" 1>&2; exit 1; }
+
+while getopts "ph" opt; do
+	case $opt in
+		p)
+			MP_MAC_PKG=true
+			;;
+		h)
+			echo
+			usage
+			exit 1
+			;;
+		\?)
+			echo "Invalid option: -$OPTARG" >&2
+			echo
+			usage
+			exit 1
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument." >&2
+			echo 
+			usage
+			exit 1
+			;;
+	esac
+done
 
 # -----------------------------------
 # OS Check
@@ -475,4 +507,86 @@ if $USELINUX; then
 		echo "Please upgrade or switch your default version of Java."
 		echo
 	fi	
+fi
+
+# ------------------------------------------------------------
+# Create Mac OS X, MacPatch Server PKG
+# ------------------------------------------------------------
+if $MP_MAC_PKG; then
+
+	# ------------------
+	# Move Files For Packaging
+	# ------------------
+	PKG_FILES_ROOT_MP="${BUILDROOT}/Server/Files/Library/MacPatch"
+
+	cp -R ${GITROOT}/MacPatch\ PKG/Server ${BUILDROOT}
+
+	mv "${MPSERVERBASE}" "${PKG_FILES_ROOT_MP}/"
+	mv "${MPBASE}/Content" "${PKG_FILES_ROOT_MP}/"
+
+	# ------------------
+	# Create the Server pkg
+	# ------------------
+	mkdir -p "${BUILDROOT}/PKG"
+
+	# Create Server base package
+	pkgbuild --root "${BUILDROOT}/Server/Files/Library" \
+	--identifier gov.llnl.mp.server \
+	--install-location /Library \
+	--scripts ${BUILDROOT}/Server/Scripts \
+	--version $MP_SERVER_PKG_VER \
+	${BUILDROOT}/PKG/Server.pkg
+
+	# Create the final package with scripts and resources
+	productbuild --distribution ${BUILDROOT}/Server/Distribution \
+	--resources ${BUILDROOT}/Server/Resources \
+	--package-path ${BUILDROOT}/PKG \
+	${BUILDROOT}/PKG/_MPServer.pkg
+
+	# Possibly Sign the newly created PKG
+	clear
+	echo
+	read -p "Would you like to sign the installer PKG (Y/N)? [N]: " SIGNPKG
+	SIGNPKG=${SIGNPKG:-N}
+	echo
+
+	if [ "$SIGNPKG" == "Y" ] || [ "$SIGNPKG" == "y" ] ; then
+		clear
+		echo
+		read -p "The name of the identity to use for signing the package: " IDENTNAME
+		IDENTNAME=${IDENTNAME:-None}
+		echo  "Signing package..."
+		if [ "$IDENTNAME" == "None" ] ; then
+			echo
+			echo "There was an issue with the identity."
+			echo "Please sign the package by hand."
+			echo 
+			echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
+			echo
+		else
+			/usr/bin/productsign --sign "${IDENTNAME}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
+			if [ $? -eq 0 ]; then
+				# GOOD
+				rm ${BUILDROOT}/PKG/_MPServer.pkg
+			else
+				# FAILED
+				echo "The signing process failed."
+				echo 
+				echo "Please sign the package by hand."
+				echo 
+				echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
+				echo
+			fi
+			#
+		fi
+
+	else
+		mv ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
+	fi
+
+	# Clean up the base package
+	rm ${BUILDROOT}/PKG/Server.pkg
+
+	# Open the build package dir
+	open ${BUILDROOT}/PKG
 fi
