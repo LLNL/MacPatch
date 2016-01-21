@@ -29,6 +29,21 @@
 # 2.0.3:	Added Mac PKG support
 #
 # -------------------------------------------------------------
+
+# -------------------------------------------------------------
+# How to use:
+#
+# sudo MPBuildServer.sh, will compile MacPatch server software
+#
+# sudo MPBuildServer.sh -p, will compile MacPatch server
+# software, and create MacPatch server pkg installer. Only for
+# Mac OS X.
+#
+# Linux requires MPBuildServer.sh, then run the buildLinuxPKG.sh
+# locates in /Library/MacPatch/tmp/MacPatch/MacPatch PKG/Linux
+#
+# -------------------------------------------------------------
+
 MPBASE="/Library/MacPatch"
 MPSERVERBASE="/Library/MacPatch/Server"
 GITROOT="/Library/MacPatch/tmp/MacPatch"
