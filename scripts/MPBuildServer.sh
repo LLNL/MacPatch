@@ -544,7 +544,8 @@ if $MP_MAC_PKG; then
 	# ------------------
 	rm -rf "${MPSERVERBASE}/conf/app/.site"
 	rm -rf "${MPSERVERBASE}/conf/app/.wsl"
-	rm -f "${MPSERVERBASE}/conf/src/apache-tomcat*"
+	find "${MPSERVERBASE}/conf/src" -name apache-tomcat-* -print | xargs -I{} rm {}
+	find "${MPSERVERBASE}/conf/src" -name apr* -print | xargs -I{} rm {}
 	rm -rf "${MPSERVERBASE}/conf/src/openbd"
 
 	# ------------------
