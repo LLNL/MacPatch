@@ -26,7 +26,14 @@
 #import "Constants.h"
 
 // Global
-NSString * const SITE_CONFIG                 = @"/Library/MacPatch/Server/conf/etc/siteconfig.json";
+NSString * const SITE_CONFIG                = @"/Library/MacPatch/Server/conf/etc/siteconfig.json";
+NSString * const SERVER_VER_FILE            = @"/Library/MacPatch/Server/conf/etc/.serverVersion.json";
+
+// Web Server
+NSString * const TOMCAT_SERVER              = @"/Library/MacPatch/Server/apache-tomcat/bin/catalina.sh";
+NSString * const LAUNCHD_FILE_TOMCAT        = @"/Library/LaunchDaemons/gov.llnl.mp.tomcat.plist";
+NSString * const LAUNCHD_ORIG_TOMCAT        = @"/Library/MacPatch/Server/conf/LaunchDaemons/gov.llnl.mp.tomcat.plist";
+NSString * const SERVICE_TOMCAT             = @"gov.llnl.mp.tomcat";
 
 // Web Server
 NSString * const APACHE_WEBSERVER            = @"/Library/MacPatch/Server/Apache2/bin/httpd";

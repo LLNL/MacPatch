@@ -27,6 +27,13 @@
 
 // Global
 extern NSString * const SITE_CONFIG;
+extern NSString * const SERVER_VER_FILE;
+
+// TOMCAT Server
+extern NSString * const TOMCAT_SERVER;
+extern NSString * const LAUNCHD_FILE_TOMCAT;
+extern NSString * const LAUNCHD_ORIG_TOMCAT;
+extern NSString * const SERVICE_TOMCAT;
 
 // Web Server
 extern NSString * const APACHE_WEBSERVER;

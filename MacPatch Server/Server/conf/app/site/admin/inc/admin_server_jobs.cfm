@@ -331,7 +331,7 @@ table.genTable td
 }
 </style>
 <cfsilent>
-<cfparam name="jobType" default="Delete Expired Clients,Purge Old Client Data,Purge & Archive Install Data">
+<cfparam name="jobType" default="Delete Expired Clients,Purge Old Client Data,Purge and Archive Install Data">
 <cfparam name="jobtaskType" default="ONCE,DAILY,INTERVAL">
 <cfsavecontent variable="deleteTypeTask">
   <nocfml><cfoutput>
@@ -596,7 +596,7 @@ table.genTable td
 				<input type="hidden" name="actionVarName" value="days">
             </fieldset>
 			</cfif>
-			<cfif taskName EQ "Purge & Archive Install Data">	
+			<cfif taskName EQ "Purge and Archive Install Data">	
             <fieldset>
             <legend>Server Task Action:</legend>
 				<cftry>
@@ -635,7 +635,7 @@ table.genTable td
 <cfif Type EQ "Purge Old Client Data">
 <cfoutput>#render(purgeTypeTask)#</cfoutput>
 </cfif>
-<cfif Type EQ "Purge & Archive Install Data">
+<cfif Type EQ "Purge and Archive Install Data">
 <cfoutput>#render(deleteInstallTypeTask)#</cfoutput>
 </cfif>
 </cfif>

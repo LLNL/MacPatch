@@ -10,9 +10,6 @@ http://www.dribin.org/dave/resources/files/
 • NSFileManager+DirectoryLocations (AS IS)
 http://cocoawithlove.com/
 
-• JSONKit (BSD License)
-http://github.com/johnezang/JSONKit
-
 • LibComponentLogging (MIT license)
 http://0xc0.de/trace
 https://github.com/aharren/LibComponentLogging-Core
@@ -25,6 +22,9 @@ https://github.com/ccgus/fmdb
 
 • NSDirectoryServices (None)
 http://javworld.com/Extreme/DirServ.html
+
+• AHLaunchCtl (AS IS)
+https://github.com/eahrold/AHLaunchCtl
 
 ------------------------------------------------------
 Web Components

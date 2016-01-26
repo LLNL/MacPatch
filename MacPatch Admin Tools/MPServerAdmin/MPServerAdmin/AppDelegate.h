@@ -28,6 +28,7 @@
 #import <Cocoa/Cocoa.h>
 
 
+@class TomcatService;
 @class AdminServiceVC;
 @class WebServiceVC;
 @class ApplePatchSyncVC;
@@ -40,6 +41,7 @@
 @interface AppDelegate : NSObject <NSApplicationDelegate, NSTabViewDelegate>
 
 @property (assign) IBOutlet NSTabView *tabView;
+@property (assign) IBOutlet TomcatService *tomcatService;
 @property (assign) IBOutlet AdminServiceVC *adminServiceVC;
 @property (assign) IBOutlet WebServiceVC *webServiceVC;
 @property (assign) IBOutlet ApplePatchSyncVC *applePatchSyncVC;

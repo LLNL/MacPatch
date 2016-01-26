@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 2.0.1
+# Version: 2.0.3
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -26,14 +26,39 @@
 #			Single Tomcat Instance, supports webservices and console
 # 2.0.1:	Updated java version check
 # 2.0.2:	Updated linux package requirements
+# 2.0.3:	Added Mac PKG support
 #
 # -------------------------------------------------------------
+
+# -------------------------------------------------------------
+# How to use:
+#
+# sudo MPBuildServer.sh, will compile MacPatch server software
+#
+# sudo MPBuildServer.sh -p, will compile MacPatch server
+# software, and create MacPatch server pkg installer. Only for
+# Mac OS X.
+#
+# Linux requires MPBuildServer.sh, then run the buildLinuxPKG.sh
+# locates in /Library/MacPatch/tmp/MacPatch/MacPatch PKG/Linux
+#
+# -------------------------------------------------------------
+
 MPBASE="/Library/MacPatch"
 MPSERVERBASE="/Library/MacPatch/Server"
 GITROOT="/Library/MacPatch/tmp/MacPatch"
 BUILDROOT="/Library/MacPatch/tmp/build/Server"
 SRC_DIR="${MPSERVERBASE}/conf/src"
 J2EE_SW=`find "${GITROOT}/MacPatch Server" -name "apache-tomcat-"* -type f -exec basename {} \; | head -n 1`
+
+# PKG Variables
+MP_MAC_PKG=false
+MP_SERVER_PKG_VER="1.2.0.0"
+CODESIGNIDENTITY="*"
+CODESIGNIDENTITYPLIST="/Library/Preferences/mp.build.server.plist"
+if [ -f "$CODESIGNIDENTITYPLIST" ]; then
+	CODESIGNIDENTITYALT=`defaults read ${CODESIGNIDENTITYPLIST} name`
+fi
 
 XOSTYPE=`uname -s`
 USELINUX=false
@@ -50,6 +75,33 @@ if [ "`whoami`" != "root" ] ; then   # If not root user,
    echo
    exit 1;
 fi
+
+usage() { echo "Usage: $0 [-p Build Mac PKG]" 1>&2; exit 1; }
+
+while getopts "ph" opt; do
+	case $opt in
+		p)
+			MP_MAC_PKG=true
+			;;
+		h)
+			echo
+			usage
+			exit 1
+			;;
+		\?)
+			echo "Invalid option: -$OPTARG" >&2
+			echo
+			usage
+			exit 1
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument." >&2
+			echo 
+			usage
+			exit 1
+			;;
+	esac
+done
 
 # -----------------------------------
 # OS Check
@@ -452,10 +504,12 @@ MKARC=${MKARC:-0}
 if [ $MKARC == 1 ]; then
 	zip -r ${MPBASE}/MacPatch_Server.zip ${MPSERVERBASE}
 fi
+clear
 
 # ------------------
 # Set Permissions
 # ------------------
+echo "Setting Permissions..."
 /Library/MacPatch/Server/conf/scripts/Permissions.sh
 
 # ------------------
@@ -475,4 +529,92 @@ if $USELINUX; then
 		echo "Please upgrade or switch your default version of Java."
 		echo
 	fi	
+fi
+
+# ------------------------------------------------------------
+# Create Mac OS X, MacPatch Server PKG
+# ------------------------------------------------------------
+if $MP_MAC_PKG; then
+	clear
+	echo "Begin creating MacPatch Server PKG for Mac OS X..."
+	echo
+	echo
+	# ------------------
+	# Move Files For Packaging
+	# ------------------
+	PKG_FILES_ROOT_MP="${BUILDROOT}/Server/Files/Library/MacPatch"
+
+	cp -R ${GITROOT}/MacPatch\ PKG/Server ${BUILDROOT}
+
+	mv "${MPSERVERBASE}" "${PKG_FILES_ROOT_MP}/"
+	mv "${MPBASE}/Content" "${PKG_FILES_ROOT_MP}/"
+
+	# ------------------
+	# Clean up structure place holders
+	# ------------------
+	echo "Clean up place holder files"
+	find ${PKG_FILES_ROOT_MP} -name ".mpRM" -print | xargs -I{} rm -rf {}
+
+	# ------------------
+	# Create the Server pkg
+	# ------------------
+	mkdir -p "${BUILDROOT}/PKG"
+
+	# Create Server base package
+	echo "Create Server base package"
+	pkgbuild --root "${BUILDROOT}/Server/Files/Library" \
+	--identifier gov.llnl.mp.server \
+	--install-location /Library \
+	--scripts ${BUILDROOT}/Server/Scripts \
+	--version $MP_SERVER_PKG_VER \
+	${BUILDROOT}/PKG/Server.pkg
+
+	# Create the final package with scripts and resources
+	echo "Run product build on MPServer.pkg"
+	productbuild --distribution ${BUILDROOT}/Server/Distribution \
+	--resources ${BUILDROOT}/Server/Resources \
+	--package-path ${BUILDROOT}/PKG \
+	${BUILDROOT}/PKG/_MPServer.pkg
+
+	# Possibly Sign the newly created PKG
+	clear
+	echo
+	read -p "Would you like to sign the installer PKG (Y/N)? [N]: " SIGNPKG
+	SIGNPKG=${SIGNPKG:-N}
+	echo
+
+	if [ "$SIGNPKG" == "Y" ] || [ "$SIGNPKG" == "y" ] ; then
+		clear
+
+		read -p "Please enter you sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
+		CODESIGNIDENTITY=${CODESIGNIDENTITY:-$CODESIGNIDENTITYALT}
+		if [ "$CODESIGNIDENTITY" != "$CODESIGNIDENTITYALT" ]; then
+			defaults write ${CODESIGNIDENTITYPLIST} name "${CODESIGNIDENTITY}"
+		fi
+
+		echo
+		echo  "Signing package..."
+		/usr/bin/productsign --sign "${CODESIGNIDENTITY}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
+		if [ $? -eq 0 ]; then
+			# GOOD
+			rm ${BUILDROOT}/PKG/_MPServer.pkg
+		else
+			# FAILED
+			echo "The signing process failed."
+			echo 
+			echo "Please sign the package by hand."
+			echo 
+			echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
+			echo
+		fi
+
+	else
+		mv ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
+	fi
+
+	# Clean up the base package
+	rm ${BUILDROOT}/PKG/Server.pkg
+
+	# Open the build package dir
+	open ${BUILDROOT}/PKG
 fi

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14F1021" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15E27e" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
+        <development version="6300" identifier="xcode"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ContentSyncVC">
@@ -9,7 +10,7 @@
                 <outlet property="hostsAllow" destination="vZ6-I0-6Oe" id="dsA-73-sDS"/>
                 <outlet property="hostsDeny" destination="qSI-Ux-zdR" id="V5y-gE-v2x"/>
                 <outlet property="masterHostName" destination="Vtm-WI-EmB" id="0bW-dN-iW6"/>
-                <outlet property="masterSyncInterval" destination="8bf-jH-pNM" id="2jc-jk-rDo"/>
+                <outlet property="masterSyncInterval" destination="fgl-AT-oOW" id="os7-Yx-eHc"/>
                 <outlet property="maxConnextions" destination="vel-gG-Kbg" id="h7O-Yc-0hJ"/>
                 <outlet property="serviceButton1" destination="6Ll-V7-ZYv" id="8pC-8p-A3Y"/>
                 <outlet property="serviceButton2" destination="oYU-9Q-BBw" id="Z9t-54-nTO"/>
@@ -152,15 +153,6 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField verticalHuggingPriority="750" id="8bf-jH-pNM">
-                                <rect key="frame" x="149" y="13" width="502" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="1,800" drawsBackground="YES" id="MYJ-Ac-q5P">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="dS8-my-9mT">
                                 <rect key="frame" x="657" y="16" width="47" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -168,6 +160,15 @@
                                     <font key="font" size="11" name="Arial-ItalicMT"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="fgl-AT-oOW">
+                                <rect key="frame" x="149" y="14" width="502" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="h1X-jm-Fz4">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                         </subviews>
@@ -209,10 +210,10 @@
                                             <rect key="frame" x="0.0" y="0.0" width="552" height="36"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            <size key="minSize" width="223" height="36"/>
+                                            <size key="minSize" width="552" height="36"/>
                                             <size key="maxSize" width="608" height="10000000"/>
                                             <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="minSize" width="223" height="36"/>
+                                            <size key="minSize" width="552" height="36"/>
                                             <size key="maxSize" width="608" height="10000000"/>
                                             <connections>
                                                 <outlet property="delegate" destination="-2" id="IP3-Ef-b9Y"/>
@@ -226,7 +227,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="Jmw-LA-7R3">
-                                    <rect key="frame" x="224" y="1" width="15" height="133"/>
+                                    <rect key="frame" x="537" y="1" width="16" height="36"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
@@ -250,10 +251,10 @@
                                             <rect key="frame" x="0.0" y="0.0" width="552" height="36"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            <size key="minSize" width="223" height="36"/>
+                                            <size key="minSize" width="552" height="36"/>
                                             <size key="maxSize" width="608" height="10000000"/>
                                             <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="minSize" width="223" height="36"/>
+                                            <size key="minSize" width="552" height="36"/>
                                             <size key="maxSize" width="608" height="10000000"/>
                                         </textView>
                                     </subviews>
@@ -264,7 +265,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="jhS-kc-fgy">
-                                    <rect key="frame" x="224" y="1" width="15" height="133"/>
+                                    <rect key="frame" x="537" y="1" width="16" height="36"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>

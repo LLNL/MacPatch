@@ -16,6 +16,8 @@
 		8F1D1F561A60AE5600397DCF /* WebServerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F541A60AE5600397DCF /* WebServerVC.m */; };
 		8F1D1F571A60AE5600397DCF /* WebServerVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F1D1F551A60AE5600397DCF /* WebServerVC.xib */; };
 		8F1D1F5B1A6437E600397DCF /* SUSCatalog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F5A1A6437E600397DCF /* SUSCatalog.m */; };
+		8F2A2D981C51889800DDD964 /* TomcatService.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2A2D961C51889800DDD964 /* TomcatService.m */; };
+		8F2A2D991C51889800DDD964 /* TomcatService.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F2A2D971C51889800DDD964 /* TomcatService.xib */; };
 		8F61C81F1A5DBD6700705CD8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C81E1A5DBD6700705CD8 /* AppDelegate.m */; };
 		8F61C8211A5DBD6700705CD8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F61C8201A5DBD6700705CD8 /* main.m */; };
 		8F61C8231A5DBD6700705CD8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F61C8221A5DBD6700705CD8 /* Images.xcassets */; };
@@ -36,13 +38,28 @@
 		8F6E48BF1AEFEDC50003D3B0 /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48B01AEFEDC50003D3B0 /* lcl.m */; };
 		8F6E48C21AEFEDC50003D3B0 /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48B81AEFEDC50003D3B0 /* LCLLogFile.m */; };
 		8F6E48C31AEFEDC50003D3B0 /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6E48B81AEFEDC50003D3B0 /* LCLLogFile.m */; };
+		8FA145D61C568B89006FEC36 /* AHAuthorizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145C71C568B89006FEC36 /* AHAuthorizer.m */; };
+		8FA145D71C568B89006FEC36 /* AHLaunchCtl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145CA1C568B89006FEC36 /* AHLaunchCtl.m */; };
+		8FA145D81C568B89006FEC36 /* AHLaunchJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145CC1C568B89006FEC36 /* AHLaunchJob.m */; };
+		8FA145D91C568B89006FEC36 /* AHLaunchJobSchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145CE1C568B89006FEC36 /* AHLaunchJobSchedule.m */; };
+		8FA145DA1C568B89006FEC36 /* AHServiceManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145D01C568B89006FEC36 /* AHServiceManagement.m */; };
+		8FA145DB1C568B89006FEC36 /* NSFileManger+Privileged.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145D31C568B89006FEC36 /* NSFileManger+Privileged.m */; };
+		8FA145DC1C568B89006FEC36 /* NSString+ah_versionCompare.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145D51C568B89006FEC36 /* NSString+ah_versionCompare.m */; };
+		8FA145DD1C568EC3006FEC36 /* AHAuthorizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145C71C568B89006FEC36 /* AHAuthorizer.m */; };
+		8FA145DE1C568ECA006FEC36 /* AHLaunchCtl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145CA1C568B89006FEC36 /* AHLaunchCtl.m */; };
+		8FA145DF1C568ECA006FEC36 /* AHLaunchJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145CC1C568B89006FEC36 /* AHLaunchJob.m */; };
+		8FA145E01C568ECA006FEC36 /* AHLaunchJobSchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145CE1C568B89006FEC36 /* AHLaunchJobSchedule.m */; };
+		8FA145E11C568ECA006FEC36 /* AHServiceManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145D01C568B89006FEC36 /* AHServiceManagement.m */; };
+		8FA145E21C568ECA006FEC36 /* NSFileManger+Privileged.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145D31C568B89006FEC36 /* NSFileManger+Privileged.m */; };
+		8FA145E31C568ECA006FEC36 /* NSString+ah_versionCompare.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145D51C568B89006FEC36 /* NSString+ah_versionCompare.m */; };
+		8FA145F31C569A56006FEC36 /* MPServerAdmin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145F21C569A56006FEC36 /* MPServerAdmin.m */; };
+		8FA145F61C57DA6F006FEC36 /* NumberField.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145F51C57DA6F006FEC36 /* NumberField.m */; };
 		8FB5018F1AEE88D00063FA92 /* MPServerAdmin Help in Resources */ = {isa = PBXBuildFile; fileRef = 8FB5018E1AEE88D00063FA92 /* MPServerAdmin Help */; };
 		8FCD31FC1AD2F65900912BEC /* MPRsyncD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */; };
 		8FCD31FD1AD2F65900912BEC /* MPRsyncD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */; };
 		8FCD32031AD44D0600912BEC /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD32021AD44D0600912BEC /* XMLDictionary.m */; };
 		8FCD32041AD44D0600912BEC /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD32021AD44D0600912BEC /* XMLDictionary.m */; };
 		8FCD321E1ADC16FA00912BEC /* AuthenticationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD321C1ADC16FA00912BEC /* AuthenticationVC.m */; };
-		8FCD321F1ADC16FA00912BEC /* AuthenticationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD321C1ADC16FA00912BEC /* AuthenticationVC.m */; };
 		8FCD32201ADC16FA00912BEC /* AuthenticationVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FCD321D1ADC16FA00912BEC /* AuthenticationVC.xib */; };
 		8FCFB3521ACB3367008DBEDB /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCFB3511ACB3367008DBEDB /* Constants.m */; };
 		8FCFB3531ACB3367008DBEDB /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCFB3511ACB3367008DBEDB /* Constants.m */; };
@@ -86,6 +103,9 @@
 		8F1D1F551A60AE5600397DCF /* WebServerVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebServerVC.xib; sourceTree = "<group>"; };
 		8F1D1F591A6437E600397DCF /* SUSCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUSCatalog.h; path = Models/SUSCatalog.h; sourceTree = "<group>"; };
 		8F1D1F5A1A6437E600397DCF /* SUSCatalog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUSCatalog.m; path = Models/SUSCatalog.m; sourceTree = "<group>"; };
+		8F2A2D951C51889800DDD964 /* TomcatService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TomcatService.h; sourceTree = "<group>"; };
+		8F2A2D961C51889800DDD964 /* TomcatService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TomcatService.m; sourceTree = "<group>"; };
+		8F2A2D971C51889800DDD964 /* TomcatService.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TomcatService.xib; sourceTree = "<group>"; };
 		8F61C8181A5DBD6700705CD8 /* MPServerAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPServerAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F61C81C1A5DBD6700705CD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F61C81D1A5DBD6700705CD8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -129,6 +149,26 @@
 		8F6E48BC1AEFEDC50003D3B0 /* qlog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qlog.h; sourceTree = "<group>"; };
 		8F6E48BD1AEFEDC50003D3B0 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8F6E48C81AEFFB7D0003D3B0 /* MPServerAdminPrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPServerAdminPrefixHeader.pch; sourceTree = "<group>"; };
+		8FA145C61C568B89006FEC36 /* AHAuthorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AHAuthorizer.h; sourceTree = "<group>"; };
+		8FA145C71C568B89006FEC36 /* AHAuthorizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AHAuthorizer.m; sourceTree = "<group>"; };
+		8FA145C81C568B89006FEC36 /* AHLaunchCtl-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AHLaunchCtl-Prefix.pch"; sourceTree = "<group>"; };
+		8FA145C91C568B89006FEC36 /* AHLaunchCtl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AHLaunchCtl.h; sourceTree = "<group>"; };
+		8FA145CA1C568B89006FEC36 /* AHLaunchCtl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AHLaunchCtl.m; sourceTree = "<group>"; };
+		8FA145CB1C568B89006FEC36 /* AHLaunchJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AHLaunchJob.h; sourceTree = "<group>"; };
+		8FA145CC1C568B89006FEC36 /* AHLaunchJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AHLaunchJob.m; sourceTree = "<group>"; };
+		8FA145CD1C568B89006FEC36 /* AHLaunchJobSchedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AHLaunchJobSchedule.h; sourceTree = "<group>"; };
+		8FA145CE1C568B89006FEC36 /* AHLaunchJobSchedule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AHLaunchJobSchedule.m; sourceTree = "<group>"; };
+		8FA145CF1C568B89006FEC36 /* AHServiceManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AHServiceManagement.h; sourceTree = "<group>"; };
+		8FA145D01C568B89006FEC36 /* AHServiceManagement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AHServiceManagement.m; sourceTree = "<group>"; };
+		8FA145D11C568B89006FEC36 /* AHServiceManagement_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AHServiceManagement_Private.h; sourceTree = "<group>"; };
+		8FA145D21C568B89006FEC36 /* NSFileManger+Privileged.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManger+Privileged.h"; sourceTree = "<group>"; };
+		8FA145D31C568B89006FEC36 /* NSFileManger+Privileged.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManger+Privileged.m"; sourceTree = "<group>"; };
+		8FA145D41C568B89006FEC36 /* NSString+ah_versionCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ah_versionCompare.h"; sourceTree = "<group>"; };
+		8FA145D51C568B89006FEC36 /* NSString+ah_versionCompare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ah_versionCompare.m"; sourceTree = "<group>"; };
+		8FA145F11C569A56006FEC36 /* MPServerAdmin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPServerAdmin.h; sourceTree = "<group>"; };
+		8FA145F21C569A56006FEC36 /* MPServerAdmin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPServerAdmin.m; sourceTree = "<group>"; };
+		8FA145F41C57DA6F006FEC36 /* NumberField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberField.h; sourceTree = "<group>"; };
+		8FA145F51C57DA6F006FEC36 /* NumberField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NumberField.m; sourceTree = "<group>"; };
 		8FB5018E1AEE88D00063FA92 /* MPServerAdmin Help */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "MPServerAdmin Help"; path = "Resources/MPServerAdmin Help"; sourceTree = "<group>"; };
 		8FB501B51AEFEC930063FA92 /* HelperPrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelperPrefixHeader.pch; sourceTree = "<group>"; };
 		8FCD31FA1AD2F65900912BEC /* MPRsyncD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPRsyncD.h; sourceTree = "<group>"; };
@@ -195,6 +235,8 @@
 			children = (
 				8F1D1F591A6437E600397DCF /* SUSCatalog.h */,
 				8F1D1F5A1A6437E600397DCF /* SUSCatalog.m */,
+				8FA145F41C57DA6F006FEC36 /* NumberField.h */,
+				8FA145F51C57DA6F006FEC36 /* NumberField.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -223,8 +265,11 @@
 			children = (
 				8F61C81D1A5DBD6700705CD8 /* AppDelegate.h */,
 				8F61C81E1A5DBD6700705CD8 /* AppDelegate.m */,
+				8FA145F11C569A56006FEC36 /* MPServerAdmin.h */,
+				8FA145F21C569A56006FEC36 /* MPServerAdmin.m */,
 				8F61C8221A5DBD6700705CD8 /* Images.xcassets */,
 				8F61C8241A5DBD6700705CD8 /* MainMenu.xib */,
+				8FA145C51C568B89006FEC36 /* AHLaunchCtl */,
 				8F61C81B1A5DBD6700705CD8 /* Supporting Files */,
 				8F1D1F581A6437C200397DCF /* Models */,
 				8F61C87A1A5F291F00705CD8 /* Views */,
@@ -246,6 +291,9 @@
 		8F61C87A1A5F291F00705CD8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8F2A2D951C51889800DDD964 /* TomcatService.h */,
+				8F2A2D961C51889800DDD964 /* TomcatService.m */,
+				8F2A2D971C51889800DDD964 /* TomcatService.xib */,
 				8F1D1F531A60AE5600397DCF /* WebServerVC.h */,
 				8F1D1F541A60AE5600397DCF /* WebServerVC.m */,
 				8F1D1F551A60AE5600397DCF /* WebServerVC.xib */,
@@ -322,6 +370,29 @@
 			path = "LibComponentLogging-qlog";
 			sourceTree = "<group>";
 		};
+		8FA145C51C568B89006FEC36 /* AHLaunchCtl */ = {
+			isa = PBXGroup;
+			children = (
+				8FA145C61C568B89006FEC36 /* AHAuthorizer.h */,
+				8FA145C71C568B89006FEC36 /* AHAuthorizer.m */,
+				8FA145C81C568B89006FEC36 /* AHLaunchCtl-Prefix.pch */,
+				8FA145C91C568B89006FEC36 /* AHLaunchCtl.h */,
+				8FA145CA1C568B89006FEC36 /* AHLaunchCtl.m */,
+				8FA145CB1C568B89006FEC36 /* AHLaunchJob.h */,
+				8FA145CC1C568B89006FEC36 /* AHLaunchJob.m */,
+				8FA145CD1C568B89006FEC36 /* AHLaunchJobSchedule.h */,
+				8FA145CE1C568B89006FEC36 /* AHLaunchJobSchedule.m */,
+				8FA145CF1C568B89006FEC36 /* AHServiceManagement.h */,
+				8FA145D01C568B89006FEC36 /* AHServiceManagement.m */,
+				8FA145D11C568B89006FEC36 /* AHServiceManagement_Private.h */,
+				8FA145D21C568B89006FEC36 /* NSFileManger+Privileged.h */,
+				8FA145D31C568B89006FEC36 /* NSFileManger+Privileged.m */,
+				8FA145D41C568B89006FEC36 /* NSString+ah_versionCompare.h */,
+				8FA145D51C568B89006FEC36 /* NSString+ah_versionCompare.m */,
+			);
+			path = AHLaunchCtl;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -366,7 +437,7 @@
 		8F61C8101A5DBD6700705CD8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0620;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "Charles Heizer";
 				TargetAttributes = {
 					8F1D1F351A605A0600397DCF = {
@@ -405,6 +476,7 @@
 			files = (
 				8F61C8231A5DBD6700705CD8 /* Images.xcassets in Resources */,
 				8F61C8501A5F130100705CD8 /* WebServiceVC.xib in Resources */,
+				8F2A2D991C51889800DDD964 /* TomcatService.xib in Resources */,
 				8F1D1F4A1A605BBF00397DCF /* Common.strings in Resources */,
 				8F61C86A1A5F266A00705CD8 /* ApplePatchSyncVC.xib in Resources */,
 				8F61C8261A5DBD6700705CD8 /* MainMenu.xib in Resources */,
@@ -427,13 +499,19 @@
 			files = (
 				8FCD31FD1AD2F65900912BEC /* MPRsyncD.m in Sources */,
 				8FCD32041AD44D0600912BEC /* XMLDictionary.m in Sources */,
-				8FCD321F1ADC16FA00912BEC /* AuthenticationVC.m in Sources */,
+				8FA145DE1C568ECA006FEC36 /* AHLaunchCtl.m in Sources */,
+				8FA145DF1C568ECA006FEC36 /* AHLaunchJob.m in Sources */,
 				8F6E48BF1AEFEDC50003D3B0 /* lcl.m in Sources */,
 				8F1D1F491A605BBF00397DCF /* Common.m in Sources */,
 				8F1D1F391A605A0600397DCF /* main.m in Sources */,
+				8FA145E01C568ECA006FEC36 /* AHLaunchJobSchedule.m in Sources */,
+				8FA145E21C568ECA006FEC36 /* NSFileManger+Privileged.m in Sources */,
+				8FA145E11C568ECA006FEC36 /* AHServiceManagement.m in Sources */,
 				8F6E48C31AEFEDC50003D3B0 /* LCLLogFile.m in Sources */,
+				8FA145DD1C568EC3006FEC36 /* AHAuthorizer.m in Sources */,
 				8F1D1F411A605A6600397DCF /* HelperTool.m in Sources */,
 				8FCFB3531ACB3367008DBEDB /* Constants.m in Sources */,
+				8FA145E31C568ECA006FEC36 /* NSString+ah_versionCompare.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,20 +522,30 @@
 				8FCD32031AD44D0600912BEC /* XMLDictionary.m in Sources */,
 				8F1D1F561A60AE5600397DCF /* WebServerVC.m in Sources */,
 				8F61C8211A5DBD6700705CD8 /* main.m in Sources */,
+				8FA145DA1C568B89006FEC36 /* AHServiceManagement.m in Sources */,
 				8F1D1F5B1A6437E600397DCF /* SUSCatalog.m in Sources */,
 				8F61C8731A5F279D00705CD8 /* AVSyncVC.m in Sources */,
 				8F61C86E1A5F274400705CD8 /* ContentSyncVC.m in Sources */,
+				8FA145D91C568B89006FEC36 /* AHLaunchJobSchedule.m in Sources */,
 				8F6E48C21AEFEDC50003D3B0 /* LCLLogFile.m in Sources */,
+				8FA145F31C569A56006FEC36 /* MPServerAdmin.m in Sources */,
 				8F61C84F1A5F130100705CD8 /* WebServiceVC.m in Sources */,
 				8F61C81F1A5DBD6700705CD8 /* AppDelegate.m in Sources */,
+				8FA145D61C568B89006FEC36 /* AHAuthorizer.m in Sources */,
 				8FCD31FC1AD2F65900912BEC /* MPRsyncD.m in Sources */,
 				8F61C8781A5F27AE00705CD8 /* DatabaseVC.m in Sources */,
 				8F1D1F481A605BBF00397DCF /* Common.m in Sources */,
 				8F6E48BE1AEFEDC50003D3B0 /* lcl.m in Sources */,
+				8F2A2D981C51889800DDD964 /* TomcatService.m in Sources */,
+				8FA145D81C568B89006FEC36 /* AHLaunchJob.m in Sources */,
 				8FCD321E1ADC16FA00912BEC /* AuthenticationVC.m in Sources */,
+				8FA145DC1C568B89006FEC36 /* NSString+ah_versionCompare.m in Sources */,
 				8F61C84A1A5F11F600705CD8 /* AdminServiceVC.m in Sources */,
 				8F61C8691A5F266A00705CD8 /* ApplePatchSyncVC.m in Sources */,
+				8FA145F61C57DA6F006FEC36 /* NumberField.m in Sources */,
+				8FA145DB1C568B89006FEC36 /* NSFileManger+Privileged.m in Sources */,
 				8FCFB3521ACB3367008DBEDB /* Constants.m in Sources */,
+				8FA145D71C568B89006FEC36 /* AHLaunchCtl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -552,6 +640,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -619,6 +708,7 @@
 				INFOPLIST_FILE = MPServerAdmin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = gov.llnl.MPServerAdmin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -634,6 +724,7 @@
 				INFOPLIST_FILE = MPServerAdmin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = gov.llnl.MPServerAdmin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
