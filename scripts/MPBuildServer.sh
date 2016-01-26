@@ -547,6 +547,11 @@ if $MP_MAC_PKG; then
 	find "${MPSERVERBASE}/conf/src" -name apache-tomcat-* -print | xargs -I{} rm {}
 	find "${MPSERVERBASE}/conf/src" -name apr* -print | xargs -I{} rm {}
 	rm -rf "${MPSERVERBASE}/conf/src/openbd"
+	rm -rf "${MPSERVERBASE}/conf/src/linux"
+	rm -rf "${MPSERVERBASE}/conf/init"
+	rm -rf "${MPSERVERBASE}/conf/init.d"
+	rm -rf "${MPSERVERBASE}/conf/systemd"
+	rm -rf "${MPSERVERBASE}/conf/tomcat"
 
 	# ------------------
 	# Move Files For Packaging
