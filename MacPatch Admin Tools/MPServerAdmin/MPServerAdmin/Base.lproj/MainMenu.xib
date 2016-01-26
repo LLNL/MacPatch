@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15E27e" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -21,6 +20,7 @@
                 <outlet property="contentSyncVC" destination="jSx-Nq-YKU" id="4WG-aI-Snb"/>
                 <outlet property="databaseVC" destination="XpW-b6-KcN" id="0aQ-4S-q8F"/>
                 <outlet property="tabView" destination="1nM-Rz-VRo" id="fqW-vh-rcZ"/>
+                <outlet property="tomcatService" destination="rfO-DX-udL" id="jmm-uD-LTc"/>
                 <outlet property="webServerVC" destination="bk2-Oh-zDS" id="o1O-fk-J45"/>
                 <outlet property="webServiceVC" destination="dgO-ky-6SY" id="dwS-Hk-izb"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
@@ -241,6 +241,12 @@
                                     <action selector="installHelperApp:" target="Voe-Tx-rLC" id="i4W-VG-Fho"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Install Helper Alt" id="LE0-ro-2BQ">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="installHelperAppAlt:" target="Voe-Tx-rLC" id="0YZ-RX-QE1"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -265,7 +271,7 @@
             <value key="minSize" type="size" width="800" height="514"/>
             <value key="maxSize" type="size" width="800" height="514"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="5" width="800" height="514"/>
+                <rect key="frame" x="0.0" y="0.0" width="800" height="514"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView id="1nM-Rz-VRo">
@@ -273,20 +279,8 @@
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
-                            <tabViewItem label="Web Server" identifier="0" id="8KF-Vq-zJD">
-                                <view key="view" id="fNh-BB-MRb">
-                                    <rect key="frame" x="10" y="33" width="754" height="452"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                </view>
-                            </tabViewItem>
-                            <tabViewItem label="Admin Service" identifier="1" id="TOi-9F-H6V">
-                                <view key="view" id="4O2-S1-da5">
-                                    <rect key="frame" x="10" y="33" width="754" height="452"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                </view>
-                            </tabViewItem>
-                            <tabViewItem label="Web Services" identifier="2" id="zR6-Kj-0bm">
-                                <view key="view" id="6wV-Tu-Q8L">
+                            <tabViewItem label="Tomcat Server" identifier="1" id="xY1-K7-Fq2" userLabel="Tomcat Server">
+                                <view key="view" id="4JC-oh-OT5">
                                     <rect key="frame" x="10" y="33" width="754" height="452"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
@@ -322,7 +316,7 @@
                     </tabView>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="93" y="61"/>
+            <point key="canvasLocation" x="116" y="-18"/>
         </window>
         <viewController nibName="WebServerVC" id="bk2-Oh-zDS" customClass="WebServerVC"/>
         <viewController nibName="AdminServiceVC" id="RO4-3f-yBe" customClass="AdminServiceVC"/>
@@ -332,5 +326,6 @@
         <viewController nibName="AVSyncVC" id="hPh-CL-a3f" customClass="AVSyncVC"/>
         <viewController nibName="DatabaseVC" id="XpW-b6-KcN" customClass="DatabaseVC"/>
         <viewController nibName="AuthenticationVC" id="MFw-vu-5DQ" customClass="AuthenticationVC"/>
+        <viewController nibName="TomcatService" id="rfO-DX-udL" customClass="TomcatService"/>
     </objects>
 </document>
