@@ -540,6 +540,14 @@ if $MP_MAC_PKG; then
 	echo
 	echo
 	# ------------------
+	# Clean up, pre package
+	# ------------------
+	rm -rf "${MPSERVERBASE}/conf/app/.site"
+	rm -rf "${MPSERVERBASE}/conf/app/.wsl"
+	rm -f "${MPSERVERBASE}/conf/src/apache-tomcat*"
+	rm -rf "${MPSERVERBASE}/conf/src/openbd"
+
+	# ------------------
 	# Move Files For Packaging
 	# ------------------
 	PKG_FILES_ROOT_MP="${BUILDROOT}/Server/Files/Library/MacPatch"
