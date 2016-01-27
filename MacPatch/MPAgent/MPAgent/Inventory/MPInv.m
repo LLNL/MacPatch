@@ -1147,7 +1147,8 @@
 		}
 		
 		if ([computerAccountInfo objectForKey:@"dsAttrTypeNative:llnlHosts"]) {
-			if ([[computerAccountInfo objectForKey:@"dsAttrTypeNative:llnlHosts"] count] > 0) {
+            logit(lcl_vDebug,@"dsAttrTypeNative:llnlHosts: %@",[computerAccountInfo objectForKey:@"dsAttrTypeNative:llnlHosts"]);
+			if ([[computerAccountInfo objectForKey:@"dsAttrTypeNative:llnlHosts"] length] > 0) {
 				[record setObject:@"1" forKey:@"HasSLAM"];	
 			}
 		} else {
