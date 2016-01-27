@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: buildLinuxPKG.sh
-# Version: 1.0.2
+# Version: 1.0.3
 #
 # Description:
 # This script will create a binary distribution package for
@@ -11,6 +11,7 @@
 # History:
 # 1.0.0:	Initial Creation
 # 1.0.1:	Added RPM
+# 1.0.3:	Add remove for un-needed files
 #
 # -------------------------------------------------------------
 
@@ -92,6 +93,17 @@ while getopts ":n:v:a:e:h" opt; do
 			;;
 	esac
 done
+
+# ------------------
+# Clean up, pre package
+# ------------------
+rm -rf "${MPBASE}/Server/conf/app/.site"
+rm -rf "${MPBASE}/Server/conf/app/.wsl"
+find "${MPBASE}/Server/conf/src" -name apache-tomcat-* -print | xargs -I{} rm {}
+find "${MPBASE}/Server/conf/src" -name apr* -print | xargs -I{} rm {}
+rm -rf "${MPBASE}/Server//conf/src/openbd"
+rm -rf "${MPSERVERBASE}/conf/systemd"
+rm -rf "${MPSERVERBASE}/conf/tomcat"
 
 if [ "$LNXDISTRO" == "ubuntu" ]; then
 
