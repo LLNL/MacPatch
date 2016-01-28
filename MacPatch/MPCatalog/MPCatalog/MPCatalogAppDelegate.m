@@ -29,6 +29,7 @@
 #import "MPWorkerProtocol.h"
 #import "EventToSend.h" 
 #import "SWDistInfoController.h"
+#import "RebootWindow.h"
 
 #define MP_INSTALLED_DATA       @".installed.plist"
 
@@ -103,7 +104,6 @@
     {
         installedImage = [NSImage imageNamed:@"Installcomplete"];
         emptyImage = [NSImage imageNamed:@"empty"];
-        
     }
     return self;
 }
@@ -203,6 +203,8 @@
 - (IBAction)closeRebootPanel:(id)sender;
 - (IBAction)closeRebootPanelAndReboot:(id)sender;
 - (void)rebootPanelDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo;
+
+@property (strong) RebootWindow *rebootWindowWindowController;
 
 // SW Dist Info
 - (IBAction)showSWDistInfo:(id)sender;
@@ -402,11 +404,35 @@
 
 - (IBAction)showRebootPanel:(id)sender
 {
-    [NSApp beginSheet: rebootPanel
-       modalForWindow: window
-        modalDelegate: self
-       didEndSelector: @selector(rebootPanelDidEnd:returnCode:contextInfo:)
-          contextInfo: nil];
+    if (NSAppKitVersionNumber < NSAppKitVersionNumber10_9) {
+        
+        [NSApp beginSheet: rebootPanel
+           modalForWindow: window
+            modalDelegate: self
+           didEndSelector: @selector(rebootPanelDidEnd:returnCode:contextInfo:)
+              contextInfo: nil];
+        
+    } else {
+        // Mac OS X 10.9 and higher
+        self.rebootWindowWindowController = [[RebootWindow alloc] initWithWindowNibName:@"RebootWindow"];
+        [self.window beginSheet:self.rebootWindowWindowController.window  completionHandler:^(NSModalResponse returnCode) {
+            NSLog(@"Sheet closed");
+            
+            switch (returnCode) {
+                case NSModalResponseOK:
+                    [self rebootPanelDidEnd:nil returnCode:1 contextInfo:nil];
+                    break;
+                case NSModalResponseCancel:
+                    // Close the window
+                    break;
+                default:
+                    // Close the window
+                    break;
+            }
+            
+            self.rebootWindowWindowController = nil;
+        }];
+    }
 }
 
 - (IBAction)closeRebootPanel:(id)sender
@@ -1159,6 +1185,7 @@
 - (void)appendDownloadProgress:(double)aNumber
 {
 	[progressBar setDoubleValue:aNumber];
+    dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar display];});
 }
 
 - (void)appendDownloadProgressPercent:(NSString *)aPercent
@@ -1280,8 +1307,6 @@
          
          if ([[d objectForKey:@"id"] isEqualTo:curID])
          {
-             //[arrayController willChangeValueForKey:@"arrangedObjects"];
-             
              if ([type isEqualToString:@"installed"] == YES) {
                  [d setObject:[NSNumber numberWithInt:1] forKey:@"installed"];
                  [d setObject:[NSNumber numberWithBool:NO] forKey:@"selected"];
@@ -1291,7 +1316,6 @@
                  if ([dict hasKey:@"isReceipt"]) {
                      if ([[dict objectForKey:@"isReceipt"] isEqualToNumber:[NSNumber numberWithInt:1]]) {
                          [arrayController removeObjects:[NSArray arrayWithObject:d]];
-                         //break;
                          *stop = YES;    // Stop enumerating
                          return;
                      }
@@ -1305,10 +1329,8 @@
              } else {
                  [d setObject:[NSNumber numberWithInt:0] forKey:@"installed"];
              }
-             
-             //[arrayController didChangeValueForKey:@"arrangedObjects"];
-             //dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
-             //break;
+
+             dispatch_async(dispatch_get_main_queue(), ^(void){[tableView display];});
          }
      }];
 }
