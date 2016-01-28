@@ -356,7 +356,7 @@
 		8F4B1ED016DD771300E15A9E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0720;
 			};
 			buildConfigurationList = 8F4B1ED316DD771300E15A9E /* Build configuration list for PBXProject "MacPatch" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -598,6 +598,7 @@
 		8F4B1ED416DD771300E15A9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;

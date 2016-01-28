@@ -14,3 +14,6 @@ dwsync.xml
 *.xcuserstate
 *.xcuserdatad
 *Dev.sh
+MacPatch/openssl-xcode/openssl/libcrypto.a
+MacPatch/openssl-xcode/openssl/libssl.a
+MacPatch/openssl-xcode/openssl/crypto/buildinf.h

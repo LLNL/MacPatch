@@ -315,25 +315,20 @@ done:
 
     // Remove File If Found
     if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
-        [NSKeyedArchiver archiveRootObject:NULL toFile:PATCHES_NEEDED_PLIST];
+        [NSKeyedArchiver archiveRootObject:[NSArray array] toFile:PATCHES_NEEDED_PLIST];
         [fm removeItemAtPath:PATCHES_NEEDED_PLIST error:&rmErr];
     }
+    
+    // Sleep 1 sec
+    [NSThread sleepForTimeInterval:1];
 
     // Re-write file with new patch info
     if (approvedUpdatesArray && [approvedUpdatesArray count] > 0)
     {
         logit(lcl_vInfo,@"Writing approved patches to %@",PATCHES_NEEDED_PLIST);
         [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:PATCHES_NEEDED_PLIST];
-    }
-
-    if ([fm isWritableFileAtPath:[_approvedPatchesFile stringByDeletingLastPathComponent]]) {
-        if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST])
-        {
-            [fm removeItemAtPath:PATCHES_NEEDED_PLIST error:NULL];
-            [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:PATCHES_NEEDED_PLIST];
-        }
     } else {
-        logit(lcl_vError,@"Unable to write approved patches file %@. Patch file will not be used.",_approvedPatchesFile);
+        [NSKeyedArchiver archiveRootObject:[NSArray array] toFile:PATCHES_NEEDED_PLIST];
     }
     
     // Added a global notification to update image icon of MPClientStatus
@@ -372,7 +367,6 @@ done:
     NSMutableArray *customPatchesArray = (NSMutableArray *)[mpAsus scanForCustomUpdateUsingBundleID:aBundleID];
 
     logit(lcl_vDebug,@"Custom Patches Needed: %@",customPatchesArray);
-    //logit(lcl_vDebug,@"Approved Custom Patches: %@",approvedCustomPatches);
 
     // Filter List of Patches containing only the approved patches
     NSDictionary *customPatch, *approvedPatch;
@@ -930,15 +924,16 @@ done:
 
 - (void)updateNeededPatchesFile:(NSDictionary *)aPatch
 {
-    NSError *error = nil;
+    // Updates the Patches Needed file by removing a installed
+    // patch from the patches needed file, which is used
+    // by MPClientStatus.app
+    
     NSMutableArray *patchesNew;
     NSArray *patches;
+    
     if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
         patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST]];
-        [NSKeyedArchiver archiveRootObject:NULL toFile:PATCHES_NEEDED_PLIST];
-        if (error) {
-            qlerror(@"%@",error.localizedDescription);
-        }
+        [NSKeyedArchiver archiveRootObject:[NSArray array] toFile:PATCHES_NEEDED_PLIST];
     } else {
         return;
     }
@@ -959,11 +954,7 @@ done:
     if (patchesNew.count >= 1) {
         [NSKeyedArchiver archiveRootObject:(NSArray *)patchesNew toFile:PATCHES_NEEDED_PLIST];
     } else {
-        error = nil;
-        [NSKeyedArchiver archiveRootObject:NULL toFile:PATCHES_NEEDED_PLIST];
-        if (error) {
-            qlerror(@"%@",error.localizedDescription);
-        }
+        [NSKeyedArchiver archiveRootObject:[NSArray array] toFile:PATCHES_NEEDED_PLIST];
     }
 }
 

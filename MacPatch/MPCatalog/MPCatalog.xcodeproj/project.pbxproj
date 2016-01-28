@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F95C6B31C598A54008FA31D /* RebootWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F95C6B11C598A54008FA31D /* RebootWindow.m */; };
+		8F95C6B41C598A54008FA31D /* RebootWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F95C6B21C598A54008FA31D /* RebootWindow.xib */; };
 		8FD88FCB16DFDD9200A870A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88FCA16DFDD9200A870A3 /* Cocoa.framework */; };
 		8FD88FD516DFDD9200A870A3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88FD316DFDD9200A870A3 /* InfoPlist.strings */; };
 		8FD88FD716DFDD9200A870A3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88FD616DFDD9200A870A3 /* main.m */; };
@@ -46,6 +48,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8F95C6B01C598A54008FA31D /* RebootWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RebootWindow.h; sourceTree = "<group>"; };
+		8F95C6B11C598A54008FA31D /* RebootWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RebootWindow.m; sourceTree = "<group>"; };
+		8F95C6B21C598A54008FA31D /* RebootWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RebootWindow.xib; sourceTree = "<group>"; };
 		8FD88FC716DFDD9200A870A3 /* MPCatalog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPCatalog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD88FCA16DFDD9200A870A3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8FD88FCD16DFDD9200A870A3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -177,6 +182,8 @@
 				8FD8900216DFDDE600A870A3 /* SWDistInfoController.m */,
 				8FD8901C16DFE0C400A870A3 /* EventToSend.h */,
 				8FD8901D16DFE0C400A870A3 /* EventToSend.c */,
+				8F95C6B01C598A54008FA31D /* RebootWindow.h */,
+				8F95C6B11C598A54008FA31D /* RebootWindow.m */,
 				8FD8901F16DFE0D000A870A3 /* MPWorkerProtocol.h */,
 				8FD88FED16DFDDB900A870A3 /* Resources */,
 				8FD88FD116DFDD9200A870A3 /* Supporting Files */,
@@ -201,6 +208,7 @@
 				8FD88FEE16DFDDC700A870A3 /* MPCatalog_MainMenu.xib */,
 				8FD88FEF16DFDDC700A870A3 /* Preferences.xib */,
 				8FD88FF016DFDDC700A870A3 /* SWDistInfoController.xib */,
+				8F95C6B21C598A54008FA31D /* RebootWindow.xib */,
 				8FD88FF116DFDDC700A870A3 /* MPCatalogV2.icns */,
 				8FD8902016DFE14300A870A3 /* app_install.png */,
 				8FD8902116DFE14300A870A3 /* app_remove.png */,
@@ -247,7 +255,7 @@
 		8FD88FBF16DFDD9200A870A3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = LLNL;
 			};
 			buildConfigurationList = 8FD88FC216DFDD9200A870A3 /* Build configuration list for PBXProject "MPCatalog" */;
@@ -277,6 +285,7 @@
 				8FD88FF316DFDDC700A870A3 /* Preferences.xib in Resources */,
 				8FD88FF416DFDDC700A870A3 /* SWDistInfoController.xib in Resources */,
 				8FD88FF516DFDDC700A870A3 /* MPCatalogV2.icns in Resources */,
+				8F95C6B41C598A54008FA31D /* RebootWindow.xib in Resources */,
 				8FD8902F16DFE14300A870A3 /* app_install.png in Resources */,
 				8FD8903016DFE14300A870A3 /* app_remove.png in Resources */,
 				8FD8903116DFE14300A870A3 /* Installcomplete.tif in Resources */,
@@ -307,6 +316,7 @@
 				8FD8900416DFDDE600A870A3 /* MPCatalog.m in Sources */,
 				8FD8900616DFDDE600A870A3 /* PreferenceController.m in Sources */,
 				8FD8900716DFDDE600A870A3 /* SWDistInfoController.m in Sources */,
+				8F95C6B31C598A54008FA31D /* RebootWindow.m in Sources */,
 				8FD8901E16DFE0C400A870A3 /* EventToSend.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,6 +347,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -408,6 +419,7 @@
 					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "gov.llnl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
 				WRAPPER_EXTENSION = app;
@@ -434,6 +446,7 @@
 					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "gov.llnl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
 				WRAPPER_EXTENSION = app;

@@ -31,7 +31,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"2.1.1.0"
+#define APPVERSION	@"2.1.2.0"
 #define APPNAME		@"MPAgentExec"
 
 void usage(void);
@@ -70,8 +70,6 @@ int main (int argc, char * argv[])
                 {"AllowServer"			,no_argument	    ,0, 'S'},
                 {"iload"				,no_argument	    ,0, 'i'},
                 {"FORCERUN"				,no_argument		,0, 'F'},
-                // Inventory
-                {"type"                 ,required_argument	,0, 't'},
                 {"Audit"                ,no_argument		,0, 'A'},
                 {"cuuid"                ,no_argument		,0, 'c'},
                 // Software Dist
@@ -87,7 +85,7 @@ int main (int argc, char * argv[])
             };
             // getopt_long stores the option index here.
             int option_index = 0;
-            c = getopt_long (argc, argv, "Dsuf:B:aUGCSiFt:Acg:d:P:eVvh", long_options, &option_index);
+            c = getopt_long (argc, argv, "Dsuf:B:aUGCSiFAcg:d:P:eVvh", long_options, &option_index);
 
             // Detect the end of the options.
             if (c == -1) {
@@ -235,7 +233,11 @@ int main (int argc, char * argv[])
         int result = NO;
         switch (a_Type) {
             case 1:
-                [controller scanForPatches];
+                if (_UpdateType >= 1) {
+                    [controller scanForPatchesWithFilter:_UpdateType];
+                } else {
+                    [controller scanForPatches];
+                }
                 break;
             case 2:
                 if (isILoadMode == YES) {
@@ -286,40 +288,21 @@ void usage(void) {
 	printf("%s\n",[APPNAME UTF8String]);
 	printf("Version: %s\n\n",[APPVERSION UTF8String]);
 	printf("Usage: %s [OPTION]\n\n",[APPNAME UTF8String]);
+    // Scan & Update
 	printf(" -s \tScan for patches.\n");
 	printf(" -u \tScan & Update approved patches.\n");
+    // Symantec Antivirus
 	printf(" -a \tScan for AV info.\n");
 	printf(" -U \tScan for AV info and update outdated AV defs.\n");
+    // Agent Updates
     printf(" -G \tScan for Agent updates and update if needed.\n");
 	printf(" -i \tScan & Update approved patches in iLoad output mode.\n");
-    printf("\nInventory\n");
-    printf("Option: -t [ALL] or [SPType]\n\n");
-    printf(" -t\tInventory type, All is default.\n");
-	printf(" \tSupported types:\n");
-    printf(" \t\tAll\n");
-	printf(" \t\tSPHardwareDataType\n");
-	printf(" \t\tSPSoftwareDataType\n");
-	printf(" \t\tSPNetworkDataType (Depricated)\n");
-    printf(" \t\tSINetworkInfo\n");
-	printf(" \t\tSPApplicationsDataType\n");
-	printf(" \t\tSPFrameworksDataType\n");
-	printf(" \t\tDirectoryServices\n");
-	printf(" \t\tInternetPlugins\n");
-	printf(" \t\tAppUsage\n");
-	printf(" \t\tClientTasks\n");
-    printf(" \t\tDiskInfo\n");
-    printf(" \t\tUsers\n");
-    printf(" \t\tGroups\n");
-    printf(" \t\tFileVault\n");
-    printf(" \t\tPowerManagment\n");
-    printf(" \t\tBatteryInfo\n");
-    printf(" \t\tConfigProfiles\n");
-    printf(" \t\tAppStoreApps\n");
-    printf(" \t\tMPServerList\n");
     printf(" -A \tCollect Audit data.\n\n");
+    // Software Dist
     printf(" -g \t[Software Group Name] Install Software in group.\n");
     printf(" -d \tInstall software using TaskID\n");
     printf(" -P \t[Software Plist] Install software using plist.\n");
+    // Misc
 	printf(" -e \tEcho logging data to console.\n");
 	printf(" -V \tVerbose logging.\n");
 	printf(" -v \tDisplay version info. \n");
