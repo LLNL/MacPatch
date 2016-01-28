@@ -235,7 +235,11 @@ int main (int argc, char * argv[])
         int result = NO;
         switch (a_Type) {
             case 1:
-                [controller scanForPatches];
+                if (_UpdateType >= 1) {
+                    [controller scanForPatchesWithFilter:_UpdateType];
+                } else {
+                    [controller scanForPatches];
+                }
                 break;
             case 2:
                 if (isILoadMode == YES) {
