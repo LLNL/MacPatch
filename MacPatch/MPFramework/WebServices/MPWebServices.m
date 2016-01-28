@@ -1612,8 +1612,8 @@
     MPJsonResult *jres = [[MPJsonResult alloc] init];
     [jres setJsonData:res];
     error = nil;
-    id result = [jres returnJsonResult:&error];
-    qldebug(@"JSON Result: %@",result);
+    id result = [jres returnResult:&error];
+    qldebug(@"Result: %@",result);
     if (error)
     {
         if (err != NULL) {
