@@ -2082,7 +2082,8 @@
         <cfargument name="Action">
 
         <cfset response = new response() />
-
+        <cfset response.result = {} />
+        
         <cfif NOT validClientID(arguments.ClientID)>
             <cfset l = lErr("PostSoftwareInstallResults", "[#arguments.ClientID#]: Invalid client id, unable to add software install results.") />
             <cfset response.errorno = "1000" />
