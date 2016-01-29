@@ -7,7 +7,15 @@ Started by following the tutorial found here:
 
     https://learn.andrewmunsell.com/learn/jekyll-by-example/tutorial
 
-# Quickstart
+## Setup / History
+
+This branch is the upstream branch of the Jekyll-OneLab LLNL collaboration
+project. This template can be updated by rebasing (or merging) the changes from
+upstream at: https://mystash.llnl.gov/projects/LWDS/repos/jekyll-onelab/browse
+
+This uses Jekyll to build static HTML based on Markdown text files.
+
+## Quickstart
 
 Assuming working on OS X, tested on OS X 10.11.2. `gem` (Ruby package manager)
 was preinstalled, so just working from there:
