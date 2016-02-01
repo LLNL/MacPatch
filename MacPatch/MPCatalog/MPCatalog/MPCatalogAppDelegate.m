@@ -1222,6 +1222,7 @@
     
     int _selected = 0;
     int _installed = 0;
+    int _emptyUninstall = 0;
     for (NSDictionary *d in [arrayController arrangedObjects]) {
         if ([d objectForKey:@"selected"]) {
             if ([[d objectForKey:@"selected"] intValue] == 1) {
@@ -1232,6 +1233,12 @@
                     if ([[d objectForKey:@"installed"] intValue] == 1) {
                         _installed++;
                         _selected--;
+                    }
+                }
+                
+                if ([d valueForKeyPath:@"Software.sw_uninstall"]) {
+                    if ([[d valueForKeyPath:@"Software.sw_uninstall"] length] <= 0) {
+                        _emptyUninstall++;
                     }
                 }
             }
@@ -1252,6 +1259,11 @@
     if (_installed >= 1) {
         [removeButton setEnabled:YES];
     } else {
+        [removeButton setEnabled:NO];
+    }
+    
+    if (_emptyUninstall >= 1) {
+        [installButton setEnabled:YES];
         [removeButton setEnabled:NO];
     }
 }

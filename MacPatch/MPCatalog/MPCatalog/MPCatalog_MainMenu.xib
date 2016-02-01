@@ -989,7 +989,7 @@
                     <toolbarItem implicitItemIdentifier="B5EED9E8-E599-48AB-BF72-7D4996F8B21A" label="Software Groups" paletteLabel="Software Groups" id="834">
                         <nil key="toolTip"/>
                         <size key="minSize" width="120" height="19"/>
-                        <size key="maxSize" width="160" height="25"/>
+                        <size key="maxSize" width="200" height="25"/>
                         <popUpButton key="view" verticalHuggingPriority="750" id="828">
                             <rect key="frame" x="0.0" y="14" width="120" height="19"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
