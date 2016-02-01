@@ -414,24 +414,27 @@
         
     } else {
         // Mac OS X 10.9 and higher
-        self.rebootWindowWindowController = [[RebootWindow alloc] initWithWindowNibName:@"RebootWindow"];
-        [self.window beginSheet:self.rebootWindowWindowController.window  completionHandler:^(NSModalResponse returnCode) {
-            NSLog(@"Sheet closed");
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-            switch (returnCode) {
-                case NSModalResponseOK:
-                    [self rebootPanelDidEnd:nil returnCode:1 contextInfo:nil];
-                    break;
-                case NSModalResponseCancel:
-                    // Close the window
-                    break;
-                default:
-                    // Close the window
-                    break;
-            }
-            
-            self.rebootWindowWindowController = nil;
-        }];
+            self.rebootWindowWindowController = [[RebootWindow alloc] initWithWindowNibName:@"RebootWindow"];
+            [self.window beginSheet:self.rebootWindowWindowController.window  completionHandler:^(NSModalResponse returnCode) {
+                
+                switch (returnCode) {
+                    case NSModalResponseOK:
+                        [self rebootPanelDidEnd:nil returnCode:1 contextInfo:nil];
+                        break;
+                    case NSModalResponseCancel:
+                        // Close the window
+                        break;
+                    default:
+                        // Close the window
+                        break;
+                }
+                
+                self.rebootWindowWindowController = nil;
+            }];
+        
+        });
     }
 }
 
