@@ -462,7 +462,7 @@ def setupServices():
 		pfConf = raw_input('Enable port forwading (Recommended) [%s]' % _PFLOAD)
 		pfConf = pfConf or _PFLOAD
 		if pfConf.lower() == 'y':
-			if platform.mac_ver()[0] >= 10.10.0:
+			if platform.mac_ver()[0] >= "10.10.0":
 				srvsList.append('gov.llnl.mp.pfctl.plist')
 			else:
 				srvsList.append('gov.llnl.mp.fw.plist')
