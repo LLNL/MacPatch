@@ -414,24 +414,27 @@
         
     } else {
         // Mac OS X 10.9 and higher
-        self.rebootWindowWindowController = [[RebootWindow alloc] initWithWindowNibName:@"RebootWindow"];
-        [self.window beginSheet:self.rebootWindowWindowController.window  completionHandler:^(NSModalResponse returnCode) {
-            NSLog(@"Sheet closed");
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-            switch (returnCode) {
-                case NSModalResponseOK:
-                    [self rebootPanelDidEnd:nil returnCode:1 contextInfo:nil];
-                    break;
-                case NSModalResponseCancel:
-                    // Close the window
-                    break;
-                default:
-                    // Close the window
-                    break;
-            }
-            
-            self.rebootWindowWindowController = nil;
-        }];
+            self.rebootWindowWindowController = [[RebootWindow alloc] initWithWindowNibName:@"RebootWindow"];
+            [self.window beginSheet:self.rebootWindowWindowController.window  completionHandler:^(NSModalResponse returnCode) {
+                
+                switch (returnCode) {
+                    case NSModalResponseOK:
+                        [self rebootPanelDidEnd:nil returnCode:1 contextInfo:nil];
+                        break;
+                    case NSModalResponseCancel:
+                        // Close the window
+                        break;
+                    default:
+                        // Close the window
+                        break;
+                }
+                
+                self.rebootWindowWindowController = nil;
+            }];
+        
+        });
     }
 }
 
@@ -1219,6 +1222,7 @@
     
     int _selected = 0;
     int _installed = 0;
+    int _emptyUninstall = 0;
     for (NSDictionary *d in [arrayController arrangedObjects]) {
         if ([d objectForKey:@"selected"]) {
             if ([[d objectForKey:@"selected"] intValue] == 1) {
@@ -1229,6 +1233,12 @@
                     if ([[d objectForKey:@"installed"] intValue] == 1) {
                         _installed++;
                         _selected--;
+                    }
+                }
+                
+                if ([d valueForKeyPath:@"Software.sw_uninstall"]) {
+                    if ([[d valueForKeyPath:@"Software.sw_uninstall"] length] <= 0) {
+                        _emptyUninstall++;
                     }
                 }
             }
@@ -1249,6 +1259,11 @@
     if (_installed >= 1) {
         [removeButton setEnabled:YES];
     } else {
+        [removeButton setEnabled:NO];
+    }
+    
+    if (_emptyUninstall >= 1) {
+        [installButton setEnabled:YES];
         [removeButton setEnabled:NO];
     }
 }

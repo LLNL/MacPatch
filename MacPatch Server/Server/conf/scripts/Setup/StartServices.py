@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 2.8.x
   
-  Script Version 1.8.7
+  Script Version 1.8.8
 '''
 
 import os
@@ -46,7 +46,7 @@ MP_CONF_FILE = MP_SRV_CONF+"/etc/siteconfig.json"
 os_type = platform.system()
 system_name = platform.uname()[1]
 dist_type = "Mac"
-macServices=["gov.llnl.mp.tomcat.plist","gov.llnl.mp.invd.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.rsync.plist","gov.llnl.mp.sync.plist","gov.llnl.mp.pfctl.plist"]
+macServices=["gov.llnl.mp.tomcat.plist","gov.llnl.mp.invd.plist","gov.llnl.mploader.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.rsync.plist","gov.llnl.mp.sync.plist","gov.llnl.mp.pfctl.plist","gov.llnl.mp.fw.plist"]
 lnxServices=["MPTomcat","MPInventoryD"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader"]
 gUID = 79
@@ -462,7 +462,10 @@ def setupServices():
 		pfConf = raw_input('Enable port forwading (Recommended) [%s]' % _PFLOAD)
 		pfConf = pfConf or _PFLOAD
 		if pfConf.lower() == 'y':
-			srvsList.append('gov.llnl.mp.pfctl.plist')
+			if platform.mac_ver()[0] >= 10.10.0:
+				srvsList.append('gov.llnl.mp.pfctl.plist')
+			else:
+				srvsList.append('gov.llnl.mp.fw.plist')
 
 
 	return set(srvsList)
