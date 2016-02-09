@@ -9,10 +9,10 @@ static files in a clearly separated fashion allows them to be re-used and
 plugged into other theme and template frameworks. The following are a list of a
 few such frameworks in use at the laboratory:
 
-* Django
-* Jekyll
+* [Django LLNL Theme](https://mystash.llnl.gov/projects/LWDS/repos/django-llnl-theme/browse)
+* [Jekyll LLNL Theme](https://mystash.llnl.gov/projects/LWDS/repos/jekyll-llnl-theme/browse)
+* [Drupal LLNL Theme](https://mystash.llnl.gov/projects/LWDS/repos/drupal-llnl-theme/browse)
 * ReadTheDocs
-* Drupal
 
 Getting Started
 ---------------
