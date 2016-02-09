@@ -103,7 +103,7 @@
 	padding-top:7px;
 }
 #llnl-menu-tab {
-	background: url(../../assets/images/llnl-tab.png) no-repeat top center;
+	background: url(../assets/images/llnl-tab.png) no-repeat top center;
 	-webkit-border-radius: 0 0 4px 4px;
 	-moz-border-radius: 0 0 4px 4px;
 	border-radius: 0 0 4px 4px;
@@ -137,7 +137,7 @@
 	float:left;
 	padding:0;
 	margin:4px 0px 0px 0px;
-	background: url(../../../assets/images/small_llnl_logo.jpg) no-repeat top center;
+	background: url(../assets/images/small_llnl_logo.jpg) no-repeat top center;
 }
 .llnl-menu-tab > a {
 	display: block;
@@ -295,7 +295,7 @@
 }
 
 span.showto {
-	background: url(../../../assets/images/mailto.png) no-repeat;
+	background: url(../assets/images/mailto.png) no-repeat;
 	margin-left: 5px;
 	padding-right: 15px
 }
