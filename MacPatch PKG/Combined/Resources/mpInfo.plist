@@ -18,13 +18,13 @@
 	<key>Updater</key>
 	<dict>
 		<key>version</key>
-		<string>2.1.4</string>
+		<string>2.1.6</string>
 		<key>agent_version</key>
 		<string>2.7.5</string>
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>
-		<string>5</string>
+		<string>6</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>

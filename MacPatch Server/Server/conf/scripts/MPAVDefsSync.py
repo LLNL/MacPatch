@@ -106,8 +106,7 @@ else:
 if avConf.has_key("avDownloadToFilePaths"):		
 	avDefsLoc = avConf["avDownloadToFilePath"]
 else:
-	#avDefsLoc = "/Library/MacPatch/Content/Web/sav"
-	avDefsLoc = "/tmp/Web/sav"
+	avDefsLoc = "/Library/MacPatch/Content/Web/sav"
 
 # ------------------------------
 # Global Variables
@@ -162,6 +161,9 @@ def downloadSymantecDefs(server='ftp.symantec.com', user='anonymous', password='
 	# Sort and Download av files
 	for file in files:
 		try:
+			if not "NavM" in file:
+				continue
+
 			fileFullPath = avDefsLoc + '/' + file
 			
 			if "NavM9" in file:
