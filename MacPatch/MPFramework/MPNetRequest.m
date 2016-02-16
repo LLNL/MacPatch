@@ -335,7 +335,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     NSString *properlyEscapedURL = [theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
     _dlFilePath = [self createTempDirFromURL:theURL];
-    qldebug(@"buildDownloadRequest url: %@",theURL);
+    qlinfo(@"Download Request URL: %@",theURL);
     qldebug(@"buildDownloadRequest tempFilePath: %@",_dlFilePath);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
