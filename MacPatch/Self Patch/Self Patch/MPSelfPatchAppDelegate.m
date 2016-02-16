@@ -262,7 +262,6 @@ static BOOL gDone = false;
 		killTaskThread = NO;
         // Dont run scan if we get a error code other than 0
         if (x == 0) {
-            logit(lcl_vInfo,@"NSProgressIndicatorSpinningStyle");
             //[spStatusProgress setStyle:NSProgressIndicatorSpinningStyle];
             [spStatusProgress setUsesThreadedAnimation:YES];
             //[spStatusProgress startAnimation:self];
