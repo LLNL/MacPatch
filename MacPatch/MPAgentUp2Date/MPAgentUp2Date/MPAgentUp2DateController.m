@@ -283,18 +283,46 @@ done:
 
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
-    NSError *error = nil;
+    NSString *res = nil;
+    MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
+    NSArray *servers = [mpNetConfig servers];
     NSURLResponse *response;
-    MPNetConfig *mpnc = [[MPNetConfig alloc] init];
-    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArray:[mpnc servers]];
-    NSURLRequest *urlReq = [req buildDownloadRequest:aURL];
-    NSString *res = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
-    if (error) {
-        logit(lcl_vError,@"Error[%d], trying to download file.",(int)[error code]);
-        if (err != NULL)  *err = error;
-        return nil;
+    MPNetRequest *req;
+    NSURLRequest *urlReq;
+    NSError *error = nil;
+    
+    for (MPNetServer *srv in servers)
+    {
+        qlinfo(@"Trying Server %@",srv.host);
+        req = [[MPNetRequest alloc] initWithMPServer:srv];
+        urlReq = [req buildDownloadRequest:aURL];
+        error = nil;
+        if (urlReq)
+        {
+            res = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
+            if (error) {
+                if (err != NULL) {
+                    *err = error;
+                }
+                qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
+                continue;
+            }
+            // Make any previouse error pointers nil, now that we have a valid host/connection
+            if (err != NULL) {
+                *err = nil;
+            }
+            break;
+        } else {
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
+            qlerror(@"%@",error.localizedDescription);
+            if (err != NULL) {
+                *err = error;
+            }
+            continue;
+        }
     }
-	
+    
     return res;
 }
 
