@@ -29,8 +29,8 @@
 
 @property (nonatomic,readonly) NSString *agentUpdaterPath;
 
-- (BOOL)scanForAgentyUpdater;
-- (BOOL)updateAgentyUpdater;
+- (BOOL)scanForAgentUpdater;
+- (BOOL)updateAgentUpdater;
 - (BOOL)scanAndUpdateAgentUpdater;
 
 @end

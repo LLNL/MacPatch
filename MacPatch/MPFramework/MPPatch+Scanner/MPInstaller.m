@@ -181,7 +181,6 @@
     [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
 }
 
-
 #pragma mark Notifications
 - (void)taskDataAvailable:(NSNotification *)aNotification
 {
