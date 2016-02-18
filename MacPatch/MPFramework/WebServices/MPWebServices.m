@@ -493,9 +493,10 @@
      NSJSONSerialization was reordering the JSON causing the hash to 
      not match.
     */
-    NSDictionary    *PatchGroupCacheFileData;
+    
     NSString        *PatchGroupCacheFile = @"/Library/MacPatch/Client/Data/.gov.llnl.mp.patchgroup.data.plist";
     int             patchGroupRevision = -1;
+    
     /*
      PatchGroup Cache File Layout
      NSDictionary:
@@ -509,9 +510,10 @@
         data: ....
         rev: ###
      */
+    
     if ([[NSFileManager defaultManager] fileExistsAtPath:PatchGroupCacheFile])
     {
-        PatchGroupCacheFileData = [NSDictionary dictionaryWithContentsOfFile:PatchGroupCacheFile];
+        NSDictionary *PatchGroupCacheFileData = [NSDictionary dictionaryWithContentsOfFile:PatchGroupCacheFile];
         if (!PatchGroupCacheFileData) {
             return NO;
         } else {
@@ -533,7 +535,6 @@
     // Request
     NSError *error = nil;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    //[params setObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
     [params setObject:[_defaults objectForKey:@"PatchGroup"] forKey:@"PatchGroup"];
     [params setObject:[NSNumber numberWithInt:patchGroupRevision] forKey:@"revision"];
     NSData *res = [self requestWithMethodAndParams:@"GetIsLatestRevisionForPatchGroup" params:(NSDictionary *)params error:&error];

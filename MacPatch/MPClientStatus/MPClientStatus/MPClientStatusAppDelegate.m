@@ -33,6 +33,7 @@
 #import "VDKQueue.h"
 #import "EventToSend.h"
 
+
 // Private Methods
 @interface MPClientStatusAppDelegate ()
 
@@ -49,10 +50,28 @@
 - (void)setupWatchedFolder;
 @property (nonatomic, strong) NSDate *lastPatchStatusUpdate;
 
+@property (strong, nonatomic) NSCondition *condition;
+
 @end
+
+// GCD Timer, replaces NSTimer code
+dispatch_source_t CreateDispatchTimer(double interval, dispatch_queue_t queue, dispatch_block_t block)
+{
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    if (timer)
+    {
+        dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, interval * NSEC_PER_SEC), interval * NSEC_PER_SEC, (1ull * NSEC_PER_SEC) / 10);
+        dispatch_source_set_event_handler(timer, block);
+        dispatch_resume(timer);
+    }
+    return timer;
+}
 
 
 @implementation MPClientStatusAppDelegate
+{
+    dispatch_source_t _timer;
+}
 
 NSString *const kShowPatchesRequiredNotification    = @"kShowPatchesRequiredNotification";
 NSString *const kRebootRequiredNotification         = @"kRebootRequiredNotification";
@@ -170,7 +189,7 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
     [self setOpenASUS:NO];
 }
 
-- (void) applicationWillTerminate: (NSNotification *)note
+- (void)applicationWillTerminate:(NSNotification *)note
 {
     
 }
@@ -601,32 +620,33 @@ done:
 #pragma mark Show Last CheckIn Menu
 - (void)showLastCheckIn
 {
-    [NSThread detachNewThreadSelector:@selector(showLastCheckInThread) toTarget:self withObject:nil];
-}
-
-- (void)showLastCheckInThread
-{
-    @autoreleasepool
-    {
-        // Run Once, to show current status
-        [self showLastCheckInMethod];
-        // 600.0 = 10 Minutes
-        NSTimer *timer = [NSTimer timerWithTimeInterval:600.0
-                                                 target:self
-                                               selector:@selector(showLastCheckInMethod)
-                                               userInfo:nil
-                                                repeats:YES];
-        
-        
-        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-        [[NSRunLoop currentRunLoop] run];
-    }
+    double secondsToFire = 600.0;
+    logit(lcl_vInfo, @"Start Last CheckIn Data Thread");
+    logit(lcl_vInfo, @"Run every %f", secondsToFire);
+    
+    // Show Menu Once, then use timer
+    [self performSelectorOnMainThread:@selector(showLastCheckInMethod)
+                           withObject:nil
+                        waitUntilDone:NO
+                                modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    
+    dispatch_queue_t gcdQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    _timer = CreateDispatchTimer(secondsToFire, gcdQueue, ^{
+        logit(lcl_vInfo, @"Start, Display Last CheckIn Data in menu.");
+        logit(lcl_vDebug, @"Repeats every %f seconds", secondsToFire);
+        [self performSelectorOnMainThread:@selector(showLastCheckInMethod)
+                               withObject:nil
+                            waitUntilDone:NO
+                                    modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    });
 }
 
 - (void)showLastCheckInMethod
 {
     @autoreleasepool
     {
+        logit(lcl_vInfo, @"Running last agent check in date request.");
         NSError *wsErr = nil;
         MPWebServices *mpws = [[MPWebServices alloc] init];
         NSDictionary *result = [mpws GetLastCheckIn:&wsErr];
@@ -637,6 +657,7 @@ done:
         
         if ([result objectForKey:@"mdate"]) {
             [checkInStatusMenuItem setTitle:[NSString stringWithFormat:@"Last Checkin: %@",[result objectForKey:@"mdate"]]];
+            [statusMenu update];
         }
     }
 }
@@ -645,32 +666,31 @@ done:
 
 - (void)displayPatchData
 {
-    [NSThread detachNewThreadSelector:@selector(displayPatchDataThread) toTarget:self withObject:nil];
-}
-
-- (void)displayPatchDataThread
-{
-    @autoreleasepool
-    {
-        // Run Once, to show current status
-        [self displayPatchDataMethod];
-        // 600.0 = 10 Minutes
-        NSTimer *timer = [NSTimer timerWithTimeInterval:180.0
-                                                 target:self
-                                               selector:@selector(displayPatchDataMethod)
-                                               userInfo:nil
-                                                repeats:YES];
-        
-        
-        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-        [[NSRunLoop currentRunLoop] run];
-    }
+    // Show Menu Once, then use timer
+    [self performSelectorOnMainThread:@selector(displayPatchDataMethod)
+                           withObject:nil
+                        waitUntilDone:NO
+                                modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    
+    dispatch_queue_t gcdQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    double secondsToFire = 180.0;
+    
+    _timer = CreateDispatchTimer(secondsToFire, gcdQueue, ^{
+        logit(lcl_vInfo, @"Start, Display Patch Data Info in menu.");
+        logit(lcl_vDebug, @"Repeats every %f seconds", secondsToFire);
+        [self performSelectorOnMainThread:@selector(displayPatchDataMethod)
+                               withObject:nil
+                            waitUntilDone:NO
+                                    modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    });
 }
 
 - (void)displayPatchDataMethod
 {
     @autoreleasepool
     {
+        logit(lcl_vInfo, @"Running client patch status request.");
+        
         self.patchNeedsReboot = NO;
         self.patchCount = 0;
         
@@ -707,13 +727,18 @@ done:
                 }
                 ud = nil;
             }
+            
+            [statusMenu update];
             return;
+            
         } else if ([data count] <= 0) {
             [self setPatchCount:[data count]];
             [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
             [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
             [checkPatchStatusMenuItem setSubmenu:NULL];
+            [statusMenu update];
             return;
+
         } else {
             [self setPatchCount:[data count]];
             [statusItem setImage:[NSImage imageNamed:@"mpmenubar_alert2.png"]];
@@ -789,6 +814,8 @@ done:
                 ud = nil;
             }
         }
+        
+        [statusMenu update];
     }
 }
 
