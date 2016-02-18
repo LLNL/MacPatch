@@ -110,6 +110,12 @@
             <cfcase value="fileVault"> 
                 <cfset _cols = getColsForTable('mpi_FileVault')>
             </cfcase> 
+            <cfcase value="patchStatus"> 
+                <cfset _cols = getColsForTable('mp_client_patch_status_view')>
+            </cfcase> 
+            <cfcase value="patchHistory"> 
+                <cfset _cols = getColsForTable('mp_installed_patches_view')>
+            </cfcase> 
             <cfdefaultcase> 
                 <cfset _cols = "">
             </cfdefaultcase> 
@@ -167,6 +173,12 @@
             from mpi_PowerManagment
             </cfif>
             <cfif url.type EQ "fileVault">
+            from mpi_FileVault
+            </cfif>
+            <cfif url.type EQ "patchStatus">
+            from mpi_FileVault
+            </cfif>
+            <cfif url.type EQ "patchHistory">
             from mpi_FileVault
             </cfif>
             Where cuuid = <cfqueryparam value="#url.cuuid#">

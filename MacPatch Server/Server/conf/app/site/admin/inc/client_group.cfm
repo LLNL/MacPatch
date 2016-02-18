@@ -376,6 +376,12 @@ function dateDifference(strDate1,strDate2)
 			},
 			'FileVault': function(t) {
 				popUpInvWindow('client_group_inv_details.cfm?type=fileVault&cuuid='+t.id+'','Client Info');
+			},
+			'PatchStatus': function(t) {
+				popUpInvWindow('client_group_inv_details.cfm?type=patchStatus&cuuid='+t.id+'','Client Info');
+			},
+			'PatchHistory': function(t) {
+				popUpInvWindow('client_group_inv_details.cfm?type=patchHistory&cuuid='+t.id+'','Client Info');
 			}
 		}
 	};
@@ -571,6 +577,12 @@ function dateDifference(strDate1,strDate2)
         </li>
         <li id="FileVault" style="text-align:left">
             <img src="/admin/images/icons/report.png" />FileVault Status
+        </li>
+        <li id="PatchStatus" style="text-align:left">
+            <img src="/admin/images/icons/report.png" />Patch Status
+        </li>
+        <li id="PatchHistory" style="text-align:left">
+            <img src="/admin/images/icons/report.png" />Patch History
         </li>
     </ul>
 </div>
