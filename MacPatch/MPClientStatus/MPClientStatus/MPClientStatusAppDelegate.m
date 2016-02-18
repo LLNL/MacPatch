@@ -183,7 +183,7 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
     // This will monitor for hits, when to update the patch status flags
     [self displayPatchData];
     
-    // Run Notification Thread
+    // Run Notification Timer
     [self runMPUserNotificationCenter];
     
     [self setOpenASUS:NO];
@@ -231,6 +231,8 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
         [menu removeItem:menuItem16];
         isShowing = NO;
     }
+    
+    [menu update];
 }
 
 #pragma mark -
@@ -1024,27 +1026,24 @@ done:
 
 - (void)runMPUserNotificationCenter
 {
-    [NSThread detachNewThreadSelector:@selector(showMPUserNotificationCenter) toTarget:self withObject:nil];
-}
-
-- (void)showMPUserNotificationCenter
-{
-    @autoreleasepool
-    {
-        // Run Once, to show current status
-        [NSThread sleepForTimeInterval:10.0];
-        [self showMPUserNotificationCenterMethod];
-        // 600.0 = 10 Minutes
-        NSTimer *timer = [NSTimer timerWithTimeInterval:1200.0
-                                                 target:self
-                                               selector:@selector(showMPUserNotificationCenterMethod)
-                                               userInfo:nil
-                                                repeats:YES];
-        
-        
-        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-        [[NSRunLoop currentRunLoop] run];
-    }
+    // Show Menu Once, then use timer
+    [self performSelectorOnMainThread:@selector(showMPUserNotificationCenterMethod)
+                           withObject:nil
+                        waitUntilDone:NO
+                                modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    
+    dispatch_queue_t gcdQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    // 1200.0
+    double secondsToFire = 11.0; // 20 Minutes
+    
+    _timer = CreateDispatchTimer(secondsToFire, gcdQueue, ^{
+        logit(lcl_vInfo, @"Start, Display Patch Data Info in menu.");
+        logit(lcl_vDebug, @"Repeats every %f seconds", secondsToFire);
+        [self performSelectorOnMainThread:@selector(showMPUserNotificationCenterMethod)
+                               withObject:nil
+                            waitUntilDone:NO
+                                    modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    });
 }
 
 - (void)showMPUserNotificationCenterMethod
@@ -1100,7 +1099,7 @@ done:
     userNote.hasActionButton = YES;
     if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
         [userNote setValue:@YES forKey:@"_showsButtons"];
-        [userNote setValue:@YES forKey:@"_ignoresDoNotDisturb"];
+        //[userNote setValue:@YES forKey:@"_ignoresDoNotDisturb"];
     }
     [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
     [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:userNote];
@@ -1110,14 +1109,12 @@ done:
 {
     NSUserNotification *userNote = [[NSUserNotification alloc] init];
     userNote.title = @"Patches Required";
-    //userNote.subtitle = @"Patches Required";
     userNote.informativeText = [NSString stringWithFormat:@"This system requires %@ patche(s).",aCount];
-    //userNote.soundName = NSUserNotificationDefaultSoundName;
     userNote.actionButtonTitle = @"Patch";
     userNote.hasActionButton = YES;
     if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
         [userNote setValue:@YES forKey:@"_showsButtons"];
-        [userNote setValue:@YES forKey:@"_ignoresDoNotDisturb"];
+        //[userNote setValue:@YES forKey:@"_ignoresDoNotDisturb"];
     }
     [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
     [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:userNote];
@@ -1144,6 +1141,8 @@ done:
     }
 }
 
+/* This will force the reboot message, ignorning do not disturb
+/* */
 - (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification
 {
     return YES;
