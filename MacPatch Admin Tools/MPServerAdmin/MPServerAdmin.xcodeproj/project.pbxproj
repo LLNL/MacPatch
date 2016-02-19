@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F1A4F291C779380000E7E4F /* MPServerAdminHelp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F1A4F281C779380000E7E4F /* MPServerAdminHelp */; };
 		8F1D1F391A605A0600397DCF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F381A605A0600397DCF /* main.m */; };
 		8F1D1F411A605A6600397DCF /* HelperTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F401A605A6600397DCF /* HelperTool.m */; };
 		8F1D1F481A605BBF00397DCF /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D1F441A605BBF00397DCF /* Common.m */; };
@@ -54,7 +55,6 @@
 		8FA145E31C568ECA006FEC36 /* NSString+ah_versionCompare.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145D51C568B89006FEC36 /* NSString+ah_versionCompare.m */; };
 		8FA145F31C569A56006FEC36 /* MPServerAdmin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145F21C569A56006FEC36 /* MPServerAdmin.m */; };
 		8FA145F61C57DA6F006FEC36 /* NumberField.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA145F51C57DA6F006FEC36 /* NumberField.m */; };
-		8FB5018F1AEE88D00063FA92 /* MPServerAdmin Help in Resources */ = {isa = PBXBuildFile; fileRef = 8FB5018E1AEE88D00063FA92 /* MPServerAdmin Help */; };
 		8FCD31FC1AD2F65900912BEC /* MPRsyncD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */; };
 		8FCD31FD1AD2F65900912BEC /* MPRsyncD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */; };
 		8FCD32031AD44D0600912BEC /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCD32021AD44D0600912BEC /* XMLDictionary.m */; };
@@ -66,6 +66,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		8F1A4F271C77930A000E7E4F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				8F1A4F291C779380000E7E4F /* MPServerAdminHelp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8F1D1F341A605A0600397DCF /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -88,6 +98,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8F1A4F281C779380000E7E4F /* MPServerAdminHelp */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MPServerAdminHelp; path = Resources/MPServerAdminHelp; sourceTree = "<group>"; };
 		8F1D1F361A605A0600397DCF /* gov.llnl.mp.admin.helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = gov.llnl.mp.admin.helper; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F1D1F381A605A0600397DCF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8F1D1F3D1A605A6600397DCF /* gov.llnl.mp.admin.helper-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "gov.llnl.mp.admin.helper-Info.plist"; sourceTree = "<group>"; };
@@ -169,7 +180,6 @@
 		8FA145F21C569A56006FEC36 /* MPServerAdmin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPServerAdmin.m; sourceTree = "<group>"; };
 		8FA145F41C57DA6F006FEC36 /* NumberField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberField.h; sourceTree = "<group>"; };
 		8FA145F51C57DA6F006FEC36 /* NumberField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NumberField.m; sourceTree = "<group>"; };
-		8FB5018E1AEE88D00063FA92 /* MPServerAdmin Help */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "MPServerAdmin Help"; path = "Resources/MPServerAdmin Help"; sourceTree = "<group>"; };
 		8FB501B51AEFEC930063FA92 /* HelperPrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelperPrefixHeader.pch; sourceTree = "<group>"; };
 		8FCD31FA1AD2F65900912BEC /* MPRsyncD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPRsyncD.h; sourceTree = "<group>"; };
 		8FCD31FB1AD2F65900912BEC /* MPRsyncD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPRsyncD.m; sourceTree = "<group>"; };
@@ -280,7 +290,7 @@
 		8F61C81B1A5DBD6700705CD8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				8FB5018E1AEE88D00063FA92 /* MPServerAdmin Help */,
+				8F1A4F281C779380000E7E4F /* MPServerAdminHelp */,
 				8F61C81C1A5DBD6700705CD8 /* Info.plist */,
 				8F61C8201A5DBD6700705CD8 /* main.m */,
 				8F6E48C81AEFFB7D0003D3B0 /* MPServerAdminPrefixHeader.pch */,
@@ -421,6 +431,7 @@
 				8F61C8151A5DBD6700705CD8 /* Frameworks */,
 				8F61C8161A5DBD6700705CD8 /* Resources */,
 				8F1D1F4B1A60696100397DCF /* CopyFiles */,
+				8F1A4F271C77930A000E7E4F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -483,7 +494,6 @@
 				8F61C84B1A5F11F600705CD8 /* AdminServiceVC.xib in Resources */,
 				8F1D1F571A60AE5600397DCF /* WebServerVC.xib in Resources */,
 				8FCD32201ADC16FA00912BEC /* AuthenticationVC.xib in Resources */,
-				8FB5018F1AEE88D00063FA92 /* MPServerAdmin Help in Resources */,
 				8F61C8791A5F27AE00705CD8 /* DatabaseVC.xib in Resources */,
 				8F61C8741A5F279D00705CD8 /* AVSyncVC.xib in Resources */,
 				8F61C86F1A5F274400705CD8 /* ContentSyncVC.xib in Resources */,
