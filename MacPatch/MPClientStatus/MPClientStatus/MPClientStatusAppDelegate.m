@@ -1034,7 +1034,7 @@ done:
     
     dispatch_queue_t gcdQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     // 1200.0
-    double secondsToFire = 11.0; // 20 Minutes
+    double secondsToFire = 1200.0; // 20 Minutes
     
     _timer = CreateDispatchTimer(secondsToFire, gcdQueue, ^{
         logit(lcl_vInfo, @"Start, Display Patch Data Info in menu.");
@@ -1092,11 +1092,22 @@ done:
 
 - (void)postUserNotificationForReboot
 {
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_8) {
+        // Look to see if we have posted already, if we have, no need to do it again
+        for(NSUserNotification *deliveredNote in NSUserNotificationCenter.defaultUserNotificationCenter.deliveredNotifications) {
+            if([deliveredNote.title isEqualToString:@"Reboot Patches Required"]) {
+                return;
+            }
+        }
+    }
+    
     NSUserNotification *userNote = [[NSUserNotification alloc] init];
     userNote.title = @"Reboot Patches Required";
     userNote.informativeText = [NSString stringWithFormat:@"This system requires patches that require a reboot."];
     userNote.actionButtonTitle = @"Reboot";
     userNote.hasActionButton = YES;
+    userNote.userInfo = @{ @"originalPointer": @((NSUInteger)userNote) };
+
     if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
         [userNote setValue:@YES forKey:@"_showsButtons"];
         //[userNote setValue:@YES forKey:@"_ignoresDoNotDisturb"];
@@ -1107,6 +1118,15 @@ done:
 
 - (void)postUserNotificationForPatchesWithCount:(NSString *)aCount
 {
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_8) {
+        // Look to see if we have posted already, if we have, no need to do it again
+        for(NSUserNotification *deliveredNote in NSUserNotificationCenter.defaultUserNotificationCenter.deliveredNotifications) {
+            if([deliveredNote.title isEqualToString:@"Patches Required"]) {
+                return;
+            }
+        }
+    }
+    
     NSUserNotification *userNote = [[NSUserNotification alloc] init];
     userNote.title = @"Patches Required";
     userNote.informativeText = [NSString stringWithFormat:@"This system requires %@ patche(s).",aCount];
@@ -1141,8 +1161,6 @@ done:
     }
 }
 
-/* This will force the reboot message, ignorning do not disturb
-/* */
 - (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification
 {
     return YES;
