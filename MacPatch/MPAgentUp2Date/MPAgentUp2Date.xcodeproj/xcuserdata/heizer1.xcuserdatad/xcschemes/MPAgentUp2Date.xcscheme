@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-eu"
+            argument = "-es"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

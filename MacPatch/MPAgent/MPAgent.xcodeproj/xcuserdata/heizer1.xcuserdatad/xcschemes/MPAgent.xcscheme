@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-V -t Plugins"
+            argument = "-V --SUServers"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

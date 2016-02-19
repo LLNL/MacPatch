@@ -867,11 +867,11 @@
             [d setObject:[_agentDict objectForKey:@"osver"] forKey:@"osver"];
         } else if ([pkgName isEqualToString:@"Updater.pkg"]) {
             [d setObject:@"update" forKey:@"type"];
-            [d setObject:[_agentDict objectForKey:@"agent_ver"] forKey:@"agent_ver"];
-            [d setObject:[_agentDict objectForKey:@"ver"] forKey:@"version"];
-            [d setObject:[_agentDict objectForKey:@"build"] forKey:@"build"];
+            [d setObject:[_updaterDict objectForKey:@"agent_ver"] forKey:@"agent_ver"];
+            [d setObject:[_updaterDict objectForKey:@"ver"] forKey:@"version"];
+            [d setObject:[_updaterDict objectForKey:@"build"] forKey:@"build"];
             [d setObject:[mpc sha1HashForFile:p] forKey:@"pkg_hash"];
-            [d setObject:[_agentDict objectForKey:@"osver"] forKey:@"osver"];
+            [d setObject:[_updaterDict objectForKey:@"osver"] forKey:@"osver"];
         } else {
             continue;
         }

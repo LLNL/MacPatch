@@ -428,7 +428,7 @@ NSString * const kEndDate			= @"3000-01-01";
 		return 1;
 	}
     NSArray *approvedTasks = [NSArray arrayWithObjects:@"KMPCHECKIN",@"KMPAGENTCHECK",@"KMPVULSCAN",@"KMPVULUPDATE",@"KMPAVCHECK",@"KMPINVSCAN",
-                              @"KMPCMD",@"KMPSWDISTMAN",@"KMPAVINFO",@"KMPSRVLIST",@"KMPPROFILES",@"KMPWSPOST", nil];
+                              @"KMPCMD",@"KMPSWDISTMAN",@"KMPAVINFO",@"KMPSRVLIST",@"KMPPROFILES",@"KMPWSPOST",@"KMPSUSRVLIST", nil];
 	
 	if (![[aTask allKeys] containsObject:@"startdate"]) return 1;
 	if (![[aTask allKeys] containsObject:@"enddate"]) return 1;

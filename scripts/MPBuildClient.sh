@@ -41,7 +41,7 @@ if [ "$SIGNCODE" == "n" ] || [ "$SIGNCODE" == "N" ] || [ "$SIGNCODE" == "y" ] ||
 
 	if [ "$SIGNCODE" == "y" ] || [ "$SIGNCODE" == "Y" ] ; then
 		# Compile the agent components
-		read -p "Please enter you code sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
+		read -p "Please enter your code sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
 		CODESIGNIDENTITY=${CODESIGNIDENTITY:-$CODESIGNIDENTITYALT}
 		if [ "$CODESIGNIDENTITY" != "$CODESIGNIDENTITYALT" ]; then
 			defaults write ${CODESIGNIDENTITYPLIST} name "${CODESIGNIDENTITY}"

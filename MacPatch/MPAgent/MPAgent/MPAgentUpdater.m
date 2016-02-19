@@ -53,7 +53,7 @@
     return self;
 }
 
-- (BOOL)scanForAgentyUpdater
+- (BOOL)scanForAgentUpdater
 {
     BOOL result = NO;
     
@@ -92,7 +92,7 @@
     return result;
 }
 
-- (BOOL)updateAgentyUpdater
+- (BOOL)updateAgentUpdater
 {
     BOOL result = NO;
     if (!self.agentUpdateData) {
@@ -193,8 +193,8 @@
 - (BOOL)scanAndUpdateAgentUpdater
 {
     BOOL result = NO;
-    if ([self scanForAgentyUpdater] == YES) {
-        result = [self updateAgentyUpdater];
+    if ([self scanForAgentUpdater] == YES) {
+        result = [self updateAgentUpdater];
     }
     return result;
 }

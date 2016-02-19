@@ -32,15 +32,26 @@ import sys
 import subprocess
 import hashlib
 import platform
+import commands
+
 
 # Define logging for global use
 logger = logging.getLogger('MPSyncContent')
 logFile = "/Library/MacPatch/Server/Logs/MPSyncContent.log"
 
 # Global OS vars
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 os_type = platform.system()
 system_name = platform.uname()[1]
+
+def script_is_running():
+    script_name = os.path.basename(__file__)
+    cmd = "ps aux | grep -e '%s' | grep -v grep | awk '{print $2}'| awk '{print $2}'" % script_name
+    l = commands.getstatusoutput(cmd)
+    if l[1]:
+        print "Error, script is already running. Now exiting script."
+        logger.error("Error, script is already running. Now exiting script.")
+        sys.exit(0);
 
 def readPlist(plistFile):
 
@@ -65,7 +76,6 @@ def readPlist(plistFile):
     _pData = plistlib.readPlist(plistFile)
     return _pData
 
-
 def main():
     '''Main command processing'''
     parser = argparse.ArgumentParser(description='Process some args.')
@@ -76,6 +86,8 @@ def main():
     parser.add_argument('--dry', help="Outputs results, dry run.", required=False)
     parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
     args = parser.parse_args()
+
+    script_is_running()
 
     # Rsync Path
     SYNC_DIR_NAME="mpContentWeb"
@@ -140,6 +152,6 @@ def main():
     os.system('/usr/bin/rsync ' + rStr)
     logger.info("Content Sync Complete")
 
-    
 if __name__ == '__main__':
+
     main()

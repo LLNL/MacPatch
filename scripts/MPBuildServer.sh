@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 2.0.3
+# Version: 2.0.4
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -27,6 +27,8 @@
 # 2.0.1:	Updated java version check
 # 2.0.2:	Updated linux package requirements
 # 2.0.3:	Added Mac PKG support
+# 2.0.4:	Added compile for Mac MPServerAdmin.app
+#			Removed create archive (aka zip)
 #
 # -------------------------------------------------------------
 
@@ -443,6 +445,23 @@ if [ -f "/usr/bin/easy_install" ]; then
 	${MPSERVERBASE}/conf/scripts/InstallPyMods.sh
 fi
 
+# ------------------------------------
+# Build MP Server Admin for Mac OS X
+# ------------------------------------
+if $USEMACOS; then
+	if [ -d "${GITROOT}/MacPatch/MacPatch.xcodeproj" ]; then
+		clear
+		echo "MPServerAdmin requires code signing."
+		echo "Hint: (Mac Developer: ...)"
+		read -p "Please enter your code sigining identity: " xcodeCODESIGNIDENTITY
+
+		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch\ Admin\ Tools/MPServerAdmin/MPServerAdmin.xcodeproj -target "gov.llnl.mp.admin.helper" SYMROOT=${BUILDROOT} CODE_SIGN_IDENTITY="${xcodeCODESIGNIDENTITY}"
+		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch\ Admin\ Tools/MPServerAdmin/MPServerAdmin.xcodeproj -target "MPServerAdmin" SYMROOT=${BUILDROOT} CODE_SIGN_IDENTITY="${xcodeCODESIGNIDENTITY}"
+		ditto -c -k --keepParent ${BUILDROOT}/Release/MPServerAdmin.app ${BUILDROOT}/Release/MPServerAdmin.app.zip
+		cp ${BUILDROOT}/Release/MPServerAdmin.app.zip ${MPSERVERBASE}/conf/bin/MPServerAdmin.app.zip 
+	fi
+fi
+
 # ------------------------------------------------------------
 # Generate self signed certificates
 # ------------------------------------------------------------
@@ -494,17 +513,6 @@ fi
 # Clean up structure place holders
 # ------------------
 find ${MPSERVERBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
-
-# ------------------
-# Create Archive
-# ------------------
-MKARC=0
-read -p "Create Archive Of Server Install [N]: " MKARC
-MKARC=${MKARC:-0}
-if [ $MKARC == 1 ]; then
-	zip -r ${MPBASE}/MacPatch_Server.zip ${MPSERVERBASE}
-fi
-clear
 
 # ------------------
 # Set Permissions
