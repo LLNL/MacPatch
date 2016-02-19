@@ -100,8 +100,8 @@
             return NO;
         }
         
-        NSString *_rmtVerNo = [jData objectForKey:@"version"];
-        NSString *_rmtLstID = [jData objectForKey:@"listid"];
+        NSString *_rmtVerNo = [[jData objectForKey:@"version"] stringValue];
+        NSString *_rmtLstID = [[jData objectForKey:@"listid"] stringValue];
         if ([_rmtLstID isEqualToString:_curLstID] == NO) {
             qlerror(@"List ID are different. Need to overwrite values.");
             return NO;
