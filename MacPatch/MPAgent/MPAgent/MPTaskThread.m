@@ -69,6 +69,14 @@ NSLock *lock;
 			} else if ([l_cmd isEqualToString:@"kMPProfiles"]) {
 				logit(lcl_vInfo,@"Running client inventory scan.");
 				//[self ];
+            
+            } else if ([l_cmd isEqualToString:@"kMPSrvList"]) {
+                logit(lcl_vInfo,@"Running Server List scan and update.");
+                //[self ];
+                
+            } else if ([l_cmd isEqualToString:@"kMPSUSrvList"]) {
+                logit(lcl_vInfo,@"Running SU Server List scan and update.");
+                //[self ];
 
 			} else {
 				// Do nothing, log invalid command

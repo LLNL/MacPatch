@@ -26,6 +26,7 @@
  */
 
 #import "AppDelegate.h"
+#import "TomcatService.h"
 #import "AdminServiceVC.h"
 #import "WebServiceVC.h"
 #import "ApplePatchSyncVC.h"
@@ -35,19 +36,20 @@
 #import "WebServerVC.h"
 #import "AuthenticationVC.h"
 
+#import "Constants.h"
 #import "Common.h"
 #import "HelperTool.h"
 #include <ServiceManagement/ServiceManagement.h>
+#import "AHLaunchCtl.h"
+#import "MPServerAdmin.h"
+
 
 #undef  ql_component
 #define ql_component lcl_cMain
 
 @interface AppDelegate () {
-    AuthorizationRef    _authRef;
+    MPServerAdmin *mpsa;
 }
-
-@property (atomic, copy,   readwrite) NSData *authorization;
-@property (atomic, strong, readwrite) NSXPCConnection *helperToolConnection;
 
 - (NSString *)javaHome;
 
@@ -60,10 +62,22 @@
 
 @implementation AppDelegate
 
+- (void)awakeFromNib
+{
+    [self checkServerVersion];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
     // put the views into the tabview
+
+    mpsa = [MPServerAdmin sharedInstance];
+    if ([self helperIsInstalled] == NO) {
+        [mpsa installHelperApp];
+    }
+    [mpsa connectToHelperTool];
+
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains( NSLibraryDirectory, NSUserDomainMask, YES );
     NSString *logFile = [[paths firstObject] stringByAppendingPathComponent:@"Logs/MPServerAdmin.log"];
@@ -73,66 +87,37 @@
     [LCLLogFile setMirrorsToStdErr:YES];
     
     NSTabViewItem *item;
+    //item = [[self tabView] tabViewItemAtIndex:0];
+    //[item setView:[[self webServerVC] view]];
+    
     item = [[self tabView] tabViewItemAtIndex:0];
-    [item setView:[[self webServerVC] view]];
+    [item setView:[[self tomcatService] view]];
+    
+    //item = [[self tabView] tabViewItemAtIndex:1];
+    //[item setView:[[self adminServiceVC] view]];
+    
+    //item = [[self tabView] tabViewItemAtIndex:2];
+    //[item setView:[[self webServiceVC] view]];
     
     item = [[self tabView] tabViewItemAtIndex:1];
-    [item setView:[[self adminServiceVC] view]];
-    
-    item = [[self tabView] tabViewItemAtIndex:2];
-    [item setView:[[self webServiceVC] view]];
-    
-    item = [[self tabView] tabViewItemAtIndex:3];
     [item setView:[[self applePatchSyncVC] view]];
     
-    item = [[self tabView] tabViewItemAtIndex:4];
+    item = [[self tabView] tabViewItemAtIndex:2];
     [item setView:[[self contentSyncVC] view]];
     
     // Not Implemented Yet
     //item = [[self tabView] tabViewItemAtIndex:5];
     //[item setView:[[self avSyncVC] view]];
     
-    item = [[self tabView] tabViewItemAtIndex:5];
+    item = [[self tabView] tabViewItemAtIndex:3];
     [item setView:[[self databaseVC] view]];
     
-    item = [[self tabView] tabViewItemAtIndex:6];
+    item = [[self tabView] tabViewItemAtIndex:4];
     [item setView:[[self authenticationVC] view]];
     
     /*
     [[self tabView] selectFirstTabViewItem:self.adminServiceVC];
      */
-    
-    OSStatus                    err;
-    AuthorizationExternalForm   extForm;
-    
-    // Create our connection to the authorization system.
-    //
-    // If we can't create an authorization reference then the app is not going to be able
-    // to do anything requiring authorization.  Generally this only happens when you launch
-    // the app in some wacky, and typically unsupported, way.  In the debug build we flag that
-    // with an assert.  In the release build we continue with self->_authRef as NULL, which will
-    // cause all authorized operations to fail.
-    
-    err = AuthorizationCreate(NULL, NULL, 0, &self->_authRef);
-    if (err == errAuthorizationSuccess) {
-        err = AuthorizationMakeExternalForm(self->_authRef, &extForm);
-    }
-    if (err == errAuthorizationSuccess) {
-        self.authorization = [[NSData alloc] initWithBytes:&extForm length:sizeof(extForm)];
-    }
-    assert(err == errAuthorizationSuccess);
-    
-    // If we successfully connected to Authorization Services, add definitions for our default
-    // rights (unless they're already in the database).
-    
-    if (self->_authRef) {
-        [Common setupAuthorizationRights:self->_authRef];
-    }
-    
-    // Install the Helper
-    if ([self helperIsInstalled] == NO) {
-        [self installHelper];
-    }
     
     [self.window makeKeyAndOrderFront:self];
     [self checkForJava:nil];
@@ -148,19 +133,6 @@
     return YES;
 }
 
-- (void)installHelper
-{
-    Boolean             success;
-    CFErrorRef          error;
-    success = SMJobBless(kSMDomainSystemLaunchd,CFSTR("gov.llnl.mp.admin.helper"),self->_authRef,&error);
-    if (success) {
-        //NSLog(@"success");
-    } else {
-        NSLog(@"Error: %@",(__bridge NSError *)error);
-        CFRelease(error);
-    }
-}
-
 - (BOOL)helperIsInstalled
 {
     BOOL result = NO;
@@ -170,62 +142,29 @@
     }
     for (NSDictionary *s in jobs)
     {
+        
         if ([[s objectForKey:@"Label"] isEqualToString:@"gov.llnl.mp.admin.helper"])
         {
+            NSLog(@"%@",s);
+            NSError *error = nil;
+            if ([s objectForKey:@"Program"] != nil) {
+                if (![[NSFileManager defaultManager] fileExistsAtPath:[s objectForKey:@"Program"]]) {
+                    [mpsa installHelperApp];
+                }
+            }
+            
+            if ([s objectForKey:@"PID"] == nil) {
+                if (![[AHLaunchCtl sharedController] start:@"gov.llnl.mp.admin.helper" inDomain:kAHGlobalLaunchDaemon error:&error]) {
+                    NSLog(@"Error Starting Job: %@", error.localizedDescription);
+                }
+            }
+
             return YES;
             break;
         }
     }
     
     return result;
-}
-
-#pragma mark - Helper Tool
-- (void)connectToHelperTool
-// Ensures that we're connected to our helper tool.
-{
-    assert([NSThread isMainThread]);
-    
-    if (self.helperToolConnection == nil) {
-        self.helperToolConnection = [[NSXPCConnection alloc] initWithMachServiceName:kHelperToolMachServiceName options:NSXPCConnectionPrivileged];
-        self.helperToolConnection.remoteObjectInterface = [NSXPCInterface interfaceWithProtocol:@protocol(HelperToolProtocol)];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-retain-cycles"
-        // We can ignore the retain cycle warning because a) the retain taken by the
-        // invalidation handler block is released by us setting it to nil when the block
-        // actually runs, and b) the retain taken by the block passed to -addOperationWithBlock:
-        // will be released when that operation completes and the operation itself is deallocated
-        // (notably self does not have a reference to the NSBlockOperation).
-        self.helperToolConnection.invalidationHandler = ^{
-            // If the connection gets invalidated then, on the main thread, nil out our
-            // reference to it.  This ensures that we attempt to rebuild it the next time around.
-            self.helperToolConnection.invalidationHandler = nil;
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                self.helperToolConnection = nil;
-                NSLog(@"connection invalidated");
-            }];
-        };
-#pragma clang diagnostic pop
-        [self.helperToolConnection resume];
-    }
-}
-
-- (void)connectAndExecuteCommandBlock:(void(^)(NSError *))commandBlock
-// Connects to the helper tool and then executes the supplied command block on the
-// main thread, passing it an error indicating if the connection was successful.
-{
-    assert([NSThread isMainThread]);
-    
-    // Ensure that there's a helper tool connection in place.
-    
-    [self connectToHelperTool];
-    
-    // Run the command block.  Note that we never error in this case because, if there is
-    // an error connecting to the helper tool, it will be delivered to the error handler
-    // passed to -remoteObjectProxyWithErrorHandler:.  However, I maintain the possibility
-    // of an error here to allow for future expansion.
-    
-    commandBlock(nil);
 }
 
 #pragma mark - IBActions
@@ -248,7 +187,17 @@
 
 - (IBAction)installHelperApp:(id)sender
 {
-    [self installHelper];
+    [self helperIsInstalled];
+}
+
+- (IBAction)installHelperAppAlt:(id)sender
+{
+    NSError *error;
+    NSString *kYourHelperToolReverseDomain = @"gov.llnl.mp.admin.helper";
+    [AHLaunchCtl installHelper:kYourHelperToolReverseDomain prompt:@"Install Helper?" error:&error];
+    if(error) {
+        NSLog(@"error: %@",error);
+    }
 }
 
 - (IBAction)checkForJava:(id)sender
@@ -267,6 +216,50 @@
         [alert addButtonWithTitle:@"OK"];
         [alert addButtonWithTitle:@"Oracle (Java JDK)"];
         [alert beginSheetModalForWindow:_window modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
+    }
+}
+
+- (void)checkServerVersion
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:SERVER_VER_FILE]) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setAlertStyle:NSCriticalAlertStyle];
+        [alert setMessageText:@"Error, Server Version Not Supported"];
+        [alert setInformativeText:@"The server version of MacPatch installed is not supported by this app. Please upgrade the MacPatch server software."];
+        [alert addButtonWithTitle:@"OK"];
+        [alert runModal];
+        [NSApp terminate:nil];
+    } else {
+
+        NSError *err = nil;
+        NSData *siteConfigData = [NSData dataWithContentsOfFile:SERVER_VER_FILE options:NSDataReadingUncached error:&err];
+        if (err) {
+            return;
+        }
+        err = nil;
+        NSDictionary *result = [NSJSONSerialization JSONObjectWithData:siteConfigData options:NSJSONReadingMutableContainers error:&err];
+        if (err) {
+            return;
+        }
+        
+        if ([result objectForKey:@"server"] != nil) {
+            if ([[result objectForKey:@"server"] objectForKey:@"version"] != nil) {
+                NSString *serverVer = [[result objectForKey:@"server"] objectForKey:@"version"];
+                NSString *minVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"MinServerVer"];
+                NSComparisonResult res = [self compareVersion:serverVer to:minVersion];
+                if (res == NSOrderedAscending) {
+                    NSAlert *alert = [[NSAlert alloc] init];
+                    [alert setAlertStyle:NSCriticalAlertStyle];
+                    [alert setMessageText:@"Error, Server Version Not Supported"];
+                    [alert setInformativeText:@"The server version of MacPatch installed is not supported by this app. Please upgrade the MacPatch server software."];
+                    [alert addButtonWithTitle:@"OK"];
+                    [alert runModal];
+                    [NSApp terminate:nil];
+                }
+            }
+        }
+        
     }
 }
 
@@ -308,6 +301,40 @@
     }
     
     return returnValue;
+}
+
+- (NSComparisonResult)compareVersion:(NSString *)versionA to:(NSString *)versionB
+{
+    NSArray *versionAComp = [versionA componentsSeparatedByString:@"."];
+    NSArray *versionBComp = [versionB componentsSeparatedByString:@"."];
+    
+    __block NSComparisonResult result = NSOrderedSame;
+    
+    [versionAComp enumerateObjectsUsingBlock:
+     ^(NSString *obj, NSUInteger idx, BOOL *stop)
+     {
+         // handle abbreviated versions.
+         if (idx > versionBComp.count -1)
+         {
+             *stop = YES;
+             return;
+         }
+         
+         NSInteger verAInt = [versionAComp[idx] integerValue];
+         NSInteger verBInt = [versionBComp[idx] integerValue];
+         
+         if (verAInt != verBInt)
+         {
+             if (verAInt < verBInt)
+                 result = NSOrderedAscending;
+             else
+                 result = NSOrderedDescending;
+             
+             *stop = YES;
+             return;
+         }
+     }];
+    return result; 
 }
 
 @end

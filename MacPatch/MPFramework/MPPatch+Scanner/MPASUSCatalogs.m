@@ -70,13 +70,16 @@
 	@try
     {
         NSDictionary *osVerInfo = [MPSystemInfo osVersionOctets];
-        if ([[osVerInfo objectForKey:@"minor"] intValue] >= 9)
+        if ([[osVerInfo objectForKey:@"minor"] intValue] >= 10)
         {
-            // For Mac OS X 10.9
+            // For Mac OS X 10.10 or higher
+            qlinfo(@"Setting catalog using softwareupdate, to %@",aCatalogURL);
             [NSTask launchedTaskWithLaunchPath:@"/usr/sbin/softwareupdate" arguments:[NSArray arrayWithObjects:@"--set-catalog",aCatalogURL,nil]];
         }
         else
         {
+            qlinfo(@"Setting catalog using writeToFile.");
+            qldebug(@"%@",tmpDefaults);
             [tmpDefaults writeToFile:ASUS_PLIST_PATH atomically:NO];
         }
 	}
@@ -127,10 +130,10 @@
     // Get Array of apporpriate OS Catalogs
     NSDictionary *osVers = [MPSystemInfo osVersionOctets];
     NSString *osMinor = [[osVers objectForKey:@"minor"] stringValue];
-    if ([susDict objectForKey:@"server"]) {
-        if ([[susDict objectForKey:@"server"] isKindOfClass:[NSArray class]]) {
-            for (NSDictionary *server in [susDict objectForKey:@"server"]) {
-                if ([[server objectForKey:@"os"] isEqualToString:osMinor]) {
+    if ([susDict objectForKey:@"servers"]) {
+        if ([[susDict objectForKey:@"servers"] isKindOfClass:[NSArray class]]) {
+            for (NSDictionary *server in [susDict objectForKey:@"servers"]) {
+                if ([[[server objectForKey:@"os"] stringValue] isEqualToString:osMinor]) {
                     if ([server objectForKey:@"servers"]) {
                         if ([[server objectForKey:@"servers"] isKindOfClass:[NSArray class]]) {
                             for (NSDictionary *item in [server objectForKey:@"servers"]) {
@@ -138,12 +141,13 @@
                             }
                         }
                     }
-                    
                     break;
                 }
             }
         }
     }
+    
+    qldebug(@"SU Catalogs for OS: %@",catalogs);
     
     NSString *newCatalogURL = NULL;
     if ([catalogs count] > 0 ) {
@@ -151,6 +155,7 @@
             // Check to make sure host is reachable and we get a vaild return code
             if ([mpNetworkUtils isHostURLReachable:[catalogs objectAtIndex:i]]) {
                 if ([mpNetworkUtils isURLValid:[catalogs objectAtIndex:i] returnCode:200]) {
+                    qldebug(@"SU Catalog verified: %@",[catalogs objectAtIndex:i]);
                     newCatalogURL = [catalogs objectAtIndex:i];
                     break;
                 } else {

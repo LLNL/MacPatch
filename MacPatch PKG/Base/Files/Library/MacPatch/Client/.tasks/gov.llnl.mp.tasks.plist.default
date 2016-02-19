@@ -334,6 +334,36 @@
 			<key>startdate</key>
 			<string>2011-01-01</string>
 		</dict>
+		<dict>
+			<key>active</key>
+			<string>1</string>
+			<key>cmd</key>
+			<string>kMPSUSrvList</string>
+			<key>cmdalt</key>
+			<string>0</string>
+			<key>description</key>
+			<string>Scan and Update SU Server List</string>
+			<key>enddate</key>
+			<string>3000-01-01</string>
+			<key>id</key>
+			<string>12</string>
+			<key>idrev</key>
+			<string>1</string>
+			<key>idsig</key>
+			<string>0</string>
+			<key>interval</key>
+			<string>EVERYRAND@1800</string>
+			<key>mode</key>
+			<string>0</string>
+			<key>name</key>
+			<string>Scan and Update SU Server List</string>
+			<key>parent</key>
+			<string>0</string>
+			<key>scope</key>
+			<string>Global</string>
+			<key>startdate</key>
+			<string>2011-01-01</string>
+		</dict>
 	</array>
 </dict>
 </plist>

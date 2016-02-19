@@ -47,6 +47,7 @@
 #import "Reachability.h"
 #import "MPServerList.h"
 #import "MPNetReach.h"
+#import "MPSUServerList.h"
 
 // Patching & Scanning
 #import "MPAsus.h"

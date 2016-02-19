@@ -26,6 +26,10 @@
 #import "MPAgentUp2DateController.h"
 #import "MacPatch.h"
 
+#define DEFAULT_TIMEOUT_VALUE 1800.0 // 30 Minutes
+
+NSInteger const TaskErrorTimedOut = 900001;
+
 @interface MPAgentUp2DateController ()
 - (NSDictionary *)collectVersionInfo;
 - (BOOL)compareVersionStrings:(NSString *)leftVersion operator:(NSString *)aOp compareTo:(NSString *)rightVersion;
@@ -38,6 +42,9 @@
 - (int)installPkg:(NSString *)pkgPath error:(NSError **)err;
 - (int)installPkg:(NSString *)pkgPath target:(NSString *)aTarget error:(NSError **)err;
 - (NSString *)installPkgWithResult:(NSString *)pkgPath target:(NSString *)aTarget error:(NSError **)err;
+
+- (void)taskTimeoutThread;
+- (void)taskTimeout:(NSNotification *)aNotification;
 @end
 
 @implementation MPAgentUp2DateController
@@ -47,6 +54,10 @@
 @synthesize _updateData;
 @synthesize _osVerDictionary;
 
+@synthesize taskTimeoutTimer;
+@synthesize taskTimeoutValue;
+@synthesize taskTimedOut;
+
 - (id)init
 {
     self = [super init];
@@ -55,6 +66,10 @@
 		[self set_cuuid:[MPSystemInfo clientUUID]];
 		[self set_updateData:nil];
         [self set_osVerDictionary:[MPSystemInfo osVersionOctets]];
+        
+        [self setTaskTimeoutValue:DEFAULT_TIMEOUT_VALUE];
+        [self setTaskTimedOut:NO];
+        
         mpAsus = [[MPAsus alloc] init];
         mpDataMgr = [[MPDataMgr alloc] init];
     }
@@ -283,18 +298,46 @@ done:
 
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
-    NSError *error = nil;
+    NSString *res = nil;
+    MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
+    NSArray *servers = [mpNetConfig servers];
     NSURLResponse *response;
-    MPNetConfig *mpnc = [[MPNetConfig alloc] init];
-    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArray:[mpnc servers]];
-    NSURLRequest *urlReq = [req buildDownloadRequest:aURL];
-    NSString *res = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
-    if (error) {
-        logit(lcl_vError,@"Error[%d], trying to download file.",(int)[error code]);
-        if (err != NULL)  *err = error;
-        return nil;
+    MPNetRequest *req;
+    NSURLRequest *urlReq;
+    NSError *error = nil;
+    
+    for (MPNetServer *srv in servers)
+    {
+        qlinfo(@"Trying Server %@",srv.host);
+        req = [[MPNetRequest alloc] initWithMPServer:srv];
+        urlReq = [req buildDownloadRequest:aURL];
+        error = nil;
+        if (urlReq)
+        {
+            res = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
+            if (error) {
+                if (err != NULL) {
+                    *err = error;
+                }
+                qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
+                continue;
+            }
+            // Make any previouse error pointers nil, now that we have a valid host/connection
+            if (err != NULL) {
+                *err = nil;
+            }
+            break;
+        } else {
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
+            qlerror(@"%@",error.localizedDescription);
+            if (err != NULL) {
+                *err = error;
+            }
+            continue;
+        }
     }
-	
+
     return res;
 }
 
@@ -356,57 +399,111 @@ done:
     return [result trim];
 }
 
-#define aBUFSIZE 100
-
 -(NSString *)runTask:(NSString *)aBinPath binArgs:(NSArray *)aArgs environment:(NSDictionary *)aEnv error:(NSError **)err
 {
-	if ([aBinPath isEqual:@"/usr/sbin/installer"]) {
-		NSMutableString *_res = [[NSMutableString alloc] init];
-		NSString *_cmd = [NSString stringWithFormat:@"export COMMAND_LINE_INSTALL=1; /usr/sbin/installer %@",[aArgs componentsJoinedByString:@" "]];
-		
-		int status;
-		char buf[aBUFSIZE];
-		
-		FILE * f = popen([_cmd cStringUsingEncoding:NSUTF8StringEncoding], "r");
-		size_t r;
-		while((r = fread(buf, sizeof(char), aBUFSIZE - 1, f)) > 0) {
-			buf[r+1] = '\0';
-			[_res appendFormat:@"%@\n",[NSString stringWithUTF8String: buf]];
-		}
-		
-		status = pclose(f);
-		if (status == -1) {
-			logit(lcl_vError,@"Error, closing file description for %@",_cmd);
-		}
-		
-		NSString *result = [NSString stringWithString:_res];
-		return result;
-		
-	} else {
+    [self setTaskTimedOut:NO];
+    NSString *resultString;
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath:aBinPath];
+    [task setArguments:aArgs];
+    
+    if ([aBinPath isEqual:@"/usr/sbin/installer"]) {
+        NSDictionary *defaultEnvironment = [[NSProcessInfo processInfo] environment];
+        NSMutableDictionary *environment = [[NSMutableDictionary alloc] initWithDictionary:defaultEnvironment];
+        [environment setObject:@"YES" forKey:@"NSUnbufferedIO"];
+        [environment setObject:@"1" forKey:@"COMMAND_LINE_INSTALL"];
+        [task setEnvironment:environment];
+    } else {
+        if (aEnv) {
+            [task setEnvironment:aEnv];
+        }
+    }
+    
+    NSPipe *readPipe = [NSPipe pipe];
+    NSFileHandle *readHandle = [readPipe fileHandleForReading];
+    
+    NSPipe *writePipe = [NSPipe pipe];
+    NSFileHandle *writeHandle = [writePipe fileHandleForWriting];
+    
+    [task setStandardInput: writePipe];
+    [task setStandardOutput: readPipe];
+    [task setStandardError: readPipe];
+    
+    // Launch The NSTask
+    @try {
+        [task launch];
+        // If timeout is set start it ...
+        if (taskTimeoutValue != 0) {
+            [NSThread detachNewThreadSelector:@selector(taskTimeoutThread) toTarget:self withObject:nil];
+        }
+    }
+    @catch (NSException *e)
+    {
+        logit(lcl_vError,@"Install returned error. %@\n%@",[e reason],[e userInfo]);
+        if(taskTimeoutTimer) {
+            [taskTimeoutTimer invalidate];
+        }
+        if (err != NULL) *err = [NSError errorWithDomain:@"RunTask" code:1001 userInfo:[e userInfo]];
+        return @"ERROR";
+    }
 
-		NSPipe *cmdData = [NSPipe pipe];
-		NSTask *cmd = [[NSTask alloc] init];
-		[cmd setLaunchPath:aBinPath];
-		[cmd setArguments: aArgs];
-		if (aEnv) {
-			[cmd setEnvironment:aEnv];	
-		}
-		[cmd setStandardOutput: cmdData];
-		[cmd setStandardInput:[NSPipe pipe]];
-		[cmd launch];
-		[cmd waitUntilExit];
-		
-		if ([cmd terminationStatus] != 0) {
-			logit(lcl_vError,@"Error, unable to run task.");
-			if (err != NULL) *err = [NSError errorWithDomain:@"RunTask" code:[cmd terminationStatus] userInfo:nil];
-		}
-		
-		NSData *data = [[cmdData fileHandleForReading] readDataToEndOfFile];
-		NSString *l_string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-		l_string = [NSString stringWithString:[l_string trim]];
-		
-		return l_string;
-	}	
+    [writeHandle writeData:[NSData dataWithContentsOfFile:@"/private/tmp/.MPRead"]];
+    [writeHandle closeFile];
+    
+    NSMutableData *data = [[NSMutableData alloc] init];
+    NSData *readData;
+    
+    // Read til we have no more data or task has timed out
+    while (taskTimedOut == NO && (readData = [readHandle availableData]) && [readData length])
+    {
+        NSString *l_string = [[NSString alloc] initWithData:readData encoding:NSUTF8StringEncoding];
+        logit(lcl_vDebug,@"%@",[l_string stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:[NSLocale currentLocale]]);
+        [data appendData: readData];
+        l_string = nil;
+    }
+    
+    // Output String
+    NSString *outputString = [[NSString alloc] initWithData:data encoding: NSUTF8StringEncoding];
+    resultString = [outputString stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:[NSLocale currentLocale]];
+    
+    // If tasked timedout kill the task
+    if (taskTimedOut == YES) {
+        // Kill Current Task
+        kill([task processIdentifier], SIGKILL);
+        NSDictionary *errUserInfo = @{NSLocalizedDescriptionKey : @"Task timed out, and was killed."};
+        if (err != NULL) *err = [NSError errorWithDomain:@"runTask" code:TaskErrorTimedOut userInfo:errUserInfo];
+        return @"ERROR";
+    }
+    
+    // make sure the task is no longer running
+    while ([task isRunning] && taskTimedOut == NO)
+    {
+        if ([task isRunning]) {
+            logit(lcl_vInfo,@"Task is running");
+        } else {
+            logit(lcl_vInfo,@"a) Task is running");
+        }
+        [NSThread sleepForTimeInterval:1.0];
+    }
+    
+    // If tasked timedout kill the task
+    if (taskTimedOut == YES) {
+        // Kill Current Task
+        kill([task processIdentifier], SIGKILL);
+        NSDictionary *errUserInfo = @{NSLocalizedDescriptionKey : @"Task timed out, and was killed."};
+        if (err != NULL) *err = [NSError errorWithDomain:@"runTask" code:TaskErrorTimedOut userInfo:errUserInfo];
+        return @"ERROR";
+    }
+    
+    
+    if ([task terminationStatus] != 0) {
+        logit(lcl_vError,@"Error, unable to run task.");
+        if (err != NULL) *err = [NSError errorWithDomain:@"RunTask" code:[task terminationStatus] userInfo:nil];
+    } else {
+        logit(lcl_vInfo,@"Task Terminated with 0.");
+    }
+    
+    return resultString;
 }
 
 - (int)installPkg:(NSString *)pkgPath error:(NSError **)err
@@ -433,13 +530,37 @@ done:
 	result = NULL;
 #else	
 	NSError *aErr = nil;
-	NSArray *binArgs = [NSArray arrayWithObjects:@"-verboseR", @"-pkg", pkgPath, @"-target", aTarget, nil];
+	NSArray *binArgs = [NSArray arrayWithObjects:@"-verboseR", @"-allow", @"-pkg", pkgPath, @"-target", aTarget, nil];
 	NSDictionary *env = [NSDictionary dictionaryWithObject:@"1" forKey:@"COMMAND_LINE_INSTALL"];
 	result = [self runTask:INSTALLER_BIN_PATH binArgs:binArgs environment:env error:&aErr];
 	if (err != NULL) *err = aErr;
 #endif
 	
 	return result;
+}
+
+- (void)taskTimeoutThread
+{
+    @autoreleasepool
+    {
+        logit(lcl_vDebug,@"Timeout is set to %f",taskTimeoutValue);
+        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:taskTimeoutValue
+                                                          target:self
+                                                        selector:@selector(taskTimeout:)
+                                                        userInfo:nil
+                                                         repeats:NO];
+        [self setTaskTimeoutTimer:timer];
+        while (taskTimedOut == NO && [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]);
+        
+    }
+    
+}
+
+- (void)taskTimeout:(NSNotification *)aNotification
+{
+    logit(lcl_vInfo,@"Task timedout, killing task.");
+    [self.taskTimeoutTimer invalidate];
+    [self setTaskTimedOut:YES];
 }
 
 @end

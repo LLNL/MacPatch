@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>MPTaskListEditor.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>gov.llnl.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -24,10 +24,10 @@
 	<string>1</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2015 Lawrence Livremore National Laboratory. All rights reserved.</string>
 	<key>MPInfo</key>
 	<string>MacPatch 2.7.0 Client Software</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2015 Lawrence Livremore National Laboratory. All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MPTaskEditor_MainMenu</string>
 	<key>NSPrincipalClass</key>

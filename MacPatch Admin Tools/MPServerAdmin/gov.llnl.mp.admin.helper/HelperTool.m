@@ -51,9 +51,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <errno.h>
-//#import "INI.h"
+
 #import "MPRsyncD.h"
 #import "XMLDictionary.h"
+#import <ServiceManagement/ServiceManagement.h>
+
+#import "AHLaunchCtl.h"
 
 #undef  ql_component
 #define ql_component lcl_cHelper
@@ -62,7 +65,7 @@
 
 @property (atomic, strong, readwrite) NSXPCListener *listener;
 
-- (BOOL)setLaunchDFilePermissions:(NSString *)aFile;
+- (NSInteger)serviceStatusForServiceLabel:(NSString *)aLabel;
 
 @end
 
@@ -250,8 +253,158 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
 
 #pragma mark - MacPatch
 
+#pragma mark TOMCAT Server
+// TomcatService
+- (void)startTomcatServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+{
+    
+    AHLaunchJob *_job = [[AHLaunchJob alloc] init];
+    NSLog(@"Check initialization. %@", _job);
+    
+    _job = [AHLaunchJob new];
+    _job.Label = @"gov.llnl.mp.tomcat";
+    _job.ProgramArguments = @[ @"/Library/MacPatch/Server/apache-tomcat/bin/launchdTomcat.sh" ];
+    _job.EnvironmentVariables = @{ @"CATALINA_HOME": @"/Library/MacPatch/Server/apache-tomcat" };
+    _job.StandardOutPath = @"/Library/MacPatch/Server/apache-tomcat/logs/stdout.log";
+    _job.StandardErrorPath = @"/Library/MacPatch/Server/apache-tomcat/logs/stderr.log";
+    _job.UserName = @"_appserver";
+    _job.WorkingDirectory = @"/Library/MacPatch/Server/apache-tomcat";
+    _job.RunAtLoad = YES;
+    
+    NSLog(@"Check initialization after property set. %@", _job);
+    
+    NSError *error = nil;
+    if (![[AHLaunchCtl sharedController] add:_job toDomain:kAHGlobalLaunchDaemon error:&error]) {
+        NSLog(@"Error Adding Job: %@", error.localizedDescription);
+    }
+    
+    
+    NSString *licenseKey = @"OK KEY";
+    //NSError *error = nil;
+    reply(error, licenseKey);
+}
+
+- (void)stopTomcatServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+{
+    
+    AHLaunchJob *_job = [[AHLaunchJob alloc] init];
+    NSLog(@"Check initialization. %@", _job);
+    
+    _job = [AHLaunchJob new];
+    _job.Label = @"gov.llnl.mp.tomcat";
+    _job.ProgramArguments = @[ @"/Library/MacPatch/Server/apache-tomcat/bin/launchdTomcat.sh" ];
+    _job.EnvironmentVariables = @{ @"CATALINA_HOME": @"/Library/MacPatch/Server/apache-tomcat" };
+    _job.StandardOutPath = @"/Library/MacPatch/Server/apache-tomcat/logs/stdout.log";
+    _job.StandardErrorPath = @"/Library/MacPatch/Server/apache-tomcat/logs/stderr.log";
+    _job.UserName = @"_appserver";
+    _job.WorkingDirectory = @"/Library/MacPatch/Server/apache-tomcat";
+    _job.RunAtLoad = YES;
+    
+    NSLog(@"Check initialization after property set. %@", _job);
+    
+    NSError *error = nil;
+    if (![[AHLaunchCtl sharedController] unload:_job.Label inDomain:kAHGlobalLaunchDaemon error:&error]) {
+        NSLog(@"Error Removing Job: %@", error.localizedDescription);
+    }
+    
+    NSString *licenseKey = @"OK KEY";
+    //NSError *error = nil;
+    reply(error, licenseKey);
+}
+
+- (void)toggleConsoleApp:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+{
+    NSError *err = nil;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:SITE_CONFIG])
+    {
+        NSMutableDictionary *scf = [[NSMutableDictionary dictionaryWithDictionary:[self readSiteConfig:SITE_CONFIG error:&err]] mutableCopy];
+        if (err) {
+            reply(err, @"");
+            return;
+        }
+        // Set Production Data
+        NSMutableDictionary *tcSrvcDict = [NSMutableDictionary dictionaryWithDictionary:[scf valueForKeyPath:@"settings.services"]];
+        if ([[tcSrvcDict objectForKey:@"console"] boolValue] == YES) {
+            scf[@"settings"][@"services"][@"console"] = [NSNumber numberWithBool:NO];
+        } else {
+            scf[@"settings"][@"services"][@"console"] = [NSNumber numberWithBool:YES];
+        }
+        
+        // Write Site Config Back Out
+        err = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:scf options:NSJSONWritingPrettyPrinted error:&err];
+        
+        // Stuping fix for NSJSONSerialization escaping paths
+        NSString *jsonStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        jsonStr = [jsonStr stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
+        jsonData = [jsonStr dataUsingEncoding:NSUTF8StringEncoding];
+        
+        [jsonData writeToFile:SITE_CONFIG options:0 error:&err];
+        if (err) {
+            reply(err, @"");
+            return;
+        }
+        
+    }
+    else
+    {
+        NSMutableDictionary* details = [NSMutableDictionary dictionary];
+        [details setValue:[NSString stringWithFormat:@"[writeDBConf]: file not found %@",SITE_CONFIG] forKey:NSLocalizedDescriptionKey];
+        err = [NSError errorWithDomain:NSCocoaErrorDomain code:1003 userInfo:details];
+    }
+    
+    reply(err, @"");
+}
+
+- (void)toggleWebServiceApp:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+{
+    NSError *err = nil;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:SITE_CONFIG])
+    {
+        NSMutableDictionary *scf = [[NSMutableDictionary dictionaryWithDictionary:[self readSiteConfig:SITE_CONFIG error:&err]] mutableCopy];
+        if (err) {
+            reply(err, @"");
+            return;
+        }
+        // Set Production Data
+        NSMutableDictionary *tcSrvcDict = [NSMutableDictionary dictionaryWithDictionary:[scf valueForKeyPath:@"settings.services"]];
+        if ([[tcSrvcDict objectForKey:@"mpwsl"] boolValue] == YES) {
+            scf[@"settings"][@"services"][@"mpwsl"] = [NSNumber numberWithBool:NO];
+        } else {
+            scf[@"settings"][@"services"][@"mpwsl"] = [NSNumber numberWithBool:YES];
+        }
+        
+        // Write Site Config Back Out
+        err = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:scf options:NSJSONWritingPrettyPrinted error:&err];
+        
+        // Stuping fix for NSJSONSerialization escaping paths
+        NSString *jsonStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        jsonStr = [jsonStr stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
+        jsonData = [jsonStr dataUsingEncoding:NSUTF8StringEncoding];
+        
+        [jsonData writeToFile:SITE_CONFIG options:0 error:&err];
+        if (err) {
+            reply(err, @"");
+            return;
+        }
+        
+    }
+    else
+    {
+        NSMutableDictionary* details = [NSMutableDictionary dictionary];
+        [details setValue:[NSString stringWithFormat:@"[writeDBConf]: file not found %@",SITE_CONFIG] forKey:NSLocalizedDescriptionKey];
+        err = [NSError errorWithDomain:NSCocoaErrorDomain code:1003 userInfo:details];
+    }
+    
+    reply(err, @"");
+}
+
 #pragma mark WEB Server
-- (void)startWebServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+// Depricated with 2.8.x
+- (void)startWebServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply __deprecated
 {
     NSLog(@"Called start Web Server");
     
@@ -269,7 +422,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        [self setLaunchDFilePermissions:LAUNCHD_FILE_WEBSERVER];
+        //[self setLaunchDFilePermissions:LAUNCHD_FILE_WEBSERVER];
         
         // Load the file
         qldebug(@"/bin/launchctl args: %@",[NSArray arrayWithObjects:@"load",LAUNCHD_FILE_WEBSERVER, nil]);
@@ -277,7 +430,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     }
     
     // Permissions and Ownership
-    [self setLaunchDFilePermissions:LAUNCHD_FILE_WEBSERVER];
+    //[self setLaunchDFilePermissions:LAUNCHD_FILE_WEBSERVER];
     
     // Set RunAtLoad value
     NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE_WEBSERVER];
@@ -298,7 +451,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(error, licenseKey);
 }
 
-- (void)stopWebServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+// Depricated with 2.8.x
+- (void)stopWebServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply __deprecated
 {
     NSString *licenseKey = @"Called stop Web Server";
     NSError *error = nil;
@@ -326,7 +480,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
 }
 
 #pragma mark Admin Service
-- (void)startService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+// Depricated with 2.8.x
+- (void)startService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply __deprecated
 {
     //NSLog(@"Called start service");
     
@@ -341,14 +496,14 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        [self setLaunchDFilePermissions:LAUNCHD_FILE];
+        //[self setLaunchDFilePermissions:LAUNCHD_FILE];
         
         // Load the file
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_FILE, nil]];
     }
     
     // Permissions and Ownership
-    [self setLaunchDFilePermissions:LAUNCHD_FILE];
+    //[self setLaunchDFilePermissions:LAUNCHD_FILE];
     
     // Set RunAtLoad value
     NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE];
@@ -369,7 +524,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(error, licenseKey);
 }
 
-- (void)stopService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+// Depricated with 2.8.x
+- (void)stopService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply __deprecated
 {
     NSString *licenseKey = @"STOP KEY";
     NSError *error = nil;
@@ -396,6 +552,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(error, licenseKey);
 }
 
+// Depricated with 2.8.x
 - (void)readSiteData:(NSData *)authData withReply:(void(^)(NSError * error, NSDictionary * siteDict))reply
 {
     NSString        *sitePort = @"2601";
@@ -409,7 +566,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(error, md);
 }
 
-- (void)writeSiteConfig:(NSData *)authData siteConf:(NSDictionary *)siteDict launchDConf:(NSDictionary *)launchDConf withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+// Depricated with 2.8.x
+- (void)writeSiteConfig:(NSData *)authData siteConf:(NSDictionary *)siteDict launchDConf:(NSDictionary *)launchDConf withReply:(void(^)(NSError * error, NSString * licenseKey))reply __deprecated
 {
     NSError *err = nil;
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -455,7 +613,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
 
 #pragma mark Web Services
 
-- (void)startWSService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+// Depricated with 2.8.x
+- (void)startWSService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply __deprecated
 {
     //NSLog(@"Called start service");
     
@@ -472,7 +631,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        [self setLaunchDFilePermissions:LAUNCHD_WS_FILE];
+        //[self setLaunchDFilePermissions:LAUNCHD_WS_FILE];
         
         // Load the file
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_WS_FILE, nil]];
@@ -489,7 +648,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         // Permissions and Ownership
-        [self setLaunchDFilePermissions:LAUNCHD_INV_FILE];
+        //[self setLaunchDFilePermissions:LAUNCHD_INV_FILE];
         
         // Load the file
         [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_INV_FILE, nil]];
@@ -521,7 +680,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(error, licenseKey);
 }
 
-- (void)stopWSService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+// Depricated with 2.8.x
+- (void)stopWSService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply __deprecated
 {
     NSString *licenseKey = @"STOP KEY";
     NSError *error = nil;
@@ -559,7 +719,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(error, licenseKey);
 }
 
-- (void)readWSData:(NSData *)authData withReply:(void(^)(NSError * error, NSDictionary * siteDict))reply
+// Depricated with 2.8.x
+- (void)readWSData:(NSData *)authData withReply:(void(^)(NSError * error, NSDictionary * siteDict))reply __deprecated
 {
     NSString        *sitePort = @"2601";
     NSError         *error = nil;
@@ -572,7 +733,8 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(error, md);
 }
 
-- (void)writeWSConfig:(NSData *)authData siteConf:(NSDictionary *)siteDict launchDConf:(NSDictionary *)launchDConf withReply:(void(^)(NSError * error, NSString * licenseKey))reply
+// Depricated with 2.8.x
+- (void)writeWSConfig:(NSData *)authData siteConf:(NSDictionary *)siteDict launchDConf:(NSDictionary *)launchDConf withReply:(void(^)(NSError * error, NSString * licenseKey))reply __deprecated
 {
     NSError *err = nil;
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -628,98 +790,113 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(md);
 }
 
-- (BOOL)setLaunchDFilePermissions:(NSString *)aFile
+- (NSInteger)serviceStatusForServiceLabel:(NSString *)aLabel
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSError *err = nil;
-    
-    // Permissions and Ownership
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"root",NSFileOwnerAccountName,
-                          @"wheel",NSFileGroupOwnerAccountName,
-                          [NSNumber numberWithLong:0644],NSFilePosixPermissions, /*420 is Decimal for the 644 octal*/
-                          nil];
-    
-    err = nil;
-    [fm setAttributes:dict ofItemAtPath:aFile error:&err];
-    if (err) {
-        qlerror(@"%@",err.localizedDescription);
-        return NO;
+    // Status Codes
+    // 0 = not running/not loaded
+    // 1 = loaded/no PID
+    // 2 = loaded and running
+    NSArray *jobs = (__bridge NSArray *)SMCopyAllJobDictionaries(kSMDomainSystemLaunchd);
+    if (!jobs) {
+        return 0;
+    }
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"Label CONTAINS[cd] %@", aLabel];
+    NSArray *results = [jobs filteredArrayUsingPredicate:predicate];
+    if ([results count] <= 0) {
+        // No Results found
+        return 0;
     }
     
-    qldebug(@"Set Permissions on %@ to %@",aFile,dict);
-    return YES;
+    if ([[results objectAtIndex:0] objectForKey:@"PID"] == nil) {
+        return 1;
+    } else {
+        if ([[[results objectAtIndex:0] objectForKey:@"PID"] integerValue] >= 1) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+    
+    return 0;
 }
 
 #pragma mark Apple Patch Sync
 
 - (void)startSUSService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
 {
-    //NSLog(@"Called start SUS Sync");
-    
+    NSDictionary *lDict;
     NSFileManager *fm = [NSFileManager defaultManager];
-    if (![fm fileExistsAtPath:LAUNCHD_SUS_FILE])
+    if (![fm fileExistsAtPath:LAUNCHD_SUS_ORIG])
     {
-        NSError *err = nil;
-        [fm copyItemAtPath:LAUNCHD_SUS_ORIG toPath:LAUNCHD_SUS_FILE error:&err];
-        if (err) {
-            NSLog(@"Error: %@",err.localizedDescription);
-            return;
-        }
-        
-        // Permissions and Ownership
-        [self setLaunchDFilePermissions:LAUNCHD_SUS_FILE];
-        
-        // Load the file
-        [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_SUS_FILE, nil]];
-    }
-    
-    // Permissions and Ownership
-    [self setLaunchDFilePermissions:LAUNCHD_SUS_FILE];
-    
-    // Set RunAtLoad value
-    NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_SUS_FILE];
-    if (isStart > 0)
-    {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_SUS_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        lDict = [NSDictionary dictionaryWithContentsOfFile:LAUNCHD_SUS_ORIG];
     } else {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_SUS_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        lDict = @{ @"Label" :  @"gov.llnl.mp.sus.sync",
+                     @"ProgramArguments" :  @[ @"/Library/MacPatch/Server/conf/scripts/MPSUSPatchSync.py",
+                                               @"--plist",
+                                               @"/Library/MacPatch/Server/conf/etc/gov.llnl.mp.patchloader.plist"],
+                     @"StandardOutPath": @"/Library/MacPatch/Server/Logs/MPSUSPatchSync_stdout.log",
+                     @"StandardErrorPath": @"/Library/MacPatch/Server/Logs/MPSUSPatchSync_stderr.log",
+                     @"StartInterval": @28800,
+                     @"RunAtLoad": @YES
+                     };
     }
-    // Write the changes
-    [md writeToFile:LAUNCHD_SUS_FILE atomically:NO];
     
+    AHLaunchJob *_job = [[AHLaunchJob alloc] init];
+    NSLog(@"Check initialization. %@", _job);
+    
+    _job = [AHLaunchJob new];
+    _job.Label = lDict[@"Label"];
+    _job.ProgramArguments = lDict[@"ProgramArguments"];
+    _job.StandardOutPath = lDict[@"StandardOutPath"];
+    _job.StandardErrorPath = lDict[@"StandardErrorPath"];
+    _job.StartInterval = (NSInteger)lDict[@"StartInterval"];
+    _job.RunAtLoad = (isStart > 0) ? YES : NO;
+    
+    NSError *error = nil;
+    if (![[AHLaunchCtl sharedController] add:_job toDomain:kAHGlobalLaunchDaemon error:&error]) {
+        NSLog(@"Error Adding Job: %@", error.localizedDescription);
+    }
     
     NSString *licenseKey = @"START SUS Sync";
-    NSError *error = nil;
-    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"start",SERVICE_SUS, nil]];
-    
     reply(error, licenseKey);
 }
 
 - (void)stopSUSService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
 {
-    NSString *licenseKey = @"Called stop SUS Sync";
-    NSError *error = nil;
+    NSDictionary *lDict;
     NSFileManager *fm = [NSFileManager defaultManager];
-    
-    if (![fm fileExistsAtPath:LAUNCHD_SUS_FILE]) {
-        reply(error, licenseKey);
-        return;
-    }
-    
-    // Set RunAtLoad value
-    NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_SUS_FILE];
-    if (isStart > 0)
+    if (![fm fileExistsAtPath:LAUNCHD_SUS_ORIG])
     {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_SUS_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        lDict = [NSDictionary dictionaryWithContentsOfFile:LAUNCHD_SUS_ORIG];
     } else {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_SUS_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        lDict = @{ @"Label" :  @"gov.llnl.mp.sus.sync",
+                     @"ProgramArguments" :  @[ @"/Library/MacPatch/Server/conf/scripts/MPSUSPatchSync.py",
+                                               @"--plist",
+                                               @"/Library/MacPatch/Server/conf/etc/gov.llnl.mp.patchloader.plist"],
+                     @"StandardOutPath": @"/Library/MacPatch/Server/Logs/MPSUSPatchSync_stdout.log",
+                     @"StandardErrorPath": @"/Library/MacPatch/Server/Logs/MPSUSPatchSync_stderr.log",
+                     @"StartInterval": @28800,
+                     @"RunAtLoad": @NO
+                     };
     }
-    // Write the changes
-    [md writeToFile:LAUNCHD_SUS_FILE atomically:NO];
     
-    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"stop",SERVICE_SUS, nil]];
+    AHLaunchJob *_job = [[AHLaunchJob alloc] init];
+    NSLog(@"Check initialization. %@", _job);
     
+    _job = [AHLaunchJob new];
+    _job.Label = lDict[@"Label"];
+    _job.ProgramArguments = lDict[@"ProgramArguments"];
+    _job.StandardOutPath = lDict[@"StandardOutPath"];
+    _job.StandardErrorPath = lDict[@"StandardErrorPath"];
+    _job.StartInterval = (NSInteger)lDict[@"StartInterval"];
+    _job.RunAtLoad = (isStart > 0) ? YES : NO;
+    
+    NSError *error = nil;
+    if (![[AHLaunchCtl sharedController] unload:_job.Label inDomain:kAHGlobalLaunchDaemon error:&error]) {
+        NSLog(@"Error Removing Job: %@", error.localizedDescription);
+    }
+    
+    NSString *licenseKey = @"STOP SUS Sync";
     reply(error, licenseKey);
 }
 
@@ -781,71 +958,75 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
 
 - (void)startPatchSyncService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
 {
-    //NSLog(@"Called start Patch Sync Service");
-    
+    NSDictionary *lDict;
     NSFileManager *fm = [NSFileManager defaultManager];
-    if (![fm fileExistsAtPath:LAUNCHD_FILE_PATCH_SYNC])
+    if (![fm fileExistsAtPath:LAUNCHD_ORIG_PATCH_SYNC])
     {
-        NSError *err = nil;
-        [fm copyItemAtPath:LAUNCHD_ORIG_PATCH_SYNC toPath:LAUNCHD_FILE_PATCH_SYNC error:&err];
-        if (err) {
-            NSLog(@"Error: %@",err.localizedDescription);
-            return;
-        }
-        
-        // Permissions and Ownership
-        [self setLaunchDFilePermissions:LAUNCHD_FILE_PATCH_SYNC];
-        
-        // Load the file
-        [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_FILE_PATCH_SYNC, nil]];
-    }
-    
-    // Permissions and Ownership
-    [self setLaunchDFilePermissions:LAUNCHD_FILE_PATCH_SYNC];
-    
-    // Set RunAtLoad value
-    NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE_PATCH_SYNC];
-    if (isStart > 0)
-    {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_FILE_PATCH_SYNC, @"RunAtLoad", @"-bool",@"YES", nil]];
+        lDict = [NSDictionary dictionaryWithContentsOfFile:LAUNCHD_ORIG_PATCH_SYNC];
     } else {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_FILE_PATCH_SYNC, @"RunAtLoad", @"-bool",@"NO", nil]];
+        lDict = @{ @"Label" :  @"gov.llnl.mp.sync",
+                     @"ProgramArguments" :  @[ @"/Library/MacPatch/Server/conf/scripts/MPSyncContent.py" ],
+                     @"StandardOutPath": @"/Library/MacPatch/Server/Logs/mp_sync_stdout.log",
+                     @"StandardErrorPath": @"/Library/MacPatch/Server/Logs/mp_sync_stderr.log",
+                     @"StartInterval": @1800,
+                     @"RunAtLoad": @YES
+                     };
     }
-    // Write the changes
-    [md writeToFile:LAUNCHD_FILE_PATCH_SYNC atomically:NO];
     
+    AHLaunchJob *_job = [[AHLaunchJob alloc] init];
+    NSLog(@"Check initialization. %@", _job);
+    
+    _job = [AHLaunchJob new];
+    _job.Label = lDict[@"Label"];
+    _job.ProgramArguments = lDict[@"ProgramArguments"];
+    _job.StandardOutPath = lDict[@"StandardOutPath"];
+    _job.StandardErrorPath = lDict[@"StandardErrorPath"];
+    _job.StartInterval = (NSInteger)lDict[@"StartInterval"];
+    _job.RunAtLoad = (isStart > 0) ? YES : NO;
+    
+    NSError *error = nil;
+    if (![[AHLaunchCtl sharedController] add:_job toDomain:kAHGlobalLaunchDaemon error:&error]) {
+        NSLog(@"Error Adding Job: %@", error.localizedDescription);
+    }
     
     NSString *licenseKey = @"START PATCH Sync";
-    NSError *error = nil;
-    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"start",SERVICE_CONTENT_SYNC, nil]];
-    
     reply(error, licenseKey);
 }
 
 - (void)stopPatchSyncService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
 {
-    NSString *licenseKey = @"Called stop PATCH Sync";
-    NSError *error = nil;
+    NSDictionary *lDict;
     NSFileManager *fm = [NSFileManager defaultManager];
-    
-    if (![fm fileExistsAtPath:LAUNCHD_FILE_PATCH_SYNC]) {
-        reply(error, licenseKey);
-        return;
-    }
-    
-    // Set RunAtLoad value
-    NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_FILE_PATCH_SYNC];
-    if (isStart > 0)
+    if (![fm fileExistsAtPath:LAUNCHD_ORIG_PATCH_SYNC])
     {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_FILE_PATCH_SYNC, @"RunAtLoad", @"-bool",@"YES", nil]];
+        lDict = [NSDictionary dictionaryWithContentsOfFile:LAUNCHD_ORIG_PATCH_SYNC];
     } else {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_FILE_PATCH_SYNC, @"RunAtLoad", @"-bool",@"NO", nil]];
+        lDict = @{ @"Label" :  @"gov.llnl.mp.sync",
+                     @"ProgramArguments" :  @[ @"/Library/MacPatch/Server/conf/scripts/MPSyncContent.py" ],
+                     @"StandardOutPath": @"/Library/MacPatch/Server/Logs/mp_sync_stdout.log",
+                     @"StandardErrorPath": @"/Library/MacPatch/Server/Logs/mp_sync_stderr.log",
+                     @"StartInterval": @1800,
+                     @"RunAtLoad": @NO
+                     };
     }
-    // Write the changes
-    [md writeToFile:LAUNCHD_FILE_PATCH_SYNC atomically:NO];
     
-    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"unload",LAUNCHD_FILE_PATCH_SYNC, nil]];
-    NSLog(@"/bin/launchctl unload %@",LAUNCHD_FILE_PATCH_SYNC);
+    AHLaunchJob *_job = [[AHLaunchJob alloc] init];
+    NSLog(@"Check initialization. %@", _job);
+    
+    _job = [AHLaunchJob new];
+    _job.Label = lDict[@"Label"];
+    _job.ProgramArguments = lDict[@"ProgramArguments"];
+    _job.StandardOutPath = lDict[@"StandardOutPath"];
+    _job.StandardErrorPath = lDict[@"StandardErrorPath"];
+    _job.StartInterval = (NSInteger)lDict[@"StartInterval"];
+    _job.RunAtLoad = (isStart > 0) ? YES : NO;
+    
+    NSError *error = nil;
+    if (![[AHLaunchCtl sharedController] unload:_job.Label inDomain:kAHGlobalLaunchDaemon error:&error]) {
+        NSLog(@"Error Removing Job: %@", error.localizedDescription);
+    }
+    
+    NSString *licenseKey = @"STOP SUS Sync";
     reply(error, licenseKey);
 }
 
@@ -918,7 +1099,7 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
         }
         
         [d writeToFile:launchDFile atomically:NO];
-        [self setLaunchDFilePermissions:launchDFile];
+        //[self setLaunchDFilePermissions:launchDFile];
     } else {
         NSMutableDictionary* details = [NSMutableDictionary dictionary];
         [details setValue:[NSString stringWithFormat:@"Unable to write to file %@",launchDFile] forKey:NSLocalizedDescriptionKey];
@@ -932,71 +1113,77 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
 // Master Server Config
 - (void)startRSyncService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
 {
-    //NSLog(@"Called start RSyncd Service");
-    
+    NSDictionary *lDict;
     NSFileManager *fm = [NSFileManager defaultManager];
-    if (![fm fileExistsAtPath:LAUNCHD_RSYNCD_FILE])
+    if (![fm fileExistsAtPath:LAUNCHD_RSYNCD_ORIG])
     {
-        NSError *err = nil;
-        [fm copyItemAtPath:LAUNCHD_RSYNCD_ORIG toPath:LAUNCHD_RSYNCD_FILE error:&err];
-        if (err) {
-            NSLog(@"Error: %@",err.localizedDescription);
-            return;
-        }
-        
-        // Permissions and Ownership
-        [self setLaunchDFilePermissions:LAUNCHD_RSYNCD_FILE];
-        
-        // Load the file
-        [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"load",LAUNCHD_RSYNCD_FILE, nil]];
-    }
-    
-    // Permissions and Ownership
-    [self setLaunchDFilePermissions:LAUNCHD_RSYNCD_FILE];
-    
-    // Set RunAtLoad value
-    NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_RSYNCD_FILE];
-    if (isStart > 0)
-    {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_RSYNCD_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        lDict = [NSDictionary dictionaryWithContentsOfFile:LAUNCHD_RSYNCD_ORIG];
     } else {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_RSYNCD_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        lDict = @{ @"Label" :  @"org.samba.rsync.mp",
+                   @"Program" : @"/usr/bin/rsync",
+                   @"ProgramArguments" :  @[ @"/usr/bin/rsync",
+                                             @"--daemon",
+                                             @"--config=/Library/MacPatch/Server/conf/etc/rsyncd.conf",
+                                             @"--no-detach"],
+                   @"inetdCompatibility": @{ @"Wait": @NO },
+                   @"Sockets": @{ @"Listeners": @{ @"SockServiceName": @"rsync", @"SockType": @"stream"} }
+                   };
     }
-    // Write the changes
-    [md writeToFile:LAUNCHD_RSYNCD_FILE atomically:NO];
     
+    AHLaunchJob *_job = [[AHLaunchJob alloc] init];
+    NSLog(@"Check initialization. %@", _job);
+    
+    _job = [AHLaunchJob new];
+    _job.Label = lDict[@"Label"];
+    _job.Program = lDict[@"Program"];
+    _job.ProgramArguments = lDict[@"ProgramArguments"];
+    _job.inetdCompatibility = lDict[@"inetdCompatibility"];
+    _job.Sockets = lDict[@"Sockets"];
+    
+    NSError *error = nil;
+    if (![[AHLaunchCtl sharedController] add:_job toDomain:kAHGlobalLaunchDaemon error:&error]) {
+        NSLog(@"Error Adding Job: %@", error.localizedDescription);
+    }
     
     NSString *licenseKey = @"START RSyncD";
-    NSError *error = nil;
-    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"start",SERVICE_RSYNCD, nil]];
-    
     reply(error, licenseKey);
 }
 
 - (void)stopRSyncService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply
 {
-    NSString *licenseKey = @"Called stop Rsyncd";
-    NSError *error = nil;
+    NSDictionary *lDict;
     NSFileManager *fm = [NSFileManager defaultManager];
-    
-    if (![fm fileExistsAtPath:LAUNCHD_RSYNCD_FILE]) {
-        reply(error, licenseKey);
-        return;
-    }
-    
-    // Set RunAtLoad value
-    NSMutableDictionary *md = [NSMutableDictionary dictionaryWithContentsOfFile:LAUNCHD_RSYNCD_FILE];
-    if (isStart > 0)
+    if (![fm fileExistsAtPath:LAUNCHD_RSYNCD_ORIG])
     {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_RSYNCD_FILE, @"RunAtLoad", @"-bool",@"YES", nil]];
+        lDict = [NSDictionary dictionaryWithContentsOfFile:LAUNCHD_RSYNCD_ORIG];
     } else {
-        [NSTask launchedTaskWithLaunchPath:@"/usr/bin/defaults" arguments:[NSArray arrayWithObjects:@"write",LAUNCHD_RSYNCD_FILE, @"RunAtLoad", @"-bool",@"NO", nil]];
+        lDict = @{ @"Label" :  @"org.samba.rsync.mp",
+                   @"Program" : @"/usr/bin/rsync",
+                   @"ProgramArguments" :  @[ @"/usr/bin/rsync",
+                                             @"--daemon",
+                                             @"--config=/Library/MacPatch/Server/conf/etc/rsyncd.conf",
+                                             @"--no-detach"],
+                   @"inetdCompatibility": @{ @"Wait": @NO },
+                   @"Sockets": @{ @"Listeners": @{ @"SockServiceName": @"rsync", @"SockType": @"stream"} }
+                   };
     }
-    // Write the changes
-    [md writeToFile:LAUNCHD_RSYNCD_FILE atomically:NO];
     
-    [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:[NSArray arrayWithObjects:@"stop",SERVICE_RSYNCD, nil]];
+    AHLaunchJob *_job = [[AHLaunchJob alloc] init];
+    NSLog(@"Check initialization. %@", _job);
     
+    _job = [AHLaunchJob new];
+    _job.Label = lDict[@"Label"];
+    _job.Program = lDict[@"Program"];
+    _job.ProgramArguments = lDict[@"ProgramArguments"];
+    _job.inetdCompatibility = lDict[@"inetdCompatibility"];
+    _job.Sockets = lDict[@"Sockets"];
+    
+    NSError *error = nil;
+    if (![[AHLaunchCtl sharedController] unload:_job.Label inDomain:kAHGlobalLaunchDaemon error:&error]) {
+        NSLog(@"Error Adding Job: %@", error.localizedDescription);
+    }
+    
+    NSString *licenseKey = @"STOP RSyncD";
     reply(error, licenseKey);
 
 }
@@ -1041,6 +1228,18 @@ static NSString * kLicenseKeyDefaultsKey = @"licenseKey";
     reply(err, @"");
 }
 
+#pragma mark - SiteConfig
+
+- (void)readSiteConf:(NSData *)authData withReply:(void(^)(NSError * error, NSDictionary * siteConfDict))reply
+{
+    NSError *err = nil;
+    NSDictionary *siteConfig = [self readSiteConfig:SITE_CONFIG error:&err];
+    if (err) {
+        reply(err, nil);
+    }
+    
+    reply(err, siteConfig);
+}
 
 #pragma mark - Database
 // DataBase

@@ -5,6 +5,7 @@
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/admin/css/mp.css" />
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
 
@@ -278,27 +279,8 @@ function dateDifference(strDate1,strDate2)
 //-->
 </SCRIPT>
 
-<script type="text/javascript">
-	function loadContent(param, id) {
-		$("#dialog").load("available_patches_apple_description.cfm?pid="+id);
-		$("#dialog").dialog(
-		 	{
-			bgiframe: false,
-			height: 300,
-			width: 600,
-			modal: true
-			}
-		);
-		$("#dialog").dialog('open');
-	}
-</script>
 <!--- Over rides --->
 <style type="text/css">
-	.ui-jqgrid {font-size:12px;}
-	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
-	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
-	//.ui-jqgrid-btable .ui-state-highlight { background: #A5A9B6; }
 
 	.ui-state-highlight, .ui-widget-content .ui-state-highlight {border: 1px solid #fff; background: #A5A9B6 50% 50% repeat-x; color: #000; }
 	.ui-state-highlight:hover, .ui-widget-content .ui-state-highlight:hover {border: 1px solid #fff; background: #A5A9B6 50% 50% repeat-x; color: #000; }
@@ -350,9 +332,6 @@ function dateDifference(strDate1,strDate2)
 	}
 </style>
 
-<style type="text/css">
-    .xAltRow { background-color: #F0F8FF; background-image: none; color: #000; }
-</style>
 <script type="text/javascript">
 	var eventsMenu = {
 		bindings: {
@@ -397,6 +376,12 @@ function dateDifference(strDate1,strDate2)
 			},
 			'FileVault': function(t) {
 				popUpInvWindow('client_group_inv_details.cfm?type=fileVault&cuuid='+t.id+'','Client Info');
+			},
+			'PatchStatus': function(t) {
+				popUpInvWindow('client_group_inv_details.cfm?type=patchStatus&cuuid='+t.id+'','Client Info');
+			},
+			'PatchHistory': function(t) {
+				popUpInvWindow('client_group_inv_details.cfm?type=patchHistory&cuuid='+t.id+'','Client Info');
 			}
 		}
 	};
@@ -592,6 +577,12 @@ function dateDifference(strDate1,strDate2)
         </li>
         <li id="FileVault" style="text-align:left">
             <img src="/admin/images/icons/report.png" />FileVault Status
+        </li>
+        <li id="PatchStatus" style="text-align:left">
+            <img src="/admin/images/icons/report.png" />Patch Status
+        </li>
+        <li id="PatchHistory" style="text-align:left">
+            <img src="/admin/images/icons/report.png" />Patch History
         </li>
     </ul>
 </div>

@@ -7,13 +7,13 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>MPServerAdmin Help</string>
+	<string>MPServerAdminHelp</string>
 	<key>CFBundleHelpBookName</key>
-	<string>MPServerAdmin Help/macpatch_server_admin.html</string>
+	<string>MPServerAdminHelp/macpatch_server_admin.html</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>gov.llnl.MPServerAdmin</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -21,7 +21,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1.0</string>
+	<string>1.2.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -37,7 +37,9 @@
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>gov.llnl.mp.admin.helper</key>
-		<string>identifier "gov.llnl.mp.admin.helper" and anchor apple generic and certificate leaf[subject.CN] = "Mac Developer: Charles Heizer (W42PNHC2DS)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
+		<string>identifier &quot;gov.llnl.mp.admin.helper&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: Charles Heizer (W42PNHC2DS)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
 	</dict>
+	<key>MinServerVer</key>
+	<string>2.8.0.0</string>
 </dict>
 </plist>

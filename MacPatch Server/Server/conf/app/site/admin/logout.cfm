@@ -4,4 +4,4 @@
  
 <!--- Redirect back to index page. --->
 <cfset structClear( session ) />
-<cflocation url="/admin" addtoken="false"/>
+<cflocation url="/" addtoken="false"/>

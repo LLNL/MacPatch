@@ -47,6 +47,10 @@
 @property (nonatomic, strong) NSDictionary *_updateData;
 @property (nonatomic, strong) NSDictionary *_osVerDictionary;
 
+@property (strong)              NSTimer         *taskTimeoutTimer;
+@property (nonatomic, assign)   NSTimeInterval  taskTimeoutValue;
+@property (nonatomic, assign)   BOOL            taskTimedOut;
+
 - (int)scanForUpdate;
 - (void)scanAndUpdate;
 

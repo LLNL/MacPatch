@@ -80,6 +80,12 @@
     // Writes a new license key.  licenseKey is the new license key string.  authData must be 
     // an AuthorizationExternalForm embedded in an NSData.
 
+// TomcatService
+- (void)startTomcatServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply;
+- (void)stopTomcatServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply;
+- (void)toggleConsoleApp:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply;
+- (void)toggleWebServiceApp:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply;
+
 // WebServerVC
 - (void)startWebServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply;
 - (void)stopWebServer:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply;
@@ -118,6 +124,9 @@
 - (void)stopRSyncService:(NSData *)authData startOnBoot:(NSInteger)isStart withReply:(void(^)(NSError * error, NSString * licenseKey))reply;
 - (void)readRsyncConf:(NSData *)authData withReply:(void(^)(NSError * error, NSDictionary * rsyncDict))reply;
 - (void)writeRsyncConf:(NSData *)authData rsyncConf:(NSDictionary *)rsyncDict launchDConf:(NSDictionary *)launchDConf withReply:(void(^)(NSError * error, NSString * licenseKey))reply;
+
+// SiteConfig ...
+- (void)readSiteConf:(NSData *)authData withReply:(void(^)(NSError * error, NSDictionary * siteConfDict))reply;
 
 // DataBase
 - (void)readDBConf:(NSData *)authData withReply:(void(^)(NSError * error, NSDictionary * dbDict))reply;

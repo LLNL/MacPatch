@@ -5,44 +5,16 @@
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/admin/css/mp.css" />
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="/admin/js/mp-jqgrid-common.js" type="text/javascript"></script>
 
-<script type="text/Javascript">
-	function load(url,id)
-	{
-		window.open(url,'_self') ;
-	}
-	
-	function downloadURL(url)
-	{
-	  var iframe;
-	  iframe = document.getElementById("hiddenDownloader");
-	  if (iframe === null)
-	  {
-		iframe = document.createElement('iframe');  
-		iframe.id = "hiddenDownloader";
-		iframe.style.visibility = 'hidden';
-		document.body.appendChild(iframe);
-	  }
-	  iframe.src = url;   
-	}
-</script>
-<style type="text/css">
-	.ui-jqgrid {font-size:12px;}
-	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
-	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
-	.ui-jqgrid-btable .ui-state-highlight { background: yellow; }
-</style>
-<style type="text/css">
-    .xAltRow { background-color: #F0F8FF; background-image: none; }
-</style>
 <script type="text/javascript">
 	$(document).ready(function()
 		{
 			var lastsel=-1;
-			$("#list").jqGrid(
+			var mygrid = $("#list").jqGrid(
 			{
 				url:'software_packages.cfc?method=getMPSoftware', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
@@ -149,6 +121,10 @@
 			<cfelse>
 				$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:false},{closeOnEscape:true});
 			</cfif>
+
+			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
+			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
+			mygrid[0].toggleToolbar();
 			
 			$(window).bind('resize', function() {
 				$("#list").setGridWidth($(window).width()-20);

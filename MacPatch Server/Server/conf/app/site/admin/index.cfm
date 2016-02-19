@@ -175,8 +175,23 @@
 			window.open('logout.cfm','_self') ;
 		}
 	</script>
-
 </head>
+<cfsilent>
+	<cfset dbObj = CreateObject("component","cfc.db").init()>
+	<cfif StructKeyExists( server, "mpsettings" )>
+		<cfif StructKeyExists( server.mpsettings.settings, "dbSchema" )>
+			<cfif StructKeyExists( server.mpsettings.settings.dbSchema, "schemaVersion" )>
+				<cfset result = dbObj.checkSchemaVersion(server.mpsettings.settings.dbSchema.schemaVersion) />
+			<cfelse>
+				<cfset result = dbObj.checkSchemaVersion("0.0.0.0") />
+			</cfif>
+		</cfif>
+	<cfelse>
+		<cfset result = dbObj.checkSchemaVersion("0.0.0.0") />
+	</cfif>
+
+	<cfset session.myRes = result>
+</cfsilent>
 <body>
 	<div class="ui-layout-north">
 		<div id="image">
@@ -196,11 +211,28 @@
    	</div> 
 	<div class="ui-layout-center">
 		<div class="wrapper">
-        	<!--- inc/dashboard.cfm --->
-			<iframe src="inc/dashboard.cfm" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
-            </iframe>
+        	<cfset _checkSchema = false>
+        	<cfif StructKeyExists( application.settings, "dbSchema" )>
+        		<cfif StructKeyExists( application.settings.dbSchema, "checkSchema" )>
+        			<cfset _checkSchema = application.settings.dbSchema.checkSchema>
+        		</cfif>
+        	</cfif>
+        	<cfif _checkSchema EQ true>
+	        	<cfif result.pass EQ false>
+	        		<cfoutput>
+	        		<iframe src="db_status.cfm?runningVersion=#result.runningVersion#&requiredVersion=#result.requiredVersion#" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
+		            </iframe>
+		            </cfoutput>
+	        	<cfelse>
+		        	<iframe src="inc/dashboard.cfm" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
+		            </iframe>
+	        	</cfif>
+        	<cfelse>
+        		<iframe src="inc/dashboard.cfm" name="bodyFrame" id="bodyFrame" scrolling="yes" frameborder="0" style="overflow:auto;overflow-x:auto;overflow-y:auto;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">
+	            </iframe>
+        	</cfif>
 		</div>
 	</div> 
-	<div class="ui-layout-south">MacPatch Version 2.7.0</div> 
+	<div class="ui-layout-south">MacPatch Version 2.8.0, Database Schema <cfoutput>#result.runningVersion#</cfoutput></div> 
 </body>
 </html>

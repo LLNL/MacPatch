@@ -111,8 +111,3 @@
         });
 </script>
 <div id="tree"></div>
-<!--- DEBUG
-<div id="bottom" style="position: absolute; bottom: 0; left: 0;">
-	<button id="btnReset">Reset Tree</button>
-</div>
---->

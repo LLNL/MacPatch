@@ -327,12 +327,15 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
         qlerror(@"%@",netErr.localizedDescription);
         return nil;
     }
+    
     // Downloads use http only
-    NSString *theURL = [NSString stringWithFormat:@"http://%@%@",mpServer.host,url];
+    // NSString *theURL = [NSString stringWithFormat:@"http://%@%@",mpServer.host,url];
+    
+    NSString *theURL = [NSString stringWithFormat:@"%@://%@:%d%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,url];
     NSString *properlyEscapedURL = [theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
     _dlFilePath = [self createTempDirFromURL:theURL];
-    qldebug(@"buildDownloadRequest url: %@",theURL);
+    qlinfo(@"Download Request URL: %@",theURL);
     qldebug(@"buildDownloadRequest tempFilePath: %@",_dlFilePath);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];

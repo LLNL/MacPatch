@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15E33e" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
+        <deployment version="1070" identifier="macosx"/>
+        <development version="6300" identifier="xcode"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -264,18 +265,16 @@
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
             <value key="minSize" type="size" width="715" height="415"/>
             <view key="contentView" id="534">
-                <rect key="frame" x="0.0" y="5" width="715" height="415"/>
+                <rect key="frame" x="0.0" y="0.0" width="715" height="415"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView id="659" customClass="WindowViewSubclass">
                         <rect key="frame" x="0.0" y="348" width="715" height="74"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <animations/>
                     </customView>
                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="caM-nC-p6Z">
                         <rect key="frame" x="445" y="115" width="227" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Allow Reboot Patch Installs Enabled" id="2T0-Pk-nhn">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -285,13 +284,11 @@
                     <imageView hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="25Z-UK-KuW">
                         <rect key="frame" x="678" y="115" width="20" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Warning" id="4pX-Z4-ufW"/>
                     </imageView>
                     <textField verticalHuggingPriority="750" id="538">
                         <rect key="frame" x="10" y="5" width="441" height="11"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Note:  Once patching has been started, patches that require a reboot will be installed on logout." id="558">
                             <font key="font" metaFont="miniSystem"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -305,7 +302,6 @@
                             <size key="offset" width="2" height="-2"/>
                             <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         </shadow>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Self Patch" id="544">
                             <font key="font" metaFont="systemBold" size="28"/>
                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -315,7 +311,6 @@
                     <imageView id="542">
                         <rect key="frame" x="13" y="357" width="48" height="48"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="MPSelfPatch" id="543"/>
                     </imageView>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="20" horizontalPageScroll="10" verticalLineScroll="20" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="537">
@@ -326,9 +321,8 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="18" headerView="559" id="560">
-                                    <rect key="frame" x="0.0" y="0.0" width="715" height="188"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="715" height="20"/>
                                     <autoresizingMask key="autoresizingMask"/>
-                                    <animations/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <tableViewGridLines key="gridStyleMask" vertical="YES"/>
@@ -487,28 +481,23 @@
                                     </connections>
                                 </tableView>
                             </subviews>
-                            <animations/>
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
-                        <animations/>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.02517482517482518" horizontal="YES" id="561">
                             <rect key="frame" x="1" y="173" width="715" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="562">
                             <rect key="frame" x="701" y="17" width="15" height="156"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                         <tableHeaderView key="headerView" id="559">
                             <rect key="frame" x="0.0" y="0.0" width="715" height="17"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </tableHeaderView>
                     </scrollView>
                     <box autoresizesSubviews="NO" borderType="line" id="539">
-                        <rect key="frame" x="10.000000752804196" y="16" width="695" height="62"/>
+                        <rect key="frame" x="10" y="16" width="695" height="62"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <view key="contentView">
                             <rect key="frame" x="1" y="1" width="693" height="46"/>
@@ -517,7 +506,6 @@
                                 <button verticalHuggingPriority="750" id="551">
                                     <rect key="frame" x="603" y="12" width="72" height="25"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
                                     <buttonCell key="cell" type="roundTextured" title="Scan" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="554">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="system"/>
@@ -529,7 +517,6 @@
                                 <button verticalHuggingPriority="750" id="550">
                                     <rect key="frame" x="523" y="12" width="72" height="25"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
                                     <buttonCell key="cell" type="roundTextured" title="Patch" bezelStyle="texturedRounded" alignment="center" enabled="NO" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="555">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="system"/>
@@ -541,7 +528,6 @@
                                 <button verticalHuggingPriority="750" id="549">
                                     <rect key="frame" x="443" y="12" width="72" height="25"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
                                     <buttonCell key="cell" type="roundTextured" title="Cancel" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="556">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="system"/>
@@ -553,7 +539,6 @@
                                 <textField verticalHuggingPriority="750" id="612">
                                     <rect key="frame" x="15" y="14" width="86" height="17"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Patch Group:" id="613">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -563,7 +548,6 @@
                                 <textField verticalHuggingPriority="750" id="614">
                                     <rect key="frame" x="103" y="14" width="218" height="17"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" placeholderString="RecommendedPatches" id="615">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -571,14 +555,12 @@
                                     </textFieldCell>
                                 </textField>
                             </subviews>
-                            <animations/>
                         </view>
-                        <animations/>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                     <box autoresizesSubviews="NO" title="Status" borderType="line" id="O4q-qS-0ar">
-                        <rect key="frame" x="10" y="69" width="695.00000075280423" height="59"/>
+                        <rect key="frame" x="10" y="69" width="695" height="59"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         <view key="contentView">
                             <rect key="frame" x="1" y="1" width="693" height="43"/>
@@ -587,7 +569,6 @@
                                 <textField verticalHuggingPriority="750" id="546">
                                     <rect key="frame" x="35" y="15" width="647" height="17"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                    <animations/>
                                     <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" placeholderString="Press the scan button to begin a scan." id="547">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -604,7 +585,6 @@
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                 </subviews>
-                <animations/>
             </view>
             <point key="canvasLocation" x="331.5" y="292.5"/>
         </window>
@@ -637,7 +617,6 @@
                     <button id="624">
                         <rect key="frame" x="18" y="146" width="179" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Enable Debug log output" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="625">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -647,7 +626,6 @@
                         </connections>
                     </button>
                 </subviews>
-                <animations/>
             </view>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="627"/>

@@ -134,12 +134,30 @@ p.solid {border-style: solid;}
     Order By Count Desc
 </cfquery>
 
-<cfquery datasource="#session.dbsource#" name="qGetOSNumbersMinor">
-    SELECT	Left(osver,4) as OSMinorVer, Count(Left(osver,4)) As Count
-	FROM	mp_clients_view
-	Group By OSMinorVer
-	Order By Count Desc
+<cfquery datasource="#session.dbsource#" name="qGetOSNumbersMinorPre">
+    SELECT  Left(osver,5) as OSMinorVer, Count(Left(osver,5)) As Count
+    FROM    mp_clients_view
+    Group By OSMinorVer
+    Order By Count Desc
 </cfquery>
+
+<cfset qGetOSNumbersMinor = QueryNew("OSMinorVer, Count")> 
+<cfset newRows = QueryAddRow(qGetOSNumbersMinor, qGetOSNumbersMinorPre.RecordCount)>
+
+<cfset rowIDX = 1>  
+<cfif  qGetOSNumbersMinorPre.RecordCount GTE 1>
+    <cfoutput query="qGetOSNumbersMinorPre">
+        <cfif Right(OSMinorVer, 1) is ".">
+            <cfset OSMinorVerAlt = Left(OSMinorVer, Len(OSMinorVer)-1) />
+        <cfelse>
+            <cfset OSMinorVerAlt = OSMinorVer />
+        </cfif>
+        <cfset temp = QuerySetCell(qGetOSNumbersMinor, "OSMinorVer", OSMinorVerAlt, rowIDX)> 
+        <cfset temp = QuerySetCell(qGetOSNumbersMinor, "Count", Count, rowIDX)> 
+        <cfset rowIDX = rowIDX + 1>
+    </cfoutput>
+</cfif>
+
 
 <cfquery datasource="#session.dbsource#" name="qGetModelNumbers" maxrows="10">
 	SELECT
@@ -147,15 +165,6 @@ p.solid {border-style: solid;}
 	FROM mp_clients mpc
 	LEFT JOIN mpi_SPHardwareOverview hw ON hw.cuuid = mpc.cuuid
     Group By hw.mpa_Model_Identifier
-    Order By Count Desc
-</cfquery>
-
-<cfquery datasource="#session.dbsource#" name="qGetOSType">
-    SELECT	
-	mpc.ostype AS OSType, Count(mpc.ostype) As Count
-    FROM mp_clients mpc
-	LEFT JOIN mpi_SPHardwareOverview hw ON hw.cuuid = mpc.cuuid
-    Group By mpc.ostype
     Order By Count Desc
 </cfquery>
 
@@ -362,15 +371,6 @@ p.solid {border-style: solid;}
                                     </cfchartseries>
                                 </cfchart>
                             </div>
-                            <div id="os4" style="display:none;">
-                                <cfchart format="png" title="OS Type Break Down" showlegend="no" chartheight="400" chartwidth="480" xaxistitle="Model Type" yaxistitle="Count" url="dashboard.cfm?Series=$SERIESLABEL$&Item=$ITEMLABEL$">
-                                    <cfchartseries type="bar" serieslabel="OSTypeBreakDown">
-                                    <cfoutput query="qGetOSType">
-                                        <cfchartdata item="#OSType#" value="#Count#">
-                                    </cfoutput>
-                                    </cfchartseries>
-                                </cfchart>
-                            </div>
 							<cfoutput>
                             <div class="dashLink">
                                 <a href="javascript:toggle('os1','os2','os3','os4')">OS Breakdown</a>
@@ -378,8 +378,6 @@ p.solid {border-style: solid;}
 								<a href="javascript:toggle('os2','os1','os3','os4')">OS Breakdown Minor</a>
                                 &nbsp;|&nbsp;
                                 <a href="javascript:toggle('os3','os1','os2','os4')">Model Types</a>
-                                &nbsp;|&nbsp;
-                                <a href="javascript:toggle('os4','os1','os2','os3')">OS Types</a>
                             </div>
                             </cfoutput>    
                         </div>

@@ -292,7 +292,24 @@
 			} else if ([intervalArray count] == 3) {
 				[tmpDict setObject:@"EVERY@1800" forKey:@"interval"];
 			}
-		}
+        }  else if ([[tmpDict objectForKey:@"cmd"] isEqualToString:@"kMPSrvList"]) {
+            if ([intervalArray count] == 2) {
+                if ([intervalArray objectAtIndex:0] == NULL || [intervalArray objectAtIndex:1] == NULL) {
+                    [tmpDict setObject:@"EVERY@600" forKey:@"interval"];
+                }
+            } else if ([intervalArray count] == 3) {
+                [tmpDict setObject:@"EVERY@600" forKey:@"interval"];
+            }
+        }  else if ([[tmpDict objectForKey:@"cmd"] isEqualToString:@"kMPSUSrvList"]) {
+            if ([intervalArray count] == 2) {
+                if ([intervalArray objectAtIndex:0] == NULL || [intervalArray objectAtIndex:1] == NULL) {
+                    [tmpDict setObject:@"EVERY@900" forKey:@"interval"];
+                }
+            } else if ([intervalArray count] == 3) {
+                [tmpDict setObject:@"EVERY@900" forKey:@"interval"];
+            }
+        }
+        
 	} else {
 		logit(lcl_vError,@"Could not validate interval. Not enough arguments (%@)",[tmpDict objectForKey:@"interval"]);
 		logit(lcl_vError,@"Changing task (%@) state to inactive.",[tmpDict objectForKey:@"name"]);

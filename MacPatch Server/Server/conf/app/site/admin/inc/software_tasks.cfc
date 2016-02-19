@@ -1,4 +1,7 @@
-<cfcomponent output="false">
+<cfcomponent output="false" extends="jqGrid">
+
+	<cfset this.logName = "software_tasks" />
+
 	<cffunction name="getMPSoftwareTasks" access="remote" returnformat="json">
 		<cfargument name="page" required="no" default="1" hint="Page user is on">
 	    <cfargument name="rows" required="no" default="10" hint="Number of Rows to display per page">
@@ -45,6 +48,7 @@
 		<cfset i = 1>
 
 		<cfloop query="qSelSW" startrow="#start#" endrow="#end#">
+			<cfset r = logInfo("getMPSoftwareTasks","Task: #name#")>
 			<cfset arrSW[i] = [#rid#, #tuuid#, #name#, #primary_suuid#, #iif(active IS 1,DE("Yes"),DE("No"))#, #Ucase(sw_task_type)#, #DateTimeFormat( sw_start_datetime, "yyyy-MM-dd HH:mm:ss" )#, #DateTimeFormat( sw_end_datetime, "yyyy-MM-dd HH:mm:ss" )#, #DateTimeFormat( mdate, "yyyy-MM-dd HH:mm:ss" )#] >
 			<cfset i = i + 1>
 		</cfloop>

@@ -116,7 +116,7 @@
 	<cfset _cuuidList = #getClientIDList()#> 
 	
 	<!---  Loop through all of the tables and remove all non-valid client ID's --->
-	<cfloop index="table" list="#tables#" delimiters=",">
+	<cfloop index="table" list="#tableList#" delimiters=",">
 		
 		<!--- Get All of the Client ID's for the table --->
         <cftry>

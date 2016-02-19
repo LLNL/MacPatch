@@ -1,10 +1,15 @@
 {
     "settings": 
     {
+        "services":
+        {
+            "console":false,
+            "mpwsl":false
+        },
         "paths": 
         {
-                "base":"/Library/MacPatch",
-                "content":"/Library/MacPatch/Content/Web"
+            "base":"/Library/MacPatch",
+            "content":"/Library/MacPatch/Content/Web"
         },
         "users": 
         {
@@ -60,12 +65,30 @@
                 "connectionretries":2
             }
         },
+        "ldap_filters": 
+        [
+            {   "config_name":"DEMO_CONFIG",
+                "config_ldap": { 
+                    "server": "SERVERNAME.COM",
+                    "port": 636,
+                    "secure": "1", 
+                    "searchbase": "SEARCH-BASE",  
+                    "attributes": "cn,name,dn,samAccountName,memberOf",
+                    "userDN": "USER DN PATH",
+                    "userPas": "USER PASSWORD"
+                }
+            }
+        ],
         "mailserver": 
         {
             "enabled": "YES",
             "server":"127.0.0.1",
             "username":"exampleusername",
             "password":"examplepassword"
+        },
+        "dbSchema": 
+        {
+            "checkSchema": true
         }
     }
 }

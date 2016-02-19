@@ -33,7 +33,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"2.1.3.0"
+#define APPVERSION	@"2.1.4.0"
 #define APPNAME		@"MPAgent"
 
 void usage(void);
@@ -73,6 +73,7 @@ int main (int argc, char * argv[])
                 {"Profile"          ,no_argument	    ,0, 'p'},
                 {"WebServicePost"   ,no_argument	    ,0, 'w'},
                 {"Servers"          ,no_argument	    ,0, 'n'},
+                {"SUServers"        ,no_argument	    ,0, 'z'},
 				{"Echo"				,no_argument		,0, 'e'},
 				{"Verbose"			,no_argument		,0, 'V'},
 				{"version"			,no_argument		,0, 'v'},
@@ -86,7 +87,7 @@ int main (int argc, char * argv[])
 			};
 			// getopt_long stores the option index here.
 			int option_index = 0;
-			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwneVvhr:t:AC", long_options, &option_index);
+			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwnzeVvhr:t:AC", long_options, &option_index);
 			
 			// Detect the end of the options.
 			if (c == -1)
@@ -130,6 +131,9 @@ int main (int argc, char * argv[])
                 case 'n':
 					a_Type = 10;
 					break;
+                case 'z':
+                    a_Type = 13;
+                    break;
                 case 'w':
 					a_Type = 11;
 					break;
@@ -258,6 +262,7 @@ void usage(void) {
     printf(" -q \tRun as background daemon using operation queues.\n");
 	printf(" -c \t --CheckIn \t\tRun client checkin.\n");
     printf(" -n \t --Servers \t\tRun server list verify/update.\n");
+    printf(" -z \t --SUServers \t\tRun SUS server list verify/update.\n");
     printf(" -w \t --WebServicePost \tRe-post failed post attempts.\n\n");
     printf("Inventory \n");
     printf("Option: -t [ALL] or [SPType]\n\n");

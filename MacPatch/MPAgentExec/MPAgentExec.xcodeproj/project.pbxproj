@@ -219,7 +219,7 @@
 		8FE560EC16DE9A7A00BB7600 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = LLNL;
 			};
 			buildConfigurationList = 8FE560EF16DE9A7A00BB7600 /* Build configuration list for PBXProject "MPAgentExec" */;
@@ -268,6 +268,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;

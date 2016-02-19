@@ -3,33 +3,49 @@
 	server settings scope.
 	Settings are gathered in the settings.cfc file.
 
-	Version: 1.2.0
+	Version: 1.3.0
 	History:
 	- Initial XML Support
 	- Added JSON support
     - Added additional default data to database (SUSList, ServerList)
+    - Removed XML conf support
 --->
 <cfcomponent output="false">
-  <cffunction name="onServerStart">
+    <cffunction name="onServerStart">
 
-  		<cfset var xFile = "/Library/MacPatch/Server/conf/etc/siteconfig.xml">
   		<cfset var jFile = "/Library/MacPatch/Server/conf/etc/siteconfig.json">
+        <cfset var dFile = "/Library/MacPatch/Server/conf/etc/db/db_schema.json">
 
   		<cfif fileExists(jFile)>
 			<cfinvoke component="Server.settings" method="getJSONAppSettings" returnvariable="_AppSettings">
 				<cfinvokeargument name="cFile" value="#jFile#">
-			</cfinvoke>
-        <cfelseif fileExists(xFile)>
-        	<cfinvoke component="Server.settings" method="getAppSettings" returnvariable="_AppSettings">
-        		<cfinvokeargument name="cFile" value="#xFile#">
 			</cfinvoke>
         <cfelse>
         	<cfthrow message="No App Settings file found.">
         	<cfreturn>
         </cfif>
 
-		<!--- main settings --->
-		<cfset srvconf.settings = _AppSettings>
+        <!--- main settings --->
+        <cfset srvconf.settings = _AppSettings>
+
+        <!--- DB Schema --->
+        <cfset _dbSchema = structNew() />
+        <cfif fileExists(dFile)>
+            <cfset dbData = DeserializeJSON(file=dFile)>
+            <cfset _schemaVersion = dbData.schemaVersion />
+            <cfset _schemaNotes = dbData.schemaNotes />
+            <cfset dbData = {} />
+        <cfelse>
+            <cfset _schemaVersion = "1.0.0.0" />
+            <cfset _schemaNotes = "" />
+            <cfthrow message="No Database Schema Config File Found.">
+            <cfreturn>
+        </cfif>
+
+        <cfset _dbSchema.schemaVersion = _schemaVersion />
+        <cfset _dbSchema.schemaNotes = _schemaNotes />
+        <cfset srvconf.settings.dbSchema = _dbSchema />
+
 
 		<!--- Validate users settings - user --->
 		<cfif not structKeyExists(srvconf.settings.users,"admin")>
@@ -77,6 +93,7 @@
             <cfset dbDefTmp = hasDefaultDBData() />
 
             <cfcatch type="any">
+                <cfset server.mpsettings = srvconf>
                 <cfthrow message="Error trying to create datasource.">
             </cfcatch>
         </cftry>

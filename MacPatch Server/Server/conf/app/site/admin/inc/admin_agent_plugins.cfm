@@ -1,36 +1,13 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-
 <script type="text/javascript" src="/admin/js/jquery-latest.js"></script>
 <script type="text/javascript" src="/admin/js/jquery-ui-latest.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/ui/Aristo-jQuery-UI-Theme/css/Aristo/Aristo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/admin/js/jqGrid/css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/admin/css/mp.css" />
 <script src="/admin/js/jqGrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="/admin/js/jqGrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
-
-<style type="text/css">
-	.EditTable td {
-	    align: left;
-	}
-</style>
-<style type="text/css">
-	.ui-jqgrid {font-size:12px;}
-	.ui-jqgrid .ui-jqgrid-titlebar {font-size:18px; font-weight:bold; font-style:italic;}
-	.ui-jqgrid .ui-jqgrid-htable th {font-size:12px; font-weight:bold; vertical-align:bottom;}
-	.ui-jqgrid .ui-jqgrid-pager { font-size: 12px; vertical-align:center;}
-	.ui-jqgrid-btable .ui-state-highlight { background: yellow; }
-</style>
-
-<style type="text/css">
-    .xAltRow { background-color: #F0F8FF; background-image: none; }
-</style>
-
-<script type="text/Javascript">
-	function load(url)
-	{
-		window.open(url,'_self') ;
-	}
-</script>
+<script src="/admin/js/mp-jqgrid-common.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 	$(document).ready(function()
@@ -43,8 +20,8 @@
 				colNames:['','Name', 'Bundle ID', 'Version', 'Hash', 'Active'],
 				colModel :[
 				  {name:'rid',index:'rid', width:1, align:"center", sortable:false, hidden:true},
-				  {name:'pluginName', index:'pluginName', width:160, editable:true, editoptions:{size:70}},
-				  {name:'pluginBundleID', index:'pluginBundleID', width:60, editable:true, formoptions:{align: 'left'}},
+				  {name:'pluginName', index:'pluginName', width:120, editable:true, editoptions:{size:70}},
+				  {name:'pluginBundleID', index:'pluginBundleID', width:100, editable:true, formoptions:{align: 'left'}},
 				  {name:'pluginVersion', index:'pluginVersion', width:60, editable:true, formoptions:{align: 'left'}},
 				  {name:'hash', index:'hash', width:60, editable:true, formoptions:{align: 'left'}},
 				  {name:'active', index:'active', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}}
@@ -114,6 +91,7 @@
 		}
 	);
 </script>
+
 <table id="list" class="scroll" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="pager" class="scroll" style="display:block"></div>
 <div id="dialog" title="Detailed Proxy Server Information" style="text-align:left;" class="ui-dialog-titlebar"></div>

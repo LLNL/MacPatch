@@ -124,6 +124,10 @@ sleep 1
 /Library/MacPatch/Client/MPAgent -n
 sleep 1
 
+# Get SU Server List
+/Library/MacPatch/Client/MPAgent -z
+sleep 1
+
 # Run Client Inventory Scan
 /Library/MacPatch/Client/MPAgent -t All
 sleep 1

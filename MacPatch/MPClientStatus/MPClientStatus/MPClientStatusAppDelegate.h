@@ -135,7 +135,6 @@
 
 // Show Last CheckIn Info
 - (void)showLastCheckIn;
-- (void)showLastCheckInThread;
 - (void)showLastCheckInMethod;
 
 - (IBAction)openSelfPatchApplications:(id)sender;

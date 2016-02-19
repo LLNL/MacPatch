@@ -31,19 +31,63 @@ import plistlib
 import sys
 import subprocess
 import hashlib
+import platform
+import commands
+
 
 # Define logging for global use
 logger = logging.getLogger('MPSyncContent')
 logFile = "/Library/MacPatch/Server/Logs/MPSyncContent.log"
 
+# Global OS vars
+__version__ = "1.2.0"
+os_type = platform.system()
+system_name = platform.uname()[1]
+
+def script_is_running():
+    script_name = os.path.basename(__file__)
+    cmd = "ps aux | grep -e '%s' | grep -v grep | awk '{print $2}'| awk '{print $2}'" % script_name
+    l = commands.getstatusoutput(cmd)
+    if l[1]:
+        print "Error, script is already running. Now exiting script."
+        logger.error("Error, script is already running. Now exiting script.")
+        sys.exit(0);
+
+def readPlist(plistFile):
+
+    # Make sure the plist file exists
+    if not os.path.exists(plistFile):
+        print "Unable to open " + plistFile +". File not found."
+        sys.exit(1)   
+
+    # Read First Line to check and see if binary and convert
+    infile = open(plistFile, 'r')
+    if not '<?xml' in infile.readline():
+        if os_type == "Darwin":
+            # Convert the plist to xml
+            os.system('/usr/bin/plutil -convert xml1 ' + plistFile)
+        
+        elif os_type == "Linux":
+            print "Plist file is a binary file, unable to open the file type on Linux."
+            print "Exiting script."
+            sys.exit(1) 
+    
+    # Read Plist File and return data
+    _pData = plistlib.readPlist(plistFile)
+    return _pData
+
 def main():
     '''Main command processing'''
     parser = argparse.ArgumentParser(description='Process some args.')
-    parser.add_argument('--plist', help="MacPatch SUS Config file", required=False)
-    parser.add_argument('--server', help="Rsync Server to Sync from.", required=False)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--plist', help="MacPatch SUS Config file", required=False)
+    group.add_argument('--server', help="Rsync Server to Sync from.", required=False)
     parser.add_argument('--checksum', help='Use checksum verificartion', action='store_true')
     parser.add_argument('--dry', help="Outputs results, dry run.", required=False)
+    parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
     args = parser.parse_args()
+
+    script_is_running()
 
     # Rsync Path
     SYNC_DIR_NAME="mpContentWeb"
@@ -79,39 +123,24 @@ def main():
         useDry="-n"
     else:
         useDry=""
-
-
-    # Make Sure the Config Plist Exists
-    if args.plist:
-        if not os.path.exists(args.plist):
-            print "Unable to open " + args.plist +". File not found."
-            sys.exit(1)   
-
-        # Read First Line to check and see if binary and convert
-        infile = open(args.plist, 'r')
-        if not '<?xml' in infile.readline():
-            os.system('/usr/bin/plutil -convert xml1 ' + args.plist)
-        
-        # ReadPlist and create config Object
-        rConfig = plistlib.readPlist(args.plist)
-    else:
-        # Read Default plist
-        rConfig = plistlib.readPlist(MP_SYNC_PLIST)
         
 
     logger.info('# ------------------------------------------------------')
     logger.info('# Starting content sync  '                               )
     logger.info('# ------------------------------------------------------')
-    
-    # If both args are empty, use the default plist
-    if args.server == None and args.plist == None:
-        if rConfig != None:
-            if rConfig.has_key('MPServerAddress'):
-                MASTER_SERVER = rConfig['MPServerAddress']
-    
-    # Use only the server arg
-    if args.server != None and args.plist == None:
+
+    if args.plist != None:
+        plistData = readPlist(args.plist)
+        if plistData != None:
+            if plistData.has_key('MPServerAddress'):
+                MASTER_SERVER = plistData['MPServerAddress']
+            else:
+                logger.error("Error, MPServerAddress was not found in plist config.")
+                sys.exit(1)
+
+    elif args.server != None:
         MASTER_SERVER = args.server
+
 
     # We dont allow localhost
     if MASTER_SERVER == "localhost":
@@ -123,6 +152,6 @@ def main():
     os.system('/usr/bin/rsync ' + rStr)
     logger.info("Content Sync Complete")
 
-    
 if __name__ == '__main__':
+
     main()
