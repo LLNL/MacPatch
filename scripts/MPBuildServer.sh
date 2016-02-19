@@ -443,6 +443,22 @@ if [ -f "/usr/bin/easy_install" ]; then
 	${MPSERVERBASE}/conf/scripts/InstallPyMods.sh
 fi
 
+# ------------------------------------
+# Build MP Server Admin for Mac OS X
+# ------------------------------------
+if $USEMACOS; then
+	if [ -d "${GITROOT}/MacPatch/MacPatch.xcodeproj" ]; then
+		echo "MPServerAdmin requires code signing."
+		echo "Hint: (Mac Developer: ...)"
+		read -p "Please enter your code sigining identity: " xcodeCODESIGNIDENTITY
+
+		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch\ Admin\ Tools/MPServerAdmin/MPServerAdmin.xcodeproj -target "gov.llnl.mp.admin.helper" SYMROOT=${BUILDROOT} CODE_SIGN_IDENTITY="${xcodeCODESIGNIDENTITY}"
+		xcodebuild clean build -configuration Release -project ${GITROOT}/MacPatch\ Admin\ Tools/MPServerAdmin/MPServerAdmin.xcodeproj -target "MPServerAdmin" SYMROOT=${BUILDROOT} CODE_SIGN_IDENTITY="${xcodeCODESIGNIDENTITY}"
+		ditto -c -k ${BUILDROOT}/Release/MPServerAdmin.app ${BUILDROOT}/Release/MPServerAdmin.app.zip
+		cp ${BUILDROOT}/Release/MPServerAdmin.app.zip ${MPSERVERBASE}/conf/bin/MPServerAdmin.app.zip 
+	fi
+fi
+
 # ------------------------------------------------------------
 # Generate self signed certificates
 # ------------------------------------------------------------

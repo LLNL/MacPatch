@@ -456,7 +456,6 @@
 					};
 					8F61C8171A5DBD6700705CD8 = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = BLZUAP2L36;
 					};
 				};
 			};
@@ -585,7 +584,7 @@
 		8F1D1F3A1A605A0600397DCF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				GCC_PREFIX_HEADER = gov.llnl.mp.admin.helper/HelperPrefixHeader.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -611,7 +610,7 @@
 		8F1D1F3B1A605A0600397DCF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				GCC_PREFIX_HEADER = gov.llnl.mp.admin.helper/HelperPrefixHeader.pch;
 				INFOPLIST_FILE = "gov.llnl.mp.admin.helperl/gov.llnl.mp.admin.helper-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
