@@ -18,11 +18,11 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 
 ## System Requirements
 
-###Client
+#### Client
 * Mac OS X Intel 32 & 64bit.  
 * Mac OS X 10.7.0 and higher.
 
-#####Server Requirements:
+#### Server Requirements:
 * Mac OS X or Mac OS X Server 10.7 or higher 
 * Linux Fedora (19 and higher), RHEL 7, Ubuntu 12.x
 * Using Intel Hardware, PPC is not supported
@@ -31,7 +31,7 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 * MySQL version 5.1 or higher, MySQL 5.6.x is recommended.
 
 ## Install and Setup
-To get MacPatch up and running use the QuickStart docs from the macpatch.github.io website.
+To get MacPatch up and running use the QuickStart docs from the [macpatch.github.io](http://macpatch.github.io) website.
 
 #### From Source
 * Mac QuickStart: https://macpatch.github.io/doc/quick-start-guide-for-os-x.html
