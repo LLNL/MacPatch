@@ -25,6 +25,13 @@
 
 #import "MPSUServerList.h"
 
+@interface MPSUServerList ()
+
+- (NSArray *)randosmizeServersForOS:(NSArray *)aServers;
+
+@end
+
+
 @implementation MPSUServerList
 
 #pragma mark - Init
@@ -141,9 +148,7 @@
         return NO;
     }
     
-    NSMutableArray *_staticItems = [[NSMutableArray alloc] init];
-    NSMutableArray *_randItems = [[NSMutableArray alloc] init];
-    NSMutableArray *_randComplete;
+    NSMutableArray *_newServerList = [[NSMutableArray alloc] init];
     if (![jData objectForKey:@"servers"]) {
         qlerror(@"Servers object was not found.");
         return NO;
@@ -152,24 +157,18 @@
     // Sort the server types, Master and Proxy get added to the end of the array
     for (NSDictionary *d in [jData objectForKey:@"servers"])
     {
-        if ([[d objectForKey:@"serverType"] isEqualToString:@"0"] || [[d objectForKey:@"serverType"] isEqualToString:@"2"])
-        {
-            [_staticItems addObject:d];
-        } else {
-            [_randItems addObject:d];
-        }
-    }
-    
-    // Sort Static Items, Master Server Before Proxy
-    [_staticItems sortUsingDescriptors:[NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"serverType" ascending:YES], nil]];
-    
-    // Randomize the distribution servers
-    if ([_randItems count] > 1) {
-        _randComplete = [NSMutableArray arrayWithArray:[self randomizeArray:(NSArray *)_randItems]];
-        [_randComplete addObjectsFromArray:_staticItems];
-        [jData setObject:_randComplete forKey:@"servers"];
+        qldebug(@"Randomizig servers for 10.%@",[d objectForKey:@"os"]);
+        NSMutableDictionary *curOSDict = [NSMutableDictionary dictionaryWithDictionary:[d copy]];
+        NSArray *sortedServers = [self randosmizeServersForOS:[curOSDict objectForKey:@"servers"]];
+        [curOSDict setObject:sortedServers forKey:@"servers"];
         
+        // Add Newly Sorted Servers for OS to main array
+        [_newServerList addObject:curOSDict];
     }
+    
+    // Add newly sorted servers array to main servers object
+    [jData setObject:_newServerList forKey:@"servers"];
+    
     
     // Write results to file, first make sure the path is available.
     NSError *fmErr;
@@ -195,6 +194,34 @@
     
     [jData writeToFile:AGENT_SUS_SERVERS_PLIST atomically:NO];
     return YES;
+}
+
+- (NSArray *)randosmizeServersForOS:(NSArray *)aServers
+{
+    NSMutableArray *_staticItems     =  [NSMutableArray new];
+    NSMutableArray *_randItems       =  [NSMutableArray new];
+    NSMutableArray *_randComplete;
+    
+    for (NSDictionary *_srv in aServers) {
+        if ([[_srv objectForKey:@"serverType"] isEqualToString:@"1"] || [[_srv objectForKey:@"serverType"] isEqualToString:@"2"])
+        {
+            [_staticItems addObject:_srv];
+        } else {
+            [_randItems addObject:_srv];
+        }
+    }
+    
+    // Sort Static Items, Master Server Before Proxy
+    [_staticItems sortUsingDescriptors:[NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"serverType" ascending:YES], nil]];
+    
+    // Randomize the distribution servers
+    if ([_randItems count] > 1) {
+        _randComplete = [NSMutableArray arrayWithArray:[self randomizeArray:(NSArray *)_randItems]];
+        [_randComplete addObjectsFromArray:_staticItems];
+    }
+    
+    
+    return (NSArray *)_randComplete;
 }
 
 - (NSArray *)randomizeArray:(NSArray *)arrayToRandomize

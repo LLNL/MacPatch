@@ -5,13 +5,13 @@
 	<key>Agent</key>
 	<dict>
 		<key>version</key>
-		<string>2.1.4</string>
+		<string>2.1.5</string>
 		<key>agent_version</key>
 		<string>2.7.5</string>
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>
-		<string>6</string>
+		<string>7</string>
 		<key>pkg</key>
 		<string>Base.pkg</string>
 	</dict>
