@@ -22,7 +22,7 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 * Mac OS X Intel 32 & 64bit.  
 * Mac OS X 10.7.0 and higher.
 
-#### Server Requirements:
+#### Server Requirements
 * Mac OS X or Mac OS X Server 10.7 or higher 
 * Linux Fedora (19 and higher), RHEL 7, Ubuntu 12.x
 * Using Intel Hardware, PPC is not supported
