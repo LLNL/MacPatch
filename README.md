@@ -29,6 +29,8 @@ was preinstalled, so just working from there:
 
     # Browse to (by default) `localhost:4000` in a web browser
 
+For more information, check out the full documentation at: http://jekyllrb.com/
+
 ## Release
 
 This Jekyll theme is released under the MIT License. For more details see the
