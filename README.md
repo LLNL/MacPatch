@@ -28,3 +28,10 @@ was preinstalled, so just working from there:
     # jekyll serve
 
     # Browse to (by default) `localhost:4000` in a web browser
+
+## Release
+
+This Jekyll theme is released under the MIT License. For more details see the
+LICENSE File.
+
+LLNL-WEB-680594
