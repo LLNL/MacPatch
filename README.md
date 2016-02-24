@@ -9,9 +9,9 @@ Started by following the tutorial found here:
 
 ## Setup / History
 
-This branch is the upstream branch of the Jekyll-OneLab LLNL collaboration
-project. This template can be updated by rebasing (or merging) the changes from
-upstream at: https://mystash.llnl.gov/projects/LWDS/repos/jekyll-onelab/browse
+This branch is the upstream branch of the Jekyll LLNL Theme. This template can
+be updated by rebasing (or merging) the changes from upstream at:
+https://mystash.llnl.gov/projects/LWDS/repos/jekyll-llnl-theme/browse
 
 This uses Jekyll to build static HTML based on Markdown text files.
 
