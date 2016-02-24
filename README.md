@@ -17,7 +17,7 @@ few such frameworks in use at the laboratory:
 Getting Started
 ---------------
 
-The easiest ways to get started using these static files is either to clone
+The easiest way to get started using these static files is either to clone
 this repository into the tree of your downstream codebase (e.g. django app), or
 to copy the files from this repo into the downstream codebase.
 
