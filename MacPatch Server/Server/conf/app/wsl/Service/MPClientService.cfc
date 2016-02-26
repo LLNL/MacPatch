@@ -2,7 +2,7 @@
 <!---
         MPClientService
         Database type is MySQL
-        MacPatch Version 2.7.5.x
+        MacPatch Version 2.9.0.x
         Rev 1
 --->
 <!---   Notes:
@@ -154,13 +154,20 @@
         Description: Returns The Agent Updater update info
     --->
     <cffunction name="GetAgentUpdaterUpdates" access="remote" returnType="struct" returnFormat="json" output="false">
-        <cfargument name="clientID">
+        <cfargument name="ClientID">
         <cfargument name="agentUp2DateVer">
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetAgentUpdaterUpdates", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cftry>
-            <cfquery datasource="#this.ds#" name="qGetLatestVersion">
+            <cfquery datasource="#this.ds#" name="qGetLatestVersion" >
                 Select agent_ver as agent_version, version, framework as agent_framework, build as agent_build,
                 pkg_Hash, pkg_Url, puuid, pkg_name, osver
                 From mp_client_agents
@@ -321,6 +328,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetAgentUpdates", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetLatestVersion" maxrows="1">
                 Select agent_ver as agent_version, version, framework as agent_framework, build as agent_build,
@@ -443,6 +457,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetAVDefsDate", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cfif arguments.avAgent NEQ "SEP" AND arguments.avAgent NEQ "SAV">
             <cfset l = lErr("GetAVDefsDate", "[#arguments.clientID#]: Unknown avAgent config. Schema may de out of date.") />
             <cfset response.errorno = "1" />
@@ -484,6 +505,13 @@
         <cfargument name="theArch" required="false" default="x86">
 
         <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetAVDefsFile", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cfif arguments.avAgent NEQ "SEP" AND arguments.avAgent NEQ "SAV">
             <cfset l = lErr("GetAVDefsFile", "[#arguments.clientID#]: Unknown avAgent config. Schema may de out of date.") />
@@ -528,6 +556,13 @@
         <cfset response = new response() />
         <cfset response.result = 0 />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetIsLatestRevisionForPatchGroup", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
             <cfset pid = patchGroupIDFromName(arguments.PatchGroup)>
@@ -569,6 +604,13 @@
         <cfargument name="Hash" required="yes" type="string">
 
         <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetIsHashValidForPatchGroup", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
@@ -636,6 +678,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetPatchGroupPatches", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cftry>
             <!--- Get the Patch Group ID from the PatchGroup Name --->
             <cfquery datasource="#this.ds#" name="qGetGroupID" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
@@ -696,6 +745,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetScanList", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cfset var jData = "">
         <cftry>
             <cfset var myObj = CreateObject("component","cfc.PatchScanManifest").init(this.ds)>
@@ -724,6 +780,13 @@
         <cfargument name="jsonData" required="true">
 
         <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("PostClientScanData", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cftry>
             <!--- Type should not be 0 --->
@@ -879,6 +942,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("PostClientAVData", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cfif Trim(arguments.avAgent) NEQ "SEP" AND Trim(arguments.avAgent) NEQ "SAV">
             <cfset l = elogit("[PostClientAVData]: Unknown avAgent config. Schema may be out of date.")>
             <cfset response.errorno = "1" />
@@ -1001,6 +1071,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("PostDataMgrJSON", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <!--- Clean a bit of the XML char before parsing --->
         <cfset var theJSON = ToString(ToBinary(Trim(arguments.encodedData)))>
 
@@ -1048,6 +1125,13 @@
         <cfargument name="patchType" required="false" default="0" />
 
         <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("PostInstalledPatch", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qAddPatchInstall">
@@ -1165,6 +1249,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetAsusCatalogs", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetCatalogs" cachedwithin="#CreateTimeSpan(0,0,1,0)#">
                 select catalog_url, proxy
@@ -1215,6 +1306,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetClientPatchStatusCount", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cfset _result = {} />
         <cfset _result[ "totalPatchesNeeded" ] = "NA" />
 
@@ -1260,9 +1358,15 @@
         <cfargument name="clientKey" required="false" default="0" />
 
         <cfset response = new response() />
-
         <cfset _result = {} />
         <cfset _result[ "mdate" ] = "NA" />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetLastCheckIn", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cftry>
             <cfquery datasource="#this.ds#" name="qGet">
@@ -1296,6 +1400,13 @@
         <cfargument name="ClientID" required="no" default="NA">
 
         <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetSoftwareTasksForGroup", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cftry>
             <cfset gid = softwareGroupID(arguments.GroupName)>
@@ -1761,6 +1872,15 @@
 
         <cfset response = new response() />
 
+        <!--- Need to Add ClientID 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetSoftwareTasksForGroupUsingOSVer", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+        --->
+
         <cftry>
             <cfset gid = softwareGroupID(arguments.GroupName)>
             <cfif gid EQ 0>
@@ -1809,6 +1929,15 @@
         <cfargument name="TaskID">
 
         <cfset response = new response() />
+
+        <!--- Need to Add ClientID 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetSoftwareTasksForGroupUsingOSVer", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+        --->
 
         <cfset _task = {} />
         <cfset _task = softwareTaskData(arguments.TaskID)>
@@ -2027,6 +2156,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetSWDistGroups", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cftry>
             <cfquery datasource="#this.ds#" name="qGetHosts">
                 SELECT gid, gName, gDescription
@@ -2147,6 +2283,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetProfileIDDataForClient", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cftry>
             <cfset clientGroup = clientGroupForClient(arguments.clientID)>
             <cfset clientProfilesList = profileIDListForGroup(clientGroup)>
@@ -2245,6 +2388,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("clientHasInventoryData", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cftry>
             <cfset invState = clientInventoryState(arguments.clientID)>
 
@@ -2298,6 +2448,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("postClientHasInventoryData", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cftry>
             <cfif validClientID(arguments.clientID) EQ true>
                 <cfif clientInventoryState(arguments.clientID) EQ false>
@@ -2327,6 +2484,13 @@
         <cfargument name="listID" required="false" default="1" />
 
         <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("getServerList", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cfset _server = {} />
         <cfset _server.name = "NA">
@@ -2406,6 +2570,13 @@
 
         <cfset response = new response() />
 
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("getServerListVersion", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
         <cfset _server = {}>
         <cfset _server.version = "0">
         <cfset _server.listid = "0">
@@ -2449,6 +2620,13 @@
         <cfargument name="listID" required="false" default="1" />
 
         <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("getSUServerList", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cfset _server = {} />
         <cfset _server.name = "NA">
@@ -2527,6 +2705,13 @@
         <cfargument name="listID" required="false" default="1" />
 
         <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("getSUServerListVersion", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cfset _server = {}>
         <cfset _server.version = "0">
@@ -2615,6 +2800,13 @@
         <cfargument name="pluginVersion" required="true" default="0" />
 
         <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("GetPluginHash", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
 
         <cftry>
             <cfif validClientID(arguments.clientID) EQ true>
