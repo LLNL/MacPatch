@@ -106,6 +106,38 @@
     </cffunction>
 
     <!---
+        Type: Private
+        Used By: All Client Requests
+        Description: Returns the patch name from the patch ID
+    --->
+    <cffunction name="validClientID" access="private" returntype="any" output="no">
+        <cfargument name="ClientID">
+
+        <cftry>
+            <cfif NOT isValidCUUID(arguments.ClientID)>
+                <cfset l = lErr("isValidCUUID", "#arguments.ClientID# is not a valid ClientID format.") />
+                <cfreturn false>
+            </cfif>
+
+            <cfquery datasource="#this.ds#" name="qGetID" cachedwithin="#CreateTimeSpan(0,0,15,0)#">
+                Select cuuid from mp_clients
+                Where cuuid = '#arguments.ClientID#'
+            </cfquery>
+
+            <cfif qGetID.RecordCount EQ 1>
+                <cfreturn true>
+            <cfelse>
+                <cfreturn false>
+            </cfif>
+
+        <cfcatch type="any">
+            <cfset l = lErr("validClientID", "[#arguments.ClientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
+        </cfcatch>
+        </cftry>
+        <cfreturn false>
+    </cffunction>
+
+    <!---
         Remote API
         Type: Public/Remote
         Description:
@@ -2242,33 +2274,6 @@
         </cftry>
 
         <cfreturn response.AsStruct()>
-    </cffunction>
-
-    <!---
-        Type: Private
-        Used By: PostSoftwareInstallResults
-        Description: Returns the patch name from the patch ID
-    --->
-    <cffunction name="validClientID" access="private" returntype="any" output="no">
-        <cfargument name="ClientID">
-
-        <cftry>
-            <cfquery datasource="#this.ds#" name="qGetID">
-                Select cuuid from mp_clients
-                Where cuuid = '#arguments.ClientID#'
-            </cfquery>
-
-            <cfif qGetID.RecordCount EQ 1>
-                <cfreturn true>
-            <cfelse>
-                <cfreturn false>
-            </cfif>
-
-        <cfcatch type="any">
-            <cfset l = lErr("validClientID", "[#arguments.ClientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
-        </cfcatch>
-        </cftry>
-        <cfreturn false>
     </cffunction>
 
     <!--- New For MacPatch 2.5.x --->
