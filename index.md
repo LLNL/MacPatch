@@ -1,8 +1,6 @@
 ---
 layout: default
 title: MacPatch
-slug: home
-base_url: "./"
 ---
 
 <div class="container-full" id="content">
