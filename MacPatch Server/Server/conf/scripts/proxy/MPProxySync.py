@@ -62,8 +62,8 @@ logger 				= logging.getLogger('MPProxySync')
 logFile             = "/Library/MacPatch/Server/Logs/MPProxySync.log"
 apiURI 				= '/MPDistribution.cfc'
 tmp_sync_dir 		= '/private/tmp/sync'
-patch_sync_dir 		= '/private/tmp/Content/patches'
-sw_sync_dir 		= '/private/tmp/Content/sw'
+patch_sync_dir 		= '/Library/MacPatch/Content/Web/patches'
+sw_sync_dir 		= '/Library/MacPatch/Content/Web/sw'
 
 MP_SERVER			= 'localhost'
 MP_PORT				= '2600'
@@ -77,7 +77,7 @@ VERIFY_SELF_SIGN	= False
 
 class ContentSync(object):
 
-	def __init__(self, hostString, sync_dir='/private/tmp/Content', sync_dir_tmp='/private/tmp/sync' ):
+	def __init__(self, hostString, sync_dir='/Library/MacPatch/Content/Web', sync_dir_tmp='/private/tmp/sync' ):
 		self.hostString = hostString
 		self.sync_dir_tmp = sync_dir_tmp
 		self.sync_dir = sync_dir

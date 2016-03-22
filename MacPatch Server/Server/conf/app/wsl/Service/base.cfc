@@ -3,6 +3,7 @@
 	<!--- Default logName --->
 	<cfset this.logName = "console" />
 	<cfset this.logLevel = "INF" />
+	<cfset this.ds = "mpds">
 
 	<cffunction name="Init" access="public" output="false">
         <!--- Return This reference. --->
@@ -130,6 +131,52 @@
 			<cfreturn false>
 		</cfif>
 		
+		<cfreturn false>
+	</cffunction>
+
+	<cffunction name="isValidCUUID" access="public" returntype="boolean">
+	    <cfargument name="aUUID" required="yes" default="NA">
+		
+		<cfreturn REFindNoCase("^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$", arguments.aUUID) />
+	</cffunction>
+
+	<cffunction name="isValidSignature" access="public" returntype="boolean">
+	    <cfargument name="aSignature" required="yes" default="NA">
+	    <cfargument name="aClientID" required="yes" default="NA">
+	    <cfargument name="aData" required="yes" default="NA">
+	    <cfargument name="aTimeStamp" required="yes" default="NA">
+
+	    <cftry>
+            <cfif NOT isValidCUUID(arguments.ClientID)>
+                <cfset l = lErr("isValidCUUID", "#arguments.ClientID# is not a valid ClientID format.") />
+                <cfreturn false>
+            </cfif>
+
+            <cfquery datasource="#this.ds#" name="qGetKey" cachedwithin="#CreateTimeSpan(0,0,15,0)#">
+                Select cuuid, cKey from mp_clients_key
+                Where cuuid = '#arguments.aClientID#'
+            </cfquery>
+
+            <cfif qGetKey.RecordCount EQ 1>
+
+            	<cfset _srvSig = arguments.aClientID & "-" & hash(qGetKey.cKey,"MD5") & "-" & hash(arguments.aData,"MD5") & "-" & arguments.aTimeStamp>
+            	<cfset _srvSigHash = hash(_srvSigHash, "SHA1") >
+            	<cfif _srvSigHash EQ arguments.aSignature>
+					<cfreturn true>
+				<cfelse>
+					<cfreturn false>            		
+            	</cfif>
+
+            <cfelse>
+                <cfreturn false>
+            </cfif>
+
+        <cfcatch type="any">
+            <cfset l = lErr("isValidSignature", "#cfcatch.Message#", "#cfcatch.Detail#") />
+            <cfreturn false>
+        </cfcatch>
+		
+		<!--- Should not get here --->
 		<cfreturn false>
 	</cffunction>
 

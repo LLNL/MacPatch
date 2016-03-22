@@ -115,7 +115,7 @@
 }
 
 - (BOOL)validateCollectionType:(NSString *)aColType
-{
+{    
 	BOOL result = NO;
 	NSArray *supportedTypes = [kINV_SUPPORTED_TYPES componentsSeparatedByString:@","];
 	
