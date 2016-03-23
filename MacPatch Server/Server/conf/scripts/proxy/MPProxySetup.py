@@ -25,7 +25,7 @@
 
 '''
   MacPatch Proxy server Setup Script
-  Script Version 1.0.0
+  Script Version 1.1.0
 '''
 
 import os
@@ -40,8 +40,8 @@ import commands
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
 MP_SRV_CONF = MP_SRV_BASE+"/conf"
-proxy_services = ['gov.llnl.mp.httpd.plist', 'gov.llnl.mp.proxy.plist', 'gov.llnl.mp.ProxySync.plist']
-OS_TYPE = platform.system()
+proxy_services = ['gov.llnl.mp.tomcat.plist', 'gov.llnl.mp.ProxySync.plist']
+os_type = platform.system()
 system_name = platform.uname()[1]
 dist_type = platform.dist()[1]
 
@@ -162,26 +162,94 @@ def serviceControl(action,services):
             else:
                 print("Error: Could not find %s" % theLaunchDaemonFile)
 
+def osxLoadServices(service):
+    _services = list()
+    
+    if service.lower() == "all":
+        _services = macServices
+    else:
+        if service in macServices:
+            _services.append(service)
+        else:
+            print service + " was not found. Service will not load."
+            return
+            
+    for srvc in _services:
+        _launchdFile = "/Library/LaunchDaemons/"+srvc
+        if os.path.exists(_launchdFile):
+            print "Loading service "+srvc
+            os.system("/bin/launchctl load -w /Library/LaunchDaemons/"+srvc)
+        else:
+
+            if os.path.exists("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc):
+                srvc_path = "/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc
+            elif os.path.exists("/Library/MacPatch/Server/conf/LaunchDaemons/proxy/"+srvc):
+                srvc_path = "/Library/MacPatch/Server/conf/LaunchDaemons/proxy/"+srvc
+
+            if os.path.exists(srvc_path):
+                if os.path.exists("/Library/LaunchDaemons/"+srvc):
+                    os.remove("/Library/LaunchDaemons/"+srvc)
+            
+                os.chown("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0, 0)
+                os.chmod("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0644)
+                os.symlink(srvc_path,"/Library/LaunchDaemons/"+srvc)
+                
+                print "Loading service "+srvc
+                os.system("/bin/launchctl load -w /Library/LaunchDaemons/"+srvc)
+                
+            else:
+                print srvc + " was not found in MacPatch Server directory. Service will not load."
+                        
+def osxUnLoadServices(service):
+
+    _services = []
+    if service.lower() == "all":
+        _services = macServices
+    else:
+        if service in macServices:
+            _services = service
+            
+    for srvc in _services:
+        _launchdFile = "/Library/LaunchDaemons/"+srvc
+        if os.path.exists(_launchdFile):
+            print "UnLoading service "+srvc
+            os.system("/bin/launchctl unload -wF /Library/LaunchDaemons/"+srvc)                
+
 # ------------------------------
 # Configure Proxy Server
 # ------------------------------
 def ConfigureServer():
+
+    srvsList = []
     # Setup Services
     setup_startup_scripts(proxy_services)
 
     # Add Certs To KeyStore
     os.system('clear')
+    print("Configure Proxy Server Settings\n\n")
     print("Get Certificate from master MacPatch Server...")
     server_name = raw_input("MacPatch Master Server name: ")
     server_port = raw_input("MacPatch Master Server Port Number [2600]:") or 2600
+    server_secure = raw_input("Use SSL to Connect [Y/N]:") or "Y"
     server_and_port=server_name+":"+str(server_port)
     downloadAndAddCertForServers(server_and_port)
 
     # Add Master Server Key
-    os.system('clear')
+    # os.system('clear')
     seed_key = raw_input("MacPatch Proxy Server ID Key: ")
 
-    json_file="/Library/MacPatch/Server/conf/etc/siteconfig.json"
+    # Add SMTP Info
+    print("Configure SMTP Server")
+    smtp_server = raw_input("SMTP Server: ")
+    smtp_user = raw_input("SMTP Username: ")
+    smtp_pass = raw_input("SMTP Password: ")
+    smtp_enable = raw_input("SMTP Enable[Y/N]: ") or "N"
+    if smtp_enable == "Y" or smtp_enable == "Yes":
+        smtp_enable = "YES"
+    else:
+        smtp_enable = "NO"
+
+    json_file="/Library/MacPatch/Server/conf/etc/proxy/siteconfig.json"
     json_data=open(json_file)
     cData = json.load(json_data)
     json_data.close()
@@ -191,11 +259,16 @@ def ConfigureServer():
     cData["settings"]["proxyServer"]["primaryServerPort"] = str(server_port)
     cData["settings"]["proxyServer"]["seedKey"] = seed_key
 
+    cData["settings"]["mailserver"]["enabled"] = smtp_enable
+    cData["settings"]["mailserver"]["server"] = smtp_server
+    cData["settings"]["mailserver"]["username"] = smtp_user
+    cData["settings"]["mailserver"]["password"] = smtp_pass
+
     with open(json_file, "w") as outfile:
         json.dump(cData, outfile, indent=4)
 
     # Add Host Info to Sync Plist
-    theFile = MP_SRV_BASE + "/conf/etc/gov.llnl.MPProxySync.plist"
+    theFile = MP_SRV_BASE + "/conf/etc/proxy/gov.llnl.MPProxySync.plist"
     isBinPlist = isBinaryPlist(theFile)
 
     if isBinPlist == True:
@@ -206,6 +279,8 @@ def ConfigureServer():
     # Apply The Settings
     prefs['MPServerAddress'] = server_name
     prefs['MPServerPort'] = str(server_port)
+    if server_secure == "Y" or server_secure == "Yes":
+        prefs['MPServerSSL'] = str(1) 
 
     try:
         if isBinPlist == True:
@@ -215,15 +290,19 @@ def ConfigureServer():
     except Exception, e:
         print("Error: %s" % e)
 
+    return proxy_services
+
 # ------------------------------
 # Main Methods
 # ------------------------------
 def main():
+
     # Args Parser
-    parser = argparse.ArgumentParser(description='Process Arguments for MP Proxy Server Setup')
-    parser.add_argument('--setup', help='Configure MPProxy Server', action='store_false')
-    parser.add_argument('--services', help="All | http | server | sync", required=False, default="none")
-    parser.add_argument('--action', help="start | stop", required=False, default="none")
+    parser = argparse.ArgumentParser(description='Process some args.')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--setup', help="Configure MPProxy Server", required=False, action='store_true')
+    group.add_argument('--load', help="Load/Start Services [All - Service]", required=False)
+    group.add_argument('--unload', help='Unload/Stop Services [All - Service]', required=False)
     args = parser.parse_args()
 
     try:
@@ -232,10 +311,9 @@ def main():
         # ----------------------------------
         os.system('clear')
         if os.geteuid() != 0:
-            print "GO"
-            #exit("\nYou must be an admin user to run this script.\nPlease re-run the script using sudo.\n")
+            exit("\nYou must be an admin user to run this script.\nPlease re-run the script using sudo.\n")
 
-        if OS_TYPE == "Linux":
+        if os_type == "Linux":
             exit("\nLinux is not supported yet.\n")
 
         # Setup
@@ -251,18 +329,32 @@ def main():
                 sys.exit(0)
 
         # Service control
-        if args.services != 'none' and args.action != 'none':
-            the_services = []
-            if args.services == 'All':
-                the_services.extend(proxy_services)
-            elif args.services == 'http':
-                the_services.append(proxy_services[0])
-            elif args.services == 'server':
-                the_services.append(proxy_services[1])
-            elif args.services == 'sync':
-                the_services.append(proxy_services[2])
-            else:
-                exit("\nInvalid Service type.\n")
+        if os_type == 'Darwin':
+            if args.setup != False:
+                srvList = ConfigureServer()
+                for srvc in srvList:
+                    osxLoadServices(srvc)
+
+            elif args.load != None:
+                osxLoadServices(args.load)
+
+            elif args.unload != None:
+                osxUnLoadServices(args.unload)
+
+        elif os_type == 'Linux':
+            '''
+            if args.setup != False:
+                srvList = setupServices()
+                for srvc in srvList:
+                    linuxLoadServices(srvc)
+            if args.load != None:
+                linuxLoadServices(args.load)
+            elif args.unload != None:
+                linuxUnLoadServices(args.unload)
+            '''
+            print "Linux not supported yet."
+            sys.exit(1)
+            
 
             # Start or Stop the services
             serviceControl(args.action,the_services)
