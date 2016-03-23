@@ -1,6 +1,6 @@
 <cfcomponent output="false"> 
   <cffunction name="onServerStart"> 
-        <cffile action="read" file="/Library/MacPatch/Server/conf/etc/siteconfig.xml" variable="xml">
+        <cffile action="read" file="/Library/MacPatch/Server/conf/etc/proxy/siteconfig.xml" variable="xml">
 		<cfxml variable="xmlData"><cfoutput>#xml#</cfoutput></cfxml>
 		
 		<!--- main settings --->

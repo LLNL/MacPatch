@@ -2,7 +2,7 @@
  
 # NOTE: this is an OSX launchd wrapper shell script for Tomcat (to be placed in $CATALINA_HOME/bin)
  
-CATALINA_HOME=/Library/MacPatch/Server/tomcat-mpws
+CATALINA_HOME=/Library/MacPatch/Server/apache-tomcat
  
 function shutdown() {
     date
