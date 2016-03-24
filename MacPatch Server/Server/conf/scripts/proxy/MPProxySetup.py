@@ -40,7 +40,7 @@ import commands
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
 MP_SRV_CONF = MP_SRV_BASE+"/conf"
-proxy_services = ['gov.llnl.mp.tomcat.plist', 'gov.llnl.mp.ProxySync.plist']
+macServices = ['gov.llnl.mp.tomcat.plist', 'gov.llnl.mp.ProxySync.plist']
 os_type = platform.system()
 system_name = platform.uname()[1]
 dist_type = platform.dist()[1]
@@ -190,8 +190,8 @@ def osxLoadServices(service):
                 if os.path.exists("/Library/LaunchDaemons/"+srvc):
                     os.remove("/Library/LaunchDaemons/"+srvc)
             
-                os.chown("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0, 0)
-                os.chmod("/Library/MacPatch/Server/conf/LaunchDaemons/"+srvc, 0644)
+                os.chown(srvc_path, 0, 0)
+                os.chmod(srvc_path, 0644)
                 os.symlink(srvc_path,"/Library/LaunchDaemons/"+srvc)
                 
                 print "Loading service "+srvc
@@ -219,10 +219,6 @@ def osxUnLoadServices(service):
 # Configure Proxy Server
 # ------------------------------
 def ConfigureServer():
-
-    srvsList = []
-    # Setup Services
-    setup_startup_scripts(proxy_services)
 
     # Add Certs To KeyStore
     os.system('clear')
@@ -290,7 +286,7 @@ def ConfigureServer():
     except Exception, e:
         print("Error: %s" % e)
 
-    return proxy_services
+    return macServices
 
 # ------------------------------
 # Main Methods
@@ -316,19 +312,7 @@ def main():
         if os_type == "Linux":
             exit("\nLinux is not supported yet.\n")
 
-        # Setup
-        if args.setup:
-            ConfigureServer()
-            start_services = raw_input("Use SSL for MacPatch connection [Y]:") or "Y"
-            if start_services == "Y":
-                args.services='All'
-                args.action='start'
-            else:
-                print("To start the proxy server services run the following command.")
-                print("MPProxyConfig.py --services All --action start")
-                sys.exit(0)
-
-        # Service control
+        # Setup & Service control
         if os_type == 'Darwin':
             if args.setup != False:
                 srvList = ConfigureServer()

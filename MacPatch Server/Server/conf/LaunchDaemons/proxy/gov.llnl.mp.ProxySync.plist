@@ -8,15 +8,17 @@
 	<string>MacPatch Proxy Content Sync</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Library/MacPatch/Server/scripts/MPProxySync.py</string>
+		<string>/Library/MacPatch/Server/conf/scripts/proxy/MPProxySync.py</string>
 		<string>--plist</string>
-		<string>/Library/MacPatch/Server/conf/etc/gov.llnl.MPProxySync.plist</string>
+		<string>/Library/MacPatch/Server/conf/etc/proxy/gov.llnl.MPProxySync.plist</string>
 	</array>
-	<key>KeepAlive</key>
-	<true/>
 	<key>StartInterval</key>
 	<integer>1800</integer>
-	<key>SuccessfulExit</key>
-	<false/>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardOutPath</key>
+	<string>/Library/MacPatch/Server/Logs/ProxySync_stdout.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Library/MacPatch/Server/Logs/ProxySync_stderr.log</string>
 </dict>
 </plist>
