@@ -49,7 +49,7 @@ dist_type = platform.dist()[1]
 # Enable Startup Scripts
 # ----------------------------------
 def setup_startup_scripts(services):
-    if OS_TYPE == "Darwin":
+    if os_type == "Darwin":
         for item in services:
             sys_file = "/Library/LaunchDaemons/" + item
             mp_file = MP_SRV_CONF + "/LaunchDaemons/" + item
@@ -65,7 +65,7 @@ def setup_startup_scripts(services):
                 print "Error, %s not found" % mp_file
                 exit()
 
-    if OS_TYPE == "Linux":
+    if os_type == "Linux":
         print("Linux is not supported yet.")
 
         '''
@@ -148,7 +148,7 @@ def isBinaryPlist(pathOrFile):
 # Services
 # -----------------------------------
 def serviceControl(action,services):
-    if OS_TYPE == "Darwin":
+    if os_type == "Darwin":
         for item in services:
             print("Attempting to start %s service." % item)
             theLaunchDaemonFile="/Library/LaunchDaemons/" + item
