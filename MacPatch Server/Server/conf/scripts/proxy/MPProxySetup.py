@@ -37,6 +37,7 @@ import platform
 from pprint import pprint
 import argparse
 import commands
+import grp
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
 MP_SRV_CONF = MP_SRV_BASE+"/conf"
@@ -178,6 +179,8 @@ def osxLoadServices(service):
         _launchdFile = "/Library/LaunchDaemons/"+srvc
         if os.path.exists(_launchdFile):
             print "Loading service "+srvc
+            os.chown(_launchdFile, 0, grp.getgrnam("wheel").gr_gid)
+            os.chmod(_launchdFile, 0644)
             os.system("/bin/launchctl load -w /Library/LaunchDaemons/"+srvc)
         else:
 
@@ -190,7 +193,7 @@ def osxLoadServices(service):
                 if os.path.exists("/Library/LaunchDaemons/"+srvc):
                     os.remove("/Library/LaunchDaemons/"+srvc)
             
-                os.chown(srvc_path, 0, 0)
+                os.chown(_launchdFile, 0, grp.getgrnam("wheel").gr_gid)
                 os.chmod(srvc_path, 0644)
                 os.symlink(srvc_path,"/Library/LaunchDaemons/"+srvc)
                 
