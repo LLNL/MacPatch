@@ -462,8 +462,11 @@
                <cfset response[ "errorMsg" ] = "#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#" />
                <cfset result = response>
             </cfif>
-            <!---<cfset result = "#deserializejson(cfhttp.fileContent)#">--->
+            <!---
+            <cfset result = "#deserializejson(cfhttp.fileContent)#">
             <cfset result = "#cfhttp.fileContent#">
+            --->
+            <cfset result = "#deserializejson(cfhttp.fileContent)#">
             
             <cfcatch>
                 <cflog type="error" file="#this.logFile#" text="#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #cfcatch.message# #cfcatch.detail#">
@@ -1267,4 +1270,92 @@
 
         <cfreturn #result#>        
     </cffunction>
+
+    <!---
+        Remote API
+        Type: Public/Remote
+        Description: Get SU Server List
+    --->
+    <cffunction name="getSUServerList" access="remote" returnType="any" returnFormat="json" output="false">
+        <cfargument name="clientID" required="false" default="0" />
+        <cfargument name="listID" required="false" default="1" />
+
+        <cfset var result = "" />
+        <cfset var _methodName = "getSUServerList"/>
+    
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "1" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfset response[ "result" ] = "" />
+
+        <cftry>
+            <cfhttp url="#this.wsURL#" method="POST" resolveurl="NO">
+                <cfhttpparam type="header" name="charset" value="utf-8">
+                <cfhttpparam type="formfield" name="method" value="#_methodName#">
+                <cfhttpparam type="formfield" name="clientID" value="#arguments.clientID#">
+                <cfhttpparam type="formfield" name="pluginName" value="#arguments.listID#">
+            </cfhttp>
+               
+            <cfif cfhttp.responseheader.STATUS_CODE NEQ "200">
+               <cflog type="error" file="#this.logFile#" text="#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#">
+               <cfset response[ "errorMsg" ] = "#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#" />
+               <cfset result = response>
+            </cfif>
+            <cfset result = "#deserializejson(cfhttp.fileContent)#">    
+            
+            <cfcatch>
+                <cflog type="error" file="#this.logFile#" text="#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #cfcatch.message# #cfcatch.detail#">
+                <cfset response[ "errorMsg" ] = "#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#" />
+                <cfset result = response>
+            </cfcatch>
+        </cftry>
+
+        <cfreturn #result#>
+
+        
+    </cffunction>
+
+    <!---
+        Remote API
+        Type: Public/Remote
+        Description: Get SU Server List for Version
+    --->
+    <cffunction name="getSUServerListVersion" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="false" default="0" />
+        <cfargument name="listID" required="false" default="1" />
+
+        <cfset var result = "" />
+        <cfset var _methodName = "getSUServerListVersion"/>
+    
+        <cfset response = {} />
+        <cfset response[ "errorno" ] = "1" />
+        <cfset response[ "errormsg" ] = "" />
+        <cfset response[ "result" ] = "" />
+
+        <cftry>
+            <cfhttp url="#this.wsURL#" method="POST" resolveurl="NO">
+                <cfhttpparam type="header" name="charset" value="utf-8">
+                <cfhttpparam type="formfield" name="method" value="#_methodName#">
+                <cfhttpparam type="formfield" name="clientID" value="#arguments.clientID#">
+                <cfhttpparam type="formfield" name="pluginName" value="#arguments.listID#">
+            </cfhttp>
+               
+            <cfif cfhttp.responseheader.STATUS_CODE NEQ "200">
+               <cflog type="error" file="#this.logFile#" text="#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#">
+               <cfset response[ "errorMsg" ] = "#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#" />
+               <cfset result = response>
+            </cfif>
+            <cfset result = "#deserializejson(cfhttp.fileContent)#">    
+            
+            <cfcatch>
+                <cflog type="error" file="#this.logFile#" text="#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #cfcatch.message# #cfcatch.detail#">
+                <cfset response[ "errorMsg" ] = "#CreateODBCDateTime(now())# -- [#_methodName#][#CGI.REMOTE_HOST#]: #XMLParse(cfhttp.FileContent)#" />
+                <cfset result = response>
+            </cfcatch>
+        </cftry>
+
+        <cfreturn #result#>   
+    </cffunction>
+
+
 </cfcomponent>
