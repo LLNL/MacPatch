@@ -5,7 +5,7 @@ description: "OS X Management Software"
 url: "http://macpatch.llnl.gov"
 
 
-img_path: /assets/images
+img_path: "/assets/images"
 
 collections:
   docs:
