@@ -2,7 +2,7 @@ name: "MacPatch"
 author: "Jorge Escobar <escobar6@llnl.gov>"
 description: "OS X Management Software"
 
-url: "http://localhost:4000"
+url: "http://macpatch.llnl.gov"
 
 
 img_path: /assets/images
