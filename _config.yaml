@@ -3,7 +3,7 @@ author: "Jorge Escobar <escobar6@llnl.gov>"
 description: "OS X Management Software"
 
 url: "http://macpatch.llnl.gov"
-baseurl: "MacPatch"
+baseurl: ""
 
 collections:
   documentation:
