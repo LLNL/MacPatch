@@ -1,8 +1,16 @@
-name: "LLNL Jekyll Template"
-author: "Ian Lee <lee1001@llnl.gov>"
-description: "LLNL Jekyll Template"
+name: "MacPatch"
+author: "Jorge Escobar <escobar6@llnl.gov>"
+description: "OS X Management Software"
 
 url: "http://localhost:4000"
+
+
+img_path: /assets/images
+
+collections:
+  docs:
+    output: true
+    permalink: /:path/
 
 # paginate: 10
 
