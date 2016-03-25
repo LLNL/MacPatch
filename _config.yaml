@@ -3,11 +3,12 @@ author: "Jorge Escobar <escobar6@llnl.gov>"
 description: "OS X Management Software"
 
 url: "http://macpatch.llnl.gov"
+baseurl: ""
 
 collections:
   documentation:
     output: true
-    permalink: /docs/:path/
+    permalink: /documentation/:path/
 
 # paginate: 10
 
