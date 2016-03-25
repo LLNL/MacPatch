@@ -11,13 +11,13 @@ Creating a new patch is broken down in to 4 steps. In this example we will be cr
 
 ### Step 1
 
-![Setp 1]({{ site.img_path }}/Patch-Step1.png "Step 1")
+![Setp 1](/assets/images/Patch-Step1.png "Step 1")
 
 `Patch Name`, and `Patch Version` are required fields. By default a new patch has it's patch state set to "Create". A patch will not show as needed to a client until it's state is at least set to "QA".
 
 ### Step 2
 
-![Setp 2]({{ site.img_path }}/Patch-Step2.png "Step 2")
+![Setp 2](/assets/images/Patch-Step2.png "Step 2")
 
 While none of the fields are required, adding patch detection criteria is highly recommended. In this example we have added two detection queries. The first one looks to see if the `/Applications/Firefox.app` exists. The second query looks to see if Firefox version is less than 30.0.0.
 
@@ -27,7 +27,7 @@ For a patch to become required all patch detection criteria queries need to retu
 
 ### Step 3
 
-![Setp 3]({{ site.img_path }}/Patch-Step3.png "Step 3")
+![Setp 3](/assets/images/Patch-Step3.png "Step 3")
 
 `Patch Group ID`, and `Patch Package` are required fields.
 
@@ -37,7 +37,7 @@ When uploading a patch a `*.pkg.zip` file is required at this time.
 
 ### Step 4
 
-![Setp 4]({{ site.img_path }}/Patch-Step4.png "Step 4")
+![Setp 4](/assets/images/Patch-Step4.png "Step 4")
 
 Here you can add pre & post requisite packages. Also, once the patch is created you will need to make it active. This can only be done once the initial patch has been created.
 

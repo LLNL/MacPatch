@@ -16,7 +16,7 @@ layout: default
 <!-- /jumbotron -->
 
 <div class="text-center" markdown="1">
-  ![alt text]({{ site.img_path }}/screencap-selfpatch.png "Logo")
+  ![alt text](/assets/images/screencap-selfpatch.png "Logo")
 </div>
 
 
@@ -65,17 +65,17 @@ layout: default
 
 <div class="row text-center" style="padding-top: 80px">
   <div class="col-sm-4">
-    <img src="{{ site.img_path }}/swcatalog.png" alt="MacPatch" class="center-block">
+    <img src="/assets/images/swcatalog.png" alt="MacPatch" class="center-block">
     <h3>Software Catalog</h3>
     <p>End users can install software from a catalog that you manage. No admin required. Create multiple catalogs for different sets of users.</p>
   </div>
   <div class="col-sm-4">
-    <img src="{{ site.img_path }}/patchgroup.png" alt="MacPatch" class="center-block">
+    <img src="/assets/images/patchgroup.png" alt="MacPatch" class="center-block">
     <h3>Patch Groups</h3>
     <p>You can create multiple patch groups. Each patch group can be configured with a different baseline. For example create one patch group for your servers and one for desktops.</p>
   </div>
   <div class="col-sm-4">
-    <img src="{{ site.img_path }}/terminal.png" alt="MacPatch" class="center-block">
+    <img src="/assets/images/terminal.png" alt="MacPatch" class="center-block">
     <h3>Terminal</h3>
     <p>Most features can be accessed from the command line for remote administrating and scripting.</p>
   </div>
