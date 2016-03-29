@@ -5,10 +5,12 @@ description: "OS X Management Software"
 url: "http://macpatch.llnl.gov"
 baseurl: ""
 
+img_media: /static/assets/main/images 
+
 collections:
-  documentation:
+  docs:
     output: true
-    permalink: /documentation/:path/
+    permalink: /docs/:path/
 
 # paginate: 10
 

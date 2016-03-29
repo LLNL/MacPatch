@@ -1,12 +1,11 @@
 ---
-title: MacPatch - Documentation
+title: Documentation
 layout: default
 ---
 
 ## Documentation
-
 <div>
-{% for doc in site.documentation %}
+{% for doc in site.docs %}
 	<li><a href="{{ doc.url }}">{{ doc.title }}</a></li>
 {% endfor %}
 </div>
