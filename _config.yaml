@@ -12,6 +12,4 @@ collections:
 
 # paginate: 10
 
-markdown: kramdown
 permalink: pretty
-highlighter: pygments
