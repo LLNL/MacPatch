@@ -31,11 +31,11 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 * MySQL version 5.1 or higher, MySQL 5.6.x is recommended.
 
 ## Install and Setup
-To get MacPatch up and running use the QuickStart docs from the [macpatch.github.io](http://macpatch.github.io) website.
+To get MacPatch up and running use the QuickStart docs from the [macpatch.llnl.gov](http://macpatch.llnl.gov) website.
 
 #### From Source
-* Mac QuickStart: https://macpatch.github.io/doc/quick-start-guide-for-os-x.html
-* Linux QuickStart: https://macpatch.github.io/doc/quick-start-guide-for-linux.html
+* Mac QuickStart: [quick-start-guide-for-os-x](http://macpatch.llnl.gov/docs/quick-start-guide-for-os-x)
+* Linux QuickStart: [quick-start-guide-for-linux](http://macpatch.llnl.gov/docs/quick-start-guide-for-linux)
 
 #### Binary
 * Download the [MacPatch DMG](https://github.com/SMSG-MAC-DEV/MacPatch/releases/latest). Install PDF and client are located in the DMG.
