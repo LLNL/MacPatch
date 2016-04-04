@@ -83,7 +83,7 @@ def main():
     group.add_argument('--plist', help="MacPatch SUS Config file", required=False)
     group.add_argument('--server', help="Rsync Server to Sync from.", required=False)
     parser.add_argument('--checksum', help='Use checksum verificartion', action='store_true')
-    parser.add_argument('--dry', help="Outputs results, dry run.", required=False)
+    parser.add_argument('--dry', help="Outputs results, dry run.", action='store_true', required=False)
     parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
     args = parser.parse_args()
 
