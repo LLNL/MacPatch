@@ -3,7 +3,7 @@ layout: default
 title: "Quick Start Guide for Linux"
 ---
 
-# MacPatch Server Quick Start Guide for OS X
+# MacPatch Server Quick Start Guide for Linux
 --
 
 This is a quick start guide to getting MacPatch version 2.8.x installed and running on a Linux based system running Ubuntu or Fedora (RedHat).
@@ -24,12 +24,13 @@ Please note, this has been tested on Ubuntu 12.10, Fedora 20, Fedora 21. RHEL 7 
 
 <a name='a1'></a>
 ## Required Software
+
 There are a couple of prerequisites to installing the MacPatch server software on Linux. The following packages and Python modules need to be installed. Your welcome to install them before hand or the MPBuildServer.sh script will install the nessasary packages.
 
 **Please Note: JAVA 1.8 is required, please check your version of Linux to make sure you can install it before continuing.**
 
 <a name='a1a'></a>
-### Ubuntu 
+### Ubuntu
 
 ##### Packages
 	build-essential, git, openjdk-8-jdk, python-pip

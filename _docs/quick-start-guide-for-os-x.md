@@ -22,10 +22,12 @@ This is a quick start guide to getting MacPatch version 2.8.x installed and runn
 
 <a name='a1'></a>
 ## Required Software
+
 There are two prerequisites to installing the MacPatch server software. Java 8 and Xcode command line tools need to be installed.
 
 <a name='a1a'></a>
 ### Java
+
 Java can be downloaded from Oracle at [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
 <!-- 
