@@ -3,6 +3,8 @@ layout: default
 title: "Custom Patch Content"
 ---
 
+# MacPatch - Create Custom Patch Content
+---
 
 MacPatch custom patch content is pretty simple to create. All content is created via the new content wizard. Keep in mind that there are only 4 required attributes which are required to create a patch. The 4 attributes are `Patch Name`, `Patch Version`, `Patch Group ID`, `Patch Package`.
 

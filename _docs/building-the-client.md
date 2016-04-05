@@ -3,6 +3,9 @@ layout: default
 title: "Building the Client"
 ---
 
+# MacPatch - Building the Client
+---
+
 The MacPatch client agent needs to be build on a Mac OS X system running Mac OS X 10.7 or higher. You will also need to upload the finished agent from a Mac OS X system using the `Agent Uploader.app`.
 
 ## Required Software

@@ -4,7 +4,7 @@ title: "Install Distribution Server"
 ---
 
 # MacPatch - Install Distribution Server
---
+---
 
 When the first server ("Master") is compiled and built it will create a file called `MacPatch_Server.zip` in `/Library/MacPatch`. This zip file is a complete copy of the master server build in a unconfigured state. Simply copy the `MacPatch_Server.zip` to your new distribution server.
 
