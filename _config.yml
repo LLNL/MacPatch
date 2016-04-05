@@ -17,6 +17,6 @@ collections:
 permalink: pretty
 # markdown: kramdown
 
-#markdown: redcarpet
-#redcarpet:
-#  extensions: [tables]
+markdown: redcarpet
+redcarpet:
+  extensions: [tables]
