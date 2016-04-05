@@ -77,7 +77,7 @@ Once the compile and copy process is completed, the MacPatch server software is 
 
 <a name='a3'></a>
 
-## MySQL Database
+## MySQL Database 
 
 MacPatch requires the use of MySQL database. The database can be installed on the first server built or it can be installed on a separate host. MySQL version 5.5.x or higher is required. MySQL 5.6.x is recommended due to it's performance enhancements. Also, the MySQL InnoDB engine is required.
 
