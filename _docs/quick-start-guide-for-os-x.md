@@ -54,6 +54,7 @@ Install Xcode
 	% xcode-select --install
 
 <a name='a1c'></a>
+
 ### PIP (Python Modules)
 
 The server build script will install the python modules needed.
@@ -75,16 +76,21 @@ Note: if you get a Error message `error: server certificate verification failed.
 Once the compile and copy process is completed, the MacPatch server software is now installed and ready to be configured.
 
 <a name='a3'></a>
+
 ## MySQL Database
+
 MacPatch requires the use of MySQL database. The database can be installed on the first server built or it can be installed on a separate host. MySQL version 5.5.x or higher is required. MySQL 5.6.x is recommended due to it's performance enhancements. Also, the MySQL InnoDB engine is required.
 
 #### Setup MacPatch MySQL Database
+
 Run the following script via the Terminal.app. You will need to know the MySQL root user password.
 	
 	% /Library/MacPatch/Server/conf/scripts/MPDBSetup.sh
 
 <a name='a4'></a>     
+
 ## Setup MacPatch Server
+
 The MacPatch server has five configuration script and should be run in the given order. The scripts are located on the server in `/Library/MacPatch/Server/conf/scripts/Setup/`.
 
 Script	| Description | Server | Required
