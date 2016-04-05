@@ -100,8 +100,11 @@ SymantecAntivirusSetup.py | MacPatch supports patching Symantec Antivirus defini
 StartServices.py | This script will add nessasary startup scripts and start and stop the MacPatch services.<ul><li>Setup Services: StartServices.py --setup</li><li>Start All Services: StartServices.py --load All</li><li>Stop All Services - StartServices.py --unload All</li></lu> | Master, Distribution | Required
 
 <a name='a5'></a> 
+
 ## Download and Add Patch Content
+
 #### Apple Updates
+
 Apple patch content will download eventually on it's own cycle, but for the first time it's recommended to download it manually.
 
 The Apple Software Update content settings are stored in a plist file (/Library/MacPatch/Server/conf/etc/gov.llnl.mp.patchloader.plist). By default Apple patches for 10.7 through 10.10 will be processed and supported. 
@@ -111,24 +114,31 @@ Run the following command via the Terminal.app on the Master MacPatch server.
 	sudo -u _appserver /Library/MacPatch/Server/conf/scripts/MPSUSPatchSync.py --plist /Library/MacPatch/Server/conf/etc/gov.llnl.mp.patchloader.plist
 	
 ### Custom Patches
+
 To create your own custom patch content please read the "Custom Patch Content" [docs](https://macpatch.github.io/doc/custom-patch-content.html).
 
 To use "AutoPkg" to add patch content please read the "AutoPkg patch content" [docs](https://macpatch.github.io/doc/autopkg-patch-content.html).	 
     
 #### Symantec AntiVirus Defs
+
 If you have elected to deploy Symantec AntiVirus definitions via MacPatch then it's also recommended that you download the content manually for the first time.
 
 	sudo -u _appserver /Library/MacPatch/Server/conf/scripts/MPAVDefsSync.py --plist /Library/MacPatch/Server/conf/etc/gov.llnl.mpavdl.plist
 
 <a name='a6'></a>    
+
 ## Configure MacPatch - Admin Console
+
 Now that the MacPatch server is up and running, you will need to configure the environment.
 
 ### First Login
+
 The default user name is "mpadmin" and the password is "\*mpadmin\*". You will need to login for the first time with this account to do all of the setup tasks. Once these tasks are completed it's recommended that this accounts password be changed. This can be done by editing the siteconfig.json file, which is located in /Library/MacPatch/Server/conf/etc/.
 
 ### Default Configuration
+
 #### MacPatch Server Info
+
 Each MacPatch server needs to be added to the environment. The master server is always added automatically. 
 
 It is recommended that you login and verify the master server settings. It is common during install that the master server address will be added as localhost or 127.0.0.1. Please make sure that the correct hostname or IP address is set.
@@ -147,7 +157,7 @@ Example data for Master server:
 * Is Proxy: No
 * Active: Yes
 
-####Create Default Patch Group
+#### Create Default Patch Group
 
 A default patch group will be created during install. The name of the default patch group is "Default". You may use it or create a new one.
 
@@ -173,6 +183,7 @@ Only the default agent configuration will get added to the client agent upon upl
 
 
 #### Upload the Client Agent
+
 To upload a client agent you will need to build the client first. Please follow the Building the Client document before continuing.
 
 * Go to "Admin-> Client Agents -> Deploy"
