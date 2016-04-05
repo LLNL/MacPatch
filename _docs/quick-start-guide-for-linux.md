@@ -80,12 +80,6 @@ DataBaseLDAPSetup.py | The database setup is required for MacPatch to function. 
 SymantecAntivirusSetup.py | MacPatch supports patching Symantec Antivirus definitions. Not all sites use SAV/SEP so this step is optional. | Master | Optional
 StartServices.py | This script will add nessasary startup scripts and start and stop the MacPatch services.<ul><li>Setup Services: StartServices.py --setup</li><li>Start All Services: StartServices.py --load All</li><li>Stop All Services - StartServices.py --unload All</li></lu> | Master, Distribution | Required
 
-<!--
-WebAdminSetup.sh | The MacPatch admin web console is required to use MacPatch. This section is an option for those who wish to setup additional servers for large environments. | Master/Required
-WebServicesSetup.sh | The MacPatch web services are required to use MacPatch. | Master, Distribution/Required
-PatchLoaderSetup.py| MacPatch requires gathering all of Apple Software updates from an Apple Software Update server, so that Apple patches can be assigned to a patch group for patching. | Master, Distribution/Recommended
--->
-
 <a name='a5'></a> 
 ## Download and Add Patch Content
 ### Apple Updates

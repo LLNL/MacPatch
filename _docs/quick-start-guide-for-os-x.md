@@ -55,12 +55,6 @@ The server build script will install the python modules needed.
 	
 	pip, argparse, mysql-connector-python, requests, biplist, wheel
 
-<!--
-	sudo easy_install pip  # if you don't already have pip
-	sudo pip install requests
-	sudo pip install argparse
-	sudo pip install --allow-external mysql-connector-python mysql-connector-python
--->
 <a name='a2'></a>
 ## Download and build the Server software
 To download and build the MacPatch server software is just a few Terminal commands. Run the following commands to build and install the software.
@@ -83,38 +77,6 @@ Run the following script via the Terminal.app. You will need to know the MySQL r
 	
 	% /Library/MacPatch/Server/conf/scripts/MPDBSetup.sh
 
-<!--
-
-#### Log in as the MySQL root user
-
-	mysql -u root -p
-    
-#### Run the following MySQL commands
-*Replace the word "Password" with your own password.*
-
-	mysql> CREATE DATABASE MacPatchDB;
-	mysql> CREATE USER 'mpdbadm'@'%' IDENTIFIED BY 'Password';
-	mysql> GRANT ALL ON MacPatchDB.* TO 'mpdbadm'@'%' IDENTIFIED BY 'Password';
-	mysql> GRANT ALL PRIVILEGES ON MacPatchDB.* TO 'mpdbadm'@'localhost' IDENTIFIED BY 'Password';
-	mysql> CREATE USER 'mpdbro'@'%' IDENTIFIED BY 'Password';
-	mysql> GRANT SELECT ON MacPatchDB.* TO 'mpdbro'@'%';
-	mysql> SET GLOBAL log_bin_trust_function_creators = 1;
-	mysql> FLUSH PRIVILEGES;
-    
-#### Delete MySQL anonymous accounts
-
-	mysql> DROP USER ''@'localhost';
-	mysql> DROP USER ''@'host_name';
-	mysql> quit
-    
-#### Load Database Schema
-The database schema files are located on the MacPatch server in the `/Library/MacPatch/Server/conf/Database/` directory. To load the tables and the views, copy the `MacPatchDB_Tables.sql` and `MacPatchDB_Views.sql` files to the Database host. The following commands are for a server that is also hosting the MacPatch database.
-
-	% mysql MacPatchDB -u mpdbadm -p < /Library/MacPatch/Server/conf/Database/MacPatchDB_Tables.sql
-	% mysql MacPatchDB -u mpdbadm -p < /Library/MacPatch/Server/conf/Database/MacPatchDB_Views.sql
-	
--->
-
 <a name='a4'></a>     
 ## Setup MacPatch Server
 The MacPatch server has five configuration script and should be run in the given order. The scripts are located on the server in `/Library/MacPatch/Server/conf/scripts/Setup/`.
@@ -124,17 +86,6 @@ Script	| Description | Server | Required
 DataBaseLDAPSetup.py | The database setup is required for MacPatch to function. | All | Required
 SymantecAntivirusSetup.py | MacPatch supports patching Symantec Antivirus definitions. Not all sites use SAV/SEP so this step is optional. | Master | Optional
 StartServices.py | This script will add nessasary startup scripts and start and stop the MacPatch services.<ul><li>Setup Services: StartServices.py --setup</li><li>Start All Services: StartServices.py --load All</li><li>Stop All Services - StartServices.py --unload All</li></lu> | Master, Distribution | Required
-
-<!--
-Script	| Description | Server/Is Required
----|---|---
-DataBaseLDAPSetup.py | The database setup is required for MacPatch to function. | Master/Required
-WebAdminSetup.sh | The MacPatch admin web console is required to use MacPatch. This section is an option for those who wish to setup additional servers for large environments. | Master/Required
-WebServicesSetup.sh | The MacPatch web services are required to use MacPatch. | Master, Distribution/Required
-PatchLoaderSetup.py| MacPatch requires gathering all of Apple Software updates from an Apple Software Update server, so that Apple patches can be assigned to a patch group for patching. | Master, Distribution/Recommended
-SymantecAntivirusSetup.py | MacPatch supports patching Symantec Antivirus definitions. Not all sites use SAV/SEP so this step is optional. | Master/Optional
-StartServices.py | Depending on your choices this script will start all MacPatch services. Script has multiple arguments. <ul><li>Start All Services: StartServices.py --load All</li><li>Stop All Services - StartServices.py --unload All</li></lu> | Master, Distribution
--->
 
 <a name='a5'></a> 
 ## Download and Add Patch Content
