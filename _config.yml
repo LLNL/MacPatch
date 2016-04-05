@@ -15,4 +15,4 @@ collections:
 # paginate: 10
 
 permalink: pretty
-markdown: maruku
+markdown: kramdown
