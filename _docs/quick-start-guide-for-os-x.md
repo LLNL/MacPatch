@@ -90,15 +90,13 @@ Run the following script via the Terminal.app. You will need to know the MySQL r
 
 The MacPatch server has five configuration script and should be run in the given order. The scripts are located on the server in `/Library/MacPatch/Server/conf/scripts/Setup/`.
 
-<!--
+
 Script	| Description | Server | Required
-
 ---|---|---|---
-
 DataBaseLDAPSetup.py | The database setup is required for MacPatch to function. | All | Required
 SymantecAntivirusSetup.py | MacPatch supports patching Symantec Antivirus definitions. Not all sites use SAV/SEP so this step is optional. | Master | Optional
 StartServices.py | This script will add nessasary startup scripts and start and stop the MacPatch services.<ul><li>Setup Services: StartServices.py --setup</li><li>Start All Services: StartServices.py --load All</li><li>Stop All Services - StartServices.py --unload All</li></lu> | Master, Distribution | Required
--->
+
 
 <a name='a5'></a> 
 
