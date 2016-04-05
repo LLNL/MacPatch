@@ -8,10 +8,14 @@ table th {
     border-bottom:1px solid #e0e0e0;
 }
 table tr {
-    padding-left:20px;
+    padding-left:10px;
 }
+
+tr:nth-child(even) {background: #CCC}
+tr:nth-child(odd) {background: #FFF}
+
 table td {
-    padding:18px;
+    padding:10px;
     border-top: 1px solid #e0e0e0;
     border-bottom:1px solid #e0e0e0;
     border-left: 1px solid #e0e0e0;
