@@ -10,7 +10,7 @@ This is a quick start guide to getting MacPatch installed and running on a Mac O
 There are two prerequisites to installing the MacPatch server software. Java and Xcode command line tools need to be installed.
 
 ### Java
-Java can be downloaded from Oracle at [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Java 7 (JDK) is recommended. Java 8 has not been tested at this time. Once the Java 7 JDK has been installed the "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7" are needed as well. These files can be found on the same location.
+Java can be downloaded from Oracle at [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Java 8 (JDK) is required.
 
 ### Xcode
 Xcode is required to build the MacPatch software for Mac OS X. While you can install the GUI version of Xcode and download and install the command line tools from within Xcode. You will be installing the Xcode command line tools from the Terminal.app.
