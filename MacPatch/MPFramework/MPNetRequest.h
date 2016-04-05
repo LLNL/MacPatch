@@ -68,6 +68,7 @@
     int             errorCode;
 }
 
+@property (nonatomic, assign) double urlTimeout;
 @property (nonatomic, assign, readonly) BOOL useController;
 @property (nonatomic, assign, readonly) int errorCode;
 
@@ -80,7 +81,9 @@
 @property (nonatomic, strong) NSMutableData *receiveData;
 @property (nonatomic, assign) BOOL internetActive;
 @property (nonatomic, assign, readonly) BOOL isFileDownload;
+
 @property (nonatomic, strong, readonly) NSString *dlFilePath;
+@property (nonatomic, strong, readonly) NSString *dlURL;
 
 // User Auth
 @property (nonatomic, strong) NSString *userName;
@@ -95,8 +98,15 @@
 - (id)initWithMPServerArrayAndController:(id <MPNetRequestController>)controller servers:(NSArray *)aServerArray;
 
 - (NSURLRequest *)buildRequestForWebServiceMethod:(NSString *)wsMethodName formData:(NSDictionary *)paramDict error:(NSError **)error;
+- (NSURLRequest *)buildPostRequestForWebServiceMethod:(NSString *)wsMethodName formData:(NSDictionary *)paramDict error:(NSError **)error;
 - (NSURLRequest *)buildGetRequestForWebServiceMethod:(NSString *)wsMethodName formData:(NSDictionary *)paramDict error:(NSError **)error;
+
 - (NSURLRequest *)buildDownloadRequest:(NSString *)url;
+- (NSURLRequest *)buildDownloadRequest:(NSString *)url error:(NSError **)error;
+
 - (NSData *)sendSynchronousRequest:(NSURLRequest *)request returningResponse:(NSURLResponse **)response error:(NSError **)error;
 - (NSString *)downloadFileRequest:(NSURLRequest *)request returningResponse:(NSURLResponse **)response error:(NSError **)error;
+
+// For use with AFNetworking
+- (NSURLRequest *)buildAFDownloadRequest:(NSString *)aURI server:(MPNetServer *)aServer error:(NSError **)error;
 @end

@@ -26,7 +26,7 @@
 #import "MPNetRequest.h"
 #import "MPNetServer.h"
 #import "Reachability.h"
-#import "MPNetReach.h"
+#import <CommonCrypto/CommonHMAC.h>
 
 #define URI             @"/Service/MPClientService.cfc"
 #define URL_TIMEOUT     30.0 // Does not, need to be longer
@@ -86,7 +86,9 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 @property (nonatomic, strong, readwrite) NSString *dlFilePath;
 
 - (int)networkIsReachable:(NSError **)error;
-- (int)testAndSetServerBasedOnReachability:(NSError **)error;
+
+- (NSString *)generateTimeStampForSignature;
+- (NSString *)signWebServiceRequest:(NSString *)aData timeStamp:(NSString *)aTimeStamp;
 
 @end
 
@@ -109,6 +111,8 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 
 @synthesize isFileDownload = _isFileDownload;
 @synthesize dlFilePath = _dlFilePath;
+@synthesize urlTimeout = _urlTimeout;
+@synthesize dlURL = _dlURL;
 
 // User Auth
 @synthesize userName;
@@ -116,6 +120,27 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
 // TLS Auth
 @synthesize tlsCert;
 @synthesize tlsCertPass;
+
+- (id)init
+{
+    self = [super init];
+    if (self)
+    {
+        self.httpMethod = @"GET";
+        self.apiURI = URI;
+        self.urlTimeout = URL_TIMEOUT;
+        self.condition = [[NSCondition alloc] init];
+        self.connection = nil;
+        self.connectionDidFinishLoading = NO;
+        self.error = nil;
+        self.response = nil;
+        self.responseData = [NSData data];
+        self.useUnTrustedCert = NO;
+        self.useController = NO;
+    }
+    
+    return self;
+}
 
 - (id)initWithMPServer:(MPNetServer *)aServer
 {
@@ -201,64 +226,29 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     return 0;
 }
 
-- (int)testAndSetServerBasedOnReachability:(NSError **)error
-{
-    NSDictionary *eInfo;
-    Reachability *internetReachable = [Reachability reachabilityForInternetConnection];
-    NetworkStatus internetStatus = [internetReachable currentReachabilityStatus];
-    if (internetStatus == NotReachable)
-    {
-        qlerror(@"The internet is down.");
-        eInfo = [NSDictionary dictionaryWithObject:@"The internet connection is down." forKey:NSLocalizedDescriptionKey];
-        if (error != NULL) {
-            *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:1001  userInfo:eInfo];
-        }
-        return 1001;
-    }
-
-    int res = -1;
-    if (mpServerArray)
-    {
-        self.mpServer = nil;
-        for (MPNetServer *s in mpServerArray)
-        {
-            qlinfo(@"%@ is reachable.",s.host);
-            self.mpServer = s;
-            res = 1000;
-            break;
-        }
-    }
-
-    return res;
-}
-
 - (NSURLRequest *)buildRequestForWebServiceMethod:(NSString *)wsMethodName formData:(NSDictionary *)paramDict error:(NSError **)error
 {
     NSError *netErr = nil;
     [self networkIsReachable:&netErr];
     if (netErr) {
-        if (error) {
-            NSDictionary *eInfo = [NSDictionary dictionaryWithObject:netErr.localizedDescription forKey:NSLocalizedDescriptionKey];
-            if (error != NULL) {
-                *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:netErr.code  userInfo:eInfo];
-            }
-        }
+        if (error != NULL) *error = netErr;
         return nil;
     }
-
+    
+    NSString *ts = [self generateTimeStampForSignature];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    //NSString *theURL = [NSString stringWithFormat:@"%@://%@:%d%@?method=%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,URI,[wsMethodName urlEncodeString]];
-    NSString *theURL = [NSString stringWithFormat:@"%@://%@:%d%@?method=%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,URI,wsMethodName];
+    NSString *theURL = [NSString stringWithFormat:@"%@://%@:%d%@?method=%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,self.apiURI,wsMethodName];
     qldebug(@"%@",theURL);
     NSString *properlyEscapedURL = [theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     [request setURL:[NSURL URLWithString:properlyEscapedURL]];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setTimeoutInterval:URL_TIMEOUT];
+    [request setTimeoutInterval:_urlTimeout];
     [request setHTTPMethod:self.httpMethod];
 
     NSString *boundary = @"MP_BOUNDARY_STRING";
     NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
-    [request addValue:contentType forHTTPHeaderField: @"Content-Type"];
+    [request addValue:ts forHTTPHeaderField:@"X-API-TS"];
+    [request addValue:contentType forHTTPHeaderField:@"Content-Type"];
 
     NSMutableData *bodyData = [NSMutableData data];
     NSArray *keyArray = [paramDict allKeys];
@@ -271,10 +261,21 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     }
     [bodyData appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     NSString *bodyDataStr = [[NSString alloc] initWithData:bodyData encoding:NSUTF8StringEncoding];
-    qldebug(@"%@",bodyDataStr);
 
+    qldebug(@"%@",bodyDataStr);
+    
+    NSString *requestSignature = [self signWebServiceRequest:bodyDataStr timeStamp:ts];
+    qldebug(@"Signature For Request[%@]: %@",ts ,requestSignature);
+    
+    [request addValue:requestSignature forHTTPHeaderField:@"X-API-Signature"];
     [request setHTTPBody:bodyData];
     return request;
+}
+
+- (NSURLRequest *)buildPostRequestForWebServiceMethod:(NSString *)wsMethodName formData:(NSDictionary *)paramDict error:(NSError **)error
+{
+    [self setHttpMethod:@"POST"];
+    return [self buildRequestForWebServiceMethod:wsMethodName formData:paramDict error:error];
 }
 
 - (NSURLRequest *)buildGetRequestForWebServiceMethod:(NSString *)wsMethodName formData:(NSDictionary *)paramDict error:(NSError **)error
@@ -282,55 +283,52 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     NSError *netErr = nil;
     [self networkIsReachable:&netErr];
     if (netErr) {
-        if (error) {
-            NSDictionary *eInfo = [NSDictionary dictionaryWithObject:netErr.localizedDescription forKey:NSLocalizedDescriptionKey];
-            if (error != NULL) {
-                *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:netErr.code  userInfo:eInfo];
-            }
-        }
+        if (error != NULL) *error = netErr;
         return nil;
     }
-
-    NSMutableString *theURL = [[NSMutableString alloc] init];
+    
+    NSString *ts = [self generateTimeStampForSignature];
+    NSString *theURL;
+    NSMutableString *queryString = [[NSMutableString alloc] init];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-
-    [theURL appendFormat:@"%@://%@:%d%@?method=%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,URI,[wsMethodName urlEncodeString]];
-    /* Old way to encode
+    [queryString appendFormat:@"method=%@",[wsMethodName urlEncodeString]];
+    
     for (NSString *key in [paramDict allKeys])
     {
-        if ([[paramDict objectForKey:key] isKindOfClass:[NSString class]]) {
-            [theURL appendFormat:@"&%@=%@",[key urlEncodeString],[[paramDict objectForKey:key] urlEncode]];
-        } else {
-            [theURL appendFormat:@"&%@=%@",[key urlEncodeString],[paramDict objectForKey:key]];
-        }
-
+        [queryString appendFormat:@"&%@=%@",key,[paramDict objectForKey:key]];
     }
-     */
-    for (NSString *key in [paramDict allKeys])
-    {
-        [theURL appendFormat:@"&%@=%@",key,[paramDict objectForKey:key]];
-    }
+    
+    theURL = [NSString stringWithFormat:@"%@://%@:%d%@?%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,self.apiURI,queryString];
     qldebug(@"%@",theURL);
+    
+    NSString *signedData = [self signWebServiceRequest:queryString timeStamp:ts];
+    qldebug(@"Signature For Get Request[%@]: %@",ts ,signedData);
+    
     NSString *properlyEscapedURL = [theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setTimeoutInterval:URL_TIMEOUT];
+    [request setTimeoutInterval:_urlTimeout];
     [request setURL:[NSURL URLWithString:(NSString *)properlyEscapedURL]];
     [request setHTTPMethod:@"GET"];
+    [request addValue:ts forHTTPHeaderField:@"X-API-TS"];
+    [request addValue:signedData forHTTPHeaderField: @"X-API-Signature"];
     return request;
 }
 
 - (NSURLRequest *)buildDownloadRequest:(NSString *)url
 {
+    return [self buildDownloadRequest:url error:NULL];
+}
+
+- (NSURLRequest *)buildDownloadRequest:(NSString *)url error:(NSError **)error;
+{
     NSError *netErr = nil;
     [self networkIsReachable:&netErr];
     if (netErr) {
-        qlerror(@"%@",netErr.localizedDescription);
+        if (error != NULL) *error = netErr;
         return nil;
     }
     
     // Downloads use http only
-    // NSString *theURL = [NSString stringWithFormat:@"http://%@%@",mpServer.host,url];
-    
     NSString *theURL = [NSString stringWithFormat:@"%@://%@:%d%@",(mpServer.useHTTPS ? @"https" : @"http"),mpServer.host,(int)mpServer.port,url];
     NSString *properlyEscapedURL = [theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
@@ -339,11 +337,38 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     qldebug(@"buildDownloadRequest tempFilePath: %@",_dlFilePath);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setTimeoutInterval:URL_TIMEOUT];
+    [request setTimeoutInterval:self.urlTimeout];
     [request setValue:@"" forHTTPHeaderField:@"Accept-Encoding"];
     [request setURL:[NSURL URLWithString:(NSString *)properlyEscapedURL]];
     return request;
 }
+
+- (NSURLRequest *)buildAFDownloadRequest:(NSString *)aURI server:(MPNetServer *)aServer error:(NSError **)error;
+{
+    NSError *netErr = nil;
+    [self networkIsReachable:&netErr];
+    if (netErr) {
+        if (error != NULL) *error = netErr;
+        return nil;
+    }
+    
+    // Downloads use http only
+    NSString *theURL = [NSString stringWithFormat:@"%@://%@:%d%@",(aServer.useHTTPS ? @"https" : @"http"),aServer.host,(int)aServer.port,aURI];
+    NSString *properlyEscapedURL = [theURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    _dlFilePath = [self createTempDirFromURL:theURL];
+    _dlURL = theURL;
+    qlinfo(@"Download Request URL: %@",theURL);
+    qldebug(@"buildDownloadRequest tempFilePath: %@",_dlFilePath);
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    [request setTimeoutInterval:self.urlTimeout];
+    [request setValue:@"" forHTTPHeaderField:@"Accept-Encoding"];
+    [request setURL:[NSURL URLWithString:(NSString *)properlyEscapedURL]];
+    return request;
+}
+
+#pragma mark - MPNetRequestController
 
 - (NSData *)sendSynchronousRequest:(NSURLRequest *)request returningResponse:(NSURLResponse **)response error:(NSError **)error
 {
@@ -683,29 +708,63 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data, SecIdentityRef *outIden
     [self.condition unlock];
 }
 
+// Misc
+#pragma mark - Helper Methods
+
 -(NSString *)createTempDirFromURL:(NSString *)aURL
 {
-	NSString *tempFilePath;
-	NSString *appName = [[NSProcessInfo processInfo] processName];
-	NSString *tempDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.XXXXXX",appName]];
-
-	const char *tempDirectoryTemplateCString = [tempDirectoryTemplate fileSystemRepresentation];
-	char *tempDirectoryNameCString = (char *)malloc(strlen(tempDirectoryTemplateCString) + 1);
-	strcpy(tempDirectoryNameCString, tempDirectoryTemplateCString);
-	char *result = mkdtemp(tempDirectoryNameCString);
-	if (!result)
-	{
+    NSString *tempFilePath;
+    NSString *appName = [[NSProcessInfo processInfo] processName];
+    NSString *tempDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.XXXXXX",appName]];
+    
+    const char *tempDirectoryTemplateCString = [tempDirectoryTemplate fileSystemRepresentation];
+    char *tempDirectoryNameCString = (char *)malloc(strlen(tempDirectoryTemplateCString) + 1);
+    strcpy(tempDirectoryNameCString, tempDirectoryTemplateCString);
+    char *result = mkdtemp(tempDirectoryNameCString);
+    if (!result)
+    {
         free(tempDirectoryNameCString);
-		// handle directory creation failure
-		qlerror(@"Error, trying to create tmp directory.");
+        // handle directory creation failure
+        qlerror(@"Error, trying to create tmp directory.");
         return [@"/private/tmp" stringByAppendingPathComponent:appName];
-	}
+    }
+    
+    NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
+    free(tempDirectoryNameCString);
+    
+    tempFilePath = [tempDirectoryPath stringByAppendingPathComponent:[aURL lastPathComponent]];
+    return tempFilePath;
+}
 
-	NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
-	free(tempDirectoryNameCString);
+- (NSString *)generateTimeStampForSignature
+{
+    NSDateFormatter *format = [[NSDateFormatter alloc] init];
+    [format setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
+    [format setDateFormat:@"yyyy-MM-dd HH:mm:00"];
+    NSDate *now = [NSDate date];
+    NSString *nsstr = [format stringFromDate:now];
+    return nsstr;
+}
 
-	tempFilePath = [tempDirectoryPath stringByAppendingPathComponent:[aURL lastPathComponent]];
-	return tempFilePath;
+- (NSString *)signWebServiceRequest:(NSString *)aData timeStamp:(NSString *)aTimeStamp
+{
+    NSString *key = @"MYKEY";
+    NSString *aStrToSign = [NSString stringWithFormat:@"%@-%@",aData,aTimeStamp];
+    
+    const char *cKey  = [key cStringUsingEncoding:NSASCIIStringEncoding];
+    const char *cData = [aStrToSign cStringUsingEncoding:NSASCIIStringEncoding];
+    
+    unsigned char cHMAC[CC_SHA256_DIGEST_LENGTH];
+    CCHmac(kCCHmacAlgSHA256, cKey, strlen(cKey), cData, strlen(cData), cHMAC);
+    
+    NSData *resData = [[NSData alloc] initWithBytes:cHMAC length:sizeof(cHMAC)];
+    
+    NSString *result = [resData description];
+    result = [result stringByReplacingOccurrencesOfString:@" " withString:@""];
+    result = [result stringByReplacingOccurrencesOfString:@"<" withString:@""];
+    result = [result stringByReplacingOccurrencesOfString:@">" withString:@""];
+    
+    return result;
 }
 
 @end
