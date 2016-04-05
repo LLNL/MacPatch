@@ -3,6 +3,8 @@ layout: default
 title: "Quick Start Guide for Linux"
 ---
 
+# MacPatch Server Quick Start Guide for OS X
+--
 
 This is a quick start guide to getting MacPatch version 2.8.x installed and running on a Linux based system running Ubuntu or Fedora (RedHat).
 

@@ -3,6 +3,9 @@ layout: default
 title: "Quick Start Guide for OS X"
 ---
 
+# MacPatch Server Quick Start Guide for OS X
+--
+
 This is a quick start guide to getting MacPatch version 2.8.x installed and running on a Mac OS X based system. For the purpose of this guide we will be installing on a Mac OS X 10.9.x system.
 
 ## Table of Contents
