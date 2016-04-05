@@ -4,14 +4,14 @@ table {
 }
 table th {
     padding:21px 25px 22px 25px;
-    border-top:1px solid #fafafa;
+    border-top:1px solid #e0e0e0;
     border-bottom:1px solid #e0e0e0;
 }
 table tr {
     padding-left:10px;
 }
 
-tr:nth-child(even) {background: #CCC}
+tr:nth-child(even) {background: #d9d9d9}
 tr:nth-child(odd) {background: #FFF}
 
 table td {
