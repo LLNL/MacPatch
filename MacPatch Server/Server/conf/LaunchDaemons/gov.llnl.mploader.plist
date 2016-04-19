@@ -18,5 +18,7 @@
 	<string>/Library/MacPatch/Server/Logs/mpPatchLoader_stdout.log</string>
 	<key>StandardErrorPath</key>
 	<string>/Library/MacPatch/Server/Logs/mpPatchLoader_stderr.log</string>
+	<key>RunAtLoad</key>
+	<true/>
 </dict>
 </plist>
