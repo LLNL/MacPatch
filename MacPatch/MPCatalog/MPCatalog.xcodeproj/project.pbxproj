@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F7B8B0C1CAF600200FB940F /* AFNetworking in Resources */ = {isa = PBXBuildFile; fileRef = 8F7B8B0B1CAF600200FB940F /* AFNetworking */; };
 		8F95C6B31C598A54008FA31D /* RebootWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F95C6B11C598A54008FA31D /* RebootWindow.m */; };
 		8F95C6B41C598A54008FA31D /* RebootWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F95C6B21C598A54008FA31D /* RebootWindow.xib */; };
 		8FD88FCB16DFDD9200A870A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88FCA16DFDD9200A870A3 /* Cocoa.framework */; };
@@ -48,6 +49,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8F7B8B0B1CAF600200FB940F /* AFNetworking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AFNetworking; path = /Users/heizer1/Syncplicity/GitHub/MacPatch/MacPatch/MPCatalog/MPCatalog/AFNetworking; sourceTree = "<absolute>"; };
 		8F95C6B01C598A54008FA31D /* RebootWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RebootWindow.h; sourceTree = "<group>"; };
 		8F95C6B11C598A54008FA31D /* RebootWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RebootWindow.m; sourceTree = "<group>"; };
 		8F95C6B21C598A54008FA31D /* RebootWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RebootWindow.xib; sourceTree = "<group>"; };
@@ -123,6 +125,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F7B8B521CB03C7700FB940F /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				8FD8901C16DFE0C400A870A3 /* EventToSend.h */,
+				8FD8901D16DFE0C400A870A3 /* EventToSend.c */,
+				8FD88FFF16DFDDE500A870A3 /* PreferenceController.h */,
+				8FD8900016DFDDE600A870A3 /* PreferenceController.m */,
+				8FD8900116DFDDE600A870A3 /* SWDistInfoController.h */,
+				8FD8900216DFDDE600A870A3 /* SWDistInfoController.m */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		8F7B8B531CB03C9000FB940F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8F95C6B01C598A54008FA31D /* RebootWindow.h */,
+				8F95C6B11C598A54008FA31D /* RebootWindow.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		8FD88FBE16DFDD9200A870A3 = {
 			isa = PBXGroup;
 			children = (
@@ -176,15 +200,9 @@
 				8FD88FFA16DFDDE500A870A3 /* MPCatalogAppDelegate.m */,
 				8FD88FFB16DFDDE500A870A3 /* MPCatalog.h */,
 				8FD88FFC16DFDDE500A870A3 /* MPCatalog.m */,
-				8FD88FFF16DFDDE500A870A3 /* PreferenceController.h */,
-				8FD8900016DFDDE600A870A3 /* PreferenceController.m */,
-				8FD8900116DFDDE600A870A3 /* SWDistInfoController.h */,
-				8FD8900216DFDDE600A870A3 /* SWDistInfoController.m */,
-				8FD8901C16DFE0C400A870A3 /* EventToSend.h */,
-				8FD8901D16DFE0C400A870A3 /* EventToSend.c */,
-				8F95C6B01C598A54008FA31D /* RebootWindow.h */,
-				8F95C6B11C598A54008FA31D /* RebootWindow.m */,
 				8FD8901F16DFE0D000A870A3 /* MPWorkerProtocol.h */,
+				8F7B8B531CB03C9000FB940F /* Views */,
+				8F7B8B521CB03C7700FB940F /* Controllers */,
 				8FD88FED16DFDDB900A870A3 /* Resources */,
 				8FD88FD116DFDD9200A870A3 /* Supporting Files */,
 			);
@@ -283,6 +301,7 @@
 				8FD88FD516DFDD9200A870A3 /* InfoPlist.strings in Resources */,
 				8FD88FF216DFDDC700A870A3 /* MPCatalog_MainMenu.xib in Resources */,
 				8FD88FF316DFDDC700A870A3 /* Preferences.xib in Resources */,
+				8F7B8B0C1CAF600200FB940F /* AFNetworking in Resources */,
 				8FD88FF416DFDDC700A870A3 /* SWDistInfoController.xib in Resources */,
 				8FD88FF516DFDDC700A870A3 /* MPCatalogV2.icns in Resources */,
 				8F95C6B41C598A54008FA31D /* RebootWindow.xib in Resources */,

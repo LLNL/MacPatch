@@ -30,7 +30,9 @@ extern NSString * const MP_ROOT_CLIENT;
 extern NSString * const MP_ROOT_SERVER;
 extern NSString * const MP_ROOT_UPDATE;
 
+extern NSString * const AGENT;
 extern NSString * const AGENT_EXEC;
+extern NSString * const AGENT_WORKER;
 extern NSString * const AGENT_VER_PLIST;
 extern NSString * const AGENT_PREFS_PLIST;
 extern NSString * const AGENT_FRAMEWORK_PATH;

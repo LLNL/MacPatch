@@ -30,6 +30,7 @@
 #import "EventToSend.h" 
 #import "SWDistInfoController.h"
 #import "RebootWindow.h"
+#import "AFNetworking.h"
 
 #define MP_INSTALLED_DATA       @".installed.plist"
 
@@ -328,7 +329,7 @@
     
     // Setup logging
 	NSString *_logFile = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Logs/MPCatalog.log"];
-	[MPLog setupLogging:_logFile level:lcl_vDebug];
+	[MPLog setupLogging:_logFile level:lcl_vInfo];
     
 	if ([d boolForKey:@"enableDebugLogging"]) {
 		// enable logging for all components up to level Debug
@@ -588,8 +589,7 @@
             continue;
         }
         
-        // Create Download URL
-        // NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
+        // Create Download URL PATH
         NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
         logit(lcl_vInfo,@"Download software from: %@",_url);
         
@@ -606,37 +606,71 @@
         }
         
         // Download Software
-        
-        [progressBar setDoubleValue:0.0];
-        [progressBar setIndeterminate:NO];
+        dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar setDoubleValue:0.0];});
+        dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar setIndeterminate:NO];});
         
         NSError *dlErr = nil;
-        NSURLResponse *response;
         MPNetConfig *mpnc = [[MPNetConfig alloc] init];
-        MPNetRequest *req;
-        NSURLRequest *urlReq;
-        NSString *dlPath;
+        __block NSString *dlPath;
         
         BOOL needsToBreak = FALSE;
         int serverListCount = (int)[[mpnc servers] count];
         for (int s = 0; s < serverListCount; s++)
         {
-            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
-            MPNetServer *srv = [[mpnc servers] objectAtIndex:s];
-            logit(lcl_vInfo,@"Trying server: %@",srv.host);
+            __block BOOL isCompleted = NO;
+            __block NSError *downloadError = nil;
             
-            req = [[MPNetRequest alloc] initWithMPServerAndController:self server:srv];
-            urlReq = [req buildDownloadRequest:_url];
-            dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
-            if (dlErr) {
-                logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+            MPNetServer *srv = [[mpnc servers] objectAtIndex:s];
+            MPNetRequest *mpNetRequest = [[MPNetRequest alloc] init];
+            NSURLRequest *request = [mpNetRequest buildAFDownloadRequest:_url server:srv error:&downloadError];
+            dlPath = mpNetRequest.dlFilePath; //MPNetRequest will gen the tmep download path
+            
+            AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+            operation.outputStream = [NSOutputStream outputStreamToFileAtPath:dlPath append:NO];
+            
+            [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+                logit(lcl_vInfo,@"Successfully downloaded file to %@", dlPath);
+                [statusTextStatus setStringValue:[NSString stringWithFormat:@"Successfully downloaded %@",[d objectForKey:@"name"]]];
+                isCompleted = YES;
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                logit(lcl_vError,@"%@", error.localizedDescription);
+                downloadError = error;
+                isCompleted = YES;
+            }];
+            
+            [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead)
+             {
+                 float progress = ((float)totalBytesRead) / totalBytesExpectedToRead;
+                 double percentComplete = progress*100.0;
+                 [progressBar setDoubleValue:percentComplete];
+             }];
+            
+            [operation start];
+            logit(lcl_vInfo,@"Trying server: %@",srv.host);
+            logit(lcl_vInfo,@"%@",mpNetRequest.dlURL);
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
+            });
+            
+            // Wait til download has completed
+            while(!isCompleted) {
+                [NSThread sleepForTimeInterval:1.0];
+            }
+            
+            // If there is no error then break out of server loop and
+            // continue with the install
+            if (!downloadError) {
+                break;
+            } else {
+                // Check to see if we have reached the end of the servers
+                // If we have and have not downloaded the file then we
+                // need to break out of the install
                 if (s == (serverListCount-1)) {
                     needsToBreak = TRUE;
-                } else {
-                    continue;
                 }
+                continue;
             }
-            break;
         }
         
         if (needsToBreak == TRUE) {
@@ -663,9 +697,8 @@
             logit(lcl_vError,@"Error[%d], trying to move downloaded file to %@.",(int)[dlErr code],swLoc);
         }
 
-        logit(lcl_vDebug,@"returnCode: %d",[req errorCode]);
         // Software was downloaded
-        if ([req errorCode] == 0)
+        if (!dlErr)
         {
             logit(lcl_vDebug,@"Begin install for (%@).",[d objectForKey:@"name"]);
             int result = -1;
@@ -873,7 +906,7 @@
 - (IBAction)installSoftware:(id)sender
 {
     [cancelButton setEnabled:YES];
-	[self performSelectorInBackground:@selector(installSoftwareThread) withObject:nil];
+    [NSThread detachNewThreadSelector:@selector(installSoftwareThread) toTarget:self withObject:nil];
 }
 
 - (void)installSoftwareThread
@@ -891,17 +924,17 @@
         NSMutableArray  *swToInstallArray   = [NSMutableArray arrayWithArray:[arrayController arrangedObjects]];
         
         int _needsReboot = 0;
-        for (NSDictionary *d in swToInstallArray) 
+        for (NSDictionary *d in swToInstallArray)
         {
-            if (cancelInstalls == YES) 
+            if (cancelInstalls == YES)
             {
                 [self setCancelInstalls:NO];
                 break;
             }
             
             if ([d objectForKey:@"selected"]) {
-                if ([[d objectForKey:@"selected"] intValue] == 1) {
-                    
+                if ([[d objectForKey:@"selected"] intValue] == 1)
+                {
                     [statusTextStatus setStringValue:[NSString stringWithFormat:@"Installing %@ ...",[d objectForKey:@"name"]]];
                     logit(lcl_vInfo,@"Installing %@ (%@).",[d objectForKey:@"name"],[d objectForKey:@"id"]);
                     logit(lcl_vInfo,@"INFO: %@",[d valueForKeyPath:@"Software.sw_type"]);
@@ -923,7 +956,7 @@
                         continue;
                     }
                     
-                    if ([mpd diskHasEnoughSpaceForPackage:stringToLong] == NO) 
+                    if ([mpd diskHasEnoughSpaceForPackage:stringToLong] == NO)
                     {
                         logit(lcl_vError,@"This system does not have enough free disk space to install the following software %@",[d objectForKey:@"name"]);
                         [self postInstallResults:99 resultText:@"Not enough free disk space." task:d];
@@ -932,40 +965,76 @@
                     }
                     
                     // Create Download URL
-                    //NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[[d valueForKeyPath:@"Software.sw_url"] urlEncode]];
                     NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
                     logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
                     
-                    [progressBar setDoubleValue:0.0];
-                    [progressBar setIndeterminate:NO];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar setDoubleValue:0.0];});
+                    dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar setIndeterminate:NO];});
                     
                     NSError *dlErr = nil;
-                    NSURLResponse *response;
                     MPNetConfig *mpnc = [[MPNetConfig alloc] init];
-                    MPNetRequest *req;
-                    NSURLRequest *urlReq;
-                    NSString *dlPath;
+                    __block NSString *dlPath;
                     
                     BOOL needsToBreak = FALSE;
                     int serverListCount = (int)[[mpnc servers] count];
                     for (int s = 0; s < serverListCount; s++)
                     {
-                        [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
-                        MPNetServer *srv = [[mpnc servers] objectAtIndex:s];
-                        logit(lcl_vInfo,@"Trying server: %@",srv.host);
+                        __block BOOL isCompleted = NO;
+                        __block NSError *downloadError = nil;
                         
-                        req = [[MPNetRequest alloc] initWithMPServerAndController:self server:srv];
-                        urlReq = [req buildDownloadRequest:_url];
-                        dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
-                        if (dlErr || req.errorCode >= 400) {
-                            logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
-                            if (s == (serverListCount-1)) {
-                                needsToBreak = TRUE;
-                            } else {
-                                continue;
-                            }
+                        MPNetServer *srv = [[mpnc servers] objectAtIndex:s];
+                        MPNetRequest *mpNetRequest = [[MPNetRequest alloc] init];
+                        NSURLRequest *request = [mpNetRequest buildAFDownloadRequest:_url server:srv error:&downloadError];
+                        dlPath = mpNetRequest.dlFilePath; //MPNetRequest will gen the tmep download path
+                        
+                        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+                        operation.outputStream = [NSOutputStream outputStreamToFileAtPath:dlPath append:NO];
+                        
+                        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+                            logit(lcl_vInfo,@"Successfully downloaded file to %@", dlPath);
+                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Successfully downloaded %@",[d objectForKey:@"name"]]];
+                            isCompleted = YES;
+                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                            logit(lcl_vError,@"%@", error.localizedDescription);
+                            downloadError = error;
+                            isCompleted = YES;
+                        }];
+                        
+                        [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead)
+                        {
+                            float progress = ((float)totalBytesRead) / totalBytesExpectedToRead;
+                            double percentComplete = progress*100.0;
+                            [progressBar setDoubleValue:percentComplete];
+                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@ %0.2f%%",[d objectForKey:@"name"],percentComplete]];
+                        }];
+                        
+                        [operation start];
+                        logit(lcl_vInfo,@"Trying server: %@",srv.host);
+                        logit(lcl_vInfo,@"%@",mpNetRequest.dlURL);
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^(void){
+                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
+                        });
+                        
+                        // Wait til download has completed
+                        while(!isCompleted) {
+                            [NSThread sleepForTimeInterval:1.0];
                         }
-                        break;
+                        
+                        // If there is no error then break out of server loop and
+                        // continue with the install
+                        if (!downloadError) {
+                            break;
+                        } else {
+                            // Check to see if we have reached the end of the servers
+                            // If we have and have not downloaded the file then we
+                            // need to break out of the install
+                            if (s == (serverListCount-1)) {
+                               needsToBreak = TRUE;
+                            }
+                            continue;
+                        }
                     }
                     
                     if (needsToBreak == TRUE) {
@@ -973,9 +1042,9 @@
                         [self updateArrayControllerWithDictionary:d forActionType:@"error"];
                         continue;
                     }
-
+                    
                     [self updateArrayControllerWithDictionary:d forActionType:@"download"];
-
+                    
                     // Create Destination Dir
                     NSString *decodedName = [[dlPath lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     dlErr = nil;
@@ -985,33 +1054,33 @@
                             logit(lcl_vError,@"Error[%d], trying to create destination directory. %@.",(int)[dlErr code],swLoc);
                         }
                     }
-
+                    
                     // Move Downloaded File to Destination
                     dlErr = nil;
                     [fm moveItemAtPath:dlPath toPath:[swLoc stringByAppendingPathComponent:decodedName] error:&dlErr];
                     if (dlErr) {
                         logit(lcl_vError,@"Error[%d], trying to move downloaded file to %@.",(int)[dlErr code],swLoc);
                     }
-
+                    
                     if ([self hasCanceledInstall:d]) break;
                     
-                    logit(lcl_vDebug,@"returnCode: %d",[req errorCode]);
                     // Software was downloaded
-                    if ([req errorCode] == 0)
+                    if (!dlErr)
                     {
                         logit(lcl_vDebug,@"Begin install for (%@).",[d objectForKey:@"name"]);
                         int result = -1;
                         int pResult = -1;
-
+                        
                         [progressBar setDoubleValue:0.0];
                         [progressBar setIndeterminate:NO];
                         [progressBar display];
                         
                         if ([self hasCanceledInstall:d]) break;
+                        
                         [self updateArrayControllerWithDictionary:d forActionType:@"install"];
                         result = [self installSoftwareViaProxy:d];
                         
-                        if (result == 0) 
+                        if (result == 0)
                         {
                             // Software has been installed, now flag for reboot
                             if ([[d valueForKeyPath:@"Software.reboot"] isEqualTo:@"1"]) {
@@ -1019,7 +1088,7 @@
                             }
                             if ([[d valueForKeyPath:@"Software.auto_patch"] isEqualTo:@"1"]) {
                                 
-                            	[progressBar setIndeterminate:YES];
+                                [progressBar setIndeterminate:YES];
                                 [progressBar startAnimation:nil];
                                 [progressBar display];
                                 
@@ -1059,7 +1128,7 @@
                     }
                 }
             }
-        }  
+        }
         [installButton setEnabled:YES];
         [refreshButton setEnabled:YES];
         [cancelButton setEnabled:NO];
@@ -1070,7 +1139,7 @@
         if (_needsReboot >= 1) {
             [self showRebootPanel:nil];
         }
-
+        
         [self.window setFrame:self.window.frame display:YES animate:YES];
     }
 }

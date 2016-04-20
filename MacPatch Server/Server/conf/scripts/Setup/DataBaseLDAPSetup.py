@@ -27,7 +27,7 @@
   MacPatch Patch Database Setup Script
   MacPatch Version 2.5.43 and higher
   
-  Script Version 1.0.1
+  Script Version 1.0.2
 '''
 
 import os
@@ -75,10 +75,13 @@ os.system('clear')
 print "Configure MacPatch Database Info..."
 mp_db_hostname = raw_input("MacPatch Database Server Hostname:  [" + str(system_name) + "]: ") or str(system_name)
 cData["settings"]["database"]["prod"]["dbHost"] = mp_db_hostname
+cData["settings"]["database"]["ro"]["dbHost"] = mp_db_hostname
 mp_db_port = raw_input("MacPatch Database Server Port Number [3306]: ") or "3306"
 cData["settings"]["database"]["prod"]["dbPort"] = mp_db_port
+cData["settings"]["database"]["ro"]["dbPort"] = mp_db_port
 mp_db_name = raw_input("MacPatch Database Name [MacPatchDB]: ") or "MacPatchDB"
 cData["settings"]["database"]["prod"]["dbName"] = mp_db_name
+cData["settings"]["database"]["ro"]["dbName"] = mp_db_name
 mp_db_usr = raw_input("MacPatch Database User Name [mpdbadm]: ") or "mpdbadm"
 cData["settings"]["database"]["prod"]["username"] = mp_db_usr
 mp_db_pas = raw_input("MacPatch Database User Password: ")

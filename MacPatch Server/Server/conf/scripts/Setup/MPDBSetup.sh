@@ -2,13 +2,15 @@
 #
 # -------------------------------------------------------------
 # Script: MPDBSetup.sh
-# Version: 1.0.0
+# Version: 1.0.1
 #
 # Description:
 # This script will setup and configure a MySQL server for
 # MacPatch
 #
 # History:
+# Added a continue on error, if the error is more of a warning
+# then the user may continue and add the schema to the db.
 #
 # -------------------------------------------------------------
 
@@ -87,7 +89,12 @@ echo
 
 $MYSQL -uroot -p -e "$SQL"
 if [ $? -ne 0 ]; then
-	exit 1;
+	echo
+	read -p "An error was detected, would you like to continue (Y/N)? [N]: " CONTONERR
+	CONTONERR=${CONTONERR:-N}
+	if [ "$CONTONERR" == "N" ] || [ "$CONTONERR" == "N" ]; then
+		exit 1;
+	fi
 fi
 
 clear

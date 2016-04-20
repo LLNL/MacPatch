@@ -88,7 +88,7 @@
         },
         "dbSchema": 
         {
-            "checkSchema": true
+            "checkSchema": false
         }
     }
 }

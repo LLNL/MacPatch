@@ -16,7 +16,11 @@
         <cfinclude template="admin_server_jobs_cmd.cfm">
     </cfif>
 </cfif>
-<cfparam name="wsServerPort" default="2600">
+
+<cfparam name="application.settings.server.tasksHost" default="127.0.0.1">
+<cfparam name="application.settings.server.tasksPort" default="2601">
+<cfparam name="application.settings.server.tasksHTTP" default="http">
+<cfset tasksURL = application.settings.server.tasksHTTP & "://" & application.settings.server.tasksHost & ":" & application.settings.server.tasksPort>
 
 <style type="text/css"> 
 fieldset {   
@@ -363,7 +367,7 @@ table.genTable td
 		<fieldset>
 			<table>
 			<tr><td>
-            	<input type="hidden" name="url" value="https://<cfoutput>#CGI.HTTP_HOST#:#wsServerPort#</cfoutput>/tasks/cleanup.cfm">
+            	<input type="hidden" name="url" value="<cfoutput>#tasksURL#</cfoutput>/tasks/cleanup.cfm">
 				<input type="hidden" name="actionVarName" value="days">
             	<input type="hidden" name="fAction" value="AddNewTask">
             </td></tr>
@@ -402,7 +406,7 @@ table.genTable td
 		<fieldset>
 			<table>
 			<tr><td>
-            	<input type="hidden" name="url" value="https://<cfoutput>#CGI.HTTP_HOST#:#wsServerPort#</cfoutput>/tasks/cleanupInventoryData.cfm">
+            	<input type="hidden" name="url" value="<cfoutput>#tasksURL#</cfoutput>/tasks/cleanupInventoryData.cfm">
             	<input type="hidden" name="fAction" value="AddNewTask">
             </td></tr>
             <cfif session.IsAdmin IS true>
@@ -447,7 +451,7 @@ table.genTable td
 		<fieldset>
 			<table>
 			<tr><td>
-            	<input type="hidden" name="url" value="https://<cfoutput>#CGI.HTTP_HOST#:#wsServerPort#</cfoutput>/tasks/cleanupInstallData.cfm">
+            	<input type="hidden" name="url" value="<cfoutput>#tasksURL#</cfoutput>/tasks/cleanupInstallData.cfm">
             	<input type="hidden" name="fAction" value="AddNewTask">
             </td></tr>
             <cfif session.IsAdmin IS true>
