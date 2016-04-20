@@ -1,7 +1,7 @@
 <cfcomponent output="false">
 	<cfscript>
 		// The name of the application
-		this.name				= "MP_ADMIN_2800";
+		this.name				= "MP_ADMIN_2811";
 		// We wish to enable the session managment
 		this.sessionmanagement 	= true;
 		// Sets the session timeout to be 15minutes
