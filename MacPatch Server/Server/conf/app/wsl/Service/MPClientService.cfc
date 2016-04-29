@@ -2841,4 +2841,85 @@
 
         <cfreturn response.AsStruct()>
     </cffunction>
+
+    <!---
+        Remote API
+        Type: Public/Remote
+        Description: Post OS Migration Data
+        New for MacPatch 2.8.6
+    --->
+    <cffunction name="PostOSMigration" access="remote" returnType="struct" returnFormat="json" output="false">
+        <cfargument name="clientID" required="true" default="0" />
+        <cfargument name="action" required="true" />
+        <cfargument name="os" required="true" />
+        <cfargument name="migrationID" required="true"/>
+        <cfargument name="label" required="false" default="NA" />
+
+        <cfset response = new response() />
+
+        <cfif NOT validClientID(arguments.ClientID)>
+            <cfset l = lErr("PostOSMigration", "Invalid client id (#arguments.ClientID#).") />
+            <cfset response.errorno = "9999" />
+            <cfset response.errormsg = "Invalid client id #arguments.ClientID#" />
+            <cfreturn response.AsStruct()>
+        </cfif>
+
+        <cftry>
+            <cfif validClientID(arguments.clientID) EQ true>
+                <!--- Get Date/Time Object --->
+                <cfset xDate = #CreateODBCDateTime(now())# />
+
+                <!--- If Action is Start, set up the migration --->
+                <cfif arguments.action EQ "start">
+
+                    <cfquery datasource="#this.ds#" name="qInsertClientApplePatches">
+                        Insert Into mp_os_migration_status
+                            (cuuid,startDateTime,preOSVer,label,migrationID)
+                        Values
+                            (<cfqueryparam value="#arguments.clientID#">,#xDate#,
+                            <cfqueryparam value="#arguments.os#">, <cfqueryparam value="#arguments.label#">,
+                            <cfqueryparam value="#arguments.migrationID#">
+                            )
+                    </cfquery>
+
+                <!--- If Action is Stop, end the migration --->
+                <cfelseif arguments.action EQ "stop">
+                    <!--- Find the Migration Status for Client ID --->
+                    <cfquery datasource="#this.ds#" name="qMigrationStatus">
+                        Select rid from mp_os_migration_status
+                        Where cuuid = <cfqueryparam value="#arguments.ClientID#">
+                        AND migrationID = <cfqueryparam value="#arguments.migrationID#">
+                    </cfquery>
+
+                    <cfif qPluginHash.RecordCount EQ 1>
+                        <cfset xRid = #qMigrationStatus.rid#>
+
+                        <cfquery datasource="#this.ds#" name="qMigrationStatusEnd">
+                            UPDATE mp_os_migration_status
+                            SET postOSVer = <cfqueryparam value="#arguments.os#">,
+                            stopDateTime = xDate
+                            Where rid = <cfqueryparam value="#xRid#">
+                        </cfquery>
+
+                    <cfelse>
+                        <cfset response.errorno = "2">
+                        <cfset response.errormsg = "Migration not found.">
+                        <cfreturn response.AsStruct()>
+                    </cfif>
+
+                </cfif>
+
+            <cfelse>
+                <cfset response.errorno = "3">
+                <cfset response.errormsg = "Invalid data.">
+            </cfif>
+            <cfcatch>
+                <cfset l = lErr("PostOSMigration", "[#arguments.ClientID#]: #cfcatch.Message#", "#cfcatch.Detail#") />
+                <cfset response.errorno = "1">
+                <cfset response.errormsg = "#cfcatch.Detail# -- #cfcatch.Message#">
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response.AsStruct()>
+    </cffunction>
 </cfcomponent>
