@@ -2891,13 +2891,13 @@
                         AND migrationID = <cfqueryparam value="#arguments.migrationID#">
                     </cfquery>
 
-                    <cfif qPluginHash.RecordCount EQ 1>
+                    <cfif qMigrationStatus.RecordCount EQ 1>
                         <cfset xRid = #qMigrationStatus.rid#>
 
                         <cfquery datasource="#this.ds#" name="qMigrationStatusEnd">
                             UPDATE mp_os_migration_status
                             SET postOSVer = <cfqueryparam value="#arguments.os#">,
-                            stopDateTime = xDate
+                            stopDateTime = #xDate#
                             Where rid = <cfqueryparam value="#xRid#">
                         </cfquery>
 
