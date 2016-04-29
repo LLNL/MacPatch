@@ -1,7 +1,7 @@
 /*
   MacPatch Database Schema
 	All Tables
-	Version 2.8.0.0
+	Version 2.8.6.0
 	Rev 0
 */
 
@@ -762,6 +762,23 @@ CREATE TABLE `mp_os_config_profiles_assigned` (
   `groupID` varchar(50) NOT NULL,
   PRIMARY KEY (`rid`,`profileID`,`groupID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT COMMENT='New for MacPatch 2.5.x';
+
+-- ----------------------------
+--  Table structure for `mp_os_migration_status`
+-- ----------------------------
+DROP TABLE IF EXISTS `mp_os_migration_status`;
+CREATE TABLE `mp_os_migration_status` (
+  `rid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `cuuid` varchar(50) NOT NULL,
+  `startDateTime` datetime NOT NULL,
+  `stopDateTime` datetime DEFAULT NULL,
+  `preOSVer` varchar(255) NOT NULL,
+  `postOSVer` varchar(255) DEFAULT NULL,
+  `label` text,
+  `migrationID` varchar(100) NOT NULL,
+  PRIMARY KEY (`rid`,`cuuid`),
+  UNIQUE KEY `idx_mid` (`cuuid`,`migrationID`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COMMENT='New for MacPatch 2.8.6';
 
 -- ----------------------------
 --  Table structure for `mp_patch_group`
