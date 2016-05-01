@@ -1750,4 +1750,46 @@
     return result;
 }
 
+#pragma mark - OS Migration
+
+- (NSString *)postOSMigrationStatus:(NSString *)aStatus label:(NSString *)Label migrationID:(NSString *)migrationID error:(NSError **)err
+{
+    // Request
+    NSError *error = nil;
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    [params setObject:self._cuuid forKey:@"clientID"];
+    [params setObject:aStatus forKey:@"action"];
+    [params setObject:[[MPSystemInfo osVersionInfo] objectForKey:@"ProductUserVisibleVersion"] forKey:@"os"];
+    [params setObject:Label forKey:@"label"];
+    [params setObject:migrationID forKey:@"migrationID"];
+    NSData *res = [self requestWithMethodAndParams:@"PostOSMigration" params:(NSDictionary *)params error:&error];
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+    
+    // MPJsonResult does all of the error checking on the result
+    MPJsonResult *jres = [[MPJsonResult alloc] init];
+    [jres setJsonData:res];
+    error = nil;
+    id result = [jres returnResult:&error];
+    qldebug(@"JSON Result: %@",result);
+    if (error)
+    {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return nil;
+    }
+    
+    return result;
+}
+
 @end

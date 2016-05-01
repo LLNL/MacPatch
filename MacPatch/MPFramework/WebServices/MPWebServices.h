@@ -94,5 +94,6 @@
 
 // Plugins
 - (NSString *)getHashForPluginName:(NSString *)pName pluginBunleID:(NSString *)bundleID pluginVersion:(NSString *)pVer error:(NSError **)err;
-
+// OSMigration
+- (NSString *)postOSMigrationStatus:(NSString *)aStatus label:(NSString *)Label migrationID:(NSString *)migrationID error:(NSError **)err;
 @end
