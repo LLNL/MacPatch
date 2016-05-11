@@ -3,6 +3,8 @@ layout: default
 title: "LDAP/AD Authentication"
 ---
 
+# How to enable LDAP/AD Authentication
+---
 
 To enable LDAP/Active Directory Authentication in MacPatch is a very simple task but may require tweaking for your specific environment.
 
@@ -41,7 +43,7 @@ While most LDAP/Active Directory environments have many similar configuration se
 The LDAP settings may also be edited without the use of the `DataBaseLDAPSetup.py` script. To edit these settings open the `/Library/MacPatch/Server/conf/etc/siteconfig.json` file.
 
 Attribute | Default Value | Description | Notes
----|---|---|---
+:--------:|:-------------:|-------------|-------
 server | None | LDAP/AD Server to query	| 
 searchbase | None | Query Search Base | Another way to filter the search
 port | None | LDAP/AD Service Port | LDAP: 389 or 636 <br>AD: 3268 or 3269

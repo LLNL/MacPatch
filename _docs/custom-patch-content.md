@@ -44,25 +44,28 @@ When uploading a patch a `*.pkg.zip` file is required at this time.
 Here you can add pre & post requisite packages. Also, once the patch is created you will need to make it active. This can only be done once the initial patch has been created.
 
 ## Patch Criteria Language
-Base Criteria | Description
 
-BundleID
+### BundleID
 
-Base Criteria | Query | Value | Query Result | Example
----|---|---|---|---
-**BundleID** | Exists | BundleID | True/False | Exists@com.adobe.Reader@True
-<span></span> | Version | BundleID | Version;(EQ,LT,LTE,GT,GTE,NEQ) | Version@com.adobe.Reader@9.3.0;LT
+| Query | Value | Query Result | Example
+:------:|:-----:|:------------:|:-------:
+Exists | BundleID | True/False | Exists@com.adobe.Reader@True
+Version | BundleID | Version;(EQ,LT,LTE,GT,GTE,NEQ) | Version@com.adobe.Reader@9.3.0;LT
 
-Base Criteria | Query | Value | Query Result | Example
----|---|---|---|---
-**File** | Exists | File path | True/False | Exists@/Applications/Firefox.app@True
-<span></span> | Date | File path | True/False | Date@/Applications/Firefox.app@2010-03-22 12:00:00;LT
-<span></span> | Hash | File path | MD5 Hash;True/False | Hash@/Applications/Firefox.app@123432dsh2362h3h;TRUE
-<span></span> | Version | File path | Version;(EQ,LT,LTE,GT,GTE,NEQ) | Version@/Applications/Firefox.app@3.5.7;LT
+### File
 
-Base Criteria | Query | Value | Query Result | Example
----|---|---|---|---
-**Script** | Script | Script | True | (NOTE: If a "@" is used it must be escaped with another "@")
+| Query | Value | Query Result | Example
+:------:|:-----:|:------------:|:-------:
+Exists | File path | True/False | Exists@/Applications/Firefox.app@True
+Date | File path | True/False | Date@/Applications/Firefox.app@2010-03-22 12:00:00;LT
+Hash | File path | MD5 Hash;True/False | Hash@/Applications/Firefox.app@123432dsh2362h3h;TRUE
+Version | File path | Version;(EQ,LT,LTE,GT,GTE,NEQ) | Version@/Applications/Firefox.app@3.5.7;LT
+
+### Script
+
+| Query | Value | Query Result | Example
+:------:|:-----:|:------------:|:-------:
+Script | Script | True | (NOTE: If a "@" is used it must be escaped with another "@")
 
 ### Testing Patch Content
 To test patch content you will need to edit the client settings those clients deemed as QA clients. This is done by creating a new patch group with the "QA" type and editing the clients config plist.

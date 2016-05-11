@@ -15,8 +15,8 @@ collections:
 # paginate: 10
 
 permalink: pretty
-# markdown: kramdown
 
-markdown: redcarpet
-redcarpet:
-  extensions: [tables]
+markdown: kramdown
+kramdown:
+  input: GFM # Enable GitHub Flavored Markdown (fenced code blocks)
+  hard_wrap: false
