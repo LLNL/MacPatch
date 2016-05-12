@@ -33,6 +33,7 @@
 		8F530FFE1B42EEAC00B8D893 /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FF81B42EEAC00B8D893 /* FMDatabaseAdditions.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F530FFF1B42EEAC00B8D893 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F530FFA1B42EEAC00B8D893 /* FMResultSet.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F5310011B42EEE400B8D893 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5310001B42EEE400B8D893 /* libsqlite3.dylib */; };
+		8F6D32461CD3C34E006B1094 /* MPOSUpgrade.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6D32451CD3C34E006B1094 /* MPOSUpgrade.m */; };
 		8FA6A8771B9621BF006A329B /* BatteryInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8601B9621BF006A329B /* BatteryInfo.m */; };
 		8FA6A8781B9621BF006A329B /* CHDisk.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8621B9621BF006A329B /* CHDisk.m */; };
 		8FA6A8791B9621BF006A329B /* CHDiskInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8641B9621BF006A329B /* CHDiskInfo.m */; };
@@ -123,6 +124,8 @@
 		8F530FF91B42EEAC00B8D893 /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMResultSet.h; sourceTree = "<group>"; };
 		8F530FFA1B42EEAC00B8D893 /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMResultSet.m; sourceTree = "<group>"; };
 		8F5310001B42EEE400B8D893 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		8F6D32441CD3C34E006B1094 /* MPOSUpgrade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPOSUpgrade.h; sourceTree = "<group>"; };
+		8F6D32451CD3C34E006B1094 /* MPOSUpgrade.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPOSUpgrade.m; sourceTree = "<group>"; };
 		8FA6A85F1B9621BF006A329B /* BatteryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatteryInfo.h; sourceTree = "<group>"; };
 		8FA6A8601B9621BF006A329B /* BatteryInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BatteryInfo.m; sourceTree = "<group>"; };
 		8FA6A8611B9621BF006A329B /* CHDisk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDisk.h; sourceTree = "<group>"; };
@@ -252,6 +255,8 @@
 				8F4B1F0516DD77FF00E15A9E /* MPDefaultsWatcher.m */,
 				8FA6A8841B96230C006A329B /* MPInventoryPlugin.h */,
 				8FA6A8851B96230C006A329B /* MPInventoryPlugin.m */,
+				8F6D32441CD3C34E006B1094 /* MPOSUpgrade.h */,
+				8F6D32451CD3C34E006B1094 /* MPOSUpgrade.m */,
 				8F4B1F0916DE633200E15A9E /* MPTasks */,
 				8FE03DD21B601926005D39EE /* Classes */,
 				8F530FFC1B42EEAC00B8D893 /* Third Party Classes */,
@@ -461,6 +466,7 @@
 				8F530FFD1B42EEAC00B8D893 /* FMDatabase.m in Sources */,
 				8F4B1F0616DD77FF00E15A9E /* MPAgent.m in Sources */,
 				8FA6A8821B9621BF006A329B /* PowerProfile.m in Sources */,
+				8F6D32461CD3C34E006B1094 /* MPOSUpgrade.m in Sources */,
 				8FA6A87D1B9621BF006A329B /* MPInv.m in Sources */,
 				8FE03DD61B60195A005D39EE /* AntiVirus.m in Sources */,
 				8F530FFE1B42EEAC00B8D893 /* FMDatabaseAdditions.m in Sources */,

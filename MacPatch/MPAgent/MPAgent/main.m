@@ -28,12 +28,13 @@
 #import "MPAppController.h"
 #import "MPAgentRegister.h"
 #import "MPInv.h"
+#import "MPOSUpgrade.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"2.1.5.0"
+#define APPVERSION	@"2.2.0.0"
 #define APPNAME		@"MPAgent"
 
 void usage(void);
@@ -51,6 +52,11 @@ int main (int argc, char * argv[])
         NSString *regKeyArg = @"999999999";
         // Inventory
         NSString *invArg = NULL;
+        // OS Migration
+        BOOL osMigration = NO;
+        NSString *osMigAction = NULL;
+        NSString *osMigLabel = @"";
+        NSString *osMigID = @"auto";
 		
 		// Setup argument processing
 		int c;
@@ -83,6 +89,10 @@ int main (int argc, char * argv[])
                 {"type"                 ,required_argument	,0, 't'},
                 {"Audit"                ,no_argument		,0, 'A'},
                 {"cuuid"                ,no_argument		,0, 'C'},
+                // OS Migration
+                {"OSUpgrade"            ,required_argument	,0, 'k'},
+                {"OSLabel"              ,required_argument	,0, 'l'},
+                {"OSUpgradeID"          ,required_argument	,0, 'm'},
 				{0, 0, 0, 0}
 			};
 			// getopt_long stores the option index here.
@@ -149,6 +159,23 @@ int main (int argc, char * argv[])
                 case 'C':
                     printf("%s\n",[[MPSystemInfo clientUUID] UTF8String]);
                     return 0;
+                case 'k':
+                    if ([[[NSString stringWithUTF8String:optarg] lowercaseString] isEqualTo:@"start"]) {
+                        osMigAction = @"start";
+                        osMigration = YES;
+                    } else if ([[[NSString stringWithUTF8String:optarg] lowercaseString] isEqualTo:@"stop"]) {
+                        osMigAction = @"stop";
+                        osMigration = YES;
+                    } else {
+                        osMigAction = @"ERR";
+                    }
+                    break;
+                case 'l':
+                    osMigLabel = [NSString stringWithUTF8String:optarg];
+                    break;
+                case 'm':
+                    osMigID = [NSString stringWithUTF8String:optarg];
+                    break;
 				case 'V':
 					verboseLogging = YES;
 					break;
@@ -244,6 +271,20 @@ int main (int argc, char * argv[])
             regResult = [mpar registerClient:clientKey];
             //[mpar registerClient:regKeyArg hostName:[[MPAgent sharedInstance] g_hostName] clientKey:clientKey];
             NSLog(@"%d",regResult);
+        } else if (osMigration) {
+            NSString *uID;
+            MPOSUpgrade *mposu = [[MPOSUpgrade alloc] init];
+            if ([[osMigID lowercaseString] isEqualTo:@"auto"]) {
+                uID = [[NSUUID UUID] UUIDString];
+            } else {
+                uID = osMigID;
+            }
+            NSError *err = nil;
+            [mposu postOSUpgradeStatus:osMigAction label:osMigLabel upgradeID:uID error:&err];
+            if (err) {
+                logit(lcl_vError,@"%@",err.localizedDescription);
+                exit(1);
+            }
         } else {
             MPAppController *mpac = [[MPAppController alloc] initWithArg:a_Type];
             [[NSRunLoop currentRunLoop] run];
