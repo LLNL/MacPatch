@@ -26,8 +26,8 @@ fi
 DBNAME="MacPatchDB"
 MPUSER="mpdbadm"
 MPROUSR="mpdbro"
-MPUSRPAS="Password"
-MPUSRROPAS="Password"
+MPUSRPAS=""
+MPUSRROPAS=""
 HOST=`hostname`
 
 BTICK='`'
@@ -70,8 +70,6 @@ do
     promptA='*'
     MPUSRPAS+="$char"
 done
-#read -p "MacPatch User Account Password: " MPUSRPAS
-#MPUSRPAS=${MPUSRPAS:-Password}
 
 echo
 read -p "MacPatch Read Only User Account [mpdbro]: " MPROUSR
@@ -87,14 +85,13 @@ do
     promptB='*'
     MPUSRROPAS+="$char"
 done
-#read -p "MacPatch User Account Password: " MPUSRROPAS
-#MPUSRROPAS=${MPUSRROPAS:-Password}
-#echo
 
+# For MySQL 5.7, not supported yet
 QA="DROP USER IF EXISTS 'mpdbadm'@'localhost';"
 QB="DROP USER IF EXISTS 'mpdbadm'@'%';"
 QC="DROP USER IF EXISTS 'mpdbro'@'localhost';"
 QD="DROP USER IF EXISTS 'mpdbro'@'%';"
+
 Q1="CREATE DATABASE IF NOT EXISTS ${BTICK}$DBNAME${BTICK};"
 Q2="CREATE USER '${MPUSER}'@'%' IDENTIFIED BY '${MPUSRPAS}';"
 Q3="GRANT ALL ON $DBNAME.* TO '${MPUSER}'@'%' IDENTIFIED BY '${MPUSRPAS}';"
@@ -103,10 +100,10 @@ Q5="CREATE USER '${MPROUSR}'@'%' IDENTIFIED BY '${MPUSRROPAS}';"
 Q6="GRANT SELECT ON $DBNAME.* TO '${MPROUSR}'@'%';"
 Q7="SET GLOBAL log_bin_trust_function_creators = 1;"
 Q8="FLUSH PRIVILEGES;"
-Q9="DROP USER IF EXISTS ''@'localhost';"
-Q10="DROP USER IF EXISTS ''@'$HOST';"
+Q9="DROP USER ''@'localhost';"
+Q10="DROP USER ''@'$HOST';"
 
-SQL="${QA}${QB}${QC}${QD}${Q1}${Q2}${Q3}${Q4}${Q5}${Q6}${Q7}${Q8}${Q9}${Q10}"
+SQL="${Q1}${Q2}${Q3}${Q4}${Q5}${Q6}${Q7}${Q8}${Q9}${Q10}"
 
 clear
 echo
