@@ -27,12 +27,13 @@
   MacPatch Patch Database Setup Script
   MacPatch Version 2.5.43 and higher
   
-  Script Version 1.0.2
+  Script Version 1.0.3
 '''
 
 import os
 import json
 import platform
+import getpass
 from pprint import pprint
 
 MP_SRV_BASE = "/Library/MacPatch/Server"
@@ -63,7 +64,7 @@ set_admin_info = raw_input("Would you like to set the admin name and password [Y
 if set_admin_info == "Y":
 	mp_adm_name = raw_input("MacPatch Default Admin Account Name [mpadmin]: ") or "mpadmin"
 	cData["settings"]["users"]["admin"]["name"] = mp_adm_name
-	mp_adm_pass = raw_input("MacPatch MacPatch Default Admin Account Password: ")
+	mp_adm_pass = getpass.getpass("MacPatch MacPatch Default Admin Account Password:")
 	cData["settings"]["users"]["admin"]["pass"] = mp_adm_pass
 
 '''	
@@ -84,9 +85,9 @@ cData["settings"]["database"]["prod"]["dbName"] = mp_db_name
 cData["settings"]["database"]["ro"]["dbName"] = mp_db_name
 mp_db_usr = raw_input("MacPatch Database User Name [mpdbadm]: ") or "mpdbadm"
 cData["settings"]["database"]["prod"]["username"] = mp_db_usr
-mp_db_pas = raw_input("MacPatch Database User Password: ")
+mp_db_pas = getpass.getpass('MacPatch Database User Password:')
 cData["settings"]["database"]["prod"]["password"] = mp_db_pas
-mp_db_pas_ro = raw_input("MacPatch Database Read Only User Password: ")
+mp_db_pas_ro = getpass.getpass('MacPatch Database Read Only User Password:')
 cData["settings"]["database"]["ro"]["password"] = mp_db_pas_ro
 
 '''	
