@@ -40,8 +40,8 @@
 	<key>MPServerAddress</key>
 	<string>localhost</string>
 	<key>MPServerPort</key>
-	<string>3601</string>
+	<string>2600</string>
 	<key>MPServerUseSSL</key>
-	<false/>
+	<true/>
 </dict>
 </plist>
