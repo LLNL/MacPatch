@@ -17,7 +17,8 @@ You must have [AutoPkg](https://github.com/autopkg/autopkg/releases/latest) inst
     autopkg repo-add http://github.com/autopkg/recipes.git
 
 
-You can find more information on AutoPkg [here](http://autopkg.github.io/autopkg/)
+You can find more information on AutoPkg [here](http://autopkg.github.io/autopkg/).<br>
+I recommend also using [AutoPkgr](http://www.lindegroup.com/autopkgr), which is an excellent GUI front end to AutoPkg.
 
 ### Add the MacPatch repo
 
