@@ -8,14 +8,14 @@ title: "Quick Start Guide for Linux"
 
 This is a quick start guide to getting MacPatch version 2.8.x installed and running on a Linux based system running Ubuntu or Fedora (RedHat).
 
-Please note, this has been tested on Ubuntu 12.10, Fedora 20, Fedora 21. RHEL 7 is supported but previouse versions are not. 
+Please note, this has been tested on Ubuntu 12.10, Fedora 20, Fedora 21. RHEL 7 is supported but previous versions are not. 
 
 ## Table of Contents
 * [Required Software](#required-software)
 	* [Ubuntu](#ubuntu)
 	* [Fedora / RHEL](#fedora--redhat-enterprise-linux)
 	* [Python](#pip-python-modules)
-* [Download and Build](#download-and-build-the-server-software) 
+* [Download and Build](#download-and-build-the-server-software)
 * [MySQL Database](#mysql-database)
 * [Server Setup](#setup-macpatch-server)
 * [Download and Add Patch Content](#download-and-add-patch-content)
