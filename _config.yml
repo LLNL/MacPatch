@@ -5,7 +5,7 @@ description: "OS X Management Software"
 url: "http://macpatch.llnl.gov"
 baseurl: ""
 
-img_media: /static/assets/main/images 
+img_media: /static/assets/main/images
 
 collections:
   docs:
@@ -15,6 +15,7 @@ collections:
 # paginate: 10
 
 permalink: pretty
+highlighter: rouge
 
 markdown: kramdown
 kramdown:
