@@ -171,11 +171,11 @@
                 <cfreturn false>
             </cfif>
 
-        <cfcatch type="any">
-            <cfset l = lErr("isValidSignature", "#cfcatch.Message#", "#cfcatch.Detail#") />
-            <cfreturn false>
-        </cfcatch>
-		
+	        <cfcatch type="any">
+	            <cfset l = lErr("isValidSignature", "#cfcatch.Message#", "#cfcatch.Detail#") />
+	            <cfreturn false>
+	        </cfcatch>
+		</cftry>
 		<!--- Should not get here --->
 		<cfreturn false>
 	</cffunction>
