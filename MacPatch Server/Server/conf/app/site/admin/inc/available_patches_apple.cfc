@@ -47,7 +47,7 @@
             <cfcatch type="any">
 				<cfset blnSearch = false>					
 				<cfset strMsgType = "Error">
-				<cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">					
+				<cfset strMsg = "There was an issue with the Search. An Error Report has been submitted to Support.">
 			</cfcatch>		
 		</cftry>
 		
