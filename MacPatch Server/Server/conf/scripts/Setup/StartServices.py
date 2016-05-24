@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 2.8.x
   
-  Script Version 1.8.8
+  Script Version 1.8.9
 '''
 
 import os
@@ -337,8 +337,8 @@ def setupPatchLoader():
 		prefs = plistlib.readPlist(theFile)
 
 	prefs['MPServerAddress'] = '127.0.0.1'
-	prefs['MPServerUseSSL'] = 'N'
-	prefs['MPServerPort'] = '3601'
+	prefs['MPServerUseSSL'] = True
+	prefs['MPServerPort'] = '2600'
 
 	try:
 		plistlib.writePlist(prefs,theFile)	
