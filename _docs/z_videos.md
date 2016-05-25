@@ -6,10 +6,11 @@ title: "Videos"
 # Videos
 ---
 
-## Server Configuration - Part 1
+## Server Install
 {% include vimeo_player.html id="166542289" %}
 
-
-## Server Configuration - Part 2
+## Server Configuration
 {% include vimeo_player.html id="166542482" %}
 
+## Server Configuration and Agent Upload
+{% include vimeo_player.html id="166981582" %}
