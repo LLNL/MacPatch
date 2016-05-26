@@ -2,7 +2,7 @@
 
     <cfscript>
     	// The name of the application
-    	this.name					= "MP_ADMIN_2811";
+    	this.name					= "MP_ADMIN_2900";
     	// We wish to enable the session managment
     	this.sessionmanagement 		= true;
     	this.applicationTimeout 	= createTimeSpan( 0, 5, 0, 0 );
