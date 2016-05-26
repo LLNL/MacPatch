@@ -88,12 +88,9 @@
 // Crypto
 #import "MPCrypto.h"
 #import "MPCodeSign.h"
-#import "RSACrypto.h"
 #import "MPKeychain.h"
 
 // Helpers
-#import "NSString-Base64Extensions.h"
-#import "NSData-Base64Extensions.h"
 #import "NSString+Helper.h"
 #import "NSString+Hash.h"
 #import "NSFileManager+Helper.h"
@@ -102,6 +99,7 @@
 #import "NSMutableDictionary+Helper.h"
 #import "NSDate+Helper.h"
 #import "NSData+Base64.h"
+#import "NSString+Base64.h"
 
 // Inventory Plugin
 //#import "InventoryPlugin.h"

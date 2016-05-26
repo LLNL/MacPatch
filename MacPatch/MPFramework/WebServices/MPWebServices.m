@@ -427,9 +427,8 @@
 
     // Request
     NSError *error = nil;
-    //NSDictionary *param = [NSDictionary dictionaryWithObject:[[_defaults objectForKey:@"PatchGroup"] urlEncode] forKey:@"PatchGroup"];
-    NSDictionary *param = [NSDictionary dictionaryWithObject:[_defaults objectForKey:@"PatchGroup"] forKey:@"PatchGroup"];
-    NSData *res = [self requestWithMethodAndParams:@"GetPatchGroupPatches" params:param error:&error];
+    NSDictionary *params = @{@"clientID":self._cuuid, @"PatchGroup":[_defaults objectForKey:@"PatchGroup"]};
+    NSData *res = [self requestWithMethodAndParams:@"GetPatchGroupPatches" params:params error:&error];
 
     if (error)
     {
@@ -534,10 +533,10 @@
     
     // Request
     NSError *error = nil;
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    [params setObject:[_defaults objectForKey:@"PatchGroup"] forKey:@"PatchGroup"];
-    [params setObject:[NSNumber numberWithInt:patchGroupRevision] forKey:@"revision"];
-    NSData *res = [self requestWithMethodAndParams:@"GetIsLatestRevisionForPatchGroup" params:(NSDictionary *)params error:&error];
+    NSDictionary *params = @{@"clientID": self._cuuid,
+                             @"PatchGroup": [_defaults objectForKey:@"PatchGroup"],
+                             @"revision":[NSNumber numberWithInt:patchGroupRevision]};
+    NSData *res = [self requestWithMethodAndParams:@"GetIsLatestRevisionForPatchGroup" params:params error:&error];
     if (error)
     {
         if (err != NULL) {
@@ -841,7 +840,7 @@
         return NO;
     }
 
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:_cuuid, @"clientID", @"SAV", @"avAgent",jSrlData, @"jsonData", nil];
+    NSDictionary *params = @{@"clientID": self._cuuid, @"avAgent": @"SAV", @"jsonData": jSrlData};
     NSData *res = [self requestWithMethodAndParams:@"PostClientAVData" params:params error:&error];
     if (error)
     {
@@ -1110,13 +1109,6 @@
     
     qlinfo(@"Client Scan Data was posted to webservice.");
     return YES;
-}
-
-// deprecated as of 2.5 release
-- (BOOL)postDataMgrXML:(NSString *)aDataMgrXML error:(NSError **)err __deprecated
-{
-    qlerror(@"[postDataMgrXML]: has been removed.");
-    return NO;
 }
 
 - (BOOL)postDataMgrJSON:(NSString *)aDataMgrJSON error:(NSError **)err
@@ -1448,6 +1440,7 @@
     // Request
     NSError *error = nil;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    [params setObject:self._cuuid forKey:@"clientID"];
     if (aState) {
         [params setObject:aState forKey:@"state"];
     }
@@ -1490,6 +1483,7 @@
     NSError *error = nil;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     [params setObject:aGroupName forKey:@"GroupName"];
+    [params setObject:self._cuuid forKey:@"clientID"];
     NSData *res = [self requestWithMethodAndParams:@"GetSoftwareTasksForGroupHash" params:(NSDictionary *)params error:&error];
     if (error)
     {
@@ -1556,6 +1550,7 @@
     NSError *error = nil;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     [params setObject:aGroupName forKey:@"GroupName"];
+    [params setObject:self._cuuid forKey:@"clientID"];
     NSData *res = [self requestWithMethodAndParams:@"GetSoftwareTasksForGroup" params:(NSDictionary *)params error:&error];
     if (error)
     {
@@ -1642,6 +1637,7 @@
     NSError *error = nil;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     [params setObject:aTaskID forKey:@"TaskID"];
+    [params setObject:self._cuuid forKey:@"clientID"];
     NSData *res = [self requestWithMethodAndParams:@"GetSoftwareTasksUsingID" params:(NSDictionary *)params error:&error];
     if (error)
     {

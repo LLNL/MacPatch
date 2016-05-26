@@ -570,7 +570,9 @@
 					<key>MPProxyServerPort</key>
 					<string>#proxyConfig.result.MPProxyServerPort#</string>  
 					<key>MPProxyEnabled</key>
-					<string>#proxyConfig.result.MPProxyEnabled#</string>  
+					<string>#proxyConfig.result.MPProxyEnabled#</string>
+					<key>MPProxyAllowSelfSigned</key>
+					<string>#masterConfig.result.MPServerAllowSelfSigned#</string>  
 				</cfif>
 				<cfif defaultMaster EQ 1>
 					<key>MPServerAddress</key>
@@ -578,7 +580,9 @@
 					<key>MPServerPort</key>
 					<string>#masterConfig.result.MPServerPort#</string>  
 					<key>MPServerSSL</key>
-					<string>#masterConfig.result.MPServerSSL#</string>  
+					<string>#masterConfig.result.MPServerSSL#</string> 
+					<key>MPServerAllowSelfSigned</key>
+					<string>#masterConfig.result.MPServerAllowSelfSigned#</string>  
 				</cfif>
 			</dict>
 			<key>enforced</key>
@@ -603,7 +607,9 @@
 					<key>MPProxyServerPort</key>
 					<string>#proxyConfig.result.MPProxyServerPort#</string>  
 					<key>MPProxyEnabled</key>
-					<string>#proxyConfig.result.MPProxyEnabled#</string>  
+					<string>#proxyConfig.result.MPProxyEnabled#</string>
+					<key>MPProxyAllowSelfSigned</key>
+					<string>#masterConfig.result.MPServerAllowSelfSigned#</string>  
 				</cfif>
 				<cfif enforceMaster EQ 1>
 					<key>MPServerAddress</key>
@@ -611,7 +617,9 @@
 					<key>MPServerPort</key>
 					<string>#masterConfig.result.MPServerPort#</string>  
 					<key>MPServerSSL</key>
-					<string>#masterConfig.result.MPServerSSL#</string>  
+					<string>#masterConfig.result.MPServerSSL#</string>
+					<key>MPServerAllowSelfSigned</key>
+					<string>#masterConfig.result.MPServerAllowSelfSigned#</string>  
 				</cfif>
 			</dict>
 		</dict>
@@ -767,12 +775,14 @@
 			<cfset serverInfo.MPServerAddress = "">
 			<cfset serverInfo.MPServerPort = "2600">
 			<cfset serverInfo.MPServerSSL = "1">
+			<cfset serverInfo.MPServerAllowSelfSigned = "0">
 			
 			<cfoutput query="arguments.data">
 				<cfif arguments.data.isMaster EQ 1>
 					<cfset serverInfo.MPServerAddress = arguments.data.server>
 					<cfset serverInfo.MPServerPort = arguments.data.port>
 					<cfset serverInfo.MPServerSSL = arguments.data.useSSL>
+					<cfset serverInfo.MPServerAllowSelfSigned = arguments.data.allowSelfSignedCert>
 				</cfif>
 			</cfoutput>
 			
@@ -780,12 +790,14 @@
 			<cfset serverInfo.MPProxyServerAddress = "">
 			<cfset serverInfo.MPProxyServerPort = "2600">
 			<cfset serverInfo.MPProxyEnabled = "0">
+			<cfset serverInfo.MPProxyAllowSelfSigned = "0">
 			
 			<cfoutput query="arguments.data">
 				<cfif arguments.data.isProxy EQ 1>
 					<cfset serverInfo.MPProxyServerAddress = arguments.data.server>
 					<cfset serverInfo.MPProxyServerPort = arguments.data.port>
 					<cfset serverInfo.MPProxyEnabled = 1>
+					<cfset serverInfo.MPProxyAllowSelfSigned = arguments.data.allowSelfSignedCert>
 				</cfif>
 			</cfoutput>
 		<cfelse>	

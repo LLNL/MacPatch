@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		72A41AA31CF62E6500FE337B /* NSString+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 72A41AA11CF62E6500FE337B /* NSString+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		72A41AA41CF62E6500FE337B /* NSString+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 72A41AA21CF62E6500FE337B /* NSString+Base64.m */; };
 		8F00CD0517610F1D008CC39E /* MPCodeSign.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F00CD0317610F1D008CC39E /* MPCodeSign.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F00CD0617610F1D008CC39E /* MPCodeSign.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F00CD0417610F1D008CC39E /* MPCodeSign.m */; };
 		8F2E697B19229A85001BF9D6 /* MPFailedRequests.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2E697919229A85001BF9D6 /* MPFailedRequests.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -47,8 +49,6 @@
 		8F4B1E0716DD1D6400E15A9E /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F018297147839CF0013EDE0 /* NSFileManager+DirectoryLocations.m */; };
 		8F4B1E0816DD1D6400E15A9E /* NSDictionary+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FBB10BE152F712400A45934 /* NSDictionary+Helper.m */; };
 		8F4B1E0916DD1D6400E15A9E /* NSMutableDictionary+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FBB10B9152F6D7900A45934 /* NSMutableDictionary+Helper.m */; };
-		8F4B1E0B16DD1D6400E15A9E /* NSData-Base64Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAEF66A145F19AD006284B2 /* NSData-Base64Extensions.m */; };
-		8F4B1E0C16DD1D6400E15A9E /* NSString-Base64Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FAEF66C145F19AD006284B2 /* NSString-Base64Extensions.m */; };
 		8F4B1E1416DD1D6400E15A9E /* lcl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB7755140C2F0700D86586 /* lcl.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F4B1E1516DD1D6400E15A9E /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB775D140C2F0700D86586 /* LCLLogFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F4B1E1716DD1D8C00E15A9E /* Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 724EE9831698A57A007FD391 /* Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -75,8 +75,6 @@
 		8F4B1E3016DD1D8C00E15A9E /* NSFileManager+DirectoryLocations.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F018296147839CF0013EDE0 /* NSFileManager+DirectoryLocations.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E3116DD1D8C00E15A9E /* NSDictionary+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FBB10BD152F712400A45934 /* NSDictionary+Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E3216DD1D8C00E15A9E /* NSMutableDictionary+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FBB10B8152F6D7900A45934 /* NSMutableDictionary+Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F4B1E3416DD1D8C00E15A9E /* NSData-Base64Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAEF669145F19AD006284B2 /* NSData-Base64Extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F4B1E3516DD1D8C00E15A9E /* NSString-Base64Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAEF66B145F19AD006284B2 /* NSString-Base64Extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E4116DD1D8C00E15A9E /* lcl_config_logger.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB7751140C2F0700D86586 /* lcl_config_logger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E4216DD1D8C00E15A9E /* LCLLogFileConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB7752140C2F0700D86586 /* LCLLogFileConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E4316DD1D8C00E15A9E /* lcl_config_extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB7750140C2F0700D86586 /* lcl_config_extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -96,7 +94,6 @@
 		8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F3516DE64DA00E15A9E /* MPSWTasks.m */; };
 		8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F50CB7C199D5DD0006AC537 /* MPKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F50CB7D199D5DD0006AC537 /* MPKeychain.m */; };
-		8F72BBB21BA3A16800BDCABB /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F72BBAF1BA39E7C00BDCABB /* libcrypto.a */; };
 		8F7B8B3F1CB03B3200FB940F /* AFHTTPRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F7B8B2C1CB03B3200FB940F /* AFHTTPRequestOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F7B8B401CB03B3200FB940F /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7B8B2D1CB03B3200FB940F /* AFHTTPRequestOperation.m */; };
 		8F7B8B411CB03B3200FB940F /* AFHTTPRequestOperationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F7B8B2E1CB03B3200FB940F /* AFHTTPRequestOperationManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -136,30 +133,13 @@
 		8FEC938817CBFEFB00AA9C1C /* MPApplePatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938617CBFEFB00AA9C1C /* MPApplePatch.m */; };
 		8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEC938917CBFF0F00AA9C1C /* MPCustomPatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FEC938C17CBFF0F00AA9C1C /* MPCustomPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */; };
-		8FF93F9E199A9205005A4EEB /* RSACrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF93F9C199A9205005A4EEB /* RSACrypto.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FF93F9F199A9205005A4EEB /* RSACrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F9D199A9205005A4EEB /* RSACrypto.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		8F72BBAE1BA39E7C00BDCABB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F72BBAA1BA39E7B00BDCABB /* openssl.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9069D28C0FCE659A0042E34C;
-			remoteInfo = crypto;
-		};
-		8F72BBB01BA39E8400BDCABB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F72BBAA1BA39E7B00BDCABB /* openssl.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9069D28B0FCE659A0042E34C;
-			remoteInfo = crypto;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		724EE9831698A57A007FD391 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = ../Constants.h; sourceTree = "<group>"; };
 		724EE9841698A57A007FD391 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Constants.m; path = ../Constants.m; sourceTree = "<group>"; };
+		72A41AA11CF62E6500FE337B /* NSString+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Base64.h"; sourceTree = "<group>"; };
+		72A41AA21CF62E6500FE337B /* NSString+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Base64.m"; sourceTree = "<group>"; };
 		8F00CD0317610F1D008CC39E /* MPCodeSign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCodeSign.h; sourceTree = "<group>"; };
 		8F00CD0417610F1D008CC39E /* MPCodeSign.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCodeSign.m; sourceTree = "<group>"; };
 		8F018296147839CF0013EDE0 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
@@ -197,7 +177,6 @@
 		8F50CB7D199D5DD0006AC537 /* MPKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPKeychain.m; sourceTree = "<group>"; };
 		8F6BA41115C0E59A00F44501 /* MPDiskUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDiskUtil.h; sourceTree = "<group>"; };
 		8F6BA41215C0E59A00F44501 /* MPDiskUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDiskUtil.m; sourceTree = "<group>"; };
-		8F72BBAA1BA39E7B00BDCABB /* openssl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openssl.xcodeproj; path = "../openssl-xcode/openssl.xcodeproj"; sourceTree = "<group>"; };
 		8F7B15CC15068211005CEA32 /* MPCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPCrypto.h; path = Crypto/MPCrypto.h; sourceTree = "<group>"; };
 		8F7B15CD15068211005CEA32 /* MPCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPCrypto.m; path = Crypto/MPCrypto.m; sourceTree = "<group>"; };
 		8F7B8B2C1CB03B3200FB940F /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AFHTTPRequestOperation.h; path = AFNetworking/AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -247,10 +226,6 @@
 		8FAEF650145F187C006284B2 /* MPDataMgr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDataMgr.m; sourceTree = "<group>"; };
 		8FAEF65E145F1922006284B2 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		8FAEF65F145F1922006284B2 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
-		8FAEF669145F19AD006284B2 /* NSData-Base64Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData-Base64Extensions.h"; sourceTree = "<group>"; };
-		8FAEF66A145F19AD006284B2 /* NSData-Base64Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData-Base64Extensions.m"; sourceTree = "<group>"; };
-		8FAEF66B145F19AD006284B2 /* NSString-Base64Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString-Base64Extensions.h"; sourceTree = "<group>"; };
-		8FAEF66C145F19AD006284B2 /* NSString-Base64Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString-Base64Extensions.m"; sourceTree = "<group>"; };
 		8FBB10B8152F6D7900A45934 /* NSMutableDictionary+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+Helper.h"; sourceTree = "<group>"; };
 		8FBB10B9152F6D7900A45934 /* NSMutableDictionary+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+Helper.m"; sourceTree = "<group>"; };
 		8FBB10BD152F712400A45934 /* NSDictionary+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Helper.h"; sourceTree = "<group>"; };
@@ -296,8 +271,6 @@
 		8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCustomPatch.m; sourceTree = "<group>"; };
 		8FED886F146462DB00709F8E /* MPASUSCatalogs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPASUSCatalogs.h; sourceTree = "<group>"; };
 		8FED8870146462DB00709F8E /* MPASUSCatalogs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPASUSCatalogs.m; sourceTree = "<group>"; };
-		8FF93F9C199A9205005A4EEB /* RSACrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSACrypto.h; sourceTree = "<group>"; };
-		8FF93F9D199A9205005A4EEB /* RSACrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSACrypto.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,7 +278,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F72BBB21BA3A16800BDCABB /* libcrypto.a in Frameworks */,
 				8FE5609816DE6D6300BB7600 /* Security.framework in Frameworks */,
 				8FE5609916DE6D6600BB7600 /* Foundation.framework in Frameworks */,
 				8FE5609A16DE6D6800BB7600 /* SystemConfiguration.framework in Frameworks */,
@@ -330,7 +302,6 @@
 		0867D691FE84028FC02AAC07 /* MPFramework */ = {
 			isa = PBXGroup;
 			children = (
-				8F72BBAA1BA39E7B00BDCABB /* openssl.xcodeproj */,
 				8F4B1DE516DD1BC600E15A9E /* MacPatch */,
 				8FEA3EE51649726400103E80 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -424,14 +395,6 @@
 			name = "MacPatch+SWDist";
 			sourceTree = "<group>";
 		};
-		8F72BBAB1BA39E7B00BDCABB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8F72BBAF1BA39E7C00BDCABB /* libcrypto.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8F7B8B2B1CB03B2800FB940F /* AFNetworking */ = {
 			isa = PBXGroup;
 			children = (
@@ -520,10 +483,8 @@
 			children = (
 				8F4B1F2816DE639100E15A9E /* NSData+Base64.h */,
 				8F4B1F2916DE639100E15A9E /* NSData+Base64.m */,
-				8FAEF669145F19AD006284B2 /* NSData-Base64Extensions.h */,
-				8FAEF66A145F19AD006284B2 /* NSData-Base64Extensions.m */,
-				8FAEF66B145F19AD006284B2 /* NSString-Base64Extensions.h */,
-				8FAEF66C145F19AD006284B2 /* NSString-Base64Extensions.m */,
+				72A41AA11CF62E6500FE337B /* NSString+Base64.h */,
+				72A41AA21CF62E6500FE337B /* NSString+Base64.m */,
 			);
 			path = Base64;
 			sourceTree = "<group>";
@@ -597,8 +558,6 @@
 			children = (
 				8F7B15CC15068211005CEA32 /* MPCrypto.h */,
 				8F7B15CD15068211005CEA32 /* MPCrypto.m */,
-				8FF93F9C199A9205005A4EEB /* RSACrypto.h */,
-				8FF93F9D199A9205005A4EEB /* RSACrypto.m */,
 				8F50CB7C199D5DD0006AC537 /* MPKeychain.h */,
 				8F50CB7D199D5DD0006AC537 /* MPKeychain.m */,
 				8F00CD0317610F1D008CC39E /* MPCodeSign.h */,
@@ -666,8 +625,6 @@
 				8F4B1E3016DD1D8C00E15A9E /* NSFileManager+DirectoryLocations.h in Headers */,
 				8F4B1E3116DD1D8C00E15A9E /* NSDictionary+Helper.h in Headers */,
 				8F4B1E3216DD1D8C00E15A9E /* NSMutableDictionary+Helper.h in Headers */,
-				8F4B1E3416DD1D8C00E15A9E /* NSData-Base64Extensions.h in Headers */,
-				8F4B1E3516DD1D8C00E15A9E /* NSString-Base64Extensions.h in Headers */,
 				8F4B1E4116DD1D8C00E15A9E /* lcl_config_logger.h in Headers */,
 				8F4B1E4216DD1D8C00E15A9E /* LCLLogFileConfig.h in Headers */,
 				8F4B1E4316DD1D8C00E15A9E /* lcl_config_extensions.h in Headers */,
@@ -703,7 +660,7 @@
 				8FE03DCC1B60020B005D39EE /* NSData+Base64.h in Headers */,
 				8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */,
 				8FC5C8B11BBEF11B00F18BD8 /* MPSUServerList.h in Headers */,
-				8FF93F9E199A9205005A4EEB /* RSACrypto.h in Headers */,
+				72A41AA31CF62E6500FE337B /* NSString+Base64.h in Headers */,
 				8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */,
 				8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */,
 				8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */,
@@ -726,7 +683,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				8F72BBB11BA39E8400BDCABB /* PBXTargetDependency */,
 			);
 			name = MacPatch;
 			productName = MacPatch;
@@ -755,28 +711,12 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* MPFramework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 8F72BBAB1BA39E7B00BDCABB /* Products */;
-					ProjectRef = 8F72BBAA1BA39E7B00BDCABB /* openssl.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8F4B1DE216DD1BC600E15A9E /* MacPatch */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		8F72BBAF1BA39E7C00BDCABB /* libcrypto.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libcrypto.a;
-			remoteRef = 8F72BBAE1BA39E7C00BDCABB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		8FE5611316DE9D0800BB7600 /* ShellScript */ = {
@@ -819,6 +759,7 @@
 				8F4B1DFB16DD1D6400E15A9E /* MPPatchScan.m in Sources */,
 				8F4B1DFC16DD1D6400E15A9E /* MPASUSCatalogs.m in Sources */,
 				8F4B1DFD16DD1D6400E15A9E /* MPBundle.m in Sources */,
+				72A41AA41CF62E6500FE337B /* NSString+Base64.m in Sources */,
 				8F4B1DFE16DD1D6400E15A9E /* MPFileCheck.m in Sources */,
 				8F47F0FC18EDFD6D00158396 /* MPJsonResult.m in Sources */,
 				8F4B1DFF16DD1D6400E15A9E /* MPOSCheck.m in Sources */,
@@ -835,8 +776,6 @@
 				8F4B1E0916DD1D6400E15A9E /* NSMutableDictionary+Helper.m in Sources */,
 				8F47F10218EE000100158396 /* MPNetConfig.m in Sources */,
 				8F7B8B421CB03B3200FB940F /* AFHTTPRequestOperationManager.m in Sources */,
-				8F4B1E0B16DD1D6400E15A9E /* NSData-Base64Extensions.m in Sources */,
-				8F4B1E0C16DD1D6400E15A9E /* NSString-Base64Extensions.m in Sources */,
 				8F4B1E1416DD1D6400E15A9E /* lcl.m in Sources */,
 				8F4B1E1516DD1D6400E15A9E /* LCLLogFile.m in Sources */,
 				8F315B9C19212DEB0031FF73 /* MPServerList.m in Sources */,
@@ -852,7 +791,6 @@
 				8F2E697C19229A85001BF9D6 /* MPFailedRequests.m in Sources */,
 				8FE560D816DE932900BB7600 /* MPAgentController.m in Sources */,
 				8F00CD0617610F1D008CC39E /* MPCodeSign.m in Sources */,
-				8FF93F9F199A9205005A4EEB /* RSACrypto.m in Sources */,
 				8FEC938817CBFEFB00AA9C1C /* MPApplePatch.m in Sources */,
 				8FEC938C17CBFF0F00AA9C1C /* MPCustomPatch.m in Sources */,
 				8F7B8B441CB03B3200FB940F /* AFHTTPSessionManager.m in Sources */,
@@ -860,14 +798,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		8F72BBB11BA39E8400BDCABB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = crypto;
-			targetProxy = 8F72BBB01BA39E8400BDCABB /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB91B208733DA50010E9CD /* Debug */ = {
@@ -957,12 +887,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"../openssl-xcode/openssl/include",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = MacPatch;
@@ -995,12 +921,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"../openssl-xcode/openssl/include",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = MacPatch;

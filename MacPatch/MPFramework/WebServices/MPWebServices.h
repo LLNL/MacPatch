@@ -65,8 +65,6 @@
 - (NSDictionary *)getAgentUpdates:(NSString *)curAppVersion build:(NSString *)curBuildVersion error:(NSError **)err;
 - (NSDictionary *)getAgentUpdaterUpdates:(NSString *)curAppVersion error:(NSError **)err;
 
-
-- (BOOL)postDataMgrXML:(NSString *)aDataMgrXML error:(NSError **)err;
 - (BOOL)postDataMgrJSON:(NSString *)aDataMgrJSON error:(NSError **)err;
 - (BOOL)postSAVDefsDataXML:(NSString *)aAVXML encoded:(BOOL)aEncoded error:(NSError **)err;
 

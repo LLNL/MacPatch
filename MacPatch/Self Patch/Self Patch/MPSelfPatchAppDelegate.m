@@ -24,6 +24,7 @@
  */
 
 #import "MPSelfPatchAppDelegate.h"
+#import "MacPatch.h"
 #import "MPWorkerProtocol.h"
 #import "PrefsController.h"
 #import <SystemConfiguration/SystemConfiguration.h>
@@ -310,7 +311,7 @@ static BOOL gDone = false;
                                  informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
             
             [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-            [alert runModal];
+            [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
 
             [self cleanup];
         }
@@ -343,7 +344,7 @@ static BOOL gDone = false;
                                  informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
             
             [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-            [alert runModal];
+            [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
 
             NSMutableDictionary *details = [NSMutableDictionary dictionary];
 			[details setValue:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue." forKey:NSLocalizedDescriptionKey];
@@ -832,7 +833,7 @@ done:
                                  informativeTextWithFormat:@"There was a issue getting the approved patches for the patch group, scan will exit."];
             
             [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-            [alert runModal];
+            [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
 
             logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
             goto done;
@@ -1102,7 +1103,7 @@ done:
                                  informativeTextWithFormat:@"There are no patches needed at this time."];
             
             [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-            [alert runModal];
+            [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
         } else {
             logit(lcl_vInfo,@"Patches found %d",(int)[[arrayController arrangedObjects] count]);
             [spStatusText setStringValue:[NSString stringWithFormat:@"%d patches needed.",(int)[[arrayController arrangedObjects] count]]];
@@ -1270,7 +1271,7 @@ done:
                         if ([[currPatchToInstallDict objectForKey:@"preinst"] length] > 0 && [[currPatchToInstallDict objectForKey:@"preinst"] isEqualTo:@"NA"] == NO) {
                             [spStatusText setStringValue:[NSString stringWithFormat:@"Begin pre install script."]];
                             [spStatusText display];
-                            NSString *preInstScript = [[currPatchToInstallDict objectForKey:@"preinst"] decodeBase64WithNewLinesReturnString:NO];
+                            NSString *preInstScript = [[currPatchToInstallDict objectForKey:@"preinst"] decodeBase64AsString];
                             logit(lcl_vDebug,@"preInstScript=%@",preInstScript);
                             if ([self runScript:preInstScript] != 0 ) 
                             {
@@ -1329,7 +1330,7 @@ done:
                         if ([[currPatchToInstallDict objectForKey:@"postinst"] length] > 0 && [[currPatchToInstallDict objectForKey:@"postinst"] isEqualTo:@"NA"] == NO) {
                             [spStatusText setStringValue:[NSString stringWithFormat:@"Begin post install script."]];
                             [spStatusText display];
-                            NSString *postInstScript = [[currPatchToInstallDict objectForKey:@"postinst"] decodeBase64WithNewLinesReturnString:NO];
+                            NSString *postInstScript = [[currPatchToInstallDict objectForKey:@"postinst"] decodeBase64AsString];
                             logit(lcl_vDebug,@"postInstScript=%@",postInstScript);
                             if ([self runScript:postInstScript] != 0 ) 
                             {
@@ -1372,7 +1373,6 @@ done:
                         logit(lcl_vInfo,@"%@ has install criteria assigned to it.",[patch objectForKey:@"patch"]);
                         
                         NSDictionary *criteriaDictPre, *criteriaDictPost;
-                        NSData *scriptData;
                         NSString *scriptText;
                         
                         int i = 0;
@@ -1382,10 +1382,8 @@ done:
                             logit(lcl_vInfo,@"Processing pre-install criteria."); 
                             for (i=0;i<[[patch objectForKey:@"criteria_pre"] count];i++)
                             {
-                                criteriaDictPre = [[patch objectForKey:@"criteria_pre"] objectAtIndex:i]; 
-                                
-                                scriptData = [[criteriaDictPre objectForKey:@"data"] decodeBase64WithNewlines:NO];		
-                                scriptText = [[NSString alloc] initWithData:scriptData encoding:NSASCIIStringEncoding];
+                                criteriaDictPre = [[patch objectForKey:@"criteria_pre"] objectAtIndex:i];
+                                scriptText = [[criteriaDictPre objectForKey:@"data"] decodeBase64AsString];
                                 
                                 s_res = [self runScript:scriptText];
                                 if (s_res != 0) {
@@ -1415,9 +1413,7 @@ done:
                             for (i=0;i<[[patch objectForKey:@"criteria_post"] count];i++)
                             {
                                 criteriaDictPost = [[patch objectForKey:@"criteria_post"] objectAtIndex:i];
-                                
-                                scriptData = [[criteriaDictPost objectForKey:@"data"] decodeBase64WithNewlines:NO];		
-                                scriptText = [[NSString alloc] initWithData:scriptData encoding:NSASCIIStringEncoding];
+                                scriptText = [[criteriaDictPost objectForKey:@"data"] decodeBase64AsString];
                                 
                                 s_res = [self runScript:scriptText];
                                 if (s_res != 0) {
@@ -1518,7 +1514,7 @@ done:
             case NSAlertFirstButtonReturn: [self logoutUserNow]; break;
         }
         
-        NSLog (@"NSAlert runModal: returned %d", choice);
+        // NSLog (@"NSAlert runModal: returned %d", choice);
     });
 }
 

@@ -267,7 +267,7 @@
 										  alternateButton:nil 
 											  otherButton:nil 
 								informativeTextWithFormat:@"There was an error authorizing the write operation. Please try again."];
-		[authFail runModal];
+        [authFail performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
 		NSLog(@"Authentication failed");
 		return;
 	}

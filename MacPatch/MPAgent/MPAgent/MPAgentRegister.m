@@ -9,7 +9,6 @@
 #import "MPAgentRegister.h"
 #import "MacPatch.h"
 #import <SystemConfiguration/SystemConfiguration.h>
-#import "RSACrypto.h"
 #import "MPKeychain.h"
 
 #define AUTO_REG_KEY @"999999999"

@@ -5,9 +5,9 @@
 	<key>Agent</key>
 	<dict>
 		<key>version</key>
-		<string>2.1.5</string>
+		<string>2.3.0.0</string>
 		<key>agent_version</key>
-		<string>2.7.6</string>
+		<string>2.9.0</string>
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>
@@ -18,9 +18,9 @@
 	<key>Updater</key>
 	<dict>
 		<key>version</key>
-		<string>2.1.6</string>
+		<string>2.2.0</string>
 		<key>agent_version</key>
-		<string>2.7.6</string>
+		<string>2.9.0</string>
 		<key>osver</key>
 		<string>*</string>
 		<key>build</key>

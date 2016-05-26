@@ -24,6 +24,7 @@
  */
 
 #import "MPInstaller.h"
+#import "MacPatch.h"
 #import <SystemConfiguration/SystemConfiguration.h>
 
 #undef  ql_component

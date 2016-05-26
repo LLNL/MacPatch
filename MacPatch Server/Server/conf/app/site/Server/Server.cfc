@@ -317,7 +317,8 @@
                         MPServerAddress = "AUTOFILL",
                         MPServerPort = "2600",
                         MPServerSSL = "1",
-                        CheckSignatures = "0"
+                        CheckSignatures = "0",
+                        MPServerAllowSelfSigned = "0"
                     };
                 </cfscript>
                 <cfloop collection="#agentConf#" item="key">

@@ -63,6 +63,9 @@
 						    <cfcase value="MPServerSSL"> 
 						        <cfset fKeyName = "MPServerSSL">
 						    </cfcase>
+						    <cfcase value="MPServerAllowSelfSigned"> 
+						        <cfset fKeyName = "MPServerAllowSelfSigned">
+						    </cfcase>
                             <cfcase value="CheckSignatures"> 
 						        <cfset fKeyName = "CheckSignatures">
 						    </cfcase>
@@ -144,6 +147,9 @@
 						    </cfcase>
 						    <cfcase value="MPServerSSL"> 
 						        <cfset efKeyName = "MPServerSSL">
+						    </cfcase>
+						    <cfcase value="MPServerAllowSelfSigned"> 
+						        <cfset efKeyName = "MPServerAllowSelfSigned">
 						    </cfcase>
                             <cfcase value="CheckSignatures"> 
 						        <cfset efKeyName = "CheckSignatures">

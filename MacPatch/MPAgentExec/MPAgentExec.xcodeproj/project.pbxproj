@@ -320,14 +320,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPAgentExec/MPAgentExec-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/include/libxml2,
-					"../openssl-xcode/openssl/include",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
-				);
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -352,14 +346,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MPAgentExec/MPAgentExec-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/include/libxml2,
-					"../openssl-xcode/openssl/include",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
-				);
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-ObjC",
