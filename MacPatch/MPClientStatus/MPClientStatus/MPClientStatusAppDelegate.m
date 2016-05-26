@@ -262,7 +262,7 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
                                          informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
                     
                     [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-                    [alert runModal];
+                    [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
                 }
                 [self cleanup];
             } else {
@@ -301,7 +301,7 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
                                          informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
                     
                     [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-                    [alert runModal];
+                    [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
                     
                     NSMutableDictionary *details = [NSMutableDictionary dictionary];
                     [details setValue:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue." forKey:NSLocalizedDescriptionKey];
@@ -483,7 +483,7 @@ done:
             [alert setAlertStyle:NSInformationalAlertStyle];
         }
         
-        [alert runModal];
+        [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
     }
 }
 

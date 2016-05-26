@@ -7,17 +7,6 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		8F2C7CCA17FC92D6008CE21A /* PROXY_BUILD */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 8F2C7CCB17FC92D6008CE21A /* Build configuration list for PBXAggregateTarget "PROXY_BUILD" */;
-			buildPhases = (
-			);
-			dependencies = (
-				8F2C7CCF17FC92E5008CE21A /* PBXTargetDependency */,
-			);
-			name = PROXY_BUILD;
-			productName = PROXY_BUILD;
-		};
 		8F68EADE1757D4D500982EF9 /* AGENT_BUILD */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 8F68EAFB1757D4D500982EF9 /* Build configuration list for PBXAggregateTarget "AGENT_BUILD" */;
@@ -43,13 +32,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXContainerItemProxy section */
-		8F2C7CCE17FC92E5008CE21A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8FE560B916DE70D900BB7600 /* MPLibrary.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F4B1DE216DD1BC600E15A9E;
-			remoteInfo = MacPatch;
-		};
 		8F4B1EFE16DD77BE00E15A9E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F4B1EFA16DD77BD00E15A9E /* MPAgent.xcodeproj */;
@@ -420,7 +402,6 @@
 			projectRoot = "";
 			targets = (
 				8F68EADE1757D4D500982EF9 /* AGENT_BUILD */,
-				8F2C7CCA17FC92D6008CE21A /* PROXY_BUILD */,
 			);
 		};
 /* End PBXProject section */
@@ -513,11 +494,6 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXTargetDependency section */
-		8F2C7CCF17FC92E5008CE21A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MacPatch;
-			targetProxy = 8F2C7CCE17FC92E5008CE21A /* PBXContainerItemProxy */;
-		};
 		8F530FB71B42040500B8D893 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MPLoginAgent;
@@ -581,20 +557,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		8F2C7CCC17FC92D6008CE21A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		8F2C7CCD17FC92D6008CE21A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		8F4B1ED416DD771300E15A9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -634,15 +596,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8F2C7CCB17FC92D6008CE21A /* Build configuration list for PBXAggregateTarget "PROXY_BUILD" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8F2C7CCC17FC92D6008CE21A /* Debug */,
-				8F2C7CCD17FC92D6008CE21A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		8F4B1ED316DD771300E15A9E /* Build configuration list for PBXProject "MacPatch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

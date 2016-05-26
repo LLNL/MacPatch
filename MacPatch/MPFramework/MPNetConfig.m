@@ -73,6 +73,7 @@
             [sns setPort:[[defaults objectForKey:@"MPServerPort"] integerValue]];
             [sns setUseHTTPS:([[defaults objectForKey:@"MPServerSSL"] integerValue] ? YES : NO)];
             [sns setUseTLSAuth:([[defaults objectForKey:@"MPClientAuth"] integerValue] ? YES : NO)];
+            [sns setAllowSelfSigned:([[defaults objectForKey:@"MPServerAllowSelfSigned"] integerValue] ? YES : NO)];
             [sns setServerType:0];
             self.servers = [NSArray arrayWithObject:sns];
         }

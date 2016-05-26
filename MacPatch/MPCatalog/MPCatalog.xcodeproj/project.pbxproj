@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8F7B8B0C1CAF600200FB940F /* AFNetworking in Resources */ = {isa = PBXBuildFile; fileRef = 8F7B8B0B1CAF600200FB940F /* AFNetworking */; };
+		8F7B8B0C1CAF600200FB940F /* (null) in Resources */ = {isa = PBXBuildFile; };
 		8F95C6B31C598A54008FA31D /* RebootWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F95C6B11C598A54008FA31D /* RebootWindow.m */; };
 		8F95C6B41C598A54008FA31D /* RebootWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F95C6B21C598A54008FA31D /* RebootWindow.xib */; };
 		8FD88FCB16DFDD9200A870A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88FCA16DFDD9200A870A3 /* Cocoa.framework */; };
@@ -49,7 +49,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8F7B8B0B1CAF600200FB940F /* AFNetworking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AFNetworking; path = /Users/heizer1/Syncplicity/GitHub/MacPatch/MacPatch/MPCatalog/MPCatalog/AFNetworking; sourceTree = "<absolute>"; };
 		8F95C6B01C598A54008FA31D /* RebootWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RebootWindow.h; sourceTree = "<group>"; };
 		8F95C6B11C598A54008FA31D /* RebootWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RebootWindow.m; sourceTree = "<group>"; };
 		8F95C6B21C598A54008FA31D /* RebootWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RebootWindow.xib; sourceTree = "<group>"; };
@@ -301,7 +300,7 @@
 				8FD88FD516DFDD9200A870A3 /* InfoPlist.strings in Resources */,
 				8FD88FF216DFDDC700A870A3 /* MPCatalog_MainMenu.xib in Resources */,
 				8FD88FF316DFDDC700A870A3 /* Preferences.xib in Resources */,
-				8F7B8B0C1CAF600200FB940F /* AFNetworking in Resources */,
+				8F7B8B0C1CAF600200FB940F /* (null) in Resources */,
 				8FD88FF416DFDDC700A870A3 /* SWDistInfoController.xib in Resources */,
 				8FD88FF516DFDDC700A870A3 /* MPCatalogV2.icns in Resources */,
 				8F95C6B41C598A54008FA31D /* RebootWindow.xib in Resources */,
@@ -430,13 +429,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"../openssl-xcode/openssl/include",
 				);
 				INFOPLIST_FILE = "MPCatalog/MPCatalog-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.llnl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -457,13 +452,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"../openssl-xcode/openssl/include",
 				);
 				INFOPLIST_FILE = "MPCatalog/MPCatalog-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/heizer1/Syncplicity/Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.llnl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";

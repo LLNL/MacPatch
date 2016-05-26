@@ -30,7 +30,6 @@
 #import "EventToSend.h" 
 #import "SWDistInfoController.h"
 #import "RebootWindow.h"
-#import "AFNetworking.h"
 
 #define MP_INSTALLED_DATA       @".installed.plist"
 
@@ -1227,7 +1226,7 @@
                     [statusTextStatus setStringValue:[NSString stringWithFormat:@"Uninstalling %@ ...",[d objectForKey:@"name"]]];
                     uninstallScriptEnc = [d valueForKeyPath:@"Software.sw_uninstall"];
                     if ([uninstallScriptEnc length] > 0) {
-                        uninstallScript = [uninstallScriptEnc decodeBase64WithNewLinesReturnString:NO];
+                        uninstallScript = [uninstallScriptEnc decodeBase64AsString];
                         logit(lcl_vDebug,@"Remove Script:\n%@",uninstallScript);
                         _result = [self removeSoftwareViaProxy:uninstallScript];   
                     }
@@ -1848,7 +1847,7 @@ done:
                                  informativeTextWithFormat:@"Unable to connect to helper application. Please try logging out and logging back in to resolve the issue."];
             
             [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-            [alert runModal];
+            [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
             [self cleanup];
         }
     }

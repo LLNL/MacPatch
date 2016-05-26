@@ -147,9 +147,6 @@
         } else if ([[req objectForKey:@"wsMethod"] isEqualToString:@"postClientAVData"]) {
             [mpws postClientAVData:[params objectForKey:@"aDict"] error:&err];
 
-        } else if ([[req objectForKey:@"wsMethod"] isEqualToString:@"postDataMgrXML"]) {
-            [mpws postDataMgrXML:[params objectForKey:@"aDataMgrXML"] error:&err];
-
         } else if ([[req objectForKey:@"wsMethod"] isEqualToString:@"postDataMgrJSON"]) {
             [mpws postDataMgrJSON:[params objectForKey:@"aDataMgrJSON"] error:&err];
 

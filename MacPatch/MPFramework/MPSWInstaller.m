@@ -509,7 +509,7 @@ typedef NSUInteger MPPostDataType;
                 [self postDataToClient:@"Running pre-install script..." type:kMPProcessStatus];
                 @try
                 {
-                    _script = [[aSWDict objectForKey:@"sw_pre_install"] decodeBase64WithNewLinesReturnString:YES];
+                    _script = [[aSWDict objectForKey:@"sw_pre_install"] decodeBase64AsString];
                     if (![mps runScript:_script]) {
                         logit(lcl_vError,@"Error running pre install script. No install will occure.");
                         return NO;
@@ -535,7 +535,7 @@ typedef NSUInteger MPPostDataType;
                 [self postDataToClient:@"Running post-install script..." type:kMPProcessStatus];
                 @try
                 {
-                    _script = [[aSWDict objectForKey:@"sw_post_install"] decodeBase64WithNewLinesReturnString:YES];
+                    _script = [[aSWDict objectForKey:@"sw_post_install"] decodeBase64AsString];
                     if (![mps runScript:_script]) {
                         logit(lcl_vError,@"Error running post install script.");
                         return NO;
