@@ -176,10 +176,10 @@
             from mpi_FileVault
             </cfif>
             <cfif url.type EQ "patchStatus">
-            from mpi_FileVault
+            from mp_client_patch_status_view
             </cfif>
             <cfif url.type EQ "patchHistory">
-            from mpi_FileVault
+            from mp_installed_patches_view
             </cfif>
             Where cuuid = <cfqueryparam value="#url.cuuid#">
         </cfquery>
