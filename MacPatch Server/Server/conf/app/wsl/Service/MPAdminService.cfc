@@ -775,12 +775,14 @@
 			<cfset serverInfo.MPServerAddress = "">
 			<cfset serverInfo.MPServerPort = "2600">
 			<cfset serverInfo.MPServerSSL = "1">
+			<cfset serverInfo.MPServerAllowSelfSigned = "0">
 			
 			<cfoutput query="arguments.data">
 				<cfif arguments.data.isMaster EQ 1>
 					<cfset serverInfo.MPServerAddress = arguments.data.server>
 					<cfset serverInfo.MPServerPort = arguments.data.port>
 					<cfset serverInfo.MPServerSSL = arguments.data.useSSL>
+					<cfset serverInfo.MPServerAllowSelfSigned = arguments.data.allowSelfSignedCert>
 				</cfif>
 			</cfoutput>
 			
@@ -788,12 +790,14 @@
 			<cfset serverInfo.MPProxyServerAddress = "">
 			<cfset serverInfo.MPProxyServerPort = "2600">
 			<cfset serverInfo.MPProxyEnabled = "0">
+			<cfset serverInfo.MPProxyAllowSelfSigned = "0">
 			
 			<cfoutput query="arguments.data">
 				<cfif arguments.data.isProxy EQ 1>
 					<cfset serverInfo.MPProxyServerAddress = arguments.data.server>
 					<cfset serverInfo.MPProxyServerPort = arguments.data.port>
 					<cfset serverInfo.MPProxyEnabled = 1>
+					<cfset serverInfo.MPProxyAllowSelfSigned = arguments.data.allowSelfSignedCert>
 				</cfif>
 			</cfoutput>
 		<cfelse>	
