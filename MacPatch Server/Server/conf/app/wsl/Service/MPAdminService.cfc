@@ -570,7 +570,9 @@
 					<key>MPProxyServerPort</key>
 					<string>#proxyConfig.result.MPProxyServerPort#</string>  
 					<key>MPProxyEnabled</key>
-					<string>#proxyConfig.result.MPProxyEnabled#</string>  
+					<string>#proxyConfig.result.MPProxyEnabled#</string>
+					<key>MPProxyAllowSelfSigned</key>
+					<string>#masterConfig.result.MPServerAllowSelfSigned#</string>  
 				</cfif>
 				<cfif defaultMaster EQ 1>
 					<key>MPServerAddress</key>
@@ -578,7 +580,9 @@
 					<key>MPServerPort</key>
 					<string>#masterConfig.result.MPServerPort#</string>  
 					<key>MPServerSSL</key>
-					<string>#masterConfig.result.MPServerSSL#</string>  
+					<string>#masterConfig.result.MPServerSSL#</string> 
+					<key>MPServerAllowSelfSigned</key>
+					<string>#masterConfig.result.MPServerAllowSelfSigned#</string>  
 				</cfif>
 			</dict>
 			<key>enforced</key>
@@ -603,7 +607,9 @@
 					<key>MPProxyServerPort</key>
 					<string>#proxyConfig.result.MPProxyServerPort#</string>  
 					<key>MPProxyEnabled</key>
-					<string>#proxyConfig.result.MPProxyEnabled#</string>  
+					<string>#proxyConfig.result.MPProxyEnabled#</string>
+					<key>MPProxyAllowSelfSigned</key>
+					<string>#masterConfig.result.MPServerAllowSelfSigned#</string>  
 				</cfif>
 				<cfif enforceMaster EQ 1>
 					<key>MPServerAddress</key>
@@ -611,7 +617,9 @@
 					<key>MPServerPort</key>
 					<string>#masterConfig.result.MPServerPort#</string>  
 					<key>MPServerSSL</key>
-					<string>#masterConfig.result.MPServerSSL#</string>  
+					<string>#masterConfig.result.MPServerSSL#</string>
+					<key>MPServerAllowSelfSigned</key>
+					<string>#masterConfig.result.MPServerAllowSelfSigned#</string>  
 				</cfif>
 			</dict>
 		</dict>
