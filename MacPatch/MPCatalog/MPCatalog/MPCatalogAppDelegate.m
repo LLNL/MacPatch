@@ -336,7 +336,7 @@
 		logit(lcl_vInfo,@"***** MP SW Catalog started -- Debug Enabled *****");
 	} else {
 		// enable logging for all components up to level Info
-		lcl_configure_by_name("*", lcl_vDebug);
+		lcl_configure_by_name("*", lcl_vInfo);
 		logit(lcl_vInfo,@"***** MP SW Catalog started *****");
 	}
     
