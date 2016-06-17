@@ -727,10 +727,6 @@ done:
                     for (i=0;i<[[patch objectForKey:@"criteria_post"] count];i++)
                     {
                         criteriaDictPost = [[patch objectForKey:@"criteria_post"] objectAtIndex:i];
-                        
-                        //scriptData = [[criteriaDictPost objectForKey:@"data"] decodeBase64WithNewlines:NO];
-                        //scriptText = [[NSString alloc] initWithData:scriptData encoding:NSASCIIStringEncoding];
-                        
                         scriptText = [[criteriaDictPost objectForKey:@"data"] decodeBase64AsString];
                         
                         mpScript = [[MPScript alloc] init];
