@@ -190,8 +190,11 @@ if [ $XOSTYPE == "Linux" ]; then
 	cp "${FLS_DIR}/systemd/MPNginx.service" "/etc/systemd/system/MPNginx.service"
 	/bin/systemctl enable MPNginx.service
 
+	# Fix User info
+	eval "sed -i 's|_appserver _www|www-data www-data|g' /Library/MacPatch/Reposado/nginx/conf/nginx.conf"
+
 	# Run Sync Every 8 hours
-	(/usr/bin/crontab -l 2>/dev/null; echo "* */8 * * * /Library/MacPatch/Reposado/reposado/code/repo_sync") | crontab -
+	(/usr/bin/crontab -l 2>/dev/null; echo "* */8 * * * runuser www-data -c /Library/MacPatch/Reposado/reposado/code/repo_sync ") | crontab -
 else
 
 	defaults write "${MP_BUILD_DIR}"/reposado/code/preferences LocalCatalogURLBase "$BASEURL"
