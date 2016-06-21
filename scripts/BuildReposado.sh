@@ -183,7 +183,7 @@ chown -R 79:70 "${MP_BUILD_DIR}"
 # Launch Daemons
 if [ $XOSTYPE == "Linux" ]; then
 
-	sed -i "s/\[URLBASE\]/$BASEURL/g" "${MP_BUILD_DIR}/reposado/code/preferences.plist"
+	eval "sed -i 's|\[URLBASE\]|"$BASEURL"|g' ${MP_BUILD_DIR}/reposado/code/preferences.plist"
 	chmod 0755 "${MP_BUILD_DIR}/reposado/code/preferences.plist"
 	
 	# Add Systemd Service for Nginx
