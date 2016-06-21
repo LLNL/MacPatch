@@ -128,7 +128,7 @@ tar xvfz "${SRC_DIR}/${HTTP_SW}" --strip 1 -C "${TMP_DIR}/nginx"
 
 # OpenSSL
 mkdir ${TMP_DIR}/openssl
-tar xvfz $"{SRC_DIR}/${OSSL_SW}" --strip 1 -C ${TMP_DIR}/openssl
+tar xvfz $"{SRC_DIR}/${OSSL_SW}" --strip 1 -C "${TMP_DIR}/openssl"
 
 if [ ! -d "${MP_BUILD_DIR}" ]; then
 	mkdir -p "${MP_BUILD_DIR}"
