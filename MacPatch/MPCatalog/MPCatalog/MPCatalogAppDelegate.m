@@ -934,7 +934,7 @@
             if ([d objectForKey:@"selected"]) {
                 if ([[d objectForKey:@"selected"] intValue] == 1)
                 {
-                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Installing %@ ...",[d objectForKey:@"name"]]];
+                    [self writeStatusText:[NSString stringWithFormat:@"Installing %@ ...",[d objectForKey:@"name"]]];
                     logit(lcl_vInfo,@"Installing %@ (%@).",[d objectForKey:@"name"],[d objectForKey:@"id"]);
                     logit(lcl_vInfo,@"INFO: %@",[d valueForKeyPath:@"Software.sw_type"]);
                     
@@ -946,6 +946,7 @@
                     swLoc = [NSString pathWithComponents:[NSArray arrayWithObjects:swLocBase, [d objectForKey:@"id"], nil]];
                     
                     // Verify Disk space requirements before downloading and installing
+                    [self writeStatusText:@"Verifying disk space needed for install"];
                     NSScanner* scanner = [NSScanner scannerWithString:[d valueForKeyPath:@"Software.sw_size"]];
                     long long stringToLong;
                     if(![scanner scanLongLong:&stringToLong]) {
@@ -958,6 +959,7 @@
                     if ([mpd diskHasEnoughSpaceForPackage:stringToLong] == NO)
                     {
                         logit(lcl_vError,@"This system does not have enough free disk space to install the following software %@",[d objectForKey:@"name"]);
+                        [self writeStatusText:@"This system does not have enough free disk space to install the software."];
                         [self postInstallResults:99 resultText:@"Not enough free disk space." task:d];
                         [self updateArrayControllerWithDictionary:d forActionType:@"error"];
                         continue;
@@ -979,6 +981,7 @@
                     int serverListCount = (int)[[mpnc servers] count];
                     for (int s = 0; s < serverListCount; s++)
                     {
+                        [self writeStatusText:@"Begin downloading software."];
                         __block BOOL isCompleted = NO;
                         __block NSError *downloadError = nil;
                         
@@ -992,7 +995,7 @@
                         
                         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
                             logit(lcl_vInfo,@"Successfully downloaded file to %@", dlPath);
-                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Successfully downloaded %@",[d objectForKey:@"name"]]];
+                            [self writeStatusText:[NSString stringWithFormat:@"Successfully downloaded %@",[d objectForKey:@"name"]]];
                             isCompleted = YES;
                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                             logit(lcl_vError,@"%@", error.localizedDescription);
@@ -1011,10 +1014,7 @@
                         [operation start];
                         logit(lcl_vInfo,@"Trying server: %@",srv.host);
                         logit(lcl_vInfo,@"%@",mpNetRequest.dlURL);
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^(void){
-                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
-                        });
+                        [self writeStatusText:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
                         
                         // Wait til download has completed
                         while(!isCompleted) {
@@ -1128,6 +1128,8 @@
                 }
             }
         }
+        
+        // Update UI
         [installButton setEnabled:YES];
         [refreshButton setEnabled:YES];
         [cancelButton setEnabled:NO];
@@ -1664,6 +1666,13 @@
     return NO;
 }
 
+- (void)writeStatusText:(NSString *)aStatusText
+{
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        [statusTextStatus setStringValue:aStatusText];
+    });
+}
+
 #pragma mark - Proxy Methods
 -(int)installSoftwareViaProxy:(NSDictionary *)aInstallDict
 {
@@ -1877,7 +1886,7 @@ done:
 #pragma mark Client Callbacks
 - (void)statusData:(in bycopy NSString *)aData
 {
-    [statusTextStatus setStringValue:aData];
+    [self writeStatusText:aData];
 }
 
 - (void)installData:(in bycopy NSString *)aData
@@ -1889,7 +1898,7 @@ done:
         if ([strTxt containsString:@"installer:%"]) {
             [progressBar setDoubleValue:[[[[strTxt replaceAll:@"installer:%" replaceString:@""] componentsSeparatedByString:@"."] objectAtIndex:0] floatValue]];
         } else {
-            [statusTextStatus setStringValue:strTxt];
+            [self writeStatusText:strTxt];
         }
     }
 }
