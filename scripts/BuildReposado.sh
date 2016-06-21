@@ -177,11 +177,12 @@ read -p "Reposado Server Hostname [$HOSTNAME]: " NEWHOSTNAME
 NEWHOSTNAME=${NEWHOSTNAME:-$HOSTNAME}
 BASEURL="http://$NEWHOSTNAME"
 
-# Set Permissions
-chown -R 79:70 "${MP_BUILD_DIR}"
-
 # Launch Daemons
 if [ $XOSTYPE == "Linux" ]; then
+	
+	# Set Permissions
+	chown -R www-data:www-data "${MP_BUILD_DIR}"
+	chmod -R 0775 "${MP_BUILD_DIR}/reposado"
 
 	eval "sed -i 's|\[URLBASE\]|"$BASEURL"|g' ${MP_BUILD_DIR}/reposado/code/preferences.plist"
 	chmod 0755 "${MP_BUILD_DIR}/reposado/code/preferences.plist"
@@ -194,8 +195,10 @@ if [ $XOSTYPE == "Linux" ]; then
 	eval "sed -i 's|_appserver _www|www-data www-data|g' /Library/MacPatch/Reposado/nginx/conf/nginx.conf"
 
 	# Run Sync Every 8 hours
-	(/usr/bin/crontab -l 2>/dev/null; echo "* */8 * * * runuser www-data -c /Library/MacPatch/Reposado/reposado/code/repo_sync ") | crontab -
+	(/usr/bin/crontab -l 2>/dev/null; echo "* */8 * * * /Library/MacPatch/Reposado/reposado/code/repo_sync ") | crontab -
 else
+	# Set Permissions
+	chown -R 79:70 "${MP_BUILD_DIR}"
 
 	defaults write "${MP_BUILD_DIR}"/reposado/code/preferences LocalCatalogURLBase "$BASEURL"
 	plutil -convert xml1 "${MP_BUILD_DIR}"/reposado/code/preferences.plist
