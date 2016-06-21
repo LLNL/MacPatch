@@ -10,8 +10,8 @@
 #	History:
 # ------------------------------------------------------------
 
-MP_BUILD_DIR=/Library/MacPatch/Reposado
-TMP_DIR=/private/var/tmp/MPReposado
+MP_BUILD_DIR="/Library/MacPatch/Reposado"
+TMP_DIR="/tmp/MPReposado"
 BAS_DIR="/Library/MacPatch/tmp/MacPatch/MacPatch Server"
 SRC_DIR="/Library/MacPatch/tmp/MacPatch/MacPatch Server/Server/conf/src"
 FLS_DIR="/Library/MacPatch/tmp/MacPatch/MacPatch Server/Server/conf/Reposado"
