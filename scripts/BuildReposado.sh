@@ -120,7 +120,7 @@ OSSL_SW=`find "${SRC_DIR}" -name "openssl-"* -type f -exec basename {} \; | head
 
 # OpenSSL
 mkdir -p "${TMP_DIR}/openssl"
-tar xvfz $"{SRC_DIR}/${OSSL_SW}" --strip 1 -C "${TMP_DIR}/openssl"
+tar xvfz "${SRC_DIR}/${OSSL_SW}" --strip 1 -C "${TMP_DIR}/openssl"
 
 # PCRE
 mkdir -p "${TMP_DIR}/pcre"
