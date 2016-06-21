@@ -107,28 +107,30 @@ fi
 # ------------------------------------------------------------
 # Remove if exists
 if [ -d "${TMP_DIR}" ]; then
-	rm -rf ${TMP_DIR}
+	rm -rf "${TMP_DIR}"
 fi
 
 # Create and go to tmp dir
-mkdir -p ${TMP_DIR}
+mkdir -p "${TMP_DIR}"
 cd ${TMP_DIR}
 
 HTTP_SW=`find "${SRC_DIR}" -name "nginx"* -type f -exec basename {} \; | head -n 1`
 PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
 OSSL_SW=`find "${SRC_DIR}" -name "openssl-"* -type f -exec basename {} \; | head -n 1`
 
+# OpenSSL
+mkdir -p "${TMP_DIR}/openssl"
+tar xvfz $"{SRC_DIR}/${OSSL_SW}" --strip 1 -C "${TMP_DIR}/openssl"
+
 # PCRE
-mkdir ${TMP_DIR}/pcre
+mkdir -p "${TMP_DIR}/pcre"
 tar xvfz "${SRC_DIR}/${PCRE_SW}" --strip 1 -C "${TMP_DIR}/pcre"
 
 # NGINX
-mkdir ${TMP_DIR}/nginx
+mkdir -p "${TMP_DIR}/nginx"
 tar xvfz "${SRC_DIR}/${HTTP_SW}" --strip 1 -C "${TMP_DIR}/nginx"
 
-# OpenSSL
-mkdir ${TMP_DIR}/openssl
-tar xvfz $"{SRC_DIR}/${OSSL_SW}" --strip 1 -C "${TMP_DIR}/openssl"
+
 
 if [ ! -d "${MP_BUILD_DIR}" ]; then
 	mkdir -p "${MP_BUILD_DIR}"
@@ -143,8 +145,8 @@ export KERNEL_BITS=64
 --without-http_ssi_module \
 --without-http_gzip_module \
 --with-http_ssl_module \
---with-openssl=${TMP_DIR}/openssl \
---with-pcre=${TMP_DIR}/pcre
+--with-openssl="${TMP_DIR}/openssl" \
+--with-pcre="${TMP_DIR}/pcre"
 
 make
 make install
