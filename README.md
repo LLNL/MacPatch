@@ -34,8 +34,8 @@ MacPatch offers features and functionality that provide Mac OS X administrators 
 To get MacPatch up and running use the QuickStart docs from the [macpatch.llnl.gov](http://macpatch.llnl.gov) website.
 
 #### From Source
-* Mac QuickStart: [quick-start-guide-for-os-x](http://macpatch.llnl.gov/docs/quick-start-guide-for-os-x)
-* Linux QuickStart: [quick-start-guide-for-linux](http://macpatch.llnl.gov/docs/quick-start-guide-for-linux)
+* Mac QuickStart: [quick-start-guide-for-os-x](http://macpatch.llnl.gov/docs/1_quick-start-guide-for-os-x/)
+* Linux QuickStart: [quick-start-guide-for-linux](http://macpatch.llnl.gov/docs/2_quick-start-guide-for-linux)
 
 #### Binary
 * Download the [MacPatch DMG](https://github.com/SMSG-MAC-DEV/MacPatch/releases/latest). Install PDF and client are located in the DMG.
