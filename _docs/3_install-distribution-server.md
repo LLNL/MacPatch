@@ -18,7 +18,7 @@ When the first server ("Master") is compiled and built it will create a file cal
 - Mac OS X 10.9.x or higher
 - Linux Distributions: RHEL 7, Fedora 20 or higher, Ubuntu 14 or higher
 - 8 Gig or RAM or higher
-- 200 or more Gig of disk space, number of patches and software items will determin size
+- 200 or more Gig of disk space, number of patches and software items will determine size
 - Java 1.8 JDK
 - Python 2.7.x
 
