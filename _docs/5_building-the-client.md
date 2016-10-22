@@ -31,9 +31,9 @@ To download and build the MacPatch client agent software there are just a couple
 
 	sudo mkdir -p /Library/MacPatch/tmp
 	cd /Library/MacPatch/tmp
-	sudo git clone https://github.com/SMSG-MAC-DEV/MacPatch.git
+	sudo git clone https://github.com/LLNL/MacPatch.git
 	sudo /Library/MacPatch/tmp/MacPatch/scripts/MPBuildClient.sh
-	
+
 Once the compile and copy process is completed the finished client agent software can be found in `/Library/MacPatch/tmp/Client/Combined/MPClientInstall.pkg.zip`
 
 ### Changing Agent Version Info

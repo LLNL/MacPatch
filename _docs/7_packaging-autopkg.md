@@ -22,7 +22,7 @@ I recommend also using [AutoPkgr](http://www.lindegroup.com/autopkgr), which is 
 
 ### Add the MacPatch repo
 
-    autopkg repo-add https://github.com/SMSG-MAC-DEV/MacPatch-AutoPKG.git
+    autopkg repo-add https://github.com/LLNL/MacPatch-AutoPKG.git
 
 ### Configure MacPatch environment settings
 Some settings can be set for all .macpatch recipes in the AutoPkg preferences.

@@ -7,12 +7,12 @@ layout: default
 <div class="jumbotron text-center">
   <h1>MacPatch</h1>
   <p class="lead">An open source management suite for large Mac OS X environments.</p>
-  <p><a class="btn btn-lg btn-success" href="https://github.com/SMSG-MAC-DEV/MacPatch" role="button"><i class="fa fa-github fa-lg"></i> MacPatch on GitHub</a></p>
+  <p><a class="btn btn-lg btn-success" href="https://github.com/LLNL/MacPatch" role="button"><i class="fa fa-github fa-lg"></i> MacPatch on GitHub</a></p>
   <!-- Social Buttons -->
   <a class="btn btn-link underline-off" href="https://twitter.com/share?text=MacPatch+-+The+open+source+Mac+OS+X+management+suite&url=http%3A%2F%2Fmacpatch.github.io" onclick="return popup('https://twitter.com/share?text=MacPatch+-+The+open+source+Mac+OS+X+management+suite&url=http%3A%2F%2Fmacpatch.github.io')"><i class="fa fa-twitter"></i> Tweet</a>
   <a class="btn btn-link underline-off" href="https://twitter.com/intent/user?screen_name=macpatchsw" onclick="return popitup('https://twitter.com/intent/user?screen_name=macpatchsw')"><i class="fa fa-twitter"></i> Follow</a>
   <!-- /Social Buttons -->
-</div> 
+</div>
 <!-- /jumbotron -->
 
 <div class="text-center" markdown="1">
@@ -80,4 +80,3 @@ layout: default
     <p>Most features can be accessed from the command line for remote administrating and scripting.</p>
   </div>
 </div>
-  
