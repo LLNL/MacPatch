@@ -8,12 +8,12 @@
 	<string>LoginWindow</string>
 	<key>KeepAlive</key>
 	<dict>
-	    <key>PathState</key>
-	    <dict>
-	        <key>/private/tmp/.MPAuthRun</key>
-	        <true/>
-	    </dict>
-    </dict>
+		<key>PathState</key>
+		<dict>
+			<key>/private/tmp/.MPAuthRun</key>
+			<true/>
+		</dict>
+	</dict>
 	<key>ProgramArguments</key>
 	<array>
 		<string>/Library/PrivilegedHelperTools/MPLoginAgent.app/Contents/MacOS/MPLoginAgent</string>

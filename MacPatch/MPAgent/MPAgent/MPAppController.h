@@ -74,5 +74,6 @@
 - (void)runProfilesScanAndInstall;
 - (void)runGetServerListOperation;
 - (void)runPostFailedWSRequests;
+- (void)runGetSUServerListOperation;
 
 @end

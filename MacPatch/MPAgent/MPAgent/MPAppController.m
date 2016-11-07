@@ -41,6 +41,12 @@
 #import "PostFailedWSRequests.h"
 #import "GetASUSListOperation.h"
 
+@interface MPAppController()
+
+- (void)createDefaultServersPlist;
+
+@end
+
 @implementation MPAppController
 
 @synthesize useOperationQueue;
@@ -56,6 +62,7 @@
 	if (self = [super init]) {
 		//Setup Signleton Manager for global iVars
 		si = [MPAgent sharedInstance];
+        [self createDefaultServersPlist];
 		queue = [[NSOperationQueue alloc] init];
 		[queue setMaxConcurrentOperationCount:2];
 
@@ -133,6 +140,51 @@
 	NSLog(@"Getting current runloop mode ... %@",[[NSRunLoop currentRunLoop] currentMode]);
 	[[NSRunLoop currentRunLoop] run];
 
+}
+
+- (void)createDefaultServersPlist
+{
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    /* Needs to be completed */
+    if (![fm fileExistsAtPath:AGENT_SERVERS_PLIST])
+    {
+        qlinfo(@"Create initial Servers.plist with starting version of 0.");
+        
+        NSMutableDictionary *serversDict = [NSMutableDictionary new];
+        // Add Default Info
+        [serversDict setObject:@"1" forKey:@"id"];
+        [serversDict setObject:@"Default" forKey:@"name"];
+        [serversDict setObject:@"0" forKey:@"version"];
+        
+        // Create Master & Proxy Server Objects and add them to array
+        NSMutableArray *srvArray = [NSMutableArray new];
+        MPDefaults *mpd = [[MPDefaults alloc] init];
+        NSDictionary *defaults = [mpd defaults];
+        
+        NSDictionary *master = @{@"host":defaults[@"MPServerAddress"], @"port":@([defaults[@"MPServerPort"] integerValue]),
+                                 @"serverType":@"1", @"allowSelfSigned":[NSNumber numberWithInt:1],
+                                 @"useHTTPS": ([defaults[@"MPServerSSL"] isEqualToString:@"1"]) ? [NSNumber numberWithInt:1] : [NSNumber numberWithInt:0],
+                                 @"useTLSAuth": [NSNumber numberWithInt:0] };
+        
+        [srvArray addObject:master];
+        // Check to see if proxy is being used...
+        NSDictionary *proxy = nil;
+        if ([defaults[@"MPProxyEnabled"] isEqualToString:@"1"]) {
+            proxy = @{@"host":defaults[@"MPProxyServerAddress"], @"port":@([defaults[@"MPProxyServerPort"] integerValue]),
+                                 @"serverType":@"1", @"allowSelfSigned":[NSNumber numberWithInt:1],
+                                 @"useHTTPS": ([defaults[@"MPServerSSL"] isEqualToString:@"1"]) ? [NSNumber numberWithInt:1] : [NSNumber numberWithInt:0],
+                                 @"useTLSAuth": [NSNumber numberWithInt:0] };
+            
+            [srvArray addObject:proxy];
+        }
+        
+        // Add Servers array to servers dict
+        [serversDict setObject:srvArray forKey:@"servers"];
+        
+        // Write a generic servers.plist to file system
+        [serversDict writeToFile:AGENT_SERVERS_PLIST atomically:NO];
+    }
 }
 
 - (void)watchTasksPlistForChangesMethod
