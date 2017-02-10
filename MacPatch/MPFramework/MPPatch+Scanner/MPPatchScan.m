@@ -74,9 +74,16 @@
 	 */ 
 	
 	// 1. Get the list
+    NSError *error = nil;
 	NSDictionary *tmpDict;
 	NSArray *customPatches;
-	customPatches = [self retrieveCustomPatchScanList];
+    customPatches = [self retrieveCustomPatchScanList:&error];
+    if (error) {
+        // Sometimes we get a empty list, try a second time
+        qlwarning(@"Re-trying to run retrieveCustomPatchScanList.");
+        customPatches = [self retrieveCustomPatchScanList:NULL];
+    }
+    
 	if ([customPatches count] == 0)
 		return resultArr;
 	
@@ -148,9 +155,16 @@
 	 */ 
 	
 	// 1. Get the list
-	NSDictionary *tmpDict;
-	NSArray *customPatches;
-	customPatches = [self retrieveCustomPatchScanList];
+    NSError *error = nil;
+    NSDictionary *tmpDict;
+    NSArray *customPatches;
+    customPatches = [self retrieveCustomPatchScanList:&error];
+    if (error) {
+        // Sometimes we get a empty list, try a second time
+        qlwarning(@"Re-trying to run retrieveCustomPatchScanList.");
+        customPatches = [self retrieveCustomPatchScanList:NULL];
+    }
+    
 	if ([customPatches count] == 0)
 		return resultArr;
 	
@@ -339,7 +353,7 @@ done:
 	return result;
 }
 
--(NSArray *)retrieveCustomPatchScanList
+-(NSArray *)retrieveCustomPatchScanList:(NSError **)err
 {
 	NSArray  *scanListArray = NULL;
     MPWebServices *mpws = [[MPWebServices alloc] init];
@@ -347,6 +361,7 @@ done:
     scanListArray = [mpws getCustomPatchScanList:&wsErr];
     if (wsErr) {
         qlerror(@"%@",[wsErr localizedDescription]);
+        if (err != NULL) *err = wsErr;
         return NULL;
     }
     return scanListArray;
