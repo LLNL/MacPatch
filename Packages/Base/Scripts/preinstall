@@ -1,0 +1,90 @@
+#!/bin/sh
+
+# ***************************************************************************************
+# PreFlight Script for MacPatch Client Installer
+# ver 1.9
+# Created By Charles Heizer
+# LLNL
+#
+#
+# ***************************************************************************************
+
+systemVersion=`/usr/bin/sw_vers -productVersion`
+majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
+minorVer=`echo $systemVersion | cut -d . -f 2`
+buildVer=`echo $systemVersion | cut -d . -f 3`
+
+# Script Parent Dir Path
+SRC=$(cd $(dirname "$0"); pwd)
+
+MPBaseDir="/Library/MacPatch"
+MPClientDir="${MPBaseDir}/Client"
+dts=`date +%Y%m%d%H%M%S`
+usrID="NULL"
+if [ -e "${SRC}/ccusr" ]; then
+	usrID=`${SRC}/ccusr`
+fi
+
+
+# ***************************************************************************************
+# Kill the running MP processes
+
+# Launch Daemons
+if [ -f "/Library/LaunchDaemons/gov.llnl.mp.agent.plist" ]; then	
+	/bin/launchctl remove gov.llnl.mp.agent
+	sleep 2
+	/bin/launchctl unload /Library/LaunchDaemons/gov.llnl.mp.agent.plist
+	sleep 2
+	
+	rm /Library/LaunchDaemons/gov.llnl.mp.agent.plist
+fi
+
+if [ -f "/Library/LaunchDaemons/gov.llnl.mp.worker.plist" ]; then	
+	/bin/launchctl remove gov.llnl.mp.worker
+	sleep 2
+	/bin/launchctl unload /Library/LaunchDaemons/gov.llnl.mp.worker.plist
+	sleep 2
+	
+	rm /Library/LaunchDaemons/gov.llnl.mp.worker.plist
+fi	
+
+# Launch Agents
+
+if [ -f "/Library/LaunchAgents/gov.llnl.mp.status.plist" ]; then
+	if [ "$usrID" != "NULL" ]; then
+		chroot -u $usrID / /bin/launchctl unload /Library/LaunchAgents/gov.llnl.mp.status.plist
+	fi
+	
+	rm /Library/LaunchAgents/gov.llnl.mp.status.plist
+fi
+
+# ***************************************************************************************
+# MacPatch Pre-Deployment
+#
+
+# Remove the temp Migration Dir if exists
+if [ -d "/private/tmp/MPMigration" ]; then
+	rm -rf "/private/tmp/MPMigration"
+fi
+
+mkdir -p "/private/tmp/MPMigration"
+
+if [ -f "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist" ]; then
+	cp "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist" "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist"
+fi		
+
+
+if [ -d "$MPClientDir" ]; then
+	echo "Removing $MPClientDir"
+	rm -rf "$MPClientDir"
+fi
+
+# Clean up old downloads
+if [ -d "/Library/Application Support/MacPatch/SW_Data/sw" ]; then
+	rm -rf /Library/Application\ Support/MacPatch/SW_Data/sw/*
+fi
+
+# Remove Old Crash Reports
+find /Library/Logs -type f -name "MP*.crash" -exec rm -f {} \;
+
+exit 0

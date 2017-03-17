@@ -1,3 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<Context path="/mp_logs" docBase="/Library/MacPatch/Server/tomcat-mpproxy/webapps/mpproxy/WEB-INF/bluedragon/work/cflog" debug="0" privileged="true">
-</Context>

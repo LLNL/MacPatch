@@ -1,0 +1,14 @@
+[Unit]
+Description=MacPatch REST Services
+After=network.target
+
+[Service]
+Type=simple
+
+ExecStart=/bin/bash /opt/MacPatch/Server/conf/scripts/systemd/MPAPI.sh start
+ExecStop=/bin/bash /opt/MacPatch/Server/conf/scripts/systemd/MPAPI.sh stop
+
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

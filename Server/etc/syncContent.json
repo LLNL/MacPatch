@@ -1,0 +1,6 @@
+{
+    "description" : "Configuration settings for Syncing content from Master server",
+    "settings": {
+    	"MPServerAddress":"127.0.0.1"
+    }
+}

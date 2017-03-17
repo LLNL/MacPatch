@@ -1,4 +1,0 @@
-<!---
-    <cfdump>
-    <cfdump var="#server#">
---->
