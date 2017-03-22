@@ -133,6 +133,9 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
         // Install Profiles
         for (NSDictionary *p in profiles)
         {
+            qldebug(@"API Profile ID: %@" , [p objectForKey:@"profileIdentifier"]);
+            qldebug(@"API Profile Rev: %@", [p objectForKey:@"rev"]);
+            
             if ([p objectForKey:@"profileIdentifier"] == (id)[NSNull null] || [[p objectForKey:@"profileIdentifier"] length] == 0 ) {
                 NSString *pName = @"NA";
                 if ([p objectForKey:@"id"]) {
@@ -143,48 +146,53 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
                 continue;
             }
             
+            BOOL needsInstall = NO;
             BOOL needsUpdate = NO;
+            BOOL foundInMPInstalledArray = NO;
             
-            if ([self profileIsInstalledOnDisk:[p objectForKey:@"profileIdentifier"] installedProfiles:localProfiles])
-            {
-                BOOL needsInstall = NO;
-                BOOL foundInMPInstalledArray = NO;
-                // Check the rev if it needs updating
-                if (installedProfilesRaw) {
-                    for (NSDictionary *installedProfile in installedProfilesRaw)
+            BOOL profileIDIsInstalled = [self profileIsInstalledOnDisk:[p objectForKey:@"profileIdentifier"] installedProfiles:localProfiles];
+            if (!profileIDIsInstalled) {
+                qlinfo(@"Profile %@ needs to be installed.",[p objectForKey:@"profileIdentifier"]);
+                needsInstall = YES;
+            } else {
+                // Profile ID Is installed
+                // See if it needs an update
+                for (NSDictionary *mpInstProfile in installedProfilesRaw)
+                {
+                    // Check if profile has been recorded as installed by MP
+                    // Note: we can not update if we dont record a revision number
+                    if ([[mpInstProfile objectForKey:@"profileIdentifier"] isEqualToString:[p objectForKey:@"profileIdentifier"]])
                     {
-                        // Looking to see if it's installed
-                        if ([[installedProfile objectForKey:@"profileIdentifier"] isEqualToString:[p objectForKey:@"profileIdentifier"]])
-                        {
-                            int currentProfileRev = [[installedProfile objectForKey:@"rev"] intValue];
-                            int wsProfileRev = [[p objectForKey:@"rev"] intValue];
-                            qldebug(@"%d -- %d",currentProfileRev,wsProfileRev);
-                            if (currentProfileRev < wsProfileRev) {
-                                needsInstall = YES;
-                                needsUpdate = YES;
-                            }
-                            foundInMPInstalledArray = YES;
-                            break;
+                        foundInMPInstalledArray = YES;
+                        
+                        int currentProfileRev = [[mpInstProfile objectForKey:@"rev"] intValue];
+                        int wsProfileRev = [[p objectForKey:@"rev"] intValue];
+                        qldebug(@"CurrentProfileRev: %d <> APIProfileRev: %d",currentProfileRev,wsProfileRev);
+                        if (currentProfileRev < wsProfileRev) {
+                            qlinfo(@"ProfileIdentifier: %@ needs an update.",[p objectForKey:@"profileIdentifier"]);
+                            needsUpdate = YES;
                         }
                     }
                 }
-
-                // No need to install profile again...
-                if (needsInstall == NO) {
-                    if (foundInMPInstalledArray == NO) {
-                        [self recordProfileInstallToDisk:p];
+                
+                if (foundInMPInstalledArray == NO) {
+                    qlinfo(@"Profile %@ needs to be installed. Was not found to be installed via MP.",[p objectForKey:@"profileIdentifier"]);
+                    [self recordProfileInstallToDisk:p];
+                }
+                
+                if ([p objectForKey:@"data"])
+                {
+                    if (needsUpdate == YES) {
+                        // In order to update, remove first
+                        [self removeProfile:[p objectForKey:@"profileIdentifier"]];
+                        needsInstall = YES;
                     }
-                    qldebug(@"continue");
-                    continue;
                 }
             }
-            if ([p objectForKey:@"data"])
+            
+            // Install Needed Profile
+            if (needsInstall == YES)
             {
-                if (needsUpdate == YES) {
-                    // In order to update, remove first
-                    [self removeProfile:[p objectForKey:@"profileIdentifier"]];
-                }
-
                 NSString *profileOnDisk = [self writeProfileToDisk:[p objectForKey:@"data"]];
                 if (!profileOnDisk) {
                     qlerror(@"Error, unable to install profile %@",[p objectForKey:@"profileIdentifier"]);
@@ -261,7 +269,11 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 
     if (![fm fileExistsAtPath:filePath]) {
         qlerror(@"Could not find/read profile data from %@",filePath);
-        return nil;
+        if ([fm fileExistsAtPath:@"/tmp/foo.plist"]) {
+            filePath = @"/tmp/foo.plist";
+        } else {
+            return nil;
+        }
     } else {
         qldebug(@"Reading profiles file %@",filePath);
     }
@@ -273,16 +285,16 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
     {
         for (NSDictionary *p in [profileDict objectForKey:@"_computerlevel"])
         {
-            qldebug(@"Adding:\n%@",p);
-            [profileIDs addObject:[p objectForKey:@"ProfileIdentifier"]];
+            qldebug(@"Adding:\n%@",[p objectForKey:@"ProfileIdentifier"]);
+            //[profileIDs addObject:[p objectForKey:@"ProfileIdentifier"]];
+            [profileIDs addObject:p];
         }
     } else {
         qlinfo(@"No computerlevel profiles.");
         return nil;
     }
     // Quick Clean Up
-    //[fm removeItemAtPath:filePath error:NULL];
-    qldebug(@"ProfileID: %@",profileIDs);
+    // qldebug(@"ProfileID: %@",profileIDs);
     return [NSArray arrayWithArray:[profileIDs copy]];
 }
 
@@ -367,6 +379,7 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 
     int result = [task terminationStatus];
     if (result == 0) {
+        [self removeProfileInstallFromDisk:aProfileIdentifier];
         return YES;
     } else {
         return NO;
@@ -379,35 +392,63 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
     if ([aProfile objectForKey:@"id"])
     {
         pID = [aProfile objectForKey:@"id"];
+        qlinfo(@"pID %@",pID);
     }
 
-    NSMutableArray *installedProfiles = [[NSMutableArray alloc] init];
+    NSMutableArray *_installedProfiles = [[NSMutableArray alloc] init]; // Read
+    
     NSString *filePath = [MP_ROOT_CLIENT stringByAppendingPathComponent:kMPProfilesData];
     qlinfo(@"Recording profile install for %@",[aProfile objectForKey:@"profileIdentifier"]);
+    
     NSMutableDictionary *profileData = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
     if (!profileData) {
         profileData = [NSMutableDictionary dictionary];
     }
 
-    // Check to see if ID already exists
     if ([profileData objectForKey:@"installed"])
     {
-        for (NSDictionary *ip in [profileData objectForKey:@"installed"])
-        {
-            // Found it ...
-            if ([[[ip objectForKey:@"id"] uppercaseString] isEqualToString:[pID uppercaseString]])
-            {
-                [installedProfiles addObject:aProfile];
+        _installedProfiles = [NSMutableArray arrayWithArray:[profileData objectForKey:@"installed"]];
+    }
+    
+    BOOL isAdded = NO;
+    for (NSDictionary *iProfile in [profileData objectForKey:@"installed"]) {
+        if ([[[iProfile objectForKey:@"id"] uppercaseString] isEqualToString:[pID uppercaseString]]) {
+            isAdded = YES;
+            break;
+        }
+    }
+    
+    if (!isAdded) {
+        [_installedProfiles addObject:(NSDictionary *)aProfile];
+    }
+    
+
+    [@{@"installed":(NSArray *)_installedProfiles} writeToFile:filePath atomically:NO];
+    if (![fm fileExistsAtPath:filePath])
+    {
+        qlerror(@"%@ file was not found.",filePath);
+    }
+}
+
+- (void)removeProfileInstallFromDisk:(NSString *)aProfileID
+{
+    NSMutableArray *_installedProfiles = [[NSMutableArray alloc] init];
+    NSString *filePath = [MP_ROOT_CLIENT stringByAppendingPathComponent:kMPProfilesData];
+    qlinfo(@"Remove recorded profile ID (%@) for disk.",aProfileID);
+    
+    NSMutableDictionary *profileData = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+    if ([profileData objectForKey:@"installed"])
+    {
+        for (NSDictionary *x in [profileData objectForKey:@"installed"]) {
+            if ([aProfileID isEqualToString:[x objectForKey:@"profileIdentifier"]]) {
+                continue;
             } else {
-                [installedProfiles addObject:ip];
+                [_installedProfiles addObject:x];
             }
         }
-    } else {
-        [installedProfiles addObject:aProfile];
     }
-
-    [profileData setObject:(NSArray *)installedProfiles forKey:@"installed"];
-    [(NSDictionary *)profileData writeToFile:filePath atomically:YES];
+    
+    [@{@"installed":(NSArray *)_installedProfiles} writeToFile:filePath atomically:NO];
     if (![fm fileExistsAtPath:filePath])
     {
         qlerror(@"%@ file was not found.",filePath);
@@ -416,25 +457,45 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 
 - (BOOL)profileIsInstalledOnDisk:(NSString *)profileID installedProfiles:(NSArray *)localProfiles
 {
-    if (profileID == (id)[NSNull null] || profileID.length == 0 ) {
-        qlerror(@"profileID is null. ");
-        return NO;
-    }
-    
-    BOOL result = NO;
-    for (NSString *pID in localProfiles)
-    {
-        if (pID == (id)[NSNull null] || pID.length == 0 ) {
-            // We have a NULL, somehow
-            continue;
+    @try {
+        if (profileID == (id)[NSNull null] || profileID.length == 0 ) {
+            qlerror(@"profileID is null. ");
+            return NO;
         }
         
-        if ([[pID uppercaseString] isEqualToString:[profileID uppercaseString]]) {
-            result = YES;
+        BOOL result = NO;
+        
+        for (NSDictionary *p in localProfiles)
+        {
+            if ([p objectForKey:@"ProfileIdentifier"]) {
+                qldebug(@"%@ == %@",[p objectForKey:@"ProfileIdentifier"], profileID);
+                
+                if ([[[p objectForKey:@"ProfileIdentifier"] uppercaseString] isEqualToString:[profileID uppercaseString]]) {
+                    result = YES;
+                    break;
+                }
+            }
+        }
+        return result;
+    } @catch (NSException *exception) {
+        qlerror(@"%@",exception);
+        return NO;
+    }
+}
+
+- (NSDictionary *)getProfileFromID:(NSString*)profileID profilesArray:(NSArray *)profiles
+{
+    NSDictionary *result = nil;
+    for (NSDictionary *p in profiles)
+    {
+        qlinfo(@"profileID: %@",profileID);
+        qlinfo(@"p: %@",p[@"ProfileIdentifier"]);
+        if ([[p objectForKey:@"ProfileIdentifier"] isEqualToString:profileID])
+        {
+            result = [p copy];
             break;
         }
     }
-    
     return result;
 }
 
