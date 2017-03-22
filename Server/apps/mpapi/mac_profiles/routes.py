@@ -31,22 +31,20 @@ class ProfilesForClient(MPResource):
 
 			cProfileObj = ClientProfile()
 			_clientGroup = cProfileObj.clientGroup(cuuid)
+			# Get Client Group Assigned Profiles and Global Assigned Profiles
 			_profileIDList = cProfileObj.profilesForGroup(_clientGroup)
-			_pIDListStr = ""
-			if _profileIDList is not None:
-				_pIDListStr = ",".join(_profileIDList)
-
 			_profiles = []
-			q_result = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID.in_((_pIDListStr))).all()
-			if q_result is not None:
-				for row in q_result:
-					_profile = Profile()
-					_profile.id = row.profileID
-					_profile.profileIdentifier = row.profileIdentifier
-					_profile.rev = row.profileRev
-					_profile.data = base64.b64encode(row.profileData)
-					_profile.remove = row.uninstallOnRemove
-					_profiles.append(_profile)
+			if _profileIDList is not None:
+				q_result = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID.in_(_profileIDList)).all()
+				if q_result is not None:
+					for row in q_result:
+						_profile = {}
+						_profile['id'] = row.profileID
+						_profile['profileIdentifier'] = row.profileIdentifier
+						_profile['rev'] = row.profileRev
+						_profile['data'] = base64.b64encode(row.profileData)
+						_profile['remove'] = row.uninstallOnRemove
+						_profiles.append(_profile)
 
 			return {'errorno': '0', 'errormsg': '', 'result': _profiles}, 200
 
