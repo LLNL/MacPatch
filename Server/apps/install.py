@@ -40,6 +40,9 @@ _all_ = [
 	"six>=1.10.0",
 	"Werkzeug>=0.11.11",
 	"WTForms>=2.1",
+	"Flask-APScheduler>=1.7.0",
+	"flask-cors>=2.0.0",
+	"flask-security>=1.7.0"
 ]
 
 _failed_ = []
