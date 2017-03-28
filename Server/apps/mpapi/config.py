@@ -39,7 +39,7 @@ class BaseConfig:
 	# MacPatch App Options
 	SITECONFIG_FILE         = '/opt/MacPatch/Server/etc/siteconfig.json'
 	VERIFY_CLIENTID         = True
-	REQUIRE_SIGNATURES      = True
+	REQUIRE_SIGNATURES      = False
 	ALLOW_MIXED_SIGNATURES  = True
 	CONTENT_DIR             = '/opt/MacPatch/Content'
 	AGENT_CONTENT_DIR       = '/opt/MacPatch/Content/Web/clients'
