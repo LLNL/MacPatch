@@ -21,8 +21,8 @@ def addDefaultData():
 	addDefaultPatchGroup()
 	addDefaultSWGroup()
 	addDefaultSUSGroup()
-	addDefaultServerConfig()
 	addDefaultServerList()
+	addDefaultServerConfig()
 	addDefaultClientGroup()
 
 # Agent Registration Settings ------------------------------------------------
@@ -47,8 +47,8 @@ def hasSiteKeys():
 
 	_siteData = getSiteKeyData()
 	res = MpSiteKeys.query.filter(MpSiteKeys.pubKeyHash==_siteData['pubKeyHash'],
-								  MpSiteKeys.priKeyHash==_siteData['priKeyHash'],
-								  MpSiteKeys.active==1).first()
+								MpSiteKeys.priKeyHash==_siteData['priKeyHash'],
+								MpSiteKeys.active==1).first()
 	if res is not None:
 		return True
 	else:
@@ -63,8 +63,8 @@ def addSiteKeys():
 
 	# Add Site Keys
 	db.session.add(MpSiteKeys(pubKey=_siteData['pubKey'], pubKeyHash=_siteData['pubKeyHash'],
-							  priKey=_siteData['priKey'], priKeyHash=_siteData['priKeyHash'],
-							  active="1", mdate=datetime.now()))
+							priKey=_siteData['priKey'], priKeyHash=_siteData['priKeyHash'],
+							active="1", mdate=datetime.now()))
 	db.session.commit()
 
 def resetSiteKeys():
@@ -82,8 +82,8 @@ def resetSiteKeys():
 
 	# Add Site Keys
 	db.session.add(MpSiteKeys(pubKey=_siteData['pubKey'], pubKeyHash=_siteData['pubKeyHash'],
-							  priKey=_siteData['priKey'], priKeyHash=_siteData['priKeyHash'],
-							  active="1", mdate=datetime.now()))
+							priKey=_siteData['priKey'], priKeyHash=_siteData['priKeyHash'],
+							active="1", mdate=datetime.now()))
 	db.session.commit()
 
 def getSiteKeyData():
@@ -268,7 +268,7 @@ def hasDefaultServerList():
 
 def addDefaultServerList():
 	# Check for config
-	if not hasDefaultServerList():
+	if hasDefaultServerList():
 		return False
 
 	# Add Agent Config
