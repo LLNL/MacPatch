@@ -2,10 +2,21 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Updater Installer
-# ver 2.0
+# ver 2.1.0
 # Created By Charles Heizer @ LLNL
 #
 # ***************************************************************************************
+
+MPBaseDir="/Library/MacPatch"
+MPUpdaterDir="${MPBaseDir}/Updater"
+
+# Script Parent Dir Path
+SRC=$(cd $(dirname "$0"); pwd)
+
+if [ -e "${SRC}/migration.plist" ]; then
+	# Copy migration.plist to host
+	cp "${SRC}/migration.plist" "${MPUpdaterDir}/.migration.plist"
+fi
 
 # Create .mpUpdate
 if [ ! -d "/Users/Shared/.mpUpdate" ]; then
