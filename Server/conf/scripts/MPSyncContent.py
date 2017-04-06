@@ -33,6 +33,7 @@ import subprocess
 import hashlib
 import platform
 import commands
+import json
 
 
 # Define logging for global use
