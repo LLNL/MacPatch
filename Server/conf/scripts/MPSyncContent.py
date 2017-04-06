@@ -33,6 +33,7 @@ import subprocess
 import hashlib
 import platform
 import commands
+import json
 
 
 # Define logging for global use
@@ -55,7 +56,7 @@ MP_SRV_CONF=MP_SRV_BASE+"/conf"
 MP_SYNC_CONF=MP_SRV_BASE+"/etc/syncContent.json"
 
 # Global OS vars
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 os_type = platform.system()
 system_name = platform.uname()[1]
 
