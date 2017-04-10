@@ -1,5 +1,5 @@
 //
-//  MPAgentUp2DateController.h
+//  MPRemoteFingerprint.h
 /*
  Copyright (c) 2017, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -23,36 +23,13 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
-@class MPServerConnection;
-@class MPAsus;
-@class MPDataMgr;
+@interface MPRemoteFingerprint : NSObject <NSURLConnectionDataDelegate, NSURLConnectionDelegate>
 
-@interface MPAgentUp2DateController : NSObject 
-{
-	MPServerConnection *mpServerConnection;
-    NSString        *_cuuid;
-    NSString        *_appPid;
-	NSDictionary    *_updateData;
-    NSDictionary    *_osVerDictionary;
-    
-    MPDefaults      *mpDefaults;
-    MPAsus          *mpAsus;
-    MPDataMgr       *mpDataMgr;
-}
+@property (nonatomic, assign, readonly) NSString *fingerPrint;
+@property (nonatomic, assign, readonly) NSString *remoteFingerPrint;
 
-@property (nonatomic, strong)   NSString        *_cuuid;
-@property (nonatomic, strong)   NSString        *_appPid;
-@property (nonatomic, strong)   NSDictionary    *_updateData;
-@property (nonatomic, strong)   NSDictionary    *_osVerDictionary;
-@property (nonatomic, strong)   NSString        *_migrationPlist;
-
-@property (strong)              NSTimer         *taskTimeoutTimer;
-@property (nonatomic, assign)   NSTimeInterval  taskTimeoutValue;
-@property (nonatomic, assign)   BOOL            taskTimedOut;
-
-- (int)scanForUpdate;
-- (void)scanAndUpdate;
+- (BOOL)isValidRemoteFingerPrint:(NSURL *)aURL fingerprint:(NSString *)aFingerprint;
 
 @end

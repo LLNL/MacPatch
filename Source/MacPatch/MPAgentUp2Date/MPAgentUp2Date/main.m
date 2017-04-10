@@ -30,7 +30,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"3.0.0.1"
+#define APPVERSION	@"3.0.0.3"
 #define APPNAME		@"MPAgentUp2Date"
 
 void usage(void);
@@ -113,10 +113,10 @@ int main (int argc, char * argv[])
 #endif
 	}
 	
-        // Setup Logging
-	NSString *_logFile = [NSString stringWithFormat:@"%@/Logs/MPAgentUp2Date.log",MP_ROOT_UPDATE];
-        [MPLog setupLogging:_logFile level:lcl_vDebug];
-        if (verboseLogging) {
+    // Setup Logging
+    NSString *_logFile = [NSString stringWithFormat:@"%@/Logs/MPAgentUp2Date.log",MP_ROOT_UPDATE];
+    [MPLog setupLogging:_logFile level:lcl_vDebug];
+    if (verboseLogging) {
 		lcl_configure_by_name("*", lcl_vDebug);
 		[LCLLogFile setMirrorsToStdErr:YES];
 		logit(lcl_vInfo,@"***** %@ v.%@ started -- Debug Enabled *****", APPNAME, APPVERSION);

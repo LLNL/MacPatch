@@ -94,6 +94,7 @@
 #import "MPKeychain.h"
 #import "MPKeyItem.h"
 #import "MPSimpleKeychain.h"
+#import "MPRemoteFingerprint.h"
 
 // Helpers
 #import "NSString+Helper.h"
