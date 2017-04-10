@@ -1,6 +1,6 @@
 [Unit]
 Description=MacPatch Rsync Server Socket
-Conflicts=MPRsyncServer.service
+Conflicts=MPRsyncServer3.service
 
 [Socket]
 ListenStream=873
