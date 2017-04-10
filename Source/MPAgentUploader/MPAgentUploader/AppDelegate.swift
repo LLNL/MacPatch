@@ -79,5 +79,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSWorkspace.shared().openFile(logFile, withApplication: "Console")
         
     }
+    
+    @IBAction func pressed(sender: AnyObject) {
+        if let window = NSApplication.shared().mainWindow {
+            if let viewController = window.contentViewController as? ViewController {
+                // do stuff
+                print("Hello")
+                viewController.displayMigrationPlistSheet()
+            }
+        }
+    }
 }
 
