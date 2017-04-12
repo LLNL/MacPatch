@@ -71,6 +71,7 @@ class ViewController: NSViewController, AuthViewControllerDelegate
     var pkg_tmp_dir: String = ""
     var agent_dictionary: [String: Any] = [:]
     var updater_dictionary: [String: Any] = [:]
+    var migration_plist: String = ""
     
     
     override func viewDidLoad() {
@@ -109,6 +110,27 @@ class ViewController: NSViewController, AuthViewControllerDelegate
         authViewController.x_useSSL = self.useSSL.state
         self.presentViewControllerAsSheet(authViewController)
     }
+    
+    func displayMigrationPlistSheet()
+    {
+        print("Yes")
+        let openPanel = NSOpenPanel()
+        openPanel.message = "Please select the migration plist file."
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = false
+        openPanel.canCreateDirectories = false
+        openPanel.canChooseFiles = true
+        openPanel.allowedFileTypes = ["plist"]
+        
+        openPanel.begin { (result) -> Void in
+            if result == NSFileHandlingPanelOKButton {
+                self.migration_plist = (openPanel.url?.path)!
+                self.writeConfigStatus.stringValue = "Migration plist will be added."
+                log.info("choosePlist: \(openPanel.url?.path)")
+            }
+        }
+    }
+    
     
     func didFinishAuthRequest(sender: AuthViewController, token:String)
     {
@@ -685,6 +707,21 @@ class ViewController: NSViewController, AuthViewControllerDelegate
                     } catch {
                         log.error("\(error)")
                         return false
+                    }
+                }
+            } else if (p.lastPathComponent == "Updater.pkg") {
+                if fm.fileExists(atPath: p.stringByAppendingPathComponent(path: "Scripts")) {
+                    if (migration_plist != "") {
+                        let fm = FileManager.default
+                        let plistFile = p.stringByAppendingPathComponent(path: "Scripts/migration.plist")
+                        log.debug("Write migration plist to \(plistFile)")
+                        do {
+                            try fm.copyItem(atPath: migration_plist, toPath: plistFile)
+                            return true
+                        } catch {
+                            log.error("\(error)")
+                            return false
+                        }
                     }
                 }
             }

@@ -93,6 +93,8 @@
 		8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F3516DE64DA00E15A9E /* MPSWTasks.m */; };
 		8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F50CB7C199D5DD0006AC537 /* MPKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F50CB7D199D5DD0006AC537 /* MPKeychain.m */; };
+		8F5970BE1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5970BC1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F5970BF1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F5970BD1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m */; };
 		8F7B8B3F1CB03B3200FB940F /* AFHTTPRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F7B8B2C1CB03B3200FB940F /* AFHTTPRequestOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F7B8B401CB03B3200FB940F /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7B8B2D1CB03B3200FB940F /* AFHTTPRequestOperation.m */; };
 		8F7B8B411CB03B3200FB940F /* AFHTTPRequestOperationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F7B8B2E1CB03B3200FB940F /* AFHTTPRequestOperationManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -184,6 +186,8 @@
 		8F4B1F3516DE64DA00E15A9E /* MPSWTasks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSWTasks.m; sourceTree = "<group>"; };
 		8F50CB7C199D5DD0006AC537 /* MPKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPKeychain.h; sourceTree = "<group>"; };
 		8F50CB7D199D5DD0006AC537 /* MPKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPKeychain.m; sourceTree = "<group>"; };
+		8F5970BC1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPRemoteFingerprint.h; sourceTree = "<group>"; };
+		8F5970BD1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPRemoteFingerprint.m; sourceTree = "<group>"; };
 		8F6BA41115C0E59A00F44501 /* MPDiskUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDiskUtil.h; sourceTree = "<group>"; };
 		8F6BA41215C0E59A00F44501 /* MPDiskUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDiskUtil.m; sourceTree = "<group>"; };
 		8F7B15CC15068211005CEA32 /* MPCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPCrypto.h; path = Crypto/MPCrypto.h; sourceTree = "<group>"; };
@@ -591,6 +595,8 @@
 				8FF8315D1DEF7ACF005DC5AD /* MPKeyItem.m */,
 				8FF8315E1DEF7ACF005DC5AD /* MPSimpleKeychain.h */,
 				8FF8315F1DEF7ACF005DC5AD /* MPSimpleKeychain.m */,
+				8F5970BC1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h */,
+				8F5970BD1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m */,
 			);
 			name = Crypto;
 			sourceTree = "<group>";
@@ -693,6 +699,7 @@
 				8F50CB7E199D5DD0006AC537 /* MPKeychain.h in Headers */,
 				8FF831601DEF7ACF005DC5AD /* MPKeyItem.h in Headers */,
 				8FF831621DEF7ACF005DC5AD /* MPSimpleKeychain.h in Headers */,
+				8F5970BE1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h in Headers */,
 				8FC1B5551E4E7894008844DF /* MPClientInfo.h in Headers */,
 				8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */,
 				8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */,
@@ -794,6 +801,7 @@
 				8F4B1DFC16DD1D6400E15A9E /* MPASUSCatalogs.m in Sources */,
 				8F4B1DFD16DD1D6400E15A9E /* MPBundle.m in Sources */,
 				8F4B1DFE16DD1D6400E15A9E /* MPFileCheck.m in Sources */,
+				8F5970BF1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m in Sources */,
 				8F47F0FC18EDFD6D00158396 /* MPJsonResult.m in Sources */,
 				8F4B1DFF16DD1D6400E15A9E /* MPOSCheck.m in Sources */,
 				8F4B1E0016DD1D6400E15A9E /* MPScript.m in Sources */,

@@ -98,7 +98,7 @@ macServices=["gov.llnl.mp.tomcat.plist","gov.llnl.mp.invd.plist","gov.llnl.mp.py
 "gov.llnl.mp.sus.sync.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.rsync.plist",
 "gov.llnl.mp.sync.plist","gov.llnl.mp.pfctl.plist","gov.llnl.mp.fw.plist","gov.llnl.mp.nginx.plist"]
 
-lnxServices=["MPTomcat","MPInventoryD","MPAPI","MPNginx","MPRsyncServer"]
+lnxServices=["MPTomcat3","MPInventoryD3","MPAPI","MPNginx3","MPRsyncServer3"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader","MPSyncContent"]
 
 # ----------------------------------------------------------------------------
@@ -482,10 +482,10 @@ def setupServices():
 			if 'gov.llnl.mp.nginx.plist' not in srvsList:
 				srvsList.append('gov.llnl.mp.nginx.plist')
 		else:
-			linkStartupScripts('MPInventoryD')
-			srvsList.append('MPInventoryD')
-			linkStartupScripts('MPNginx')
-			srvsList.append('MPNginx')
+			linkStartupScripts('MPInventoryD3')
+			srvsList.append('MPInventoryD3')
+			linkStartupScripts('MPNginx3')
+			srvsList.append('MPNginx3')
 			linkStartupScripts('MPAPI')
 			srvsList.append('MPAPI')
 	else:
@@ -511,10 +511,10 @@ def setupServices():
 			if 'gov.llnl.mp.nginx.plist' not in srvsList:
 				srvsList.append('gov.llnl.mp.nginx.plist')
 		else:
-			linkStartupScripts('MPNginx')
-			srvsList.append('MPNginx')
-			linkStartupScripts('MPTomcat')
-			srvsList.append('MPTomcat')
+			linkStartupScripts('MPNginx3')
+			srvsList.append('MPNginx3')
+			linkStartupScripts('MPTomcat3')
+			srvsList.append('MPTomcat3')
 
 	else:
 		
@@ -532,10 +532,10 @@ def setupServices():
 		if os_type == 'Darwin':
 			srvsList.append('gov.llnl.mp.rsync.plist')
 		else:
-			linkStartupScripts('MPRsyncServer')
-			linkStartupScripts('MPRsyncServer@','copy')
-			linkStartupScripts('MPRsyncServer','copy','socket')
-			srvsList.append('MPRsyncServer')
+			linkStartupScripts('MPRsyncServer3')
+			linkStartupScripts('MPRsyncServer3@','copy')
+			linkStartupScripts('MPRsyncServer3','copy','socket')
+			srvsList.append('MPRsyncServer3')
 
 	# Patch Loader
 	_PATCHLOAD = 'Y' if masterType else 'N'
