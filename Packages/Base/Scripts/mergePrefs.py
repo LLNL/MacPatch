@@ -22,6 +22,7 @@ import datetime
 import re
 
 ### Functions ###
+filteredKeys = ['AllowClient','AllowServer','Domain', 'PatchGroup', 'Reboot', 'SWDistGroup']
 
 
 def usage():
@@ -87,6 +88,8 @@ newPlist = dict()
 
 # Merge default settings from inPlist into newPlist
 newPlist.update(inPlist.default)
+print newPlist
+
 
 # Merge current settings from targetPlist into newPlist
 newPlist.update(targetPlist)
