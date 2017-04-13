@@ -3,6 +3,9 @@
 # mergePrefs.py
 # Jorge Escobar
 # 1/30/2013
+#
+# Updated 4/13/17
+# Added filteredKeys list for managing the perm file
 
 # Usage:
 #	mergePrefs -b -i /path/to/infile.plist -t /path/to/target.plist
@@ -21,9 +24,12 @@ import xml.parsers.expat as expat
 import datetime
 import re
 
+
+### Variables ###
+LOCAL_PERM_PLIST_PATH = "/Library/Preferences/gov.llnl.mpagent.perm.plist"
+FILTERED_PERM_KEYS = ['AllowClient', 'AllowServer', 'Domain', 'PatchGroup', 'Reboot', 'SWDistGroup', 'Description', 'PatchState']
+
 ### Functions ###
-
-
 def usage():
 	print "Usage: mergePrefs -b -i /path/to/infile.plist -t /path/to/target.plist"
 	print "       -b, --backup     backup target plist before changing"
@@ -95,9 +101,19 @@ newPlist.update(targetPlist)
 newPlist.update(inPlist.enforced)
 
 # Merge local "perm" settings into newPlist, if the perm file exists
-LOCAL_PERM_PLIST_PATH = "/Library/Preferences/gov.llnl.mpagent.perm.plist"
 if os.path.isfile(LOCAL_PERM_PLIST_PATH):
 	permPlist = safeReadPlist(LOCAL_PERM_PLIST_PATH)
+	
+	# This is for migrations, populate the keys that can be perm data
+	# if filteredKeys list is empty all perm data will get merged.
+	if len(FILTERED_PERM_KEYS) >= 1:
+		permPlistFiltered = dict()
+		for fKey in FILTERED_PERM_KEYS:
+			if fKey in permPlist:
+				permPlistFiltered[fKey] = permPlist[fKey]
+
+		permPlist = permPlistFiltered
+
 	newPlist.update(permPlist)
 
 # Backup target plist if requrested
