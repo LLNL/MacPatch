@@ -358,12 +358,32 @@
             From mp_adm_users_info
             Where user_id = <cfqueryparam value="#LCase(arguments.username)#" />
         </cfquery>
-        
-        <cfif qUserRights.recordcount EQ 0 and arguments.usertype NEQ 0>
+
+        <cfif qUserData.recordcount EQ 0 and arguments.usertype NEQ 0>
+            <!--- LDAP User and has never logged in --->
             <cfquery name="qAddAccount" datasource="mpds"> 
                 Insert Into mp_adm_group_users ( user_id, user_type, last_login, number_of_logins)
                 Values ( '#arguments.username#', '#arguments.usertype#', #CreateODBCDateTime(now())#, '1')
             </cfquery>
+
+            <cfquery name="qAddAccountRights" datasource="mpds"> 
+                Insert Into mp_adm_users_info ( user_id, user_type, last_login, number_of_logins)
+                Values ( '#arguments.username#', '#arguments.usertype#', #CreateODBCDateTime(now())#, '1')
+            </cfquery>
+        </cfif>
+
+        <!--- Set user rights from database --->
+        <cfif qUserRights.recordcount EQ 1>
+            <cfset result['admin'] = qUserRights.admin />
+            <cfset result['autopkg'] = qUserRights.autopkg />
+            <cfset result['agentUpload'] = qUserRights.agentUpload />
+            <cfset result['apiAccess'] = qUserRights.apiAccess />
+        </cfif>
+
+        
+        
+        <cfif qUserRights.recordcount EQ 0 and arguments.usertype NEQ 0>
+            
         <cfelseif qUserRights.recordcount EQ 1>
             <cfset result['admin'] = qUserRights.admin />
             <cfset result['autopkg'] = qUserRights.autopkg />
