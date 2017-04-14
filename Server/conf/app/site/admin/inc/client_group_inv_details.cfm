@@ -244,10 +244,12 @@
 <cffunction name="getColsForTable" access="public" returntype="any">
     <cfargument name="table" required="yes">
 
+    <cfset schemaName = #server.mpsettings.settings.database.prod.dbName# />
     <cfquery datasource="#session.dbsource#" name="qGetColumns" cachedwithin="#CreateTimeSpan(0,0,0,2)#">
         SELECT DISTINCT COLUMN_NAME
         FROM INFORMATION_SCHEMA.COLUMNS
         WHERE table_name = '#arguments.table#'
+        AND TABLE_SCHEMA = '#schemaName#'
     </cfquery>
 
     <cfset _cols = ValueList(qGetColumns.COLUMN_NAME)>
