@@ -20,11 +20,11 @@
 				colNames:['','Name', 'Bundle ID', 'Version', 'Hash', 'Active'],
 				colModel :[
 				  {name:'rid',index:'rid', width:1, align:"center", sortable:false, hidden:true},
-				  {name:'pluginName', index:'pluginName', width:120, editable:true, editoptions:{size:70}},
-				  {name:'pluginBundleID', index:'pluginBundleID', width:100, editable:true, formoptions:{align: 'left'}},
-				  {name:'pluginVersion', index:'pluginVersion', width:60, editable:true, formoptions:{align: 'left'}},
-				  {name:'hash', index:'hash', width:60, editable:true, formoptions:{align: 'left'}},
-				  {name:'active', index:'active', width:60, editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}}
+				  {name:'pluginName', index:'pluginName', width:80, editable:true, editoptions:{size:70}},
+				  {name:'pluginBundleID', index:'pluginBundleID', width:90, editable:true, formoptions:{align: 'left'}},
+				  {name:'pluginVersion', index:'pluginVersion', width:20, align:"center", editable:true, formoptions:{align: 'left'}},
+				  {name:'hash', index:'hash', width:110, editable:true, formoptions:{align: 'left'}},
+				  {name:'active', index:'active', width:20, align:"center", editable:true, edittype:'select', editoptions:{value:{1:'Yes',0:'No'}}}
 				],
 				altRows:true,
 				altclass:'xAltRow',
@@ -60,10 +60,10 @@
 				},
 				ondblClickRow: function(id)
 				{
-				    <cfif session.IsAdmin IS true>
+					<cfif session.IsAdmin IS true>
 					$('#list').editRow(id, true, undefined, function(res) {
-					    // res is the response object from the $.ajax call
-					    $("#list").trigger("reloadGrid");
+						// res is the response object from the $.ajax call
+						$("#list").trigger("reloadGrid");
 					});
 					</cfif>
 				},
@@ -79,10 +79,10 @@
 				}
 			);
 			<cfif session.IsAdmin IS true>
-		         $("#list").jqGrid('navGrid',"#pager",
-                    {edit:true,add:true,del:true},
-                    {closeOnEscape:true,reloadAfterSubmit:true,width:600, align:"left"},
-                    {reloadAfterSubmit:true,width:600},{});
+				 $("#list").jqGrid('navGrid',"#pager",
+					{edit:true,add:true,del:true},
+					{closeOnEscape:true,reloadAfterSubmit:true,width:600, align:"left"},
+					{reloadAfterSubmit:true,width:600},{});
 			</cfif>
 
 			$(window).bind('resize', function() {
