@@ -480,13 +480,17 @@ class AgentUpdates():
 			result['ipaddr'] = _client[1]
 			result['hostname'] = _client[2]
 		else:
-			return None
+			result['osver'] = "10.9.0"
+			result['ipaddr'] = "127.0.0.1"
+			result['hostname'] = "localhost"
+			# return None
 
 		if _plist is not None:
 			result['domain'] = _plist[0]
 			result['patchgroup'] = _plist[1]
 		else:
-			print "BAD"
+			result['domain'] = "Default"
+			result['patchgroup'] = "Default"
 
 		return result
 

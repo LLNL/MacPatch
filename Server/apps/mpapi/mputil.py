@@ -86,8 +86,12 @@ def isValidSignature(Signature, ClientID, Data, TimeStamp):
 
 def isValidClientID(ClientID):
 
-	if not current_app.config['VERIFY_CLIENTID']:
+	if 'VERIFY_CLIENTID' not in current_app.config:
 		return True
+	else:
+		if not current_app.config['VERIFY_CLIENTID']:
+			return True
+
 
 	client_obj = MpClient.query.filter_by(cuuid=ClientID).first()
 

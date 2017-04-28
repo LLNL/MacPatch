@@ -644,7 +644,7 @@ done:
 
         MPNetServer *conf = [[MPNetServer alloc] init];
         [conf setHost:[_altConf objectForKey:@"MPServerAddress"]];
-        [conf setPort:(NSUInteger)[_altConf objectForKey:@"MPServerPort"]];
+        [conf setPort:[[_altConf objectForKey:@"MPServerPort"] integerValue]];
         [conf setAllowSelfSigned:YES];
         return conf;
     }
