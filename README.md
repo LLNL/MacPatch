@@ -1,4 +1,4 @@
-# ![MPLogo](https://github.com/LLNL/MacPatch/tree/master/Docs/Images/MPLogo_64x64.png "MPLogo") MacPatch 3
+# ![MPLogo](https://github.com/LLNL/MacPatch/tree/master/Docs/Images/MPLogo_64x64.png) MacPatch 3
 
 
 
