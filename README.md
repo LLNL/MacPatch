@@ -1,7 +1,7 @@
 # ![MPLogo](Docs/Images/MPLogo_64x64.png) MacPatch 3
 
 <p align="left">
-  <img src="Docs/Images/MPLogo_64x64.png" />
+  <img src="http://lmsotfy.com/so.png" />
 </p>
 
 ## Overview
