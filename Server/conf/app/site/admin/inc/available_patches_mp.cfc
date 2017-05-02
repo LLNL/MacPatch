@@ -116,9 +116,8 @@
 
 				<cfif fileExists(qPatch.pkg_path)>
 					<cfset patchDirName = getDirectoryFromPath( qPatch.pkg_path ) />
-					<cfif FileDelete(qPatch.pkg_path)>
-						<cfset delDir = DirectoryDelete(patchDirName) />
-					</cfif>
+					<cfset fDel = FileDelete(qPatch.pkg_path)>
+					<cfset delDir = DirectoryDelete(patchDirName, true) />
 				</cfif>
 
 				<cfquery name="delPatch" datasource="#session.dbsource#">

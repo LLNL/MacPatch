@@ -111,7 +111,11 @@
         <cfset var userdata = "">
 		
 		<cftry>
-			<cfset strMsg = "Delete MP patch">
+			<cfset strMsg = "Delete MP software package">
+			<cfquery name="qSW" datasource="#session.dbsource#">
+				Select * FROM mp_software WHERE suuid = <cfqueryparam value="#Arguments.id#">
+			</cfquery>
+
 			<cfquery name="delPatch" datasource="#session.dbsource#">
 				DELETE FROM mp_software WHERE suuid = <cfqueryparam value="#Arguments.id#">
 			</cfquery>
@@ -122,6 +126,12 @@
             <cfquery name="delPatchRequisits" datasource="#session.dbsource#">
 				DELETE FROM mp_software_requisits WHERE suuid = <cfqueryparam value="#Arguments.id#">
 			</cfquery>
+
+			<cfif fileExists(qSW.sw_path)>
+				<cfset swpkgDirName = getDirectoryFromPath( qSW.sw_path ) />
+				<cfset fDel = FileDelete(qSW.sw_path)>
+				<cfset delDir = DirectoryDelete(swpkgDirName, true) />
+			</cfif>
 		<cfcatch>
 			<!--- Error, return message --->
 			<cfset strMsgType = "Error">
