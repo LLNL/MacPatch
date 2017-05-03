@@ -11,6 +11,17 @@
 <script src="/admin/js/mp-jqgrid-common.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+	function loadContent(param, id, type)
+	{
+		$("#dialog").load("/admin/inc/sw_pkg_info.cfm?id="+id);
+		$("#dialog").dialog( {
+			bgiframe: false, height: 680, width: 620, modal: true 
+		} );
+		$("#dialog").dialog('open');
+	}
+</script>
+
+<script type="text/javascript">
 	$(document).ready(function()
 		{
 			var lastsel=-1;
@@ -18,15 +29,16 @@
 			{
 				url:'software_packages.cfc?method=getMPSoftware', //CFC that will return the users
 				datatype: 'json', //We specify that the datatype we will be using will be JSON
-				colNames:['','','Name', 'Version', 'Reboot', 'State', 'Dist Type', 'Modified Date', 'Create Date'],
-				colModel :[ 
+				colNames:['','','','Name', 'Version', 'Reboot', 'State', 'Dist Type', 'Modified Date', 'Create Date'],
+				colModel :[
 				  {name:'suuid',index:'suuid', width:20, align:"center", sortable:false, resizable:false},
 				  {name:'sw_url',index:'sw_url', width:20, align:"center", sortable:false},
-				  {name:'sName', index:'sName', width:100, editable:true}, 
+				  {name:'swInfo',index:'swInfo', width:20, align:"center", sortable:false},
+				  {name:'sName', index:'sName', width:100, editable:true},
 				  {name:'sVersion', index:'sVersion', width:30, sorttype:'float', editable:true},
 				  {name:'sReboot', index:'sReboot', width:20, align:"left", editable:true, edittype:"select", editoptions:{value:"0:No;1:Yes"}},
-				  {name:'sState', index:'sState', width:40, align:"left", editable:true, edittype:"select", editoptions:{value:"2:Production;1:QA;0:Create;3:Disabled"}}, 
-				  {name:'sw_Type', index:'sw_Type', width:40, align:"left"}, 
+				  {name:'sState', index:'sState', width:40, align:"left", editable:true, edittype:"select", editoptions:{value:"2:Production;1:QA;0:Create;3:Disabled"}},
+				  {name:'sw_Type', index:'sw_Type', width:40, align:"left"},
 				  {name:'mdate', index:'mdate', width:60, align:"center"},
 				  {name:'cdate', index:'cdate', width:60, align:"center"}
 				],
@@ -49,9 +61,9 @@
 				editurl:"software_packages.cfc?method=addEditMPSoftware",//Not used right now.
 				toolbar:[false,"top"],//Shows the toolbar at the top. I will decide if I need to put anything in there later.
 				//The JSON reader. This defines what the JSON data returned from the CFC should look like
-				loadComplete: function(){ 
-					var ids = jQuery("#list").getDataIDs(); 
-					for(var i=0;i<ids.length;i++){ 
+				loadComplete: function(){
+					var ids = jQuery("#list").getDataIDs();
+					for(var i=0;i<ids.length;i++){
 						var cl = ids[i];
 						var pkgURLPATH = encodeURI(jQuery("#list").getCell(cl,'sw_url'));
 						<cfif session.IsAdmin IS true>
@@ -60,22 +72,25 @@
 						edit = "<input type='image' style='padding-left:0px;' onclick=load('software_package_wizard_edit.cfm?packageID="+ids[i]+"'); src='/admin/images/info_16.png'>";
 						</cfif>
 						dl = "<input type='image' style='padding-left:0px;' onclick=downloadURL('/mp-content"+pkgURLPATH+"'); src='/admin/images/icons/arrow_down.png'>";
-						jQuery("#list").setRowData(ids[i],{suuid:edit,sw_url:dl}) 
-					} 
-				}, 
+
+						info = "<input type='image' style='padding-left:2px;' onclick=loadContent('info','"+ids[i]+"'); src='/admin/images/info_16.png'>";
+
+						jQuery("#list").setRowData(ids[i],{suuid:edit,sw_url:dl,swInfo:info})
+					}
+				},
 				onSelectRow: function(id)
-				{	
+				{
 					if(id && id!==lastsel)
 					{
 					  lastsel=id;
 					}
 				},
-				ondblClickRow: function(id) 
+				ondblClickRow: function(id)
 				{
-				    <cfif session.IsAdmin IS true>
+					<cfif session.IsAdmin IS true>
 					$('#list').editRow(id, true, undefined, function(res) {
-					    // res is the response object from the $.ajax call
-					    $("#list").trigger("reloadGrid");
+						// res is the response object from the $.ajax call
+						$("#list").trigger("reloadGrid");
 					});
 					</cfif>
 				},
@@ -93,29 +108,29 @@
 			<cfif session.IsAdmin IS true>
 				$("#list").jqGrid('navGrid',"#pager",{edit:false,add:false,del:true})
 				.navButtonAdd('#pager',{
-				   caption:"", 
-				   buttonicon:"ui-icon-plus", 
+				   caption:"",
+				   buttonicon:"ui-icon-plus",
 				   title:"Add New Software Package",
-				   onClickButton: function(){ 
+				   onClickButton: function(){
 					 load('software_package_wizard_new.cfm');
 				   }
 				})
 				.navButtonAdd('#pager',{
-				   caption:"", 
-				   buttonicon:"ui-icon-copy", 
+				   caption:"",
+				   buttonicon:"ui-icon-copy",
 				   title:"Duplicate Software Package",
-				   onClickButton: function(){ 
+				   onClickButton: function(){
 					 load("software_package_copy.cfm?id="+ lastsel);
-				   }, 
+				   },
 				   position:"last"
 				})
 				.navButtonAdd('#pager',{
-				   caption:"", 
-				   buttonicon:"ui-icon-gear", 
+				   caption:"",
+				   buttonicon:"ui-icon-gear",
 				   title:"Generate Task",
-				   onClickButton: function(){ 
+				   onClickButton: function(){
 					 load("software_package_generate_task.cfm?id="+ lastsel);
-				   }, 
+				   },
 				   position:"last"
 				});
 			<cfelse>
@@ -125,7 +140,7 @@
 			$("#list").navButtonAdd("#pager",{caption:"",title:"Toggle Search Toolbar", buttonicon:'ui-icon-pin-s', onClickButton:function(){ mygrid[0].toggleToolbar() } });
 			$("#list").jqGrid('filterToolbar',{stringResult: true, searchOnEnter: true, defaultSearch: 'cn'});
 			mygrid[0].toggleToolbar();
-			
+
 			$(window).bind('resize', function() {
 				$("#list").setGridWidth($(window).width()-20);
 			}).trigger('resize');
@@ -136,4 +151,4 @@
 <table id="list" cellpadding="0" cellspacing="0" style="font-size:11px;"></table>
 <div id="pager" style="text-align:center;font-size:11px;"></div>
 </div>
-<div id="dialog" title="Detailed Patch Information" style="text-align:left;" class="ui-dialog-titlebar"></div>
+<div id="dialog" title="Software Package Assignment" style="text-align:left;" class="ui-dialog-titlebar"></div>
