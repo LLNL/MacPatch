@@ -1033,7 +1033,6 @@
         patchState = @"Production";
     }
     
-    
     // Request
     NSError *error = nil;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
@@ -1042,10 +1041,10 @@
     
     NSString *uri;
     if (!aSeverity) {
-        uri = [NSString stringWithFormat:@"/api/v1/client/patch/scanlist/%@",[MPSystemInfo clientUUID]];
+        uri = [NSString stringWithFormat:@"/api/v1/client/patch/scanlist/%@/%@",[MPSystemInfo clientUUID], patchState];
     } else {
         // Set OS Level *, any OS
-        uri = [NSString stringWithFormat:@"/api/v1/client/patch/scanlist/%@/*/%@",[MPSystemInfo clientUUID], aSeverity];
+        uri = [NSString stringWithFormat:@"/api/v1/client/patch/scanlist/%@/%@/*/%@",[MPSystemInfo clientUUID], patchState, aSeverity];
     }
     NSDictionary *res = [self restGetRequestforURI:uri resultType:@"json" error:&error];
     if (error)
