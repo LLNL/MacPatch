@@ -3,7 +3,6 @@ from flask_restful import reqparse
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 
-
 from . import *
 from .. import db
 from .. mputil import *
@@ -108,7 +107,7 @@ class PatchScanListFilterOS(MPResource):
 			log_Debug('[PatchScanListFilterOS][Get]: Args: cuuid=(%s) osver=(%s) state=(%s)' % (cuuid, osver, state))
 
 			_scanList = PatchScan()
-			_list = _scanList.getScanList(osver, severity)
+			_list = _scanList.getScanList(osver, severity, state)
 
 			if _list is not None:
 				result = {'patches': _list}
@@ -439,22 +438,45 @@ class PatchScan():
 	def __init__(self):
 		pass
 
-	def bundleIDList(self, severity=None):
+	def bundleIDList(self, severity=None, state=None):
 		'''
 			Return a tuple of bundle_id set and ordered list based on version number
 			descending.
 		'''
+		log_Info('[bundleIDList] State=%s' % (state))
+		_state = "Production"
+		if state == "All":
+			_state = ("Production","QA")
+		elif state == "Create":
+			_state = ("Create")
+		elif state == "QA":
+			_state = ("QA")
 
 		# Query DataBase get all Custom Patches based on bundle and version
 		if severity is None or severity == 'All':
-			q = MpPatch.query.with_entities(MpPatch.puuid, MpPatch.patch_name, MpPatch.patch_ver, MpPatch.bundle_id,
-											MpPatch.patch_reboot, MpPatch.patch_state, MpPatch.active, MpPatch.rid, MpPatch.patch_severity
-											).filter(MpPatch.active == 1, MpPatch.patch_state == "Production").order_by(MpPatch.bundle_id.desc()).all()
+			if state == "All":
+				q = MpPatch.query.with_entities(MpPatch.puuid, MpPatch.patch_name, MpPatch.patch_ver, MpPatch.bundle_id,
+										MpPatch.patch_reboot, MpPatch.patch_state, MpPatch.active, MpPatch.rid, MpPatch.patch_severity
+										).filter(MpPatch.active == 1, MpPatch.patch_state.in_(("Production","QA"))).order_by(MpPatch.bundle_id.desc()).all()
+			else:
+				q = MpPatch.query.with_entities(MpPatch.puuid, MpPatch.patch_name, MpPatch.patch_ver, MpPatch.bundle_id,
+										MpPatch.patch_reboot, MpPatch.patch_state, MpPatch.active, MpPatch.rid, MpPatch.patch_severity
+										).filter(MpPatch.active == 1, MpPatch.patch_state == _state).order_by(MpPatch.bundle_id.desc()).all()
+
+			# log_Info('[1] %s' % (str(q.statement.compile(dialect=mysql.dialect())))
 		else:
-			q = MpPatch.query.with_entities(MpPatch.puuid, MpPatch.patch_name, MpPatch.patch_ver, MpPatch.bundle_id,
+			if state == "All":
+				q = MpPatch.query.with_entities(MpPatch.puuid, MpPatch.patch_name, MpPatch.patch_ver, MpPatch.bundle_id,
 											MpPatch.patch_reboot, MpPatch.patch_state, MpPatch.active, MpPatch.rid, MpPatch.patch_severity
-											).filter(MpPatch.active == 1, MpPatch.patch_state == "Production", MpPatch.patch_severity == severity).order_by(
+											).filter(MpPatch.active == 1, MpPatch.patch_state.in_(("Production","QA")), MpPatch.patch_severity == severity).order_by(
 				MpPatch.bundle_id.desc()).all()
+			else:
+				q = MpPatch.query.with_entities(MpPatch.puuid, MpPatch.patch_name, MpPatch.patch_ver, MpPatch.bundle_id,
+											MpPatch.patch_reboot, MpPatch.patch_state, MpPatch.active, MpPatch.rid, MpPatch.patch_severity
+											).filter(MpPatch.active == 1, MpPatch.patch_state == _state, MpPatch.patch_severity == severity).order_by(
+				MpPatch.bundle_id.desc()).all()
+
+			# log_Info('[2] %s' % (str(q.statement.compile(dialect=mysql.dialect())))
 
 		bundleList = []
 		results = []
@@ -518,9 +540,9 @@ class PatchScan():
 		return result
 
 	# Really the only public method to be used
-	def getScanList(self, os=None, severity=None):
+	def getScanList(self, os=None, severity=None, state=None):
 		results = []
-		b = self.bundleIDList(severity)
+		b = self.bundleIDList(severity, state)
 		for name in b[0]:
 			for x in b[1]:
 				if name == x["bundle_id"]:
@@ -540,9 +562,10 @@ class PatchScan():
 
 # Add Routes Resources
 patches_api.add_resource(ClientPatchStatus,     '/client/patch/status/<string:cuuid>')
-patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:cuuid>', endpoint='noOS')
-patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:cuuid>/<string:osver>', endpoint='withOS')
-patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:cuuid>/<string:osver>/<string:severity>', endpoint='withLevel')
+patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:cuuid>', endpoint='noState')
+patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:cuuid>/<string:state>', endpoint='withState')
+patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:cuuid>/<string:state>/<string:osver>', endpoint='withOS')
+patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:cuuid>/<string:state>/<string:osver>/<string:severity>', endpoint='withLevel')
 
 patches_api.add_resource(PatchGroupPatches,     '/client/patch/group/<string:patchGroup>/<string:cuuid>')
 patches_api.add_resource(PatchGroupPatchesRev,  '/client/patch/group/rev/<string:patchGroup>/<string:cuuid>')
