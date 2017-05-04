@@ -80,7 +80,8 @@ def readJSONFile(filename):
         fd = open(filename, 'r+')
         returndata = json.load(fd)
         fd.close()
-    except: 
+    except Exception as e:
+        print e
         print 'COULD NOT LOAD:', filename
 
     return returndata
@@ -96,8 +97,6 @@ def main():
     parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
     args = parser.parse_args()
 
-    script_is_running()
-
     # Setup Logging
     try:
         hdlr = logging.FileHandler(logFile)
@@ -110,6 +109,8 @@ def main():
         print "%s" % e
         sys.exit(1)
 
+    script_is_running()
+    
     # Set Default Values
     if args.checksum:
         useChecksum="-c"
@@ -152,5 +153,5 @@ def main():
     logger.info("Content Sync Complete")
 
 if __name__ == '__main__':
-
     main()
+  
