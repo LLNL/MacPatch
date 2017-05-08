@@ -181,7 +181,7 @@ class SoftwareTaskForTaskID(MPResource):
 
 				task['Software'] = _sw_data
 
-			q_software_cri = db.query(MpSoftwareCriteria).filter(MpSoftwareCriteria.suuid == task['suuid']).order_by(MpSoftwareCriteria.type_order.asc()).all()
+			q_software_cri = MpSoftwareCriteria.query.filter(MpSoftwareCriteria.suuid == task['suuid']).order_by(MpSoftwareCriteria.type_order.asc()).all()
 			if q_software_cri is not None:
 				_sw_cri = SoftwareCritera()
 				_sw_cri_data = _sw_cri.struct()

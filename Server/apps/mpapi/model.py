@@ -1,6 +1,6 @@
 from mpapi import db
 
-# Rev 5
+# Rev 6
 #
 
 from datetime import *
@@ -275,7 +275,7 @@ class MpClientTasks(CommonBase):
 	rid             = Column(BigInteger, primary_key=True, autoincrement=True)
 	group_id        = Column(String(50), nullable=False, index=True, unique=True)
 
-	id  			= Column(INTEGER(4, unsigned=True) ,  info="Task ID")
+	id  			= Column(INTEGER(4, unsigned=True),   info="Task ID")
 	name 			= Column(String(255), nullable=False, info="Name")
 	cmd 			= Column(String(255), nullable=False, info="Command")
 	description 	= Column(String(255), nullable=False, info="Description")
@@ -327,7 +327,6 @@ class MpClientPatches(CommonBase):
 	description = Column(Text, nullable=True, info="Description")
 	restart     = Column(String(255), nullable=False, info="Reboot")
 
-
 # mp_client_patches_apple
 class MpClientPatchesApple(CommonBase):
 	__tablename__ = 'mp_client_patches_apple'
@@ -359,7 +358,6 @@ class MpClientPatchesThird(CommonBase):
 	patch_id    = Column(String(255), nullable=False)
 	version     = Column(String(255))
 	bundleID    = Column(String(255))
-
 
 # ------------------------------------------
 ## Patch Content
@@ -475,7 +473,6 @@ class MpInstalledPatch(CommonBase):
 	type_int    = Column(Integer)
 	server_name = Column(String(255), server_default="NA", info='Server Name')
 
-
 # ------------------------------------------
 ## Patch Groups and Content
 
@@ -519,7 +516,6 @@ class MpPatchGroupPatches(CommonBase):
 	patch_id        = Column(String(50), nullable=False, index=True)
 	patch_group_id  = Column(String(50), nullable=False, index=True)
 
-
 # ------------------------------------------
 ## Client Agent
 
@@ -553,7 +549,6 @@ class MpClientAgentsFilter(CommonBase):
 	attribute_filter    = Column(String(255), nullable=False)
 	attribute_condition = Column(String(10), nullable=False)
 
-
 # ------------------------------------------
 ## AntiVirus
 
@@ -584,7 +579,6 @@ class AvDefs(CommonBase):
 	defs_date_str   = Column(String(20), nullable=False)
 	file            = Column(Text(), nullable=False)
 
-
 # ------------------------------------------
 ## Inventory
 
@@ -594,7 +588,6 @@ class MpInvState(CommonBase):
 	rid = Column(BigInteger, primary_key=True, autoincrement=True)
 	cuuid = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False, index=True, unique=True)
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
-
 
 # ------------------------------------------
 ## Servers
@@ -646,7 +639,6 @@ class MpServer(CommonBase):
 	isProxy             = Column(Integer, nullable=False, server_default="0")
 	active              = Column(Integer, nullable=False, server_default="1")
 
-
 # ------------------------------------------
 ## Profiles
 
@@ -674,7 +666,6 @@ class MpOsConfigProfilesAssigned(CommonBase):
 	rid         = Column(BigInteger, primary_key=True, nullable=False, autoincrement=True)
 	profileID   = Column(String(50), primary_key=True, nullable=False)
 	groupID     = Column(String(50), primary_key=True, nullable=False)
-
 
 # ------------------------------------------
 ## Software
@@ -836,6 +827,20 @@ class MPPluginHash(CommonBase):
 	hash            = Column(String(100), nullable=False)
 	active          = Column(Integer, server_default='0')
 
+# ------------------------------------------
+## OS Migration
+
+class OSMigrationStatus(CommonBase):
+	__tablename__ = 'mp_os_migration_status'
+
+	rid             = Column(BigInteger, primary_key=True, autoincrement=True)
+	cuuid           = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False, index=True, unique=True)
+	startDateTime   = Column(DateTime, server_default='1970-01-01 00:00:00')
+	stopDateTime    = Column(DateTime, server_default='1970-01-01 00:00:00')
+	preOSVer        = Column(String(255), nullable=False)
+	postOSVer       = Column(String(255))
+	label           = Column(MEDIUMTEXT())
+	migrationID     = Column(String(100), nullable=False)
 
 ''' STOP - Tables for Web Services'''
 # ------------------------------------------
