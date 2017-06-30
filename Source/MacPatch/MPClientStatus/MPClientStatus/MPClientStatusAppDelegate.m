@@ -499,7 +499,7 @@ done:
             [alert setInformativeText:@"Client check-in was successful."];
             [alert setAlertStyle:NSInformationalAlertStyle];
         }
-
+        
         [alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
     }
 }
@@ -605,39 +605,6 @@ done:
         logit(lcl_vError,@"[NSException]: %@",e);
     }
     
-    /*
-    NSError *err = nil;
-    BOOL postResult;
-    MPWebServices *mpws = [[MPWebServices alloc] init];
-    postResult = [mpws postJSONDataForMethod:@"client_checkin_base" data:agentDict error:&err];
-    if (err) {
-        logit(lcl_vError,@"%@",[err localizedDescription]);
-        y++;
-    }
-    if (postResult) {
-        logit(lcl_vInfo,@"Running client base checkin, returned true.");
-    } else {
-        logit(lcl_vError,@"Running client base checkin, returned false.");
-        y++;
-    }
-    
-    // Read Client Plist Info
-    
-    NSMutableDictionary *mpDefaults = [NSMutableDictionary dictionaryWithContentsOfFile:AGENT_PREFS_PLIST];
-    [mpDefaults setObject:_cuuid forKey:@"cuuid"];
-    
-    err = nil;
-    postResult = [mpws postJSONDataForMethod:@"client_checkin_plist" data:mpDefaults error:&err];
-    if (err) {
-        logit(lcl_vError,@"%@",[err localizedDescription]);
-    }
-    if (postResult) {
-        logit(lcl_vInfo,@"Running client config checkin, returned true.");
-    } else {
-        logit(lcl_vError,@"Running client config checkin, returned false.");
-        y++;
-    }
-    */
     [self showLastCheckInMethod];
     if (y==0) {
         return YES;
@@ -833,13 +800,31 @@ done:
             return;
             
         } else if ([data count] <= 0) {
+            
             [self setPatchCount:[data count]];
             [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
             [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
             [checkPatchStatusMenuItem setSubmenu:NULL];
             [statusMenu update];
+            
+            
+            // Remove Notifications
+            if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9)
+            {
+                NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:@"mp.cs.note"];
+                [ud setBool:NO forKey:@"patch"];
+                [ud setBool:NO forKey:@"reboot"];
+                for (NSUserNotification *nox in [[NSUserNotificationCenter defaultUserNotificationCenter] deliveredNotifications]) {
+                    if ([nox.title isEqualToString:@"Reboot Patches Required"]) {
+                        [[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:nox];
+                    }
+                }
+                [ud synchronize];
+                ud = nil;
+            }
+            
             return;
-
+            
         } else {
             [self setPatchCount:[data count]];
             [statusItem setImage:[NSImage imageNamed:@"mpmenubar_alert2.png"]];
@@ -1301,7 +1286,7 @@ done:
     userNote.actionButtonTitle = @"Reboot";
     userNote.hasActionButton = YES;
     userNote.userInfo = @{ @"originalPointer": @((NSUInteger)userNote) };
-
+    
     if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9) {
         [userNote setValue:@YES forKey:@"_showsButtons"];
         //[userNote setValue:@YES forKey:@"_ignoresDoNotDisturb"];
