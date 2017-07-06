@@ -105,7 +105,7 @@ typedef NSUInteger MPPostDataType;
     NSArray *appArgs;
     // Parse the Environment variables for the install
     if ((int)NSAppKitVersionNumber >= 1187 /* 10.8 */) {
-        appArgs = [NSArray arrayWithObjects:@"-v",@"-i", aUpdate, nil];
+        appArgs = [NSArray arrayWithObjects:@"--verbose",@"-i", aUpdate, nil];
     } else {
         appArgs = [NSArray arrayWithObjects:@"-i", aUpdate, nil];
     }

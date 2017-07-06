@@ -85,6 +85,7 @@ int main(int argc, char * argv[])
                                                               @"ForceOrderFront":            @YES,
                                                               @"CleanExit":                  @YES,
                                                               @"Debug":                      @NO,
+                                                              @"MinView":                    @YES,
                                                               }];
     
     // Handle various options startup options.

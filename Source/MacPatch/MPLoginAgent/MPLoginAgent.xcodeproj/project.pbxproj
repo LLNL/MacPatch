@@ -18,6 +18,9 @@
 		8F6E4FBC1B31EE5E00D3911E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6E4FBB1B31EE5E00D3911E /* SystemConfiguration.framework */; };
 		8F6E4FBE1B31EE7E00D3911E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6E4FBD1B31EE7E00D3911E /* Cocoa.framework */; };
 		8F752F1E1B34B8170001896F /* MPPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F752F1D1B34B8170001896F /* MPPanel.m */; };
+		8F7924531F06FCFC00440FBB /* MinScanAndPatchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7924511F06FCFC00440FBB /* MinScanAndPatchVC.m */; };
+		8F7924541F06FCFC00440FBB /* MinScanAndPatchVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F7924521F06FCFC00440FBB /* MinScanAndPatchVC.xib */; };
+		8F7924571F06FE8500440FBB /* MPAuthViewMin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7924561F06FE8500440FBB /* MPAuthViewMin.m */; };
 		8F9969F71B3B4F7000360709 /* InstallPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F9969F61B3B4F7000360709 /* InstallPackage.m */; };
 		8FA64D9F1B307D26006E9CB7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA64D9E1B307D26006E9CB7 /* AppDelegate.m */; };
 		8FA64DA21B307D26006E9CB7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA64DA11B307D26006E9CB7 /* main.m */; };
@@ -56,6 +59,11 @@
 		8F6E4FBD1B31EE7E00D3911E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8F752F1C1B34B8170001896F /* MPPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPPanel.h; sourceTree = "<group>"; };
 		8F752F1D1B34B8170001896F /* MPPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPPanel.m; sourceTree = "<group>"; };
+		8F7924501F06FCFC00440FBB /* MinScanAndPatchVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MinScanAndPatchVC.h; sourceTree = "<group>"; };
+		8F7924511F06FCFC00440FBB /* MinScanAndPatchVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MinScanAndPatchVC.m; sourceTree = "<group>"; };
+		8F7924521F06FCFC00440FBB /* MinScanAndPatchVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MinScanAndPatchVC.xib; sourceTree = "<group>"; };
+		8F7924551F06FE8500440FBB /* MPAuthViewMin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAuthViewMin.h; sourceTree = "<group>"; };
+		8F7924561F06FE8500440FBB /* MPAuthViewMin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAuthViewMin.m; sourceTree = "<group>"; };
 		8F9969F51B3B4F7000360709 /* InstallPackage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstallPackage.h; sourceTree = "<group>"; };
 		8F9969F61B3B4F7000360709 /* InstallPackage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InstallPackage.m; sourceTree = "<group>"; };
 		8FA64D9A1B307D26006E9CB7 /* MPLoginAgent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPLoginAgent.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -164,6 +172,11 @@
 				8F6E4FB21B31ED1B00D3911E /* Libraries */,
 				8FA64DA01B307D26006E9CB7 /* Supporting Files */,
 				8FA64DB61B307FD9006E9CB7 /* MPLoginAgent-Bridging-Header.h */,
+				8F7924551F06FE8500440FBB /* MPAuthViewMin.h */,
+				8F7924561F06FE8500440FBB /* MPAuthViewMin.m */,
+				8F7924501F06FCFC00440FBB /* MinScanAndPatchVC.h */,
+				8F7924511F06FCFC00440FBB /* MinScanAndPatchVC.m */,
+				8F7924521F06FCFC00440FBB /* MinScanAndPatchVC.xib */,
 			);
 			path = MPLoginAgent;
 			sourceTree = "<group>";
@@ -267,6 +280,7 @@
 				8FA64DB51B307D62006E9CB7 /* gov.llnl.MPLoginAgent.plist in Resources */,
 				8FE6B4B61B4C86F9000A0471 /* MPLogo_64x64.png in Resources */,
 				8FE6B4B31B4C86F9000A0471 /* Fail.png in Resources */,
+				8F7924541F06FCFC00440FBB /* MinScanAndPatchVC.xib in Resources */,
 				8FE6B4B71B4C86F9000A0471 /* Running.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -280,12 +294,14 @@
 			files = (
 				8FA64DA21B307D26006E9CB7 /* main.m in Sources */,
 				8FC495211B31D3FA001222A2 /* ScanAndPatchVC.m in Sources */,
+				8F7924571F06FE8500440FBB /* MPAuthViewMin.m in Sources */,
 				8F9969F71B3B4F7000360709 /* InstallPackage.m in Sources */,
 				8F530FB41B3E1DAA00B8D893 /* InstallAppleUpdate.m in Sources */,
 				8FC495081B309A1D001222A2 /* MPAuthView.m in Sources */,
 				8FA64D9F1B307D26006E9CB7 /* AppDelegate.m in Sources */,
 				8F67E6751B32205F00888EB9 /* MPScanner.m in Sources */,
 				8F752F1E1B34B8170001896F /* MPPanel.m in Sources */,
+				8F7924531F06FCFC00440FBB /* MinScanAndPatchVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +408,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = MPLoginAgent/MPLoginAgent_Prefix.pch;
 				HEADER_SEARCH_PATHS = (
@@ -420,6 +437,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = MPLoginAgent/MPLoginAgent_Prefix.pch;
 				HEADER_SEARCH_PATHS = (

@@ -26,10 +26,12 @@
 
 #import <Cocoa/Cocoa.h>
 #import "ScanAndPatchVC.h"
+#import "MinScanAndPatchVC.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-@property (assign) IBOutlet ScanAndPatchVC *scanAndPatchVC;
+@property (assign) IBOutlet ScanAndPatchVC    *scanAndPatchVC;
+@property (assign) IBOutlet MinScanAndPatchVC *minScanAndPatchVC;
 
 @end
 

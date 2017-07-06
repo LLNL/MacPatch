@@ -60,11 +60,38 @@
 }
 @end
 
+@interface InstallPackage ()
+
+@property (nonatomic,strong) NSThread *timeoutThread;
+
+@property (nonatomic, assign)            int  taskTimeoutValue;
+@property (nonatomic, assign)            int  taskTimeoutCount;
+@property (nonatomic, assign, readwrite) BOOL taskTimedOut;
+@property (nonatomic, assign, readwrite) BOOL taskIsRunning;
+
+
+@end
+
 @implementation InstallPackage
 
+@synthesize timeoutThread;
+@synthesize taskTimeoutValue;
+@synthesize taskTimeoutCount;
 @synthesize taskTimedOut;
 @synthesize taskIsRunning;
 @synthesize installtaskResult;
+
+- (id)init
+{
+    if (self = [super init])
+    {
+        [self setTaskTimeoutValue:600];
+        [self setTaskIsRunning:NO];
+        [self setTaskTimedOut:NO];
+    }
+    
+    return self;
+}
 
 - (int)installPkgToRoot:(NSString *)pkgPath
 {
@@ -90,7 +117,7 @@
 -(void)runInstallPkgTask:(NSString *)pkg target:(NSString *)target env:(NSString *)aEnv
 {
     
-    NSArray *appArgs = [NSArray arrayWithObjects:@"-verboseR", @"-pkg", pkg, @"-target", target, nil];
+    NSArray *appArgs = [NSArray arrayWithObjects:@"-verboseR", @"-allowUntrusted", @"-pkg", pkg, @"-target", target, nil];
     logit(lcl_vInfo,@"Pkg Install Args: %@",appArgs);
     
     task = [[NSTask alloc] init];
@@ -139,8 +166,26 @@
                                                object: fh];
     
     [self setTaskIsRunning:YES];
-    [task launch];
-    [fh readInBackgroundAndNotify];
+    
+    // Launch The NSTask
+    @try {
+        [task launch];
+        // If timeout is set start it ...
+        if (taskTimeoutValue != 0) {
+            timeoutThread = [[NSThread alloc] initWithTarget:self selector:@selector(taskTimeoutThread) object:nil];
+            [timeoutThread start];
+        }
+        [fh readInBackgroundAndNotify];
+    }
+    @catch (NSException *e)
+    {
+        logit(lcl_vError,@"Install returned error. %@\n%@",[e reason],[e userInfo]);
+        installtaskResult = 1;
+        [timeoutThread cancel];
+        [task terminate];
+        [self setTaskIsRunning:NO];
+        return;
+    }
 }
 
 #pragma mark - Notifications
@@ -150,6 +195,7 @@
     NSData *incomingData = [[aNotification userInfo] objectForKey:NSFileHandleNotificationDataItem];
     if (incomingData && [incomingData length])
     {
+        self.taskTimeoutCount = 0; // Reset the timeout counter, we have data.
         NSString *incomingText = [[NSString alloc] initWithData:incomingData encoding:NSASCIIStringEncoding];
         logit(lcl_vDebug,@"%@",incomingText);
         
@@ -161,9 +207,33 @@
 
 - (void)taskCompleted:(NSNotification *)aNotification
 {
+    [timeoutThread cancel];
     [self setTaskIsRunning:NO];
     int exitCode = [[aNotification object] terminationStatus];
     [self setInstalltaskResult:exitCode];
+}
+
+#pragma mark - Timeout
+
+- (void)taskTimeoutThread
+{
+    @autoreleasepool
+    {
+        while (self.taskTimeoutValue > self.taskTimeoutCount)
+        {
+            [NSThread sleepForTimeInterval:1.0];
+            taskTimeoutCount++;
+        }
+        [self taskTimeout:nil];
+    }
+}
+
+- (void)taskTimeout:(NSNotification *)aNotification
+{
+    logit(lcl_vError,@"Task timedout, killing task.");
+    [timeoutThread cancel];
+    [self setTaskTimedOut:YES];
+    [task terminate];
 }
 
 @end

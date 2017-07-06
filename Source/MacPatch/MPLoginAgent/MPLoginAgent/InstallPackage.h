@@ -36,9 +36,9 @@
     int                 installtaskResult;
 }
 
-@property (nonatomic, assign)   BOOL        taskTimedOut;
-@property (nonatomic, assign)   BOOL        taskIsRunning;
-@property (nonatomic, assign)   int         installtaskResult;
+@property (nonatomic, assign, readonly) BOOL taskTimedOut;
+@property (nonatomic, assign, readonly) BOOL taskIsRunning;
+@property (nonatomic, assign)           int  installtaskResult;
 
 
 - (int)installPkgToRoot:(NSString *)pkgPath;
