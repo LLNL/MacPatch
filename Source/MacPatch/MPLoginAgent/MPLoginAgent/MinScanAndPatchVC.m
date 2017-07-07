@@ -131,37 +131,32 @@
         
         if ([self isRecentPatchStatusFile])
         {
+            qlinfo(@"Using patch status file for updates.");
             approvedUpdates = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST]];
         }
         else
         {
             // Scan for Apple Patches
-            dispatch_async(dispatch_get_main_queue(), ^(void){
-                [progressText setStringValue:@"Scanning for Apple Updates"];
-            });
+            [self progress:@"Scanning for Apple Updates"];
             
             error = nil;
             appleUpdates = [self scanForAppleUpdates:&error];
             if (error) {
                 qlerror(@"%@",error.localizedDescription);
             }
-            NSLog(@"Apple Updates: %@",appleUpdates);
+            qldebug(@"Apple Updates: %@",appleUpdates);
             
             // Scan for Custome Patches
-            dispatch_async(dispatch_get_main_queue(), ^(void){
-                [progressText setStringValue:@"Scanning for Custom Updates"];
-            });
+            [self progress:@"Scanning for Custom Updates"];
             
             error = nil;
             customUpdates = [self scanForCustomUpdates:&error];
             if (error) {
                 qlerror(@"%@",error.localizedDescription);
             }
-            NSLog(@"Custom Updates: %@",customUpdates);
             
-            dispatch_async(dispatch_get_main_queue(), ^(void){
-                [progressText setStringValue:@"Compiling approved patches from scan list"];
-            });
+            qldebug(@"Custom Updates: %@",customUpdates);
+            [self progress:@"Compiling approved patches from scan list"];
             
             approvedUpdates = [self filterFoundPatches:[self patchGroupPatches]
                                           applePatches:appleUpdates
@@ -170,7 +165,7 @@
             [self createPatchStatusFile:approvedUpdates];
         }
         
-        NSLog(@"Approved Updates: %@",approvedUpdates);
+        qlinfo(@"Approved Updates: %@",approvedUpdates);
         progressCountTotal = (int)[approvedUpdates count];
         
         // If we have no patches, close out.
@@ -197,12 +192,14 @@
             // Create/Get Dictionary of Patch to install
             patch = nil;
             patch = [NSDictionary dictionaryWithDictionary:[approvedUpdates objectAtIndex:i]];
-
+            
+            qlinfo(@"Installing: %@",[patch objectForKey:@"patch"]);
+            qldebug(@"Patch: %@",patch);
             [self progress:[NSString stringWithFormat:@"Installing %@",[patch objectForKey:@"patch"]]];
             
-            //[NSThread sleepForTimeInterval:3.0];
             install_result = [self installPatch:patch];
             if (install_result != 0) {
+                qlerror(@"Patch %@ failed to install.",[patch objectForKey:@"patch"]);
                 [failedPatches addObject:patch];
             }
             
@@ -214,11 +211,10 @@
             });
         }
         
-        dispatch_async(dispatch_get_main_queue(), ^(void){
-            [progressText setStringValue:@"Complete"];
-        });
+        [self progress:@"Complete"];
         [NSThread sleepForTimeInterval:1.0];
-            
+        
+        qlinfo(@"Patches have been installed, system will now reboot.");
         [self countDownToClose];
     }
     
@@ -229,16 +225,11 @@
     for (int i = 0; i < 5;i++)
     {
         // Message that window is closing
-        dispatch_async(dispatch_get_main_queue(), ^(void){
-            [progressText setStringValue:[NSString stringWithFormat:@"Rebooting system in %d seconds...",(5-i)]];
-        });
+        [self progress:[NSString stringWithFormat:@"Rebooting system in %d seconds...",(5-i)]];
         sleep(1);
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^(void){
-        [progressText setStringValue:@"Rebooting System Please Be Patient"];
-    });
-    
+    [self progress:@"Rebooting System Please Be Patient"];
     [self rebootOrLogout:0];
 }
 
