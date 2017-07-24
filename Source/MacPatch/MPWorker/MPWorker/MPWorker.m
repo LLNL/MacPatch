@@ -1467,6 +1467,130 @@ done:
 		logit(lcl_vInfo,@"Info log level is now enabled.");
 	}
 }
+
+// Proxy Method
+- (int)stagePatchWithBaseDirectory:(in bycopy NSDictionary *)aPatch directory:(in bycopy NSString *)path
+{
+    MPAsus *mpa = [[MPAsus alloc] init];
+    
+    logit(lcl_vInfo,@"Pre staging update %@.",[aPatch objectForKey:@"patch"]);
+    if ([[aPatch objectForKey:@"type"] isEqualToString:@"Apple"])
+    {
+        [mpa downloadAppleUpdate:[aPatch objectForKey:@"patch"]];
+    }
+    else
+    {
+        MPCrypto *crypto = [[MPCrypto alloc] init];
+        NSError  *dlErr = nil;
+        NSArray  *patchesFromPatch = [[aPatch objectForKey:@"patches"] objectForKey:@"patches"];
+        
+        for (NSDictionary *_p in patchesFromPatch)
+        {
+            dlErr = nil;
+            NSString *stageDir = [NSString stringWithFormat:@"%@/Data/.stage/%@",path,[aPatch objectForKey:@"patch_id"]];
+            NSString *downloadURL = [NSString stringWithFormat:@"/mp-content%@",[_p objectForKey:@"url"]];
+            if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]])
+            {
+                // Migth want to check hash here
+                logit(lcl_vInfo,@"Patch %@ is already pre-staged.",[aPatch objectForKey:@"patch"]);
+                continue;
+            }
+            
+            // Create Staging Dir
+            BOOL isDir = NO;
+            BOOL exists = [fm fileExistsAtPath:stageDir isDirectory:&isDir];
+            if (exists)
+            {
+                if (isDir) {
+                    if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]])
+                    {
+                        if ([[[_p objectForKey:@"hash"] uppercaseString] isEqualTo:[[crypto md5HashForFile:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]] uppercaseString]])
+                        {
+                            qlinfo(@"Patch %@ has already been staged.",[aPatch objectForKey:@"patch"]);
+                            return 0;
+                        } else {
+                            dlErr = nil;
+                            [fm removeItemAtPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]] error:&dlErr];
+                            if (dlErr) {
+                                qlerror(@"Unable to remove bad staged patch file %@",[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]);
+                                qlerror(@"Can not stage %@",[aPatch objectForKey:@"patch"]);
+                                return 1;
+                            }
+                        }
+                        
+                    }
+                } else {
+                    // Is not a dir but is a file, just remove it. It's in our space
+                    dlErr = nil;
+                    [fm removeItemAtPath:stageDir error:&dlErr];
+                    if (dlErr) {
+                        qlerror(@"Unable to remove bad staged directory/file %@",stageDir);
+                        qlerror(@"Can not stage %@",[aPatch objectForKey:@"patch"]);
+                        return 1;
+                    }
+                }
+            } else {
+                // Stage dir does not exists, create it.
+                dlErr = nil;
+                [fm createDirectoryAtPath:stageDir withIntermediateDirectories:YES attributes:nil error:&dlErr];
+                if (dlErr) {
+                    qlerror(@"%@",dlErr.localizedDescription);
+                    qlerror(@"Can not stage %@",[aPatch objectForKey:@"patch"]);
+                    return 1; // Error creating stage patch dir. Can not use it.
+                }
+            }
+            
+            logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
+            NSString *dlPatchLoc = [mpa downloadUpdate:downloadURL error:&dlErr];
+            
+            dlErr = nil;
+            [fm moveItemAtPath:dlPatchLoc toPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]] error:&dlErr];
+            if (dlErr) {
+                qlerror(@"%@",dlErr.localizedDescription);
+                return 1; // Error creating stage patch dir. Can not use it.
+            }
+            qlinfo(@"%@ has been staged.",[aPatch objectForKey:@"patches"]);
+        }
+    }
+    
+    
+    return 0;
+}
+
+// Proxy Method
+- (BOOL)unzipFile:(in bycopy NSString *)file error:(NSError **)error;
+{
+    BOOL result = NO;
+    NSError *_err = nil;
+    MPAsus *mpa = [[MPAsus alloc] init];
+    result = [mpa unzip:file error:&_err];
+    if (_err) {
+        qlerror(@"%@",_err.localizedDescription);
+        if (error != NULL) *error = _err;
+    }
+    
+    return result;
+}
+
+- (BOOL)removeStagedDirectory:(in bycopy NSString *)stagedDirectory
+{
+    BOOL result = NO;
+    NSError *err = nil;
+    if ([fm fileExistsAtPath:stagedDirectory])
+    {
+        [fm removeItemAtPath:stagedDirectory error:&err];
+        if (err) {
+            qlerror(@"Error removing staged directory %@",stagedDirectory);
+            qlerror(@"%@",err.localizedDescription);
+        }
+        result = YES;
+    } else {
+        qlerror(@"Staged directory %@ did not exists.",stagedDirectory);
+        result = YES;
+    }
+    return result;
+}
+
 #pragma mark SelfPatch Misc
 - (NSString *)getSizeFromDescription:(NSString *)aDesc
 {

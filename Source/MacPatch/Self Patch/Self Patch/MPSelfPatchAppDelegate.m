@@ -123,6 +123,7 @@ static BOOL gDone = false;
 	
 	[defaultValues setObject:[NSNumber numberWithBool:NO] forKey:@"enableDebugLogging"];
 	[defaultValues setObject:[NSNumber numberWithBool:YES] forKey:@"enableScanOnLaunch"];
+    [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:@"preStageRebootPatches"];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
 }
@@ -229,7 +230,10 @@ static BOOL gDone = false;
     if (![d objectForKey:@"enableDebugLogging"]) {
         [d setBool:NO forKey:@"enableDebugLogging"];
     }
-    
+    if (![d objectForKey:@"preStageRebootPatches"]) {
+        [d setBool:YES forKey:@"preStageRebootPatches"];
+    }
+
     // Syncronize defaults
     [d synchronize];
 
@@ -739,6 +743,89 @@ done:
 	return;
 }
 
+- (BOOL)preStagePatch:(NSDictionary *)patch
+{
+    int result = -1;
+    if (!proxy) {
+        [self connect];
+        if (!proxy) goto done;
+    }
+    
+    @try
+    {
+        result = [proxy stagePatchWithBaseDirectory:patch directory:MP_ROOT_CLIENT];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to stage patch %@",[patch objectForKey:@"patch"]);
+    }
+    
+done:
+    [self cleanup];
+    return (result == 0) ? YES : NO;
+}
+
+- (BOOL)unzipViaProxy:(NSString *)file error:(NSError **)err
+{
+    BOOL result = NO;
+    NSError *error = nil;
+    if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            if (err != NULL) *err = [NSError errorWithDomain:@"unzip" code:1001 userInfo:nil];
+            goto done;
+        }
+        if (!proxy) {
+            logit(lcl_vError,@"Unable to connect to helper application. Functionality will be diminished.");
+            goto done;
+        }
+    }
+    
+    @try {
+        error = nil;
+        result = [proxy unzipFile:file error:&error];
+        if (error) {
+            if (err != NULL) *err = error;
+        }
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"unzip error: %@", e);
+    }
+    
+done:
+    qltrace(@"Done, unzip file.");
+    [self cleanup];
+    return result;
+}
+
+- (BOOL)removeStagedDirectoryViaProxy:(NSString *)stagedDirectory
+{
+    BOOL result = NO;
+    NSError *error = nil;
+    if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            qlerror(@"%@",error.localizedDescription);
+            goto done;
+        }
+        if (!proxy) {
+            logit(lcl_vError,@"Unable to connect to helper application. Functionality will be diminished.");
+            goto done;
+        }
+    }
+    
+    @try
+    {
+        result = [proxy removeStagedDirectory:stagedDirectory];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"removeStagedDirectoryViaProxy error: %@", e);
+    }
+    
+done:
+    [self cleanup];
+    return result;
+}
+
 #pragma mark -
 #pragma mark SelfPatch
 - (void)showSelfPatchWindow:(id)sender
@@ -1180,11 +1267,16 @@ done:
         NSString			*infoText;
         NSString			*downloadURL;
         NSError				*err;
+        
+        // Staging
+        NSString *stageDir;
+        
         int i;
         int installResult = 1;
         int	launchRebootWindow = 0;
         
-        for (i = 0; i < [patchesToInstallArray count]; i++) {
+        for (i = 0; i < [patchesToInstallArray count]; i++)
+        {
             // Create/Get Dictionary of Patch to install  
             patch = nil;
             patch = [NSDictionary dictionaryWithDictionary:[patchesToInstallArray objectAtIndex:i]];
@@ -1207,7 +1299,8 @@ done:
                 // Now proceed to the download and install			
                 installResult = -1;
                 
-                if ([[patch objectForKey:@"type"] isEqualTo:@"Third"]) {
+                if ([[patch objectForKey:@"type"] isEqualTo:@"Third"])
+                {
                     NSString *infoText = [NSString stringWithFormat:@"Starting install for %@",[patch objectForKey:@"patch"]];
                     [spStatusText setStringValue:infoText];
                     [spStatusText display];
@@ -1219,7 +1312,8 @@ done:
                     
                     NSString *dlPatchLoc; //Download location Path
                     int patchIndex = 0;
-                    for (patchIndex=0;patchIndex < [patchPatchesArray count];patchIndex++) {
+                    for (patchIndex=0;patchIndex < [patchPatchesArray count];patchIndex++)
+                    {
                         
                         // Make sure we only process the dictionaries in the NSArray
                         if ([[patchPatchesArray objectAtIndex:patchIndex] isKindOfClass:[NSDictionary class]]) {
@@ -1229,34 +1323,87 @@ done:
                             continue;
                         }
                         
+                        // -------------------------------------------
                         // Update table view to show whats installing
+                        // -------------------------------------------
                         [self updateTableAndArrayControllerWithPatch:patch status:0];
                         
                         // We have a currPatchToInstallDict to work with
                         logit(lcl_vInfo,@"Start install for patch %@ from %@",[currPatchToInstallDict objectForKey:@"url"],[patch objectForKey:@"patch"]);
                         
+                        BOOL usingStagedPatch = NO;
+                        BOOL downloadPatch = YES;
+                        
+                        // -------------------------------------------
                         // First we need to download the update
+                        // -------------------------------------------
                         @try
                         {
-                            logit(lcl_vInfo,@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
-                            [spStatusText display];
-                            //Pre Proxy Config
-                            downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
-                            logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
-                            err = nil;
-                            dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
-                            if (err) {
-                                logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",[patch objectForKey:@"patch"],[err localizedDescription]);
-                                [spStatusText setStringValue:[NSString stringWithFormat:@"Error downloading a patch, skipping %@.",[patch objectForKey:@"patch"]]];
+                            // -------------------------------------------
+                            // Check to see if the patch has been staged
+                            // -------------------------------------------
+                            MPCrypto *mpCrypto = [[MPCrypto alloc] init];
+                            stageDir = [NSString stringWithFormat:@"%@/Data/.stage/%@",MP_ROOT_CLIENT,[patch objectForKey:@"patch_id"]];
+                            if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]])
+                            {
+                                dlPatchLoc = [stageDir stringByAppendingPathComponent:[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]];
+                                if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[[mpCrypto md5HashForFile:dlPatchLoc] uppercaseString]])
+                                {
+                                    qlinfo(@"The staged file passed the file hash validation.");
+                                    usingStagedPatch = YES;
+                                    downloadPatch = NO;
+                                } else {
+                                    [spStatusText setStringValue:[NSString stringWithFormat:@"The staged file did not pass the file hash validation."]];
+                                    [spStatusText display];
+                                    logit(lcl_vError,@"The staged file did not pass the file hash validation.");
+                                }
+                            }
+                            
+                            // -------------------------------------------
+                            // Check to see if we need to download the patch
+                            // -------------------------------------------
+                            if (downloadPatch)
+                            {
+                                logit(lcl_vInfo,@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
+                                [spStatusText setStringValue:[NSString stringWithFormat:@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
+                                [spStatusText display];
+                                //Pre Proxy Config
+                                downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
+                                logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
+                                err = nil;
+                                dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
+                                if (err) {
+                                    logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",[patch objectForKey:@"patch"],[err localizedDescription]);
+                                    [spStatusText setStringValue:[NSString stringWithFormat:@"Error downloading a patch, skipping %@.",[patch objectForKey:@"patch"]]];
+                                    [spStatusText display];
+                                    
+                                    [self updateTableAndArrayControllerWithPatch:patch status:2];
+                                    break;
+                                }
+                                [spStatusText setStringValue:[NSString stringWithFormat:@"Patch download completed."]];
+                                [spStatusText display];
+                                logit(lcl_vInfo,@"File downloaded to %@",dlPatchLoc);
+                                
+                                
+                                // -------------------------------------------
+                                // Validate hash, before install
+                                // -------------------------------------------
+                                [spStatusText setStringValue:[NSString stringWithFormat:@"Validating downloaded patch."]];
                                 [spStatusText display];
                                 
-                                [self updateTableAndArrayControllerWithPatch:patch status:2];
-                                break;
+                                NSString *fileHash = [mpCrypto md5HashForFile:dlPatchLoc];
+                                [mpCrypto release];
+                                
+                                logit(lcl_vInfo,@"Downloaded file hash: %@ (%@)",fileHash,[currPatchToInstallDict objectForKey:@"hash"]);
+                                if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[fileHash uppercaseString]] == NO) {
+                                    [spStatusText setStringValue:[NSString stringWithFormat:@"The downloaded file did not pass the file hash validation. No install will occur."]];
+                                    [spStatusText display];
+                                    logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
+                                    [self updateTableAndArrayControllerWithPatch:patch status:2];
+                                    continue;
+                                }
                             }
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"Patch download completed."]];
-                            [spStatusText display];
-                            logit(lcl_vInfo,@"File downloaded to %@",dlPatchLoc);
+                            
                         }
                         @catch (NSException *e) {
                             logit(lcl_vError,@"%@", e);
@@ -1264,31 +1411,15 @@ done:
                             break;
                         }
                         
-                        // *****************************
-                        // Validate hash, before install
-                        [spStatusText setStringValue:[NSString stringWithFormat:@"Validating downloaded patch."]];
-                        [spStatusText display];
-                        
-                        MPCrypto *mpCrypto = [[MPCrypto alloc] init];
-                        NSString *fileHash = [mpCrypto md5HashForFile:dlPatchLoc];
-                        [mpCrypto release];
-                        
-                        logit(lcl_vInfo,@"Downloaded file hash: %@ (%@)",fileHash,[currPatchToInstallDict objectForKey:@"hash"]);
-                        if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[fileHash uppercaseString]] == NO) {
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"The downloaded file did not pass the file hash validation. No install will occur."]];
-                            [spStatusText display];
-                            logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
-                            [self updateTableAndArrayControllerWithPatch:patch status:2];
-                            continue;
-                        }
-                        
-                        // *****************************
+                        // -------------------------------------------
                         // Now we need to unzip
+                        // -------------------------------------------
                         [spStatusText setStringValue:[NSString stringWithFormat:@"Uncompressing patch, to begin install."]];
                         [spStatusText display];
                         logit(lcl_vInfo,@"Begin decompression of file, %@",dlPatchLoc);
                         err = nil;
-                        [mpAsus unzip:dlPatchLoc error:&err];
+                        //[mpAsus unzip:dlPatchLoc error:&err];
+                        [self unzipViaProxy:dlPatchLoc error:&err];
                         if (err) {
                             [spStatusText setStringValue:[NSString stringWithFormat:@"Error decompressing a patch, skipping %@.",[patch objectForKey:@"patch"]]];
                             [spStatusText display];
@@ -1300,8 +1431,9 @@ done:
                         [spStatusText display];
                         logit(lcl_vInfo,@"File has been decompressed.");
                         
-                        // *****************************
+                        // -------------------------------------------
                         // Run PreInstall Script
+                        // -------------------------------------------
                         if ([[currPatchToInstallDict objectForKey:@"preinst"] length] > 0 && [[currPatchToInstallDict objectForKey:@"preinst"] isEqualTo:@"NA"] == NO) {
                             [spStatusText setStringValue:[NSString stringWithFormat:@"Begin pre install script."]];
                             [spStatusText display];
@@ -1315,10 +1447,12 @@ done:
                             }
                         }
                         
-                        // *****************************
+                        // -------------------------------------------
                         // Install the update
+                        // -------------------------------------------
                         BOOL hadErr = NO;
-                        @try {
+                        @try
+                        {
                             NSString *pkgPath;
                             NSString *pkgBaseDir = [dlPatchLoc stringByDeletingLastPathComponent];						
                             NSPredicate *pkgPredicate = [NSPredicate predicateWithFormat:@"(SELF like [cd] '*.pkg') OR (SELF like [cd] '*.mpkg')"];
@@ -1359,8 +1493,9 @@ done:
                             continue;
                         }
                         
-                        // *****************************
+                        // -------------------------------------------
                         // Run PostInstall Script
+                        // -------------------------------------------
                         if ([[currPatchToInstallDict objectForKey:@"postinst"] length] > 0 && [[currPatchToInstallDict objectForKey:@"postinst"] isEqualTo:@"NA"] == NO) {
                             [spStatusText setStringValue:[NSString stringWithFormat:@"Begin post install script."]];
                             [spStatusText display];
@@ -1372,14 +1507,30 @@ done:
                             }
                         }
                         
-                        // *****************************
+                        // -------------------------------------------
                         // Instal is complete, post result to web service
+                        // -------------------------------------------
                         @try {
                             [self postInstallToWebService:[patch objectForKey:@"patch_id"] type:@"third"];
                         }
                         @catch (NSException *e) {
                             logit(lcl_vError,@"%@", e);
                         }
+                        
+                        // -------------------------------------------
+                        // If staged, remove staged patch dir
+                        // -------------------------------------------
+                        if (usingStagedPatch)
+                        {
+                            if ([fm fileExistsAtPath:stageDir])
+                            {
+                                qlinfo(@"Removing staged patch dir %@",stageDir);
+                                if (![self removeStagedDirectoryViaProxy:stageDir]) {
+                                    qlerror(@"Removing staged patch dir %@ failed.",stageDir);
+                                }
+                            }
+                        }
+                        
                         [spStatusText setStringValue:[NSString stringWithFormat:@"Patch install completed."]];
                         [spStatusText display];	 
                         
@@ -1496,7 +1647,11 @@ done:
             } else {
                 logit(lcl_vInfo,@"%@(%@) requires a reboot, this patch will be installed on logout.",[patch objectForKey:@"patch"],[patch objectForKey:@"version"]);
                 //[self generateRebootPatchForDownload:patch];
-                
+                if ([[NSUserDefaults standardUserDefaults] boolForKey:@"preStageRebootPatches"] == YES) {
+                    if ([self preStagePatch:patch]) {
+                        qlerror(@"Pre staging for %@ failed.",[patch objectForKey:@"patch"]);
+                    }
+                }
                 launchRebootWindow++;
                 [self updateTableAndArrayControllerWithPatch:patch status:3];
                 continue;
@@ -1530,6 +1685,96 @@ done:
         [spCancelButton setEnabled:NO];
     }
 }
+/*
+- (BOOL)preStagePatch:(NSDictionary *)patch
+{
+
+    MPAsus *mpa = [[MPAsus alloc] init];
+    
+    logit(lcl_vInfo,@"Pre staging update %@.",[patch objectForKey:@"patch"]);
+    if ([[patch objectForKey:@"type"] isEqualToString:@"Apple"])
+    {
+        [mpa downloadAppleUpdate:[patch objectForKey:@"patch"]];
+    }
+    else
+    {
+        MPCrypto *crypto = [[MPCrypto alloc] init];
+        NSError  *dlErr = nil;
+        NSArray  *patchesFromPatch = [[patch objectForKey:@"patches"] objectForKey:@"patches"];
+        
+        for (NSDictionary *_p in patchesFromPatch)
+        {
+            dlErr = nil;
+            NSString *stageDir = [NSString stringWithFormat:@"%@/Data/.stage/%@",MP_ROOT_CLIENT,[patch objectForKey:@"patch_id"]];
+            NSString *downloadURL = [NSString stringWithFormat:@"/mp-content%@",[_p objectForKey:@"url"]];
+            if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]])
+            {
+                // Migth want to check hash here
+                logit(lcl_vInfo,@"Patch %@ is already pre-staged.",[patch objectForKey:@"patch"]);
+                continue;
+            }
+            
+            // Create Staging Dir
+            BOOL isDir = NO;
+            BOOL exists = [fm fileExistsAtPath:stageDir isDirectory:&isDir];
+            if (exists)
+            {
+                if (isDir) {
+                    if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]])
+                    {
+                        if ([[[_p objectForKey:@"hash"] uppercaseString] isEqualTo:[[crypto md5HashForFile:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]] uppercaseString]])
+                        {
+                            qlinfo(@"Patch %@ has already been staged.",[patch objectForKey:@"patch"]);
+                            return YES;
+                        } else {
+                            dlErr = nil;
+                            [fm removeItemAtPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]] error:&dlErr];
+                            if (dlErr) {
+                                qlerror(@"Unable to remove bad staged patch file %@",[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]);
+                                qlerror(@"Can not stage %@",[patch objectForKey:@"patch"]);
+                                return NO;
+                            }
+                        }
+                        
+                    }
+                } else {
+                    // Is not a dir but is a file, just remove it. It's in our space
+                    dlErr = nil;
+                    [fm removeItemAtPath:stageDir error:&dlErr];
+                    if (dlErr) {
+                        qlerror(@"Unable to remove bad staged directory/file %@",stageDir);
+                        qlerror(@"Can not stage %@",[patch objectForKey:@"patch"]);
+                        return NO;
+                    }
+                }
+            } else {
+                // Stage dir does not exists, create it.
+                dlErr = nil;
+                [fm createDirectoryAtPath:stageDir withIntermediateDirectories:YES attributes:nil error:&dlErr];
+                if (dlErr) {
+                    qlerror(@"%@",dlErr.localizedDescription);
+                    qlerror(@"Can not stage %@",[patch objectForKey:@"patch"]);
+                    return NO; // Error creating stage patch dir. Can not use it.
+                }
+            }
+            
+            logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
+            NSString *dlPatchLoc = [mpa downloadUpdate:downloadURL error:&dlErr];
+            
+            dlErr = nil;
+            [fm moveItemAtPath:dlPatchLoc toPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]] error:&dlErr];
+            if (dlErr) {
+                qlerror(@"%@",dlErr.localizedDescription);
+                return NO; // Error creating stage patch dir. Can not use it.
+            }
+            qlinfo(@"%@ has been staged.",[patch objectForKey:@"patches"]);
+        }
+    }
+    
+
+    return YES;
+}
+*/
 
 - (void)openRebootApp
 {

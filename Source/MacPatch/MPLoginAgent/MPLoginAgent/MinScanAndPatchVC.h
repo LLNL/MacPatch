@@ -39,6 +39,7 @@
 
 @property (nonatomic, strong) NSThread *taskThread;
 @property (nonatomic, assign) BOOL killTaskThread;
+@property (nonatomic, assign) BOOL cancelTask;
 
 @property (nonatomic, assign) int progressCount;
 @property (nonatomic, assign) int progressCountTotal;

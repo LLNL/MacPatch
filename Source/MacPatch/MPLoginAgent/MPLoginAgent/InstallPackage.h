@@ -25,20 +25,21 @@
  */
 
 #import <Foundation/Foundation.h>
+@class GCDTask;
 
 @interface InstallPackage : NSObject
 {
-    NSTask              *task;
+    //NSTask              *task;
+    GCDTask             *gcdTask;
     NSPipe              *pipe;
     NSFileHandle        *fh;
     BOOL                taskTimedOut;
-    BOOL                taskIsRunning;
     int                 installtaskResult;
 }
 
-@property (nonatomic, assign, readonly) BOOL taskTimedOut;
-@property (nonatomic, assign, readonly) BOOL taskIsRunning;
-@property (nonatomic, assign)           int  installtaskResult;
+@property (nonatomic, strong)           NSTask *task;
+@property (nonatomic, assign, readonly) BOOL    taskTimedOut;
+@property (nonatomic, assign)           int     installtaskResult;
 
 
 - (int)installPkgToRoot:(NSString *)pkgPath;

@@ -372,9 +372,6 @@
     [removeButton  setEnabled:NO];
     [cancelButton  setEnabled:NO];
     [infoButton    setEnabled:NO];
-	
-    //NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    //[nc addObserver:self selector:@selector(installOutputFromProxy:) name:@"installSoftwareNote" object:nil];
 
     [self setTableColEdit:YES];
     

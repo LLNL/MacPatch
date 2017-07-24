@@ -68,6 +68,8 @@
 - (void)installAppleSoftwareUpdates:(NSArray *)approvedUpdates;
 - (BOOL)installAppleSoftwareUpdates:(NSArray *)approvedUpdates isSelfCheck:(BOOL)aSelfCheck;
 
+- (BOOL)downloadAppleUpdate:(NSString *)updateName;
+
 - (NSData *)installResultsToXML:(NSArray *)aInstalledPatches;
 - (NSArray *)installResultsToDictArray:(NSArray *)aInstalledPatches type:(NSString *)aType;
 

@@ -41,6 +41,7 @@
 {
 	[super windowDidLoad];
 	[scanOnLaunchCheckBox setState:[self scanOnLaunch]];
+    [preStageRebootPatchesBox setState:[self preStageRebootPatches]];
 	[enableDebugLogCheckBox setState:[self debugLogging]];
     [allowInstallRebootPatchesCheckBox setState:[self allowInstallRebootPatches]];
 	[stateColumnCheckBox setState:[self colStateOnLaunch]];
@@ -59,6 +60,14 @@
 	logit(lcl_vInfo,@"Scan on launch state changed %d",state);
 	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
 	[d setBool:state forKey:@"enableScanOnLaunch"];
+}
+
+- (IBAction)changePreStageRebootPatches:(id)sender
+{
+    int state = (int)[preStageRebootPatchesBox state];
+    logit(lcl_vInfo,@"Pre stage reboot patches state changed %d",state);
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    [d setBool:state forKey:@"preStageRebootPatches"];
 }
 
 - (IBAction)changeAllowInstallOfRebootPatches:(id)sender
@@ -124,6 +133,12 @@
 {
 	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
 	return [d boolForKey:@"enableScanOnLaunch"];
+}
+
+- (BOOL)preStageRebootPatches
+{
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    return [d boolForKey:@"preStageRebootPatches"];
 }
 
 - (BOOL)debugLogging

@@ -139,234 +139,6 @@
     [self scanForPatchesWithFilterWaitAndForceWithCritical:aFilter byPassRunning:aByPass critical:NO];
 }
 
-/*
-- (void)scanForPatchesWithFilterWaitAndForce:(int)aFilter byPassRunning:(BOOL)aByPass
-{
-    // Filter - 0 = All,  1 = Apple, 2 = Third
-    if (forceRun == NO) {
-        if (aByPass == YES) {
-            int w = 0;
-            while ([self isTaskRunning:kMPPatchSCAN] == YES) {
-                if (w == 60) {
-                    [self removeTaskRunning:kMPPatchSCAN];
-                    break;
-                }
-                w++;
-                sleep(1);
-            }
-        } else {
-            if ([self isTaskRunning:kMPPatchSCAN]) {
-                logit(lcl_vInfo,@"Scanning for patches is already running. Now exiting.");
-                return;
-            } else {
-                [self writeTaskRunning:kMPPatchSCAN];
-            }
-        }
-    }
-
-    MPASUSCatalogs      *mpCatalog;
-    NSArray             *applePatchesArray;
-    NSArray             *approvedApplePatches = nil;
-    NSMutableArray      *customPatchesArray;
-    NSArray             *approvedCustomPatches = nil;
-	NSMutableArray      *approvedUpdatesArray = [[NSMutableArray alloc] init];
-	NSMutableDictionary *tmpDict;
-	NSDictionary        *customPatch, *approvedPatch;
-    NSDictionary        *patchGroupPatches;
-
-	// Get Patch Group Patches
-    MPWebServices *mpws = [[MPWebServices alloc] init];
-    NSError *rmErr = nil;
-    NSError *wsErr = nil;
-    
-    BOOL useLocalPatchesFile = NO;
-    NSString *patchGroupRevLocal = [MPClientInfo patchGroupRev];
-    if (![patchGroupRevLocal isEqualToString:@"-1"]) {
-        NSString *patchGroupRevRemote = [mpws getPatchGroupContentRev:&wsErr];
-        if (!wsErr) {
-            if ([patchGroupRevLocal isEqualToString:patchGroupRevRemote]) {
-                useLocalPatchesFile = YES;
-                NSString *pGroup = [_defaults objectForKey:@"PatchGroup"];
-                patchGroupPatches = [[[NSDictionary dictionaryWithContentsOfFile:PATCH_GROUP_PATCHES_PLIST] objectForKey:pGroup] objectForKey:@"data"];
-                if (!patchGroupPatches) {
-                    logit(lcl_vError,@"Unable to get data from cached patch group data file. Will download new one.");
-                    useLocalPatchesFile = NO;
-                }
-            }
-        }
-    }
-    
-    if (!useLocalPatchesFile) {
-        wsErr = nil;
-        patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
-        if (wsErr) {
-            logit(lcl_vError,@"%@",wsErr.localizedDescription);
-            goto done;
-        }
-    }
-
-	if (!patchGroupPatches) {
-		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
-		goto done;
-	}
-
-    if ((aFilter == 0) || (aFilter == 1)) {
-        approvedApplePatches  = [patchGroupPatches objectForKey:@"AppleUpdates"];
-    }
-    if ((aFilter == 0) || (aFilter == 2)) {
-        approvedCustomPatches = [patchGroupPatches objectForKey:@"CustomUpdates"];
-    }
-
-	// Scan for Apple Patches
-    if ((aFilter == 0) || (aFilter == 1))
-    {
-        logit(lcl_vInfo,@"Setting Apple softwareupdate catalog.");
-        mpCatalog = [[MPASUSCatalogs alloc] init];
-        if (![mpCatalog checkAndSetCatalogURL]) {
-            logit(lcl_vError,@"There was a issue setting the CatalogURL, Apple updates will not occur.");
-        }
-
-        logit(lcl_vInfo,@"Scanning for Apple software updates.");
-
-        // New way, using the helper daemon
-        applePatchesArray = nil;
-        applePatchesArray = [mpAsus scanForAppleUpdates];
-        
-        // post patches to web service
-        wsErr = nil;
-        [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
-        if (wsErr) {
-            logit(lcl_vError,@"Scan results posted to webservice returned false.");
-            logit(lcl_vError,@"%@",wsErr.localizedDescription);
-        } else {
-            logit(lcl_vInfo,@"Scan results posted to webservice.");
-        }
-
-        // Process patches
-        if (!applePatchesArray) {
-            logit(lcl_vInfo,@"The scan results for ASUS scan were nil.");
-        } else {
-            // If no items in array, lets bail...
-            if ([applePatchesArray count] == 0 ) {
-                logit(lcl_vInfo,@"No Apple updates found.");
-                sleep(1);
-            } else {
-                // We have Apple patches, now add them to the array of approved patches
-
-                // If no items in array, lets bail...
-                if ([approvedApplePatches count] == 0 ) {
-                    logit(lcl_vInfo,@"No apple updates found for \"%@\" patch group.",[_defaults objectForKey:@"PatchGroup"]);
-                } else {
-                    // Build Approved Patches
-                    logit(lcl_vInfo,@"Building approved patch list...");
-
-                    for (int i=0; i<[applePatchesArray count]; i++) {
-                        for (int x=0;x < [approvedApplePatches count]; x++) {
-                            if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"name"] isEqualTo:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"]]) {
-                                logit(lcl_vInfo,@"Approved update %@",[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"]);
-                                logit(lcl_vDebug,@"Approved: %@",[approvedApplePatches objectAtIndex:x]);
-                                tmpDict = [[NSMutableDictionary alloc] init];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"] forKey:@"patch"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"description"] forKey:@"description"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"restart"] forKey:@"restart"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"version"] forKey:@"version"];
-
-                                if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"]) {
-
-                                    [tmpDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"] forKey:@"hasCriteria"];
-                                    if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"] boolValue] == YES) {
-                                        if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] && [[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] count] > 0) {
-                                            [tmpDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] forKey:@"criteria_pre"];
-                                        }
-                                        if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] && [[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] count] > 0) {
-                                            [tmpDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] forKey:@"criteria_post"];
-                                        }
-                                    }
-                                }
-                                [tmpDict setObject:@"Apple" forKey:@"type"];
-                                [tmpDict setObject:[[approvedApplePatches objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
-                                logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
-                                [approvedUpdatesArray addObject:tmpDict];
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-	// Scan for Custom Patches to see what is relevant for the system
-	if ((aFilter == 0) || (aFilter == 2))
-    {
-        logit(lcl_vInfo,@"Scanning for custom patch vulnerabilities...");
-        customPatchesArray = (NSMutableArray *)[mpAsus scanForCustomUpdates];
-
-        logit(lcl_vDebug,@"Custom Patches Needed: %@",customPatchesArray);
-        logit(lcl_vDebug,@"Approved Custom Patches: %@",approvedCustomPatches);
-
-        // Filter List of Patches containing only the approved patches
-        logit(lcl_vInfo,@"Building approved patch list...");
-        for (int i=0; i<[customPatchesArray count]; i++) {
-            customPatch	= [customPatchesArray objectAtIndex:i];
-            for (int x=0;x < [approvedCustomPatches count]; x++) {
-                approvedPatch	= [approvedCustomPatches objectAtIndex:x];
-                if ([[customPatch objectForKey:@"patch_id"] isEqualTo:[approvedPatch objectForKey:@"patch_id"]])
-                {
-                    logit(lcl_vInfo,@"Patch %@ approved for update.",[customPatch objectForKey:@"description"]);
-                    logit(lcl_vDebug,@"Approved [customPatch]: %@",customPatch);
-                    logit(lcl_vDebug,@"Approved [approvedPatch]: %@",approvedPatch);
-                    tmpDict = [[NSMutableDictionary alloc] init];
-                    [tmpDict setObject:[customPatch objectForKey:@"patch"] forKey:@"patch"];
-                    [tmpDict setObject:[customPatch objectForKey:@"description"] forKey:@"description"];
-                    [tmpDict setObject:[customPatch objectForKey:@"restart"] forKey:@"restart"];
-                    [tmpDict setObject:[customPatch objectForKey:@"version"] forKey:@"version"];
-                    [tmpDict setObject:approvedPatch forKey:@"patches"];
-                    [tmpDict setObject:[customPatch objectForKey:@"patch_id"] forKey:@"patch_id"];
-                    [tmpDict setObject:@"Third" forKey:@"type"];
-                    [tmpDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
-                    [tmpDict setObject:[approvedPatch objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
-
-                    logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
-                    [approvedUpdatesArray addObject:tmpDict];
-                    tmpDict = nil;
-                    break;
-                }
-            }
-        }
-	}
-
-    logit(lcl_vDebug,@"Approved patches to install: %@",approvedUpdatesArray);
-
-done:
-
-    // Remove File If Found
-    if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
-        [NSKeyedArchiver archiveRootObject:[NSArray array] toFile:PATCHES_NEEDED_PLIST];
-        [fm removeItemAtPath:PATCHES_NEEDED_PLIST error:&rmErr];
-    }
-    
-    // Sleep 1 sec
-    [NSThread sleepForTimeInterval:1];
-
-    // Re-write file with new patch info
-    if (approvedUpdatesArray && [approvedUpdatesArray count] > 0)
-    {
-        logit(lcl_vInfo,@"Writing approved patches to %@",PATCHES_NEEDED_PLIST);
-        [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:PATCHES_NEEDED_PLIST];
-    } else {
-        [NSKeyedArchiver archiveRootObject:[NSArray array] toFile:PATCHES_NEEDED_PLIST];
-    }
-    
-    // Added a global notification to update image icon of MPClientStatus
-    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"kRefreshStatusIconNotification" object:nil];
-    
-	[self setApprovedPatches:[NSArray arrayWithArray:approvedUpdatesArray]];
-	[self removeTaskRunning:kMPPatchSCAN];
-    logit(lcl_vInfo,@"Patch Scan Completed.");
-}
-*/
-
 - (void)scanForPatchesWithFilterWaitAndForceWithCritical:(int)aFilter byPassRunning:(BOOL)aByPass critical:(BOOL)aCritical
 {
     // Filter - 0 = All,  1 = Apple, 2 = Third
@@ -391,14 +163,26 @@ done:
         }
     }
     
+    MPAsus              *mpa;
     MPASUSCatalogs      *mpCatalog;
     NSArray             *applePatchesArray;
     NSArray             *approvedApplePatches = nil;
     NSMutableArray      *customPatchesArray;
     NSArray             *approvedCustomPatches = nil;
     NSMutableArray      *approvedUpdatesArray = [[NSMutableArray alloc] init];
+    NSMutableArray      *approvedUpdateIDsArray = [[NSMutableArray alloc] init];
     NSMutableDictionary *tmpDict;
     NSDictionary        *customPatch, *approvedPatch;
+    
+    // PreStage Patches
+    MPCrypto *crypto = [[MPCrypto alloc] init];
+    NSArray  *patchesFromPatch;
+    NSString *downloadURL;
+    NSString *dlPatchLoc; //Download location Path
+    NSError  *dlErr = nil;
+    NSString *stageDir;
+    BOOL isDir = NO;
+    BOOL exists = NO;
     
     // Get Patch Group Patches
     MPWebServices *mpws = [[MPWebServices alloc] init];
@@ -606,6 +390,108 @@ done:
         }
     }
     
+    if ([_defaults objectForKey:@"PreStageUpdates"])
+    {
+        logit(lcl_vInfo,@"PreStageUpdates is enabled.");
+        if ([approvedUpdatesArray count] >= 1)
+        {
+            mpa = [[MPAsus alloc] init];
+            for (NSDictionary *_patch in approvedUpdatesArray)
+            {
+                logit(lcl_vInfo,@"Pre staging update %@.",[_patch objectForKey:@"patch"]);
+                if ([[_patch objectForKey:@"type"] isEqualToString:@"Apple"])
+                {
+                    [mpa downloadAppleUpdate:[_patch objectForKey:@"patch"]];
+                }
+                else
+                {
+                    // This is to clean up non used patches
+                    [approvedUpdateIDsArray addObject:[_patch objectForKey:@"patch_id"]];
+                    
+                    patchesFromPatch = [[_patch objectForKey:@"patches"] objectForKey:@"patches"];
+                    for (NSDictionary *_p in patchesFromPatch)
+                    {
+                        dlErr = nil;
+                        stageDir = [NSString stringWithFormat:@"%@/Data/.stage/%@",MP_ROOT_CLIENT,[_patch objectForKey:@"patch_id"]];
+                        downloadURL = [NSString stringWithFormat:@"/mp-content%@",[_p objectForKey:@"url"]];
+                        if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]])
+                        {
+                            // Migth want to check hash here
+                            logit(lcl_vInfo,@"Patch %@ is already pre-staged.",[_patch objectForKey:@"patch"]);
+                            continue;
+                        }
+                        
+                        // Create Staging Dir
+                        isDir = NO;
+                        exists = [fm fileExistsAtPath:stageDir isDirectory:&isDir];
+                        if (exists)
+                        {
+                            if (isDir) {
+                                if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]])
+                                {
+                                    if ([[[_p objectForKey:@"hash"] uppercaseString] isEqualTo:[[crypto md5HashForFile:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]] uppercaseString]])
+                                    {
+                                        qlinfo(@"Patch %@ has already been staged.",[_patch objectForKey:@"patch"]);
+                                        continue;
+                                    } else {
+                                        dlErr = nil;
+                                        [fm removeItemAtPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]] error:&dlErr];
+                                        if (dlErr) {
+                                            qlerror(@"Unable to remove bad staged patch file %@",[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]);
+                                            qlerror(@"Can not stage %@",[_patch objectForKey:@"patch"]);
+                                            continue;
+                                        }
+                                    }
+                                    
+                                }
+                            } else {
+                                // Is not a dir but is a file, just remove it. It's in our space
+                                dlErr = nil;
+                                [fm removeItemAtPath:stageDir error:&dlErr];
+                                if (dlErr) {
+                                    qlerror(@"Unable to remove bad staged directory/file %@",stageDir);
+                                    qlerror(@"Can not stage %@",[_patch objectForKey:@"patch"]);
+                                    continue;
+                                }
+                            }
+                        } else {
+                            // Stage dir does not exists, create it.
+                            dlErr = nil;
+                            [fm createDirectoryAtPath:stageDir withIntermediateDirectories:YES attributes:nil error:&dlErr];
+                            if (dlErr) {
+                                qlerror(@"%@",dlErr.localizedDescription);
+                                qlerror(@"Can not stage %@",[_patch objectForKey:@"patch"]);
+                                continue; // Error creating stage patch dir. Can not use it.
+                            }
+                        }
+                        
+                        qlinfo(@"Download patch from: %@",downloadURL);
+                        dlErr = nil;
+                        dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&dlErr];
+                        if (dlErr) {
+                            qlerror(@"%@",dlErr.localizedDescription);
+                        }
+                        qldebug(@"Downloaded patch to %@",dlPatchLoc);
+                        
+                        dlErr = nil;
+                        [fm moveItemAtPath:dlPatchLoc toPath:[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]] error:&dlErr];
+                        if (dlErr) {
+                            qlerror(@"%@",dlErr.localizedDescription);
+                            continue; // Error creating stage patch dir. Can not use it.
+                        }
+                        qlinfo(@"%@ has been staged.",[_patch objectForKey:@"patches"]);
+                        qldebug(@"Moved patch to: %@",[stageDir stringByAppendingPathComponent:[[_p objectForKey:@"url"] lastPathComponent]]);
+                    }
+                }
+            }
+
+            [self cleanupPreStagePatches:(NSArray *)approvedUpdateIDsArray];
+        }
+        
+    }
+    
+    //[approvedUpdatesArray writeToFile:@"/tmp/approvedUpdates.plist" atomically:NO];
+    
     // Added a global notification to update image icon of MPClientStatus
     if (aCritical == NO) {
         // We only update notification if a normal scan has run
@@ -620,7 +506,6 @@ done:
 {
 	NSMutableArray      *approvedUpdatesArray = [[NSMutableArray alloc] init];
 	NSMutableDictionary *tmpDict;
-
 
     // Get Patch Group Patches
     MPWebServices *mpws = [[MPWebServices alloc] init];
@@ -736,7 +621,9 @@ done:
     NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"patch_install_weight" ascending:YES];
     updatesArray = [updatesArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:desc]];
 
+    // -------------------------------------------
     // Populate Array with Patch Results
+    // -------------------------------------------
 	if (!updatesArray) {
 		logit(lcl_vInfo,@"Updates array is nil");
         [self removeTaskRunning:kMPPatchUPDATE];
@@ -749,7 +636,9 @@ done:
         return;
     }
 
+    // -------------------------------------------
 	// Check to see if client os type is allowed to perform updates.
+    // -------------------------------------------
 	logit(lcl_vInfo, @"Validating client install status.");
 	NSString *_osType = nil;
 	_osType = [[MPSystemInfo osVersionInfo] objectForKey:@"ProductName"];
@@ -798,12 +687,16 @@ done:
 		}
 	}
 
+    // -------------------------------------------
+    // iLoad
+    // -------------------------------------------
 	if (iLoadMode == YES) {
 		printf("Updates to install: %d\n", (int)[updatesArray count]);
 	}
 
+    // -------------------------------------------
     // Begin Patching Process
-	MPCrypto			*_crypto;
+    // -------------------------------------------
     MPInstaller         *mpInstaller = nil;
     MPScript            *mpScript = nil;
     NSDictionary		*patch;
@@ -811,6 +704,9 @@ done:
 	NSArray				*patchPatchesArray;
 	NSString			*downloadURL;
 	NSError				*err;
+    
+    // Staging
+    NSString *stageDir;
 
 	int i;
 	int installResult = 1;
@@ -849,16 +745,20 @@ done:
          continue;
          }
          */
+        
+        // -------------------------------------------
         // Now proceed to the download and install
+        // -------------------------------------------
         installResult = -1;
 
-        if ([[patch objectForKey:@"type"] isEqualTo:@"Third"] && (aFilter == 0 || aFilter == 2)) {
+        if ([[patch objectForKey:@"type"] isEqualTo:@"Third"] && (aFilter == 0 || aFilter == 2))
+        {
             logit(lcl_vInfo,@"Starting install for %@",[patch objectForKey:@"patch"]);
 
 			if (iLoadMode == YES) {
 				printf("Begin: %s\n", [[patch objectForKey:@"patch"] cString]);
 			}
-
+            
             // Get all of the patches, main and subs
             // This is messed up, not sure why I have an array right within an array, needs to be fixed ...later :-)
             patchPatchesArray = [NSArray arrayWithArray:[[patch objectForKey:@"patches"] objectForKey:@"patches"]];
@@ -875,39 +775,69 @@ done:
                     logit(lcl_vInfo,@"Object found was not of dictionary type; could be a problem. %@",[patchPatchesArray objectAtIndex:patchIndex]);
                     continue;
                 }
+                
+                BOOL usingStagedPatch = NO;
+                BOOL downloadPatch = YES;
 
                 // We have a currPatchToInstallDict to work with
                 logit(lcl_vInfo,@"Start install for patch %@ from %@",[currPatchToInstallDict objectForKey:@"url"],[patch objectForKey:@"patch"]);
 
                 // First we need to download the update
-                @try {
-                    logit(lcl_vInfo,@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
-                    //Pre Proxy Config
-                    downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
-                    logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
-                    err = nil;
-                    dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
-                    if (err) {
-                        logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",[patch objectForKey:@"patch"],[err localizedDescription]);
-                        break;
+                @try
+                {
+                    // -------------------------------------------
+                    // Check to see if the patch has been staged
+                    // -------------------------------------------
+                    MPCrypto *mpCrypto = [[MPCrypto alloc] init];
+                    stageDir = [NSString stringWithFormat:@"%@/Data/.stage/%@",MP_ROOT_CLIENT,[patch objectForKey:@"patch_id"]];
+                    if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]])
+                    {
+                        dlPatchLoc = [stageDir stringByAppendingPathComponent:[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]];
+                        if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[[mpCrypto md5HashForFile:dlPatchLoc] uppercaseString]])
+                        {
+                            qlinfo(@"The staged file passed the file hash validation.");
+                            usingStagedPatch = YES;
+                            downloadPatch = NO;
+                        } else {
+                            logit(lcl_vError,@"The staged file did not pass the file hash validation.");
+                        }
                     }
-                    logit(lcl_vInfo,@"File downloaded to %@",dlPatchLoc);
+                    
+                    // -------------------------------------------
+                    // Check to see if we need to download the patch
+                    // -------------------------------------------
+                    if (downloadPatch)
+                    {
+                        logit(lcl_vInfo,@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
+                        
+                        //Pre Proxy Config
+                        downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
+                        
+                        logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
+                        err = nil;
+                        dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
+                        if (err) {
+                            logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",[patch objectForKey:@"patch"],[err localizedDescription]);
+                            break;
+                        }
+                        logit(lcl_vInfo,@"File downloaded to %@",dlPatchLoc);
+                        
+                        // -------------------------------------------
+                        // Validate hash, before install
+                        // -------------------------------------------
+                        NSString *fileHash = [mpCrypto md5HashForFile:dlPatchLoc];
+                        
+                        logit(lcl_vInfo,@"Downloaded file hash: %@ (%@)",fileHash,[currPatchToInstallDict objectForKey:@"hash"]);
+                        if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[fileHash uppercaseString]] == NO)
+                        {
+                            logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
+                            continue;
+                        }
+                    }
                 }
                 @catch (NSException *e) {
                     logit(lcl_vError,@"%@", e);
                     break;
-                }
-
-                // *****************************
-                // Validate hash, before install
-                logit(lcl_vInfo,@"Validating downloaded patch.");
-				_crypto = [[MPCrypto alloc] init];
-                NSString *fileHash = [_crypto md5HashForFile:dlPatchLoc];
-				_crypto = nil;
-                logit(lcl_vInfo,@"Downloaded file hash: %@ (%@)",fileHash,[currPatchToInstallDict objectForKey:@"hash"]);
-                if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[fileHash uppercaseString]] == NO) {
-                    logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
-                    continue;
                 }
 
                 // *****************************
@@ -1020,6 +950,24 @@ done:
 				if (iLoadMode == YES) {
 					fprintf(stdout, "Completed: %s\n", [[patch objectForKey:@"patch"] cString]);
 				}
+                
+                // -------------------------------------------
+                // If staged, remove staged patch dir
+                // -------------------------------------------
+                if (usingStagedPatch)
+                {
+                    if ([fm fileExistsAtPath:stageDir])
+                    {
+                        qlinfo(@"Removing staged patch dir %@",stageDir);
+                        err = nil;
+                        [fm removeItemAtPath:stageDir error:&err];
+                        if (err) {
+                            qlerror(@"Removing staged patch dir %@ failed.",stageDir);
+                            qlerror(@"%@",err.localizedDescription);
+                        }
+                    }
+                }
+                
 				[self removeInstalledPatchFromCacheFile:[patch objectForKey:@"patch"]];
                 logit(lcl_vInfo,@"Patch install completed.");
 
@@ -2352,6 +2300,34 @@ done:
     return YES;
 }
 
+#pragma mark - Misc
+
+- (void)cleanupPreStagePatches:(NSArray *)aApprovedPatches
+{
+    qlinfo(@"Cleaning up older pre-staged patches.");
+    NSString *stagePatchDir;
+    
+    NSString *stageDir = [NSString stringWithFormat:@"%@/Data/.stage",MP_ROOT_CLIENT];
+    NSArray *dirEnum = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:stageDir error:NULL];
+    
+    for (NSString *filename in dirEnum)
+    {
+        qldebug(@"Validating patch %@",filename);
+        BOOL found = NO;
+        stagePatchDir = [stageDir stringByAppendingPathComponent:filename];
+        for (NSString *patchid in aApprovedPatches) {
+            if ([[filename lowercaseString] isEqualToString:[patchid lowercaseString]]) {
+                found = YES;
+                break;
+            }
+        }
+        // filename (patch_id) not found in approved patch IDs
+        if (found == NO) {
+            qlinfo(@"Delete obsolete patch %@",filename);
+            [[NSFileManager defaultManager] removeItemAtPath:stagePatchDir error:NULL];
+        }
+    }
+}
 
 #pragma mark MPNetRequestController Callbacks
 - (void)appendDownloadProgress:(double)aNumber

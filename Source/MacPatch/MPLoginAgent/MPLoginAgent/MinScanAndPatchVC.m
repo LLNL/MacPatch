@@ -14,10 +14,14 @@
 #include <unistd.h>
 #include <sys/reboot.h>
 
+#import <CoreServices/CoreServices.h>
+
 #undef  ql_component
 #define ql_component lcl_cMain
 
 #define	BUNDLE_ID       @"gov.llnl.MPLoginAgent"
+
+extern OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSend);
 
 @interface MinScanAndPatchVC ()
 
@@ -61,6 +65,7 @@
 @synthesize progressCountTotal;
 @synthesize taskThread;
 @synthesize killTaskThread;
+@synthesize cancelTask;
 
 - (void)awakeFromNib
 {
@@ -74,6 +79,7 @@
         mpDefauts = [[MPDefaults alloc] init];
         mpScanner = [[MPScanner alloc] init];
         mpScanner.delegate = self;
+        cancelTask = FALSE;
         
         [progressBar setUsesThreadedAnimation: YES];
         
@@ -123,6 +129,8 @@
     @autoreleasepool
     {
         [self toggleStatusProgress];
+        [NSThread sleepForTimeInterval:2];
+        [NSApp activateIgnoringOtherApps:YES];
         
         NSError *error = nil;
         NSArray *appleUpdates = nil;
@@ -138,6 +146,7 @@
         {
             // Scan for Apple Patches
             [self progress:@"Scanning for Apple Updates"];
+            if (cancelTask) [self _stopThread];
             
             error = nil;
             appleUpdates = [self scanForAppleUpdates:&error];
@@ -148,6 +157,7 @@
             
             // Scan for Custome Patches
             [self progress:@"Scanning for Custom Updates"];
+            if (cancelTask) [self _stopThread];
             
             error = nil;
             customUpdates = [self scanForCustomUpdates:&error];
@@ -157,12 +167,13 @@
             
             qldebug(@"Custom Updates: %@",customUpdates);
             [self progress:@"Compiling approved patches from scan list"];
-            
+            if (cancelTask) [self _stopThread];
             approvedUpdates = [self filterFoundPatches:[self patchGroupPatches]
                                           applePatches:appleUpdates
                                         customePatches:customUpdates];
             
             [self createPatchStatusFile:approvedUpdates];
+            if (cancelTask) [self _stopThread];
         }
         
         qlinfo(@"Approved Updates: %@",approvedUpdates);
@@ -189,6 +200,8 @@
         int install_result = 0;
         for (int i = 0; i < [approvedUpdates count]; i++)
         {
+            if (cancelTask) [self _stopThread];
+            
             // Create/Get Dictionary of Patch to install
             patch = nil;
             patch = [NSDictionary dictionaryWithDictionary:[approvedUpdates objectAtIndex:i]];
@@ -235,7 +248,7 @@
 
 - (void)rebootOrLogout:(int)action
 {
-//    exit(0);
+    // exit(0);
 
     int rb = 0;
     switch ( action ) {
@@ -282,15 +295,50 @@
 
 - (IBAction)cancelOperation:(id)sender
 {
-    [self performSelector:@selector(_stopThread) onThread:taskThread withObject:nil waitUntilDone:NO];
-    [taskThread cancel]; 
+    [self progress:@"Cancelling, waiting for current request to finish..."];
+    dispatch_async(dispatch_get_main_queue(), ^(void)
+    {
+        cancelButton.enabled = FALSE;
+        self.cancelTask = TRUE;
+    });
 }
 
 - (void)_stopThread
 {
-    CFRunLoopStop(CFRunLoopGetCurrent());
-    [NSThread exit];
-    reboot(RB_AUTOBOOT);
+    @autoreleasepool
+    {
+        MDSendAppleEventToSystemProcess(kAERestart);
+    }
+}
+
+OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSendID)
+{
+    qlinfo(@"MDSendAppleEventToSystemProcess called");
+    
+    AEAddressDesc targetDesc;
+    static const ProcessSerialNumber kPSNOfSystemProcess = {0, kSystemProcess };
+    AppleEvent eventReply = {typeNull, NULL};
+    AppleEvent eventToSend = {typeNull, NULL};
+    
+    OSStatus status = AECreateDesc(typeProcessSerialNumber,
+                                   &kPSNOfSystemProcess, sizeof(kPSNOfSystemProcess), &targetDesc);
+    
+    if (status != noErr) return status;
+    
+    status = AECreateAppleEvent(kCoreEventClass, eventToSendID,
+                                &targetDesc, kAutoGenerateReturnID, kAnyTransactionID, &eventToSend);
+    
+    AEDisposeDesc(&targetDesc);
+    
+    if (status != noErr) return status;
+    
+    status = AESendMessage(&eventToSend, &eventReply,
+                           kAENormalPriority, kAEDefaultTimeout);
+    
+    AEDisposeDesc(&eventToSend);
+    if (status != noErr) return status;
+    AEDisposeDesc(&eventReply);
+    return status;
 }
 
 #pragma mark - Scanning
@@ -626,6 +674,9 @@
     int          patchInstallsFound = 0;
     int          patchInstallCount = 0;
     
+    // Staging
+    NSString *stageDir;
+    
     for (int i = 0; i < [patchPatchesArray count]; i++)
     {
         // Make sure we only process the dictionaries in the NSArray
@@ -641,8 +692,81 @@
         // We have a currPatchToInstallDict to work with
         qlinfo(@"Start install for patch %@ from %@",[patchDict objectForKey:@"url"],[patch objectForKey:@"patch"]);
         
+        BOOL usingStagedPatch = NO;
+        BOOL downloadPatch = YES;
+        MPCrypto *mpCrypto = [[MPCrypto alloc] init];
+        
+        // -------------------------------------------
+        // First we need to download the update
+        // -------------------------------------------
+        @try
+        {
+            // -------------------------------------------
+            // Check to see if the patch has been staged
+            // -------------------------------------------
+            stageDir = [NSString stringWithFormat:@"%@/Data/.stage/%@",MP_ROOT_CLIENT,[patch objectForKey:@"patch_id"]];
+            if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[patchDict objectForKey:@"url"] lastPathComponent]]])
+            {
+                dlPatchLoc = [stageDir stringByAppendingPathComponent:[[patchDict objectForKey:@"url"] lastPathComponent]];
+                if ([[[patchDict objectForKey:@"hash"] uppercaseString] isEqualTo:[[mpCrypto md5HashForFile:dlPatchLoc] uppercaseString]])
+                {
+                    qlinfo(@"The staged file passed the file hash validation.");
+                    usingStagedPatch = YES;
+                    downloadPatch = NO;
+                } else {
+                    //[spStatusText setStringValue:[NSString stringWithFormat:@"The staged file did not pass the file hash validation."]];
+                    //[spStatusText display];
+                    logit(lcl_vError,@"The staged file did not pass the file hash validation.");
+                }
+            }
+            
+            // -------------------------------------------
+            // Check to see if we need to download the patch
+            // -------------------------------------------
+            if (downloadPatch)
+            {
+                // Download the patch
+                logit(lcl_vInfo,@"Start download for patch from %@",[patchDict objectForKey:@"url"]);
+                [self progress:[NSString stringWithFormat:@"Downloading %@",[[patchDict objectForKey:@"url"] lastPathComponent]]];
+                
+                //Pre Proxy Config
+                downloadURL = [NSString stringWithFormat:@"/mp-content%@",[patchDict objectForKey:@"url"]];
+                logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
+                err = nil;
+                dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
+                if (err) {
+                    logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",[patch objectForKey:@"patch"],[err localizedDescription]);
+                    [self progress:[NSString stringWithFormat:@"Error downloading a patch, skipping %@.",[patch objectForKey:@"patch"]]];
+                    break;
+                }
+                
+                [self progress:[NSString stringWithFormat:@"Patch download completed."]];
+                logit(lcl_vInfo,@"File downloaded to %@",dlPatchLoc);
+                
+                
+                // -------------------------------------------
+                // Validate hash, before install
+                // -------------------------------------------
+                [self progress:[NSString stringWithFormat:@"Validating downloaded patch %@.",[patch objectForKey:@"patch"]]];
+                
+                NSString *fileHash = [mpCrypto md5HashForFile:dlPatchLoc];
+                logit(lcl_vInfo,@"Downloaded file hash: %@ (%@)",fileHash,[patchDict objectForKey:@"hash"]);
+                if ([[[patchDict objectForKey:@"hash"] uppercaseString] isEqualTo:[fileHash uppercaseString]] == NO) {
+                    [self progress:[NSString stringWithFormat:@"The downloaded file did not pass the file hash validation. No install will occur."]];
+                    logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
+                    continue;
+                }
+            }
+            
+        }
+        @catch (NSException *e) {
+            logit(lcl_vError,@"%@", e);
+            break;
+        }
+        
         // *****************************
         // Download the update
+        /*
         @try
         {
             qlinfo(@"Start download for patch from %@",[patchDict objectForKey:@"url"]);
@@ -668,12 +792,15 @@
             qlerror(@"%@", e);
             break;
         }
+        */
         
         // *****************************
         // Validate hash, before install
+        
+        /*
         [self progress:[NSString stringWithFormat:@"Validating downloaded patch."]];
         
-        MPCrypto *mpCrypto = [[MPCrypto alloc] init];
+        
         NSString *fileHash = [mpCrypto md5HashForFile:dlPatchLoc];
         
         qlinfo(@"Downloaded file hash: %@ (%@)",fileHash,[patchDict objectForKey:@"hash"]);
@@ -685,6 +812,8 @@
             continue;
         }
         mpCrypto = nil;
+        */
+        
         
         // *****************************
         // Now we need to unzip
@@ -771,6 +900,23 @@
             if ( postInstallRes != 0 ) {
                 qlerror(@"Error (%d) running post-install script.",preInstallRes);
                 break;
+            }
+        }
+        
+        // -------------------------------------------
+        // If staged, remove staged patch dir
+        // -------------------------------------------
+        if (usingStagedPatch)
+        {
+            if ([fm fileExistsAtPath:stageDir])
+            {
+                qlinfo(@"Removing staged patch dir %@",stageDir);
+                err = nil;
+                [fm removeItemAtPath:stageDir error:&err];
+                if (err) {
+                    qlerror(@"Removing staged patch dir %@ failed.",stageDir);
+                    qlerror(@"%@",err.localizedDescription);
+                }
             }
         }
         

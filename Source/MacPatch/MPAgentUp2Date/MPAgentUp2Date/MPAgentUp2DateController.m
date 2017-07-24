@@ -222,8 +222,12 @@ NSInteger const TaskErrorTimedOut = 900001;
 	NSDictionary *_agentFrameWorkInfo = [NSDictionary dictionaryWithContentsOfFile:AGENT_FRAMEWORK_PATH];
 	NSMutableDictionary *tmpDict = [[NSMutableDictionary alloc] init];
 	
-	if ([_agentVersionInfo objectForKey:@"version"]) {
-		[tmpDict setObject:[_agentVersionInfo objectForKey:@"version"] forKey:@"agentVersion"];
+    //if ([_agentVersionInfo objectForKey:@"major"] && [_agentVersionInfo objectForKey:@"minor"] && [_agentVersionInfo objectForKey:@"bug"]) {
+    //    NSString *_ver = [NSString stringWithFormat:@"%@.%@.%@",[_agentVersionInfo objectForKey:@"major"], [_agentVersionInfo objectForKey:@"minor"],[_agentVersionInfo objectForKey:@"bug"]];
+   //     [tmpDict setObject:_ver forKey:@"agentVersion"];
+    
+    if ([_agentVersionInfo objectForKey:@"version"]) {
+        [tmpDict setObject:[_agentVersionInfo objectForKey:@"version"] forKey:@"agentVersion"];
 	} else {
 		[tmpDict setObject:@"0" forKey:@"agentVersion"];
 	}
@@ -672,7 +676,7 @@ done:
     }
     
     if (self.verifyFingerprint) {
-        NSString *url = [NSString stringWithFormat:@"https://%@:%d",server.host,server.port];
+        NSString *url = [NSString stringWithFormat:@"https://%@:%d",server.host,(int)server.port];
         BOOL isValidCert = [self validateRemoteFingerprint:url];
         if (!isValidCert) {
             qlerror(@"Remote Certificate finger print verify failed.");

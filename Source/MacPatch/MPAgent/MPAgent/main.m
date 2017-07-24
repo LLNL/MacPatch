@@ -33,8 +33,9 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <unistd.h>
+#include "MPDefaultServers.h"
 
-#define APPVERSION	@"3.0.0.8"
+#define APPVERSION	@"3.0.0.9"
 #define APPNAME		@"MPAgent"
 
 void usage(void);
@@ -263,6 +264,15 @@ int main (int argc, char * argv[])
 			logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
 		}
         
+        // Check for Servers Plist, if not there then create it with default servers
+        logit(lcl_vInfo,@"Checking for default servers plist %@.",AGENT_SERVERS_PLIST);
+        if (![[NSFileManager defaultManager] fileExistsAtPath:AGENT_SERVERS_PLIST])
+        {
+            qlinfo(@"Create default servers plist.");
+            MPDefaultServers *mpSrvs = [[MPDefaultServers alloc] init];
+            [mpSrvs createDefaultServersList];
+        }
+        
         // Process Inventory
         if (invArg !=NULL)
         {
@@ -354,6 +364,7 @@ int main (int argc, char * argv[])
             exit(0);
             
         } else {
+
             MPAppController *mpac = [[MPAppController alloc] init];
             [mpac runWithType:a_Type];
             [[NSRunLoop currentRunLoop] run];

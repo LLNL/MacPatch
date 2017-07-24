@@ -23,7 +23,7 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-// MacPatch MPWorkerProtocol.h version 1.6.0
+// MacPatch MPWorkerProtocol.h version 1.7.2
 
 #import <Foundation/Foundation.h>
 
@@ -76,11 +76,16 @@
 - (void)setDebugLogging:(BOOL)aState;
 - (void)removeStatusFilesViaHelper;
 
+- (int)stagePatchWithBaseDirectory:(in bycopy NSDictionary *)aPatch directory:(in bycopy NSString *)path;
+
 // Inventory Collection
 - (int)collectInventoryData;
 
 // Misc
 - (NSString *)createAppSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask directoryAttributes:(in bycopy NSDictionary *)attributes;
+
+- (BOOL)unzipFile:(in bycopy NSString *)file error:(NSError **)error;
+- (BOOL)removeStagedDirectory:(in bycopy NSString *)stagedDirectory;
 
 // MPReboot
 - (int)cleanUpRebootFileViaHelper;

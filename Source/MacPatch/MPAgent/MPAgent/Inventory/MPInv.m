@@ -1281,7 +1281,7 @@ done:
 	}
 	
 	if ([fm fileExistsAtPath:appDB] == NO) {
-		logit(lcl_vError, @"Application usage data is missing.");
+		logit(lcl_vWarning, @"Application usage data is missing. %@ file not found.",appDB);
 		return nil;
 	}
 	NSMutableArray *rows = [[NSMutableArray alloc] init];
@@ -1512,7 +1512,8 @@ done:
         }
         
 	} else {
-        logit(lcl_vError, @"File %@ does not exist.",pmPlist);
+        logit(lcl_vWarning, @"File %@ does not exist.",pmPlist);
+        return pwrDataProfiles;
 	}
     
     if (_pwrDataProfiles != nil) pwrDataProfiles = [NSArray arrayWithArray:_pwrDataProfiles];

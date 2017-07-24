@@ -65,6 +65,38 @@ static void InstallHandleSIGTERMFromRunLoop(void)
     });
 }
 
+
+static void fixDefaultsIfNeeded(void)
+{
+    NSArray *domains = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSSystemDomainMask,YES);
+    //File should be in library
+    NSString *libraryPath = [domains firstObject];
+    if (libraryPath)
+    {
+        NSString *preferensesPath = [libraryPath stringByAppendingPathComponent:@"Preferences"];
+        
+        //Defaults file name similar to bundle identifier
+        NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        
+        //Add correct extension
+        NSString *defaultsName = [bundleIdentifier stringByAppendingString:@".plist"];
+        
+        NSString *defaultsPath = [preferensesPath stringByAppendingPathComponent:defaultsName];
+        
+        NSFileManager *manager = [NSFileManager defaultManager];
+        
+        if (![manager fileExistsAtPath:defaultsPath])
+        {
+            //Create to fix issues
+            [manager createFileAtPath:defaultsPath contents:nil attributes:nil];
+            
+            //And restart defaults at the end
+            [NSUserDefaults resetStandardUserDefaults];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+    }
+}
+
 int main(int argc, char * argv[])
 {
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -86,7 +118,11 @@ int main(int argc, char * argv[])
                                                               @"CleanExit":                  @YES,
                                                               @"Debug":                      @NO,
                                                               @"MinView":                    @YES,
+                                                              @"AppleTimeout":               @1800,
+                                                              @"CustomTimeout":              @600
                                                               }];
+    
+    fixDefaultsIfNeeded();
     
     // Handle various options startup options.
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WaitForWindowServerSession"]) {
@@ -105,6 +141,7 @@ int main(int argc, char * argv[])
         //NSLog(@"Not installing SIGTERM handler");
     }
 
+    [[NSUserDefaults standardUserDefaults] synchronize];
     retVal = NSApplicationMain(argc, (const char **) argv);
     return retVal;
 }

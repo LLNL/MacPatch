@@ -110,7 +110,8 @@
         // Showing window normally
         [self.panel orderFront:self];
     }
-    [self.panel setLevel:kCGStatusWindowLevel];
+    //[self.panel setLevel:kCGStatusWindowLevel];
+    [self.panel setLevel:kCGMaximumWindowLevel];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
