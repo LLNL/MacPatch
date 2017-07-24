@@ -12,7 +12,7 @@
 		8F1592041767B64B006BE1E0 /* empty.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F1592031767B64B006BE1E0 /* empty.tif */; };
 		8F226CD01AB21AB900354546 /* Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F226CCF1AB21AB900354546 /* Warning.png */; };
 		8F336E9A1BA88A1000983D78 /* MPAlert.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F336E991BA88A1000983D78 /* MPAlert.png */; };
-		8F336EA01BA88EFE00983D78 /* EventToSend.c in Sources */ = {isa = PBXBuildFile; fileRef = 8F336E9F1BA88EFE00983D78 /* EventToSend.c */; };
+		8F336EA01BA88EFE00983D78 /* EventToSend.c in Sources */ = {isa = PBXBuildFile; fileRef = 8F336E9F1BA88EFE00983D78 /* EventToSend.c */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F336EA21BA8909E00983D78 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F336EA11BA8909D00983D78 /* Carbon.framework */; };
 		8F779399181EDB8D008FA072 /* LogOutReq.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8F779398181EDB8D008FA072 /* LogOutReq.tif */; };
 		8FA9ADF91767B6930055506B /* RestartReq.tif in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9ADF81767B6930055506B /* RestartReq.tif */; };
@@ -374,6 +374,7 @@
 		8FD890C516DFEDB700A870A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Self Patch/Self Patch-Prefix.pch";
@@ -390,6 +391,7 @@
 		8FD890C616DFEDB700A870A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Self Patch/Self Patch-Prefix.pch";
