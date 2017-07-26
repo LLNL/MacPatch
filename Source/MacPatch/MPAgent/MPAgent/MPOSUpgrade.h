@@ -29,4 +29,5 @@
 
 - (int)postOSUpgradeStatus:(NSString *)action label:(NSString *)aLabel upgradeID:(NSString *)aUpgradeID error:(NSError **)error;
 
+- (NSString *)migrationIDFromFile:(NSString *)aFilePath;
 @end

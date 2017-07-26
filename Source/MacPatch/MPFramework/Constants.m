@@ -74,6 +74,8 @@ NSString * const kMPAVUpdate                = @".mpAVUpdateRunning";
 NSString * const MP_KEYCHAIN_FILE           = @"/Library/Application Support/MacPatch/.MacPatch.keychain";
 NSString * const MP_AGENT_HASH              = @"/Library/Application Support/MacPatch/.keyHash";
 
+NSString * const OS_MIGRATION_STATUS        = @"/Users/Shared/.migrationid";
+
 @implementation Constants
 
 @end
