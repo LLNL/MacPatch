@@ -39,6 +39,7 @@
 #define APPNAME		@"MPAgent"
 
 void usage(void);
+const char * consoleUser(void);
 
 int main (int argc, char * argv[])
 {
@@ -99,11 +100,13 @@ int main (int argc, char * argv[])
                 {"OSUpgrade"            ,required_argument	,0, 'k'},
                 {"OSLabel"              ,required_argument	,0, 'l'},
                 {"OSUpgradeID"          ,required_argument	,0, 'm'},
+                // Current Console User
+                {"consoleUser"          ,no_argument		,0, 'x'},
 				{0, 0, 0, 0}
 			};
 			// getopt_long stores the option index here.
 			int option_index = 0;
-			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwnzeVvhr::R::t:ACk:l:m:", long_options, &option_index);
+			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwnzeVvhr::R::t:ACk:l:m:x", long_options, &option_index);
 			
 			// Detect the end of the options.
 			if (c == -1)
@@ -174,6 +177,8 @@ int main (int argc, char * argv[])
                         osMigration = YES;
                     } else {
                         osMigAction = @"ERR";
+                        printf("Error, \"OSUpgrade\" state must be either start or stop.\n");
+                        return 1;
                     }
                     break;
                 case 'l':
@@ -194,6 +199,9 @@ int main (int argc, char * argv[])
 				case 'e':
 					echoToConsole = YES;
 					break;
+                case 'x':
+                    printf("%s\n",consoleUser());
+                    return 0;
 				case 'v':
 					printf("%s\n",[APPVERSION UTF8String]);
 					return 0;
@@ -316,7 +324,9 @@ int main (int argc, char * argv[])
             exit(0);
             
         // Verify Registration
-        } else if (readRegInfo) {
+        }
+        else if (readRegInfo)
+        {
             
             MPAgentRegister *mpar = [[MPAgentRegister alloc] init];
             
@@ -340,12 +350,18 @@ int main (int argc, char * argv[])
             }
 
         // Post OS Migration Info
-        } else if (osMigration) {
+        }
+        else if (osMigration)
+        {
             
             NSString *uID;
             MPOSUpgrade *mposu = [[MPOSUpgrade alloc] init];
             if ([[osMigID lowercaseString] isEqualTo:@"auto"]) {
-                uID = [[NSUUID UUID] UUIDString];
+                if ([[osMigAction lowercaseString] isEqualTo:@"stop"]) {
+                    uID = [mposu  migrationIDFromFile:OS_MIGRATION_STATUS];
+                } else {
+                    uID = [[NSUUID UUID] UUIDString];
+                }
             } else {
                 uID = osMigID;
             }
@@ -363,8 +379,9 @@ int main (int argc, char * argv[])
             
             exit(0);
             
-        } else {
-
+        }
+        else
+        {
             MPAppController *mpac = [[MPAppController alloc] init];
             [mpac runWithType:a_Type];
             [[NSRunLoop currentRunLoop] run];
@@ -430,4 +447,27 @@ void usage(void)
 	printf("\n -v \tDisplay version info. \n");
 	printf("\n");
     exit(0);
+}
+
+const char * consoleUser(void)
+{
+    NSString *result;
+    SCDynamicStoreRef   store;
+    CFStringRef         consoleUserName;
+    
+    store = SCDynamicStoreCreate(NULL, (CFStringRef)@"GetCurrentConsoleUser", NULL, NULL);
+    consoleUserName = SCDynamicStoreCopyConsoleUser(store, NULL, NULL);
+    
+    NSString *nsString = (__bridge NSString*)consoleUserName;
+
+    if (nsString) {
+        result = nsString;
+    } else {
+        result = @"null";
+    }
+
+    if (consoleUserName)
+        CFRelease(consoleUserName);
+    
+    return [result UTF8String];
 }
