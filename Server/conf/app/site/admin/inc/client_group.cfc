@@ -269,21 +269,11 @@
 			<cfset log = logInfo("removeClient","[Delete]: Client was not removed, #getClientInfo.hostname# (#Arguments.id#)") />
 			<cfreturn false>
 		</cfif>
-
-		<cfset ignoreTables="mp_agent_registration, mp_client_reg_keys, mp_clients_wait_reg">
-
+		
 		<!--- Delete the client --->
 		<cfloop list="#tableList#" index="table" delimiters=",">
-			<!---
-			<cfif listFindNoCase(ignoreTables, table) EQ 0>
-				<cfif #tableContainsColumn(table)# EQ true>
-			--->
-					<cfset tmp = deleteClient(Arguments.id,table)>
-					<cfset log = logInfo("removeClient","#Session.Username# removed client,(#getClientInfo.hostname#, #getClientInfo.ipaddr#, #Arguments.id#, #table#)") />
-			<!---
-				</cfif>
-			</cfif>
-			--->
+			<cfset tmp = deleteClient(Arguments.id,table)>
+			<cfset log = logInfo("removeClient","#Session.Username# removed client,(#getClientInfo.hostname#, #getClientInfo.ipaddr#, #Arguments.id#, #table#)") />
 		</cfloop>
 
 		<cfreturn true>
