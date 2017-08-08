@@ -832,7 +832,10 @@ done:
 	[self progress:@""];
 	if ([[arrayController arrangedObjects] count] >= 1) {
 		[arrayController removeObjects:[arrayController arrangedObjects]];
-		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            [tableView reloadData];
+            [tableView display];
+        });
 	}
 	
 	[window	makeKeyAndOrderFront:sender];
@@ -877,7 +880,6 @@ done:
 	[spCancelButton setEnabled:YES];
 }
 
-/* Orig, pre ARC
 - (void)runPatchScan
 {
     @autoreleasepool
@@ -887,353 +889,10 @@ done:
         [self setDefaults:[mpDefaults readDefaults]];
         
         [arrayController removeObjects:[arrayController arrangedObjects]];
-        [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-        
-        [spUpdateButton setEnabled:NO];
-        [self progress:@"Preparing to scan for patches."];
-        [spScanAndPatchButton setEnabled:NO];
-        
-        // Method Valiables
-        NSMutableArray *approvedUpdatesArray = [[NSMutableArray alloc] init];
-        NSMutableDictionary *tmpDict;
-        NSImage *emptyImage = [NSImage imageNamed:@"empty.tif"];
-        NSImage *rebootImage = [NSImage imageNamed:@"RestartReq.tif"];
-        NSImage *baselineImage = [NSImage imageNamed:@"Installcomplete.tif"];
-        
-        asus = [[MPAsus alloc] init];
-        
-        if (killTaskThread == YES) {
-            [self progress:@"Canceling request..."];
-            goto done;
-        }
-        
-        // Get Patch Group Patches
-        [self progress:@"Getting approved patch list for client."];
-        MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
-        NSError       *wsErr = nil;
-        NSDictionary  *patchGroupPatches;
-        BOOL           useLocalPatchesFile = NO;
-        NSString      *patchGroupRevLocal = [MPClientInfo patchGroupRev];
-        
-        if (![patchGroupRevLocal isEqualToString:@"-1"]) {
-            NSString *patchGroupRevRemote = [mpws getPatchGroupContentRev:&wsErr];
-            if (!wsErr) {
-                if ([patchGroupRevLocal isEqualToString:patchGroupRevRemote]) {
-                    useLocalPatchesFile = YES;
-                    NSString *pGroup = [defaults objectForKey:@"PatchGroup"];
-                    patchGroupPatches = [[[NSDictionary dictionaryWithContentsOfFile:PATCH_GROUP_PATCHES_PLIST] objectForKey:pGroup] objectForKey:@"data"];
-                    if (!patchGroupPatches) {
-                        logit(lcl_vError,@"Unable to get data from cached patch group data file. Will download new one.");
-                        useLocalPatchesFile = NO;
-                    }
-                }
-            }
-        }
-        if (!useLocalPatchesFile) {
-            wsErr = nil;
-            patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
-            if (wsErr) {
-                logit(lcl_vError,@"%@",wsErr.localizedDescription);
-                goto done;
-            }
-        }
-        
-        if (!patchGroupPatches)
-        {
-            NSDictionary *userInfo = @{@"title":@"Communications Error", @"defaultButton":@"OK", @"message":@"There was a issue getting the approved patches for the patch group, scan will exit."};
-            [self performSelectorOnMainThread:@selector(runNSAlert:) withObject:userInfo waitUntilDone:YES];
-            logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
-            goto done;
-        }
-        NSArray *approvedApplePatches = [patchGroupPatches objectForKey:@"AppleUpdates"];
-        NSArray *approvedCustomPatches = [patchGroupPatches objectForKey:@"CustomUpdates"];
-        
-        // Scan for Apple Patches
-        int catResult = [self setCatalogURL];
-        if (catResult != 0) {
-            if (catResult == 1001) {
-                goto done;
-            }
-            logit(lcl_vError,@"There was a issue setting the CatalogURL, Apple updates will not occur.");
-        }
-        
-        if (killTaskThread == YES) {
-            [self progress:@"Canceling request..."];
-            goto done;
-        }
-        
-        [self progress:@"Scanning for Apple software updates..."];
-        appleScanError = nil;
-        NSArray *applePatchesArray = nil;
-        applePatchesArray = [self scanForAppleUpdates:&appleScanError];
-        if (appleScanError) {
-            goto done;
-        }
-        
-        if (killTaskThread == YES) {
-            [self progress:@"Canceling request..."];
-            goto done;
-        }
-        
-        // post patches to web service
-        mpws = [[[MPWebServices alloc] init] autorelease];
-        wsErr = nil;
-        [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
-        if (wsErr) {
-            logit(lcl_vError,@"Scan results posted to webservice returned false.");
-            logit(lcl_vError,@"%@",wsErr.localizedDescription);
-        } else {
-            logit(lcl_vInfo,@"Scan results posted to webservice.");
-        }
-        
-        if (killTaskThread == YES) {
-            [self progress:@"Canceling request..."];
-            goto done;
-        }
-        
-        // Process patches
-        if (!applePatchesArray) {
-            logit(lcl_vInfo,@"The scan results for ASUS scan were nil.");
-        } else {
-            // If no items in array, lets bail...
-            if ([applePatchesArray count] == 0 ) {
-                [self progress:@"No Apple updates found."];
-                sleep(1);
-            } else {
-                // We have Apple patches, now add them to the array of approved patches
-                
-                
-                // If no items in array, lets bail...
-                if ([approvedApplePatches count] == 0 ) {
-                    [self progress:@"No Patch Group patches found."];
-                    logit(lcl_vInfo,@"No apple updates found for \"%@\" patch group.",[defaults objectForKey:@"PatchGroup"]);
-                } else {
-                    // Build Approved Patches
-                    [self progress:@"Building approved patch list..."];
-                    
-                    for (int i=0; i<[applePatchesArray count]; i++) {
-                        for (int x=0;x < [approvedApplePatches count]; x++) {
-                            if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"name"] isEqualTo:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"]]) {
-                                tmpDict = [[NSMutableDictionary alloc] init];
-                                [tmpDict setObject:[NSNumber numberWithBool:YES] forKey:@"select"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"size"] forKey:@"size"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"] forKey:@"patch"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"description"] forKey:@"description"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"restart"] forKey:@"restart"];
-                                if ([[[[applePatchesArray objectAtIndex:i] objectForKey:@"restart"] uppercaseString] isEqualTo:@"Y"] || [[[[applePatchesArray objectAtIndex:i] objectForKey:@"restart"] uppercaseString] isEqualTo:@"YES"])
-                                {
-                                    [tmpDict setObject:rebootImage forKey:@"reboot"];
-                                } else {
-                                    [tmpDict setObject:emptyImage forKey:@"reboot"];
-                                }
-                                if ([[[applePatchesArray objectAtIndex:i] objectForKey:@"baseline"] isEqualTo:@"1"]) {
-                                    [tmpDict setObject:baselineImage forKey:@"baseline"];
-                                    break;
-                                }
-                                
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"version"] forKey:@"version"];
-                                
-                                if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"]) {
-                                    
-                                    [tmpDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"] forKey:@"hasCriteria"];
-                                    if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"] boolValue] == YES) {
-                                        if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] && [[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] count] > 0) {
-                                            [tmpDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] forKey:@"criteria_pre"];
-                                        }
-                                        if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] && [[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] count] > 0) {
-                                            [tmpDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] forKey:@"criteria_post"];
-                                        }
-                                    }
-                                }
-                                [tmpDict setObject:@"Apple" forKey:@"type"];
-                                [tmpDict setObject:[[approvedApplePatches objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
-                                logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
-                                [approvedUpdatesArray addObject:tmpDict];
-                                [tmpDict release];
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (killTaskThread == YES) {
-            [self progress:@"Canceling request..."];
-            goto done;
-        }
-        
-        // Scan for Custom Patches to see what is relevant for the system
-        [[NSDistributedNotificationCenter defaultCenter] addObserver: self
-                                                            selector: @selector(scanForNotification:)
-                                                                name: @"ScanForNotification"
-                                                              object: nil];
-        
-        [[NSDistributedNotificationCenter defaultCenter] addObserver: self
-                                                            selector: @selector(scanForNotificationFinished:)
-                                                                name: @"ScanForNotificationFinished"
-                                                              object: nil];
-        
-        [self progress:@"Scanning for custom updates..."];
-        
-        customScanError = nil;
-        NSMutableArray *customPatchesArray = (NSMutableArray *)[self scanForCustomUpdates:&customScanError];
-        if (customScanError) {
-            goto done;
-        }
-        
-        logit(lcl_vDebug,@"Custom Patches Needed: %@",customPatchesArray);
-        logit(lcl_vDebug,@"Approved Custom Patches: %@",approvedCustomPatches);
-        
-        // Filter List of Patches containing only the approved patches
-        NSDictionary *customPatch, *approvedPatch;
-        [self progress:@"Building approved patch list..."];
-        
-        for (int i=0; i<[customPatchesArray count]; i++) {
-            customPatch	= [customPatchesArray objectAtIndex:i];
-            for (int x=0;x < [approvedCustomPatches count]; x++) {
-                approvedPatch	= [approvedCustomPatches objectAtIndex:x];
-                if ([[customPatch objectForKey:@"patch_id"] isEqualTo:[approvedPatch objectForKey:@"patch_id"]]) {
-                    logit(lcl_vInfo,@"Patch %@ approved for update.",[customPatch objectForKey:@"description"]);
-                    tmpDict = [[NSMutableDictionary alloc] init];
-                    [tmpDict setObject:[NSNumber numberWithBool:YES] forKey:@"select"];
-                    for (id item in [approvedPatch objectForKey:@"patches"]) {
-                        if ([[item objectForKey:@"type"] isEqualTo:@"1"]) {
-                            [tmpDict setObject:[NSString stringWithFormat:@"%@",[item objectForKey:@"size"]] forKey:@"size"];
-                            break;
-                        }
-                    }
-                    for (id item in [approvedPatch objectForKey:@"patches"]) {
-                        if ([[item objectForKey:@"baseline"] isEqualTo:@"1"]) {
-                            [tmpDict setObject:baselineImage forKey:@"baseline"];
-                            break;
-                        }
-                    }
-                    [tmpDict setObject:[customPatch objectForKey:@"patch"] forKey:@"patch"];
-                    [tmpDict setObject:[customPatch objectForKey:@"description"] forKey:@"description"];
-                    [tmpDict setObject:[customPatch objectForKey:@"restart"] forKey:@"restart"];
-                    if ([[[customPatch objectForKey:@"restart"] uppercaseString] isEqualTo:@"TRUE"] || [[[customPatch objectForKey:@"restart"] uppercaseString] isEqualTo:@"YES"])
-                    {
-                        [tmpDict setObject:rebootImage forKey:@"reboot"];
-                    } else {
-                        [tmpDict setObject:emptyImage forKey:@"reboot"];
-                    }
-                    [tmpDict setObject:[customPatch objectForKey:@"version"] forKey:@"version"];
-                    [tmpDict setObject:approvedPatch forKey:@"patches"];
-                    [tmpDict setObject:[customPatch objectForKey:@"patch_id"] forKey:@"patch_id"];
-                    [tmpDict setObject:@"Third" forKey:@"type"];
-                    [tmpDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
-                    [tmpDict setObject:[approvedPatch objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
-                    
-                    logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
-                    [approvedUpdatesArray addObject:tmpDict];
-                    [tmpDict release];
-                    break;
-                }
-            }
-        }
-        
-        NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"patch_install_weight" ascending:YES];
-        [approvedUpdatesArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
-        
-        logit(lcl_vInfo,@"%d patche(s) needed.",(int)[approvedUpdatesArray count]);
-        logit(lcl_vDebug,@"Approved patches to install: %@",approvedUpdatesArray);
-        
-        // Removing Image, write out array of required patches for Client Status
-        NSMutableArray *_requiredPatchesArray = [NSMutableArray new];
-        NSMutableDictionary *_dict;
-        for (NSDictionary *ePatch in approvedUpdatesArray)
-        {
-            _dict = [ePatch mutableCopy];
-            if ([_dict objectForKey:@"baseline"]) {
-                [_dict removeObjectForKey:@"baseline"];
-            }
-            if ([_dict objectForKey:@"reboot"]) {
-                [_dict removeObjectForKey:@"reboot"];
-            }
-            [_requiredPatchesArray addObject:_dict];
-        }
-        
-        if (approvedUpdatesArray && [approvedUpdatesArray count] > 0)
-        {
-            NSString *_approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
-            
-            BOOL isDir;
-            BOOL exists = [fm fileExistsAtPath:[_approvedPatchesFile stringByDeletingLastPathComponent] isDirectory:&isDir];
-            if (exists) {
-                // file exists
-                if (!isDir) {
-                    // file is a directory
-                    logit(lcl_vWarning,@"Unable to create file %@. \"Data\" directory already exists but is not a directory.",_approvedPatchesFile);
-                }
-            } else {
-                [self createDirAtPathWithIntermediateDirs:[_approvedPatchesFile stringByDeletingLastPathComponent] intermediateDirs:YES];
-            }
-            
-            [self writeArrayToFile:(NSArray *)approvedUpdatesArray file:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
-            [self writeArrayToFile:(NSArray *)_requiredPatchesArray file:PATCHES_NEEDED_PLIST];
-            
-            [arrayController removeObjects:[arrayController arrangedObjects]];
-            [arrayController addObjects:approvedUpdatesArray];
-            [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-        } else {
-            NSError *rmErr;
-            NSString *approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
-            if ([fm fileExistsAtPath:approvedPatchesFile])
-            {
-                if (![fm isDeletableFileAtPath:approvedPatchesFile]) {
-                    logit(lcl_vDebug,@"Unable to remove file (%@) due to permissions.",approvedPatchesFile);
-                } else {
-                    rmErr = nil;
-                    logit(lcl_vInfo,@"Removing file %@. No patches found.",[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]);
-                    [fm removeItemAtPath:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT] error:&rmErr];
-                    if (rmErr) {
-                        qlerror(@"%@",rmErr.localizedDescription);
-                    }
-                }
-            }
-            if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
-                logit(lcl_vInfo,@"Removing file %@. No patches found.",PATCHES_NEEDED_PLIST);
-                [self removeStatusFiles];
-            }
-        }
-        
-    done:
-        
-        [self progress:@"Scan Completed."];
-        
-        
-        [spStatusProgress stopAnimation:nil];
-        if  ([approvedUpdatesArray count] <= 0)
-        {
-            NSDictionary *userInfo = @{@"title":@"Patch Scan Complete", @"defaultButton":@"OK", @"message":@"There are no patches needed at this time."};
-            [self performSelectorOnMainThread:@selector(runNSAlert:) withObject:userInfo waitUntilDone:YES];
-            
-        } else {
-            logit(lcl_vInfo,@"Patches found %d",(int)[[arrayController arrangedObjects] count]);
-            [self progress:[NSString stringWithFormat:@"%d patches needed.",(int)[[arrayController arrangedObjects] count]]];
-            
-            [spUpdateButton setEnabled:YES];
-        }
-        
-        [spScanAndPatchButton setEnabled:YES];
-        [spCancelButton setEnabled:NO];
-        
-        [approvedUpdatesArray release];
-        [asus release];
-    }
-}
-*/
-
-- (void)runPatchScan
-{
-    @autoreleasepool
-    {
-        NSError *appleScanError = nil;
-        NSError *customScanError = nil;
-        [self setDefaults:[mpDefaults readDefaults]];
-        
-        [arrayController removeObjects:[arrayController arrangedObjects]];
-        [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            [tableView reloadData];
+            [tableView display];
+        });
         
         [spUpdateButton setEnabled:NO];
         [self progress:@"Preparing to scan for patches."];
@@ -1529,8 +1188,12 @@ done:
             [self writeArrayToFile:(NSArray *)_requiredPatchesArray file:PATCHES_NEEDED_PLIST];
             
             [arrayController removeObjects:[arrayController arrangedObjects]];
-            [arrayController addObjects:approvedUpdatesArray];	
-            [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+            [arrayController addObjects:approvedUpdatesArray];
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                [tableView reloadData];
+                [tableView display];
+            });
         }
         else
         {
@@ -2010,7 +1673,11 @@ done:
         [self progress:@"Completed."];
         [spScanAndPatchButton setEnabled:YES];
         [spStatusProgress stopAnimation:nil];
-        [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            [tableView reloadData];
+            [tableView display];
+        });
         
         // Open the Reboot App
         if (launchRebootWindow > 0) {
