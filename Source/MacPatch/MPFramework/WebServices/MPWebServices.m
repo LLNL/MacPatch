@@ -1353,7 +1353,7 @@
     NSError *error = nil;
     id result = nil;
     
-    NSString *aURI = [NSString stringWithFormat:@"/api/v1/sw/tasks/%@/%@",[MPSystemInfo clientUUID], aTaskID];
+    NSString *aURI = [NSString stringWithFormat:@"/api/v1/sw/task/%@/%@",[MPSystemInfo clientUUID], aTaskID];
     result = [self restGetRequestforURI:aURI resultType:@"json" error:&error];
     qldebug(@"result: %@",result);
     if (err != NULL) *err = error;
