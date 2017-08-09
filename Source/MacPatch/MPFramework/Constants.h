@@ -73,6 +73,7 @@ extern NSString * const kMPAVUpdate;
 
 extern NSString * const MP_KEYCHAIN_FILE;
 extern NSString * const MP_AGENT_HASH;
+extern NSString * const OS_MIGRATION_STATUS;
 
 @interface Constants : NSObject {
 

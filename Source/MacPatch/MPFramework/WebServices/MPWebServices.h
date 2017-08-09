@@ -49,6 +49,8 @@
 - (NSData *)postRequestWithURIforREST:(NSString *)aURI body:(id)aBody error:(NSError **)err;
 - (id)returnRequestWithType:(NSData *)requestData resultType:(NSString *)resultType error:(NSError **)err;
 
+- (int)postOSMigrationStatusNew:(NSString *)aStatus label:(NSString *)Label migrationID:(NSString *)migrationID error:(NSError **)err;
+
 #pragma mark Convience methods
 - (NSDictionary *)getPatchGroupContent:(NSError **)err;
 - (NSString *)getPatchGroupContentRev:(NSError **)err;

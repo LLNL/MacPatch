@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C48b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G24b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1080" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -12,6 +12,7 @@
                 <outlet property="allowInstallRebootPatchesCheckBox" destination="0WF-KM-8iz" id="2ew-zQ-31a"/>
                 <outlet property="baselineColumnCheckBox" destination="35" id="39"/>
                 <outlet property="enableDebugLogCheckBox" destination="7" id="11"/>
+                <outlet property="preStageRebootPatchesBox" destination="yw4-Lp-miQ" id="1RA-0W-431"/>
                 <outlet property="scanOnLaunchCheckBox" destination="3" id="5"/>
                 <outlet property="sizeColumnCheckBox" destination="33" id="37"/>
                 <outlet property="stateColumnCheckBox" destination="30" id="38"/>
@@ -23,16 +24,16 @@
         <window title="Self Patch Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="214" y="954" width="440" height="286"/>
+            <rect key="contentRect" x="214" y="954" width="440" height="290"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
-            <value key="minSize" type="size" width="440" height="286"/>
-            <value key="maxSize" type="size" width="440" height="286"/>
-            <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="440" height="286"/>
+            <value key="minSize" type="size" width="440" height="290"/>
+            <value key="maxSize" type="size" width="440" height="290"/>
+            <view key="contentView" misplaced="YES" id="2">
+                <rect key="frame" x="0.0" y="0.0" width="440" height="290"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button id="3">
-                        <rect key="frame" x="18" y="250" width="356" height="18"/>
+                        <rect key="frame" x="18" y="254" width="356" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Scan for patches on launch" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="4">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -42,8 +43,8 @@
                             <action selector="changeScanOnLaunch:" target="-2" id="6"/>
                         </connections>
                     </button>
-                    <button id="7">
-                        <rect key="frame" x="18" y="230" width="356" height="18"/>
+                    <button misplaced="YES" id="7">
+                        <rect key="frame" x="18" y="214" width="356" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Enable debug logging" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="8">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -53,8 +54,19 @@
                             <action selector="changeEnableDebugLog:" target="-2" id="10"/>
                         </connections>
                     </button>
-                    <box autoresizesSubviews="NO" borderType="line" title="Self Patch - Columns" id="32">
-                        <rect key="frame" x="17" y="25" width="406" height="76"/>
+                    <button misplaced="YES" id="yw4-Lp-miQ">
+                        <rect key="frame" x="18" y="234" width="356" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="Pre-Stage reboot patches" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="t8y-Xt-Hep">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="changePreStageRebootPatches:" target="-2" id="bs1-mn-rck"/>
+                        </connections>
+                    </button>
+                    <box autoresizesSubviews="NO" misplaced="YES" borderType="line" title="Self Patch - Columns" id="32">
+                        <rect key="frame" x="17" y="16" width="406" height="76"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="gt4-lu-a4N">
                             <rect key="frame" x="1" y="1" width="404" height="60"/>
@@ -96,8 +108,8 @@
                             </subviews>
                         </view>
                     </box>
-                    <box autoresizesSubviews="NO" borderType="line" title="Reboot Patches" id="Vrp-F3-dIZ">
-                        <rect key="frame" x="17" y="112" width="406" height="100"/>
+                    <box autoresizesSubviews="NO" misplaced="YES" borderType="line" title="Reboot Patches" id="Vrp-F3-dIZ">
+                        <rect key="frame" x="17" y="103" width="406" height="100"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="8jw-mh-LT0">
                             <rect key="frame" x="1" y="1" width="404" height="84"/>
@@ -114,7 +126,7 @@
                                         <action selector="changeAllowInstallOfRebootPatches:" target="-2" id="l5O-hD-wO1"/>
                                     </connections>
                                 </button>
-                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" id="JVd-WE-Xet">
+                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" allowsCharacterPickerTouchBarItem="NO" id="JVd-WE-Xet">
                                     <rect key="frame" x="10" y="14" width="385" height="38"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Warning: This option could quit some applications and unsaved work can be lost. " id="78D-79-NgW">
@@ -151,8 +163,9 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="41"/>
             </connections>
-            <point key="canvasLocation" x="-126" y="17"/>
+            <point key="canvasLocation" x="-126" y="19"/>
         </window>
+        <userDefaultsController representsSharedInstance="YES" id="1TG-z5-Jxc"/>
     </objects>
     <resources>
         <image name="NSPreferencesGeneral" width="32" height="32"/>

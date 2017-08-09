@@ -93,12 +93,6 @@
 }
 
 #pragma mark -
-#pragma mark dealloc
-//===========================================================
-//  dealloc
-//===========================================================
-
-#pragma mark -
 #pragma mark Class Methods
 //=========================================================== 
 //  methods
@@ -374,7 +368,6 @@
 	[fh_installTask readInBackgroundAndNotify];
 }
 
-
 - (BOOL)installAppleSoftwareUpdates:(NSArray *)approvedUpdates isSelfCheck:(BOOL)aSelfCheck
 {
 	BOOL result = YES;
@@ -425,6 +418,44 @@ done:
 	;
 	
 	return result;
+}
+
+- (BOOL)downloadAppleUpdate:(NSString *)updateName
+{
+    qlinfo(@"Downloading Apple software update %@.",updateName);
+    
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath: ASUS_BIN_PATH];
+    [task setArguments: [NSArray arrayWithObjects: @"--download", updateName, nil]];
+    
+    NSPipe *pipe = [NSPipe pipe];
+    [task setStandardOutput: pipe];
+    [task setStandardError: pipe];
+    
+    NSFileHandle *file = [pipe fileHandleForReading];
+    
+    [task launch];
+    qlinfo(@"Starting Apple software update download.");
+    [task waitUntilExit];
+    
+    int status = [task terminationStatus];
+    if (status != 0) {
+        qlinfo(@"Error: softwareupdate exit code = %d",status);
+        return NO;
+    } else {
+        qlinfo(@"Apple software update download completed.");
+    }
+    
+    NSData *data = [file readDataToEndOfFile];
+    NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    qldebug(@"Apple software update full download results\n%@",string);
+    
+    if (!([string rangeOfString:@"No new"].location == NSNotFound)) {
+        qlinfo(@"No new updates.");
+        return NO;
+    }
+
+    return YES;
 }
 
 #pragma mark Custom Patch install

@@ -173,7 +173,7 @@ static MPAgent *_instance;
     MPSimpleKeychain *skc = [[MPSimpleKeychain alloc] initWithKeychainFile:MP_KEYCHAIN_FILE];
     MPKeyItem *keyItem = [skc retrieveKeyItemForService:kMPClientService error:&err];
     if (err) {
-        logit(lcl_vError,@"getClientKey: %@",err.localizedDescription);
+        logit(lcl_vWarning,@"getClientKey: %@",err.localizedDescription);
         return @"NA";
     }
     

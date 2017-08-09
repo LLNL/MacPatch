@@ -30,6 +30,7 @@
 {
 	IBOutlet NSButton *scanOnLaunchCheckBox;
 	IBOutlet NSButton *enableDebugLogCheckBox;
+    IBOutlet NSButton *preStageRebootPatchesBox;
     IBOutlet NSButton *allowInstallRebootPatchesCheckBox;
 	IBOutlet NSButton *stateColumnCheckBox;
 	IBOutlet NSButton *sizeColumnCheckBox;
@@ -41,6 +42,7 @@
 - (IBAction)doNothing:(id)sender;
 
 - (IBAction)changeScanOnLaunch:(id)sender;
+- (IBAction)changePreStageRebootPatches:(id)sender;
 - (IBAction)changeEnableDebugLog:(id)sender;
 - (IBAction)changeAllowInstallOfRebootPatches:(id)sender;
 
@@ -49,6 +51,7 @@
 - (IBAction)showHideBselineColumn:(id)sender;
 
 - (BOOL)scanOnLaunch;
+- (BOOL)preStageRebootPatches;
 - (BOOL)debugLogging;
 - (BOOL)allowInstallRebootPatches;
 - (BOOL)colStateOnLaunch;

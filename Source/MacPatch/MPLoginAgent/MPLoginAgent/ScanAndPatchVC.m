@@ -173,6 +173,8 @@ typedef NSUInteger MPInstallIconStatus;
     @autoreleasepool
     {
         [self toggleStatusProgress];
+        [NSThread sleepForTimeInterval:10.0];
+        return;
         
         NSError *error = nil;
         NSArray *resultApple = nil;

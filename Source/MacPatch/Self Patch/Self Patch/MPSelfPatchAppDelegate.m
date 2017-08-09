@@ -114,6 +114,7 @@ static BOOL gDone = false;
 @synthesize runTaskThread;
 @synthesize killTaskThread;
 @synthesize defaults;
+@synthesize spStatusText;
 @synthesize spStatusProgress;
 
 
@@ -123,6 +124,7 @@ static BOOL gDone = false;
 	
 	[defaultValues setObject:[NSNumber numberWithBool:NO] forKey:@"enableDebugLogging"];
 	[defaultValues setObject:[NSNumber numberWithBool:YES] forKey:@"enableScanOnLaunch"];
+    [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:@"preStageRebootPatches"];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
 }
@@ -229,7 +231,10 @@ static BOOL gDone = false;
     if (![d objectForKey:@"enableDebugLogging"]) {
         [d setBool:NO forKey:@"enableDebugLogging"];
     }
-    
+    if (![d objectForKey:@"preStageRebootPatches"]) {
+        [d setBool:YES forKey:@"preStageRebootPatches"];
+    }
+
     // Syncronize defaults
     [d synchronize];
 
@@ -287,9 +292,7 @@ static BOOL gDone = false;
 
 -(void)dealloc
 {
-	[asus release];
     [self cleanup];
-	[super dealloc];
 }
 
 #pragma mark -
@@ -303,7 +306,7 @@ static BOOL gDone = false;
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
-        proxy = [[connection rootProxy] retain];
+        proxy = [connection rootProxy];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
 		
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
@@ -337,7 +340,7 @@ static BOOL gDone = false;
     [connection setReplyTimeout: 1800.0]; //30 min to install
 	
     @try {
-        proxy = [[connection rootProxy] retain];
+        proxy = [connection rootProxy];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionDown:) name:NSConnectionDidDieNotification object:connection];
 		
         [proxy setProtocolForProxy: @protocol(MPWorkerServer)];
@@ -371,7 +374,6 @@ static BOOL gDone = false;
     {
         NSConnection *connection = [proxy connectionForProxy];
         [connection invalidate];
-        [proxy release];
         proxy = nil;
     }
 	
@@ -739,15 +741,101 @@ done:
 	return;
 }
 
+- (BOOL)preStagePatch:(NSDictionary *)patch
+{
+    int result = -1;
+    if (!proxy) {
+        [self connect];
+        if (!proxy) goto done;
+    }
+    
+    @try
+    {
+        result = [proxy stagePatchWithBaseDirectory:patch directory:MP_ROOT_CLIENT];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"Trying to stage patch %@",[patch objectForKey:@"patch"]);
+    }
+    
+done:
+    [self cleanup];
+    return (result == 0) ? YES : NO;
+}
+
+- (BOOL)unzipViaProxy:(NSString *)file error:(NSError **)err
+{
+    BOOL result = NO;
+    NSError *error = nil;
+    if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            if (err != NULL) *err = [NSError errorWithDomain:@"unzip" code:1001 userInfo:nil];
+            goto done;
+        }
+        if (!proxy) {
+            logit(lcl_vError,@"Unable to connect to helper application. Functionality will be diminished.");
+            goto done;
+        }
+    }
+    
+    @try {
+        error = nil;
+        result = [proxy unzipFile:file error:&error];
+        if (error) {
+            if (err != NULL) *err = error;
+        }
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"unzip error: %@", e);
+    }
+    
+done:
+    qltrace(@"Done, unzip file.");
+    [self cleanup];
+    return result;
+}
+
+- (BOOL)removeStagedDirectoryViaProxy:(NSString *)stagedDirectory
+{
+    BOOL result = NO;
+    NSError *error = nil;
+    if (!proxy) {
+        [self connect:&error];
+        if (error) {
+            qlerror(@"%@",error.localizedDescription);
+            goto done;
+        }
+        if (!proxy) {
+            logit(lcl_vError,@"Unable to connect to helper application. Functionality will be diminished.");
+            goto done;
+        }
+    }
+    
+    @try
+    {
+        result = [proxy removeStagedDirectory:stagedDirectory];
+    }
+    @catch (NSException *e) {
+        logit(lcl_vError,@"removeStagedDirectoryViaProxy error: %@", e);
+    }
+    
+done:
+    [self cleanup];
+    return result;
+}
+
 #pragma mark -
 #pragma mark SelfPatch
 - (void)showSelfPatchWindow:(id)sender
 {
 	[spScanAndPatchButton setTitle:@"Scan"];
-	[spStatusText setStringValue:@""];
+	[self progress:@""];
 	if ([[arrayController arrangedObjects] count] >= 1) {
 		[arrayController removeObjects:[arrayController arrangedObjects]];
-		[tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            [tableView reloadData];
+            [tableView display];
+        });
 	}
 	
 	[window	makeKeyAndOrderFront:sender];
@@ -761,7 +849,6 @@ done:
 	killTaskThread = NO;
 	
 	if (runTaskThread != nil) {
-		[runTaskThread release];
 		runTaskThread = nil;
 	}
     
@@ -779,7 +866,6 @@ done:
 - (IBAction)installPatches:(id)sender
 {
 	if (runTaskThread) {
-		[runTaskThread release];
 		runTaskThread = nil;
 	}
     
@@ -803,10 +889,13 @@ done:
         [self setDefaults:[mpDefaults readDefaults]];
         
         [arrayController removeObjects:[arrayController arrangedObjects]];
-        [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            [tableView reloadData];
+            [tableView display];
+        });
         
         [spUpdateButton setEnabled:NO];
-        [spStatusText setStringValue:@"Preparing to scan for patches."];
+        [self progress:@"Preparing to scan for patches."];
         [spScanAndPatchButton setEnabled:NO];
         
         // Method Valiables
@@ -819,13 +908,14 @@ done:
         asus = [[MPAsus alloc] init];
 
         if (killTaskThread == YES) {
-            [spStatusText setStringValue:@"Canceling request..."];
-            goto done;
+            [self progress:@"Canceling request..."];
+            [self scanComplete:NO];
+            return;
         }
         
         // Get Patch Group Patches
-        [spStatusText setStringValue:@"Getting approved patch list for client."];
-        MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+        [self progress:@"Getting approved patch list for client."];
+        MPWebServices *mpws = [[MPWebServices alloc] init];
         NSError       *wsErr = nil;
         NSDictionary  *patchGroupPatches;
         BOOL           useLocalPatchesFile = NO;
@@ -850,7 +940,8 @@ done:
             patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
             if (wsErr) {
                 logit(lcl_vError,@"%@",wsErr.localizedDescription);
-                goto done;
+                [self scanComplete:NO];
+                return;
             }
         }
 
@@ -859,7 +950,8 @@ done:
             NSDictionary *userInfo = @{@"title":@"Communications Error", @"defaultButton":@"OK", @"message":@"There was a issue getting the approved patches for the patch group, scan will exit."};
             [self performSelectorOnMainThread:@selector(runNSAlert:) withObject:userInfo waitUntilDone:YES];
             logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
-            goto done;
+            [self scanComplete:NO];
+            return;
         }
         NSArray *approvedApplePatches = [patchGroupPatches objectForKey:@"AppleUpdates"];
         NSArray *approvedCustomPatches = [patchGroupPatches objectForKey:@"CustomUpdates"]; 
@@ -868,31 +960,35 @@ done:
         int catResult = [self setCatalogURL];
         if (catResult != 0) {
             if (catResult == 1001) {
-                goto done;
+                [self scanComplete:NO];
+                return;
             }
             logit(lcl_vError,@"There was a issue setting the CatalogURL, Apple updates will not occur.");
         }
         
         if (killTaskThread == YES) {
-            [spStatusText setStringValue:@"Canceling request..."];
-            goto done;
+            [self progress:@"Canceling request..."];
+            [self scanComplete:NO];
+            return;
         }
         
-        [spStatusText setStringValue:@"Scanning for Apple software updates..."];
+        [self progress:@"Scanning for Apple software updates..."];
         appleScanError = nil;
         NSArray *applePatchesArray = nil;
         applePatchesArray = [self scanForAppleUpdates:&appleScanError];
         if (appleScanError) {
-            goto done;
+            [self scanComplete:NO];
+            return;
         }
         
         if (killTaskThread == YES) {
-            [spStatusText setStringValue:@"Canceling request..."];
-            goto done;
+            [self progress:@"Canceling request..."];
+            [self scanComplete:NO];
+            return;
         }
         
         // post patches to web service
-        mpws = [[[MPWebServices alloc] init] autorelease];
+        mpws = [[MPWebServices alloc] init];
         wsErr = nil;
         [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
         if (wsErr) {
@@ -903,8 +999,9 @@ done:
         }
 
         if (killTaskThread == YES) {
-            [spStatusText setStringValue:@"Canceling request..."];
-            goto done;
+            [self progress:@"Canceling request..."];
+            [self scanComplete:NO];
+            return;
         }
         
         // Process patches
@@ -913,7 +1010,7 @@ done:
         } else {
             // If no items in array, lets bail...
             if ([applePatchesArray count] == 0 ) {
-                [spStatusText setStringValue:@"No Apple updates found."];
+                [self progress:@"No Apple updates found."];
                 sleep(1);
             } else {
                 // We have Apple patches, now add them to the array of approved patches
@@ -921,11 +1018,11 @@ done:
                 
                 // If no items in array, lets bail...
                 if ([approvedApplePatches count] == 0 ) {
-                    [spStatusText setStringValue:@"No Patch Group patches found."];
+                    [self progress:@"No Patch Group patches found."];
                     logit(lcl_vInfo,@"No apple updates found for \"%@\" patch group.",[defaults objectForKey:@"PatchGroup"]);
                 } else {
                     // Build Approved Patches
-                    [spStatusText setStringValue:@"Building approved patch list..."];
+                    [self progress:@"Building approved patch list..."];
                     
                     for (int i=0; i<[applePatchesArray count]; i++) {
                         for (int x=0;x < [approvedApplePatches count]; x++) {
@@ -965,7 +1062,6 @@ done:
                                 [tmpDict setObject:[[approvedApplePatches objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
                                 logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
                                 [approvedUpdatesArray addObject:tmpDict];
-                                [tmpDict release];
                                 break;
                             }
                         }	
@@ -973,9 +1069,11 @@ done:
                 }
             }
         }
+        
         if (killTaskThread == YES) {
-            [spStatusText setStringValue:@"Canceling request..."];
-            goto done;
+            [self progress:@"Canceling request..."];
+            [self scanComplete:NO];
+            return;
         }
         
         // Scan for Custom Patches to see what is relevant for the system
@@ -989,12 +1087,13 @@ done:
                                                                 name: @"ScanForNotificationFinished"
                                                               object: nil];
 
-        [spStatusText setStringValue:@"Scanning for custom updates..."];
-        [spStatusText display];
+        [self progress:@"Scanning for custom updates..."];
+        
         customScanError = nil;
         NSMutableArray *customPatchesArray = (NSMutableArray *)[self scanForCustomUpdates:&customScanError];
         if (customScanError) {
-            goto done;
+            [self scanComplete:NO];
+            return;
         }
         
         logit(lcl_vDebug,@"Custom Patches Needed: %@",customPatchesArray);
@@ -1002,9 +1101,10 @@ done:
         
         // Filter List of Patches containing only the approved patches
         NSDictionary *customPatch, *approvedPatch;
-        [spStatusText setStringValue:@"Building approved patch list..."];
-        [spStatusText display];
-        for (int i=0; i<[customPatchesArray count]; i++) {
+        [self progress:@"Building approved patch list..."];
+        
+        for (int i=0; i<[customPatchesArray count]; i++)
+        {
             customPatch	= [customPatchesArray objectAtIndex:i];
             for (int x=0;x < [approvedCustomPatches count]; x++) {
                 approvedPatch	= [approvedCustomPatches objectAtIndex:x];
@@ -1042,7 +1142,6 @@ done:
 
                     logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
                     [approvedUpdatesArray addObject:tmpDict];
-                    [tmpDict release];
                     break;
                 }
             }	
@@ -1089,9 +1188,15 @@ done:
             [self writeArrayToFile:(NSArray *)_requiredPatchesArray file:PATCHES_NEEDED_PLIST];
             
             [arrayController removeObjects:[arrayController arrangedObjects]];
-            [arrayController addObjects:approvedUpdatesArray];	
-            [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-        } else {
+            [arrayController addObjects:approvedUpdatesArray];
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                [tableView reloadData];
+                [tableView display];
+            });
+        }
+        else
+        {
             NSError *rmErr;
             NSString *approvedPatchesFile = [NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT];
             if ([fm fileExistsAtPath:approvedPatchesFile])
@@ -1113,30 +1218,30 @@ done:
             }
         }
         
-    done:
-
-        [spStatusText setStringValue:@"Scan Completed."];
-        [spStatusText display];
-
-        [spStatusProgress stopAnimation:nil];
-        if  ([approvedUpdatesArray count] <= 0)
-        {
-            NSDictionary *userInfo = @{@"title":@"Patch Scan Complete", @"defaultButton":@"OK", @"message":@"There are no patches needed at this time."};
-            [self performSelectorOnMainThread:@selector(runNSAlert:) withObject:userInfo waitUntilDone:YES];
-
-        } else {
-            logit(lcl_vInfo,@"Patches found %d",(int)[[arrayController arrangedObjects] count]);
-            [spStatusText setStringValue:[NSString stringWithFormat:@"%d patches needed.",(int)[[arrayController arrangedObjects] count]]];
-            [spStatusText display];
-            [spUpdateButton setEnabled:YES];
-        }
-        
-        [spScanAndPatchButton setEnabled:YES];
-        [spCancelButton setEnabled:NO];
-        
-        [approvedUpdatesArray release];
-        [asus release];
+        BOOL needsPatches = ([approvedUpdatesArray count] <= 0) ? YES : NO;
+        [self scanComplete:needsPatches];
     }
+}
+
+- (void)scanComplete:(BOOL)patchesNeeded
+{
+    [self progress:@"Scan Completed."];
+    [spStatusProgress stopAnimation:nil];
+    
+    if  (patchesNeeded)
+    {
+        NSDictionary *userInfo = @{@"title":@"Patch Scan Complete", @"defaultButton":@"OK", @"message":@"There are no patches needed at this time."};
+        [self performSelectorOnMainThread:@selector(runNSAlert:) withObject:userInfo waitUntilDone:YES];
+        
+    } else {
+        logit(lcl_vInfo,@"Patches found %d",(int)[[arrayController arrangedObjects] count]);
+        [self progress:[NSString stringWithFormat:@"%d patches needed.",(int)[[arrayController arrangedObjects] count]]];
+        
+        [spUpdateButton setEnabled:YES];
+    }
+    
+    [spScanAndPatchButton setEnabled:YES];
+    [spCancelButton setEnabled:NO];
 }
 
 - (void)runNSAlert:(NSDictionary *)userInfo
@@ -1153,7 +1258,6 @@ done:
     });
 }
 
-
 - (void)runPatchUpdates
 {
 
@@ -1162,8 +1266,8 @@ done:
         [spScanAndPatchButton setEnabled:NO];
         [spUpdateButton setEnabled:NO];
         
-        [spStatusText setStringValue:@"Begin patching process."];
-        [spStatusText display];
+        [self progress:@"Begin patching process."];
+        
         
         if ([self setCatalogURL] != 0) {
             logit(lcl_vError,@"There was a issue setting the CatalogURL, Apple updates will not occur.");
@@ -1180,11 +1284,16 @@ done:
         NSString			*infoText;
         NSString			*downloadURL;
         NSError				*err;
+        
+        // Staging
+        NSString *stageDir;
+        
         int i;
         int installResult = 1;
         int	launchRebootWindow = 0;
         
-        for (i = 0; i < [patchesToInstallArray count]; i++) {
+        for (i = 0; i < [patchesToInstallArray count]; i++)
+        {
             // Create/Get Dictionary of Patch to install  
             patch = nil;
             patch = [NSDictionary dictionaryWithDictionary:[patchesToInstallArray objectAtIndex:i]];
@@ -1207,10 +1316,11 @@ done:
                 // Now proceed to the download and install			
                 installResult = -1;
                 
-                if ([[patch objectForKey:@"type"] isEqualTo:@"Third"]) {
+                if ([[patch objectForKey:@"type"] isEqualTo:@"Third"])
+                {
                     NSString *infoText = [NSString stringWithFormat:@"Starting install for %@",[patch objectForKey:@"patch"]];
-                    [spStatusText setStringValue:infoText];
-                    [spStatusText display];
+                    [self progress:infoText];
+                    
                     
                     // Get all of the patches, main and subs
                     // This is messed up, not sure why I have an array right within an array, needs to be fixed ...later :-)
@@ -1219,7 +1329,8 @@ done:
                     
                     NSString *dlPatchLoc; //Download location Path
                     int patchIndex = 0;
-                    for (patchIndex=0;patchIndex < [patchPatchesArray count];patchIndex++) {
+                    for (patchIndex=0;patchIndex < [patchPatchesArray count];patchIndex++)
+                    {
                         
                         // Make sure we only process the dictionaries in the NSArray
                         if ([[patchPatchesArray objectAtIndex:patchIndex] isKindOfClass:[NSDictionary class]]) {
@@ -1229,34 +1340,86 @@ done:
                             continue;
                         }
                         
+                        // -------------------------------------------
                         // Update table view to show whats installing
+                        // -------------------------------------------
                         [self updateTableAndArrayControllerWithPatch:patch status:0];
                         
                         // We have a currPatchToInstallDict to work with
                         logit(lcl_vInfo,@"Start install for patch %@ from %@",[currPatchToInstallDict objectForKey:@"url"],[patch objectForKey:@"patch"]);
                         
+                        BOOL usingStagedPatch = NO;
+                        BOOL downloadPatch = YES;
+                        
+                        // -------------------------------------------
                         // First we need to download the update
+                        // -------------------------------------------
                         @try
                         {
-                            logit(lcl_vInfo,@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
-                            [spStatusText display];
-                            //Pre Proxy Config
-                            downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
-                            logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
-                            err = nil;
-                            dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
-                            if (err) {
-                                logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",[patch objectForKey:@"patch"],[err localizedDescription]);
-                                [spStatusText setStringValue:[NSString stringWithFormat:@"Error downloading a patch, skipping %@.",[patch objectForKey:@"patch"]]];
-                                [spStatusText display];
-                                
-                                [self updateTableAndArrayControllerWithPatch:patch status:2];
-                                break;
+                            // -------------------------------------------
+                            // Check to see if the patch has been staged
+                            // -------------------------------------------
+                            MPCrypto *mpCrypto = [[MPCrypto alloc] init];
+                            stageDir = [NSString stringWithFormat:@"%@/Data/.stage/%@",MP_ROOT_CLIENT,[patch objectForKey:@"patch_id"]];
+                            if ([fm fileExistsAtPath:[stageDir stringByAppendingPathComponent:[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]])
+                            {
+                                dlPatchLoc = [stageDir stringByAppendingPathComponent:[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]];
+                                if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[[mpCrypto md5HashForFile:dlPatchLoc] uppercaseString]])
+                                {
+                                    qlinfo(@"The staged file passed the file hash validation.");
+                                    usingStagedPatch = YES;
+                                    downloadPatch = NO;
+                                } else {
+                                    [self progress:[NSString stringWithFormat:@"The staged file did not pass the file hash validation."]];
+                                    
+                                    logit(lcl_vError,@"The staged file did not pass the file hash validation.");
+                                }
                             }
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"Patch download completed."]];
-                            [spStatusText display];
-                            logit(lcl_vInfo,@"File downloaded to %@",dlPatchLoc);
+                            
+                            // -------------------------------------------
+                            // Check to see if we need to download the patch
+                            // -------------------------------------------
+                            if (downloadPatch)
+                            {
+                                logit(lcl_vInfo,@"Start download for patch from %@",[currPatchToInstallDict objectForKey:@"url"]);
+                                [self progress:[NSString stringWithFormat:@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
+                                
+                                //Pre Proxy Config
+                                downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
+                                logit(lcl_vInfo,@"Download patch from: %@",downloadURL);
+                                err = nil;
+                                dlPatchLoc = [mpAsus downloadUpdate:downloadURL error:&err];
+                                if (err) {
+                                    logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",[patch objectForKey:@"patch"],[err localizedDescription]);
+                                    [self progress:[NSString stringWithFormat:@"Error downloading a patch, skipping %@.",[patch objectForKey:@"patch"]]];
+                                    
+                                    
+                                    [self updateTableAndArrayControllerWithPatch:patch status:2];
+                                    break;
+                                }
+                                [self progress:[NSString stringWithFormat:@"Patch download completed."]];
+                                
+                                logit(lcl_vInfo,@"File downloaded to %@",dlPatchLoc);
+                                
+                                
+                                // -------------------------------------------
+                                // Validate hash, before install
+                                // -------------------------------------------
+                                [self progress:[NSString stringWithFormat:@"Validating downloaded patch."]];
+                                
+                                
+                                NSString *fileHash = [mpCrypto md5HashForFile:dlPatchLoc];
+                                
+                                logit(lcl_vInfo,@"Downloaded file hash: %@ (%@)",fileHash,[currPatchToInstallDict objectForKey:@"hash"]);
+                                if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[fileHash uppercaseString]] == NO) {
+                                    [self progress:[NSString stringWithFormat:@"The downloaded file did not pass the file hash validation. No install will occur."]];
+                                    
+                                    logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
+                                    [self updateTableAndArrayControllerWithPatch:patch status:2];
+                                    continue;
+                                }
+                            }
+                            
                         }
                         @catch (NSException *e) {
                             logit(lcl_vError,@"%@", e);
@@ -1264,47 +1427,32 @@ done:
                             break;
                         }
                         
-                        // *****************************
-                        // Validate hash, before install
-                        [spStatusText setStringValue:[NSString stringWithFormat:@"Validating downloaded patch."]];
-                        [spStatusText display];
-                        
-                        MPCrypto *mpCrypto = [[MPCrypto alloc] init];
-                        NSString *fileHash = [mpCrypto md5HashForFile:dlPatchLoc];
-                        [mpCrypto release];
-                        
-                        logit(lcl_vInfo,@"Downloaded file hash: %@ (%@)",fileHash,[currPatchToInstallDict objectForKey:@"hash"]);
-                        if ([[[currPatchToInstallDict objectForKey:@"hash"] uppercaseString] isEqualTo:[fileHash uppercaseString]] == NO) {
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"The downloaded file did not pass the file hash validation. No install will occur."]];
-                            [spStatusText display];
-                            logit(lcl_vError,@"The downloaded file did not pass the file hash validation. No install will occur.");
-                            [self updateTableAndArrayControllerWithPatch:patch status:2];
-                            continue;
-                        }
-                        
-                        // *****************************
+                        // -------------------------------------------
                         // Now we need to unzip
-                        [spStatusText setStringValue:[NSString stringWithFormat:@"Uncompressing patch, to begin install."]];
-                        [spStatusText display];
+                        // -------------------------------------------
+                        [self progress:[NSString stringWithFormat:@"Uncompressing patch, to begin install."]];
+                        
                         logit(lcl_vInfo,@"Begin decompression of file, %@",dlPatchLoc);
                         err = nil;
-                        [mpAsus unzip:dlPatchLoc error:&err];
+                        //[mpAsus unzip:dlPatchLoc error:&err];
+                        [self unzipViaProxy:dlPatchLoc error:&err];
                         if (err) {
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"Error decompressing a patch, skipping %@.",[patch objectForKey:@"patch"]]];
-                            [spStatusText display];
+                            [self progress:[NSString stringWithFormat:@"Error decompressing a patch, skipping %@.",[patch objectForKey:@"patch"]]];
+                            
                             logit(lcl_vError,@"Error decompressing a patch, skipping %@. Err Message:%@",[patch objectForKey:@"patch"],[err localizedDescription]);
                             [self updateTableAndArrayControllerWithPatch:patch status:2];
                             break;
                         }
-                        [spStatusText setStringValue:[NSString stringWithFormat:@"Patch has been uncompressed."]];
-                        [spStatusText display];
+                        [self progress:[NSString stringWithFormat:@"Patch has been uncompressed."]];
+                        
                         logit(lcl_vInfo,@"File has been decompressed.");
                         
-                        // *****************************
+                        // -------------------------------------------
                         // Run PreInstall Script
+                        // -------------------------------------------
                         if ([[currPatchToInstallDict objectForKey:@"preinst"] length] > 0 && [[currPatchToInstallDict objectForKey:@"preinst"] isEqualTo:@"NA"] == NO) {
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"Begin pre install script."]];
-                            [spStatusText display];
+                            [self progress:[NSString stringWithFormat:@"Begin pre install script."]];
+                            
                             NSString *preInstScript = [[currPatchToInstallDict objectForKey:@"preinst"] decodeBase64AsString];
                             logit(lcl_vDebug,@"preInstScript=%@",preInstScript);
                             if ([self runScript:preInstScript] != 0 ) 
@@ -1315,10 +1463,12 @@ done:
                             }
                         }
                         
-                        // *****************************
+                        // -------------------------------------------
                         // Install the update
+                        // -------------------------------------------
                         BOOL hadErr = NO;
-                        @try {
+                        @try
+                        {
                             NSString *pkgPath;
                             NSString *pkgBaseDir = [dlPatchLoc stringByDeletingLastPathComponent];						
                             NSPredicate *pkgPredicate = [NSPredicate predicateWithFormat:@"(SELF like [cd] '*.pkg') OR (SELF like [cd] '*.mpkg')"];
@@ -1328,27 +1478,27 @@ done:
                             // Install pkg(s)
                             for (int ii = 0; ii < [pkgList count]; ii++) {
                                 pkgPath = [NSString stringWithFormat:@"%@/%@",pkgBaseDir,[pkgList objectAtIndex:ii]];
-                                [spStatusText setStringValue:[NSString stringWithFormat:@"Installing %@",[pkgPath lastPathComponent]]];
-                                [spStatusText display];
+                                [self progress:[NSString stringWithFormat:@"Installing %@",[pkgPath lastPathComponent]]];
+                                
                                 logit(lcl_vInfo,@"Start install of %@",pkgPath);
                                 installResult = [self installPKG:pkgPath target:@"/" env:[currPatchToInstallDict objectForKey:@"env"]];
                                 if (installResult != 0) {
-                                    [spStatusText setStringValue:[NSString stringWithFormat:@"Error installing patch."]];
-                                    [spStatusText display];
+                                    [self progress:[NSString stringWithFormat:@"Error installing patch."]];
+                                    
                                     logit(lcl_vError,@"Error installing package, error code %d.",installResult);
                                     [self updateTableAndArrayControllerWithPatch:patch status:2];
                                     hadErr = YES;
                                     break;
                                 } else {
-                                    [spStatusText setStringValue:[NSString stringWithFormat:@"Install was successful."]];
-                                    [spStatusText display];
+                                    [self progress:[NSString stringWithFormat:@"Install was successful."]];
+                                    
                                     logit(lcl_vInfo,@"%@ was installed successfully.",pkgPath);
                                 }
                             } // End Loop
                         }
                         @catch (NSException *e) {
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"Error installing patch."]];
-                            [spStatusText display];
+                            [self progress:[NSString stringWithFormat:@"Error installing patch."]];
+                            
                             logit(lcl_vError,@"%@", e);
                             logit(lcl_vError,@"Error attempting to install patch, skipping %@. Err Message:%@",[patch objectForKey:@"patch"],[err localizedDescription]);
                             [self updateTableAndArrayControllerWithPatch:patch status:2];
@@ -1359,11 +1509,12 @@ done:
                             continue;
                         }
                         
-                        // *****************************
+                        // -------------------------------------------
                         // Run PostInstall Script
+                        // -------------------------------------------
                         if ([[currPatchToInstallDict objectForKey:@"postinst"] length] > 0 && [[currPatchToInstallDict objectForKey:@"postinst"] isEqualTo:@"NA"] == NO) {
-                            [spStatusText setStringValue:[NSString stringWithFormat:@"Begin post install script."]];
-                            [spStatusText display];
+                            [self progress:[NSString stringWithFormat:@"Begin post install script."]];
+                            
                             NSString *postInstScript = [[currPatchToInstallDict objectForKey:@"postinst"] decodeBase64AsString];
                             logit(lcl_vDebug,@"postInstScript=%@",postInstScript);
                             if ([self runScript:postInstScript] != 0 ) 
@@ -1372,16 +1523,32 @@ done:
                             }
                         }
                         
-                        // *****************************
+                        // -------------------------------------------
                         // Instal is complete, post result to web service
+                        // -------------------------------------------
                         @try {
                             [self postInstallToWebService:[patch objectForKey:@"patch_id"] type:@"third"];
                         }
                         @catch (NSException *e) {
                             logit(lcl_vError,@"%@", e);
                         }
-                        [spStatusText setStringValue:[NSString stringWithFormat:@"Patch install completed."]];
-                        [spStatusText display];	 
+                        
+                        // -------------------------------------------
+                        // If staged, remove staged patch dir
+                        // -------------------------------------------
+                        if (usingStagedPatch)
+                        {
+                            if ([fm fileExistsAtPath:stageDir])
+                            {
+                                qlinfo(@"Removing staged patch dir %@",stageDir);
+                                if (![self removeStagedDirectoryViaProxy:stageDir]) {
+                                    qlerror(@"Removing staged patch dir %@ failed.",stageDir);
+                                }
+                            }
+                        }
+                        
+                        [self progress:[NSString stringWithFormat:@"Patch install completed."]];
+                        	 
                         
                         [self updateTableAndArrayControllerWithPatch:patch status:1];
                         
@@ -1393,8 +1560,8 @@ done:
                     logit(lcl_vInfo,@"Apple Dict:%@",patch);
                     logit(lcl_vInfo,@"%@",infoText);
                     
-                    [spStatusText setStringValue:infoText];
-                    [spStatusText display];
+                    [self progress:infoText];
+                    
                     
                     // Update the table view to show we are in the install process
                     [self updateTableAndArrayControllerWithPatch:patch status:0];
@@ -1423,13 +1590,11 @@ done:
                                 if (s_res != 0) {
                                     installResult = 1;
                                     logit(lcl_vError,@"Pre-install script returned false for %@. No install will occur.",[patch objectForKey:@"patch"]); 
-                                    [scriptText release];
                                     goto instResult;
                                 } else {
                                     logit(lcl_vInfo,@"Pre-install script returned true.");
                                 }
                                 
-                                [scriptText release];
                                 criteriaDictPre = nil;
                             }
                         }	
@@ -1453,12 +1618,10 @@ done:
                                 if (s_res != 0) {
                                     installResult = 1;
                                     logit(lcl_vError,@"Pre-install script returned false for %@. No install will occur.",[patch objectForKey:@"patch"]); 
-                                    [scriptText release];
                                     goto instResult;
                                 } else {
                                     logit(lcl_vInfo,@"Post-install script returned true.");	
                                 }
-                                [scriptText release];
                                 criteriaDictPost = nil;
                             }
                         }
@@ -1466,14 +1629,14 @@ done:
                     
                 instResult:				
                     if (installResult != 0) {	
-                        [spStatusText setStringValue:[NSString stringWithFormat:@"Error installing update, error code %d.",installResult]];
-                        [spStatusText display];	 
+                        [self progress:[NSString stringWithFormat:@"Error installing update, error code %d.",installResult]];
+                        	 
                         logit(lcl_vError,@"Error installing update, error code %d.",installResult);
                         [self updateTableAndArrayControllerWithPatch:patch status:2];
                         continue;
                     } else {
-                        [spStatusText setStringValue:[NSString stringWithFormat:@"%@ was installed successfully.",[patch objectForKey:@"patch"]]];
-                        [spStatusText display];	 
+                        [self progress:[NSString stringWithFormat:@"%@ was installed successfully.",[patch objectForKey:@"patch"]]];
+                        	 
                         logit(lcl_vInfo,@"%@ was installed successfully.",[patch objectForKey:@"patch"]);
                         
                         // Post the results to web service
@@ -1484,8 +1647,8 @@ done:
                             logit(lcl_vError,@"%@", e);
                         }
                         
-                        [spStatusText setStringValue:[NSString stringWithFormat:@"Patch install completed."]];
-                        [spStatusText display];	 
+                        [self progress:[NSString stringWithFormat:@"Patch install completed."]];
+                        	 
 
                         [self updateTableAndArrayControllerWithPatch:patch status:1];
                     }
@@ -1496,17 +1659,25 @@ done:
             } else {
                 logit(lcl_vInfo,@"%@(%@) requires a reboot, this patch will be installed on logout.",[patch objectForKey:@"patch"],[patch objectForKey:@"version"]);
                 //[self generateRebootPatchForDownload:patch];
-                
+                if ([[NSUserDefaults standardUserDefaults] boolForKey:@"preStageRebootPatches"] == YES) {
+                    if ([self preStagePatch:patch]) {
+                        qlerror(@"Pre staging for %@ failed.",[patch objectForKey:@"patch"]);
+                    }
+                }
                 launchRebootWindow++;
                 [self updateTableAndArrayControllerWithPatch:patch status:3];
                 continue;
             }
         } //End patchesToInstallArray For Loop
         
-        [spStatusText setStringValue:@"Completed."];
+        [self progress:@"Completed."];
         [spScanAndPatchButton setEnabled:YES];
         [spStatusProgress stopAnimation:nil];
-        [tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            [tableView reloadData];
+            [tableView display];
+        });
         
         // Open the Reboot App
         if (launchRebootWindow > 0) {
@@ -1617,7 +1788,6 @@ done:
     NSArray *patches;
     if ([fm fileExistsAtPath:PATCHES_NEEDED_PLIST]) {
         patches = [NSArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:PATCHES_NEEDED_PLIST]];
-        //[self removeStatusFiles];
         if (error) {
             qlerror(@"%@",error.localizedDescription);
         }
@@ -1663,11 +1833,11 @@ done:
 - (void)postInstallToWebService:(NSString *)aPatch type:(NSString *)aType
 {
     NSString *statusStr = [NSString stringWithFormat:@"Posting patch install results for %@",aPatch];
-    [spStatusText setStringValue:statusStr];
-	[spStatusText display];
+    [self progress:statusStr];
+	
 
     BOOL result = NO;
-    MPWebServices *mpws = [[[MPWebServices alloc] init] autorelease];
+    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
     result = [mpws postPatchInstallResultsToWebService:aPatch patchType:aType error:&wsErr];
     if (wsErr) {
@@ -1690,11 +1860,10 @@ done:
 
 - (IBAction)stopAndCloseSelfPatch:(id)sender
 {
-	[spStatusText setStringValue:@"Canceling task..."];
+	[self progress:@"Canceling task..."];
 	[self setKillTaskThread:YES];
 	if (runTaskThread) {
 		[runTaskThread cancel];
-		[runTaskThread release];
 		runTaskThread = nil;
 		[spStatusProgress stopAnimation:nil];		
 	}
@@ -1753,13 +1922,12 @@ done:
             @try
             {
                 qlinfo(@"Downloading %@",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]);
-                //NSString *downloadURL = [NSString stringWithFormat:@"/mp-content%@",[[currPatchToInstallDict objectForKey:@"url"] urlEncode]];
                 NSString *downloadURL = [NSString stringWithFormat:@"/mp-content%@",[currPatchToInstallDict objectForKey:@"url"]];
+                
                 [reboot setObject:downloadURL forKey:@"downloadURL"];
                 qlinfo(@"Download patch from: %@",downloadURL);
                 
-                [spStatusText setStringValue:[NSString stringWithFormat:@"Downloading %@ for later install.",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
-                [spStatusText display];
+                [self progress:[NSString stringWithFormat:@"Downloading %@ for later install.",[[currPatchToInstallDict objectForKey:@"url"] lastPathComponent]]];
                 
                 err = nil;
                 NSString *dlPatchLoc = [mpa downloadUpdate:downloadURL error:&err];
@@ -1781,6 +1949,13 @@ done:
         [NSKeyedArchiver archiveRootObject:rebootDictArray toFile:@"/private/tmp/.MPAuthPatches.plist"];
     }
     
+}
+
+- (void)progress:(NSString *)text
+{
+    dispatch_async(dispatch_get_main_queue(), ^(void){
+        [self.spStatusText setStringValue:text];
+    });
 }
 
 #pragma mark Notifications
@@ -1811,8 +1986,7 @@ done:
 	if(notification)
 	{
         NSDictionary *tmpDict = [notification userInfo];
-		[spStatusText setStringValue:[NSString stringWithFormat:@"Scanning for %@",[tmpDict objectForKey:@"patch_name"]]];
-		[spStatusText display];
+		[self progress:[NSString stringWithFormat:@"Scanning for %@",[tmpDict objectForKey:@"patch_name"]]];
 	}	
 }
 
@@ -1832,8 +2006,8 @@ done:
 	{
 		NSDictionary *tmpDict = [notification userInfo];
 		if ([tmpDict objectForKey:@"pname"]) {
-			[spStatusText setStringValue:[NSString stringWithFormat:@"Scanning for %@",[tmpDict objectForKey:@"pname"]]];
-			[spStatusText display];	
+			[self progress:[NSString stringWithFormat:@"Scanning for %@",[tmpDict objectForKey:@"pname"]]];
+				
 		}
 		if ([tmpDict objectForKey:@"iData"]) {
 			logit(lcl_vDebug,@"readInstallData: %@",[tmpDict objectForKey:@"iData"]);
@@ -1849,8 +2023,8 @@ done:
 		if ([tmpDict objectForKey:@"patchesNeeded"]) {
 			NSNumber *patchesNeeded = [tmpDict objectForKey:@"patchesNeeded"];
 			
-			[spStatusText setStringValue:[NSString stringWithFormat:@"%d patches needed.",[patchesNeeded intValue]]];
-			[spStatusText display];
+			[self progress:[NSString stringWithFormat:@"%d patches needed.",[patchesNeeded intValue]]];
+			
 		}
 		gDone = true;
 	}	

@@ -210,6 +210,9 @@ if [ -e "${SRC}/gov.llnl.mpagent.plist" ]; then
 	"${SRC}/mergePrefs.py" -b -i "${SRC}/gov.llnl.mpagent.plist" -t "${agentPrefsPlist}"
 fi
 
+# Add new option to stage patches
+defaults write "${agentPrefsPlist}" PreStageUpdates -bool YES
+
 # Copy in client version info
 if [ -e "${SRC}/.mpVersion.plist" ]; then
 	cp "${SRC}/.mpVersion.plist" "/Library/MacPatch/Client/.mpVersion.plist"

@@ -1,6 +1,7 @@
 <cfcomponent output="false" extends="jqGrid">
 
 	<cfset this.logName = "client_group" />
+	<cfset this.dbTables = "" />
 
 	<cffunction name="getClientsForGroup" access="remote" returnformat="json">
 		<cfargument name="page" required="no" default="1" hint="Page user is on">
@@ -119,6 +120,8 @@
 	<cffunction name="editClientsForGroup" access="remote" hint="Add or Edit" returnformat="json" output="no">
 		<cfargument name="id" required="no" hint="Field that was editted">
 
+		<cfsetting requesttimeout="300" />
+
 		<cfset var strMsg = "">
 		<cfset var strMsgType = "Success">
 		<cfset var userdata = "">
@@ -145,11 +148,12 @@
 		<cfset var strMsg = "">
 		<cfset var strMsgType = "Success">
 		<cfset var userdata = "">
+		<cfset this.dbTables = #getDBTables()# />
 
 		<cfloop index="index_name" list="#Arguments.id#" delimiters=",">
 
 			<cfquery name="ClientInfo" datasource="#session.dbsource#">
-				Select * FROM mp_clients_view WHERE cuuid = '#index_name#'
+				Select hostname, ipaddr FROM mp_clients WHERE cuuid = '#index_name#'
 			</cfquery>
 
 			<cfset strMsg = "Delete MP Client">
@@ -175,10 +179,10 @@
 
 	<cffunction name="getDBTables" output="no" returntype="any">
 		<cftry>
-			<cfquery datasource="#session.dbsource#" name="qGet" cachedwithin="#CreateTimeSpan(0, 0, 10, 0)#">
+			<cfquery datasource="#session.dbsource#" name="qGet" cachedwithin="#CreateTimeSpan(0, 1, 0, 0)#">
 				SELECT DISTINCT TABLE_NAME
 				FROM INFORMATION_SCHEMA.TABLES
-				WHERE table_schema='MacPatchDB'
+				WHERE table_schema='MacPatchDB3'
 				AND TABLE_TYPE = 'BASE TABLE'
 			</cfquery>
 			<cfcatch type="any">
@@ -187,7 +191,19 @@
 		</cftry>
 		<cfset tablesRaw = ValueList(qGet.TABLE_NAME)>
 
-		<cfreturn #tablesRaw#>
+		<cfset tables = "" />
+		<cfset ignoreTables="mp_agent_registration, mp_client_reg_keys, mp_clients_wait_reg, mp_clients">
+		<cfloop list="#tablesRaw#" index="table" delimiters=",">
+			<cfif listFindNoCase(ignoreTables, table) EQ 0>
+				<cfif #tableContainsColumn(table)# EQ true>
+					<cfset tables = ListAppend(tables, table) />
+				</cfif>
+			</cfif>
+		</cfloop>
+		<!--- add mp_clients as last item --->
+		<cfset tables = ListAppend(tables, "mp_clients") />
+
+		<cfreturn #tables#>
 	</cffunction>
 
 	<cffunction name="deleteClient" access="public" output="no" returntype="void">
@@ -210,14 +226,16 @@
 		<cfargument	name="table" required="yes">
 		<cftry>
 			<cfquery datasource="#session.dbsource#" name="qGetCol" cachedwithin="#CreateTimeSpan(2, 0, 0, 0)#">
-				SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-				WHERE TABLE_SCHEMA = 'MacPatchDB' AND TABLE_NAME = <cfqueryparam value="#arguments.table#"> AND COLUMN_NAME = 'cuuid'
+				SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+				WHERE TABLE_SCHEMA = 'MacPatchDB3' AND TABLE_NAME = <cfqueryparam value="#arguments.table#"> AND COLUMN_NAME = 'cuuid'
 			</cfquery>
-				<cfif qGetCol.RecordCount EQ 1>
-					<cfreturn true>
-				<cfelse>
-					<cfreturn false>
-				</cfif>
+			
+			<cfif qGetCol.RecordCount EQ 1>
+				<cfreturn true>
+			<cfelse>
+				<cfreturn false>
+			</cfif>
+
 			<cfcatch type="any">
 				<cfreturn false>
 			</cfcatch>
@@ -231,7 +249,7 @@
 
 		<cftry>
 			<cfquery name="getClientInfo" datasource="#session.dbsource#">
-				Select * From mp_clients
+				Select cuuid From mp_clients
 				Where cuuid = '#Arguments.id#'
 			</cfquery>
 			<cfif getClientInfo.RecordCount LTE 0>
@@ -245,23 +263,17 @@
 		</cftry>
 
 		<!--- MacPatch Database Tables --->
-		<cfset tableList = #getDBTables()#>
+		<cfset tableList = #this.dbTables#>
 		<cfif ListLen(tableList,",") EQ 0>
 			<cfset log = logInfo("removeClient","[Delete]: No tables to remove client id from.") />
 			<cfset log = logInfo("removeClient","[Delete]: Client was not removed, #getClientInfo.hostname# (#Arguments.id#)") />
 			<cfreturn false>
 		</cfif>
-
-		<cfset ignoreTables="mp_agent_registration, mp_client_reg_keys, mp_clients_wait_reg">
-
+		
 		<!--- Delete the client --->
 		<cfloop list="#tableList#" index="table" delimiters=",">
-			<cfif listFindNoCase(ignoreTables, table) EQ 0>
-				<cfif #tableContainsColumn(table)# EQ true>
-					<cfset tmp = deleteClient(Arguments.id,table)>
-					<cfset log = logInfo("removeClient","#Session.Username# removed client,(#getClientInfo.hostname#, #getClientInfo.ipaddr#, #Arguments.id#, #table#)") />
-				</cfif>
-			</cfif>
+			<cfset tmp = deleteClient(Arguments.id,table)>
+			<cfset log = logInfo("removeClient","#Session.Username# removed client,(#getClientInfo.hostname#, #getClientInfo.ipaddr#, #Arguments.id#, #table#)") />
 		</cfloop>
 
 		<cfreturn true>

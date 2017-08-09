@@ -764,6 +764,39 @@
     return result;
 }
 
+- (int)postOSMigrationStatusNew:(NSString *)aStatus label:(NSString *)Label migrationID:(NSString *)migrationID error:(NSError **)err
+{
+    NSError *error = nil;
+    MPJsonResult *jres = [[MPJsonResult alloc] init];
+    // Request, convert params to json
+    NSDictionary *params = @{@"clientID":self._cuuid, @"action":aStatus,@"os": [[MPSystemInfo osVersionInfo] objectForKey:@"ProductUserVisibleVersion"],
+                             @"label":Label, @"migrationID":migrationID};
+
+    NSString *jData = [jres serializeJSONDataAsString:params error:&error];
+    if (error) {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return 1;
+    }
+    
+    NSString *uri = [NSString stringWithFormat:@"/api/v1/provisioning/migration/%@",[MPSystemInfo clientUUID]];
+    id res = [self restPostRequestforURI:uri body:jData resultType:@"string" error:&error];
+    qldebug(@"[postOSMigrationStatusNew] %@",res);
+    if (error) {
+        if (err != NULL) {
+            *err = error;
+        } else {
+            qlerror(@"%@",error.localizedDescription);
+        }
+        return 1;
+    }
+    
+    return 0;
+}
+
 
 #pragma mark - Helper Methods for REST WS
 
@@ -1320,7 +1353,7 @@
     NSError *error = nil;
     id result = nil;
     
-    NSString *aURI = [NSString stringWithFormat:@"/api/v1/sw/tasks/%@/%@",[MPSystemInfo clientUUID], aTaskID];
+    NSString *aURI = [NSString stringWithFormat:@"/api/v1/sw/task/%@/%@",[MPSystemInfo clientUUID], aTaskID];
     result = [self restGetRequestforURI:aURI resultType:@"json" error:&error];
     qldebug(@"result: %@",result);
     if (err != NULL) *err = error;

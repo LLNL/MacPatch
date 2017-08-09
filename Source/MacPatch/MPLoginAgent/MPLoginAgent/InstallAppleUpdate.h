@@ -28,6 +28,7 @@
 
 // declare our class
 @class InstallAppleUpdate;
+@class GCDTask;
 
 // define the protocol for the delegate
 @protocol InstallAppleUpdateDelegate
@@ -41,21 +42,17 @@
 
 @interface InstallAppleUpdate : NSObject <InstallAppleUpdateDelegate>
 {
-    NSTask              *task;
+    //NSTask              *task;
+    GCDTask             *gcdTask;
     NSPipe              *pipe;
     NSFileHandle        *fh;
-    BOOL                taskTimedOut;
-    BOOL                taskIsRunning;
-    int                 installtaskResult;
-    NSTimer             *timeoutTimer;
 }
 
-@property (nonatomic, assign)   id          delegate;
-@property (retain)              NSTimer     *timeoutTimer;
-@property (nonatomic, assign)   BOOL        taskTimedOut;
-@property (nonatomic, assign)   BOOL        taskIsRunning;
-@property (nonatomic, assign)   int         installtaskResult;
-@property (nonatomic, assign)   int         taskTimeoutValue;
+@property (nonatomic, assign)           id   delegate;
+@property (nonatomic, assign, readonly) BOOL taskTimedOut;
+@property (nonatomic, assign, readonly) BOOL taskIsRunning;
+@property (nonatomic, assign)           int  installtaskResult;
+
 
 - (int)installAppleSoftwareUpdate:(NSString *)aUpdate;
 

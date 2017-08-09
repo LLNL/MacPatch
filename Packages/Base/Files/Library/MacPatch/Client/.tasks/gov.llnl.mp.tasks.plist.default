@@ -78,11 +78,11 @@
 			<key>id</key>
 			<string>3</string>
 			<key>idrev</key>
-			<string>1</string>
+			<string>2</string>
 			<key>idsig</key>
 			<string>0</string>
 			<key>interval</key>
-			<string>Recurring@Daily@12:00:00</string>
+			<string>EVERY@14400</string>
 			<key>mode</key>
 			<string>0</string>
 			<key>name</key>
@@ -92,7 +92,7 @@
 			<key>scope</key>
 			<string>Global</string>
 			<key>startdate</key>
-			<string>2011-01-01</string>
+			<string>2017-01-01</string>
 		</dict>
 		<dict>
 			<key>active</key>

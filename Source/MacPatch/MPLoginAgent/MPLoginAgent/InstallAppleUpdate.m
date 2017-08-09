@@ -66,20 +66,31 @@ typedef NSUInteger MPPostDataType;
 }
 @end
 
+@interface InstallAppleUpdate ()
+
+@property (nonatomic,strong) NSThread *timeoutThread;
+
+@property (nonatomic, assign)            int  taskTimeoutValue;
+@property (nonatomic, assign)            int  taskTimeoutCount;
+@property (nonatomic, assign, readwrite) BOOL taskTimedOut;
+
+- (void)taskTimeoutThread;
+- (void)taskTimeout:(NSNotification *)aNotification;
+
+@end
+
 @implementation InstallAppleUpdate
 
-@synthesize taskTimedOut;
-@synthesize taskIsRunning;
-@synthesize installtaskResult;
+@synthesize timeoutThread;
 @synthesize taskTimeoutValue;
-@synthesize timeoutTimer;
+@synthesize taskTimeoutCount;
+@synthesize taskTimedOut;
 
 - (id)init
 {
     if (self = [super init])
     {
         [self setTaskTimeoutValue:1800];
-        [self setTaskIsRunning:NO];
         [self setTaskTimedOut:NO];
     }
     
@@ -88,6 +99,72 @@ typedef NSUInteger MPPostDataType;
 
 - (int)installAppleSoftwareUpdate:(NSString *)aUpdate
 {
+    NSDictionary *defaultEnv = [[NSProcessInfo processInfo] environment];
+    NSMutableDictionary *env = [[NSMutableDictionary alloc] initWithDictionary:defaultEnv];
+    [env setObject:@"YES" forKey:@"NSUnbufferedIO"];
+    [env setObject:@"1" forKey:@"COMMAND_LINE_INSTALL"];
+    
+    NSArray *appArgs;
+    // >= 10.8
+    if ((int)NSAppKitVersionNumber >= 1187 )
+    {
+        appArgs = @[@"--verbose",@"-i", aUpdate];
+    } else {
+        appArgs = @[@"-i", aUpdate];
+    }
+    
+    logit(lcl_vInfo,@"softwareupdate Args: %@",appArgs);
+    
+    GCDTask *gTask = [[GCDTask alloc] init];
+    
+    [gTask setArguments:appArgs];
+    [gTask setLaunchPath:ASUS_BIN_PATH];
+    [gTask setEnvironment:env];
+    gcdTask = gTask;
+    
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    __block int exitCode = 0;
+    [gTask launchWithOutputBlock:^(NSData *stdOutData) {
+        NSString *output = [[NSString alloc] initWithData:stdOutData encoding:NSUTF8StringEncoding];
+        if ([[output trim] length] != 0)
+        {
+            if ([output containsString:@"PackageKit: Missing bundle path"] == NO) {
+                if ([output containsString:@"Done."] == YES) {
+                    // Found the Done. string, should exit
+                    //foundDone = YES;
+                }
+                logit(lcl_vDebug,@"%@",output);
+                [_delegate installData:self data:output type:kMPInstallStatus];
+            } else {
+                logit(lcl_vDebug,@"%@",output);
+            }
+        }
+        
+    } andErrorBlock:^(NSData *stdErrData) {
+        NSString *output = [[NSString alloc] initWithData:stdErrData encoding:NSUTF8StringEncoding];
+        logit(lcl_vError,@"[installAppleSoftwareUpdate][stdErr]: %@",output);
+        
+    } onLaunch:^{
+        logit(lcl_vInfo,@"Task has started running.");
+        [self startTaskTimeout];
+    } onExit:^(int exitStatus){
+        logit(lcl_vInfo,@"Task has now quit. %d",exitStatus);
+        exitCode = exitStatus;
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    return exitCode;
+}
+/*
+- (int)installAppleSoftwareUpdate:(NSString *)aUpdate
+{
+    NSUserDefaults *nsDefaults = [NSUserDefaults standardUserDefaults];
+    if([[[nsDefaults dictionaryRepresentation] allKeys] containsObject:@"AppleTimeout"])
+    {
+        [self setTaskTimeoutValue:(int)[nsDefaults integerForKey:@"AppleTimeout"]];
+    }
+    
     [self setTaskIsRunning:YES];
     [self setTaskTimedOut:NO];
 
@@ -104,8 +181,9 @@ typedef NSUInteger MPPostDataType;
 
     NSArray *appArgs;
     // Parse the Environment variables for the install
-    if ((int)NSAppKitVersionNumber >= 1187 /* 10.8 */) {
-        appArgs = [NSArray arrayWithObjects:@"-v",@"-i", aUpdate, nil];
+    // 10.8
+    if ((int)NSAppKitVersionNumber >= 1187 ) {
+        appArgs = [NSArray arrayWithObjects:@"--verbose",@"-i", aUpdate, nil];
     } else {
         appArgs = [NSArray arrayWithObjects:@"-i", aUpdate, nil];
     }
@@ -203,6 +281,7 @@ typedef NSUInteger MPPostDataType;
     [self setTaskIsRunning:NO];
     return taskResult;
 }
+*/
 
 - (void)postDataToClient:(id)data type:(MPPostDataType)dataType
 {
@@ -223,6 +302,7 @@ typedef NSUInteger MPPostDataType;
      */
 }
 
+/*
 - (void)taskTimeoutThread
 {
     @autoreleasepool {
@@ -244,6 +324,35 @@ typedef NSUInteger MPPostDataType;
     [timeoutTimer invalidate];
     [self setTaskTimedOut:YES];
     [task terminate];
+}
+*/
+
+#pragma mark - Timeout
+
+- (void)startTaskTimeout
+{
+    logit(lcl_vInfo,@"Start timeout thread");
+    timeoutThread = [[NSThread alloc] initWithTarget:self selector:@selector(taskTimeoutThread) object:nil];
+    [timeoutThread start];
+}
+
+- (void)taskTimeoutThread
+{
+    @autoreleasepool
+    {
+        while (self.taskTimeoutValue > self.taskTimeoutCount)
+        {
+            [NSThread sleepForTimeInterval:1.0];
+            taskTimeoutCount++;
+        }
+        [self taskTimeout:nil];
+    }
+}
+
+- (void)taskTimeout:(NSNotification *)aNotification
+{
+    logit(lcl_vError,@"Task timedout, killing task.");
+    [gcdTask RequestTermination];    
 }
 
 @end

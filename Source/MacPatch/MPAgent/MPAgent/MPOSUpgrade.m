@@ -24,8 +24,7 @@
  */
 
 #import "MPOSUpgrade.h"
-
-static NSString *migrationFile = @"/Users/Shared/.migrationid";
+#import "MacPatch.h"
 
 @interface MPOSUpgrade()
 
@@ -39,13 +38,12 @@ static NSString *migrationFile = @"/Users/Shared/.migrationid";
 {
     int result = 0;
     NSError *err = nil;
-    //CEH
-    //MPWebServices *mpws = [[MPWebServices alloc] init];
     if ([[action lowercaseString] isEqualToString:@"start"] || [[action lowercaseString] isEqualToString:@"stop"])
     {
-        //CEH
-        //NSString *resStr;
-        //resStr = [mpws postOSMigrationStatus:action label:aLabel migrationID:aUpgradeID error:&err];
+        MPWebServices *mpws = [[MPWebServices alloc] init];
+        
+        int res = -1;
+        res = [mpws postOSMigrationStatusNew:action label:aLabel migrationID:aUpgradeID error:&err];
         if (err) {
             if (error != NULL) *error = err;
             logit(lcl_vError,@"Error posting upgrade status.")
@@ -55,7 +53,7 @@ static NSString *migrationFile = @"/Users/Shared/.migrationid";
         } else {
             logit(lcl_vInfo,@"Posting upgrade status for %@ was successful.",action);
             if ([[action lowercaseString] isEqualToString:@"start"]) {
-                result = [self writeMigrationDataToDisk:aUpgradeID label:aLabel migrationIDFile:migrationFile];
+                result = [self writeMigrationDataToDisk:aUpgradeID label:aLabel migrationIDFile:OS_MIGRATION_STATUS];
             }
         }
     } else {
@@ -72,6 +70,7 @@ static NSString *migrationFile = @"/Users/Shared/.migrationid";
 {
     NSError *err = nil;
     NSFileManager *fm = [NSFileManager defaultManager];
+    /*
     NSString *parentDir = [aFilePath stringByDeletingLastPathComponent];
     BOOL isDir;
     BOOL exists = [fm fileExistsAtPath:parentDir isDirectory:&isDir];
@@ -92,17 +91,41 @@ static NSString *migrationFile = @"/Users/Shared/.migrationid";
             return 1;
         }
     }
+     */
+    if ([fm fileExistsAtPath:aFilePath]) {
+        [fm removeItemAtPath:aFilePath error:&err];
+        if (err) {
+            qlerror(@"Error trying to remove file %@", aFilePath);
+            qlerror(@"%@",err.localizedDescription);
+            fprintf(stderr, "%s\n", [err.localizedDescription UTF8String]);
+            return 1;
+        }
+    }
     NSString *fileData = [NSString stringWithFormat:@"%@\n%@",aID,aLabel];
     err = nil;
-    [fileData writeToFile:@"migrationFile" atomically:NO encoding:NSUTF8StringEncoding error:&err];
+    [fileData writeToFile:aFilePath atomically:NO encoding:NSUTF8StringEncoding error:&err];
     if (err) {
-        logit(lcl_vError,@"Error creating migration id file (%@).", migrationFile);
+        logit(lcl_vError,@"Error creating migration id file (%@).", aFilePath);
         logit(lcl_vError,@"%@",err.localizedDescription);
         fprintf(stderr, "%s\n", [err.localizedDescription UTF8String]);
         return 1;
     }
     
+    qlinfo(@"Migration data written to disk.");
     return 0;
+}
+
+- (NSString *)migrationIDFromFile:(NSString *)aFilePath
+{
+    // read everything from text
+    NSString *fileContents = [NSString stringWithContentsOfFile:aFilePath encoding:NSUTF8StringEncoding error:nil];
+    
+    // first, separate by new line
+    NSArray* allLinedStrings = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+    
+    // then break down even further
+    NSString *migrationID = [allLinedStrings objectAtIndex:0];
+    return migrationID;
 }
 
 @end

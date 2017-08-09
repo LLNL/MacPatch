@@ -542,7 +542,7 @@ class AgentUpdates():
 
 			# filter count & Test if filter applies
 			filter_count += 1
-			filter_result = self.runFilterUsingAttributes(clientInfo, i['attribute'], i['attribute_oper'], i['attribute_filter'])
+			filter_result = self.runFilterUsingAttributes(clientInfo, i['attribute'].lower(), i['attribute_oper'], i['attribute_filter'])
 			if filter_result:
 				# If filter is true add 1 to result
 				result_passed += 1

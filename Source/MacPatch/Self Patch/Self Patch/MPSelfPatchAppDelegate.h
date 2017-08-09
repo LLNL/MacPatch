@@ -32,16 +32,14 @@
 
 @interface MPSelfPatchAppDelegate : NSObject <MPWorkerClient> 
 {    
-    NSWindow *window;
+    NSWindow *__weak window;
 	NSTableView *tableView;
 	NSArrayController *arrayController;
-	IBOutlet NSTextField *spStatusText;
 	IBOutlet NSTextField *patchGroupLabel;
     IBOutlet NSTextField *patchNoteLabel;
 	IBOutlet NSButton *spScanAndPatchButton;
 	IBOutlet NSButton *spCancelButton;
 	IBOutlet NSButton *spUpdateButton;
-	IBOutlet NSProgressIndicator *spStatusProgress;
 	
 	// Helper
 	id                  proxy;
@@ -64,21 +62,22 @@
 	
 }
 
-@property (nonatomic, retain) NSString *mpHost;
-@property (nonatomic, retain) NSString *mpHostPort;
+@property (nonatomic, strong) NSString *mpHost;
+@property (nonatomic, strong) NSString *mpHostPort;
 
-@property (assign) IBOutlet NSWindow *window;
-@property (nonatomic, retain) IBOutlet NSTableView *tableView;
-@property (nonatomic, retain) IBOutlet NSArrayController *arrayController;
-@property (nonatomic, retain) IBOutlet NSButton *spUpdateButton;
-@property (nonatomic, retain) IBOutlet NSButton *spCancelButton;
-@property (nonatomic, retain) IBOutlet NSTextField *allowRebootInstallsWarningLabel;
-@property (nonatomic, retain) IBOutlet NSImageView *allowRebootInstallsWarningImage;
-@property (nonatomic, assign) IBOutlet NSProgressIndicator *spStatusProgress;
+@property (weak) IBOutlet NSWindow *window;
+@property (nonatomic, strong) IBOutlet NSTableView *tableView;
+@property (nonatomic, strong) IBOutlet NSArrayController *arrayController;
+@property (nonatomic, strong) IBOutlet NSButton *spUpdateButton;
+@property (nonatomic, strong) IBOutlet NSButton *spCancelButton;
+@property (nonatomic, strong) IBOutlet NSTextField *allowRebootInstallsWarningLabel;
+@property (nonatomic, strong) IBOutlet NSImageView *allowRebootInstallsWarningImage;
+@property (nonatomic, weak) IBOutlet NSTextField *spStatusText;
+@property (nonatomic, weak) IBOutlet NSProgressIndicator *spStatusProgress;
 
-@property (nonatomic, assign) NSThread *runTaskThread;
+@property (nonatomic) NSThread *runTaskThread;
 @property (nonatomic, assign) BOOL killTaskThread;
-@property (nonatomic, retain) NSDictionary *defaults;
+@property (nonatomic, strong) NSDictionary *defaults;
 
 - (IBAction)scanForPatches:(id)sender;
 - (IBAction)installPatches:(id)sender;

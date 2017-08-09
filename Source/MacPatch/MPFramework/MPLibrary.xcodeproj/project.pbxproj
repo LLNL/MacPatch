@@ -95,6 +95,8 @@
 		8F50CB7F199D5DD0006AC537 /* MPKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F50CB7D199D5DD0006AC537 /* MPKeychain.m */; };
 		8F5970BE1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5970BC1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F5970BF1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F5970BD1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m */; };
+		8F6580721F2116C3006B147C /* GCDTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6580701F2116C3006B147C /* GCDTask.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F6580731F2116C3006B147C /* GCDTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6580711F2116C3006B147C /* GCDTask.m */; };
 		8F7B8B3F1CB03B3200FB940F /* AFHTTPRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F7B8B2C1CB03B3200FB940F /* AFHTTPRequestOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F7B8B401CB03B3200FB940F /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7B8B2D1CB03B3200FB940F /* AFHTTPRequestOperation.m */; };
 		8F7B8B411CB03B3200FB940F /* AFHTTPRequestOperationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F7B8B2E1CB03B3200FB940F /* AFHTTPRequestOperationManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -188,6 +190,8 @@
 		8F50CB7D199D5DD0006AC537 /* MPKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPKeychain.m; sourceTree = "<group>"; };
 		8F5970BC1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPRemoteFingerprint.h; sourceTree = "<group>"; };
 		8F5970BD1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPRemoteFingerprint.m; sourceTree = "<group>"; };
+		8F6580701F2116C3006B147C /* GCDTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDTask.h; sourceTree = "<group>"; };
+		8F6580711F2116C3006B147C /* GCDTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDTask.m; sourceTree = "<group>"; };
 		8F6BA41115C0E59A00F44501 /* MPDiskUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDiskUtil.h; sourceTree = "<group>"; };
 		8F6BA41215C0E59A00F44501 /* MPDiskUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDiskUtil.m; sourceTree = "<group>"; };
 		8F7B15CC15068211005CEA32 /* MPCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPCrypto.h; path = Crypto/MPCrypto.h; sourceTree = "<group>"; };
@@ -424,6 +428,15 @@
 			name = "MacPatch+SWDist";
 			sourceTree = "<group>";
 		};
+		8F65806F1F2116A5006B147C /* GCDTask */ = {
+			isa = PBXGroup;
+			children = (
+				8F6580701F2116C3006B147C /* GCDTask.h */,
+				8F6580711F2116C3006B147C /* GCDTask.m */,
+			);
+			name = GCDTask;
+			sourceTree = "<group>";
+		};
 		8F7B8B2B1CB03B2800FB940F /* AFNetworking */ = {
 			isa = PBXGroup;
 			children = (
@@ -621,6 +634,7 @@
 		8FED881F1463165B00709F8E /* Third Party Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8F65806F1F2116A5006B147C /* GCDTask */,
 				8F7B8B2B1CB03B2800FB940F /* AFNetworking */,
 				8FAEF668145F19AC006284B2 /* Base64 */,
 				8FCB774E140C2F0700D86586 /* Logging */,
@@ -701,6 +715,7 @@
 				8FF831621DEF7ACF005DC5AD /* MPSimpleKeychain.h in Headers */,
 				8F5970BE1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h in Headers */,
 				8FC1B5551E4E7894008844DF /* MPClientInfo.h in Headers */,
+				8F6580721F2116C3006B147C /* GCDTask.h in Headers */,
 				8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */,
 				8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */,
 				8FE6EEB81B9A035800E8F8E1 /* InventoryPlugin.h in Headers */,
@@ -824,6 +839,7 @@
 				8F4B1E1516DD1D6400E15A9E /* LCLLogFile.m in Sources */,
 				8F315B9C19212DEB0031FF73 /* MPServerList.m in Sources */,
 				8F4B1EC016DD5FB400E15A9E /* NSString+Hash.m in Sources */,
+				8F6580731F2116C3006B147C /* GCDTask.m in Sources */,
 				8F47F0FE18EDFD6D00158396 /* Reachability.m in Sources */,
 				8F47F0FA18EDFD6D00158396 /* MPNetServer.m in Sources */,
 				8F4B1EC616DD5FDD00E15A9E /* NSFileManager+Helper.m in Sources */,
@@ -873,7 +889,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Library/Frameworks;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -904,7 +920,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Library/Frameworks;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 			};
