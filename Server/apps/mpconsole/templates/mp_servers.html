@@ -102,6 +102,7 @@ MacPatch Servers
 	window.operateEvents = {
 		'click .edit': function (e, value, row, index)
 		{
+			// console.log(row);
 			$.get( "/console/servers/mp/" + row['rid']).done(function(data) {
 				$('#modalTitle').html('Edit MacPatch Server');
 				$('#modalBody').html(data);

@@ -29,6 +29,27 @@
 	{% if session.user is none %}
 
 	{% endif %}
+	<script>
+		function resetModalWindow()
+		{
+			/* Reset Modal */
+			$('#myContent').remove();
+			$('#modaliFrame').remove();
+			$('#modalDialog').removeClass("modal-wide");
+			$('#modalDialog').removeClass("modal-mid");
+			$('#modalHeader').removeClass('panel-heading');
+			$('#modalContent').removeClass('panel-danger');
+			$('#modalFooter').show();
+		}
+
+		function closeModal() {
+			$("#modalDialog").modal("hide");
+		}
+
+		function aboutConsole() {
+			alert("MacPatch Console 3.1.0 Beta 1")
+		}
+	</script>
 </head>
 
 <body>
@@ -60,8 +81,9 @@
 						</li>
 						<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
 						</li>
-						<li class="divider"></li>
 						-->
+						<li><a href="#" onclick="aboutConsole();return false;"><i class="fa fa-question-circle fa-fw"></i> About MP Console</a>
+						<li class="divider"></li>
 						<li><a href="{{ url_for('auth.logout')}}"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
 						</li>
 					</ul>
@@ -78,19 +100,8 @@
 						<li>
 							<a href="{{ url_for('dashboard.index') }}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
 						</li>
-						<!--
 						<li>
-							<a href="{{ url_for('clients.clientsList') }}"><i class="fa fa-desktop fa-fw"></i> Clients
-								<small class="label pull-right btn-primary">{{clientCount}}</small>
-							</a>
-						</li>
-						-->
-						<li>
-							<a href="{{ url_for('clients.clientGroups') }}"><i class="fa fa-object-group fa-fw"></i> Client Groups
-								<!--
-								<small class="label pull-right btn-primary">{{clientCount}}</small>
-								-->
-							</a>
+							<a href="{{ url_for('clients.clientGroups') }}"><i class="fa fa-object-group fa-fw"></i> Client Groups</a>
 						</li>
 						<li>
 							<a href="#"><i class="fa fa-cubes fa-fw"></i> Patches<span class="fa arrow"></span></a>
@@ -104,9 +115,9 @@
 								<li>
 									<a href="{{ url_for('patches.patchGroups') }}"><i class="fa fa-list fa-fw"></i> Patch Groups
 									{% if patchGroupCount %}
-										<small class="label pull-right btn-primary">{{patchGroupCount}}</small>
+										<small class="label pull-right btn-primary" id="labelPatchGroupCount">{{patchGroupCount}}</small>
 									{% else %}
-										<small class="label pull-right btn-primary">0</small>
+										<small class="label pull-right btn-primary" id="labelPatchGroupCount">0</small>
 									{% endif %}
 									</a>
 								</li>
@@ -150,7 +161,7 @@
 						</li>
 						<li id="reports">
 							<a href="#"><i class="fa fa-list fa-fw"></i> Reports<span class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
+							<ul class="nav nav-second-level" id="reports_list">
 								<li>
 									<a href="{{ url_for('reports.new') }}"><i class="fa fa-cube fa-fw"></i> New Report</a>
 								</li>
@@ -177,12 +188,14 @@
 								<li>
 									<a href="{{ url_for('console.asusServersView') }}"><i class="fa fa-server fa-fw"></i> SoftwareUpdate Servers</a>
 								</li>
+								<!-- Add in updates
 								<li>
 									<a href="{{ url_for('console.dataSourcesView') }}"><i class="fa fa-database fa-fw"></i> DataSources</a>
 								</li>
 								<li>
 									<a href="{{ url_for('console.tasks') }}"><i class="fa fa-cube fa-fw"></i> Jobs</a>
 								</li>
+								-->
 								<li>
 									<a href="{{ url_for('console.accounts') }}"><i class="fa fa-users fa-fw"></i> Accounts</a>
 								</li>
@@ -200,7 +213,7 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">{% block pageHeader %}{% endblock %}</h1>
+					<h3 class="page-header">{% block pageHeader %}{% endblock %}</h3>
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
@@ -223,8 +236,10 @@
 						</div><!-- /.modal-content -->
 					</div><!-- /.modal-dialog -->
 				</div><!-- /.modal -->
+
 				{% block bodyPanel %}{% endblock %}
 			</div>
+
 		</div>
 		<!-- /#page-wrapper -->
 
@@ -243,7 +258,8 @@
 	<!-- Metis Menu Plugin JavaScript -->
 	<script src="{{ url_for('static', filename='metisMenu/metisMenu.min.js') }}"></script>
 	<script>
-		function randomColor() {
+		function randomColor()
+		{
 			var letters = '0123456789ABCDEF'.split('');
 			var color = '#';
 			for (var i = 0; i < 6; i++ ) {
@@ -272,8 +288,27 @@
 
 			return colors[0];
 		}
+
+		// Show List Of Reports
+		$(document).ready(function()
+		{
+			var _url = "/reports/list";
+			$.ajax({
+				type: 'GET',
+				url: _url,
+				cache: false,
+				dataType: 'json',
+				success: function(res)
+				{
+					$.each(res.data, function(i, p) {
+						$("#reports ul").append('<li><a href="/reports/show/'+p.id+'"><i class="fa fa-file-text-o fa-fw"></i>'+ p.name +'</a></li>');
+					});
+				}
+			});
+		});
 	</script>
 	{% block javascript %}{% endblock %}
+
 
 	<!-- Custom Theme JavaScript -->
 	<script src="{{ url_for('static', filename='sb-admin/js/sb-admin-2.js') }}"></script>

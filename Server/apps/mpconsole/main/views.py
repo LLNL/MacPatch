@@ -8,7 +8,8 @@ from .. model import *
 
 @login_manager.user_loader
 def load_user(userid):
-    return AdmUsers.query.get(int(userid))
+	if userid != 'None':
+		return AdmUsers.query.get(int(userid))
 
 
 @main.route('/')

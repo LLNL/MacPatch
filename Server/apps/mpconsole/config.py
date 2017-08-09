@@ -6,64 +6,64 @@ MP_ROOT_DIR = '/opt/MacPatch'
 MP_SRV_DIR = MP_ROOT_DIR+'/Server'
 
 class BaseConfig:
-    
-    DEBUG   = False
-    TESTING = False
-    BASEDIR = basedir
-    #DEBUG_TB_ENABLED = True
-    #SQLALCHEMY_RECORD_QUERIES = False
 
-    # Web Server Options
-    # Use 127.0.0.1 and port 3601, NGINX will be the outward facing
-    # avenue for clients to communicate.
-    SRV_HOST                        = '127.0.0.1'
-    SRV_PORT                        = 5000
+	DEBUG   = False
+	TESTING = False
+	BASEDIR = basedir
+	# DEBUG_TB_ENABLED = True
+	# SQLALCHEMY_RECORD_QUERIES = False
 
-    # Database Options
-    DB_USER                         = 'mpdbadm'
-    DB_PASS                         = 'password'
-    DB_HOST                         = 'localhost'
-    DB_PORT                         = '3306'
-    DB_NAME                         = 'MacPatchDB'
-    SQLALCHEMY_DATABASE_URI         = 'mysql+mysqlconnector://'
-    SQLALCHEMY_TRACK_MODIFICATIONS  = False
-    SQLALCHEMY_POOL_SIZE            = 50
-    SQLALCHEMY_POOL_TIMEOUT         = 20
-    SQLALCHEMY_POOL_RECYCLE         = 170
+	# Web Server Options
+	# Use 127.0.0.1 and port 3601, NGINX will be the outward facing
+	# avenue for clients to communicate.
+	SRV_HOST                        = '127.0.0.1'
+	SRV_PORT                        = 5000
 
-    # App Options
-    SECRET_KEY          = '~t\x86\xc9\x1ew\x8bOcX\x85O\xb6\xa2\x11kL\xd1\xce\x7f\x14<y\x9e'
-    LOGGING_FORMAT      = '%(asctime)s [%(name)s][%(levelname).3s] --- %(message)s'
-    LOGGING_LEVEL       = logging.INFO
-    LOGGING_LOCATION    = MP_ROOT_DIR+'/logs/mpconsole.log'
+	# Database Options
+	DB_USER                         = 'mpdbadm'
+	DB_PASS                         = 'password'
+	DB_HOST                         = 'localhost'
+	DB_PORT                         = '3306'
+	DB_NAME                         = 'MacPatchDB'
+	SQLALCHEMY_DATABASE_URI         = 'mysql+mysqlconnector://'
+	SQLALCHEMY_TRACK_MODIFICATIONS  = False
+	SQLALCHEMY_POOL_SIZE            = 50
+	SQLALCHEMY_POOL_TIMEOUT         = 20
+	SQLALCHEMY_POOL_RECYCLE         = 170
 
-    # MacPatch App Options
-    SITECONFIG_FILE     = MP_ROOT_DIR+'/etc/siteconfig.json'
-    CONTENT_DIR         = MP_ROOT_DIR+'/Content'
-    AGENT_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/clients'
-    PATCH_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/patches'
+	# App Options
+	SECRET_KEY          = '~t\x86\xc9\x1ew\x8bOcX\x85O\xb6\xa2\x11kL\xd1\xce\x7f\x14<y\x9e'
+	LOGGING_FORMAT      = '%(asctime)s [%(name)s][%(levelname).3s] --- %(message)s'
+	LOGGING_LEVEL       = 'info'
+	LOGGING_LOCATION    = MP_SRV_DIR+'/apps/logs'
 
-    CORS_HEADERS        = 'Content-Type'
+	# MacPatch App Options
+	SITECONFIG_FILE     = MP_SRV_DIR+'/etc/siteconfig.json'
+	CONTENT_DIR         = MP_ROOT_DIR+'/Content'
+	AGENT_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/clients'
+	PATCH_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/patches'
 
-    JOBS_FILE = basedir+'/jobs.json'
-    JOBS = []
+	CORS_HEADERS        = 'Content-Type'
 
-    SCHEDULER_API_ENABLED = True
+	JOBS_FILE = basedir+'/jobs.json'
+	JOBS = []
+
+	SCHEDULER_API_ENABLED = True
 
 class DevelopmentConfig(BaseConfig):
-    
-    DEBUG                           = True
-    LOGGING_LEVEL                   = logging.DEBUG
-    DEBUG_TB_INTERCEPT_REDIRECTS    = False
-    SQLALCHEMY_TRACK_MODIFICATIONS  = False
+
+	DEBUG                           = True
+	LOGGING_LEVEL                   = 'debug'
+	DEBUG_TB_INTERCEPT_REDIRECTS    = False
+	SQLALCHEMY_TRACK_MODIFICATIONS  = False
 
 
 class ProductionConfig(BaseConfig):
-    
-    DEBUG                           = False
-    LOGGING_LEVEL                   = logging.INFO
+
+	DEBUG                           = False
+	LOGGING_LEVEL                   = 'info'
 
 config = {
-    "development": "mpapi.config.DevelopmentConfig",
-    "prduction": "mpapi.config.ProductionConfig"
+	"development": "mpapi.config.DevelopmentConfig",
+	"prduction": "mpapi.config.ProductionConfig"
 }

@@ -1,6 +1,6 @@
 from mpconsole import db
 
-# Rev 6
+# Rev 5
 #
 
 from datetime import *
@@ -13,6 +13,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 class CommonBase(db.Model):
 	__abstract__ = True
+	__tablelabel__ = ''
 
 	@property
 	def asDict(self):
@@ -62,6 +63,7 @@ class CommonBase(db.Model):
 
 		return result
 
+
 def get_class_by_tablename(tablename):
 	"""Return class reference mapped to table.
 
@@ -75,6 +77,7 @@ def get_class_by_tablename(tablename):
 	return None
 
 ''' Database Tables '''
+
 
 # LDAP
 class User(UserMixin):
@@ -100,6 +103,7 @@ class User(UserMixin):
 	def __repr__(self):
 		return "<User '{}'>".format(self.username)
 
+
 # mp_user
 class MPUser(CommonBase):
 	__tablename__ = 'mp_user'
@@ -109,8 +113,10 @@ class MPUser(CommonBase):
 	email = Column(String(120), unique=True)
 	password_hash = Column(String(255))
 
+
 # ------------------------------------------
 ''' START - Tables for Web Services'''
+
 
 # ------------------------------------------
 ## Registration
@@ -129,6 +135,7 @@ class MPAgentRegistration(CommonBase):
 	serialno = Column(String(255), nullable=False)
 	reg_date = Column(DateTime, nullable=False, server_default='1970-01-01 00:00:00')
 
+
 # mp_clients_wait_reg
 class MpClientsWantingRegistration(CommonBase):
 	__tablename__ = 'mp_clients_wait_reg'
@@ -137,6 +144,7 @@ class MpClientsWantingRegistration(CommonBase):
 	cuuid = Column(String(50), nullable=False, unique=True)
 	hostname = Column(String(255), nullable=False)
 	req_date = Column(DateTime, nullable=True)
+
 
 # mp_clients_reg_conf
 class MpClientsRegistrationSettings(CommonBase):
@@ -147,6 +155,7 @@ class MpClientsRegistrationSettings(CommonBase):
 	autoreg_key = Column(Integer, nullable=True, server_default='999999')
 	client_parking = Column(Integer, nullable=True, server_default='0')
 
+
 # mp_client_reg_keys
 class MpClientRegKeys(CommonBase):
 	__tablename__ = 'mp_client_reg_keys'
@@ -156,6 +165,7 @@ class MpClientRegKeys(CommonBase):
 	regKey = Column(String(255), nullable=False)
 	active = Column(Integer, nullable=True, server_default='1')
 	reg_date = Column(DateTime, nullable=True, server_default='1970-01-01 00:00:00')
+
 
 # mp_reg_keys
 class MpRegKeys(CommonBase):
@@ -182,6 +192,7 @@ class MpSiteKeys(CommonBase):
 	request_new_key = Column(Integer, nullable=True, server_default='0')
 	mdate = Column(DateTime, nullable=True, server_default='1970-01-01 00:00:00')
 
+
 # ------------------------------------------
 ## Main
 
@@ -205,13 +216,14 @@ class MpClient(CommonBase):
 	agent_build = Column(String(10), server_default='0', info='Agent Build', doc='4')
 	client_version = Column(String(20), server_default='NA', info='Client Ver', doc='5')
 
+
 # mp_clients_plist
 class MpClientPlist(CommonBase):
 	__tablename__ = 'mp_clients_plist'
 
 	rid = Column(BigInteger, primary_key=True, autoincrement=True)
 	cuuid = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False,
-					index=True, unique=True)
+				   index=True, unique=True)
 	mdate = Column(DateTime, nullable=True, server_default='1970-01-01 00:00:00')
 	EnableASUS = Column(String(255), server_default='NA')
 	MPDLTimeout = Column(String(255), server_default='NA')
@@ -241,6 +253,7 @@ class MpClientPlist(CommonBase):
 	CheckSignature = Column(String(255), server_default='NA')
 	SWDistGroupState = Column(String(255), server_default='NA')
 
+
 # mp_client_groups
 class MpClientGroups(CommonBase):
 	__tablename__ = 'mp_client_groups'
@@ -250,21 +263,24 @@ class MpClientGroups(CommonBase):
 	group_name = Column(String(255), nullable=False, index=True, unique=True, info="Group Name")
 	group_owner = Column(String(255), server_default='NA', index=True, info="Group Owner")
 
+
 # mp_client_group_admins
 class MpClientGroupAdmins(CommonBase):
 	__tablename__ = 'mp_client_group_admin'
 
 	rid = Column(BigInteger, primary_key=True, autoincrement=True)
-	group_id = Column(String(50), nullable=False, index=True, unique=True)
+	group_id = Column(String(50), nullable=False, index=True, unique=False)
 	group_admin = Column(String(255), nullable=False, index=True, unique=True)
+
 
 # mp_client_group_members
 class MpClientGroupMembers(CommonBase):
 	__tablename__ = 'mp_client_group_members'
 
 	rid = Column(BigInteger, primary_key=True, autoincrement=True)
-	group_id = Column(String(50), nullable=False, index=True, unique=True)
+	group_id = Column(String(50), nullable=False, index=True, unique=False)
 	cuuid = Column(String(255), nullable=False, index=True, unique=True)
+
 
 # mp_client_tasks
 class MpClientTasks(CommonBase):
@@ -288,6 +304,7 @@ class MpClientTasks(CommonBase):
 	mode = Column(String(255), nullable=False, info="Mode", server_default='0')
 	idsig = Column(String(255), nullable=False, info="Signature", server_default='0')
 
+
 # mp_group_config
 class MPGroupConfig(CommonBase):
 	__tablename__ = 'mp_group_config'
@@ -296,6 +313,8 @@ class MPGroupConfig(CommonBase):
 	group_id = Column(String(50), index=True, nullable=False)
 	rev_settings = Column(BigInteger, server_default='1')
 	rev_tasks = Column(BigInteger, server_default='1')
+	tasks_version = Column(BigInteger, server_default='0')
+
 
 # mp_client_settings
 class MpClientSettings(CommonBase):
@@ -305,6 +324,7 @@ class MpClientSettings(CommonBase):
 	group_id = Column(String(50), index=True, nullable=False)
 	key = Column(String(255), index=True, nullable=False)
 	value = Column(String(255), nullable=False)
+
 
 # ------------------------------------------
 ## Patches Needed
@@ -331,7 +351,7 @@ class MpClientPatchesApple(CommonBase):
 
 	rid = Column(BigInteger, primary_key=True, autoincrement=True)
 	cuuid = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False,
-					index=True, unique=True)
+				   index=True, unique=True)
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 	patch = Column(String(255), nullable=False)
 	type = Column(String(255), nullable=False)
@@ -341,13 +361,14 @@ class MpClientPatchesApple(CommonBase):
 	restart = Column(String(255), nullable=False)
 	version = Column(String(255))
 
+
 # mp_client_patches_third
 class MpClientPatchesThird(CommonBase):
 	__tablename__ = 'mp_client_patches_third'
 
 	rid = Column(BigInteger, primary_key=True, autoincrement=True)
 	cuuid = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False,
-					index=True, unique=True)
+				   index=True, unique=True)
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 	patch = Column(String(255), nullable=False)
 	type = Column(String(255), nullable=False)
@@ -358,6 +379,7 @@ class MpClientPatchesThird(CommonBase):
 	patch_id = Column(String(255), nullable=False)
 	version = Column(String(255))
 	bundleID = Column(String(255))
+
 
 # ------------------------------------------
 ## Patch Content
@@ -381,6 +403,7 @@ class ApplePatch(CommonBase):
 	title = Column(String(255), nullable=False, info="Title")
 	version = Column(String(20), nullable=False, info="Version")
 
+
 # apple_patches_additions
 class ApplePatchAdditions(CommonBase):
 	__tablename__ = 'apple_patches_mp_additions'
@@ -395,6 +418,7 @@ class ApplePatchAdditions(CommonBase):
 	patch_reboot = Column(INTEGER(unsigned=True), server_default="0")
 	osver_support = Column(String(10), nullable=False, server_default="NA")
 
+
 # mp_apple_patch_criteria
 class ApplePatchCriteria(CommonBase):
 	__tablename__ = 'mp_apple_patch_criteria'
@@ -408,6 +432,7 @@ class ApplePatchCriteria(CommonBase):
 	type_order = Column(INTEGER(2, unsigned=True), server_default='0')
 	cdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
+
 
 # mp_patches
 class MpPatch(CommonBase):
@@ -438,6 +463,7 @@ class MpPatch(CommonBase):
 	cdate = Column(DateTime, server_default='1970-01-01 00:00:00', info="Create Date")
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00', info="Modify Date")
 
+
 # mp_patches_criteria
 class MpPatchesCriteria(CommonBase):
 	__tablename__ = 'mp_patches_criteria'
@@ -449,6 +475,7 @@ class MpPatchesCriteria(CommonBase):
 	type_order = Column(Integer, nullable=False)
 	type_required_order = Column(Integer, nullable=False, server_default="0")
 
+
 # mp_patches_requisits
 class MpPatchesRequisits(CommonBase):
 	__tablename__ = 'mp_patches_requisits'
@@ -459,6 +486,7 @@ class MpPatchesRequisits(CommonBase):
 	type_txt = Column(String(255))
 	type_order = Column(Integer, server_default='0')
 	puuid_ref = Column(String(50))
+
 
 # mp_installed_patches
 class MpInstalledPatch(CommonBase):
@@ -472,6 +500,7 @@ class MpInstalledPatch(CommonBase):
 	type = Column(String(255), nullable=False, info='Patch Type')
 	type_int = Column(Integer)
 	server_name = Column(String(255), server_default="NA", info='Server Name')
+
 
 # ------------------------------------------
 ## Patch Groups and Content
@@ -487,6 +516,7 @@ class MpPatchGroup(CommonBase):
 	hash = Column(String(50), server_default="0")
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00', info="Updated Last")
 
+
 # mp_patch_group_members
 class PatchGroupMembers(CommonBase):
 	__tablename__ = 'mp_patch_group_members'
@@ -495,6 +525,7 @@ class PatchGroupMembers(CommonBase):
 	user_id = Column(String(255), nullable=False, info="User ID")
 	patch_group_id = Column(String(50), nullable=False, info="Patch Group ID")
 	is_owner = Column(INTEGER(1, unsigned=True), server_default='0', info="Owner")
+
 
 # mp_patch_group_data
 class MpPatchGroupData(CommonBase):
@@ -508,6 +539,7 @@ class MpPatchGroupData(CommonBase):
 	data_type = Column(String(4), server_default="")
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 
+
 # mp_patch_group_patches
 class MpPatchGroupPatches(CommonBase):
 	__tablename__ = 'mp_patch_group_patches'
@@ -515,6 +547,7 @@ class MpPatchGroupPatches(CommonBase):
 	rid = Column(BigInteger, primary_key=True, nullable=False, autoincrement=True)
 	patch_id = Column(String(50), nullable=False, index=True)
 	patch_group_id = Column(String(50), nullable=False, index=True)
+
 
 # ------------------------------------------
 ## Client Agent
@@ -538,6 +571,7 @@ class MpClientAgent(CommonBase):
 	cdate = Column(DateTime, server_default='1970-01-01 00:00:00', info="Create Date")
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00', info="Mod Date")
 
+
 # mp_client_agents_filters
 class MpClientAgentsFilter(CommonBase):
 	__tablename__ = 'mp_client_agents_filters'
@@ -549,6 +583,7 @@ class MpClientAgentsFilter(CommonBase):
 	attribute_filter = Column(String(255), nullable=False, info="Filter")
 	attribute_condition = Column(String(10), nullable=False, info="Condition")
 
+
 # ------------------------------------------
 ## AntiVirus
 
@@ -558,7 +593,7 @@ class AvInfo(CommonBase):
 
 	rid = Column(BigInteger, primary_key=True, autoincrement=True)
 	cuuid = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False,
-					index=True, unique=True)
+				   index=True, unique=True)
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 	av_type = Column(String(255), server_default="NA")
 	app_name = Column(String(255), server_default="NA")
@@ -567,6 +602,7 @@ class AvInfo(CommonBase):
 	eng_version = Column(String(255), server_default="NA")
 	defs_date = Column(String(50), server_default="NA")
 	last_scan = Column(DateTime, server_default='1970-01-01 00:00:00')
+
 
 # av_defs
 class AvDefs(CommonBase):
@@ -580,6 +616,7 @@ class AvDefs(CommonBase):
 	defs_date_str = Column(String(20), nullable=False)
 	file = Column(Text(), nullable=False)
 
+
 # ------------------------------------------
 ## Inventory
 
@@ -589,6 +626,7 @@ class MpInvState(CommonBase):
 	rid = Column(BigInteger, primary_key=True, autoincrement=True)
 	cuuid = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False, index=True, unique=True)
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
+
 
 # ------------------------------------------
 ## Servers
@@ -607,6 +645,7 @@ class MpAsusCatalog(CommonBase):
 	active = Column(Integer, nullable=False, server_default="0")
 	catalog_group_name = Column(String(255), nullable=False)
 
+
 # mp_asus_catalog_list
 class MpAsusCatalogList(CommonBase):
 	__tablename__ = 'mp_asus_catalog_list'
@@ -616,6 +655,7 @@ class MpAsusCatalogList(CommonBase):
 	name = Column(String(255), nullable=False)
 	version = Column(Integer, nullable=False)
 
+
 # mp_server_list
 class MpServerList(CommonBase):
 	__tablename__ = 'mp_server_list'
@@ -624,6 +664,7 @@ class MpServerList(CommonBase):
 	listid = Column(String(50), primary_key=True, nullable=False)
 	name = Column(String(255), nullable=False)
 	version = Column(Integer, nullable=False, server_default="0")
+
 
 # mp_servers
 class MpServer(CommonBase):
@@ -639,6 +680,7 @@ class MpServer(CommonBase):
 	isMaster = Column(Integer, nullable=False, server_default="0")
 	isProxy = Column(Integer, nullable=False, server_default="0")
 	active = Column(Integer, nullable=False, server_default="1")
+
 
 # ------------------------------------------
 ## Profiles
@@ -659,6 +701,7 @@ class MpOsConfigProfiles(CommonBase):
 	uninstallOnRemove = Column(Integer, server_default='1')
 	cdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
+
 
 # mp_os_config_profiles_assigned
 class MpOsConfigProfilesAssigned(CommonBase):
@@ -721,6 +764,7 @@ class MpSoftware(CommonBase):
 	cdate = Column(DateTime, server_default='1970-01-01 00:00:00', info="Create Date", doc=99)
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00', info="Mod Date", doc=98)
 
+
 # mp_software_criteria
 class MpSoftwareCriteria(CommonBase):
 	__tablename__ = 'mp_software_criteria'
@@ -732,6 +776,7 @@ class MpSoftwareCriteria(CommonBase):
 	type_order = Column(Integer, nullable=False)
 	type_required_order = Column(Integer, nullable=False, server_default='0')
 
+
 # mp_software_group_tasks
 class MpSoftwareGroupTasks(CommonBase):
 	__tablename__ = 'mp_software_group_tasks'
@@ -740,6 +785,7 @@ class MpSoftwareGroupTasks(CommonBase):
 	sw_group_id = Column(String(50), nullable=False)
 	sw_task_id = Column(String(50), nullable=False)
 	selected = Column(Integer, server_default='0')
+
 
 # mp_software_groups
 class MpSoftwareGroup(CommonBase):
@@ -755,6 +801,7 @@ class MpSoftwareGroup(CommonBase):
 	cdate = Column(DateTime, server_default='1970-01-01 00:00:00', info="Create Date")
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00', info="Mod Date")
 
+
 # mp_software_groups_filters
 class MpSoftwareGroupFilters(CommonBase):
 	__tablename__ = 'mp_software_groups_filters'
@@ -767,6 +814,7 @@ class MpSoftwareGroupFilters(CommonBase):
 	attribute_condition = Column(String(255))
 	datasource = Column(String(255))
 
+
 # mp_software_groups_privs
 class MpSoftwareGroupPrivs(CommonBase):
 	__tablename__ = 'mp_software_groups_privs'
@@ -776,19 +824,21 @@ class MpSoftwareGroupPrivs(CommonBase):
 	uid = Column(String(255), nullable=False)
 	isowner = Column(Integer, nullable=False, server_default='0')
 
+
 # mp_software_installs
 class MpSoftwareInstall(CommonBase):
 	__tablename__ = 'mp_software_installs'
 
 	rid = Column(BigInteger, primary_key=True, nullable=False, autoincrement=True)
 	cuuid = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False,
-					index=True, unique=True)
+				   index=True, unique=True)
 	tuuid = Column(String(50))
 	suuid = Column(String(50))
 	action = Column(String(1), server_default='i')
 	result = Column(Integer)
 	resultString = Column(Text)
 	cdate = Column(DateTime, server_default='1970-01-01 00:00:00')
+
 
 # mp_software_requisits
 class MpSoftwareRequisits(CommonBase):
@@ -800,6 +850,7 @@ class MpSoftwareRequisits(CommonBase):
 	type_txt = Column(String(255))
 	type_order = Column(Integer, server_default='0')
 	suuid_ref = Column(String(50))
+
 
 # mp_software_task
 class MpSoftwareTask(CommonBase):
@@ -817,6 +868,7 @@ class MpSoftwareTask(CommonBase):
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 	cdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 
+
 # mp_software_tasks_data
 class MpSoftwareTasksData(CommonBase):
 	__tablename__ = 'mp_software_tasks_data'
@@ -826,6 +878,7 @@ class MpSoftwareTasksData(CommonBase):
 	gDataHash = Column(String(50), nullable=False)
 	gData = Column(LONGTEXT(), nullable=False)
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
+
 
 # mp_software_tasks_data
 class MpUploadRequest(CommonBase):
@@ -837,6 +890,7 @@ class MpUploadRequest(CommonBase):
 	requestid = Column(String(50), nullable=False)
 	enabled = Column(Integer, server_default='1')
 	cdate = Column(DateTime, server_default='1970-01-01 00:00:00')
+
 
 # ------------------------------------------
 ## Plugins
@@ -852,22 +906,9 @@ class MPPluginHash(CommonBase):
 	hash = Column(String(100), nullable=False, info="Hash")
 	active = Column(Integer, server_default='0', info="Enabled")
 
-# ------------------------------------------
-## OS Migration
-
-class OSMigrationStatus(CommonBase):
-	__tablename__ = 'mp_os_migration_status'
-
-	rid             = Column(BigInteger, primary_key=True, autoincrement=True)
-	cuuid           = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False, index=True, unique=True)
-	startDateTime   = Column(DateTime, server_default='1970-01-01 00:00:00')
-	stopDateTime    = Column(DateTime, server_default='1970-01-01 00:00:00')
-	preOSVer        = Column(String(255), nullable=False)
-	postOSVer       = Column(String(255))
-	label           = Column(MEDIUMTEXT())
-	migrationID     = Column(String(100), nullable=False)
 
 ''' STOP - Tables for Web Services'''
+
 
 # ------------------------------------------
 
@@ -901,6 +942,7 @@ class AdmUsers(CommonBase, UserMixin):
 	def get_by_username(username):
 		return MPUser.query.filter_by(user_id=username).first()
 
+
 class AdmGroups(CommonBase):
 	__tablename__ = 'mp_adm_groups'
 
@@ -908,6 +950,7 @@ class AdmGroups(CommonBase):
 	group_id = Column(String(255), nullable=False)
 	group_name = Column(String(255), nullable=False)
 	enabled = Column(INTEGER(1, unsigned=True), server_default='1')
+
 
 class AdmUsersInfo(CommonBase):
 	__tablename__ = 'mp_adm_users_info'
@@ -928,6 +971,7 @@ class AdmUsersInfo(CommonBase):
 	agentUpload = Column(INTEGER(1, unsigned=True), server_default='0')
 	apiAccess = Column(INTEGER(1, unsigned=True), server_default='0')
 
+
 class AdmGroupUsers(CommonBase):
 	__tablename__ = 'mp_adm_group_users'
 
@@ -942,6 +986,7 @@ class AdmGroupUsers(CommonBase):
 	authToken2 = Column(String(50))
 	user_email = Column(String(255))
 	email_notification = Column(INTEGER(1, unsigned=True), server_default='0')
+
 
 # ------------------------------------------
 ## Agent
@@ -967,6 +1012,7 @@ class AgentConfigData(CommonBase):
 	akeyValue = Column(String(255), nullable=False)
 	enforced = Column(INTEGER(1, unsigned=True), nullable=False, server_default='0')
 
+
 # ------------------------------------------
 ## Inventory
 
@@ -982,6 +1028,20 @@ class AdHocReports(CommonBase):
 	disabled = Column(INTEGER(1, unsigned=True), server_default='0')
 	disabledDate = Column(DateTime, server_default='1970-01-01 00:00:00')
 
+# mp_adhoc_reports
+class InvReports(CommonBase):
+	__tablename__ = 'mp_inv_reports'
+
+	rid = Column(BigInteger, primary_key=True, autoincrement=True)
+	name = Column(String(255), nullable=False)
+	owner = Column(String(255), nullable=False)
+	scope = Column(INTEGER(1, unsigned=True), server_default='0')
+	rtable = Column(String(255), nullable=False)
+	rcolumns = Column(LONGTEXT())
+	rquery = Column(LONGTEXT())
+	cdate = Column(DateTime, server_default='1970-01-01 00:00:00')
+	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
+
 # Required Inventory Tables
 # mpi_DirectoryServices
 class MPIDirectoryServices(CommonBase):
@@ -989,7 +1049,7 @@ class MPIDirectoryServices(CommonBase):
 
 	rid = Column(BigInteger, primary_key=True, autoincrement=True)
 	cuuid = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False,
-					index=True, unique=True)
+				   index=True, unique=True)
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 
 	mpa_cn = Column(String(255))
@@ -1001,13 +1061,14 @@ class MPIDirectoryServices(CommonBase):
 	mpa_Bound_To_Domain = Column(String(255))
 	mpa_ADDomain = Column(String(255))
 
+
 # mpi_SPHardwareOverview
 class MPISPHardwareOverview(CommonBase):
 	__tablename__ = 'mpi_SPHardwareOverview'
 
 	rid = Column(BigInteger, nullable=False, primary_key=True, autoincrement=True)
 	cuuid = Column(String(50), ForeignKey('mp_clients.cuuid', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False,
-					index=True, unique=True)
+				   index=True, unique=True)
 	mdate = Column(DateTime, server_default='1970-01-01 00:00:00')
 	mpa_Model_Name = Column(String(255))
 	mpa_Model_Identifier = Column(String(255))
@@ -1038,6 +1099,7 @@ class MPISPHardwareOverview(CommonBase):
 	mpa_l3_cache_per_processor = Column(String(255))
 	mpa_smc_version_processor_tray = Column(String(255))
 	mpa_illumination_version = Column(String(255))
+
 
 # ------------------------------------------
 ## Misc

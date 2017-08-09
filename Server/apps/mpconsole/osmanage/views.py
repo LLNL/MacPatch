@@ -1,23 +1,29 @@
-from flask import render_template, jsonify, request
+from flask import render_template, request
+from flask.ext.security import login_required
 from datetime import *
 import json
-import base64
-import re
-import collections
 from datetime import datetime
 import uuid
+import re
+from yattag import indent
+import hashlib
 
 from . import osmanage
 from .. import login_manager
 from .. model import *
 from .. import db
 
+'''
+	This method queries the DB for all uploaded profiles
+	Add renders the os_profiles.html File
+'''
 @osmanage.route('/profiles')
+@login_required
 def profiles():
 
 	columns = [('profileID', 'Profile ID', '0'), ('profileIdentifier', 'Profile Identifier', '1'), ('profileName', 'Name', '1'),
-	           ('profileDescription', 'Description', '1'), ('profileRev', 'Revision', '1'), ('enabled', 'Enabled', '1'), 
-	           ('uninstallOnRemove', 'Uninstall On Remove', '1')]
+				('profileDescription', 'Description', '1'), ('profileRev', 'Revision', '1'), ('enabled', 'Enabled', '1'),
+				('uninstallOnRemove', 'Uninstall On Remove', '1')]
 
 	profileQuery = MpOsConfigProfiles.query.all()
 
@@ -27,28 +33,128 @@ def profiles():
 		for c in columns:
 			y = "p."+c[0]
 			if c[0] == 'enabled' or c[0] == 'uninstallOnRemove':
-				row[c[0]] = "Yes" if eval(y) == 0 else "No"
+				row[c[0]] = "Yes" if eval(y) == 1 else "No"
 			else:
 				row[c[0]] = eval(y)
 
 		_results.append(row)
 
-	return render_template('os_profiles.html', data=_results, columns=columns)
+	return render_template('os_managment/os_profiles.html', data=_results, columns=columns)
 
+'''
+	This method renders the os_profile_manager.html File
+	For a new profile
+'''
+@osmanage.route('/profiles/add')
+@login_required
+def profileAdd():
+
+	profile_id = str(uuid.uuid4())
+	return render_template('os_managment/os_profile_manager.html', profileData={}, profileDataAlt={}, profileDataRE={}, profileID=profile_id)
+
+'''
+	This method renders the os_profile_manager.html File
+	This is to edit an existing profile
+'''
+@osmanage.route('/profiles/update/<profile_id>')
+@login_required
+def profileEdit(profile_id):
+	profile = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID == profile_id).first()
+	# Parse BLOB Data
+	pData = str(profile.profileData)
+	pData = unicode(pData, errors='replace')
+
+	# Using RE get the data between <?xml ... </plist>
+	stringlist = re.findall('<\?.+</plist>', pData, re.DOTALL)
+	pData2 = ""
+	pretty_string = ""
+	if len(stringlist) >= 1:
+		pData2 = stringlist[0]
+		pData2 = pData2.replace('\\n', '')  # Remove \n from string purely for formatting
+		pretty_string = indent(pData2,indentation='    ')
+
+	return render_template('os_managment/os_profile_manager.html', profileData=profile, profileDataAlt=pData, profileDataRE=pretty_string, profileID=profile_id)
+
+''' Private '''
+'''
+	Method to verify file extension
+'''
+ALLOWED_EXTENSIONS = set(['plist', 'mobileprovision', 'mobileconfig'])
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+''' AJAX Request '''
+@osmanage.route('/profile/save/<profile_id>', methods=['POST'])
+def profileSave(profile_id):
+	# requestForm = request.form
+	formDict = request.form.to_dict()
+
+	isNewProfile=False
+	profile = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID == profile_id).first()
+	if profile is None:
+		profile = MpOsConfigProfiles()
+		isNewProfile=True
+
+	if 'profileFile' in request.files:
+		# Save File, returns path to file
+		_file = request.files['profileFile']
+		_file_data = _file.read()
+
+		if _file_data and allowed_file(_file.filename):
+			# Gen Hash
+			profile__hash = hashlib.md5(_file_data).hexdigest()
+			setattr(profile, 'profileData', _file_data.encode('string-escape').encode('utf-8'))
+			setattr(profile, 'profileHash', profile__hash)
+
+	# Save Profile Data
+	setattr(profile, 'profileName', formDict['profileName'])
+	setattr(profile, 'profileDescription', formDict['profileDescription'])
+	setattr(profile, 'enabled', formDict['enabled'])
+	setattr(profile, 'uninstallOnRemove', formDict['uninstallOnRemove'])
+	setattr(profile, 'mdate', datetime.now())
+
+	if isNewProfile:
+		setattr(profile, 'cdate', datetime.now())
+		setattr(profile, 'profileRev', 1)
+		setattr(profile, 'profileID', profile_id)
+		setattr(profile, 'profileIdentifier', formDict['profileIdentifier'])
+		db.session.add(profile)
+	else:
+		setattr(profile, 'profileRev', (profile.profileRev + 1))
+
+	db.session.commit()
+	return json.dumps({'error': 0}), 200
+
+''' AJAX Request '''
+@osmanage.route('/profile/delete',methods=['DELETE'])
+def profileDelete():
+	if request.method == 'DELETE':
+		formDict = request.form.to_dict()
+		profile_ids = formDict['profileID'].split(",")
+		for pid in profile_ids:
+			MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID == pid).delete()
+
+		db.session.commit()
+
+	return json.dumps({'error': 0}), 200
+
+'''
+	-------------------------------------------
+	Group Profile Assignments
+	-------------------------------------------
+'''
 @osmanage.route('/profile/group/<group_id>/add',methods=['GET'])
 def addProfileToGroup(group_id):
 
 	profilesQuery = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.enabled == 1).all()
 	profilesRes = []
-	for p in profilesQuery: 
+	for p in profilesQuery:
 		row = {}
 		row['profileID'] = p.profileID
 		row['title'] = p.profileName + " (" + p.profileIdentifier +")"
 		profilesRes.append(row)
 
-	_result = {}
-
-	return render_template('os_profile_wizard.html', profileData={}, profileCriteria={}, profileArray=profilesRes, groupID=group_id)
+	return render_template('os_managment/os_profile_wizard.html', profileData={}, profileCriteria={}, profileCriteriaAlt={}, profileArray=profilesRes, groupID=group_id)
 
 @osmanage.route('/profile/group/<group_id>/edit/<policy_id>',methods=['GET'])
 def editProfileInGroup(group_id, policy_id):
@@ -56,83 +162,97 @@ def editProfileInGroup(group_id, policy_id):
 	profilesQuery = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.enabled == 1).all()
 
 	profilesRes = []
-	for p in profilesQuery: 
+	for p in profilesQuery:
 		row = {}
 		row['profileID'] = p.profileID
 		row['title'] = p.profileName + " (" + p.profileIdentifier +")"
 		profilesRes.append(row)
 
 	policyQuery = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.gPolicyID == policy_id).first()
-	criteriaQuery = MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == policy_id).all()
+	criteriaQuery = MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == policy_id).order_by(MpOsProfilesCriteria.type_order.asc()).all()
 
-	return render_template('os_profile_wizard.html', profileData=policyQuery, profileCriteria=criteriaQuery, profileArray=profilesRes, groupID=group_id)
+	profileCritLst = []
+	for crit in criteriaQuery:
+		patchCritDict = crit.__dict__
+		del patchCritDict['_sa_instance_state']
+		del patchCritDict['rid']
+		if patchCritDict['type'] == "Script":
+			patchCritDict['type_data'] = escapeStringForACEEditor(patchCritDict['type_data'])
 
+		profileCritLst.append(patchCritDict)
+
+	cri = {}
+	for c in criteriaQuery:
+		cri[c.type] = c.type_data
+
+	return render_template('os_managment/os_profile_wizard.html', profileData=policyQuery, profileCriteria=profileCritLst, profileArray=profilesRes, groupID=group_id, profileCriteriaAlt=cri)
+
+''' AJAX Method '''
 @osmanage.route('/profile/<gprofile_id>',methods=['GET','DELETE'])
 def profile(gprofile_id):
 	if request.method == 'DELETE':
 		profileQuery = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.gPolicyID == gprofile_id).delete()
-		profileCriQuery = MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == gprofile_id).delete()
+		MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == gprofile_id).delete()
 		db.session.commit()
 
-		return json.dumps({'error': 0}), 200  
-
+		return json.dumps({'error': 0}), 200
+	# TODO
 	if request.method == 'GET':
 		profileQuery = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileid == gprofile_id).first()
 		_result = {}
 
-		return json.dumps({'error': 0}), 200  
+		return json.dumps({'error': 0}), 200
 
-	return json.dumps({'error': 0}), 200   
+	return json.dumps({'error': 0}), 200
 
+''' AJAX Method '''
 @osmanage.route('/profiles/group/<group_id>', methods=['GET'])
 def groupProfiles(group_id):
-	
+
 	columns = [('profileID', 'Profile ID', '0'), ('gPolicyID', 'Policy Identifier', '0'), ('pName', 'Profile Name', '1'), ('title', 'Title', '1'),
-	           ('description', 'Description', '1'), ('enabled', 'Enabled', '1')]           
-	
+				('description', 'Description', '1'), ('enabled', 'Enabled', '1')]
+
 	profiles = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == group_id).join(
 		MpOsConfigProfiles, MpOsConfigProfiles.profileID == MpOsProfilesGroupAssigned.profileID).add_columns(
 		MpOsConfigProfiles.profileName).all()
 
-
 	_results = []
-	for p in profiles:
-		row = {}
-		for c in columns:
-			if c[0] == 'pName':
-				row[c[0]] = p.profileName
-			else:
-				y = "p[0]."+c[0]
-				row[c[0]] = eval(y)
+	if profiles is not None:
+		for p in profiles:
+			row = {}
+			for c in columns:
+				if c[0] == 'pName':
+					row[c[0]] = p.profileName
+				else:
+					y = "p[0]."+c[0]
+					row[c[0]] = eval(y)
 
-		_results.append(row)
+			_results.append(row)
 
 	return json.dumps({'data': _results, 'total': 0}), 200
 
+''' AJAX Method '''
 @osmanage.route('/group/profile', methods=['POST'])
 def postProfile():
-	
-	_form = request.form
-	_formDict = dict(request.form)
 
+	_formDict = dict(request.form)
 	gPolicyID = request.form['gPolicyID']
 
-	if gPolicyID == None or len(gPolicyID) <= 0:
+	if gPolicyID is None or len(gPolicyID) <= 0:
 		gPolicyID = str(uuid.uuid4())
 
 	groupID = request.form['groupID']
 
-	if groupID == None or len(groupID) <= 0:
-		return json.dumps({'error': 404}), 404   
+	if groupID is None or len(groupID) <= 0:
+		return json.dumps({'error': 404}), 404
 
 	profileID = request.form['profileID']
-	
+
 	addNew = False
 	qPolicy = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.gPolicyID == gPolicyID).first()
 	if not qPolicy:
 		addNew = True
 		qPolicy = MpOsProfilesGroupAssigned()
-
 
 	setattr(qPolicy, 'gPolicyID', gPolicyID)
 	setattr(qPolicy, 'profileID', profileID)
@@ -142,60 +262,71 @@ def postProfile():
 	setattr(qPolicy, 'enabled', request.form['enabled'])
 	if addNew:
 		db.session.add(qPolicy)
-    
 
-	qPolicyCriDel = MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == gPolicyID).delete()
+	MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == gPolicyID).delete()
 
 	for key in _formDict:
-	    if key.startswith('cri_'):
-	            cri = MpOsProfilesCriteria()
-	            setattr(cri, 'gPolicyID', gPolicyID)
-	            if key == 'cri_os_type':
-	                setattr(cri, 'type', 'OSType')
-	                setattr(cri, 'type_data', request.form[key])
-	                setattr(cri, 'type_order', 1)
-	                db.session.add(cri)
-	                continue
+		if key.startswith('cri_'):
+				cri = MpOsProfilesCriteria()
+				setattr(cri, 'gPolicyID', gPolicyID)
+				if key == 'cri_os_type':
+					setattr(cri, 'type', 'OSType')
+					setattr(cri, 'type_data', request.form[key])
+					setattr(cri, 'type_order', 1)
+					db.session.add(cri)
+					continue
 
-	            if key == 'cri_os_ver':
-	                setattr(cri, 'type', 'OSVersion')
-	                setattr(cri, 'type_data', request.form[key])
-	                setattr(cri, 'type_order', 2)
-	                db.session.add(cri)
-	                continue
+				if key == 'cri_os_ver':
+					setattr(cri, 'type', 'OSVersion')
+					setattr(cri, 'type_data', request.form[key])
+					setattr(cri, 'type_order', 2)
+					db.session.add(cri)
+					continue
 
-	            if key == 'cri_system_type':
-	                setattr(cri, 'type', 'SYSType')
-	                setattr(cri, 'type_data', request.form[key])
-	                setattr(cri, 'type_order', 3)
-	                db.session.add(cri)
-	                continue
+				if key == 'cri_system_type':
+					setattr(cri, 'type', 'SYSType')
+					setattr(cri, 'type_data', request.form[key])
+					setattr(cri, 'type_order', 3)
+					db.session.add(cri)
+					continue
 
-	            if key == 'cri_model_type':
-	                setattr(cri, 'type', 'ModelType')
-	                setattr(cri, 'type_data', request.form[key])
-	                setattr(cri, 'type_order', 4)
-	                db.session.add(cri)
-	                continue
+				if key == 'cri_model_type':
+					setattr(cri, 'type', 'ModelType')
+					setattr(cri, 'type_data', request.form[key])
+					setattr(cri, 'type_order', 4)
+					db.session.add(cri)
+					continue
 
-	    if key.startswith('rec_cri_type_'):
+		if key.startswith('req_cri_type_'):
 
-	    	formLst = key.split('_')
-	        nid = formLst[1]
-	        ntitle = formLst[0]
-	        norder = int(request.form['req_cri_order_'+str(nid)]) + 4
-	        formData = request.form['req_cri_data_'+str(nid)]
-	        formType = request.form['req_cri_type_'+str(nid)]
+			formLst = key.split('_')
+			nid = formLst[-1]
+			norder = int(request.form['req_cri_order_'+str(nid)])
+			if norder <= 4:
+				norder = norder + 4
 
-	        cri = MpOsProfilesCriteria()
-	        setattr(cri, 'gPolicyID', gPolicyID)
-	        setattr(cri, 'type', formType)
-	        setattr(cri, 'type_data', formData)
-	        setattr(cri, 'type_order', norder)
-	        db.session.add(cri)
+			formData = request.form['req_cri_data_'+str(nid)]
+			formType = request.form['req_cri_type_'+str(nid)]
+
+			cri = MpOsProfilesCriteria()
+			setattr(cri, 'gPolicyID', gPolicyID)
+			setattr(cri, 'type', formType)
+			setattr(cri, 'type_data', formData)
+			setattr(cri, 'type_order', norder)
+			db.session.add(cri)
 
 	db.session.commit()
 
+	return json.dumps({'error': 0}), 200
 
-	return json.dumps({'error': 0}), 200   
-	
+'''
+	-------------------------------------------
+	Global
+	-------------------------------------------
+'''
+def escapeStringForACEEditor(data_string):
+	result = ""
+	result = data_string.replace('`','\`')
+	result = result.replace('${','\${')
+	result = result.replace('}','\}')
+	return result

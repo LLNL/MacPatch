@@ -1,35 +1,45 @@
 from flask import render_template, session, request, current_app
+from flask.ext.security import login_required
 from sqlalchemy import text
-from datetime import datetime, timedelta
+from datetime import datetime
 import json
 import uuid
 import os
 import os.path
-import operator
-from collections import OrderedDict
+from operator import itemgetter
 
 from . import clients
 from .. import login_manager
 from .. model import *
 from .. import db
+
+'''
+----------------------------------------------------------------
+'''
 @clients.route('/clients')
+@login_required
 def clientsList():
 	cList = MpClient.query.all()
 	cListCols = MpClient.__table__.columns.keys()
 	cListColNames = [{'name':'rid','label':'rid'}, {'name':'cuuid', 'label':'CUUID'},
-					 {'name':'hostname','label':'Host Name'},{'name':'computername','label':'Computer Name'},
-					 {'name':'ipaddr','label':'IP Address'}, {'name':'macaddr','label':'MAC Address'},
-					 {'name': 'serialNo', 'label': 'Serial No'}, {'name':'osver','label':'OS Ver'},
-					 {'name':'ostype','label':'OS Type'}, {'name':'consoleUser','label':'Console User'},
-					 {'name':'needsreboot','label':'Needs Reboot'}, {'name':'agent_version','label':'Agent Ver'},
-					 {'name':'client_version','label':'Client Ver'}, {'name':'mdate','label':'Mod Date'},
-					 {'name':'cdate','label':'CDate'}]
-	#cListCols = cList.keys()
-	#print cListColNames
+					{'name':'hostname','label':'Host Name'},{'name':'computername','label':'Computer Name'},
+					{'name':'ipaddr','label':'IP Address'}, {'name':'macaddr','label':'MAC Address'},
+					{'name': 'serialNo', 'label': 'Serial No'}, {'name':'osver','label':'OS Ver'},
+					{'name':'ostype','label':'OS Type'}, {'name':'consoleUser','label':'Console User'},
+					{'name':'needsreboot','label':'Needs Reboot'}, {'name':'agent_version','label':'Agent Ver'},
+					{'name':'client_version','label':'Client Ver'}, {'name':'mdate','label':'Mod Date'},
+					{'name':'cdate','label':'CDate'}]
+	# cListCols = cList.keys()
+	# print cListColNames
 	return render_template('clients.html', cData=cList, columns=cListCols, colNames=cListColNames)
 
-''' Client '''
+'''
+----------------------------------------------------------------
+	Client
+----------------------------------------------------------------
+'''
 @clients.route('/dashboard/<client_id>')
+@login_required
 def clientsInfo(client_id):
 	qGet = MpClient.query.filter(MpClient.cuuid == client_id).first()
 	rCols = [('patch', 'Patch'),('description', 'Description'),('restart', 'Reboot'),('mdate',' Days Needed')]
@@ -91,6 +101,30 @@ def clientRequiredPatches(client_id):
 
 	return json.dumps({'data':_results, 'columns': _columns}), 200
 
+@clients.route('/dashboard/installed/<client_id>')
+def clientInstalledPatches(client_id):
+
+	columns = [('patch_name', 'Patch'),('type', 'Type'),('mdate', 'Installed On')]
+	query = MpInstalledPatch.query.filter(MpInstalledPatch.cuuid == client_id).order_by(MpInstalledPatch.mdate.desc()).limit(10)
+
+	_results = []
+	for p in query:
+		row = {}
+		for c, t in columns:
+			y = "p."+c
+			row[c] = eval(y)
+		_results.append(row)
+
+	_columns = []
+	for c, t in columns:
+		row = {}
+		row['field'] = c
+		row['title'] = t
+		row['sortable'] = 'true'
+		_columns.append(row)
+
+	return json.dumps({'data':_results, 'columns': _columns}, default=json_serial), 200
+
 @clients.route('/dashboard/inventory/<client_id>/<inv_id>')
 def clientInventoryReport(client_id, inv_id):
 
@@ -133,8 +167,13 @@ def daysFromDate(now, date):
 	x = now - date
 	return x.days
 
-''' Groups '''
+'''
+********************************
+	Groups
+********************************
+'''
 @clients.route('/groups')
+@login_required
 def clientGroups():
 	groups = MpClientGroups.query.all()
 	cols = MpClientGroups.__table__.columns
@@ -164,13 +203,15 @@ def clientGroups():
 
 		_results.append(_row)
 
-	print _data
-	print _results
+	# print _data
+	# print _results
+	_rights = list(accessToGroups())
 
 	''' Return Data '''
-	return render_template('client_groups.html', data=_data, columns=cols, counts=_results, rights=list(accessToGroups()))
+	return render_template('client_groups.html', data=_data, columns=cols, counts=_results, rights=_rights)
 
 @clients.route('/group/add')
+@login_required
 def clientGroupAdd():
 	''' Returns an empty set of data to add a new record '''
 	usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()
@@ -183,6 +224,7 @@ def clientGroupAdd():
 	return render_template('update_client_group.html', data=clientGroup, type="add")
 
 @clients.route('/group/<id>/user/add',methods=['GET'])
+@login_required
 def clientGroupUserAdd(id):
 	return render_template('client_group_user_mod.html', data={'group_id':id}, type="add")
 
@@ -200,6 +242,7 @@ def clientGroupUserRemove(id, user_id):
 	return json.dumps({'error': 0}), 200
 
 @clients.route('/group/user/modify',methods=['POST'])
+@login_required
 def clientGroupUserModify():
 	id = request.form.get('group_id')
 	uid = request.form.get('user_id')
@@ -214,9 +257,10 @@ def clientGroupUserModify():
 		db.session.add(adm)
 
 	db.session.commit()
-	return clientGroup(id,4)
+	return clientGroup(id,5)
 
 @clients.route('/group/update',methods=['POST'])
+@login_required
 def patchGroupUpdate():
 
 	_add = False
@@ -259,6 +303,7 @@ def patchGroupUpdate():
 	return clientGroups()
 
 @clients.route('/group/<name>')
+@login_required
 def clientGroup(name,tab=1):
 	q_defaultGroup = MpClientGroups.query.filter(MpClientGroups.group_id == name, MpClientGroups.group_name == 'Default').first()
 	canEditGroup = False
@@ -290,6 +335,7 @@ def clientGroup(name,tab=1):
 
 	_owner = MpClientGroups.query.filter(MpClientGroups.group_id == name).first()
 	_admins.append({'user_id':_owner.group_owner,'owner': 'True'})
+	_admins = sorted(_admins, key=itemgetter('owner'), reverse=True)
 
 	# Run Query of all clients that contain the Client ID
 	sql = text("""select * From mp_clients;""")
@@ -309,33 +355,39 @@ def clientGroup(name,tab=1):
 
 			_results.append(_row)
 
-	# Get Client Tasks
-	_jData = None
-	_qTasks = MpClientTasks.query.filter(MpClientTasks.group_id == name).all()
+	# Client Tasks Columns
 	_qTasksCols = MpClientTasks.__table__.columns
-	if not _qTasks:
-		default_tasks = os.path.join(current_app.config['BASEDIR'], 'static/json', 'default_tasks.json')
-		fileISOk = os.path.exists(default_tasks)
-		if fileISOk:
-			with open(default_tasks) as data_file:
-				_jData = json.load(data_file)
 
+	# Data in one dict
 	groupResult['Clients'] = {'data': _results, 'columns': sortedCols}
 	groupResult['Group'] = {'name': _qcg.group_name, 'id':name}
-	groupResult['Tasks'] = {'data': _jData['mpTasks'], 'columns': _qTasksCols}
-	groupResult['Software'] = {'catalogs':softwareCatalogs()}
-	groupResult['Patches'] = {'groups': patchGroups()}
+	groupResult['Software'] = {'catalogs':softwareCatalogs()}  # Used to populate UI for setting
+	groupResult['Patches'] = {'groups': patchGroups()}  # Used to populate UI for setting
 	groupResult['Users'] = {'users': _admins, 'columns': [('user_id','User ID'),('owner','Owner')]}
 	groupResult['Admin'] = isAdminForGroup(name)
 	groupResult['Owner'] = isOwnerOfGroup(name)
 
+	# Group Settings
+	_settings = getGroupSettings(name)
+	print _settings
 	profileCols = [('profileID', 'Profile ID', '0'), ('gPolicyID', 'Policy Identifier', '0'), ('pName', 'Profile Name', '1'), ('title', 'Title', '1'),
 					('description', 'Description', '1'), ('enabled', 'Enabled', '1')]
-
+	'''
 	return render_template('client_group.html', data=_results, columns=sortedCols, group_name=_qcg.group_name, group_id=name,
 						tasks=_jData['mpTasks'], tasksCols=_qTasksCols, gResults=groupResult, selectedTab=tab,
 						profileCols=profileCols, readOnly=canEditGroup)
+	'''
+	return render_template('client_group.html', data=_results, columns=sortedCols, group_name=_qcg.group_name, group_id=name,
+						tasksCols=_qTasksCols, gResults=groupResult, selectedTab=tab,
+						profileCols=profileCols, readOnly=canEditGroup, settings=_settings)
 
+'''
+********************************
+	Groups - > Clients
+********************************
+'''
+# Not working yet, will add in future, right now clients
+# list is gathered durning clientGroup request
 @clients.route('/group/<name>/clients')
 def clientGroupClients(name):
 
@@ -365,11 +417,10 @@ def clientGroupClients(name):
 
 	return jResult, 200
 
-''' Clients '''
+# Remove/Delete Client
 @clients.route('/group/<id>/remove/clients',methods=['POST'])
 def clientGroupClientsRemove(id):
 
-	print id
 	print request.form['clients']
 	for x in request.form['clients'].split(","):
 		print x
@@ -388,9 +439,9 @@ def clientGroupClientsRemove(id):
 
 # Move a client to a new group
 @clients.route('/move/client',methods=['POST'])
+@login_required
 def clientMove():
 
-	_cuuid      = request.form['cuuid']
 	_cuuids     = request.form['cuuids'].split(',')
 	_o_group_id = request.form['orig_group_id']
 	_group_id   = request.form['group_id']
@@ -404,15 +455,20 @@ def clientMove():
 
 # Move a client to a new group
 @clients.route('/show/move/client/<id>')
+@login_required
 def showClientMove(id):
 
 	cGroups = MpClientGroups().query.all()
 	# curGroup = MpClientGroupMembers().query.filter(MpClientGroupMembers.cuuid == id).first()
 
-	return render_template('move_client_to_group.html', groups=cGroups, curGroup=0, cuuid=0)
 	# return render_template('move_client_to_group.html', groups=cGroups, curGroup=curGroup.group_id, cuuid=id )
+	return render_template('move_client_to_group.html', groups=cGroups, curGroup=0, cuuid=0)
 
-# Settings
+'''
+********************************
+	Groups - > Settings
+********************************
+'''
 @clients.route('/group/<id>/settings',methods=['POST'])
 def groupSettings(id):
 	_form = request.form
@@ -448,46 +504,15 @@ def groupSettings(id):
 	db.session.commit()
 	return json.dumps({'error': 0}), 200
 
+def getGroupSettings(id):
+	mpc = MpClientSettings().query.filter(MpClientSettings.group_id == id).all()
+	result = {}
+	if mpc is not None:
+		for s in mpc:
+			result[s.key] = s.value
 
-# Tasks
-@clients.route('/group/<id>/task/active',methods=['POST'])
-def taskState(id):
-	suname = request.form.get('pk')
-	state = request.form.get('value')
-	print id
-	print request.form
+	return result
 
-	#patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == suname).first()
-	#setattr(patchAdds, 'patch_state', state)
-	#db.session.commit()
-	return clientGroup(id)
-
-@clients.route('/group/<id>/task/interval',methods=['POST'])
-def taskInterval(id):
-	suname = request.form.get('pk')
-	state = request.form.get('value')
-	print id
-	print request.form
-
-	#patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == suname).first()
-	#setattr(patchAdds, 'patch_state', state)
-	#db.session.commit()
-	return clientGroup(id)
-
-@clients.route('/group/<id>/task/<datetype>',methods=['POST'])
-def taskDate(id, datetype):
-	suname = request.form.get('pk')
-	state = request.form.get('value')
-	print id
-	print datetype
-	print request.form
-
-	#patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == suname).first()
-	#setattr(patchAdds, 'patch_state', state)
-	#db.session.commit()
-	return clientGroup(id)
-
-''' Client Group Methods '''
 def patchGroups():
 	_qget = MpPatchGroup.query.with_entities(MpPatchGroup.id, MpPatchGroup.name).all()
 	_results = []
@@ -504,8 +529,118 @@ def softwareCatalogs():
 
 	return _results
 
+'''
+********************************
+	Groups - > Tasks
+********************************
+'''
+@clients.route('/group/<group_id>/tasks', methods=['GET'])
+@login_required
+def groupTasks(group_id):
 
-''' Global '''
+	# Get Tasks from default_tasks.json file, then query db to see if client group
+	# is using the correct version of the default tasks. If not, we will
+	# add the missing tasks to the group.
+	# TODO: Add method to mpconsole.py to upgrade all groups so that admins
+	# dont have to click on the tasks tab to refresh
+
+	add_tasks=False
+	file_tasks = defaultTasks()
+	grp_conf = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
+	if "version" in file_tasks:
+		if grp_conf is not None:
+			if grp_conf.tasks_version != file_tasks['version']:
+				add_tasks = True
+		else:
+			add_tasks = True
+
+	if add_tasks:
+		# Add Missing Tasks
+		print "Add Tasks"
+		addMissingTasks(group_id, file_tasks['mpTasks'], file_tasks['version'])
+
+	tasks = MpClientTasks.query.filter(MpClientTasks.group_id == group_id).all()
+	_results = []
+	if tasks is not None and len(tasks) >= 1:
+		for t in tasks:
+			_row = t.__dict__.copy()
+			del _row['_sa_instance_state']
+			_results.append(_row)
+
+	return json.dumps({'data': _results, 'total': len(_results)}), 200
+
+# Private Method to Add Missing tasks, used by groupTasks
+#
+# TODO, need to remove tasks if removed from default_tasks
+#
+def addMissingTasks(group_id, fileTasks, new_task_version):
+
+	# List of Current commands in db
+	_cmds = []
+	tasks = MpClientTasks.query.filter(MpClientTasks.group_id == group_id).all()
+	if tasks is not None and len(tasks) >= 1:
+		for t in tasks:
+			_row = t.__dict__.copy()
+			_cmds.append(_row['cmd'])
+
+	# Loop over default tasks, if cmd is not found then add it
+	for task in fileTasks:
+		if task['cmd'] not in _cmds:
+			_task = MpClientTasks()
+			setattr(_task, 'group_id', group_id)
+			for key in task.keys():
+				setattr(_task, key, task[key])
+
+			db.session.add(_task)
+			db.session.commit()
+
+	# Update Tasks Version to new version
+	grp_conf = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
+	if grp_conf is not None:
+		rev_tasks = grp_conf.rev_tasks + 1
+		setattr(grp_conf, "tasks_version", new_task_version)
+		setattr(grp_conf, "rev_tasks", rev_tasks)
+		db.session.commit()
+
+def revGroupTasks(group_id):
+	grp_conf = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
+	if grp_conf is not None:
+		rev_tasks = grp_conf.rev_tasks + 1
+		setattr(grp_conf, "rev_tasks", rev_tasks)
+		db.session.commit()
+
+# Tasks inline updates
+@clients.route('/group/<id>/task/active',methods=['POST'])
+def taskState(id):
+	key = request.form.get('pk')
+	value = request.form.get('value')
+
+	task = MpClientTasks.query.filter(MpClientTasks.group_id == id, MpClientTasks.cmd == key).first()
+	if task is not None:
+		setattr(task, 'active', value)
+		db.session.commit()
+		revGroupTasks(id)
+
+	return clientGroup(id)
+
+@clients.route('/group/<id>/task/interval',methods=['POST'])
+def taskInterval(id):
+	cmd = request.form.get('pk')
+	interval = request.form.get('value')
+
+	task = MpClientTasks.query.filter(MpClientTasks.group_id == id, MpClientTasks.cmd == cmd).first()
+	if task is not None:
+		setattr(task, 'interval', interval)
+		db.session.commit()
+		revGroupTasks(id)
+
+	return clientGroup(id)
+
+'''
+********************************
+	Global
+********************************
+'''
 def getDoc(col_obj):
 	return col_obj.doc
 
@@ -598,3 +733,22 @@ def inventoryTypes():
 			('PatchStatus','Patch Status'),
 			('PatchHistory','Patch History')}
 	'''
+
+def defaultTasks():
+
+	_jData = []
+	tasks = os.path.join(current_app.config['BASEDIR'], 'static/json', 'default_tasks.json')
+	fileISOk = os.path.exists(tasks)
+	if fileISOk:
+		with open(tasks) as data_file:
+			_jData = json.load(data_file)
+
+	return _jData
+
+def json_serial(obj):
+	"""JSON serializer for objects not serializable by default json code"""
+
+	if isinstance(obj, datetime):
+		serial = obj.isoformat()
+		return serial
+	raise TypeError("Type not serializable")

@@ -28,14 +28,12 @@ Client Group - {{group_name}}
 	</ul>
 	<div class="tab-content">
 		<div class="tab-pane fade {% if selectedTab == 1 %}in active{% endif %}" id="clients">
-
-
-				<table id="table" class="table table-condensed" data-row-style="rowStyle" data-toolbar="#toolbar">
+			<table id="table" class="table table-condensed" data-row-style="rowStyle" data-toolbar="#toolbar">
 				<div id="toolbar">
 					{% if gResults['Owner'] == True or gResults['Admin'] == True %}
 					<button id="delClientButton" type="button" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i></button>
 					{% endif %}
-					<button id="mvClientButton" type="button" class="btn btn-default" title="Assign To Group"><i class="fa fa-share-square-o fa-lg"></i></button>
+					<button id="mvClientButton" type="button" class="btn btn-default" title="Assign To Group"><i class="glyphicon glyphicon-share"></i></button>
 				</div>
 			</table>
 			<div class="row">
@@ -74,7 +72,7 @@ Client Group - {{group_name}}
 							<div class="col-md-3">
 								<select class="form-control" name="patch_group">
 									{% for pg in gResults['Patches']['groups'] %}
-									<option value="{{pg[0]}}">{{pg[1]}}</option>
+									<option value="{{pg[0]}}" {% if pg[0] == settings.patch_group %}selected{% endif %}>{{pg[1]}}</option>
 									{% endfor %}
 								</select>
 							</div>
@@ -86,7 +84,7 @@ Client Group - {{group_name}}
 							<div class="col-md-3">
 								<select class="form-control" name="software_group">
 									{% for swc in gResults['Software']['catalogs'] %}
-									<option value="{{swc[0]}}">{{swc[1]}}</option>
+									<option value="{{swc[0]}}" {% if swc[0] == settings.software_group %}selected{% endif %}>{{swc[1]}}</option>
 									{% endfor %}
 								</select>
 							</div>
@@ -99,7 +97,7 @@ Client Group - {{group_name}}
 								<select class="form-control" name="inherited_software_group">
 									<option value="None">None</option>
 									{% for swc in gResults['Software']['catalogs'] %}
-									<option value="{{swc[0]}}">{{swc[1]}}</option>
+									<option value="{{swc[0]}}" {% if swc[0] == settings.inherited_software_group %}selected{% endif %}>{{swc[1]}}</option>
 									{% endfor %}
 								</select>
 							</div>
@@ -110,8 +108,8 @@ Client Group - {{group_name}}
 							</div>
 							<div class="col-md-3">
 								<select class="form-control" name="allow_client">
-									<option value="1" selected>Yes</option>
-									<option value="0">No</option>
+									<option value="1" {% if "1" == settings.allow_client %}selected{% endif %}>Yes</option>
+									<option value="0" {% if "0" == settings.allow_client %}selected{% endif %}>No</option>
 								</select>
 							</div>
 						</div>
@@ -121,8 +119,8 @@ Client Group - {{group_name}}
 							</div>
 							<div class="col-md-3">
 								<select class="form-control" name="allow_server">
-									<option value="1" selected>Yes</option>
-									<option value="0">No</option>
+									<option value="1" {% if "1" == settings.allow_server %}selected{% endif %}>Yes</option>
+									<option value="0" {% if "0" == settings.allow_server %}selected{% endif %}>No</option>
 								</select>
 							</div>
 							<div class="col-md-4">
@@ -135,8 +133,8 @@ Client Group - {{group_name}}
 							</div>
 							<div class="col-md-3">
 								<select class="form-control" name="allow_reboot">
-									<option value="1" selected>Yes</option>
-									<option value="0">No</option>
+									<option value="1" {% if "1" == settings.allow_reboot %}selected{% endif %}>Yes</option>
+									<option value="0" {% if "0" == settings.allow_reboot %}selected{% endif %}>No</option>
 								</select>
 							</div>
 							<div class="col-md-4">
@@ -149,8 +147,20 @@ Client Group - {{group_name}}
 							</div>
 							<div class="col-md-3">
 								<select class="form-control" name="verify_signatures">
-									<option value="1" selected>Yes</option>
-									<option value="0">No</option>
+									<option value="1" {% if "1" == settings.verify_signatures %}selected{% endif %}>Yes</option>
+									<option value="0" {% if "0" == settings.verify_signatures %}selected{% endif %}>No</option>
+								</select>
+							</div>
+						</div>
+						<div class="row row-grid top10">
+							<div class="col-md-4">
+								<label>Patch State Patching</label>
+							</div>
+							<div class="col-md-3">
+								<select class="form-control" name="patch_state">
+									<option value="Production" {% if "Production" == settings.patch_state %}selected{% endif %}>Production</option>
+									<option value="QA" {% if "QA" == settings.patch_state %}selected{% endif %}>QA</option>
+									<option value="All" {% if "All" == settings.patch_state %}selected{% endif %}>Production &amp; QA</option>
 								</select>
 							</div>
 						</div>
@@ -201,6 +211,8 @@ Client Group - {{group_name}}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
 -->
 	<script>
+	var $tasksTable = $('#tableTasks'), $ttRbutton = $('#ttRefreshbutton');
+
 	$( document ).ready(function()
 	{
 		$('#table').bootstrapTable(
@@ -243,6 +255,9 @@ Client Group - {{group_name}}
 				title: '{{col.info}}',
 				{% if col.name == 'rid' or col.name == 'cuuid' or col.name == 'cdate' or col.name == 'ostype' %}
 				visible: false,
+				{% elif col.name == 'needsreboot' %}
+				align: 'center',
+				formatter: rebootFormatter,
 				{% endif %}
 				sortable: true
 			},
@@ -265,8 +280,8 @@ Client Group - {{group_name}}
 			]
 		});
 
-		$('#tableTasks').bootstrapTable({
-
+		$('#tableTasksOld').bootstrapTable(
+		{
 			striped: true,
 			pagination: true,
 			sidePagination: 'client',
@@ -335,8 +350,61 @@ Client Group - {{group_name}}
 			]
 		});
 
-		$('#tableUsers').bootstrapTable({
+		$tasksTable.bootstrapTable(
+		{
+			striped: true,
+			url: "/clients/group/{{group_id}}/tasks",
+			search: true,
+			pageSize: 20,
+			pageList: [5, 10, 20, 50, 100, 200],
+			pagination: true,
+			queryParamsType: "limit",
+			pagination: true,
+			sidePagination: "client",
+			showRefresh: true,
+			idField: 'cmd',
+			columns: [
+				{% for tcol in tasksCols %}
+					{
+						field: '{{tcol.name}}',
+						title: '{{tcol.info}}',
+						{% if tcol.name == 'id' or tcol.name == 'idrev' or tcol.name == 'parent' or tcol.name == 'cmdalt'
+						 or tcol.name == 'mode' or tcol.name == 'idsig' or tcol.name == 'group_id' or tcol.name == 'rid'
+						 or tcol.name == 'scope' or tcol.name == 'startdate' or tcol.name == 'enddate'%}
+						visible: false,
+						{% endif %}
+						{% if tcol.name == 'active' %}
+						editable: {
+							type: 'select',
+							url: '/clients/group/{{gResults['Group']['id']}}/task/active',
+							source: [
+								{value: '0', text: 'False'},
+								{value: '1', text: 'True'},
+							]
+						},
+						{% endif %}
+						{% if tcol.name ==  'interval' %}
+						editable: {
+							type: 'text',
+							url: '/clients/group/{{gResults['Group']['id']}}/task/interval'
+						},
+						{% endif %}
+						{% if tcol.name ==  'startdate' or tcol.name ==  'enddate' %}
+						editable: {
+							type: 'date',
+							format: 'yyyy-mm-dd',
+							viewformat: 'yyyy-mm-dd',
+							url: '/clients/group/{{gResults['Group']['id']}}/task/{{tcol.name}}'
+						},
+						{% endif %}
+						sortable: true
+					},
+				{% endfor %}
+			]
+		});
 
+		$('#tableUsers').bootstrapTable(
+		{
 			striped: true,
 			pagination: true,
 			sidePagination: 'client',
@@ -380,7 +448,8 @@ Client Group - {{group_name}}
 			]
 		});
 
-		$('#tableProfiles').bootstrapTable({
+		$('#tableProfiles').bootstrapTable(
+		{
 			striped: true,
 			ajax: function loadMyRows(params)
 			{
@@ -441,8 +510,6 @@ Client Group - {{group_name}}
 			]
 		});
 
-
-
 	});
 
 	/*  Format Rows in Clients Table
@@ -472,11 +539,32 @@ Client Group - {{group_name}}
 		].join('');
 	}
 
+	function rebootFormatter(value, row, index)
+	{
+		if (value == 'true') {
+			return [
+				'<div class="operateWidth-md">',
+				'<img src="{{ url_for("static", filename="images/Reboot_32.png") }}" title="Reboot Required" height="22" width="22">',
+				'</div>'
+			].join('');
+		} else {
+			return [
+				'<div class="operateWidth-md">',
+				'<img src="{{ url_for("static", filename="images/empty.png") }}" height="22" width="22">',
+				'</div>'
+			].join('');
+		}
+
+	}
+
 	/* Events for client table */
-	window.operateEvents = {
+	window.operateEvents =
+	{
 		'click .assign': function (e, value, row, index)
 		{
-			$.get( "/clients/show/move/client/" + row['cuuid']).done(function(data) {
+			$.get( "/clients/show/move/client/" + row['cuuid']).done(function(data)
+			{
+				$('#myContent').remove();
 				$('#modalTitle').html('Move Client To Group');
 				$('#modalBody').html(data);
 				$('#modalBody').css({'height':'200px'});
@@ -502,7 +590,8 @@ Client Group - {{group_name}}
 		},
 	};
 
-	function operateFormatterUsers(value, row, index) {
+	function operateFormatterUsers(value, row, index)
+	{
 		{% if gResults['Owner'] == True %}
 		return [
 			'<div><a class="remove" href="javascript:void(0)" title="Remove User from Group">',
@@ -530,7 +619,8 @@ Client Group - {{group_name}}
 		return htmlData.join('');
 	}
 
-	window.operateEventsUsers = {
+	window.operateEventsUsers =
+	{
 		'click .remove': function (e, value, row, index)
 		{
 			var _url = "/clients/group/{{gResults['Group']['id']}}/" + row['user_id'] + "/remove";
@@ -551,16 +641,18 @@ Client Group - {{group_name}}
 
 	var $profilesTable = $('#tableProfiles');
 
-	window.operateEventsProfiles = {
+	window.operateEventsProfiles =
+	{
 		'click .editProfile': function (e, value, row, index)
 		{
 			$.get( "/osmanage/profile/group/{{gResults['Group']['id']}}/edit/" + row['gPolicyID']).done(function(data)
 			{
+				$('#myContent').remove();
 				$('#modalTitle').html('Edit Profile');
 				$('#modalSaveButton').remove();
-				$('#modalCancelButton').html('Close');
+				$('#modalCancelButton').remove();
 				$('#modalBody').html(data);
-				$('#modalBody').css({'height':'88vh'});
+				$('#modalBody').css({'height':'60vh'});
 				$('#modalDialog').addClass("modal-wide");
 				$('#modalDialog').modal('show');
 
@@ -594,10 +686,9 @@ Client Group - {{group_name}}
 	};
 
 	function refreshProfilesTable()
-		{
-			console.log("Damn");
-
-		}
+	{
+		console.log("Damn");
+	}
 
 	var $table = $('#tableUsers'), $addButton = $('#addButton'),
 	$_settingsSaveButton = $('#settingsSaveButton'), $_delClientButton = $('#delClientButton'),
@@ -606,7 +697,9 @@ Client Group - {{group_name}}
 	$(function () {
 		$addButton.click(function ()
 		{
-			$.get( "/clients/group/{{gResults['Group']['id']}}/user/add").done(function(data) {
+			$.get( "/clients/group/{{gResults['Group']['id']}}/user/add").done(function(data)
+			{
+				$('#myContent').remove();
 				$('#modalTitle').html('Add Admin User To Group');
 				$('#modalBody').html(data);
 				$('#modalBody').css({'height':'200px'});
@@ -620,6 +713,7 @@ Client Group - {{group_name}}
 		{
 			$.get( "/osmanage/profile/group/{{gResults['Group']['id']}}/add").done(function(data)
 			{
+				$('#myContent').remove();
 				$('#modalTitle').html('Add Profile to Group');
 				$('#modalSaveButton').remove();
 				$('#modalCancelButton').html('Close');
@@ -672,7 +766,9 @@ Client Group - {{group_name}}
 			}
 
 			console.log(rowsArr);
-			$.get( "/clients/show/move/client/0").done(function(data) {
+			$.get( "/clients/show/move/client/0").done(function(data)
+			{
+				$('#myContent').remove();
 				$('#modalTitle').html('Move Client(s) To Group');
 				$('#modalBody').html(data);
 				$('#modalBody #cuuids').val(rowsArr.toString());
@@ -725,6 +821,14 @@ Client Group - {{group_name}}
 			*/
 		});
 	});
+
+	var $_tableTasks = $('#tableTasks');
+	$(function () {
+		$_tableTasks.bootstrapTable('refresh', {
+			query: {pageSize: 2}
+		});
+	});
+
 
 	</script>
 {% endblock %}
