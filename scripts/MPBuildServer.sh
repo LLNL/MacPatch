@@ -14,24 +14,25 @@
 # History:
 # 1.4:    Remove Jetty Support
 #     Added Tomcat 7.0.57
-# 1.5:    Added Tomcat 7.0.63
-# 1.6:    Variableized the tomcat config
-#     removed all Jetty refs
-# 1.6.1:  Now using InstallPyMods.sh script to install python modules
-# 1.6.2:  Fix cp paths
-# 1.6.3:  Updated OpenJDK to 1.8.0
-# 1.6.4:  Updated to install Ubuntu packages
-# 1.6.5:  More ubuntu updates
-# 2.0.0:  Apache HTTPD removed
-#     Single Tomcat Instance, supports webservices and console
-# 2.0.1:  Updated java version check
-# 2.0.2:  Updated linux package requirements
-# 2.0.3:  Added Mac PKG support
-# 2.0.4:  Added compile for Mac MPServerAdmin.app
-#     Removed create archive (aka zip)
+# 1.5:    	Added Tomcat 7.0.63
+# 1.6:    	Variableized the tomcat config
+#     		removed all Jetty refs
+# 1.6.1:  	Now using InstallPyMods.sh script to install python modules
+# 1.6.2:  	Fix cp paths
+# 1.6.3:  	Updated OpenJDK to 1.8.0
+# 1.6.4:  	Updated to install Ubuntu packages
+# 1.6.5:  	More ubuntu updates
+# 2.0.0:  	Apache HTTPD removed
+#     		Single Tomcat Instance, supports webservices and console
+# 2.0.1:  	Updated java version check
+# 2.0.2:  	Updated linux package requirements
+# 2.0.3:  	Added Mac PKG support
+# 2.0.4:  	Added compile for Mac MPServerAdmin.app
+#     		Removed create archive (aka zip)
 # 2.0.5     Disabled the MPServerAdmin app build, having issue
-#     with the launch services.
+#     		with the launch services.
 # 3.0.0     Rewritten for new Python Env
+# 3.1.0     Updates to remove tomcat and use new console
 #
 #
 # ----------------------------------------------------------------------------
@@ -85,12 +86,19 @@ MPSERVERBASE="/opt/MacPatch/Server"
 BUILDROOT="${MPBASE}/.build/server"
 TMP_DIR="${MPBASE}/.build/tmp"
 SRC_DIR="${MPSERVERBASE}/conf/src/server"
-TOMCAT_SW="NA"
 OWNERGRP="79:70"
+
+if [ -d "/opt/MacPatch" ]; then
+	rm -rf /opt/MacPatch
+fi
+
+sleep 5
+
+cp -rp /opt/MacPatch.pre /opt/MacPatch
 
 # PKG Variables
 MP_MAC_PKG=false
-MP_SERVER_PKG_VER="1.4.0.0"
+MP_SERVER_PKG_VER="1.5.0.0"
 CODESIGNIDENTITY="*"
 CODESIGNIDENTITYPLIST="/Library/Preferences/mp.build.server.plist"
 
@@ -160,14 +168,6 @@ done
 clear
 
 if $USEMACOS; then
-  if JHOME="$(/usr/libexec/java_home -v 2>/dev/null)"; then
-	  # Do this if you want to export JAVA_HOME
-	  echo "Java JDK is installed"
-  else
-	  echo "Did not find any version of the Java JDK installed."
-	  echo "Please install the Java JDK 1.8"
-	  exit 1
-  fi
 
   if $MACPROMPTFORXCODE; then
 	clear
@@ -187,6 +187,7 @@ if $USEMACOS; then
 	  exit 1
 	fi
   fi
+
 fi
 
 # ----------------------------------------------------------------------------
@@ -291,12 +292,10 @@ if $USEMACOS; then
   echo
   echo "* Uncompress source files needed for build"
   echo "-----------------------------------------------------------------------"
-  #cp -R ${GITROOT}/MacPatch\ Server/Server ${MPBASE}
 
   # Copy Agent Uploader
   cp ${MPSERVERBASE}/conf/Content/Web/tools/MPAgentUploader.zip ${MPBASE}/Content/Web/tools/
 
-  #HTTP_SW=`find "${SRC_DIR}" -name "nginx"* -type f -exec basename {} \; | head -n 1`
   PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
   OSSL_SW=`find "${SRC_DIR}" -name "openssl-"* -type f -exec basename {} \; | head -n 1`
 
@@ -304,10 +303,6 @@ if $USEMACOS; then
   echo " - Uncompress ${PCRE_SW}"
   mkdir -p ${TMP_DIR}/pcre
   tar xfz ${SRC_DIR}/${PCRE_SW} --strip 1 -C ${TMP_DIR}/pcre
-
-  # NGINX Done else where in script
-  #mkdir ${TMP_DIR}/nginx
-  #tar xfz ${SRC_DIR}/${HTTP_SW} --strip 1 -C ${TMP_DIR}/nginx
 
   # OpenSSL
   echo " - Uncompress ${OSSL_SW}"
@@ -324,8 +319,7 @@ if $USELINUX; then
   echo "-----------------------------------------------------------------------"
   if $USERHEL; then
 	# Check if needed packges are installed or install
-	# "mysql-connector-python"
-	pkgs=("gcc" "gcc-c++" "java-1.8.0-openjdk" "java-1.8.0-openjdk-devel" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release" "python-devel" "python-setuptools" "python-wheel" "python-pip" "swig")
+	pkgs=("gcc" "gcc-c++" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release" "python-devel" "python-setuptools" "python-wheel" "python-pip" "swig")
 
 	for i in "${pkgs[@]}"
 	do
@@ -338,7 +332,7 @@ if $USELINUX; then
 
   elif $USEUBUNTU; then
 	#statements
-	pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev" "openjdk-8-jdk" "openjdk-8-jdk-headless" "python-dev" "python-pip" "swig")
+	pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev" "python-dev" "python-pip" "swig")
 	for i in "${pkgs[@]}"
 	do
 	  p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
@@ -377,7 +371,7 @@ do
 		echo " - Trying ${p}, python module again."
 		pip install --egg --quiet --upgrade ${p}
 		if [ $? != 0 ] ; then
-			echo " Error installing ${p}"
+	    echo " Error installing ${p}"
 		fi
 	fi
   else
@@ -412,21 +406,6 @@ do
 done
 
 sleep 1
-
-# ------------------
-# Setup Tomcat
-# ------------------
-echo
-echo "* Uncompress and setup Tomcat."
-echo "-----------------------------------------------------------------------"
-TOMCAT_SW=`find "${SRC_DIR}" -name "apache-tomcat-"* -type f -exec basename {} \; | head -n 1`
-echo " - Uncompress ${TOMCAT_SW}"
-mkdir -p "${MPSERVERBASE}/apache-tomcat"
-tar xfz ${SRC_DIR}/${TOMCAT_SW} --strip 1 -C ${MPSERVERBASE}/apache-tomcat
-chmod +x ${MPSERVERBASE}/apache-tomcat/bin/*
-rmF ${MPSERVERBASE}/apache-tomcat/webapps/docs
-rmF ${MPSERVERBASE}/apache-tomcat/webapps/examples
-rmF ${MPSERVERBASE}/apache-tomcat/webapps/ROOT
 
 # ------------------
 # Build NGINX
@@ -493,41 +472,6 @@ echo
 echo "* Configuring tomcat and console app"
 echo "-----------------------------------------------------------------------"
 
-mkdir -p "${MPSERVERBASE}/conf/app/war/site"
-mkdir -p "${MPSERVERBASE}/conf/app/.site"
-unzip -q "${MPSERVERBASE}/conf/src/server/openbd/openbd.war" -d "${MPSERVERBASE}/conf/app/.site"
-
-rm -rf "${MPSERVERBASE}/conf/app/.site/index.cfm"
-rm -rf "${MPSERVERBASE}/conf/app/.site/manual"
-cp -r "${MPSERVERBASE}"/conf/app/site/* "${MPSERVERBASE}"/conf/app/.site
-cp -r "${MPSERVERBASE}"/conf/app/mods/site/* "${MPSERVERBASE}"/conf/app/.site
-
-chmod -R 0775 "${MPSERVERBASE}/conf/app/.site"
-chown -R $OWNERGRP "${MPSERVERBASE}/conf/app/.site"
-
-echo " - Creating console.war file"
-jar cf "${MPSERVERBASE}/conf/app/war/site/console.war" -C "${MPSERVERBASE}/conf/app/.site" .
-
-# Tomcat Config
-MPTCCONF="${MPSERVERBASE}/conf/tomcat/server"
-MPTOMCAT="${MPSERVERBASE}/apache-tomcat"
-
-echo " - Copy console.war to ${MPTOMCAT}/webapps"
-cp "${MPSERVERBASE}/conf/app/war/site/console.war" "${MPTOMCAT}/webapps"
-cp "${MPTCCONF}/bin/setenv.sh" "${MPTOMCAT}/bin/setenv.sh"
-
-if $USEMACOS; then
-  cp "${MPTCCONF}/bin/launchdTomcat.sh" "${MPTOMCAT}/bin/launchdTomcat.sh"
-  cp -r "${MPTCCONF}/conf/server_mac.xml" "${MPTOMCAT}/conf/server.xml"
-elif $USELINUX; then
-  cp -r "${MPTCCONF}/conf/server_lnx.xml" "${MPTOMCAT}/conf/server.xml"
-fi
-
-cp -r "${MPTCCONF}/conf/Catalina" "${MPTOMCAT}/conf/"
-cp -r "${MPTCCONF}/conf/web.xml" "${MPTOMCAT}/conf/web.xml"
-chmod -R 0775 "${MPTOMCAT}"
-chown -R $OWNERGRP "${MPTOMCAT}"
-
 # Set Permissions
 if $USEMACOS; then
   chown -R $OWNERGRP ${MPSERVERBASE}/logs
@@ -544,7 +488,7 @@ echo
 echo "* Creating self signed SSL certificate"
 echo "-----------------------------------------------------------------------"
 
-certsDir="${MPSERVERBASE}/etc/apacheCerts"
+certsDir="${MPSERVERBASE}/etc/ssl"
 if [ ! -d "${certsDir}" ]; then
   mkdirP "${certsDir}"
 fi
@@ -621,7 +565,6 @@ if $USEMACOS; then
   chmod -R 0775 "${MPSERVERBASE}/etc"
   chmod -R 0775 "${MPSERVERBASE}/InvData"
   chown -R $OWNERGRP "${MPSERVERBASE}/apps/env"
-  #/Library/MacPatch/Server/conf/scripts/Permissions.sh
 fi
 
 # ------------------------------------------------------------
@@ -645,7 +588,6 @@ if $MP_MAC_PKG; then
   rm -rf "${MPSERVERBASE}/conf/init"
   rm -rf "${MPSERVERBASE}/conf/init.d"
   rm -rf "${MPSERVERBASE}/conf/systemd"
-  rm -rf "${MPSERVERBASE}/conf/tomcat"
 
   # ------------------
   # Move Files For Packaging
