@@ -300,6 +300,171 @@ class MP_UploadAgentPackage(MPResource):
 			log_Error('[MP_UploadAgentPackage][Post][Exception][Line: %d] Message: %s' % (
 				exc_tb.tb_lineno, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
+
+''' ******************************* '''
+''' NEW	3.1.x					    '''
+
+# Agent Config
+class MP_AgentConfigInfo(MPResource):
+
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		super(MP_AgentConfigInfo, self).__init__()
+
+	def get(self, cuuid):
+		try:
+			if not isValidClientID(cuuid):
+				log_Error('[AgentConfigInfo][GET]: Failed to verify ClientID (' + cuuid + ')')
+				return {'result': '', 'errorno': 424, 'errormsg': 'Failed to verify ClientID'}, 424
+
+			if not isValidSignature(self.req_signature, cuuid, self.req_uri, self.req_ts):
+				if current_app.config['ALLOW_MIXED_SIGNATURES']:
+					log_Info('[AgentConfigInfo][GET]: ALLOW_MIXED_SIGNATURES is enabled.')
+				else:
+					log_Error('[AgentConfigInfo][GET]: Failed to verify Signature for client (' + cuuid + ')')
+					return {'result': '', 'errorno': 424, 'errormsg': 'Failed to verify Signature'}, 424
+
+			agentConfigInfo = {}
+			group_id = 0
+			qGroupMembership = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == cuuid).first()
+			if qGroupMembership is not None:
+				group_id = qGroupMembership.group_id
+
+			qGroupSettingsRev = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
+			if qGroupSettingsRev is not None:
+				agentConfigInfo["rev"] = qGroupSettingsRev.rev_settings
+				agentConfigInfo["group_id"] = group_id
+				agentConfigInfo["mdate"] = ""
+
+			if group_id != 0:
+				return {"errorno": 0, "errormsg": 'none', "result": {'type': 'AgentConfigInfo', 'data': agentConfigInfo}}, 200
+			else:
+				return {"errorno": 404, "errormsg": 'Settings version or client group membersion not found.', "result": {'type': 'AgentConfigInfo', 'data': {}}}, 404
+
+		except IntegrityError, exc:
+
+			log_Error('[AgentConfigInfo][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))
+			return {"result": {}, "errorno": 500, "errormsg": exc.message}, 500
+		except Exception as e:
+
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[AgentConfigInfo][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
+				exc_tb.tb_lineno, cuuid, e.message))
+			return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
+
+class MP_AgentConfig(MPResource):
+
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		super(MP_AgentConfig, self).__init__()
+
+	def get(self, cuuid):
+		try:
+			if not isValidClientID(cuuid):
+				log_Error('[AgentConfig][GET]: Failed to verify ClientID (' + cuuid + ')')
+				return {'result': '', 'errorno': 424, 'errormsg': 'Failed to verify ClientID'}, 424
+
+			if not isValidSignature(self.req_signature, cuuid, self.req_uri, self.req_ts):
+				if current_app.config['ALLOW_MIXED_SIGNATURES']:
+					log_Info('[AgentConfig][GET]: ALLOW_MIXED_SIGNATURES is enabled.')
+				else:
+					log_Error('[AgentConfig][GET]: Failed to verify Signature for client (' + cuuid + ')')
+					return {'result': '', 'errorno': 424, 'errormsg': 'Failed to verify Signature'}, 424
+
+			agentConfig = {}
+			group_id = 0
+			qGroupMembership = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == cuuid).first()
+			if qGroupMembership is not None:
+				group_id = qGroupMembership.group_id
+
+			qAgentSettings= MpClientSettings.query.filter(MpClientSettings.group_id == group_id).all()
+			if qAgentSettings is not None:
+				for row in qAgentSettings:
+					if row.key == "patch_group":
+						agentConfig["patch_group_id"] = row.value
+						agentConfig[row.key] = self.patchGroupName(row.value)
+					elif row.key == "inherited_software_group":
+						agentConfig["inherited_software_group_id"] = row.value
+						agentConfig[row.key] = self.swGroupName(row.value)
+					elif row.key == "software_group":
+						agentConfig["software_group_id"] = row.value
+						agentConfig[row.key] = self.swGroupName(row.value)
+					else:
+						agentConfig[row.key] = row.value
+						
+			if group_id != 0:
+				return {"errorno": 0, "errormsg": 'none', "result": {'type': 'AgentConfig', 'data': agentConfig}}, 200
+			else:
+				return {"errorno": 404, "errormsg": 'Settings version or client group membersion not found.', "result": {'type': 'AgentConfig', 'data': {}}}, 404
+
+		except IntegrityError, exc:
+			log_Error('[AgentConfig][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))
+			return {"result": {}, "errorno": 500, "errormsg": exc.message}, 500
+
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[AgentConfig][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
+			return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
+
+	def swGroupName(self, id):
+		res = MpSoftwareGroup.query.filter(MpSoftwareGroup.gid == id).first()
+		if res is not None:
+			return res.gName
+		else:
+			return "NA"
+
+	def patchGroupName(self, id):
+		res = MpPatchGroup.query.filter(MpPatchGroup.id == id).first()
+		if res is not None:
+			return res.name
+		else:
+			return "NA"
+
+class MP_AgentConfigVersion(MPResource):
+
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		super(MP_AgentConfigVersion, self).__init__()
+
+	def get(self, cuuid):
+		try:
+			if not isValidClientID(cuuid):
+				log_Error('[AgentConfigVersion][GET]: Failed to verify ClientID (' + cuuid + ')')
+				return {'result': '', "errorno": 424, "errormsg": 'Failed to verify ClientID'}, 424
+
+			if not isValidSignature(self.req_signature, cuuid, self.req_uri, self.req_ts):
+				if current_app.config['ALLOW_MIXED_SIGNATURES']:
+					log_Info('[AgentConfigVersion][GET]: ALLOW_MIXED_SIGNATURES is enabled.')
+				else:
+					log_Error('[AgentConfigVersion][GET]: Failed to verify Signature for client (' + cuuid + ')')
+					return {'result': '', "errorno": 424, "errormsg": 'Failed to verify Signature'}, 424
+
+			group_id = 0
+			qGroupMembership = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == cuuid).first()
+			if qGroupMembership is not None:
+				group_id = qGroupMembership.group_id
+
+			group_settings_rev = 0
+			qGroupSettingsRev = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
+			if qGroupSettingsRev is not None:
+				group_settings_rev = qGroupSettingsRev.rev_settings
+
+			if group_settings_rev != 0 and group_id != 0:
+				return {'errorno': 0, 'errormsg': 'none', 'result': group_settings_rev}, 200
+			else:
+				return {'errorno': 404, 'errormsg': 'Settings version or client group membersion not found.', 'result': 0}, 404
+
+		except IntegrityError, exc:
+			log_Error('[AgentConfigVersion][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))
+			return {'errorno': 500, 'errormsg': exc.message, 'result': 0}, 500
+
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[AgentConfigVersion][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
+				exc_tb.tb_lineno, cuuid, e.message))
+			return {'errorno': 500, 'errormsg': e.message, 'result': 0}, 500
+
+
 ''' ------------------------------- '''
 ''' NOT A WEB SERVICE CLASS         '''
 ''' Class for Getting the Scan List '''
@@ -712,8 +877,12 @@ agent_api.add_resource(MP_AgentUpdate,         '/agent/update/<string:cuuid>/<st
 agent_api.add_resource(MP_AgentUpdaterUpdate,  '/agent/updater/<string:cuuid>/<string:agentver>', endpoint='withOutBuild')
 agent_api.add_resource(MP_AgentUpdaterUpdate,  '/agent/updater/<string:cuuid>/<string:agentver>/<string:agentbuild>', endpoint='withBuild')
 
-
 agent_api.add_resource(MP_PluginHash,          '/agent/plugin/hash/<string:cuuid>/<string:plugin_name>/<string:plugin_bundle>/<string:plugin_version>')
 
 agent_api.add_resource(MP_ConfigData,           '/agent/config/<string:token>')
 agent_api.add_resource(MP_UploadAgentPackage,   '/agent/upload/<string:agent_id>/<string:token>')
+
+# NEW 3.1
+agent_api.add_resource(MP_AgentConfigInfo,      '/agent/config/info/<string:cuuid>')
+agent_api.add_resource(MP_AgentConfig,      	'/agent/config/data/<string:cuuid>')
+agent_api.add_resource(MP_AgentConfigVersion,   '/agent/config/version/<string:cuuid>')

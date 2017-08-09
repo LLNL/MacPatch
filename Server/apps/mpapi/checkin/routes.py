@@ -26,6 +26,7 @@ class AgentBase(MPResource):
 
 		try:
 			args = self.reqparse.parse_args()
+			print args
 			_body = request.get_json(silent=True)
 
 			if not isValidSignature(self.req_signature, cuuid, request.data, self.req_ts):
@@ -33,7 +34,7 @@ class AgentBase(MPResource):
 					log_Info('[AgentBase][Post]: ALLOW_MIXED_SIGNATURES is enabled.')
 				else:
 					log_Error('[AgentBase][Post]: Failed to verify Signature for client (%s)' % (cuuid))
-					return {"result": '', "errorno": 424, "errormsg": 'Failed to verify Signature'}, 424
+					return {"result": {}, "errorno": 424, "errormsg": 'Failed to verify Signature'}, 424
 
 			client_obj = MpClient.query.filter_by(cuuid=cuuid).first()
 			log_Debug('[AgentBase][Post]: Client (%s) Data %s' % (cuuid, _body))
@@ -42,13 +43,17 @@ class AgentBase(MPResource):
 				# Update
 				log_Info('[AgentBase][Post]: Updating client (%s) record.' % (cuuid))
 				for col in client_obj.columns:
-					if col == 'mdate':
-						setattr(client_obj, col, datetime.now())
-					else:
-						setattr(client_obj, col, args[col])
+					if args[col] is not None:
+						if col == 'mdate':
+							setattr(client_obj, col, datetime.now())
+						else:
+							setattr(client_obj, col, args[col])
 
 				db.session.commit()
-				return {"result": '', "errorno": 0, "errormsg": 'none'}, 201
+
+				_settings = self.getClientTasksSettingsRev(cuuid)
+				return {"errorno": 0, "errormsg": 'none', "result": _settings}, 201
+
 			else:
 				# Add
 				log_Info('[AgentBase][Post]: Adding client (%s) record.' % (cuuid))
@@ -57,24 +62,49 @@ class AgentBase(MPResource):
 
 				client_object.cuuid = cuuid
 				for col in client_object.columns:
-					if col == 'mdate':
-						setattr(client_object, col, datetime.now())
-					else:
-						setattr(client_object, col, args[col])
+					if args[col] is not None:
+						if col == 'mdate':
+							setattr(client_object, col, datetime.now())
+						else:
+							setattr(client_object, col, args[col])
 
 				db.session.add(client_object)
 				db.session.commit()
-				return {"result": '', "errorno": 0, "errormsg": 'none'}, 201
+
+				_settings = getClientTasksSettingsRev(cuuid)
+				return {"errorno": 0, "errormsg": 'none', "result": _settings}, 201
 
 		except IntegrityError, exc:
 			log_Error('[AgentBase][Post][IntegrityError]: CUUID: %s Message: %s' % (cuuid, exc.message))
-			return {"result": '', "errorno": 500, "errormsg": exc.message}, 500
+			return {"errorno": 500, "errormsg": exc.message, "result": {}}, 500
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			log_Error('[AgentBase][Post][Exception][Line: %d] CUUID: %s Message: %s' % (
 				exc_tb.tb_lineno, cuuid, e.message))
-			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
+			return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
 
+	def getClientTasksSettingsRev(self, cuuid):
+
+		group_id = 0
+		versions = {'settings':0,'tasks':0,'mpservers':0,'suservers':0}
+		qGroupMembership = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == cuuid).first()
+		if qGroupMembership is not None:
+			group_id = qGroupMembership.group_id
+
+		qGroupSettings = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
+		if qGroupSettings is not None:
+			versions["settings"] = qGroupSettings.rev_settings
+			versions["tasks"] = qGroupSettings.rev_tasks
+
+		qMPServers = MpServerList.query.filter(MpServerList.listid == 1).first()
+		if qMPServers is not None:
+			versions["mpservers"] = qMPServers.version
+
+		qSUServers = MpAsusCatalogList.query.filter(MpAsusCatalogList.listid == 1).first()
+		if qSUServers is not None:
+			versions["suservers"] = qSUServers.version
+
+		return versions
 
 # Client Reg Status
 class AgentPlist(MPResource):
@@ -183,7 +213,6 @@ class AgentStatus(MPResource):
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			log_Error('[AgentStatus][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
-
 
 
 # Add Routes Resources

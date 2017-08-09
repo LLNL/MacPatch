@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import reqparse
-from flask_restful_swagger import swagger
+# from flask_restful_swagger import swagger
 
 from . import *
 from .. import db
@@ -20,13 +20,13 @@ class Test(MPResource):
 	def __init__(self):
 		self.reqparse = reqparse.RequestParser()
 		super(Test, self).__init__()
-
+	'''
 	@swagger.operation(notes='Get: Test Registration')
 	def get(self):
 		return {
 			'Reg': 'Test',
 		}
-
+	'''
 
 # Client Reg Process
 class Registration(MPResource):
@@ -34,7 +34,7 @@ class Registration(MPResource):
 	def __init__(self):
 		# self.reqparse = reqparse.RequestParser()
 		super(Registration, self).__init__()
-
+	'''
 	@swagger.operation(
 		notes='Post Client Reg',
 		parameters=[
@@ -47,6 +47,7 @@ class Registration(MPResource):
 				"paramType": "body"
 			}
 		])
+	'''
 	def post(self, cuuid, regKey="NA"):
 		'''
 			Content Dict: cKey, CPubKeyPem, CPubKeyDer, ClientHash
@@ -122,8 +123,9 @@ class RegistrationStatus(MPResource):
 
 	def __init__(self):
 		super(RegistrationStatus, self).__init__()
-
+	'''
 	@swagger.operation(notes='Get Client registration Status')
+	'''
 	def get(self, cuuid, keyHash='NA'):
 
 		reg_query_object = MPAgentRegistration.query.filter_by(cuuid=cuuid).first()

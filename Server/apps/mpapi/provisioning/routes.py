@@ -49,7 +49,6 @@ class PatchGroups(MPResource):
 			log_Error('[PatchGroups][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
-
 class ClientGroups(MPResource):
 
 	def __init__(self):
@@ -128,6 +127,8 @@ class OSMigration(MPResource):
 					osMigration = OSMigrationStatus.query.filter_by(cuuid=cuuid, migrationID=_body['migrationID']).first()
 					if osMigration is not None:
 						setattr(osMigration, 'stopDateTime', datetime.now())
+						setattr(osMigration, 'postOSVer', _body['os'])
+
 					else:
 						log_Error('[OSMigration][Post]: Migration not found for client (%s)' % (cuuid))
 						return {"result": '', "errorno": 2, "errormsg": 'Migration not found.'}, 424

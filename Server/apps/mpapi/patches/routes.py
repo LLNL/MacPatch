@@ -132,7 +132,7 @@ class PatchGroupPatches(MPResource):
 		self.reqparse = reqparse.RequestParser()
 		super(PatchGroupPatches, self).__init__()
 
-	def get(self, cuuid, patchGroup):
+	def get(self, cuuid, patchGroup="Default"):
 
 		try:
 			if not isValidClientID(cuuid):
@@ -175,7 +175,7 @@ class PatchGroupPatchesRev(MPResource):
 		self.reqparse = reqparse.RequestParser()
 		super(PatchGroupPatchesRev, self).__init__()
 
-	def get(self, cuuid, patchGroup):
+	def get(self, cuuid, patchGroup="Default"):
 
 		try:
 			if not isValidClientID(cuuid):
@@ -567,8 +567,13 @@ patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:
 patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:cuuid>/<string:state>/<string:osver>', endpoint='withOS')
 patches_api.add_resource(PatchScanListFilterOS, '/client/patch/scanlist/<string:cuuid>/<string:state>/<string:osver>/<string:severity>', endpoint='withLevel')
 
-patches_api.add_resource(PatchGroupPatches,     '/client/patch/group/<string:patchGroup>/<string:cuuid>')
-patches_api.add_resource(PatchGroupPatchesRev,  '/client/patch/group/rev/<string:patchGroup>/<string:cuuid>')
+# MP Agent 3.0
+patches_api.add_resource(PatchGroupPatches,     '/client/patch/group/<string:patchGroup>/<string:cuuid>', endpoint='patches_agent30')
+patches_api.add_resource(PatchGroupPatchesRev,  '/client/patch/group/rev/<string:patchGroup>/<string:cuuid>', endpoint='patches_rev_agent30')
+
+# MP Agent 3.1
+patches_api.add_resource(PatchGroupPatches,     '/client/patch/group/<string:cuuid>', endpoint='patches_agent31')
+patches_api.add_resource(PatchGroupPatchesRev,  '/client/patch/group/rev/<string:cuuid>', endpoint='patches_rev_agent31')
 
 # Post Client Patch Scan Data
 patches_api.add_resource(PatchScanData,         '/client/patch/scan/<string:patch_type>/<string:cuuid>')

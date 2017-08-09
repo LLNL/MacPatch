@@ -28,7 +28,7 @@ class SoftwareTasksForGroup(MPResource):
 			else:
 				if not isValidClientID(cuuid):
 					log_Error('[SoftwareTasksForGroup][Get]: Failed to verify ClientID (%s)' % (cuuid))
-					return {"result": '', "errorno": 424, "errormsg": 'Failed to verify ClientID'}, 424
+					# return {"result": '', "errorno": 424, "errormsg": 'Failed to verify ClientID'}, 424
 
 				if not isValidSignature(self.req_signature, cuuid, self.req_uri, self.req_ts):
 					log_Error('[SoftwareTasksForGroup][Get]: Failed to verify Signature for client (%s)' % (cuuid))
@@ -56,6 +56,10 @@ class SoftwareTasksForGroup(MPResource):
 				_tasks = _result['Tasks']
 				for task in _tasks:
 					_sw_criteria = task['SoftwareCriteria']
+					if not _sw_criteria:
+						log_Error('[SoftwareTasksForGroup][Get][%s] SW Task (%s) does not contain any criteria.' % (cuuid, task['id']))
+						continue
+
 					_os_vers = _sw_criteria['os_vers']
 					if _os_vers == "*":
 						_tasks_new.append(task)
@@ -115,7 +119,7 @@ class SoftwareTaskForTaskID(MPResource):
 				for t in _task.keys():
 					if t in q_task.__dict__:
 						t_Val = eval("q_task." + t)
-						if type(t_Val) is not datetime.datetime:
+						if type(t_Val) is not datetime:
 							_task_data[t] = t_Val
 						else:
 							_task_data[t] = t_Val.strftime("%Y-%m-%d %H:%M:%S")
@@ -137,7 +141,7 @@ class SoftwareTaskForTaskID(MPResource):
 				for s in _sw.keys():
 					if s in q_software.__dict__:
 						s_Val = eval("q_software." + s)
-						if type(s_Val) is not datetime.datetime:
+						if type(s_Val) is not datetime:
 							if s == "sw_pre_install" or s == "sw_post_install" or s == "sw_uninstall":
 								_sw_data[s] = base64.b64encode(s_Val)
 							else:
