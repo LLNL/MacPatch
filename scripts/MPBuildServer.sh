@@ -88,21 +88,6 @@ TMP_DIR="${MPBASE}/.build/tmp"
 SRC_DIR="${MPSERVERBASE}/conf/src/server"
 OWNERGRP="79:70"
 
-# --------
-# TODO: START Testing Only, remove when ready
-# --------
-if [ -d "/opt/MacPatch" ]; then
-	rm -rf /opt/MacPatch
-fi
-
-sleep 5
-
-cp -rp /opt/MacPatch.orig /opt/MacPatch
-
-# --------
-# TODO: END Testing Only, remove when ready
-# --------
-
 # PKG Variables
 MP_MAC_PKG=false
 MP_SERVER_PKG_VER="1.5.0.0"
