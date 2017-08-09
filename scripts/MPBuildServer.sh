@@ -524,6 +524,7 @@ chmod 2777 "${MPSERVERBASE}/apps/log"
 if command_exists virtualenv ; then
 	virtualenv --no-site-packages env
 	source env/bin/activate
+  pip install pip --upgrade
 	python install.py
 	deactivate
 else
