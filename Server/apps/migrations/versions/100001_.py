@@ -1,4 +1,4 @@
-"""0001 - Base
+"""0001 - MP 3.0.0 Base Schema
 
 Revision ID: 8e25a122fa51
 Revises: None

@@ -2,15 +2,18 @@ import uuid
 import hashlib
 import os.path
 from datetime import datetime
+from werkzeug.security import generate_password_hash
 from mpapi import db
-from mpapi.mputil import return_data_for_root_key
+from mpapi.mputil import return_data_for_root_key, read_config_file
 from mpapi.model import MpClientsRegistrationSettings, MpSiteKeys
 from mpapi.model import AgentConfig, AgentConfigData
 from mpapi.model import MpPatchGroup, PatchGroupMembers
 from mpapi.model import MpAsusCatalogList
 from mpapi.model import MpServer, MpServerList
 from mpapi.model import MpSoftwareGroup, MpSoftwareGroupPrivs
-from mpapi.model import MpClientGroups, MpClient, MpClientGroupMembers
+from mpapi.model import MpClientGroups, MpClient, MpClientGroupMembers, MpClientTasks
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 from sqlalchemy import *
 
@@ -24,6 +27,7 @@ def addDefaultData():
 	addDefaultServerList()
 	addDefaultServerConfig()
 	addDefaultClientGroup()
+	addDefaultTasksToClientGroup()
 
 # Agent Registration Settings ------------------------------------------------
 def hasRegConfig():
@@ -292,6 +296,74 @@ def addDefaultClientGroup():
 	_uuid = str(uuid.uuid4())
 	db.session.add(MpClientGroups(group_id=_uuid, group_name="Default", group_owner="mpadmin"))
 	db.session.commit()
+
+def addDefaultTasksToClientGroup():
+	# Check if Default group exists
+	gid = None
+	res = MpClientGroups.query.filter(MpClientGroups.group_name == 'Default').first()
+	if res is not None:
+		gid = res.group_id
+	else:
+		print "Default client group does not exist."
+		print "Can not add default agent trasks."
+		return False
+
+	# Check for default tasks
+	hasTasks = hasDefaultClientGroupTasks(gid)
+	if hasTasks == 0:
+		# Add Tasks
+		tasks = readDefaultTasks()
+		for t in tasks:
+			_task = MpClientTasks()
+			setattr(_task, 'group_id', gid)
+			for key, value in t.iteritems():
+				setattr(_task, key, value)
+			db.session.add(_task)
+
+		db.session.commit()
+		return True
+	elif hasTasks == 2:
+		print "There was a problem getting the data on the default tasks."
+		return False
+
+	return False
+
+def hasDefaultClientGroupTasks(gid):
+	if gid is None:
+		return 2
+
+	res = MpClientTasks.query.filter(MpClientTasks.group_id == gid).count()
+	if res <= 0:
+		return 0
+	else:
+		return 1
+
+	# Return 2 if error, we should not get here
+	return 2
+
+def readDefaultTasks():
+	tasks = None
+	jFile = os.path.join(basedir, 'mpconsole/static/json/default_tasks.json')
+	if os.path.exists(jFile):
+		jData = read_config_file(jFile)
+		tasks = jData['mpTasks']
+
+	return tasks
+
+'''
+	Commands for mpconsole.py
+'''
+# Add Default Admin Account ----------------------------------------------------
+def addDefaultAdminAccount():
+	usr_dict = return_data_for_root_key('users')
+	if 'admin' in usr_dict:
+		adm_account = usr_dict['admin']
+		if adm_account['enabled']:
+			_pass = generate_password_hash(adm_account['pass'])
+			db.session.add(AdmUsers(user_id=adm_account['name'], user_RealName="MPAdmin", user_pass=_pass, enabled='1'))
+			db.session.commit()
+		return True
+	return False
 
 # Upgrade Tasks ---------------------------------------------------------------
 def addUnassignedClientsToGroup():

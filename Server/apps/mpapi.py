@@ -3,7 +3,7 @@
 import os
 from flask_script import Manager, Command, Option, Server
 from flask_migrate import MigrateCommand
-from mpdb import addDefaultData, resetSiteKeys, addSiteKeys
+from mpdb import *
 import multiprocessing
 
 import warnings

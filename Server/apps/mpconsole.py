@@ -2,11 +2,8 @@
 
 import os
 from flask_script import Manager, Command, Option, Server
-from flask_migrate import Migrate
-from mpdb import addDefaultData, addUnassignedClientsToGroup
-from mpapi.extensions import db
+from mpdb import *
 import multiprocessing
-from werkzeug.security import generate_password_hash
 
 import warnings
 from flask.exthook import ExtDeprecationWarning
@@ -25,7 +22,7 @@ class GunicornServer(Command):
 	"""Start GUNICORN Server"""
 	description = 'Run the app within Gunicorn'
 
-	def __init__(self, host='127.0.0.1', port=int(os.environ.get("PORT", 5000)), workers=2, daemon=False):
+	def __init__(self, host='127.0.0.1', port=int(os.environ.get("PORT", 3602)), workers=2, daemon=False):
 		self.port = port
 		self.host = host
 		self.workers = workers
@@ -70,16 +67,12 @@ class GunicornServer(Command):
 # manager.add_command('db', MigrateCommand)
 
 @manager.command
-def insert_data():
-	_pass = generate_password_hash('*mpadmin*')
-	db.session.add(AdmUsers(user_id="mpadmin", user_RealName="MPAdmin", user_pass=_pass, enabled='1'))
-	db.session.commit()
-
-@manager.command
-def populateDB():
-	print 'Add Default Data To Database'
-	addDefaultData()
-	print 'Default Data Added Database'
+def addDefaultAdmin():
+	print 'Adding Default Admin Account to DB'
+	if addDefaultAdminAccount():
+		print 'Default Admin Account has been added to DB'
+	else:
+		print 'Error Adding Default Admin Account to DB'
 
 @manager.command
 def migrateClientsToGroup():

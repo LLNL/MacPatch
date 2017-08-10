@@ -1,6 +1,5 @@
 import pip
 import os
-import argparse
 from sys import platform
 
 _pre_ = [
@@ -43,7 +42,8 @@ _all_ = [
 	"WTForms>=2.1",
 	"Flask-APScheduler>=1.7.0",
 	"flask-cors>=2.0.0",
-	"flask-security>=1.7.0"
+	"flask-security>=1.7.0",
+	"yattag>=1.8.0"
 ]
 
 _failed_ = []
