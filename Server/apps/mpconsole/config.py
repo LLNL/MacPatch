@@ -17,7 +17,7 @@ class BaseConfig:
 	# Use 127.0.0.1 and port 3601, NGINX will be the outward facing
 	# avenue for clients to communicate.
 	SRV_HOST                        = '127.0.0.1'
-	SRV_PORT                        = 5000
+	SRV_PORT                        = 3602
 
 	# Database Options
 	DB_USER                         = 'mpdbadm'
