@@ -65,7 +65,7 @@ def upgrade():
 		sa.Column('rid', sa.BigInteger(), nullable=False, autoincrement=True),
 		sa.Column('name', sa.String(length=255), nullable=False),
 		sa.Column('owner', sa.String(length=255), nullable=False),
-		sa.Column('scope', Column(INTEGER(1, unsigned=True), server_default='0'),
+		sa.Column('scope', mysql.INTEGER(display_width=1, unsigned=True), server_default='0'),
 		sa.Column('rtable', sa.String(length=255), nullable=False),
 		sa.Column('rcolumns', mysql.LONGTEXT(), nullable=True),
 		sa.Column('rquery', mysql.LONGTEXT(), nullable=True),
@@ -88,5 +88,5 @@ def downgrade():
 	op.drop_table('mp_os_config_profiles_group_policy')
 
 	### end Alembic commands ###
-	u_qstr1="ALTER TABLE `mp_group_config` DROP COLUMN `tasks_version`;"
+	d_qstr1 = "ALTER TABLE `mp_group_config` DROP COLUMN `tasks_version`;"
 	op.execute(d_qstr1)
