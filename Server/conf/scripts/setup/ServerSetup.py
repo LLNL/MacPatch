@@ -506,15 +506,15 @@ def setupServices():
 		jData['settings']['services']['console'] = True
 
 		if os_type == 'Darwin':
-			if 'gov.llnl.mp.tomcat.plist' not in srvsList:
-				srvsList.append('gov.llnl.mp.tomcat.plist')
+			if 'gov.llnl.mp.py.console.plist' not in srvsList:
+				srvsList.append('gov.llnl.mp.py.console.plist')
 			if 'gov.llnl.mp.nginx.plist' not in srvsList:
 				srvsList.append('gov.llnl.mp.nginx.plist')
 		else:
 			linkStartupScripts('MPNginx3')
 			srvsList.append('MPNginx3')
-			linkStartupScripts('MPTomcat3')
-			srvsList.append('MPTomcat3')
+			linkStartupScripts('MPConsole')
+			srvsList.append('MPConsole')
 
 	else:
 		
