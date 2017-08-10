@@ -359,7 +359,7 @@ for p in "${pip_mods[@]}"
 do
   echo " - Installing ${p}, python module."
   if $USELINUX; then
-	pip install --quiet --upgrade ${p}
+	pip install --upgrade ${p}
 	if [ $? != 0 ] ; then
 		echo " Error installing ${p}"
 		sleep 2
