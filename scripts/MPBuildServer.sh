@@ -531,7 +531,7 @@ chmod 2777 "${MPSERVERBASE}/apps/log"
 
 if command_exists virtualenv ; then
     VENV_VER=`virtualenv --version`
-    echo $VENV_VER
+    echo "virtualenv version $VENV_VER"
     if [ $(ver $VENV_VER) -lt $(ver "15.0.0") ]; then
         echo "virtualenv is an older version."
         echo "Install and setup of the virtual environment may not succeed."
@@ -575,15 +575,13 @@ rm -rf ${BUILDROOT}
 # ------------------
 # Set Permissions
 # ------------------
-if $USEMACOS; then
-  echo "Setting Permissions..."
-  chmod -R 0775 "${MPBASE}/Content"
-  chown -R $OWNERGRP "${MPBASE}/Content"
-  chmod -R 0775 "${MPSERVERBASE}/logs"
-  chmod -R 0775 "${MPSERVERBASE}/etc"
-  chmod -R 0775 "${MPSERVERBASE}/InvData"
-  chown -R $OWNERGRP "${MPSERVERBASE}/apps/env"
-fi
+echo "Setting Permissions..."
+chmod -R 0775 "${MPBASE}/Content"
+chown -R $OWNERGRP "${MPBASE}/Content"
+chmod -R 0775 "${MPSERVERBASE}/logs"
+chmod -R 0775 "${MPSERVERBASE}/etc"
+chmod -R 0775 "${MPSERVERBASE}/InvData"
+chown -R $OWNERGRP "${MPSERVERBASE}/apps/env"
 
 # ------------------------------------------------------------
 # Create Mac OS X, MacPatch Server PKG
