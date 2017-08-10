@@ -25,9 +25,9 @@
 
 '''
   MacPatch Patch Loader Setup Script
-  MacPatch Version 3.0.x
+  MacPatch Version 3.1.x
   
-  Script Version 2.1.0
+  Script Version 2.2.0
 '''
 
 import os
@@ -94,11 +94,11 @@ if sys.platform.startswith('linux'):
 		print('User www-data does not exist.')
 		exit(1)
 
-macServices=["gov.llnl.mp.tomcat.plist","gov.llnl.mp.invd.plist","gov.llnl.mp.py.api.plist",
+macServices=["gov.llnl.mp.invd.plist","gov.llnl.mp.py.api.plist","gov.llnl.mp.py.console.plist",
 "gov.llnl.mp.sus.sync.plist","gov.llnl.mpavdl.plist","gov.llnl.mp.rsync.plist",
 "gov.llnl.mp.sync.plist","gov.llnl.mp.pfctl.plist","gov.llnl.mp.fw.plist","gov.llnl.mp.nginx.plist"]
 
-lnxServices=["MPTomcat3","MPInventoryD3","MPAPI","MPNginx3","MPRsyncServer3"]
+lnxServices=["MPInventoryD3","MPAPI","MPConsole","MPNginx3","MPRsyncServer3"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader","MPSyncContent"]
 
 # ----------------------------------------------------------------------------
