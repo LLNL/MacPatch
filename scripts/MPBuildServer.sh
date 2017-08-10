@@ -530,7 +530,8 @@ chown $OWNERGRP "${MPSERVERBASE}/apps/log"
 chmod 2777 "${MPSERVERBASE}/apps/log"
 
 if command_exists virtualenv ; then
-    VENV_VER = `virtualenv --version`
+    VENV_VER=`virtualenv --version`
+    echo $VENV_VER
     if [ $(ver $VENV_VER) -lt $(ver "15.0.0") ]; then
         echo "virtualenv is an older version."
         echo "Install and setup of the virtual environment may not succeed."
