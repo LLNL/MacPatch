@@ -531,7 +531,7 @@ chmod 2777 "${MPSERVERBASE}/apps/log"
 
 if command_exists virtualenv ; then
     VENV_VER = `virtualenv --version`
-    if [ ver($VENV_VER) -lt 1500 ];
+    if [ $ver($VENV_VER) -lt 1500 ];
         echo "virtualenv is an older version."
         echo "Install and setup of the virtual environment may not succeed."
         read -p "Would you like to continue (Y/N)? [Y]: " VENVOK
