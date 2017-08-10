@@ -259,8 +259,12 @@ function rmF {
   fi
 }
 
-command_exists () {
+function command_exists () {
 	type "$1" &> /dev/null ;
+}
+
+function ver { 
+    printf "%03d%03d%03d%03d" $(echo "$1" | tr '.' ' ') 
 }
 
 # ------------------
@@ -359,7 +363,7 @@ for p in "${pip_mods[@]}"
 do
   echo " - Installing ${p}, python module."
   if $USELINUX; then
-	pip install --upgrade ${p}
+	pip install --quiet --upgrade ${p}
 	if [ $? != 0 ] ; then
 		echo " Error installing ${p}"
 		sleep 2
@@ -526,6 +530,19 @@ chown $OWNERGRP "${MPSERVERBASE}/apps/log"
 chmod 2777 "${MPSERVERBASE}/apps/log"
 
 if command_exists virtualenv ; then
+    VENV_VER = `virtualenv --version`
+    if [ ver($VENV_VER) -lt 1500 ];
+        echo "virtualenv is an older version."
+        echo "Install and setup of the virtual environment may not succeed."
+        read -p "Would you like to continue (Y/N)? [Y]: " VENVOK
+        VENVOK=${VENVOK:-Y}
+        if [ "$VENVOK" == "Y" ] || [ "$VENVOK" == "y" ] ; then
+            echo
+        else
+            exit 1
+        fi
+    fi
+
     virtualenv --no-site-packages env
     source env/bin/activate
     if [ "$CA_CERT" != "NA" ]; then
