@@ -87,6 +87,7 @@ BUILDROOT="${MPBASE}/.build/server"
 TMP_DIR="${MPBASE}/.build/tmp"
 SRC_DIR="${MPSERVERBASE}/conf/src/server"
 OWNERGRP="79:70"
+CA_CERT="NA"
 
 # PKG Variables
 MP_MAC_PKG=false
@@ -129,11 +130,14 @@ fi
 
 usage() { echo "Usage: $0 [-p Build Mac PKG]" 1>&2; exit 1; }
 
-while getopts "ph" opt; do
+while getopts "phc:" opt; do
   case $opt in
 	p)
 	  MP_MAC_PKG=true
 	  ;;
+  c)
+    CA_CERT=${OPTARG}
+    ;;
 	h)
 	  echo
 	  usage
@@ -502,11 +506,11 @@ if (( $? )) ; then
 	echo -e "ERROR: Something went wrong!"
 	exit 1
 else
-  echo "Done!"
-  echo
-  echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
-  echo "if running in a production environment."
-  echo
+    echo "Done!"
+    echo
+    echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
+    echo "if running in a production environment."
+    echo
 fi
 
 # ------------------------------------------------------------
@@ -522,10 +526,13 @@ chown $OWNERGRP "${MPSERVERBASE}/apps/log"
 chmod 2777 "${MPSERVERBASE}/apps/log"
 
 if command_exists virtualenv ; then
-	virtualenv --no-site-packages env
-	source env/bin/activate
-  pip install pip --upgrade
-	python install.py
+    virtualenv --no-site-packages env
+    source env/bin/activate
+    if [ "$CA_CERT" != "NA" ]; then
+        python install.py -a "$CA_CERT"
+    else
+        python install.py
+    fi
 	deactivate
 else
 	echo "virtualenv was not found. Please create virtual env."

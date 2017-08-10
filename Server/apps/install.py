@@ -1,5 +1,6 @@
 import pip
 import os
+import argparse
 from sys import platform
 
 _pre_ = [
@@ -49,6 +50,7 @@ _failed_ = []
 
 MP_HOME     = "/opt/MacPatch"
 MP_SRV_BASE = MP_HOME+"/Server"
+CA_CERT     = None
 
 srcDir      = MP_SRV_BASE+"/apps/_src_"
 cryptoPKG   = srcDir+"/M2Crypto-0.21.1-py2.7-macosx-10.8-intel.egg"
@@ -72,7 +74,10 @@ def installAlt(package):
 def upgrade(packages, platformStr="linux"):
 	for package in packages:
 		if platformStr == 'linux':
-			res = pip.main(['install', "--quiet", "--egg", "--no-cache-dir", "--upgrade", "--trusted-host", "pypi.python.org", package])
+			if CA_CERT is not None:
+				res = pip.main(['install', "--quiet", "--egg", "--no-cache-dir", "--upgrade", "--cert", CA_CERT, package])
+			else:
+				res = pip.main(['install', "--quiet", "--egg", "--no-cache-dir", "--upgrade", package])
 		else:
 			res = pip.main(['install', "--quiet", "--egg", "--no-cache-dir", "--upgrade", package])
 
@@ -84,7 +89,10 @@ def install(packages, platformStr="linux"):
 	for package in packages:
 		print("Installing Python Module: " + package)
 		if platformStr == 'linux':
-			res = pip.main(['install', "--quiet", "--egg", "--no-cache-dir", "--trusted-host", "pypi.python.org", package])
+			if CA_CERT is not None:
+				res = pip.main(['install', "--quiet", "--egg", "--no-cache-dir", "--cert", CA_CERT, package])
+			else:
+				res = pip.main(['install', "--quiet", "--egg", "--no-cache-dir", package])
 		else:
 			res = pip.main(['install', "--quiet", "--egg", "--no-cache-dir", package])
 
@@ -93,6 +101,14 @@ def install(packages, platformStr="linux"):
 			print("Error installing " + package + ". Please verify env.")
 
 if __name__ == '__main__':
+
+	'''Main command processing'''
+	parser = argparse.ArgumentParser(description='Process some args.')
+	parser.add_argument('--ca', help="SSL Inspection CA certificate file", required=False, default=None)
+	args = parser.parse_args()
+
+	if args.ca:
+		CA_CERT = args.ca
 
 	isMac = platform.startswith('darwin')
 	isLinux = platform.startswith('linux')
