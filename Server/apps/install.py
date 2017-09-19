@@ -136,4 +136,4 @@ if __name__ == '__main__':
 	if platform.startswith('darwin'):
 		print "Install Darwin Packages"
 		install(darwin, osType)
-		easyInstall(cryptoPKG)
+		# easyInstall(cryptoPKG)
