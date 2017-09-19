@@ -483,7 +483,7 @@ if $USEMACOS; then
 	echo "* Build and configure SWIG"
 	cd ${TMP_DIR}/swig
 	make clean > /dev/null 2>&1
-	./configure --prefix=${MPSERVERBASE}/lib --with-pcre-prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/swig-build.log 2>&1
+	./configure --prefix=${MPSERVERBASE}/lib --with-pcre-prefix=${MPSERVERBASE}/lib --disable-dependency-tracking > ${MPSERVERBASE}/logs/swig-build.log 2>&1
 	make  >> ${MPSERVERBASE}/logs/swig-build.log 2>&1
 	make install >> ${MPSERVERBASE}/logs/swig-build.log 2>&1
 
@@ -583,11 +583,7 @@ if command_exists virtualenv ; then
 	source env/bin/activate
 	# Install M2Crypto
 	if $USEMACOS; then
-		#export LD_LIBRARY_PATH=${MPSERVERBASE}/lib/lib
-		#export CPATH=$CPATH:${MPSERVERBASE}/lib/include:${MPSERVERBASE}/lib/include/openssl
-		echo "LDFLAGS=\"-L${MPSERVERBASE}/lib/lib\" CFLAGS=\"-I${MPSERVERBASE}/lib/include/openssl\" pip install M2Crypto"
-		#LDFLAGS="-L${MPSERVERBASE}/lib/lib" CFLAGS="-I${MPSERVERBASE}/lib/include/openssl" pip install M2Crypto
-		exit 1
+		env LDFLAGS="-I${MPSERVERBASE}/lib/include -L${MPSERVERBASE}/lib/lib" pip install M2Crypto --no-cache-dir --quiet
 	fi
 
 	if [ "$CA_CERT" != "NA" ]; then
