@@ -474,7 +474,7 @@ if $USEMACOS; then
 	# PCRE
 	echo "* Build and configure PCRE"
 	cd ${TMP_DIR}/pcre
-	make clean
+	make clean > 2>&1
 	./configure --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/pcre-build.log 2>&1
 	make  >> ${MPSERVERBASE}/logs/pcre-build.log 2>&1
 	make install >> ${MPSERVERBASE}/logs/pcre-build.log 2>&1
@@ -482,16 +482,15 @@ if $USEMACOS; then
 	# SWIG
 	echo "* Build and configure SWIG"
 	cd ${TMP_DIR}/swig
-	make clean
-	./configure --prefix=${MPSERVERBASE}/lib \
-	--with-pcre-prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/swig-build.log 2>&1
+	make clean > 2>&1
+	./configure --prefix=${MPSERVERBASE}/lib --with-pcre-prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/swig-build.log 2>&1
 	make  >> ${MPSERVERBASE}/logs/swig-build.log 2>&1
 	make install >> ${MPSERVERBASE}/logs/swig-build.log 2>&1
 
 	# OpenSSL
 	echo "* Build and configure OpenSSL"
 	cd ${TMP_DIR}/openssl
-	make clean
+	make clean > 2>&1
 	./Configure darwin64-x86_64-cc --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/openssl-build.log 2>&1
 	make  >> ${MPSERVERBASE}/logs/openssl-build.log 2>&1
 	make install >> ${MPSERVERBASE}/logs/openssl-build.log 2>&1
