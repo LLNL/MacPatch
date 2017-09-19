@@ -584,7 +584,7 @@ if command_exists virtualenv ; then
 	# Install M2Crypto
 	if $USEMACOS; then
 		export LD_LIBRARY_PATH=${MPSERVERBASE}/lib/lib
-		export CPATH=$CPATH:${MPSERVERBASE}/lib/include
+		export CPATH=$CPATH:${MPSERVERBASE}/lib/include:${MPSERVERBASE}/lib/include/openssl
 		pip install M2Crypto
 	fi
 
