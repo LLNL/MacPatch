@@ -583,9 +583,10 @@ if command_exists virtualenv ; then
 	source env/bin/activate
 	# Install M2Crypto
 	if $USEMACOS; then
-		export LD_LIBRARY_PATH=${MPSERVERBASE}/lib/lib
-		export CPATH=$CPATH:${MPSERVERBASE}/lib/include:${MPSERVERBASE}/lib/include/openssl
-		pip install M2Crypto
+		#export LD_LIBRARY_PATH=${MPSERVERBASE}/lib/lib
+		#export CPATH=$CPATH:${MPSERVERBASE}/lib/include:${MPSERVERBASE}/lib/include/openssl
+		LDFLAGS="-L${MPSERVERBASE}/lib/lib" CFLAGS="-I${MPSERVERBASE}/lib/include/openssl" pip install M2Crypto
+		exit
 	fi
 
 	if [ "$CA_CERT" != "NA" ]; then
