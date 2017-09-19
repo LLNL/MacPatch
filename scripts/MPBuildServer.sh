@@ -585,8 +585,9 @@ if command_exists virtualenv ; then
 	if $USEMACOS; then
 		#export LD_LIBRARY_PATH=${MPSERVERBASE}/lib/lib
 		#export CPATH=$CPATH:${MPSERVERBASE}/lib/include:${MPSERVERBASE}/lib/include/openssl
-		LDFLAGS="-L${MPSERVERBASE}/lib/lib" CFLAGS="-I${MPSERVERBASE}/lib/include/openssl" pip install M2Crypto
-		exit
+		echo "LDFLAGS=\"-L${MPSERVERBASE}/lib/lib\" CFLAGS=\"-I${MPSERVERBASE}/lib/include/openssl\" pip install M2Crypto"
+		#LDFLAGS="-L${MPSERVERBASE}/lib/lib" CFLAGS="-I${MPSERVERBASE}/lib/include/openssl" pip install M2Crypto
+		exit 1
 	fi
 
 	if [ "$CA_CERT" != "NA" ]; then
