@@ -136,8 +136,8 @@ while getopts "phc:" opt; do
 	  MP_MAC_PKG=true
 	  ;;
   c)
-    CA_CERT=${OPTARG}
-    ;;
+	CA_CERT=${OPTARG}
+	;;
 	h)
 	  echo
 	  usage
@@ -263,8 +263,8 @@ function command_exists () {
 	type "$1" &> /dev/null ;
 }
 
-function ver { 
-    printf "%03d%03d%03d%03d" $(echo "$1" | tr '.' ' ') 
+function ver {
+	printf "%03d%03d%03d%03d" $(echo "$1" | tr '.' ' ')
 }
 
 # ------------------
@@ -289,25 +289,31 @@ mkdirP ${MPSERVERBASE}/logs
 # Copy compiled files
 # ------------------
 if $USEMACOS; then
-  echo
-  echo "* Uncompress source files needed for build"
-  echo "-----------------------------------------------------------------------"
+	echo
+	echo "* Uncompress source files needed for build"
+	echo "-----------------------------------------------------------------------"
 
-  # Copy Agent Uploader
-  cp ${MPSERVERBASE}/conf/Content/Web/tools/MPAgentUploader.zip ${MPBASE}/Content/Web/tools/
+	# Copy Agent Uploader
+	cp ${MPSERVERBASE}/conf/Content/Web/tools/MPAgentUploader.zip ${MPBASE}/Content/Web/tools/
 
-  PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
-  OSSL_SW=`find "${SRC_DIR}" -name "openssl-"* -type f -exec basename {} \; | head -n 1`
+	PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
+	OSSL_SW=`find "${SRC_DIR}" -name "openssl-"* -type f -exec basename {} \; | head -n 1`
+	SWIG_SW=`find "${SRC_DIR}" -name "swig-"* -type f -exec basename {} \; | head -n 1`
 
-  # PCRE
-  echo " - Uncompress ${PCRE_SW}"
-  mkdir -p ${TMP_DIR}/pcre
-  tar xfz ${SRC_DIR}/${PCRE_SW} --strip 1 -C ${TMP_DIR}/pcre
+	# PCRE
+	echo " - Uncompress ${PCRE_SW}"
+	mkdir -p ${TMP_DIR}/pcre
+	tar xfz ${SRC_DIR}/${PCRE_SW} --strip 1 -C ${TMP_DIR}/pcre
 
-  # OpenSSL
-  echo " - Uncompress ${OSSL_SW}"
-  mkdir -p ${TMP_DIR}/openssl
-  tar xfz ${SRC_DIR}/${OSSL_SW} --strip 1 -C ${TMP_DIR}/openssl
+	# OpenSSL
+	echo " - Uncompress ${OSSL_SW}"
+	mkdir -p ${TMP_DIR}/openssl
+	tar xfz ${SRC_DIR}/${OSSL_SW} --strip 1 -C ${TMP_DIR}/openssl
+
+	# SWIG
+	echo " - Uncompress ${SWIG_SW}"
+	mkdir -p ${TMP_DIR}/swig
+	tar xfz ${SRC_DIR}/${SWIG_SW} --strip 1 -C ${TMP_DIR}/swig
 fi
 
 # ------------------
@@ -371,7 +377,7 @@ do
 		echo " - Trying ${p}, python module again."
 		pip install --egg --quiet --upgrade ${p}
 		if [ $? != 0 ] ; then
-	    echo " Error installing ${p}"
+		echo " Error installing ${p}"
 		fi
 	fi
   else
@@ -462,6 +468,35 @@ do
 done
 
 # ------------------
+# Compile OpenSSL,PCRE,SWIG for M2Crypto
+# ------------------
+if $USEMACOS; then
+	# PCRE
+	echo "* Build and configure PCRE"
+	cd ${TMP_DIR}/pcre
+	make clean
+	./configure --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/pcre-build.log 2>&1
+	make  >> ${MPSERVERBASE}/logs/pcre-build.log 2>&1
+	make install >> ${MPSERVERBASE}/logs/pcre-build.log 2>&1
+
+	# SWIG
+	echo "* Build and configure SWIG"
+	cd ${TMP_DIR}/swig
+	make clean
+	./configure --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/swig-build.log 2>&1
+	make  >> ${MPSERVERBASE}/logs/swig-build.log 2>&1
+	make install >> ${MPSERVERBASE}/logs/swig-build.log 2>&1
+
+	# OpenSSL
+	echo "* Build and configure OpenSSL"
+	cd ${TMP_DIR}/openssl
+	make clean
+	./Configure darwin64-x86_64-cc --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/openssl-build.log 2>&1
+	make  >> ${MPSERVERBASE}/logs/openssl-build.log 2>&1
+	make install >> ${MPSERVERBASE}/logs/openssl-build.log 2>&1
+fi
+
+# ------------------
 # Link & Set Permissions
 # ------------------
 ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
@@ -510,11 +545,11 @@ if (( $? )) ; then
 	echo -e "ERROR: Something went wrong!"
 	exit 1
 else
-    echo "Done!"
-    echo
-    echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
-    echo "if running in a production environment."
-    echo
+	echo "Done!"
+	echo
+	echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
+	echo "if running in a production environment."
+	echo
 fi
 
 # ------------------------------------------------------------
@@ -530,27 +565,34 @@ chown $OWNERGRP "${MPSERVERBASE}/apps/log"
 chmod 2777 "${MPSERVERBASE}/apps/log"
 
 if command_exists virtualenv ; then
-    VENV_VER=`virtualenv --version`
-    echo "virtualenv version $VENV_VER"
-    if [ $(ver $VENV_VER) -lt $(ver "15.0.0") ]; then
-        echo "virtualenv is an older version."
-        echo "Install and setup of the virtual environment may not succeed."
-        read -p "Would you like to continue (Y/N)? [Y]: " VENVOK
-        VENVOK=${VENVOK:-Y}
-        if [ "$VENVOK" == "Y" ] || [ "$VENVOK" == "y" ] ; then
-            echo
-        else
-            exit 1
-        fi
-    fi
+	VENV_VER=`virtualenv --version`
+	echo "virtualenv version $VENV_VER"
+	if [ $(ver $VENV_VER) -lt $(ver "15.0.0") ]; then
+		echo "virtualenv is an older version."
+		echo "Install and setup of the virtual environment may not succeed."
+		read -p "Would you like to continue (Y/N)? [Y]: " VENVOK
+		VENVOK=${VENVOK:-Y}
+		if [ "$VENVOK" == "Y" ] || [ "$VENVOK" == "y" ] ; then
+			echo
+		else
+			exit 1
+		fi
+	fi
 
-    virtualenv --no-site-packages env
-    source env/bin/activate
-    if [ "$CA_CERT" != "NA" ]; then
-        python install.py -a "$CA_CERT"
-    else
-        python install.py
-    fi
+	virtualenv --no-site-packages env
+	source env/bin/activate
+	# Install M2Crypto
+	if $USEMACOS; then
+		export LD_LIBRARY_PATH=${MPSERVERBASE}/lib/lib
+		export CPATH=$CPATH:${MPSERVERBASE}/lib/include
+		pip install M2Crypto --quiet
+	fi
+
+	if [ "$CA_CERT" != "NA" ]; then
+		python install.py -a "$CA_CERT"
+	else
+		python install.py
+	fi
 	deactivate
 else
 	echo "virtualenv was not found. Please create virtual env."
