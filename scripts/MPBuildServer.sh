@@ -163,6 +163,8 @@ done
 # ----------------------------------------------------------------------------
 clear
 
+
+
 if $USEMACOS; then
 
   if $MACPROMPTFORXCODE; then
@@ -183,7 +185,6 @@ if $USEMACOS; then
 	  exit 1
 	fi
   fi
-
 fi
 
 # ----------------------------------------------------------------------------
@@ -491,7 +492,8 @@ if $USEMACOS; then
 	echo "* Build and configure OpenSSL"
 	cd ${TMP_DIR}/openssl
 	make clean > /dev/null 2>&1
-	./Configure darwin64-x86_64-cc --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/openssl-build.log 2>&1
+	#./Configure darwin64-x86_64-cc --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/openssl-build.log 2>&1
+	./config --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/openssl-build.log 2>&1
 	make  >> ${MPSERVERBASE}/logs/openssl-build.log 2>&1
 	make install >> ${MPSERVERBASE}/logs/openssl-build.log 2>&1
 fi
