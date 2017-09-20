@@ -79,6 +79,7 @@ USEUBUNTU=false
 USEMACOS=false
 USESSL=false
 MACPROMPTFORXCODE=true
+MACPROMPTFORBREW=true
 
 MPBASE="/opt/MacPatch"
 MPSRVCONTENT="${MPBASE}/Content/Web"
@@ -100,30 +101,35 @@ minorVer="0"
 buildVer="0"
 
 if [[ $platform == 'linux' ]]; then
-  USELINUX=true
-  OWNERGRP="www-data:www-data"
-  LNXDIST=`python -c "import platform;print(platform.linux_distribution()[0])"`
-  if [[ $LNXDIST == *"Red"*  || $LNXDIST == *"Cent"* ]]; then
-	USERHEL=true
-  else
-	USEUBUNTU=true
-  fi
+	USELINUX=true
+	OWNERGRP="www-data:www-data"
+	LNXDIST=`python -c "import platform;print(platform.linux_distribution()[0])"`
+	if [[ $LNXDIST == *"Red"*  || $LNXDIST == *"Cent"* ]]; then
+		USERHEL=true
+	else
+		USEUBUNTU=true
+	fi
 
-  if ( ! $USERHEL && ! $USEUBUNTU ); then
-	echo "Not running a supported version of Linux."
-	exit 1;
-  fi
+	if ( ! $USERHEL && ! $USEUBUNTU ); then
+		echo "Not running a supported version of Linux."
+		exit 1;
+	fi
 
 elif [[ "$unamestr" == 'Darwin' ]]; then
-  USEMACOS=true
-  if [ -f "$CODESIGNIDENTITYPLIST" ]; then
-	CODESIGNIDENTITYALT=`defaults read ${CODESIGNIDENTITYPLIST} name`
-  fi
+	USEMACOS=true
+	if [ -f "$CODESIGNIDENTITYPLIST" ]; then
+		CODESIGNIDENTITYALT=`defaults read ${CODESIGNIDENTITYPLIST} name`
+	fi
 
-  systemVersion=`/usr/bin/sw_vers -productVersion`
-  majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
-  minorVer=`echo $systemVersion | cut -d . -f 2`
-  buildVer=`echo $systemVersion | cut -d . -f 3`
+	systemVersion=`/usr/bin/sw_vers -productVersion`
+	majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
+	minorVer=`echo $systemVersion | cut -d . -f 2`
+	buildVer=`echo $systemVersion | cut -d . -f 3`
+
+	# Test for Brew
+	if type brew 2>/dev/null; then
+		MACPROMPTFORBREW=false
+	fi
 fi
 
 # Script Input Args ----------------------------------------------------------
@@ -131,31 +137,31 @@ fi
 usage() { echo "Usage: $0 [-p Build Mac PKG]" 1>&2; exit 1; }
 
 while getopts "phc:" opt; do
-  case $opt in
-	p)
-	  MP_MAC_PKG=true
-	  ;;
-  c)
-	CA_CERT=${OPTARG}
-	;;
-	h)
-	  echo
-	  usage
-	  exit 1
-	  ;;
-	\?)
-	  echo "Invalid option: -$OPTARG" >&2
-	  echo
-	  usage
-	  exit 1
-	  ;;
-	:)
-	  echo "Option -$OPTARG requires an argument." >&2
-	  echo
-	  usage
-	  exit 1
-	  ;;
-  esac
+	case $opt in
+		p)
+			MP_MAC_PKG=true
+			;;
+		c)
+			CA_CERT=${OPTARG}
+			;;
+		h)
+			echo
+			usage
+			exit 1
+			;;
+		\?)
+			echo "Invalid option: -$OPTARG" >&2
+			echo
+			usage
+			exit 1
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument." >&2
+			echo
+			usage
+			exit 1
+			;;
+	esac
 done
 
 # ----------------------------------------------------------------------------
@@ -163,28 +169,51 @@ done
 # ----------------------------------------------------------------------------
 clear
 
-
-
 if $USEMACOS; then
 
-  if $MACPROMPTFORXCODE; then
-	clear
-	echo
-	echo "Server Build Requires Xcode Command line tools to be installed"
-	echo "and the license agreement accepted. If you have not done this,"
-	echo "parts of the install will fail."
-	echo
-	echo "It is recommended that you run \"sudo xcrun --show-sdk-version\""
-	echo "prior to continuing with this script."
-	echo
-	read -p "Would you like to continue (Y/N)? [Y]: " XCODEOK
-	XCODEOK=${XCODEOK:-Y}
-	if [ "$XCODEOK" == "Y" ] || [ "$XCODEOK" == "y" ] ; then
-	  echo
-	else
-	  exit 1
+	if $MACPROMPTFORXCODE; then
+		clear
+		echo
+		echo "Server Build Requires Xcode Command line tools to be installed"
+		echo "and the license agreement accepted. If you have not done this,"
+		echo "parts of the install will fail."
+		echo
+		echo "It is recommended that you run \"sudo xcrun --show-sdk-version\""
+		echo "prior to continuing with this script."
+		echo
+		read -p "Would you like to continue (Y/N)? [Y]: " XCODEOK
+		XCODEOK=${XCODEOK:-Y}
+		if [ "$XCODEOK" == "Y" ] || [ "$XCODEOK" == "y" ] ; then
+			echo
+		else
+			exit 1
+		fi
 	fi
-  fi
+
+	if $MACPROMPTFORBREW; then
+		clear
+		echo
+		echo "Server Build Requires Brew to be installed."
+		echo
+		echo "To install brew go to https://brew.sh and follow the install"
+		echo "directions."
+		echo
+		echo "This install requires \"OpenSSL\" and \"SWIG\" to be installed"
+		echo "using brew. It's recommended that you install these two"
+		echo "applications before continuing."
+		echo
+		echo "Exapmple: brew install openssl swig"
+		echo
+		echo "Once installed please re-run this script."
+		echo
+		read -p "Would you like to continue (Y/N)? [Y]: " BREWOK
+		BREWOK=${BREWOK:-Y}
+		if [ "$BREWOK" == "Y" ] || [ "$BREWOK" == "y" ] ; then
+			echo
+		else
+			exit 1
+		fi
+	fi
 fi
 
 # ----------------------------------------------------------------------------
@@ -299,7 +328,6 @@ if $USEMACOS; then
 
 	PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
 	OSSL_SW=`find "${SRC_DIR}" -name "openssl-"* -type f -exec basename {} \; | head -n 1`
-	SWIG_SW=`find "${SRC_DIR}" -name "swig-"* -type f -exec basename {} \; | head -n 1`
 
 	# PCRE
 	echo " - Uncompress ${PCRE_SW}"
@@ -311,47 +339,81 @@ if $USEMACOS; then
 	mkdir -p ${TMP_DIR}/openssl
 	tar xfz ${SRC_DIR}/${OSSL_SW} --strip 1 -C ${TMP_DIR}/openssl
 
-	# SWIG
-	echo " - Uncompress ${SWIG_SW}"
-	mkdir -p ${TMP_DIR}/swig
-	tar xfz ${SRC_DIR}/${SWIG_SW} --strip 1 -C ${TMP_DIR}/swig
+	# BREW Software Check
+	XOPENSSL=false
+	declare -i needsInstall=0
+	sudo -u _appserver bash -c "brew list | grep openssl > /dev/null 2>&1"
+	if [ $? != 0 ] ; then
+		# echo "OpenSSL is not installed using brew. Please install openssl."
+		needsInstall=1
+		XOPENSSL=true
+	fi
+
+	XSWIG=false
+	sudo -u _appserver bash -c "brew list | grep swig > /dev/null 2>&1"
+	if [ $? != 0 ] ; then
+		# echo "SWIG is not installed using brew. Please install swig."
+		needsInstall=1
+		XSWIG=true
+	fi
+
+	if [ "$needsInstall" -gt 0 ]; then
+		echo
+		echo
+		echo "* Missing Required Software (brew packages)"
+		echo "--------------------------------------------"
+		if $XOPENSSL; then
+			echo "Please install OpenSSL: brew install openssl"
+		fi
+		if $XSWIG; then
+			echo "Please install SWIG: brew install swig"
+		fi
+		echo
+		echo "Please open a new terminal and install the missing packages"
+		echo "and continue with the script."
+		echo
+		read -p "Ready to continue (Y/N)? [Y]: " BREWSWOK
+		BREWSWOK=${BREWSWOK:-Y}
+		if [ "$BREWSWOK" == "Y" ] || [ "$BREWSWOK" == "y" ] ; then
+			echo
+		else
+			exit 1
+		fi
+	fi
 fi
 
 # ------------------
 # Install required packages
 # ------------------
 if $USELINUX; then
-  echo
-  echo "* Install required linux packages"
-  echo "-----------------------------------------------------------------------"
-  if $USERHEL; then
-	# Check if needed packges are installed or install
-	pkgs=("gcc" "gcc-c++" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release" "python-devel" "python-setuptools" "python-wheel" "python-pip" "swig")
-
-	for i in "${pkgs[@]}"
-	do
-	  p=`rpm -qa --qf '%{NAME}\n' | grep -e ${i}$ | head -1`
-	  if [ -z $p ]; then
-		echo " - Install $i"
-		yum install -y -q -e 1 ${i}
-	  fi
-	done
-
-  elif $USEUBUNTU; then
-	#statements
-	pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev" "python-dev" "python-pip" "swig")
-	for i in "${pkgs[@]}"
-	do
-	  p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
-	  if [ -z $p ]; then
-		echo
-		echo "Install $i"
-		echo
-		apt-get install ${i} -y
-	  fi
-	done
-
-  fi
+	echo
+	echo "* Install required linux packages"
+	echo "-----------------------------------------------------------------------"
+	if $USERHEL; then
+		# Check if needed packges are installed or install
+		pkgs=("gcc" "gcc-c++" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release" "python-devel" "python-setuptools" "python-wheel" "python-pip" "swig")
+		for i in "${pkgs[@]}"
+		do
+			p=`rpm -qa --qf '%{NAME}\n' | grep -e ${i}$ | head -1`
+			if [ -z $p ]; then
+				echo " - Install $i"
+				yum install -y -q -e 1 ${i}
+			fi
+		done
+	elif $USEUBUNTU; then
+		#statements
+		pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev" "python-dev" "python-pip" "swig")
+		for i in "${pkgs[@]}"
+		do
+			p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
+			if [ -z $p ]; then
+				echo
+				echo "Install $i"
+				echo
+				apt-get install ${i} -y
+			fi
+		done
+	fi
 fi
 
 # ------------------
@@ -362,54 +424,54 @@ echo "* Upgrade/Install required python tools."
 echo "-----------------------------------------------------------------------"
 HAVEPIP=`which pip`
 if [ $? != 0 ] ; then
-  easy_install --quiet pip
+	easy_install --quiet pip
 fi
 
 pip_mods=( "pip" "setuptools" "virtualenv" "pycrypto" "argparse" "biplist" "python-crontab" "python-dateutil" "requests" "six" "wheel" "mysql-connector-python-rf")
 for p in "${pip_mods[@]}"
 do
-  echo " - Installing ${p}, python module."
-  if $USELINUX; then
-	pip install --quiet --upgrade ${p}
-	if [ $? != 0 ] ; then
-		echo " Error installing ${p}"
-		sleep 2
-		echo
-		echo " - Trying ${p}, python module again."
-		pip install --egg --quiet --upgrade ${p}
+	echo " - Installing ${p}, python module."
+	if $USELINUX; then
+		pip install --quiet --upgrade ${p}
 		if [ $? != 0 ] ; then
-		echo " Error installing ${p}"
+			echo " Error installing ${p}"
+			sleep 2
+			echo
+			echo " - Trying ${p}, python module again."
+			pip install --egg --quiet --upgrade ${p}
+			if [ $? != 0 ] ; then
+			echo " Error installing ${p}"
+			fi
 		fi
-	fi
-  else
-	if [[ ${p} == *"python-crontab"* ]]; then
-		   continue
-	fi
-
-	if (( $minorVer >= 11 )); then
-		# Needed to install when SIP is active
-		pip install --egg --quiet ${p}
 	else
-		pip install --egg --quiet --no-cache-dir --upgrade ${p}
-	fi
+		if [[ ${p} == *"python-crontab"* ]]; then
+			continue
+		fi
 
-	if [ $? != 0 ] ; then
-		echo " Error installing ${p}"
-		sleep 2
-		echo
-		echo " - Trying ${p}, python module again."
 		if (( $minorVer >= 11 )); then
 			# Needed to install when SIP is active
-			pip install --quiet ${p}
+			pip install --egg --quiet ${p}
 		else
-			pip install --quiet --upgrade ${p}
+			pip install --egg --quiet --no-cache-dir --upgrade ${p}
 		fi
 
 		if [ $? != 0 ] ; then
 			echo " Error installing ${p}"
+			sleep 2
+			echo
+			echo " - Trying ${p}, python module again."
+			if (( $minorVer >= 11 )); then
+				# Needed to install when SIP is active
+				pip install --quiet ${p}
+			else
+				pip install --quiet --upgrade ${p}
+			fi
+
+			if [ $? != 0 ] ; then
+				echo " Error installing ${p}"
+			fi
 		fi
 	fi
-  fi
 done
 
 sleep 1
@@ -430,19 +492,19 @@ tar xfz ${SRC_DIR}/${NGINX_SW} --strip 1 -C ${BUILDROOT}/nginx
 cd ${BUILDROOT}/nginx
 
 if $USELINUX; then
-  ./configure --prefix=${MPSERVERBASE}/nginx \
-  --with-http_ssl_module \
-  --with-pcre \
-  --user=www-data \
-  --group=www-data > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+	./configure --prefix=${MPSERVERBASE}/nginx \
+	--with-http_ssl_module \
+	--with-pcre \
+	--user=www-data \
+	--group=www-data > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 else
-  export KERNEL_BITS=64
-  ./configure --prefix=${MPSERVERBASE}/nginx \
-  --without-http_autoindex_module \
-  --without-http_ssi_module \
-  --with-http_ssl_module \
-  --with-openssl=${TMP_DIR}/openssl \
-  --with-pcre=${TMP_DIR}/pcre  > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+	export KERNEL_BITS=64
+	./configure --prefix=${MPSERVERBASE}/nginx \
+	--without-http_autoindex_module \
+	--without-http_ssi_module \
+	--with-http_ssl_module \
+	--with-openssl=${TMP_DIR}/openssl \
+	--with-pcre=${TMP_DIR}/pcre  > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 fi
 
 make  >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
@@ -450,11 +512,11 @@ make install >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 
 mv ${MPSERVERBASE}/nginx/conf/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf.orig
 if $USEMACOS; then
-  echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
-  cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERBASE}/nginx/conf/nginx.conf
+	echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERBASE}/nginx/conf/nginx.conf
 else
-  echo " - Copy nginx.conf to ${MPSERVERBASE}/nginx/conf/nginx.conf"
-  cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf
+	echo " - Copy nginx.conf to ${MPSERVERBASE}/nginx/conf/nginx.conf"
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf
 fi
 echo " - Copy nginx sites to ${MPSERVERBASE}/nginx/conf/sites"
 cp -r ${MPSERVERBASE}/conf/nginx/sites ${MPSERVERBASE}/nginx/conf/sites
@@ -463,40 +525,10 @@ perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $MPSERVERBASE/nginx/conf/nginx.conf
 FILES=$MPSERVERBASE/nginx/conf/sites/*.conf
 for f in $FILES
 do
-  #echo "$f"
-  perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $f
-  perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $f
+	#echo "$f"
+	perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $f
+	perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $f
 done
-
-# ------------------
-# Compile OpenSSL,PCRE,SWIG for M2Crypto
-# ------------------
-if $USEMACOS; then
-	# PCRE
-	echo "* Build and configure PCRE"
-	cd ${TMP_DIR}/pcre
-	make clean > /dev/null 2>&1
-	./configure --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/pcre-build.log 2>&1
-	make  >> ${MPSERVERBASE}/logs/pcre-build.log 2>&1
-	make install >> ${MPSERVERBASE}/logs/pcre-build.log 2>&1
-
-	# SWIG
-	echo "* Build and configure SWIG"
-	cd ${TMP_DIR}/swig
-	make clean > /dev/null 2>&1
-	./configure --prefix=${MPSERVERBASE}/lib --with-pcre-prefix=${MPSERVERBASE}/lib --disable-dependency-tracking > ${MPSERVERBASE}/logs/swig-build.log 2>&1
-	make  >> ${MPSERVERBASE}/logs/swig-build.log 2>&1
-	make install >> ${MPSERVERBASE}/logs/swig-build.log 2>&1
-
-	# OpenSSL
-	echo "* Build and configure OpenSSL"
-	cd ${TMP_DIR}/openssl
-	make clean > /dev/null 2>&1
-	#./Configure darwin64-x86_64-cc --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/openssl-build.log 2>&1
-	./config --prefix=${MPSERVERBASE}/lib > ${MPSERVERBASE}/logs/openssl-build.log 2>&1
-	make  >> ${MPSERVERBASE}/logs/openssl-build.log 2>&1
-	make install >> ${MPSERVERBASE}/logs/openssl-build.log 2>&1
-fi
 
 # ------------------
 # Link & Set Permissions
@@ -511,10 +543,10 @@ echo "-----------------------------------------------------------------------"
 
 # Set Permissions
 if $USEMACOS; then
-  chown -R $OWNERGRP ${MPSERVERBASE}/logs
-  chmod 0775 ${MPSERVERBASE}
-  chown root:wheel ${MPSERVERBASE}/conf/launchd/*.plist
-  chmod 0644 ${MPSERVERBASE}/conf/launchd/*.plist
+	chown -R $OWNERGRP ${MPSERVERBASE}/logs
+	chmod 0775 ${MPSERVERBASE}
+	chown root:wheel ${MPSERVERBASE}/conf/launchd/*.plist
+	chmod 0644 ${MPSERVERBASE}/conf/launchd/*.plist
 fi
 
 # ------------------------------------------------------------
@@ -527,7 +559,7 @@ echo "-----------------------------------------------------------------------"
 
 certsDir="${MPSERVERBASE}/etc/ssl"
 if [ ! -d "${certsDir}" ]; then
-  mkdirP "${certsDir}"
+	mkdirP "${certsDir}"
 fi
 
 USER="MacPatch"
@@ -583,9 +615,14 @@ if command_exists virtualenv ; then
 
 	virtualenv --no-site-packages env
 	source env/bin/activate
+
 	# Install M2Crypto
 	if $USEMACOS; then
-		env LDFLAGS="-I${MPSERVERBASE}/lib/include -L${MPSERVERBASE}/lib/lib" pip install M2Crypto --no-cache-dir --quiet
+		OPENSSLPWD=`sudo -u _appserver bash -c "brew --prefix openssl`
+		env LDFLAGS="-L${OPENSSLPWD}/lib" \
+		CFLAGS="-I${OPENSSLPWD}/include" \
+		SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
+		pip install m2crypto
 	fi
 
 	if [ "$CA_CERT" != "NA" ]; then
