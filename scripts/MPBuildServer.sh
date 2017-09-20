@@ -622,7 +622,7 @@ if command_exists virtualenv ; then
 		env LDFLAGS="-L${OPENSSLPWD}/lib" \
 		CFLAGS="-I${OPENSSLPWD}/include" \
 		SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
-		pip install m2crypto
+		pip install m2crypto --no-cache-dir --upgrade
 	fi
 
 	if [ "$CA_CERT" != "NA" ]; then
@@ -666,102 +666,100 @@ chown -R $OWNERGRP "${MPSERVERBASE}/apps/env"
 # Create Mac OS X, MacPatch Server PKG
 # ------------------------------------------------------------
 if $MP_MAC_PKG; then
-  #clear
-  echo
-  echo "* Begin creating MacPatch Server PKG for Mac OS X..."
-  echo "-----------------------------------------------------------------------"
-  echo
-  echo
-  # ------------------
-  # Clean up, pre package
-  # ------------------
-  rm -rf "${MPSERVERBASE}/conf/app/.site"
-  find "${MPSERVERBASE}/conf/src" -name apache-tomcat-* -print | xargs -I{} rm {}
-  find "${MPSERVERBASE}/conf/src" -name apr* -print | xargs -I{} rm {}
-  rm -rf "${MPSERVERBASE}/conf/src/openbd"
-  rm -rf "${MPSERVERBASE}/conf/src/linux"
-  rm -rf "${MPSERVERBASE}/conf/init"
-  rm -rf "${MPSERVERBASE}/conf/init.d"
-  rm -rf "${MPSERVERBASE}/conf/systemd"
-
-  # ------------------
-  # Move Files For Packaging
-  # ------------------
-  PKG_FILES_ROOT_MP="${BUILDROOT}/Server/Files/Library/MacPatch"
-
-  cp -R ${GITROOT}/MacPatch\ PKG/Server ${BUILDROOT}
-
-  mv "${MPSERVERBASE}" "${PKG_FILES_ROOT_MP}/"
-  mv "${MPBASE}/Content" "${PKG_FILES_ROOT_MP}/"
-
-  # ------------------
-  # Clean up structure place holders
-  # ------------------
-  echo "Clean up place holder files"
-  find ${PKG_FILES_ROOT_MP} -name ".mpRM" -print | xargs -I{} rm -rf {}
-
-  # ------------------
-  # Create the Server pkg
-  # ------------------
-  mkdir -p "${BUILDROOT}/PKG"
-
-  # Create Server base package
-  echo "Create Server base package"
-  pkgbuild --root "${BUILDROOT}/Server/Files/Library" \
-  --identifier gov.llnl.mp.server \
-  --install-location /Library \
-  --scripts ${BUILDROOT}/Server/Scripts \
-  --version $MP_SERVER_PKG_VER \
-  ${BUILDROOT}/PKG/Server.pkg
-
-  # Create the final package with scripts and resources
-  echo "Run product build on MPServer.pkg"
-  productbuild --distribution ${BUILDROOT}/Server/Distribution \
-  --resources ${BUILDROOT}/Server/Resources \
-  --package-path ${BUILDROOT}/PKG \
-  ${BUILDROOT}/PKG/_MPServer.pkg
-
-  # Possibly Sign the newly created PKG
-  #clear
-  echo
-  read -p "Would you like to sign the installer PKG (Y/N)? [N]: " SIGNPKG
-  SIGNPKG=${SIGNPKG:-N}
-  echo
-
-  if [ "$SIGNPKG" == "Y" ] || [ "$SIGNPKG" == "y" ] ; then
 	#clear
-
-	read -p "Please enter you sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
-	CODESIGNIDENTITY=${CODESIGNIDENTITY:-$CODESIGNIDENTITYALT}
-	if [ "$CODESIGNIDENTITY" != "$CODESIGNIDENTITYALT" ]; then
-	  defaults write ${CODESIGNIDENTITYPLIST} name "${CODESIGNIDENTITY}"
-	fi
-
 	echo
-	echo  "Signing package..."
-	/usr/bin/productsign --sign "${CODESIGNIDENTITY}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
-	if [ $? -eq 0 ]; then
-	  # GOOD
-	  rm ${BUILDROOT}/PKG/_MPServer.pkg
+	echo "* Begin creating MacPatch Server PKG for Mac OS X..."
+	echo "-----------------------------------------------------------------------"
+	echo
+	echo
+	# ------------------
+	# Clean up, pre package
+	# ------------------
+	rm -rf "${MPSERVERBASE}/conf/app/.site"
+	find "${MPSERVERBASE}/conf/src" -name apache-tomcat-* -print | xargs -I{} rm {}
+	find "${MPSERVERBASE}/conf/src" -name apr* -print | xargs -I{} rm {}
+	rm -rf "${MPSERVERBASE}/conf/src/openbd"
+	rm -rf "${MPSERVERBASE}/conf/src/linux"
+	rm -rf "${MPSERVERBASE}/conf/init"
+	rm -rf "${MPSERVERBASE}/conf/init.d"
+	rm -rf "${MPSERVERBASE}/conf/systemd"
+
+	# ------------------
+	# Move Files For Packaging
+	# ------------------
+	PKG_FILES_ROOT_MP="${BUILDROOT}/Server/Files/Library/MacPatch"
+
+	cp -R ${GITROOT}/MacPatch\ PKG/Server ${BUILDROOT}
+
+	mv "${MPSERVERBASE}" "${PKG_FILES_ROOT_MP}/"
+	mv "${MPBASE}/Content" "${PKG_FILES_ROOT_MP}/"
+
+	# ------------------
+	# Clean up structure place holders
+	# ------------------
+	echo "Clean up place holder files"
+	find ${PKG_FILES_ROOT_MP} -name ".mpRM" -print | xargs -I{} rm -rf {}
+
+	# ------------------
+	# Create the Server pkg
+	# ------------------
+	mkdir -p "${BUILDROOT}/PKG"
+
+	# Create Server base package
+	echo "Create Server base package"
+	pkgbuild --root "${BUILDROOT}/Server/Files/Library" \
+	--identifier gov.llnl.mp.server \
+	--install-location /Library \
+	--scripts ${BUILDROOT}/Server/Scripts \
+	--version $MP_SERVER_PKG_VER \
+	${BUILDROOT}/PKG/Server.pkg
+
+	# Create the final package with scripts and resources
+	echo "Run product build on MPServer.pkg"
+	productbuild --distribution ${BUILDROOT}/Server/Distribution \
+	--resources ${BUILDROOT}/Server/Resources \
+	--package-path ${BUILDROOT}/PKG \
+	${BUILDROOT}/PKG/_MPServer.pkg
+
+	# Possibly Sign the newly created PKG
+	#clear
+	echo
+	read -p "Would you like to sign the installer PKG (Y/N)? [N]: " SIGNPKG
+	SIGNPKG=${SIGNPKG:-N}
+	echo
+
+	if [ "$SIGNPKG" == "Y" ] || [ "$SIGNPKG" == "y" ] ; then
+		#clear
+		read -p "Please enter you sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
+		CODESIGNIDENTITY=${CODESIGNIDENTITY:-$CODESIGNIDENTITYALT}
+		if [ "$CODESIGNIDENTITY" != "$CODESIGNIDENTITYALT" ]; then
+			defaults write ${CODESIGNIDENTITYPLIST} name "${CODESIGNIDENTITY}"
+		fi
+
+		echo
+		echo  "Signing package..."
+		/usr/bin/productsign --sign "${CODESIGNIDENTITY}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
+		if [ $? -eq 0 ]; then
+		# GOOD
+			rm ${BUILDROOT}/PKG/_MPServer.pkg
+		else
+			# FAILED
+			echo "The signing process failed."
+			echo
+			echo "Please sign the package by hand."
+			echo
+			echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
+			echo
+		fi
 	else
-	  # FAILED
-	  echo "The signing process failed."
-	  echo
-	  echo "Please sign the package by hand."
-	  echo
-	  echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
-	  echo
+		mv ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
 	fi
 
-  else
-	mv ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
-  fi
+	# Clean up the base package
+	rm ${BUILDROOT}/PKG/Server.pkg
 
-  # Clean up the base package
-  rm ${BUILDROOT}/PKG/Server.pkg
-
-  # Open the build package dir
-  open ${BUILDROOT}/PKG
+	# Open the build package dir
+	open ${BUILDROOT}/PKG
 fi
 
 exit 0;
