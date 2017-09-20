@@ -618,7 +618,7 @@ if command_exists virtualenv ; then
 
 	# Install M2Crypto
 	if $USEMACOS; then
-		OPENSSLPWD=`sudo -u _appserver bash -c "brew --prefix openssl`
+		OPENSSLPWD=`sudo -u _appserver bash -c "brew --prefix openssl"`
 		env LDFLAGS="-L${OPENSSLPWD}/lib" \
 		CFLAGS="-I${OPENSSLPWD}/include" \
 		SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
