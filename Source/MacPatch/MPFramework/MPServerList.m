@@ -68,6 +68,18 @@
     return nil;
 }
 
+- (NSArray *)getLocalServerArray
+{
+    NSDictionary *_dict = [self readServerPlistFromHost];
+    NSArray *servers = [NSArray array];
+    if ([_dict objectForKey:@"servers"]) {
+        if ([[_dict objectForKey:@"servers"] count] >= 1) {
+            servers = [[_dict objectForKey:@"servers"] copy];
+        }
+    }
+    return servers;
+}
+
 
 #pragma mark - Get From Server
 
@@ -132,7 +144,7 @@
         return YES;
     }
 
-    NSError *wsErr = NO;
+    NSError *wsErr = nil;
     MPWebServices *mpws = [[MPWebServices alloc] init];
     NSDictionary *_curInfo = [self readServerPlistFromHost];
     if (!_curInfo) {

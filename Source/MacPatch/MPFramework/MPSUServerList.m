@@ -135,7 +135,7 @@
         return YES;
     }
     
-    NSError *wsErr = NO;
+    NSError *wsErr = nil;
     MPWebServices *mpws = [[MPWebServices alloc] init];
     NSDictionary *_curInfo = [self readPlistFromHost];
     if (!_curInfo) {

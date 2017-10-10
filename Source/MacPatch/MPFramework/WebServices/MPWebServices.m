@@ -540,7 +540,7 @@
         } else {
             qlerror(@"%@",error.localizedDescription);
         }
-        return NO;
+        return @"";
     }
 
     // Parse Main JSON Result
@@ -894,8 +894,66 @@
 
 #pragma mark Convience methods
 
+/*
+- (void)runCheckIn
+{
+    NSDictionary *agentData = [self agentData];
+    if (!agentData)
+    {
+        logit(lcl_vError,@"Agent data is nil, can not post client checkin data.");
+        return;
+    }
+    
+    MPWSResult *result;
+    MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
+    NSString *urlPath = [@"/api/v1/client/checkin" stringByAppendingPathComponent:[si g_cuuid]];
+    result = [req runSyncPOST:urlPath body:agentData];
+    
+    if (result.statusCode >= 200 && result.statusCode <= 299) {
+        logit(lcl_vInfo,@"Running client base checkin, returned true.");
+        // Process Setting Revisions
+        [self updateGroupSettings:result.result];
+    } else {
+        logit(lcl_vError,@"Running client base checkin, returned false.");
+        logit(lcl_vDebug,@"%@",result.toDictionary);
+    }
+    
+    logit(lcl_vInfo,@"Running client check in completed.");
+    
+    return;
+}
+*/
+
+- (NSString *)patchGroupContentUrlPath
+{
+    NSString *urlPath = [NSString stringWithFormat:@"/api/v1/client/patch/group/%@",[MPSystemInfo clientUUID]];
+    return urlPath;
+}
+
+- (NSDictionary *)getPatchGroupContentCLI:(NSError **)err
+{
+    MPWSResult *result;
+    MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
+    NSString *urlPath = [self patchGroupContentUrlPath];
+    result = [req runSyncGET:urlPath];
+    
+    if (result.statusCode >= 200 && result.statusCode <= 299) {
+        // Process Results
+        logit(lcl_vDebug,@"Patch Group Patches: %@",result.result);
+        return result.result;
+    } else {
+        logit(lcl_vError,@"Running client base checkin, returned false.");
+        logit(lcl_vDebug,@"%@",result.toDictionary);
+    }
+    
+    logit(lcl_vInfo,@"Running client check in completed.");
+    
+    return nil;
+}
+
 - (NSDictionary *)getPatchGroupContent:(NSError **)err
 {
+    /*
     NSError *wsErr = nil;
     NSString *uri;
     NSData *reqData;
@@ -942,6 +1000,7 @@
     }
     // Should not get here
     return nil;
+     */
 }
 
 - (NSString *)getPatchGroupContentRev:(NSError **)err
@@ -1434,7 +1493,7 @@
         } else {
             qlerror(@"%@",error.localizedDescription);
         }
-        return NO;
+        return @"";
     }
     
     // Parse Main JSON Result

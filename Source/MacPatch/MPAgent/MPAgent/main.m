@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include "MPDefaultServers.h"
 
-#define APPVERSION	@"3.0.0.9"
+#define APPVERSION	@"3.1.0.0"
 #define APPNAME		@"MPAgent"
 
 void usage(void);
@@ -53,6 +53,7 @@ int main (int argc, char * argv[])
         // Registration
         BOOL doRegistration     = NO;
         BOOL readRegInfo        = NO;
+        BOOL runZetaTest        = NO;
         NSString *regKeyArg     = @"999999999";
         NSString *regKeyHash    = @"999999999";
         
@@ -102,11 +103,13 @@ int main (int argc, char * argv[])
                 {"OSUpgradeID"          ,required_argument	,0, 'm'},
                 // Current Console User
                 {"consoleUser"          ,no_argument		,0, 'x'},
+                // TEST
+                {"zeta"                 ,no_argument        ,0, 'Z'},
 				{0, 0, 0, 0}
 			};
 			// getopt_long stores the option index here.
 			int option_index = 0;
-			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwnzeVvhr::R::t:ACk:l:m:x", long_options, &option_index);
+			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwnzeVvhr::R::t:ACk:l:m:xZ", long_options, &option_index);
 			
 			// Detect the end of the options.
 			if (c == -1)
@@ -217,6 +220,9 @@ int main (int argc, char * argv[])
                         regKeyHash = [NSString stringWithUTF8String:optarg];
                     }
                     break;
+                case 'Z':
+                    runZetaTest = YES;
+                    break;
 				case 'h':
 				case '?':
 				default:
@@ -279,6 +285,26 @@ int main (int argc, char * argv[])
             qlinfo(@"Create default servers plist.");
             MPDefaultServers *mpSrvs = [[MPDefaultServers alloc] init];
             [mpSrvs createDefaultServersList];
+        }
+        
+        // Zeta Test
+        if (runZetaTest)
+        {
+            
+            /*
+            MPHTTPRequest *ch = [MPHTTPRequest new];
+            NSDictionary *data = [ch agentData];
+            MPWSResult *result;
+            result = [ch runSyncPOST:[@"/api/v1/client/checkin" stringByAppendingPathComponent:[data objectForKey:@"cuuid"]] body:data];
+            if (!result) {
+                NSLog(@"Error running sync POST");
+            } else {
+                NSLog(@"Status: %d",(int)result.statusCode);
+                NSLog(@"Result: %@",result.toDictionary);
+            }
+            */
+            exit(0);
+             
         }
         
         // Process Inventory

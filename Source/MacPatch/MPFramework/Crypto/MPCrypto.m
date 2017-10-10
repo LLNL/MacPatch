@@ -341,7 +341,8 @@ done:
     OSStatus err = 0;
     SecExternalFormat format = kSecFormatPEMSequence;
     
-    err = SecItemImport((__bridge CFDataRef)(aKeyData), (CFStringRef)@"pem", &format, NULL, kNilOptions, kNilOptions, NULL, &imported);
+    //err = SecItemImport((__bridge CFDataRef)(aKeyData), (CFStringRef)@"pem", &format, NULL, kNilOptions, kNilOptions, NULL, &imported);
+    err = SecItemImport((__bridge CFDataRef)(aKeyData), (CFStringRef)@"pem", &format, NULL, kNilOptions, NULL, NULL, &imported);
     if (err != 0) {
         NSLog(@"SecItemImport[importPublicKey]: %@ ERROR: %@", self.class, [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil]);
     }

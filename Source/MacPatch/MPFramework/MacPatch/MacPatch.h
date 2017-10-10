@@ -49,7 +49,16 @@
 #import "MPServerList.h"
 #import "MPSUServerList.h"
 
-#import "AFNetworking.h"
+#import "AFURLRequestSerialization.h"
+#import "AFURLResponseSerialization.h"
+#import "AFSecurityPolicy.h"
+#import "AFNetworkReachabilityManager.h"
+
+#import "AFURLSessionManager.h"
+#import "AFHTTPSessionManager.h"
+
+#import "AFHTTPSessionManager+Synchronous.h"
+/*
 #import "AFURLRequestSerialization.h"
 #import "AFURLResponseSerialization.h"
 #import "AFSecurityPolicy.h"
@@ -64,6 +73,12 @@
     #import "AFURLSessionManager.h"
     #import "AFHTTPSessionManager.h"
 #endif
+*/
+
+// Networking Add for MP 3.1.0
+#import "MPHTTPRequest.h"
+#import "MPWSResult.h"
+#import "STHTTPRequest.h"
 
 // Patching & Scanning
 #import "MPAsus.h"

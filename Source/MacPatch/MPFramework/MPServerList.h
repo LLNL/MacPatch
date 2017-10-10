@@ -37,6 +37,7 @@
 - (id)initAndGetHostListFromServer;
 
 - (NSDictionary *)readServerPlistFromHost;
+- (NSArray *)getLocalServerArray;
 
 // Network Methods for Getting the Data
 - (BOOL)usingCurrentMPHostList:(NSError **)err;

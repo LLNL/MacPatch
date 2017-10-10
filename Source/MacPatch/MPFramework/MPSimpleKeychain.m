@@ -176,7 +176,7 @@
 {
     if (![self keychainIsUnlocked]) {
         if (![self unlockKeyChain:keyChainFile]) {
-            return NO;
+            return nil;
         }
     }
     

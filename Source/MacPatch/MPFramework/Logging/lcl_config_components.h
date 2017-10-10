@@ -32,6 +32,8 @@ _lcl_component(MPInventoryPlugin,   "MPInventoryPlugin",    "MPInventoryPlugin")
 _lcl_component(MPResult,            "MPResult",             "MPResult")
 _lcl_component(MPAgentRegister,     "MPAgentRegister",      "MPAgentRegister")
 _lcl_component(MPClientInfo,        "MPClientInfo",         "MPClientInfo")
+_lcl_component(MPHTTPRequest,       "MPHTTPRequest",        "MPHTTPRequest")
+
 
 
 

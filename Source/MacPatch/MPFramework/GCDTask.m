@@ -17,7 +17,7 @@
 
 - (void) launchWithOutputBlock: (void (^)(NSData* stdOutData)) stdOut
                  andErrorBlock: (void (^)(NSData* stdErrData)) stdErr
-                      onLaunch: (void (^)()) launched
+                      onLaunch: (void (^)(void)) launched
                         onExit: (void (^)(int)) exit
 {
     executingTask = [[NSTask alloc] init];

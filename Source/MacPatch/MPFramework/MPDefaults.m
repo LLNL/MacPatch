@@ -143,4 +143,30 @@
     }
 }
 
+#pragma mark - MacPatch 3.1 Methods
+// MP 3.1
+- (id)initUsingSettings
+{
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
+
+- (void)updateSettingsData:(NSDictionary *)settingsRevisons
+{
+    
+}
+
+- (NSInteger)revisionForKey:(MPSettingsKey)key
+{
+    return 0;
+}
+
+- (id)settingsForKey:(MPSettingsKey)key
+{
+    return nil;
+}
+
 @end
