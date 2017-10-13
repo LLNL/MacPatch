@@ -86,4 +86,3 @@
 
 <cflocation url="#session.cflocFix#/admin/inc/available_patches_mp.cfm">
 <cfabort>
-
