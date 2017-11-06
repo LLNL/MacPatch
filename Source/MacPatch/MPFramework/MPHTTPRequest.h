@@ -13,7 +13,17 @@
 
 @interface MPHTTPRequest : NSObject <NSURLSessionDelegate>
 
+@property (nonatomic, weak, readonly) NSError *error;
+
 - (id)initWithAgentPlist;
+
+/**
+ Create temporary download directory using url path
+
+ @param urlPath URL path
+ @return path to temp download file
+ */
+- (NSString *)createTempDownloadDir:(NSString *)urlPath;
 
 /**
  ASyncronus GET Request
@@ -49,5 +59,7 @@
 - (MPWSResult *)runSyncGET:(NSString *)urlPath;
 - (MPWSResult *)runSyncGET:(NSString *)urlPath body:(NSDictionary *)body;
 - (MPWSResult *)runSyncPOST:(NSString *)urlPath body:(NSDictionary *)body;
+
+- (NSString *)runSyncFileDownload:(NSString *)urlPath downloadDirectory:(NSString *)dlDir error:(NSError **)err;
 
 @end

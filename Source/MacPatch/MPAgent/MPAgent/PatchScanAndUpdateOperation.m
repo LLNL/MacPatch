@@ -24,7 +24,6 @@
  */
 
 #import "PatchScanAndUpdateOperation.h"
-#import "MPAgent.h"
 #import "MacPatch.h"
 
 @interface PatchScanAndUpdateOperation ()
@@ -46,12 +45,11 @@
 - (id)init
 {
 	if ((self = [super init])) {
-		scanType = 0;
-        taskPID = -99;
+		scanType    = 0;
+        taskPID     = -99;
 		isExecuting = NO;
         isFinished  = NO;
-		si	= [MPAgent sharedInstance];
-		fm	= [NSFileManager defaultManager];
+		fm          = [NSFileManager defaultManager];
 	}	
 	
 	return self;
@@ -114,7 +112,8 @@
 {
 	logit(lcl_vInfo,@"Running client vulnerability scan.");
 	@autoreleasepool {
-        @try {
+        @try
+        {
             [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:kMPPatchSCAN]];
         }
         @catch (NSException *exception) {
@@ -122,9 +121,12 @@
         }
         
 		NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-		if (![fm fileExistsAtPath:appPath]) {
+		if (![fm fileExistsAtPath:appPath])
+        {
 			logit(lcl_vError,@"Unable to find MPAgentExec app.");
-		} else {
+		}
+        else
+        {
             NSError *err = nil;
             MPCodeSign *cs = [[MPCodeSign alloc] init];
             BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
@@ -154,8 +156,10 @@
 - (void)runPatchScanAndUpdate
 {
     logit(lcl_vInfo,@"Running client vulnerability update.");
-    @autoreleasepool {
-        @try {
+    @autoreleasepool
+    {
+        @try
+        {
             [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:kMPPatchUPDATE]];
         }
         @catch (NSException *exception) {
@@ -163,9 +167,12 @@
         }
         
         NSString *appPath = [MP_ROOT_CLIENT stringByAppendingPathComponent:@"MPAgentExec"];
-        if (![fm fileExistsAtPath:appPath]) {
+        if (![fm fileExistsAtPath:appPath])
+        {
             logit(lcl_vError,@"Unable to find MPAgentExec app.");
-        } else {
+        }
+        else
+        {
             NSError *err = nil;
             MPCodeSign *cs = [[MPCodeSign alloc] init];
             BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
@@ -195,8 +202,10 @@
 - (void)runCritialPatchScanAndUpdate
 {
     logit(lcl_vInfo,@"Running Critial vulnerability scan and update.");
-    @autoreleasepool {
-        @try {
+    @autoreleasepool
+    {
+        @try
+        {
             [self setTaskFile:[@"/private/tmp" stringByAppendingPathComponent:kMPPatchUPDATE]];
         }
         @catch (NSException *exception) {

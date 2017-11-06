@@ -36,7 +36,7 @@
 
 - (long)getFreeDiskSpaceAtPath:(NSString *)aPath
 {
-	NSDictionary *fileAttributes = [[NSFileManager defaultManager] fileSystemAttributesAtPath:@"/"];
+	NSDictionary *fileAttributes = [[NSFileManager defaultManager] fileSystemAttributesAtPath:aPath];
 	unsigned long freeSpace = (long)[[fileAttributes objectForKey:NSFileSystemFreeSize] longLongValue];
 	return (freeSpace / 1024);
 	//NSLog(@"free disk space: %dGB", (int)(freeSpace / 1024 / 1024 / 1024 ));

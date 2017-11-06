@@ -24,25 +24,12 @@
  */
 
 #import <Foundation/Foundation.h>
-@class MPAgent;
 
-@interface MPTasks : NSObject 
-{
-    MPAgent *si;
-	NSString *_taskPlist;
-}
+@interface MPTasks : NSObject
 
-@property (nonatomic, strong) NSString *_taskPlist;
-
-- (int)validateTasksPlist;
-
-- (void)readAndSetTasksFromPlist;
-- (void)updateTasksPlist;
-- (void)loadTasks:(NSArray *)aTasks;
+- (NSArray *)setNextRunForTasks:(NSArray *)aTasks;
 - (NSDictionary *)genNextRunAt:(NSDictionary *)aTask;
 
-- (void)updateTaskRunAt:(NSString *)aTaskID;
-- (void)updateMissedTaskRunAt:(NSString *)aTaskID;
 - (NSInteger)weekDayFromDate:(NSDate *)aDate;
 - (NSDate *)weeklyNextRun:(NSDate *)startDate;
 

@@ -25,7 +25,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "MPAppController.h"
+#import "AgentController.h"
 #import "MPAgentRegister.h"
 #import "MPInv.h"
 #import "MPOSUpgrade.h"
@@ -33,7 +33,6 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <unistd.h>
-#include "MPDefaultServers.h"
 
 #define APPVERSION	@"3.1.0.0"
 #define APPNAME		@"MPAgent"
@@ -50,6 +49,7 @@ int main (int argc, char * argv[])
 		BOOL debugLogging       = NO;
 		BOOL traceLogging       = NO;
 		BOOL verboseLogging     = NO;
+        
         // Registration
         BOOL doRegistration     = NO;
         BOOL readRegInfo        = NO;
@@ -59,6 +59,7 @@ int main (int argc, char * argv[])
         
         // Inventory
         NSString *invArg        = NULL;
+        
         // OS Migration
         BOOL osMigration        = NO;
         NSString *osMigAction   = NULL;
@@ -79,7 +80,7 @@ int main (int argc, char * argv[])
 				{"Scan"				,no_argument	    ,0, 's'},
 				{"Update"			,no_argument	    ,0, 'u'},
 				{"Inventory"		,no_argument	    ,0, 'i'},
-				{"AVInfo"			,no_argument	    ,0, 'a'},
+				{"AVScan"			,no_argument	    ,0, 'a'},
 				{"AVUpdate"			,no_argument	    ,0, 'U'},
 				{"AgentUpdater"		,no_argument	    ,0, 'G'},
                 {"SWScanUpdate" 	,no_argument	    ,0, 'S'},
@@ -194,7 +195,7 @@ int main (int argc, char * argv[])
 					verboseLogging = YES;
 					break;
 				case 'D':
-					verboseLogging = YES;
+					debugLogging = YES;
 					break;
 				case 'T':
 					traceLogging = YES;
@@ -254,19 +255,15 @@ int main (int argc, char * argv[])
         NSString *_logFile = [NSString stringWithFormat:@"%@/Logs/MPAgent.log",MP_ROOT_CLIENT];
 		[MPLog setupLogging:_logFile level:lcl_vDebug];
 		
-		if ([[NSUserDefaults standardUserDefaults] boolForKey:@"MPAgentDebug"]) {
-			debugLogging = YES;
-		}
-		
 		if (verboseLogging || debugLogging) {
 			lcl_configure_by_name("*", lcl_vDebug);
-			if (verboseLogging) {
+			if (verboseLogging || echoToConsole) {
 				[LCLLogFile setMirrorsToStdErr:YES];
 			}
 			logit(lcl_vInfo,@"***** %@ v.%@ started -- Debug Enabled *****", APPNAME, APPVERSION);
 		} else if (traceLogging) {
 			lcl_configure_by_name("*", lcl_vTrace);
-			if (verboseLogging) {
+			if (verboseLogging || echoToConsole) {
 				[LCLLogFile setMirrorsToStdErr:YES];
 			}
 			logit(lcl_vInfo,@"***** %@ v.%@ started -- Trace Enabled *****", APPNAME, APPVERSION);
@@ -278,19 +275,9 @@ int main (int argc, char * argv[])
 			logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
 		}
         
-        // Check for Servers Plist, if not there then create it with default servers
-        logit(lcl_vInfo,@"Checking for default servers plist %@.",AGENT_SERVERS_PLIST);
-        if (![[NSFileManager defaultManager] fileExistsAtPath:AGENT_SERVERS_PLIST])
-        {
-            qlinfo(@"Create default servers plist.");
-            MPDefaultServers *mpSrvs = [[MPDefaultServers alloc] init];
-            [mpSrvs createDefaultServersList];
-        }
-        
         // Zeta Test
         if (runZetaTest)
         {
-            
             /*
             MPHTTPRequest *ch = [MPHTTPRequest new];
             NSDictionary *data = [ch agentData];
@@ -343,7 +330,7 @@ int main (int argc, char * argv[])
                 printf("\nAgent has been registered.\n");
             } else {
                 fprintf(stderr, "Agent registration has failed.\n");
-                [[NSFileManager defaultManager] removeItemAtPath:MP_KEYCHAIN_FILE error:NULL];
+                //[[NSFileManager defaultManager] removeItemAtPath:MP_KEYCHAIN_FILE error:NULL];
                 exit(1);
             }
             
@@ -353,7 +340,6 @@ int main (int argc, char * argv[])
         }
         else if (readRegInfo)
         {
-            
             MPAgentRegister *mpar = [[MPAgentRegister alloc] init];
             
             if (![regKeyHash isEqualToString:@"999999999"]) {
@@ -379,7 +365,6 @@ int main (int argc, char * argv[])
         }
         else if (osMigration)
         {
-            
             NSString *uID;
             MPOSUpgrade *mposu = [[MPOSUpgrade alloc] init];
             if ([[osMigID lowercaseString] isEqualTo:@"auto"]) {
@@ -408,8 +393,9 @@ int main (int argc, char * argv[])
         }
         else
         {
-            MPAppController *mpac = [[MPAppController alloc] init];
+            AgentController *mpac = [[AgentController alloc] init];
             [mpac runWithType:a_Type];
+            
             [[NSRunLoop currentRunLoop] run];
         }
 		

@@ -24,7 +24,6 @@
  */
 
 #import "PostFailedWSRequests.h"
-#import "MPAgent.h"
 #import "MPFailedRequests.h"
 
 @interface PostFailedWSRequests (Private)
@@ -40,13 +39,12 @@
 
 - (id)init
 {
-	if ((self = [super init])) {
+    self = [super init];
+	if (self) {
 		isExecuting = NO;
         isFinished  = NO;
-		si	= [MPAgent sharedInstance];
-		fm	= [NSFileManager defaultManager];
+		fm          = [NSFileManager defaultManager];
 	}
-
 	return self;
 }
 

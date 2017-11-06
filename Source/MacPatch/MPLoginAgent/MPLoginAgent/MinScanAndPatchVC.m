@@ -475,8 +475,21 @@ OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSendID)
 {
     NSError       *error = nil;
     NSDictionary  *patchGroupPatches = nil;
-    MPWebServices *mpws = [[MPWebServices alloc] init];
+    MPRESTfull    *rest = [[MPRESTfull alloc] init];
+    
     BOOL           useLocalPatchesFile = NO;
+    
+    // Get Approved Patch group patches
+    patchGroupPatches = [rest getApprovedPatchesForClient:&error];
+    if (error)
+    {
+        qlerror(@"There was a issue getting the approved patches for the patch group, scan will exit.");
+        qlerror(@"%@",error.localizedDescription);
+        return nil;
+    }
+    
+    /* CEH - Look at re-implementing local cache of patch group patches
+     
     NSString      *patchGroupRevLocal = [MPClientInfo patchGroupRev];
     
     if (![patchGroupRevLocal isEqualToString:@"-1"]) {
@@ -507,7 +520,7 @@ OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSendID)
         logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
         return nil;
     }
-    
+    */
     return patchGroupPatches;
 }
 
@@ -1092,9 +1105,10 @@ OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSendID)
 - (void)postInstallToWebService:(NSString *)aPatch type:(NSString *)aType
 {
     BOOL result = NO;
-    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
-    result = [mpws postPatchInstallResultsToWebService:aPatch patchType:aType error:&wsErr];
+    
+    MPRESTfull *rest = [[MPRESTfull alloc] init];
+    result = [rest postPatchInstallResults:aPatch type:aType error:&wsErr];
     if (wsErr) {
         qlerror(@"%@",wsErr.localizedDescription);
     } else {
@@ -1104,7 +1118,6 @@ OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSendID)
             qlerror(@"Patch (%@) install result was not posted to webservice.",aPatch);
         }
     }
-    
     return;
 }
 @end

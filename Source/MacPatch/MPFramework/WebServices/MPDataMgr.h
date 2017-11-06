@@ -28,30 +28,7 @@
 
 @interface MPDataMgr : NSObject {}
 
-- (NSString *)GenXMLForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable;
-
-- (NSString *)GenXMLForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable 
-				 dbTablePrefix:(NSString *)aTablePrefix;
-
-- (NSString *)GenXMLForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable 
-				 dbTablePrefix:(NSString *)aTablePrefix 
-				 dbFieldPrefix:(NSString *)aFieldPrefix;
-
-- (NSString *)GenXMLForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable 
-				 dbTablePrefix:(NSString *)aTablePrefix 
-				 dbFieldPrefix:(NSString *)aFieldPrefix  
-				  updateFields:(NSString *)aUpdateFields;
-
-- (NSString *)GenXMLForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable dbTablePrefix:(NSString *)aTablePrefix 
-				 dbFieldPrefix:(NSString *)aFieldPrefix 
-				  updateFields:(NSString *)aUpdateFields 
-					 deleteCol:(NSString *)aDelCol 
-				deleteColValue:(NSString *)aDelColVal;
-
-
-- (NSXMLElement *)genXMLElement:(NSString *)aName attributes:(NSDictionary *)aDict;
-
-// JSON Classes
+// JSON Classes as String
 - (NSString *)GenJSONForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable;
 
 - (NSString *)GenJSONForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable
@@ -66,9 +43,18 @@
 				 dbFieldPrefix:(NSString *)aFieldPrefix
 				  updateFields:(NSString *)aUpdateFields;
 
-- (NSString *)GenJSONForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable dbTablePrefix:(NSString *)aTablePrefix
+- (NSString *)GenJSONForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable
+                  dbTablePrefix:(NSString *)aTablePrefix
 				 dbFieldPrefix:(NSString *)aFieldPrefix
 				  updateFields:(NSString *)aUpdateFields
 					 deleteCol:(NSString *)aDelCol
 				deleteColValue:(NSString *)aDelColVal;
+
+// Data as Dictionary
+- (NSDictionary *)GenDataForDataMgr:(NSArray *)aContent dbTable:(NSString *)aTable
+                      dbTablePrefix:(NSString *)aTablePrefix
+                      dbFieldPrefix:(NSString *)aFieldPrefix
+                       updateFields:(NSString *)aUpdateFields
+                          deleteCol:(NSString *)aDelCol
+                     deleteColValue:(NSString *)aDelColVal;
 @end

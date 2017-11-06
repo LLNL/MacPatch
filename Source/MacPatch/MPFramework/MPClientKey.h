@@ -1,5 +1,5 @@
 //
-//  ClientCheckInOperation.h
+//  MPClientKey.h
 /*
  Copyright (c) 2017, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -23,22 +23,11 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
-@class MPSettings;
+@interface MPClientKey : NSObject
 
-@interface ClientCheckInOperation : NSOperation 
-{
-	BOOL isExecuting;
-	BOOL isFinished;
-	
-@private
-	
-	MPSettings *settings;
-	NSFileManager *fm;
-}
-
-@property (nonatomic, readonly) BOOL isExecuting;
-@property (nonatomic, readonly) BOOL isFinished;
++ (MPClientKey *)sharedInstance;
+- (NSString *)clientKey;
 
 @end

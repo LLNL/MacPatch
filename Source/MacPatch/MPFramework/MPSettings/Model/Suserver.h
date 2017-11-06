@@ -25,7 +25,7 @@
 
 @interface Suserver : NSObject
 
-@property (nonatomic, strong) NSString * catalogURL;
+@property (nonatomic, strong) NSString *catalogURL;
 @property (nonatomic, assign) NSInteger osmajor;
 @property (nonatomic, assign) NSInteger osminor;
 @property (nonatomic, assign) NSInteger serverType;

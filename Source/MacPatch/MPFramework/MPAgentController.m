@@ -24,9 +24,11 @@
  */
 
 #import "MPAgentController.h"
-#import "MacPatch.h"
-#import <SystemConfiguration/SystemConfiguration.h>
 #import "Constants.h"
+#import "MacPatch.h"
+#import "MPWSResult.h"
+
+#import <SystemConfiguration/SystemConfiguration.h>
 #include <sys/reboot.h>
 
 @interface MPAgentController ()
@@ -51,13 +53,15 @@
 - (id)init
 {
     self = [super init];
-    if (self) {
-        fm = [NSFileManager defaultManager];
-        MPDefaults *d = [[MPDefaults alloc] init];
+    if (self)
+    {
+        fm              = [NSFileManager defaultManager];
+        MPDefaults *d   = [[MPDefaults alloc] init];
+        mpAsus          = [[MPAsus alloc] init];
+        mpDataMgr       = [[MPDataMgr alloc] init];
+        
         [self set_defaults:d.defaults];
 		[self set_cuuid:[MPSystemInfo clientUUID]];
-        mpAsus = [[MPAsus alloc] init];
-        mpDataMgr = [[MPDataMgr alloc] init];
 		[self setILoadMode:NO];
 		[self setForceRun:NO];
 		
@@ -115,7 +119,8 @@
 - (void)scanForPatchesWithFilterWaitAndForce:(int)aFilter byPassRunning:(BOOL)aByPass
 {
     // Filter - 0 = All,  1 = Apple, 2 = Third
-    if (forceRun == NO) {
+    if (forceRun == NO)
+    {
         if (aByPass == YES) {
             int w = 0;
             while ([self isTaskRunning:kMPPatchSCAN] == YES) {
@@ -148,6 +153,7 @@
     NSDictionary        *patchGroupPatches;
     
 	// Get Patch Group Patches
+    /*
     NSError *wsErr = nil;
     MPWebServices *mpws = [[MPWebServices alloc] init];
     
@@ -175,7 +181,17 @@
             goto done;
         }
     }
-
+     */
+    NSError *wsErr = nil;
+    MPRESTfull *mprest = [[MPRESTfull alloc] init];
+    patchGroupPatches = [mprest getApprovedPatchesForClient:&wsErr];
+    if (wsErr)
+    {
+        // Error getting approved patch group patches
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+        goto done;
+    }
+    
 	if (!patchGroupPatches) {
 		logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
 		goto done;
@@ -299,9 +315,10 @@ done:
                 contents:[@"update" dataUsingEncoding:NSASCIIStringEncoding] 
               attributes:nil];
     
-    if ([fm isWritableFileAtPath:[_approvedPatchesFile stringByDeletingLastPathComponent]]) {
+    if ([fm isWritableFileAtPath:[_approvedPatchesFile stringByDeletingLastPathComponent]])
+    {
         logit(lcl_vDebug,@"Writing approved patches to %@",_approvedPatchesFile);
-        [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:[NSString stringWithFormat:@"%@/Data/.approvedPatches.plist",MP_ROOT_CLIENT]];
+        [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:[MP_ROOT_CLIENT stringByAppendingPathComponent:@"/Data/.approvedPatches.plist"]];
         [NSKeyedArchiver archiveRootObject:approvedUpdatesArray toFile:PATCHES_NEEDED_PLIST];
     } else {
         logit(lcl_vError,@"Unable to write approved patches file %@. Patch file will not be used.",_approvedPatchesFile);
@@ -320,31 +337,13 @@ done:
     
     // Get Patch Group Patches
     NSError *wsErr = nil;
-    MPWebServices *mpws = [[MPWebServices alloc] init];
-    
-    BOOL useLocalPatchesFile = NO;
-    NSString *patchGroupRevLocal = [MPClientInfo patchGroupRev];
-    if (![patchGroupRevLocal isEqualToString:@"-1"]) {
-        NSString *patchGroupRevRemote = [mpws getPatchGroupContentRev:&wsErr];
-        if (!wsErr) {
-            if ([patchGroupRevLocal isEqualToString:patchGroupRevRemote]) {
-                useLocalPatchesFile = YES;
-                NSString *pGroup = [_defaults objectForKey:@"PatchGroup"];
-                patchGroupPatches = [[[NSDictionary dictionaryWithContentsOfFile:PATCH_GROUP_PATCHES_PLIST] objectForKey:pGroup] objectForKey:@"data"];
-                if (!patchGroupPatches) {
-                    logit(lcl_vError,@"Unable to get data from cached patch group data file. Will download new one.");
-                    useLocalPatchesFile = NO;
-                }
-            }
-        }
-    }
-    if (!useLocalPatchesFile) {
-        wsErr = nil;
-        patchGroupPatches = [mpws getPatchGroupContent:&wsErr];
-        if (wsErr) {
-            logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit. %@",wsErr.localizedDescription);
-            return;
-        }
+    MPRESTfull *mprest = [[MPRESTfull alloc] init];
+    patchGroupPatches = [mprest getApprovedPatchesForClient:&wsErr];
+    if (wsErr)
+    {
+        // Error getting approved patch group patches
+        logit(lcl_vError,@"%@",wsErr.localizedDescription);
+        return;
     }
 
 	if (!patchGroupPatches) {
@@ -680,11 +679,12 @@ done:
                 // *****************************
                 // Instal is complete, post result to web service
                 
-                @try {
-                    MPWebServices *mpws = [[MPWebServices alloc] init];
+                @try
+                {
                     NSError *wsErr = nil;
-                    [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
-                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
+                    MPRESTfull *mprest = [[MPRESTfull alloc] init];
+                    [mprest postPatchInstallResults:patch[@"patch_id"] type:@"third" error:&wsErr];
+                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",patch[@"patch_id"]);
                     if (wsErr) {
                         logit(lcl_vError,@"%@", wsErr.localizedDescription);
                     }
@@ -790,16 +790,16 @@ done:
                 logit(lcl_vError,@"Error installing update, error code %d.",installResult);
                 continue;
             } else {
-                logit(lcl_vInfo,@"%@ was installed successfully.",[patch objectForKey:@"patch"]);
+                logit(lcl_vInfo,@"%@ was installed successfully.",patch[@"patch"]);
             }
             
             // Post the results to web service
             @try
             {
-                MPWebServices *mpws = [[MPWebServices alloc] init];
                 NSError *wsErr = nil;
-                [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch"] patchType:@"apple" error:&wsErr];
-                logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
+                MPRESTfull *mprest = [[MPRESTfull alloc] init];
+                [mprest postPatchInstallResults:patch[@"patch"] type:@"apple" error:&wsErr];
+                logit(lcl_vInfo,@"Posting patch (%@) install to web service.",patch[@"patch_id"]);
                 if (wsErr) {
                     logit(lcl_vError,@"%@", wsErr.localizedDescription);
                 }
@@ -809,7 +809,7 @@ done:
             }
 			
 			if (iLoadMode == YES) {
-				fprintf(stdout, "Completed: %s\n", [[patch objectForKey:@"patch"] cString]);
+				fprintf(stdout, "Completed: %s\n", [patch[@"patch"] cString]);
 			}
             logit(lcl_vInfo,@"Patch install completed.");
         } else {
@@ -1119,23 +1119,22 @@ done:
                 // Instal is complete, post result to web service
                 @try
                 {
-                    MPWebServices *mpws = [[MPWebServices alloc] init];
                     NSError *wsErr = nil;
-                    [mpws postPatchInstallResultsToWebService:[patch objectForKey:@"patch_id"] patchType:@"third" error:&wsErr];
-                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",[patch objectForKey:@"patch_id"]);
+                    MPRESTfull *mprest = [[MPRESTfull alloc] init];
+                    [mprest postPatchInstallResults:patch[@"patch_id"] type:@"third" error:&wsErr];
+                    logit(lcl_vInfo,@"Posting patch (%@) install to web service.",patch[@"patch_id"]);
                     if (wsErr) {
                         logit(lcl_vError,@"%@", wsErr.localizedDescription);
                     }
-
                 }
                 @catch (NSException *e) {
                     logit(lcl_vError,@"%@", e);
                 }
 				
 				if (iLoadMode == YES) {
-					fprintf(stdout, "Completed: %s\n", [[patch objectForKey:@"patch"] cString]);
+					fprintf(stdout, "Completed: %s\n", [patch[@"patch"] cString]);
 				}
-				[self removeInstalledPatchFromCacheFile:[patch objectForKey:@"patch"]];
+				[self removeInstalledPatchFromCacheFile:patch[@"patch"]];
                 [self postNotificationTo:@"MPPatchStatusNotification" info:@"Patch install completed." isGlobal:YES];
                 logit(lcl_vInfo,@"Patch install completed.");
                 

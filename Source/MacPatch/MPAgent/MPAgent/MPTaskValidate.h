@@ -35,20 +35,13 @@ extern NSString * const kStartDate;
 extern NSString * const kEndDate;
 extern NSString * const kMPPatchCrit;
 
-@interface MPTaskValidate : NSObject {
-	
-@private	
-	NSDictionary *defaultTasks;
-}
-
-@property (nonatomic, strong) NSDictionary *defaultTasks;
+@interface MPTaskValidate : NSObject
 
 - (int)validateTask:(NSDictionary *)aTask;
 - (BOOL)validateInterval:(NSArray *)aInterval;
 - (BOOL)validateStateDate:(NSString *)aStringDate;
 - (BOOL)validateEndDate:(NSString *)aStringDate;
-- (void)readDefaultTasks;
-- (NSDictionary *)resetTaskFromDefaults:(NSString *)aCMDName;
+
 - (NSDictionary *)updateTaskIntervalForCommand:(NSDictionary *)aTask cmd:(NSString *)aCMDName;
 - (NSDictionary *)updateEndDateForTask:(NSDictionary *)aTask;
 - (NSDictionary *)disableTask:(NSDictionary *)aTask;

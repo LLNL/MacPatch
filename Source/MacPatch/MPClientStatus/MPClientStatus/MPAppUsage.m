@@ -24,8 +24,14 @@
  */
 
 #import "MPAppUsage.h"
-#import "FMDatabase.h"
-#import "FMDatabaseAdditions.h"
+#import "MacPatch.h"
+
+@interface MPAppUsage ()
+{
+    FMDatabase *db;
+}
+
+@end
 
 @implementation MPAppUsage
 @synthesize dbPath;

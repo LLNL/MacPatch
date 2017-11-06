@@ -27,24 +27,15 @@
 
 
 @interface MPSWTasks : NSObject
-{
-    NSDictionary *defaults;
-    NSString *groupName;
-    NSString *groupHash;
 
-@private
-    NSDictionary *mpHostConfigInfo;
-}
-
-@property(strong) NSDictionary *defaults;
 @property(strong) NSString *groupName;
 @property(strong) NSString *groupHash;
-@property(nonatomic, strong) NSDictionary *mpHostConfigInfo;
 
 - (id)initWithGroupAndHash:(NSString *)aGroup hash:(NSString *)aHash;
 
-- (id)getSWTasksForGroupFromServer:(NSError **)err;
+- (NSArray *)getSoftwareTasksForGroup:(NSError **)err;
 
 - (int)postInstallResults:(int)resultNo resultText:(NSString *)resultString task:(NSDictionary *)taskDict;
 - (int)postUnInstallResults:(int)resultNo resultText:(NSString *)resultString task:(NSDictionary *)taskDict;
+
 @end

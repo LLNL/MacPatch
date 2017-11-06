@@ -31,7 +31,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"3.0.1.1"
+#define APPVERSION	@"3.1.0.0"
 #define APPNAME		@"MPAgentExec"
 
 void usage(void);
@@ -47,7 +47,6 @@ int main (int argc, char * argv[])
         BOOL forceRunTask = NO;
         int _UpdateType = 0; // 0 All, 1 = Apple, 2 = Third
         NSString *_updateBundle = nil;
-        NSDictionary *_defaultsOverride = nil;
 
         // Inventory
         NSString *argType = NULL;
@@ -64,8 +63,6 @@ int main (int argc, char * argv[])
                 {"UpdateFilter"			,required_argument	,0, 'f'},
                 {"UpdateBundle"			,required_argument	,0, 'B'},
                 {"Critial"				,no_argument	    ,0, 'x'},
-                {"AVInfo"				,no_argument	    ,0, 'a'},
-                {"AVUpdate"				,no_argument	    ,0, 'U'},
                 {"AgentUpdate"			,no_argument		,0, 'G'},
                 {"AllowClient"			,no_argument	    ,0, 'C'},
                 {"AllowServer"			,no_argument	    ,0, 'S'},
@@ -85,7 +82,7 @@ int main (int argc, char * argv[])
             };
             // getopt_long stores the option index here.
             int option_index = 0;
-            c = getopt_long (argc, argv, "Dsuf:B:aUGCSiFcg:d:P:eVvh", long_options, &option_index);
+            c = getopt_long (argc, argv, "Dsuf:B:GCSiFcg:d:P:eVvh", long_options, &option_index);
 
             // Detect the end of the options.
             if (c == -1) {
@@ -113,20 +110,14 @@ int main (int argc, char * argv[])
                         a_Type = 2;
                         _updateBundle = [NSString stringWithUTF8String:optarg];
                         break;
-                    case 'a':
-                        a_Type = 3;
-                        break;
-                    case 'U':
-                        a_Type = 4;
-                        break;
                     case 'G':
                         a_Type = 5;
                         break;
                     case 'C':
-                        _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"AllowClient"];
+                        //_defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"AllowClient"];
                         break;
                     case 'S':
-                        _defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"AllowServer"];
+                        //_defaultsOverride = [NSDictionary dictionaryWithObject:@"1" forKey:@"AllowServer"];
                         break;
                     case 'c':
                         printf("%s\n",[[MPSystemInfo clientUUID] UTF8String]);
@@ -210,9 +201,6 @@ int main (int argc, char * argv[])
 
         // Run Functions
         MPAgentExecController *controller = [[MPAgentExecController alloc] init];
-        if (_defaultsOverride) {
-            [controller overRideDefaults:_defaultsOverride];
-        }
         if (forceRunTask == YES) {
             [controller setForceRun:YES];
         }
@@ -235,12 +223,6 @@ int main (int argc, char * argv[])
                 } else {
                     [controller scanForPatchesAndUpdateWithFilter:_UpdateType];
                 }
-                break;
-            case 3:
-                [controller scanForAVDefs];
-                break;
-            case 4:
-                [controller scanForAVDefsAndUpdate];
                 break;
             case 5:
                 [controller scanAndUpdateAgentUpdater];
@@ -286,9 +268,6 @@ void usage(void) {
     printf("\n    \tOverrides configuration which prevents client from being updated.\n");
     printf(" -C \tAllowClient override.\n");
     printf(" -S \tAllowServer override.\n\n");
-    // Symantec Antivirus
-	printf(" -a \tScan for AV info.\n");
-	printf(" -U \tScan for AV info and update outdated AV defs.\n\n");
     // Agent Updates
     printf(" -G \tScan for Agent updates and update if needed.\n");
 	printf(" -i \tScan & Update approved patches in iLoad output mode.\n\n");

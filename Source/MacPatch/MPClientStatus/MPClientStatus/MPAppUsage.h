@@ -24,12 +24,9 @@
  */
 
 #import <Foundation/Foundation.h>
-@class FMDatabase;
 
-@interface MPAppUsage : NSObject {
-	FMDatabase *db;
-	NSString *dbPath;
-}	
+@interface MPAppUsage : NSObject
+
 @property (nonatomic, strong) NSString *dbPath;
 
 -(int)initAndPrepDB;

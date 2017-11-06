@@ -1,5 +1,5 @@
 //
-//  MPAppController.h
+//  AgentController.h
 /*
  Copyright (c) 2017, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -25,42 +25,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class ClientCheckInOperation;
-@class AgentScanAndUpdateOperation;
-@class AntiVirusScanAndUpdateOperation;
-@class InventoryOperation;
-@class PatchScanAndUpdateOperation;
-@class MPSWDistTaskOperation;
-@class Profiles;
-@class GetServerListOperation;
-@class PostFailedWSRequests;
-@class GetASUSListOperation;
-
-@interface MPAppController : NSObject {
-    
-@private
-    MPAgent *si;
-	NSOperationQueue *queue;
-	
-	ClientCheckInOperation *clientOp;
-	AgentScanAndUpdateOperation *agentOp;
-	AntiVirusScanAndUpdateOperation *avOp;
-	InventoryOperation *invOp;
-	PatchScanAndUpdateOperation *patchOp;
-    MPSWDistTaskOperation *swDistOp;
-    Profiles *profilesOp;
-    GetServerListOperation *serverListOp;
-	PostFailedWSRequests *postFailedWSRequestsOp;
-    GetASUSListOperation *suServerListOp;
-
-	BOOL useOperationQueue;
-}
-
-@property (nonatomic, assign) BOOL useOperationQueue;
+@interface AgentController : NSObject
 
 - (void)runWithType:(int)aArg;
 - (void)runAsDaemon;
-- (void)watchTasksPlistForChangesMethod;
 - (void)runTasksLoop;
 
 - (void)runClientCheckIn;

@@ -43,6 +43,7 @@ NSString * const PATCHES_NEEDED_PLIST       = @"/Library/MacPatch/Client/Data/.n
 NSString * const PATCHES_APPROVED_PLIST     = @"/Library/MacPatch/Client/Data/.approvedPatches.plist";
 NSString * const PATCHES_CRITICAL_PLIST     = @"/Library/MacPatch/Client/Data/.criticalPatches.plist";
 NSString * const PATCH_GROUP_PATCHES_PLIST  = @"/Library/MacPatch/Client/Data/.gov.llnl.mp.patchgroup.data.plist";
+NSString * const SOFTWARE_DATA_DIR          = @"/Library/Application Support/MacPatch/SW_Data";
 
 NSString * const WS_CLIENT_REG              = @"/MPRegister.cfc";
 NSString * const WS_CLIENT_FILE             = @"/Service/MPClientService.cfc";
@@ -75,6 +76,9 @@ NSString * const MP_KEYCHAIN_FILE           = @"/Library/Application Support/Mac
 NSString * const MP_AGENT_HASH              = @"/Library/Application Support/MacPatch/.keyHash";
 
 NSString * const OS_MIGRATION_STATUS        = @"/Users/Shared/.migrationid";
+
+NSString * const MP_AGENT_DEPL_PLIST        = @"/Library/Application Support/MacPatch/gov.llnl.mpagent.plist";
+NSString * const MP_AGENT_SETTINGS          = @"/Library/Application Support/MacPatch/gov.llnl.mp.plist";
 
 @implementation Constants
 

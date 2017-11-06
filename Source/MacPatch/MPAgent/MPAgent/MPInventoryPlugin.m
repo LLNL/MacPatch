@@ -88,19 +88,21 @@
 - (BOOL)isValidPlugin:(NSString *)pluginName bundleID:(NSString *)pluginBundleID version:(NSString *)pluginVersion pluginHash:(NSString *)aHash
 {
     BOOL result = NO;
-    
-    MPWebServices *mpws = [[MPWebServices alloc] init];
-    mpws.clientKey = [[MPAgent sharedInstance] g_clientKey];
     NSError *err = nil;
-    NSString *wsHash = [mpws getHashForPluginName:pluginName pluginBunleID:pluginBundleID pluginVersion:pluginVersion error:&err];
+    MPRESTfull *mprest = [[MPRESTfull alloc] init];
+    NSString *wsHash = [mprest getHashForPluginName:pluginName pluginBunleID:pluginBundleID pluginVersion:pluginVersion error:&err];
     if (err) {
         logit(lcl_vError,@"%@",err.description);
         return result;
     }
     logit(lcl_vDebug,@"Web Service returned hash: %@",wsHash);
-
+    
     if ([[wsHash uppercaseString] isEqualToString:[aHash uppercaseString]]) {
         result = YES;
+    } else {
+        logit(lcl_vError,@"Hashes did not match. Plugin is not valid.")
+        logit(lcl_vDebug,@"Web Service hash: %@",wsHash);
+        logit(lcl_vDebug,@"Plugin hash: %@",aHash);
     }
     
     return result;

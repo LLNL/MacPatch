@@ -25,23 +25,19 @@
 
 #import <Foundation/Foundation.h>
 
-@class MPAgent;
+@class MPSettings;
 
 @interface MPSWDistTaskOperation : NSOperation
 {
     BOOL isExecuting;
     BOOL isFinished;
     
-@private    
-    MPAgent             *si;
+@private
+    MPSettings          *settings;
     MPCrypto            *mpc;
-    NSTimeInterval      _timerInterval;
-    NSString            *_fileHash;
     NSOperationQueue    *l_queue;
-    
     NSFileManager       *fm;
     NSString            *_swDiskTaskListHash;
-    NSURL               *mp_SOFTWARE_DATA_DIR;
 }
 
 @property (nonatomic, readonly) BOOL                isExecuting;
@@ -50,10 +46,9 @@
 @property (nonatomic, assign) NSTimeInterval        _timerInterval;
 @property (nonatomic, strong) NSOperationQueue      *l_queue;
 @property (nonatomic, strong) NSString              *_swDiskTaskListHash;
-@property (nonatomic, strong) NSURL                 *mp_SOFTWARE_DATA_DIR;
+@property (nonatomic, strong) NSString              *sw_dir;
 
 - (void)checkAndInstallMandatoryApplications;
-- (BOOL)validateSoftwareDistListHashForGroup:(NSString *)aGroupName hash:(NSString *)aHash error:(NSError **)err;
 
 - (BOOL)softwareItemInstalled:(NSDictionary *)dict;
 - (NSArray *)filterMandatorySoftwareContent:(NSArray *)content;

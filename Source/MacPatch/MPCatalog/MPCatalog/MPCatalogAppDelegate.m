@@ -30,7 +30,6 @@
 #import "EventToSend.h" 
 #import "SWDistInfoController.h"
 #import "RebootWindow.h"
-#import "AFNetworking.h"
 
 #define MP_INSTALLED_DATA       @".installed.plist"
 
@@ -482,7 +481,7 @@
     @autoreleasepool
     {
         [swDistGroupsButton removeAllItems];
-
+        /*
         NSError *error = nil;
         NSArray *catalogs;
         MPWebServices *mpws = [[MPWebServices alloc] init];
@@ -517,6 +516,7 @@
                 [swDistGroupsButton addItemWithTitle:@"Missing_SWDistGroup"];
             }
         }
+         */
         [swDistGroupsButton display];
     }
 }
@@ -554,7 +554,9 @@
     
     MPDiskUtil *mpd = [[MPDiskUtil alloc] init];
     
-    // Install the mandatory software 
+    // *****************************************
+    // Install the mandatory software
+    // *****************************************
     int _needsReboot = 0;
     for (NSDictionary *d in mandatoryInstllTasks) 
     {
@@ -562,15 +564,20 @@
         logit(lcl_vInfo,@"Installing %@ (%@).",[d objectForKey:@"name"],[d objectForKey:@"id"]);
         logit(lcl_vInfo,@"INFO: %@",[d valueForKeyPath:@"Software.sw_type"]);
         
+        // *****************************************
         // Create Path to download software to
+        // *****************************************
         NSString *swLoc = NULL;
         NSString *swLocBase = [[mp_SOFTWARE_DATA_DIR path] stringByAppendingPathComponent:@"sw"];
         swLoc = [NSString pathWithComponents:[NSArray arrayWithObjects:swLocBase, [d objectForKey:@"id"], nil]];
         
+        // *****************************************
         // Verify Disk space requirements before downloading and installing
+        // *****************************************
         NSScanner* scanner = [NSScanner scannerWithString:[d valueForKeyPath:@"Software.sw_size"]];
         long long stringToLong;
-        if(![scanner scanLongLong:&stringToLong]) {
+        if(![scanner scanLongLong:&stringToLong])
+        {
             logit(lcl_vError,@"Unable to convert size %@",[d valueForKeyPath:@"Software.sw_size"]);
             [self postInstallResults:99 resultText:@"Unable to calculate size." task:d];
             [self updateArrayControllerWithDictionary:d forActionType:@"error"];
@@ -585,10 +592,15 @@
             continue;
         }
         
+        // *****************************************
         // Create Download URL PATH
-        NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
-        logit(lcl_vInfo,@"Download software from: %@",_url);
+        // *****************************************
+        NSString *urlPath = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
+        logit(lcl_vInfo,@"Download software from: %@",urlPath);
         
+        // *****************************************
+        // Create the final llcation for the downloaded file
+        // *****************************************
         BOOL isDir;
         NSDictionary *attributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithShort:0777] forKey:NSFilePosixPermissions];
         if ([fm fileExistsAtPath:swLoc isDirectory:&isDir] == NO) {
@@ -601,83 +613,40 @@
             }
         }
         
+        // *****************************************
         // Download Software
+        // *****************************************
         dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar setDoubleValue:0.0];});
         dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar setIndeterminate:NO];});
         
-        NSError *dlErr = nil;
-        MPNetConfig *mpnc = [[MPNetConfig alloc] init];
-        __block NSString *dlPath;
+        __block NSError *dlErr = nil;
+        MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
+        NSString *dlPath = [req createTempDownloadDir:urlPath]; // Create temp download dir
         
-        BOOL needsToBreak = FALSE;
-        int serverListCount = (int)[[mpnc servers] count];
-        for (int s = 0; s < serverListCount; s++)
+        // Start download
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
+        });
+        [req runDownloadRequest:urlPath downloadDirectory:dlPath progress:progressBar progressPercent:nil completion:^(NSString *fileName, NSString *filePath, NSError *error)
         {
-            __block BOOL isCompleted = NO;
-            __block NSError *downloadError = nil;
-            
-            MPNetServer *srv = [[mpnc servers] objectAtIndex:s];
-            MPNetRequest *mpNetRequest = [[MPNetRequest alloc] init];
-            NSURLRequest *request = [mpNetRequest buildAFDownloadRequest:_url server:srv error:&downloadError];
-            dlPath = mpNetRequest.dlFilePath; //MPNetRequest will gen the tmep download path
-            
-            AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-            operation.outputStream = [NSOutputStream outputStreamToFileAtPath:dlPath append:NO];
-            
-            [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-                logit(lcl_vInfo,@"Successfully downloaded file to %@", dlPath);
-                [statusTextStatus setStringValue:[NSString stringWithFormat:@"Successfully downloaded %@",[d objectForKey:@"name"]]];
-                isCompleted = YES;
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            if (error) {
                 logit(lcl_vError,@"%@", error.localizedDescription);
-                downloadError = error;
-                isCompleted = YES;
-            }];
-            
-            [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead)
-             {
-                 float progress = ((float)totalBytesRead) / totalBytesExpectedToRead;
-                 double percentComplete = progress*100.0;
-                 [progressBar setDoubleValue:percentComplete];
-             }];
-            
-            [operation start];
-            logit(lcl_vInfo,@"Trying server: %@",srv.host);
-            logit(lcl_vInfo,@"%@",mpNetRequest.dlURL);
-            
-            dispatch_async(dispatch_get_main_queue(), ^(void){
-                [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
-            });
-            
-            // Wait til download has completed
-            while(!isCompleted) {
-                [NSThread sleepForTimeInterval:1.0];
+                dlErr = error;
             }
-            
-            // If there is no error then break out of server loop and
-            // continue with the install
-            if (!downloadError) {
-                break;
-            } else {
-                // Check to see if we have reached the end of the servers
-                // If we have and have not downloaded the file then we
-                // need to break out of the install
-                if (s == (serverListCount-1)) {
-                    needsToBreak = TRUE;
-                }
-                continue;
+            else
+            {
+                logit(lcl_vInfo,@"Successfully downloaded file to %@", fileName);
+                dispatch_async(dispatch_get_main_queue(), ^(void){
+                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Successfully downloaded %@",fileName]];
+                });
             }
-        }
-        
-        if (needsToBreak == TRUE) {
-            [self postInstallResults:99 resultText:@"Unable to download software." task:d];
-            [self updateArrayControllerWithDictionary:d forActionType:@"error"];
-            continue;
-        }
-        
+        }];
+
         [self updateArrayControllerWithDictionary:d forActionType:@"download"];
 
+        // *****************************************
         // Create Destination Dir
+        // *****************************************
         dlErr = nil;
         if ([fm fileExistsAtPath:swLoc] == NO) {
             [fm createDirectoryAtPath:swLoc withIntermediateDirectories:YES attributes:nil error:&dlErr];
@@ -685,15 +654,19 @@
                 logit(lcl_vError,@"Error[%d], trying to create destination directory. %@.",(int)[dlErr code],swLoc);
             }
         }
-
+        
+        // *****************************************
         // Move Downloaded File to Destination
+        // *****************************************
         dlErr = nil;
         [fm moveItemAtPath:dlPath toPath:[swLoc stringByAppendingPathComponent:[dlPath lastPathComponent]] error:&dlErr];
         if (dlErr) {
             logit(lcl_vError,@"Error[%d], trying to move downloaded file to %@.",(int)[dlErr code],swLoc);
         }
 
-        // Software was downloaded
+        // *****************************************
+        // Software was downloaded, start install
+        // *****************************************
         if (!dlErr)
         {
             logit(lcl_vDebug,@"Begin install for (%@).",[d objectForKey:@"name"]);
@@ -704,6 +677,7 @@
             [progressBar display];
             
             if ([self hasCanceledInstall:d]) break;
+            
             [self updateArrayControllerWithDictionary:d forActionType:@"install"];
             result = [self installSoftwareViaProxy:d];
             
@@ -713,16 +687,20 @@
                 if ([[d valueForKeyPath:@"Software.reboot"] isEqualTo:@"1"]) {
                     _needsReboot++;
                 }
-                if ([[d valueForKeyPath:@"Software.auto_patch"] isEqualTo:@"1"]) {
-                    [statusTextStatus setStringValue:@"Auto Patching is enabled, begin patching..."];
-                    [statusTextStatus display];
+                if ([[d valueForKeyPath:@"Software.auto_patch"] isEqualTo:@"1"])
+                {
+                    dispatch_async(dispatch_get_main_queue(), ^(void){
+                        [statusTextStatus setStringValue:@"Auto Patching is enabled, begin patching..."];
+                    });
+                    
                     pResult = [self patchSoftwareViaProxy:d];
                     [NSThread sleepForTimeInterval:5];
                 }
                 
-                [statusTextStatus setStringValue:[NSString stringWithFormat:@"Installing %@ completed.",[d objectForKey:@"name"]]];
-                [statusTextStatus display];
-                
+                dispatch_async(dispatch_get_main_queue(), ^(void){
+                    [statusTextStatus setStringValue:[NSString stringWithFormat:@"Installing %@ completed.",[d objectForKey:@"name"]]];
+                });
+
                 [self installSoftwareItem:d];
                 [self updateArrayControllerWithDictionary:d];
             } else {
@@ -960,92 +938,55 @@
                         continue;
                     }
                     
+                    // *****************************************
                     // Create Download URL
-                    NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
+                    // *****************************************
+                    NSString *urlPath = [NSString stringWithFormat:@"/mp-content%@",[d valueForKeyPath:@"Software.sw_url"]];
                     logit(lcl_vDebug,@"Download software from: %@",[d valueForKeyPath:@"Software.sw_type"]);
-                    
                     
                     dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar setDoubleValue:0.0];});
                     dispatch_async(dispatch_get_main_queue(), ^(void){[progressBar setIndeterminate:NO];});
                     
-                    NSError *dlErr = nil;
-                    MPNetConfig *mpnc = [[MPNetConfig alloc] init];
-                    __block NSString *dlPath;
+                    __block NSError *dlErr = nil;
+                    MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
+                    NSString *dlPath = [req createTempDownloadDir:urlPath]; // Create temp download dir
                     
-                    BOOL needsToBreak = FALSE;
-                    int serverListCount = (int)[[mpnc servers] count];
-                    for (int s = 0; s < serverListCount; s++)
-                    {
-                        __block BOOL isCompleted = NO;
-                        __block NSError *downloadError = nil;
-                        
-                        MPNetServer *srv = [[mpnc servers] objectAtIndex:s];
-                        MPNetRequest *mpNetRequest = [[MPNetRequest alloc] init];
-                        NSURLRequest *request = [mpNetRequest buildAFDownloadRequest:_url server:srv error:&downloadError];
-                        dlPath = mpNetRequest.dlFilePath; //MPNetRequest will gen the tmep download path
-                        
-                        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-                        operation.outputStream = [NSOutputStream outputStreamToFileAtPath:dlPath append:NO];
-                        if (srv.allowSelfSigned) {
-                            operation.securityPolicy.allowInvalidCertificates = YES;
-                        }
-                        
-                        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-                            logit(lcl_vInfo,@"Successfully downloaded file to %@", dlPath);
-                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Successfully downloaded %@",[d objectForKey:@"name"]]];
-                            isCompleted = YES;
-                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                            logit(lcl_vError,@"%@", error.localizedDescription);
-                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Error: %@",error.localizedDescription]];
-                            downloadError = error;
-                            isCompleted = YES;
-                        }];
-                        
-                        [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead)
-                        {
-                            float progress = ((float)totalBytesRead) / totalBytesExpectedToRead;
-                            double percentComplete = progress*100.0;
-                            [progressBar setDoubleValue:percentComplete];
-                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@ %0.2f%%",[d objectForKey:@"name"],percentComplete]];
-                        }];
-                        
-                        [operation start];
-                        logit(lcl_vInfo,@"Trying server: %@",srv.host);
-                        logit(lcl_vInfo,@"%@",mpNetRequest.dlURL);
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^(void){
-                            [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
-                        });
-                        
-                        // Wait til download has completed
-                        while(!isCompleted) {
-                            [NSThread sleepForTimeInterval:1.0];
-                        }
-                        
-                        // If there is no error then break out of server loop and
-                        // continue with the install
-                        if (!downloadError) {
-                            break;
-                        } else {
-                            // Check to see if we have reached the end of the servers
-                            // If we have and have not downloaded the file then we
-                            // need to break out of the install
-                            if (s == (serverListCount-1)) {
-                               needsToBreak = TRUE;
-                            }
-                            continue;
-                        }
-                    }
+                    // *****************************************
+                    // Start download
+                    // *****************************************
+                    dispatch_async(dispatch_get_main_queue(), ^(void){
+                        [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
+                    });
                     
-                    if (needsToBreak == TRUE) {
+                    [req runDownloadRequest:urlPath downloadDirectory:dlPath progress:progressBar progressPercent:nil completion:^(NSString *fileName, NSString *filePath, NSError *error)
+                     {
+                         if (error) {
+                             logit(lcl_vError,@"%@", error.localizedDescription);
+                             dlErr = error;
+                         }
+                         else
+                         {
+                             logit(lcl_vInfo,@"Successfully downloaded file to %@", fileName);
+                             dispatch_async(dispatch_get_main_queue(), ^(void){
+                                 [statusTextStatus setStringValue:[NSString stringWithFormat:@"Successfully downloaded %@",fileName]];
+                             });
+                         }
+                     }];
+                    
+                    // *****************************************
+                    // There was an error downloding the file, no install can ocure
+                    // *****************************************
+                    if (dlErr) {
                         [self postInstallResults:99 resultText:@"Unable to download software." task:d];
                         [self updateArrayControllerWithDictionary:d forActionType:@"error"];
                         continue;
                     }
-                    
+
                     [self updateArrayControllerWithDictionary:d forActionType:@"download"];
                     
+                    // *****************************************
                     // Create Destination Dir
+                    // *****************************************
                     NSString *decodedName = [[dlPath lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     dlErr = nil;
                     if ([fm fileExistsAtPath:swLoc] == NO) {
@@ -1055,7 +996,9 @@
                         }
                     }
                     
+                    // *****************************************
                     // Move Downloaded File to Destination
+                    // *****************************************
                     dlErr = nil;
                     [fm moveItemAtPath:dlPath toPath:[swLoc stringByAppendingPathComponent:decodedName] error:&dlErr];
                     if (dlErr) {
@@ -1064,7 +1007,9 @@
                     
                     if ([self hasCanceledInstall:d]) break;
                     
-                    // Software was downloaded
+                    // *****************************************
+                    // Software was downloaded, now install software
+                    // *****************************************
                     if (!dlErr)
                     {
                         logit(lcl_vDebug,@"Begin install for (%@).",[d objectForKey:@"name"]);
@@ -1461,23 +1406,18 @@
             [self setSwDistCurrentTitle:[[swDistGroupsButton selectedItem] title]];
         }
         NSError *err = nil;
-        NSDictionary *_wsResult = [sw getSWTasksForGroupFromServer:&err];
-        NSDictionary *_tasks;
+        NSArray *tasks = [sw getSoftwareTasksForGroup:&err];
         if (err) {
-            [statusTextStatus setStringValue:[NSString stringWithFormat:@"%@",[[err userInfo] objectForKey:@"NSLocalizedDescription"]]];
+            [statusTextStatus setStringValue:err.localizedDescription];
             return;
         }
-        
-        if ([_wsResult objectForKey:@"Tasks"]) {
-            _tasks = [_wsResult copy];
-        }
-        
+
         window.title = [NSString stringWithFormat:@"MP - Software Catalog (%@)",[sw groupName]];
         
         if (err) {
-            [statusTextStatus setStringValue:[NSString stringWithFormat:@"%@",[[err userInfo] objectForKey:@"NSLocalizedDescription"]]];
+            [statusTextStatus setStringValue:err.localizedDescription];
         } else {
-            [self filterSoftwareContent:[_tasks objectForKey:@"Tasks"]];
+            [self filterSoftwareContent:tasks];
             [statusTextStatus setStringValue:@"Done"];
         }
         

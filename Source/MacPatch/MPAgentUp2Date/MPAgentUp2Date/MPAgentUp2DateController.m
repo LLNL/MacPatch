@@ -110,17 +110,14 @@ NSInteger const TaskErrorTimedOut = 900001;
     NSDictionary *updateInfo;
 
     if (isMigration)
-    {
         logit(lcl_vInfo,@"Migration plist was found, using alt settings.");
-        updateInfo = [self getAgentUpdates:[_agentInfo objectForKey:@"agentVersion"] build:[_agentInfo objectForKey:@"agentBuild"] error:&wsErr];
-    } else {
-        MPWebServices *mpws = [[MPWebServices alloc] init];
-        updateInfo = [mpws getAgentUpdates:[_agentInfo objectForKey:@"agentVersion"] build:[_agentInfo objectForKey:@"agentBuild"] error:&wsErr];
-        if (wsErr) {
-            logit(lcl_vError,@"%@, error code %d (%@)",[wsErr localizedDescription], (int)[wsErr code], [wsErr domain]);
-            return 0;
-        }
+    
+    updateInfo = [self getAgentUpdates:[_agentInfo objectForKey:@"agentVersion"] build:[_agentInfo objectForKey:@"agentBuild"] error:&wsErr];
+    if (wsErr) {
+        logit(lcl_vError,@"%@, error code %d (%@)",[wsErr localizedDescription], (int)[wsErr code], [wsErr domain]);
+        return 0;
     }
+    
     if (![updateInfo isKindOfClass:[NSDictionary class]])
     {
         logit(lcl_vError,@"Agent updater info is not available.");
@@ -221,10 +218,6 @@ NSInteger const TaskErrorTimedOut = 900001;
 	NSDictionary *_agentVersionInfo = [NSDictionary dictionaryWithContentsOfFile:AGENT_VER_PLIST];
 	NSDictionary *_agentFrameWorkInfo = [NSDictionary dictionaryWithContentsOfFile:AGENT_FRAMEWORK_PATH];
 	NSMutableDictionary *tmpDict = [[NSMutableDictionary alloc] init];
-	
-    //if ([_agentVersionInfo objectForKey:@"major"] && [_agentVersionInfo objectForKey:@"minor"] && [_agentVersionInfo objectForKey:@"bug"]) {
-    //    NSString *_ver = [NSString stringWithFormat:@"%@.%@.%@",[_agentVersionInfo objectForKey:@"major"], [_agentVersionInfo objectForKey:@"minor"],[_agentVersionInfo objectForKey:@"bug"]];
-   //     [tmpDict setObject:_ver forKey:@"agentVersion"];
     
     if ([_agentVersionInfo objectForKey:@"version"]) {
         [tmpDict setObject:[_agentVersionInfo objectForKey:@"version"] forKey:@"agentVersion"];
@@ -802,9 +795,22 @@ done:
 {
     NSError *error = nil;
     NSDictionary *result = nil;
-    NSString *aURI = [NSString stringWithFormat:@"/api/v1/agent/update/%@/%@/%@",[MPSystemInfo clientUUID], curAppVersion, curBuildVersion];
-    result = [self restGetRequestforURI:aURI resultType:@"json" error:&error];
-    if (err != NULL) *err = error;
+    MPRESTfull *rest = [[MPRESTfull alloc] init];
+    
+    NSString *urlPath = [NSString stringWithFormat:@"/api/v2/agent/update/%@/%@/%@",[MPSystemInfo clientUUID], curAppVersion, curBuildVersion];
+    result = [rest getDataFromWS:urlPath error:&error];
+    if (error)
+    {
+        if (err != NULL)
+        {
+            *err = error;
+        }
+        else
+        {
+            qlerror(@"%@",error.localizedDescription);
+        }
+    }
+    
     return result;
 }
 

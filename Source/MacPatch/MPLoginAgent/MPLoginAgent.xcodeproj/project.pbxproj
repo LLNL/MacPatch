@@ -41,6 +41,7 @@
 		8FE6B4B71B4C86F9000A0471 /* Running.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE6B4AD1B4C86F9000A0471 /* Running.png */; };
 		8FE6B4B81B4C86F9000A0471 /* Success.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE6B4AE1B4C86F9000A0471 /* Success.png */; };
 		8FE6B4B91B4C86F9000A0471 /* Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE6B4AF1B4C86F9000A0471 /* Warning.png */; };
+		8FFD37E21FA391E900115F33 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFD37E11FA391E900115F33 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -92,6 +93,7 @@
 		8FE6B4AD1B4C86F9000A0471 /* Running.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Running.png; sourceTree = "<group>"; };
 		8FE6B4AE1B4C86F9000A0471 /* Success.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Success.png; sourceTree = "<group>"; };
 		8FE6B4AF1B4C86F9000A0471 /* Warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Warning.png; sourceTree = "<group>"; };
+		8FFD37E11FA391E900115F33 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FFD37E21FA391E900115F33 /* libsqlite3.tbd in Frameworks */,
 				8F67E65A1B320E7900888EB9 /* libMacPatch.a in Frameworks */,
 				8F6E4FB61B31ED4A00D3911E /* libz.dylib in Frameworks */,
 				8F6E4FB81B31ED6A00D3911E /* libicucore.dylib in Frameworks */,
@@ -137,6 +140,7 @@
 			children = (
 				8FA64D9C1B307D26006E9CB7 /* MPLoginAgent */,
 				8FA64D9B1B307D26006E9CB7 /* Products */,
+				8FFD37E01FA391E800115F33 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -207,6 +211,14 @@
 				8FE6B4AF1B4C86F9000A0471 /* Warning.png */,
 			);
 			path = images;
+			sourceTree = "<group>";
+		};
+		8FFD37E01FA391E800115F33 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8FFD37E11FA391E900115F33 /* libsqlite3.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -363,7 +375,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -408,7 +420,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
@@ -429,7 +441,7 @@
 				);
 				INFOPLIST_FILE = MPLoginAgent/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -458,7 +470,7 @@
 				);
 				INFOPLIST_FILE = MPLoginAgent/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

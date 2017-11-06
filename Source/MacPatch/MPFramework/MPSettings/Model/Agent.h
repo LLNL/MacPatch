@@ -38,6 +38,7 @@
 @property (nonatomic, strong) NSString *swDistGroupAddID;
 @property (nonatomic, strong) NSString *swDistGroupID;
 @property (nonatomic, assign) NSInteger verifySignatures;
+@property (nonatomic, assign) NSInteger preStagePatches;
 
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;

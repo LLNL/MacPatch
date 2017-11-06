@@ -38,6 +38,7 @@ NSString *const kAgentSwDistGroupAdd    = @"swDistGroupAdd";
 NSString *const kAgentSwDistGroupAddID  = @"swDistGroupAddID";
 NSString *const kAgentSwDistGroupID     = @"swDistGroupID";
 NSString *const kAgentVerifySignatures  = @"verifySignatures";
+NSString *const kAgentPreStagePatches   = @"preStagePatches";
 
 @interface Agent ()
 @end
@@ -102,6 +103,10 @@ NSString *const kAgentVerifySignatures  = @"verifySignatures";
     if(![dictionary[kAgentVerifySignatures] isKindOfClass:[NSNull class]]){
         self.verifySignatures = [dictionary[kAgentVerifySignatures] integerValue];
     }
+    
+    if(![dictionary[kAgentPreStagePatches] isKindOfClass:[NSNull class]]){
+        self.preStagePatches = [dictionary[kAgentPreStagePatches] integerValue];
+    }
 
 	return self;
 }
@@ -152,6 +157,7 @@ NSString *const kAgentVerifySignatures  = @"verifySignatures";
 	}
     
     dictionary[kAgentVerifySignatures] = @(self.verifySignatures);
+    dictionary[kAgentPreStagePatches] = @(self.preStagePatches);
     
 	return dictionary;
 }
@@ -209,6 +215,7 @@ NSString *const kAgentVerifySignatures  = @"verifySignatures";
 	}
 
     [aCoder encodeObject:@(self.verifySignatures) forKey:kAgentVerifySignatures];
+    [aCoder encodeObject:@(self.preStagePatches) forKey:kAgentPreStagePatches];
 }
 
 /**
@@ -230,6 +237,7 @@ NSString *const kAgentVerifySignatures  = @"verifySignatures";
 	self.swDistGroupAddID = [aDecoder decodeObjectForKey:kAgentSwDistGroupAddID];
 	self.swDistGroupID = [aDecoder decodeObjectForKey:kAgentSwDistGroupID];
     self.verifySignatures = [[aDecoder decodeObjectForKey:kAgentVerifySignatures] integerValue];
+    self.preStagePatches = [[aDecoder decodeObjectForKey:kAgentPreStagePatches] integerValue];
 	return self;
 
 }
@@ -253,6 +261,7 @@ NSString *const kAgentVerifySignatures  = @"verifySignatures";
 	copy.swDistGroupAddID = [self.swDistGroupAddID copy];
 	copy.swDistGroupID = [self.swDistGroupID copy];
     copy.verifySignatures = self.verifySignatures;
+    copy.preStagePatches = self.preStagePatches;
 	return copy;
 }
 @end

@@ -507,110 +507,27 @@ done:
 // Performs a client checkin
 - (BOOL)performClientCheckInMethod
 {
-    int y = 0;
-    
-    NSString *_cuuid = [MPSystemInfo clientUUID];
-    NSDictionary *osDict = [[NSDictionary alloc] initWithDictionary:[self getOSInfo]];
-    
-    NSDictionary *consoleUserDict = [MPSystemInfo consoleUserData];
-    NSDictionary *hostNameDict = [MPSystemInfo hostAndComputerNames];
-    NSDictionary *clientVer = [NSDictionary dictionaryWithContentsOfFile:AGENT_VER_PLIST];
-    
-    NSMutableDictionary *agentDict = [[NSMutableDictionary alloc] init];
-    [agentDict setObject:_cuuid forKey:@"cuuid"];
-    [agentDict setObject:[self getHostSerialNumber] forKey:@"serialno" defaultObject:@"NA"];
-    [agentDict setObject:[hostNameDict objectForKey:@"localHostName"] forKey:@"hostname" defaultObject:@"localhost"];
-    [agentDict setObject:[hostNameDict objectForKey:@"localComputerName"] forKey:@"computername" defaultObject:@"localhost"];
-    [agentDict setObject:[consoleUserDict objectForKey:@"consoleUser"] forKey:@"consoleUser" defaultObject:@"NA"];
-    [agentDict setObject:[MPSystemInfo getIPAddress] forKey:@"ipaddr" defaultObject:@"127.0.0.1"];
-    [agentDict setObject:[MPSystemInfo getMacAddressForInterface:@"en0"] forKey:@"macaddr" defaultObject:@"00:00:00:00:00:00"];
-    [agentDict setObject:[osDict objectForKey:@"ProductVersion"] forKey:@"osver" defaultObject:@"10.0.0"];
-    [agentDict setObject:[osDict objectForKey:@"ProductName"] forKey:@"ostype" defaultObject:@"Mac OS X"];
-    [agentDict setObject:[clientVer objectForKey:@"version"] forKey:@"client_version" defaultObject:@"0"];
-    [agentDict setObject:@"false" forKey:@"needsreboot" defaultObject:@"false"];
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
-        [agentDict setObject:@"true" forKey:@"needsreboot"];
-    }
-    
-    
-    MPWebServices *mpws = [[MPWebServices alloc] init];
-    
-    NSError *err = nil;
-    BOOL postResult = NO;
-    NSString *uri;
-    NSData *reqData;
-    id postRes;
-    @try {
-        // Send Checkin Data
-        err = nil;
-        uri = [@"/api/v1/client/checkin" stringByAppendingPathComponent:_cuuid];
-        reqData = [mpws postRequestWithURIforREST:uri body:agentDict error:&err];
-        if (err) {
-            logit(lcl_vError,@"%@",[err localizedDescription]);
-        } else {
-            // Parse JSON result, if error code is not 0
-            err = nil;
-            postRes = [mpws returnRequestWithType:reqData resultType:@"string" error:&err];
-            logit(lcl_vDebug,@"%@",postRes);
-            if (err) {
-                logit(lcl_vError,@"%@",[err localizedDescription]);
-            } else {
-                postResult = YES;
-            }
+    MPClientInfo *ci = [[MPClientInfo alloc] init];
+    NSDictionary *agentData = [ci agentData];
+    if (agentData) {
+        NSDictionary *revsDict;
+        NSError *wsError = nil;
+        MPRESTfull *rest = [[MPRESTfull alloc] init];
+        revsDict = [rest postClientCheckinData:agentData error:&wsError];
+        if (wsError)
+        {
+            logit(lcl_vError,@"Error posting client check in data.");
+            logit(lcl_vError,@"%@",wsError.localizedDescription);
+            return FALSE;
         }
         
-        if (postResult) {
-            logit(lcl_vInfo,@"Running client base checkin, returned true.");
-        } else {
-            logit(lcl_vError,@"Running client base checkin, returned false.");
-        }
-    }
-    @catch (NSException * e) {
-        logit(lcl_vError,@"[NSException]: %@",e);
+        // CEH - Update Settings once implemented via mpworker
+        
+        // Update the UI info
+        [self showLastCheckInMethod];
     }
     
-    // Read Client Plist Info, and post it...
-    @try
-    {
-        postResult = NO;
-        NSMutableDictionary *mpDefaults = [NSMutableDictionary dictionaryWithContentsOfFile:AGENT_PREFS_PLIST];
-        [mpDefaults setObject:_cuuid forKey:@"cuuid"];
-        logit(lcl_vDebug, @"Agent Plist: %@",mpDefaults);
-        
-        err = nil;
-        uri = [@"/api/v1/client/checkin/plist" stringByAppendingPathComponent:_cuuid];
-        reqData = [mpws postRequestWithURIforREST:uri body:mpDefaults error:&err];
-        if (err) {
-            logit(lcl_vError,@"%@",[err localizedDescription]);
-        } else {
-            // Parse JSON result, if error code is not 0
-            err = nil;
-            postRes = [mpws returnRequestWithType:reqData resultType:@"string" error:&err];
-            logit(lcl_vDebug,@"%@",postRes);
-            if (err) {
-                logit(lcl_vError,@"%@",[err localizedDescription]);
-            } else {
-                postResult = YES;
-            }
-        }
-        
-        if (postResult) {
-            logit(lcl_vInfo,@"Running client config checkin, returned true.");
-        } else {
-            logit(lcl_vError,@"Running client config checkin, returned false.");
-        }
-    }
-    @catch (NSException * e) {
-        logit(lcl_vError,@"[NSException]: %@",e);
-    }
-    
-    [self showLastCheckInMethod];
-    if (y==0) {
-        return YES;
-    } else {
-        return NO;
-    }
+    return TRUE;
 }
 
 - (NSDictionary *)systemVersionDictionary
@@ -705,28 +622,26 @@ done:
     @autoreleasepool
     {
         logit(lcl_vInfo, @"Running last agent check in date request.");
+        NSDictionary *result;
         NSError *wsErr = nil;
-        MPWebServices *mpws = [[MPWebServices alloc] init];
-        NSData *reqData;
-        id result;
+        MPRESTfull *rest = [[MPRESTfull alloc] init];
+        result = [rest getLastCheckinData:&wsErr];
         
-        NSString *uri = [@"/api/v1/client/checkin/info" stringByAppendingPathComponent:[MPSystemInfo clientUUID]];
-        reqData = [mpws getRequestWithURIforREST:uri error:&wsErr];
-        if (wsErr) {
-            logit(lcl_vError,@"%@",[wsErr localizedDescription]);
-        } else {
-            // Parse JSON result, if error code is not 0
-            wsErr = nil;
-            result = [mpws returnRequestWithType:reqData resultType:@"json" error:&wsErr];
-            logit(lcl_vDebug,@"%@",result);
-            if (wsErr) {
-                logit(lcl_vError,@"%@",wsErr.localizedDescription);
-            }
-            if ([result objectForKey:@"mdate1"]) {
-                [checkInStatusMenuItem setTitle:[NSString stringWithFormat:@"Last Checkin: %@",[result objectForKey:@"mdate1"]]];
-                [statusMenu update];
-            }
+        NSDictionary *data;
+        if ([result objectForKey:@"data"]) {
+            data = [result objectForKey:@"data"];
         }
+        
+        logit(lcl_vDebug,@"%@",result);
+        
+        if (wsErr) {
+            logit(lcl_vError,@"%@",wsErr.localizedDescription);
+        }
+        if ([data objectForKey:@"mdate1"]) {
+            [checkInStatusMenuItem setTitle:[NSString stringWithFormat:@"Last Checkin: %@",[data objectForKey:@"mdate1"]]];
+            [statusMenu update];
+        }
+        
     }
 }
 
@@ -773,7 +688,8 @@ done:
         }
         
         // If No Patches ...
-        if (!data) {
+        if (!data)
+        {
             [self setPatchCount:0];
             [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
             [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
@@ -799,7 +715,9 @@ done:
             [statusMenu update];
             return;
             
-        } else if ([data count] <= 0) {
+        }
+        else if ([data count] <= 0)
+        {
             
             [self setPatchCount:[data count]];
             [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
@@ -1360,8 +1278,6 @@ done:
         if ([notification.actionButtonTitle isEqualToString:@"Reboot"]) {
             [self logoutNow];
         }
-    } else {
-        //NSLog(@"Close");
     }
 }
 

@@ -31,19 +31,13 @@ static MPAgent *_instance;
 
 @implementation MPAgent
 
-@synthesize g_Defaults;
 @synthesize g_OSVers;
 @synthesize g_cuuid;
 @synthesize g_serialNo;
-@synthesize g_osVer;
-@synthesize g_osType;
 @synthesize g_agentVer;
-@synthesize g_Tasks;
-@synthesize g_TasksHash;
 @synthesize g_AppHashes;
 @synthesize g_agentPid;
 @synthesize g_hostName;
-@synthesize g_clientKey;
 
 // SWDist
 @synthesize g_SWDistTasks;
@@ -56,20 +50,14 @@ static MPAgent *_instance;
 		
         if (_instance == nil) {
             _instance = [[super allocWithZone:NULL] init];
-            MPDefaults *mpd = [[MPDefaults alloc] init];
-			NSDictionary *osDict = [[NSDictionary alloc] initWithDictionary:[_instance getOSInfo]];
-			[_instance setG_Defaults:[mpd defaults]];
 			[_instance setG_OSVers:[_instance systemVersionDictionary]];
 			[_instance setG_cuuid:[_instance collectCUUIDFromHost]];
 			[_instance setG_serialNo:[_instance getHostSerialNumber]];
-			[_instance setG_osVer:[osDict objectForKey:@"ProductVersion"]];
-			[_instance setG_osType:[osDict objectForKey:@"ProductName"]];
 			[_instance setG_agentVer:@"0"];
 			[_instance setG_AppHashes:[NSMutableDictionary dictionary]];
             [_instance setG_agentPid:NULL];
             [_instance setG_SWDistTasksHash:@"NA"];
             [_instance setG_SWDistTasksJSONHash:@"NA"];
-            [_instance setG_clientKey:[_instance getClientKey]];
             NSString *localHostName = (__bridge NSString *)SCDynamicStoreCopyLocalHostName(NULL);
             [_instance setG_hostName:localHostName];
         }
@@ -167,7 +155,7 @@ static MPAgent *_instance;
 	return results;
 }
 
-- (NSString *)getClientKey
+- (NSString *)clientKey
 {
     NSError *err = nil;
     MPSimpleKeychain *skc = [[MPSimpleKeychain alloc] initWithKeychainFile:MP_KEYCHAIN_FILE];

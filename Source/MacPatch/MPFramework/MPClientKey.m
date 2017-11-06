@@ -1,5 +1,5 @@
 //
-//  MPDefaultsWatcher.h
+//  MPClientKey.m
 /*
  Copyright (c) 2017, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
@@ -23,25 +23,50 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#import <Foundation/Foundation.h>
-@class MPAgent;
+#import "MPClientKey.h"
+#import "Constants.h"
+#import "MPSimpleKeychain.h"
+#import "MPKeyItem.h"
 
-@interface MPDefaultsWatcher : NSObject {
-@private
-    MPAgent *si;
-    NSString *confHash;
+static MPClientKey *_instance;
+
+@implementation MPClientKey
+
++ (MPClientKey *)sharedInstance
+{
+    @synchronized(self)
+    {
+        if (_instance == nil) {
+            _instance = [[super allocWithZone:NULL] init];
+        }
+    }
+    return _instance;
 }
-@property (nonatomic, strong) NSString *confHash;
 
-- (id)initForHash;
+#pragma mark Singleton Methods
 
-- (void)checkConfig;
-- (void)checkConfigThread;
++ (id)allocWithZone:(NSZone *)zone
+{
+    return [self sharedInstance];
+}
 
-- (NSDictionary *)readConfigPlist;
 
-- (BOOL)checkFileHash:(NSString *)localFilePath fileHash:(NSString *)hash;
-- (BOOL)checkFileHash:(NSString *)localFilePath fileHash:(NSString *)hash digest:(NSString *)aDigest;
-- (NSString *)hashForFile:(NSString *)aFilePath digest:(NSString *)aDigest;
+- (id)copyWithZone:(NSZone *)zone
+{
+    return self;
+}
+
+- (NSString *)clientKey
+{
+    NSError *err = nil;
+    MPSimpleKeychain *skc = [[MPSimpleKeychain alloc] initWithKeychainFile:MP_KEYCHAIN_FILE];
+    MPKeyItem *keyItem = [skc retrieveKeyItemForService:kMPClientService error:&err];
+    if (err) {
+        logit(lcl_vWarning,@"getClientKey: %@",err.localizedDescription);
+        return @"NA";
+    }
+    
+    return keyItem.secret;
+}
 
 @end

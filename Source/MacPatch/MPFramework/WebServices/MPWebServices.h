@@ -26,16 +26,8 @@
 #import <Foundation/Foundation.h>
 
 @interface MPWebServices : NSObject
-{
-    @private
-    NSString *_cuuid;
-    NSString *_osver;
-    NSDictionary *_defaults;
-}
 
 @property (nonatomic, strong) NSString *clientKey;
-
--(id)initWithDefaults:(NSDictionary *)aDefaults;
 
 // Registration
 - (BOOL)getIsClientAgentRegistered:(NSError **)err;

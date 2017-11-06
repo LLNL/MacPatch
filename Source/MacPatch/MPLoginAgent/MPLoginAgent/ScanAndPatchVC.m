@@ -970,10 +970,21 @@ typedef NSUInteger MPInstallIconStatus;
 {
     NSError       *error = nil;
     NSDictionary  *patchGroupPatches = nil;
-    MPWebServices *mpws = [[MPWebServices alloc] init];
-    BOOL           useLocalPatchesFile = NO;
-    NSString      *patchGroupRevLocal = [MPClientInfo patchGroupRev];
+    MPRESTfull    *rest = [[MPRESTfull alloc] init];
     
+    BOOL           useLocalPatchesFile = NO;
+    
+    patchGroupPatches = [rest getApprovedPatchesForClient:&error];
+    if (error) {
+        qlerror(@"There was a issue getting the approved patches for the patch group, scan will exit.");
+        qlerror(@"%@",error.localizedDescription);
+        return nil;
+    }
+    
+    /* CEH - Look at re-implementing local cache of patch group patches
+     
+    NSString      *patchGroupRevLocal = [MPClientInfo patchGroupRev];
+ 
     if (![patchGroupRevLocal isEqualToString:@"-1"]) {
         NSString *patchGroupRevRemote = [mpws getPatchGroupContentRev:&error];
         if (!error) {
@@ -1002,6 +1013,7 @@ typedef NSUInteger MPInstallIconStatus;
         logit(lcl_vError,@"There was a issue getting the approved patches for the patch group, scan will exit.");
         return nil;
     }
+    */
     
     return patchGroupPatches;
 }
@@ -1388,9 +1400,10 @@ typedef NSUInteger MPInstallIconStatus;
 - (void)postInstallToWebService:(NSString *)aPatch type:(NSString *)aType
 {
     BOOL result = NO;
-    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
-    result = [mpws postPatchInstallResultsToWebService:aPatch patchType:aType error:&wsErr];
+    
+    MPRESTfull *rest = [[MPRESTfull alloc] init];
+    result = [rest postPatchInstallResults:aPatch type:aType error:&wsErr];
     if (wsErr) {
         qlerror(@"%@",wsErr.localizedDescription);
     } else {
@@ -1400,7 +1413,6 @@ typedef NSUInteger MPInstallIconStatus;
             qlerror(@"Patch (%@) install result was not posted to webservice.",aPatch);
         }
     }
-    
     return;
 }
 

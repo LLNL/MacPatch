@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C53a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -778,15 +778,15 @@
         <window title="MacPatch Client Info" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="556" userLabel="MacPatch - ClientInfo">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="1042" y="676" width="480" height="396"/>
+            <rect key="contentRect" x="1042" y="676" width="480" height="131"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="480" height="396"/>
-            <view key="contentView" id="557">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="396"/>
+            <view key="contentView" misplaced="YES" id="557">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="131"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="561">
-                        <rect key="frame" x="105" y="357" width="290" height="22"/>
+                        <rect key="frame" x="105" y="92" width="290" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="MacPatch Client Information" id="562">
                             <font key="font" metaFont="systemBold" size="18"/>
@@ -795,12 +795,12 @@
                         </textFieldCell>
                     </textField>
                     <imageView id="559">
-                        <rect key="frame" x="20" y="299" width="80" height="80"/>
+                        <rect key="frame" x="20" y="34" width="80" height="80"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="axesIndependently" image="MPBaseRoundIcon" id="564"/>
                     </imageView>
                     <textField verticalHuggingPriority="750" id="560">
-                        <rect key="frame" x="105" y="299" width="358" height="50"/>
+                        <rect key="frame" x="105" y="34" width="358" height="50"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" title="Multiline Label" id="563">
                             <font key="font" metaFont="system"/>
@@ -809,20 +809,20 @@
                         </textFieldCell>
                     </textField>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="558">
-                        <rect key="frame" x="20" y="22" width="440" height="265"/>
+                        <rect key="frame" x="20" y="22" width="440" height="0.0"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="sa6-VY-FkX">
-                            <rect key="frame" x="1" y="0.0" width="438" height="264"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <rect key="frame" x="1" y="0.0" width="423" height="0.0"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="568" id="567">
-                                    <rect key="frame" x="0.0" y="0.0" width="438" height="241"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="423" height="19"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn editable="NO" width="142" minWidth="40" maxWidth="1000" id="569">
+                                        <tableColumn identifier="" editable="NO" width="142" minWidth="40" maxWidth="1000" id="569">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Property">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -842,7 +842,7 @@
                                                 </binding>
                                             </connections>
                                         </tableColumn>
-                                        <tableColumn editable="NO" width="290" minWidth="40" maxWidth="1000" id="570">
+                                        <tableColumn identifier="" editable="NO" width="275" minWidth="40" maxWidth="1000" id="570">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Value">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -874,17 +874,18 @@
                             <rect key="frame" x="1" y="154" width="387" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="565">
-                            <rect key="frame" x="224" y="17" width="15" height="102"/>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="565">
+                            <rect key="frame" x="424" y="0.0" width="15" height="0.0"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <tableHeaderView key="headerView" id="568">
-                            <rect key="frame" x="0.0" y="0.0" width="438" height="23"/>
+                            <rect key="frame" x="0.0" y="0.0" width="423" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="131" y="327.5"/>
         </window>
         <arrayController id="588" userLabel="Client Info Array Controller">
             <declaredKeys>

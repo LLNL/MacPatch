@@ -69,11 +69,14 @@
                 return nil;
             }
         } else {
+            keyChainFile = [aKeyChainFile copy];
+            /*
             OSStatus result = [self createKeyChain:aKeyChainFile];
             if (result != noErr) {
                 NSLog(@"Create Keychain error: %d",result);
                 return nil;
             }
+             */
         }
     }
     return self;

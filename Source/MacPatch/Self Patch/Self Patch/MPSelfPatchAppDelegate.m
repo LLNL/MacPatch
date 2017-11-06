@@ -915,6 +915,19 @@ done:
         
         // Get Patch Group Patches
         [self progress:@"Getting approved patch list for client."];
+        
+        NSError       *wsErr = nil;
+        NSDictionary  *patchGroupPatches;
+        MPRESTfull *rest = [[MPRESTfull alloc] init];
+        
+        patchGroupPatches = [rest getApprovedPatchesForClient:&wsErr];
+        if (wsErr) {
+            logit(lcl_vError,@"%@",wsErr.localizedDescription);
+            [self scanComplete:NO];
+            return;
+        }
+        
+        /* CEH
         MPWebServices *mpws = [[MPWebServices alloc] init];
         NSError       *wsErr = nil;
         NSDictionary  *patchGroupPatches;
@@ -944,7 +957,8 @@ done:
                 return;
             }
         }
-
+         */
+        
         if (!patchGroupPatches)
         {
             NSDictionary *userInfo = @{@"title":@"Communications Error", @"defaultButton":@"OK", @"message":@"There was a issue getting the approved patches for the patch group, scan will exit."};
@@ -988,6 +1002,17 @@ done:
         }
         
         // post patches to web service
+        wsErr = nil;
+        BOOL ws_res = NO;
+        ws_res = [rest postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
+        if (wsErr) {
+            logit(lcl_vError,@"Scan results posted to webservice returned false.");
+            logit(lcl_vError,@"%@",wsErr.localizedDescription);
+        } else {
+            logit(lcl_vInfo,@"Scan results posted to webservice.");
+        }
+        
+        /* CEH
         mpws = [[MPWebServices alloc] init];
         wsErr = nil;
         [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
@@ -997,7 +1022,7 @@ done:
         } else {
             logit(lcl_vInfo,@"Scan results posted to webservice.");
         }
-
+         */
         if (killTaskThread == YES) {
             [self progress:@"Canceling request..."];
             [self scanComplete:NO];
@@ -1837,19 +1862,25 @@ done:
 	
 
     BOOL result = NO;
-    MPWebServices *mpws = [[MPWebServices alloc] init];
     NSError *wsErr = nil;
-    result = [mpws postPatchInstallResultsToWebService:aPatch patchType:aType error:&wsErr];
-    if (wsErr) {
+    MPRESTfull *rest = [[MPRESTfull alloc] init];
+    result = [rest  postPatchInstallResults:aPatch type:aType error:&wsErr];
+    if (wsErr)
+    {
         logit(lcl_vError,@"%@",wsErr.localizedDescription);
-    } else {
-        if (result == TRUE) {
+    }
+    else
+    {
+        if (result == TRUE)
+        {
             logit(lcl_vInfo,@"Patch (%@) install result was posted to webservice.",aPatch);
-        } else {
+        }
+        else
+        {
             logit(lcl_vError,@"Patch (%@) install result was not posted to webservice.",aPatch);
         }
     }
-
+    
     return;
 }
 

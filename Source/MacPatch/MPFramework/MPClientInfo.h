@@ -28,6 +28,14 @@
 
 @interface MPClientInfo : NSObject
 
-+ (NSString *)patchGroupRev;
+- (NSString *)patchGroupRev;
+
+
+/**
+ Returns all data needed for client checkin
+
+ @return NSDictionary
+ */
+- (NSDictionary *)agentData;
 
 @end

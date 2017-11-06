@@ -25,7 +25,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class MPAgent;
+@class MPSettings;
 
 @interface Profiles : NSOperation
 {
@@ -33,8 +33,8 @@
 	BOOL isFinished;
 
 @private
-
-	MPAgent *si;
+    
+    MPSettings *settings;
 	NSFileManager *fm;
 }
 

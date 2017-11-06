@@ -123,8 +123,10 @@
     NSURLRequest *request = [NSURLRequest requestWithURL:aURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.f];
     NSURLResponse *response;
     NSData *urlData = [self sendSynchronousRequest:request returningResponse:&response error:&urlErr];
-    result = self.certVerify;
-    
+    if (urlData)
+    {
+        result = self.certVerify;
+    }
     return result;
 }
 

@@ -28,13 +28,16 @@
 // Logging
 #import "lcl.h"
 #import "MPLog.h"
+
+// Settings
+#import "MPSettings.h"
+
 // Uitlities & Networking
 #import "MPNetworkUtils.h"
 #import "MPDefaults.h"
 #import "MPDiskUtil.h"
 #import "MPSystemInfo.h"
 #import "MPDate.h"
-#import "MPClientCheckInData.h"
 #import "MPNSTask.h"
 #import "MPClientInfo.h"
 #import "GCDTask.h"
@@ -47,38 +50,12 @@
 #import "MPResult.h"
 #import "Reachability.h"
 #import "MPServerList.h"
-#import "MPSUServerList.h"
-
-#import "AFURLRequestSerialization.h"
-#import "AFURLResponseSerialization.h"
-#import "AFSecurityPolicy.h"
-#import "AFNetworkReachabilityManager.h"
-
-#import "AFURLSessionManager.h"
-#import "AFHTTPSessionManager.h"
-
-#import "AFHTTPSessionManager+Synchronous.h"
-/*
-#import "AFURLRequestSerialization.h"
-#import "AFURLResponseSerialization.h"
-#import "AFSecurityPolicy.h"
-#import "AFNetworkReachabilityManager.h"
-
-#import "AFURLConnectionOperation.h"
-#import "AFHTTPRequestOperation.h"
-#import "AFHTTPRequestOperationManager.h"
-
-#if ( ( defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 1090) || \
-( defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000 ) )
-    #import "AFURLSessionManager.h"
-    #import "AFHTTPSessionManager.h"
-#endif
-*/
 
 // Networking Add for MP 3.1.0
 #import "MPHTTPRequest.h"
 #import "MPWSResult.h"
 #import "STHTTPRequest.h"
+#import "MPRESTfull.h"
 
 // Patching & Scanning
 #import "MPAsus.h"
@@ -92,17 +69,17 @@
 #import "MPApplePatch.h"
 #import "MPCustomPatch.h"
 
-// AntiVirus
-// #import "MPAntiVirus.h"
-
 // Software Distribution
 #import "MPSWTasks.h"
 #import "MPSWInstaller.h"
 
 // WebServices
 #import "MPDataMgr.h"
-#import "MPWebServices.h"
+//#import "MPWebServices.h"
 #import "MPFailedRequests.h"
+
+// New WS Class
+#import "MPRESTfull.h"
 
 // Crypto
 #import "MPCrypto.h"
@@ -111,6 +88,9 @@
 #import "MPKeyItem.h"
 #import "MPSimpleKeychain.h"
 #import "MPRemoteFingerprint.h"
+
+// SQLite
+#import "FMDB.h"
 
 // Helpers
 #import "NSString+Helper.h"
@@ -122,6 +102,13 @@
 #import "NSDate+Helper.h"
 #import "NSData+Base64.h"
 #import "NSString+Base64.h"
+
+// -- Models
+// Settings
+#import "Agent.h"
+#import "Server.h"
+#import "Suserver.h"
+#import "Task.h"
 
 // Inventory Plugin
 //#import "InventoryPlugin.h"

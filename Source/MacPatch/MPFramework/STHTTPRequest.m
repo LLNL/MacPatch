@@ -25,19 +25,19 @@ static BOOL globalIgnoreCache = NO;
 static STHTTPRequestCookiesStorage globalCookiesStoragePolicy = STHTTPRequestCookiesStorageShared;
 
 @interface STHTTPRequestFileUpload : NSObject
-@property (nonatomic, retain) NSString *path;
-@property (nonatomic, retain) NSString *parameterName;
-@property (nonatomic, retain) NSString *mimeType;
+@property (nonatomic, copy) NSString *path;
+@property (nonatomic, copy) NSString *parameterName;
+@property (nonatomic, copy) NSString *mimeType;
 
 + (instancetype)fileUploadWithPath:(NSString *)path parameterName:(NSString *)parameterName mimeType:(NSString *)mimeType;
 + (instancetype)fileUploadWithPath:(NSString *)path parameterName:(NSString *)parameterName;
 @end
 
 @interface STHTTPRequestDataUpload : NSObject
-@property (nonatomic, retain) NSData *data;
-@property (nonatomic, retain) NSString *parameterName;
-@property (nonatomic, retain) NSString *mimeType; // can be nil
-@property (nonatomic, retain) NSString *fileName; // can be nil
+@property (nonatomic, copy) NSData *data;
+@property (nonatomic, copy) NSString *parameterName;
+@property (nonatomic, copy) NSString *mimeType; // can be nil
+@property (nonatomic, copy) NSString *fileName; // can be nil
 + (instancetype)dataUploadWithData:(NSData *)data parameterName:(NSString *)parameterName mimeType:(NSString *)mimeType fileName:(NSString *)fileName;
 @end
 
@@ -45,11 +45,11 @@ static STHTTPRequestCookiesStorage globalCookiesStoragePolicy = STHTTPRequestCoo
 
 @interface STHTTPRequest ()
 
-@property (nonatomic) NSInteger responseStatus;
+@property (nonatomic, assign) NSInteger responseStatus;
 @property (nonatomic, strong) NSURLSessionTask *task;
 @property (nonatomic, strong) NSMutableData *responseData;
-@property (nonatomic, strong) NSString *responseStringEncodingName;
-@property (nonatomic, strong) NSDictionary *responseHeaders;
+@property (nonatomic, strong, readwrite) NSString *responseStringEncodingName;
+@property (nonatomic, strong, readwrite) NSDictionary *responseHeaders;
 @property (nonatomic, strong) NSURL *url;
 @property (nonatomic, strong) NSError *error;
 @property (nonatomic, strong) NSMutableArray *filesToUpload; // STHTTPRequestFileUpload instances

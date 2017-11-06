@@ -9,21 +9,22 @@
 #import <Foundation/Foundation.h>
 
 @class Agent;
-@class Server;
-@class Suserver;
-@class Task;
 
 @interface MPSettings : NSObject
 
 @property (nonatomic, strong, readonly) NSString *ccuid;
 @property (nonatomic, strong, readonly) NSString *serialno;
+@property (nonatomic, strong, readonly) NSString *osver;
+@property (nonatomic, strong, readonly) NSString *ostype;
 
 @property (nonatomic, strong, readonly) Agent *agent;
-@property (nonatomic, strong, readonly) Server *server;
-@property (nonatomic, strong, readonly) Suserver *suserver;
-@property (nonatomic, strong, readonly) Task *task;
+@property (nonatomic, strong, readonly) NSArray *servers;
+@property (nonatomic, strong, readonly) NSArray *suservers;
+@property (nonatomic, strong, readonly) NSArray *tasks;
 
 
-+ (MPSettings *)settings;
++ (MPSettings *)sharedInstance;
+
+- (BOOL)compareAndUpdateSettings:(NSDictionary *)remoteSettingsRevs;
 
 @end

@@ -25,20 +25,38 @@
  */
 
 #import "MPClientInfo.h"
-#import "MPDefaults.h"
+#import "MPSettings.h"
 
 #undef  ql_component
 #define ql_component lcl_cMPClientInfo
 
+@interface MPClientInfo ()
+{
+    NSFileManager   *fm;
+    MPSettings      *settings;
+}
+
+@end
+
 @implementation MPClientInfo
 
-+ (NSString *)patchGroupRev
+- (id)init
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
+    self = [super init];
+    if (self)
+    {
+        fm       = [NSFileManager defaultManager];
+        settings = [MPSettings sharedInstance];
+    }
+    return self;
+}
+
+- (NSString *)patchGroupRev
+{
+    fm = [NSFileManager defaultManager];
     if ([fm fileExistsAtPath:PATCH_GROUP_PATCHES_PLIST])
     {
-        MPDefaults *defaults = [[MPDefaults alloc] init];
-        NSString *pGroup = [[defaults defaults] objectForKey:@"PatchGroup"];
+        NSString *pGroup = settings.agent.patchGroup;
         NSDictionary *_dict = [NSDictionary dictionaryWithContentsOfFile:PATCH_GROUP_PATCHES_PLIST];
         NSDictionary *patchGroupDict;
         if ([_dict objectForKey:pGroup])
@@ -54,6 +72,57 @@
     }
     
     return @"-1";
+}
+
+- (NSDictionary *)agentData
+{
+    NSMutableDictionary *agentDict;
+    @try
+    {
+        NSDictionary *consoleUserDict = [MPSystemInfo consoleUserData];
+        NSDictionary *hostNameDict = [MPSystemInfo hostAndComputerNames];
+        
+        NSDictionary *agentVer = nil;
+        if ([fm fileExistsAtPath:AGENT_VER_PLIST]) {
+            if ([fm isReadableFileAtPath:AGENT_VER_PLIST] == NO ) {
+                [fm setAttributes:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedLong:0664UL] forKey:NSFilePosixPermissions]
+                     ofItemAtPath:AGENT_VER_PLIST
+                            error:NULL];
+            }
+            agentVer = [NSDictionary dictionaryWithContentsOfFile:AGENT_VER_PLIST];
+        } else {
+            agentVer = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"NA",@"NA",@"NA",@"NA",@"NA",@"NA",nil]
+                                                   forKeys:[NSArray arrayWithObjects:@"version",@"major",@"minor",@"bug",@"build",@"framework",nil]];
+        }
+        
+        agentDict = [[NSMutableDictionary alloc] init];
+        [agentDict setObject:[settings ccuid] forKey:@"cuuid"];
+        [agentDict setObject:[settings serialno] forKey:@"serialno"];
+        [agentDict setObject:[hostNameDict objectForKey:@"localHostName"] forKey:@"hostname"];
+        [agentDict setObject:[hostNameDict objectForKey:@"localComputerName"] forKey:@"computername"];
+        [agentDict setObject:[consoleUserDict objectForKey:@"consoleUser"] forKey:@"consoleuser"];
+        [agentDict setObject:[MPSystemInfo getIPAddress] forKey:@"ipaddr"];
+        [agentDict setObject:[MPSystemInfo getMacAddressForInterface:@"en0"] forKey:@"macaddr"];
+        [agentDict setObject:[settings osver] forKey:@"osver"];
+        [agentDict setObject:[settings ostype] forKey:@"ostype"];
+        [agentDict setObject:@"0" forKey:@"agent_version"];
+        [agentDict setObject:[agentVer objectForKey:@"build"] forKey:@"agent_build"];
+        NSString *cVer = [NSString stringWithFormat:@"%@.%@.%@",[agentVer objectForKey:@"major"],[agentVer objectForKey:@"minor"],[agentVer objectForKey:@"bug"]];
+        [agentDict setObject:cVer forKey:@"agent_version"];
+        [agentDict setObject:@"false" forKey:@"needsreboot"];
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
+            [agentDict setObject:@"true" forKey:@"needsreboot"];
+        }
+        
+        logit(lcl_vDebug, @"Agent Data: %@",agentDict);
+        return (NSDictionary *)agentDict;
+    }
+    @catch (NSException * e) {
+        logit(lcl_vError,@"[NSException]: %@",e);
+        logit(lcl_vError,@"No client checkin data will be posted.");
+        return nil;
+    }
 }
 
 @end

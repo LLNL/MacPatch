@@ -43,6 +43,7 @@ extern NSString * const PATCHES_NEEDED_PLIST;
 extern NSString * const PATCHES_APPROVED_PLIST;
 extern NSString * const PATCHES_CRITICAL_PLIST;
 extern NSString * const PATCH_GROUP_PATCHES_PLIST;
+extern NSString * const SOFTWARE_DATA_DIR;
 
 extern NSString * const WS_CLIENT_REG;
 extern NSString * const WS_CLIENT_FILE;
@@ -74,6 +75,9 @@ extern NSString * const kMPAVUpdate;
 extern NSString * const MP_KEYCHAIN_FILE;
 extern NSString * const MP_AGENT_HASH;
 extern NSString * const OS_MIGRATION_STATUS;
+
+extern NSString * const MP_AGENT_DEPL_PLIST;
+extern NSString * const MP_AGENT_SETTINGS;
 
 @interface Constants : NSObject {
 

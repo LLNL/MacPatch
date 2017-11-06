@@ -45,6 +45,7 @@
 		8FD8903B16DFE14300A870A3 /* remove.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8902C16DFE14300A870A3 /* remove.png */; };
 		8FD8903C16DFE14300A870A3 /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8902D16DFE14300A870A3 /* stop.png */; };
 		8FD8903D16DFE14300A870A3 /* Console.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8902E16DFE14300A870A3 /* Console.png */; };
+		8FFD37EC1FA50E1700115F33 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFD37EB1FA50E1700115F33 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -100,6 +101,7 @@
 		8FD8902C16DFE14300A870A3 /* remove.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = remove.png; sourceTree = "<group>"; };
 		8FD8902D16DFE14300A870A3 /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
 		8FD8902E16DFE14300A870A3 /* Console.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Console.png; sourceTree = "<group>"; };
+		8FFD37EB1FA50E1700115F33 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FFD37EC1FA50E1700115F33 /* libsqlite3.tbd in Frameworks */,
 				8FD8901B16DFDE2E00A870A3 /* libMacPatch.a in Frameworks */,
 				8FD8901816DFDE2E00A870A3 /* libicucore.dylib in Frameworks */,
 				8FD8901A16DFDE2E00A870A3 /* libz.dylib in Frameworks */,
@@ -165,6 +168,7 @@
 		8FD88FC916DFDD9200A870A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FFD37EB1FA50E1700115F33 /* libsqlite3.tbd */,
 				8FD8900816DFDE2D00A870A3 /* Carbon.framework */,
 				8FD8900916DFDE2D00A870A3 /* Security.framework */,
 				8FD8900A16DFDE2D00A870A3 /* SystemConfiguration.framework */,
@@ -391,7 +395,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -434,7 +438,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -455,7 +459,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "MPCatalog/MPCatalog-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.llnl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
@@ -475,7 +479,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "MPCatalog/MPCatalog-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.llnl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";

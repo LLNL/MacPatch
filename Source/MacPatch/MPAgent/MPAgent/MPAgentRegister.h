@@ -11,9 +11,6 @@
 @class MPWebServices;
 
 @interface MPAgentRegister : NSObject
-{
-    MPWebServices *mpws;
-}
 
 @property (nonatomic, strong) NSString *clientKey;
 @property (nonatomic, strong) NSString *registrationKey;

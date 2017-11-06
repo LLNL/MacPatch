@@ -25,8 +25,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class MPAgent;
-
 @interface PostFailedWSRequests : NSOperation
 {
 	BOOL isExecuting;
@@ -34,7 +32,6 @@
 
 @private
 
-	MPAgent *si;
 	NSFileManager *fm;
 }
 

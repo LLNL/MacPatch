@@ -26,6 +26,8 @@
 @property (nonatomic)         NSInteger requestCount;
 @property (nonatomic, strong) NSString  *clientKey;
 
+@property (nonatomic, weak, readwrite) NSError *error;
+
 @end
 
 @implementation MPHTTPRequest
@@ -33,6 +35,7 @@
 @synthesize serverArray;
 @synthesize allowSelfSignedCert;
 @synthesize clientKey;
+@synthesize error;
 
 - (id)init
 {
@@ -73,25 +76,57 @@
     MPServerList *s = [MPServerList new];
     NSArray *servers = [s getLocalServerArray];
     self.serverArray = [servers copy];
+    if (self.serverArray.count <= 0) {
+        [self populateServerArrayUsingAgentPlist];
+    }
 }
 
 - (void)populateServerArrayUsingAgentPlist
 {
     NSMutableArray *_servers = [NSMutableArray new];
     
-    NSDictionary *agentData = [NSDictionary dictionaryWithContentsOfFile:AGENT_PREFS_PLIST];
+    NSDictionary *agentData = [NSDictionary dictionaryWithContentsOfFile:MP_AGENT_DEPL_PLIST];
     NSDictionary *server = @{@"host": agentData[@"MPServerAddress"], @"port": agentData[@"MPServerPort"], @"serverType": @(1),
                              @"allowSelfSigned": agentData[@"MPServerAllowSelfSigned"], @"useHTTPS": agentData[@"MPServerSSL"]};
     [_servers addObject:server];
     
     NSDictionary *proxy = nil;
-    if (agentData[@"MPProxyEnabled"]) {
-        proxy = @{@"host": agentData[@"MPProxyServerAddress"], @"port": agentData[@"MPProxyServerPort"], @"serverType": @(2),
-                  @"allowSelfSigned": agentData[@"MPServerAllowSelfSigned"], @"useHTTPS": agentData[@"MPServerSSL"]};
-        [_servers addObject:proxy];
+    if (agentData[@"MPProxyEnabled"])
+    {
+        if ([agentData[@"MPProxyEnabled"] integerValue] == 1)
+        {
+            proxy = @{@"host": agentData[@"MPProxyServerAddress"], @"port": agentData[@"MPProxyServerPort"], @"serverType": @(2),
+                      @"allowSelfSigned": agentData[@"MPServerAllowSelfSigned"], @"useHTTPS": agentData[@"MPServerSSL"]};
+            [_servers addObject:proxy];
+        }
     }
     
     self.serverArray = _servers;
+}
+
+- (NSString *)createTempDownloadDir:(NSString *)urlPath
+{
+    NSString *tempFilePath;
+    NSString *appName = [[NSProcessInfo processInfo] processName];
+    NSString *tempDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.XXXXXX",appName]];
+    
+    const char *tempDirectoryTemplateCString = [tempDirectoryTemplate fileSystemRepresentation];
+    char *tempDirectoryNameCString = (char *)malloc(strlen(tempDirectoryTemplateCString) + 1);
+    strcpy(tempDirectoryNameCString, tempDirectoryTemplateCString);
+    char *result = mkdtemp(tempDirectoryNameCString);
+    if (!result)
+    {
+        free(tempDirectoryNameCString);
+        // handle directory creation failure
+        qlerror(@"Error, trying to create tmp directory.");
+        return [@"/private/tmp" stringByAppendingPathComponent:appName];
+    }
+    
+    NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
+    free(tempDirectoryNameCString);
+    
+    tempFilePath = [tempDirectoryPath stringByAppendingPathComponent:[urlPath lastPathComponent]];
+    return tempFilePath;
 }
 
 #pragma mark - Public ASyncronus Methdos
@@ -182,10 +217,10 @@
     [r setHeaderWithName:@"Accept" value:@"application/json"];
     [r setHeaderWithName:@"X-Agent-ID" value:@"MacPatch"];
     
-    NSError *error = nil;
+    NSError *jerror = nil;
     // Convert body to JSON Data
-    NSData  *jsonData = [NSJSONSerialization dataWithJSONObject:body options:0 error:&error];
-    if (!error) {
+    NSData  *jsonData = [NSJSONSerialization dataWithJSONObject:body options:0 error:&jerror];
+    if (!jerror) {
         r.rawPOSTData = jsonData;
     }
     
@@ -194,7 +229,7 @@
     NSString *sg = [self signWSRequest:bodyDataStr timeStamp:ts key:[self readClientKey]];
     [r setHeaderWithName:@"X-API-TS" value:ts];
     [r setHeaderWithName:@"X-API-Signature" value:sg];
-
+    
     __weak STHTTPRequest *wr = r;
     __block __typeof(self) weakSelf = self;
     
@@ -219,8 +254,8 @@
 }
 
 - (void)runDownloadRequest:(NSString *)urlPath downloadDirectory:(NSString *)dlDir
-                     progress:(NSProgressIndicator *)progressBar progressPercent:(id)progressPercent
-                   completion:(void (^)(NSString *fileName, NSString *filePath, NSError *error))completion
+                  progress:(NSProgressIndicator *)progressBar progressPercent:(id)progressPercent
+                completion:(void (^)(NSString *fileName, NSString *filePath, NSError *error))completion
 {
     // Create Download Directory if it does not exist
     if (![fm fileExistsAtPath:dlDir]) {
@@ -231,8 +266,8 @@
     __block NSString *flName = [urlPath lastPathComponent];
     __block NSString *flPath = [dlDir stringByAppendingPathComponent:flName];
     
-    
-    if (self.requestCount == -1) {
+    if (self.requestCount == -1)
+    {
         self.requestCount++;
     } else {
         if (self.requestCount >= (self.serverArray.count - 1))
@@ -300,8 +335,8 @@
     r.errorBlock = ^(NSError *error)
     {
         [weakSelf runDownloadRequest:urlPath downloadDirectory:(NSString *)dlDir
-                               progress:progressBar progressPercent:progressPercent
-                             completion:(void (^)(NSString *fileName, NSString *filePath, NSError *error))completion];
+                            progress:progressBar progressPercent:progressPercent
+                          completion:(void (^)(NSString *fileName, NSString *filePath, NSError *error))completion];
     };
     
     [r startAsynchronous];
@@ -316,9 +351,9 @@
 - (MPWSResult *)runSyncGET:(NSString *)urlPath body:(NSDictionary *)body
 {
     MPWSResult *wsResult = nil;
-    
     MPNetServer *server;
     NSString *url;
+    
     for (NSDictionary *srvDict in self.serverArray)
     {
         self.allowSelfSignedCert = NO;
@@ -328,7 +363,6 @@
         
         url = [NSString stringWithFormat:@"%@://%@:%d%@",server.useHTTPS ? @"https":@"http", server.host, (int)server.port, urlPath];
         qlinfo(@"URL: %@",url);
-        //NSLog(@"DEBUG REQUEST URL: %@",url);
         wsResult = [self syncronusGETWithURL:url body:body];
         if ((int)wsResult.statusCode == 200 || (int)wsResult.statusCode == 201) {
             qldebug(@"WSResult: %@",wsResult.toDictionary);
@@ -348,12 +382,11 @@
     for (NSDictionary *srvDict in self.serverArray)
     {
         self.allowSelfSignedCert = NO;
-        
         server = [MPNetServer serverObjectWithDictionary:srvDict];
         self.allowSelfSignedCert = server.allowSelfSigned;
         
         url = [NSString stringWithFormat:@"%@://%@:%d%@",server.useHTTPS ? @"https":@"http", server.host, (int)server.port, urlPath];
-        qlinfo(@"URL: %@",url);
+        qldebug(@"[runSyncPOST] URL: %@",url);
         wsResult = [self syncronusPOSTWithURL:url body:body];
         if ((int)wsResult.statusCode == 200 || (int)wsResult.statusCode == 201) {
             qldebug(@"WSResult: %@",wsResult.toDictionary);
@@ -364,6 +397,41 @@
     return wsResult;
 }
 
+- (NSString *)runSyncFileDownload:(NSString *)urlPath downloadDirectory:(NSString *)dlDir error:(NSError **)err
+{
+    __block NSString *_fileName;
+    __block NSString *_filePath;
+    __block NSError *_err;
+    
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    [self runDownloadRequest:urlPath
+           downloadDirectory:dlDir
+                    progress:nil
+             progressPercent:nil
+                  completion:^(NSString *fileName, NSString *filePath, NSError *_error)
+     {
+         if (_error)
+         {
+             _err = [_error copy];
+         }
+         else
+         {
+             _fileName = fileName;
+             _filePath = filePath;
+         }
+         dispatch_semaphore_signal(semaphore);
+     }];
+    
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    
+    if (err != NULL) {
+        if (_err) *err = _err;
+    }
+    
+    return _filePath;
+}
+
 #pragma mark - Private Methdos
 - (MPWSResult *)syncronusGETWithURL:(NSString *)aURL body:(NSDictionary *)body
 {
@@ -371,17 +439,25 @@
     
     // Result
     __block NSInteger statusCode = 9999;
-    NSError *error = nil;
+    NSError *_error = nil;
     
     // Convert body to JSON Data
-    NSData  *jsonData = [NSJSONSerialization dataWithJSONObject:body options:0 error:&error];
+    NSData  *jsonData;
+    if (body) {
+        jsonData = [NSJSONSerialization dataWithJSONObject:body options:0 error:&_error];
+        if (_error) {
+            qlerror(@"%@",_error.localizedDescription);
+            error = _error;
+            return res;
+        }
+    }
     
     // Create URLRequest
     NSURL *url = [NSURL URLWithString:aURL];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     request.HTTPMethod = @"GET";
     [request setValue:@"MacPatch" forHTTPHeaderField:@"X-Agent-ID"];
-
+    
     NSString *sg;
     NSString *ts = [self generateTimeStampForSignature];
     
@@ -396,7 +472,7 @@
     } else {
         sg = [self signWSRequest:[url path] timeStamp:ts key:[self readClientKey]];
     }
-
+    
     [request setValue:[self generateTimeStampForSignature] forHTTPHeaderField:@"X-API-TS"];
     [request setValue:sg forHTTPHeaderField:@"X-API-Signature"];
     
@@ -407,33 +483,38 @@
     sessionConfig.timeoutIntervalForResource = 60;
     sessionConfig.HTTPMaximumConnectionsPerHost = 1;
     
+    __block NSError *sesErr = nil;
     __block NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
     
     // Create semaphore, to wait for block to end
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     // Make Request Task
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-      {
-          if (!error)
-          {
-              NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-              statusCode = httpResponse.statusCode;
-              res = [[MPWSResult alloc] initWithJSONData:data];
-              res.statusCode = statusCode;
-          }
-          else
-          {
-              qlerror(@"Error: %@", error.localizedDescription);
-          }
-          
-          dispatch_semaphore_signal(semaphore);
-      }];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *_error)
+                                  {
+                                      if (!_error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                                          statusCode = httpResponse.statusCode;
+                                          res = [[MPWSResult alloc] initWithJSONData:data];
+                                          res.statusCode = statusCode;
+                                      }
+                                      else
+                                      {
+                                          qlerror(@"Error: %@", _error.localizedDescription);
+                                          sesErr = _error;
+                                      }
+                                      
+                                      dispatch_semaphore_signal(semaphore);
+                                  }];
     // Run Task
     [task resume];
     
     // Wait for semaphore signal
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    if (sesErr) {
+        error = sesErr;
+    }
     
     return res;
 }
@@ -444,9 +525,9 @@
     
     // Result
     __block NSInteger statusCode = 9999;
-    NSError *error = nil;
-    // Convert body to JSON Data
-    NSData  *jsonData = [NSJSONSerialization dataWithJSONObject:body options:0 error:&error];
+    NSError *jerror = nil;
+    NSData  *jsonData;
+    
     // Create URLRequest
     NSURL *url = [NSURL URLWithString:aURL];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
@@ -458,13 +539,18 @@
     NSString *ts = [self generateTimeStampForSignature];
     
     // If Request with out a body pass nil for the dictionary
-    if (body != nil) {
+    if (body != nil)
+    {
+        // Convert body to JSON Data
+        jsonData = [NSJSONSerialization dataWithJSONObject:body options:0 error:&jerror];
         [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
         [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-        [request setHTTPBody:jsonData];
-        
-        NSString *bodyDataStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        sg = [self signWSRequest:bodyDataStr timeStamp:ts key:[self readClientKey]];
+        if (!jerror)
+        {
+            [request setHTTPBody:jsonData];
+            NSString *bodyDataStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            sg = [self signWSRequest:bodyDataStr timeStamp:ts key:[self readClientKey]];
+        }
     } else {
         sg = [self signWSRequest:[url path] timeStamp:ts key:[self readClientKey]];
     }
@@ -484,23 +570,26 @@
                                                              delegateQueue:nil];
     // Create semaphore, to wait for block to end
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
     // Make Request Task
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-      {
-          if (!error)
-          {
-              NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-              statusCode = httpResponse.statusCode;
-              res = [[MPWSResult alloc] initWithJSONData:data];
-              res.statusCode = statusCode;
-          }
-          else
-          {
-              qlerror(@"Error: %@", error.localizedDescription);
-          }
-          
-          dispatch_semaphore_signal(semaphore);
-      }];
+    NSURLSessionDataTask *task;
+    task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *err)
+    {
+        if (!err)
+        {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+            statusCode = httpResponse.statusCode;
+            res = [[MPWSResult alloc] initWithJSONData:data];
+            res.statusCode = statusCode;
+        }
+        else
+        {
+            qlerror(@"Error: %@", err.localizedDescription);
+        }
+
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
     // Run Task
     [task resume];
     // Wait for semaphore signal

@@ -25,8 +25,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class MPAgent;
-
 @interface PatchScanAndUpdateOperation : NSOperation 
 {
 	int scanType;
@@ -37,7 +35,6 @@
     
 @private
 	
-	MPAgent *si;
 	NSFileManager *fm;
 }
 

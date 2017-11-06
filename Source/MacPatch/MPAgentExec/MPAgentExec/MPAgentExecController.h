@@ -33,42 +33,28 @@
 
 @interface MPAgentExecController : NSObject <MPWorkerClient, MPNetRequestController>
 {
-    NSDictionary    *_defaults;
-    NSString        *_cuuid;
-    NSString        *_appPid;
-    
     MPAsus          *mpAsus;
     MPDataMgr       *mpDataMgr;
-	
-    BOOL			iLoadMode;
-	BOOL			forceRun;
-	
-	NSArray			*approvedPatches;
     NSFileManager   *fm;
-    
-    int             errorCode;
-    NSString        *errorMsg;
 
     // Helper
 	id              proxy;
 }
 
-@property (nonatomic, strong) NSDictionary       *_defaults;
-@property (nonatomic, strong) NSString           *_cuuid;
-@property (nonatomic, strong) NSString           *_appPid;
+@property (nonatomic, strong)           NSString    *_appPid;
 
-@property (nonatomic, assign) BOOL               iLoadMode;
-@property (nonatomic, assign) BOOL               forceRun;
+@property (nonatomic, assign)           BOOL        iLoadMode;
+@property (nonatomic, assign)           BOOL        forceRun;
 
-@property (nonatomic, strong) NSArray            *approvedPatches;
+@property (nonatomic, strong)           NSArray     *approvedPatches;
 
-@property (nonatomic, readonly, assign) int      errorCode;
-@property (nonatomic, readonly, strong) NSString *errorMsg;
-@property (nonatomic, readonly, assign) int      needsReboot;
-@property (nonatomic, strong)           NSURL    *mp_SOFTWARE_DATA_DIR;
+@property (nonatomic, assign, readonly) int         errorCode;
+@property (nonatomic, strong, readonly) NSString    *errorMsg;
+@property (nonatomic, assign, readonly) int         needsReboot;
+
+@property (nonatomic, strong)           NSURL       *mp_SOFTWARE_DATA_DIR;
 
 -(id)initForBundleUpdate;
--(void)overRideDefaults:(NSDictionary *)aDict;
 
 -(void)scanForPatches;
 -(void)scanForPatchesWithFilter:(int)aFilter;
@@ -84,8 +70,6 @@
 
 -(BOOL)checkPatchPreAndPostForRebootRequired:(NSArray *)aDictArray;
 -(void)removeInstalledPatchFromCacheFile:(NSString *)aPatchName;
--(void)scanForAVDefs;
--(void)scanForAVDefsAndUpdate;
 -(void)scanAndUpdateAgentUpdater;
 -(NSDictionary *)getAgentUpdaterInfo;
 

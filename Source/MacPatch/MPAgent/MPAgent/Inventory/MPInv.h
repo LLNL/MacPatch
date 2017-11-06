@@ -28,7 +28,6 @@
 @interface MPInv : NSObject 
 {    
 	NSArray		*invResults;
-	NSString	*cUUID;
 }
 // Getters * Setters
 @property (nonatomic, strong) NSArray *invResults;
@@ -75,7 +74,7 @@
 
 // Helpers for Directory Data from Daniel
 - (NSDictionary *)stringToDict:(NSString *)theString theDelimiter:(NSString *)theDelimiter;
-- (BOOL)sendResultsToWebService:(NSString *)aDataMgrXML;
+- (BOOL)sendResultsToWebService:(NSDictionary *)aDataMgrData;
 
 
 @end
