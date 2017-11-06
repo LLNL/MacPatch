@@ -1,13 +1,13 @@
 {
     "description" : "SiteConfig for new MPApi, pyhton flask web services.",
-    "settings" : 
+    "settings" :
     {
         "services":
         {
-            "console":false,
-            "mpwsl":false
+            "console": false,
+            "wsapi": false
         },
-        "paths": 
+        "paths":
         {
             "base":"/opt/MacPatch/Server",
             "content":"/opt/MacPatch/Content/Web"
@@ -20,15 +20,15 @@
             "inventory_dir": "/opt/MacPatch/Server/Data/Inventory",
             "apiKey": "123456"
         },
-        "users": 
+        "users":
         {
             "admin": {
                 "enabled": true,
                 "name":"mpadmin",
                 "pass":"*mpadmin*"
-            }    
+            }
         },
-        "ldap": 
+        "ldap":
         {
             "enabled": false,
             "server":"SERVERNAME",
@@ -41,67 +41,28 @@
             "loginUsrPrefix":"LOGIN-PREFIX",
             "loginUsrSufix":"LOGIN-SUFFIX"
         },
-        "database": 
-        {
-            "prod": {
-                "enabled": "YES",
-                "dsName":"mpds",
-                "dbHost":"127.0.0.1",
-                "dbPort":"3306",
-                "dbName":"MacPatchDB3",
-                "hoststringPre":"jdbc:mysql:",
-                "hoststringURI":"?cacheResultSetMetadata=false&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull",
-                "drivername":"com.mysql.jdbc.Driver",
-                "username":"mpdbadm",
-                "password":"password",
-                "maxconnections":500,
-                "logintimeout":30,
-                "connectiontimeout":30,
-                "connectionretries":2
-            },
-            "ro": {
-                "enabled": "YES",
-                "dsName":"mpdsro",
-                "dbHost":"127.0.0.1",
-                "dbPort":"3306",
-                "dbName":"MacPatchDB3",
-                "hoststringPre":"jdbc:mysql:",
-                "hoststringURI":"?cacheResultSetMetadata=false&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull",
-                "drivername":"com.mysql.jdbc.Driver",
-                "username":"mpdbro",
-                "password":"password",
-                "maxconnections":100,
-                "logintimeout":30,
-                "connectiontimeout":30,
-                "connectionretries":2
-            }
-        },
-        "ldap_filters": 
+        "ldap_filters":
         [
             {   "config_name":"DEMO_CONFIG",
                 "config_enabled": false,
-                "config_ldap": { 
+                "config_ldap": {
                     "server": "SERVERNAME.COM",
                     "port": 636,
-                    "secure": "1", 
-                    "searchbase": "SEARCH-BASE",  
+                    "secure": "1",
+                    "searchbase": "SEARCH-BASE",
                     "attributes": "cn,name,dn,samAccountName,memberOf",
                     "userDN": "USER DN PATH",
                     "userPas": "USER PASSWORD"
                 }
             }
         ],
-        "mailserver": 
+        "mailserver":
         {
             "enabled": false,
             "server":"127.0.0.1",
             "port": 25,
             "username":"exampleusername",
             "password":"examplepassword"
-        },
-        "dbSchema":
-        {
-            "checkSchema": false
         }
     }
 }
