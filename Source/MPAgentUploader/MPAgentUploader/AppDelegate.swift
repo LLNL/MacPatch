@@ -31,6 +31,10 @@ import Cocoa
 import Alamofire
 import LogKit
 var log = LXLogger()
+
+//import SwiftyBeaver
+//let log = SwiftyBeaver.self
+
 var MPAlamofire = Alamofire.SessionManager()
 
 @NSApplicationMain
@@ -41,8 +45,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
-
+        /*
+        let console = ConsoleDestination()
+        let file = FileDestination()
+        
+        file.logFileURL = URL(string: logPath)
+        file.format = "$Dyyyy-MM-dd HH:mm:ss.SSS$d $C$L$c: $M"
+        
+        log.addDestination(console)
+        log.addDestination(file)
+        */
+        
         log = LXLogger(endpoints: [
+            
             LXRotatingFileEndpoint(
                 baseURL: URL(fileURLWithPath: logPath),
                 numberOfFiles: 7,
@@ -54,7 +69,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 })
             )
         ])
-
+        
         NotificationCenter.default.post(name: Notification.Name("setLogLevel"), object: nil)
     }
 
@@ -63,7 +78,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     lazy var preferencesWindowController: PreferencesWindowController  = {
-        let wcSB = NSStoryboard(name: "Preferences", bundle: Bundle.main)
+        let wcSB = NSStoryboard(name: NSStoryboard.Name(rawValue: "Preferences"), bundle: Bundle.main)
         // or whichever bundle
         return wcSB.instantiateInitialController() as! PreferencesWindowController
     }()
@@ -76,12 +91,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction func showLogFileInConsole(_ sender: NSObject?)
     {
         let logFile = NSHomeDirectory().stringByAppendingPathComponent(path: "Library/Logs/1_AgentUploader.log")
-        NSWorkspace.shared().openFile(logFile, withApplication: "Console")
+        NSWorkspace.shared.openFile(logFile, withApplication: "Console")
         
     }
     
     @IBAction func pressed(sender: AnyObject) {
-        if let window = NSApplication.shared().mainWindow {
+        if let window = NSApplication.shared.mainWindow {
             if let viewController = window.contentViewController as? ViewController {
                 // do stuff
                 print("Hello")

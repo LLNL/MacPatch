@@ -172,7 +172,6 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 # define SWIFT_DEPRECATED_OBJC(Msg) SWIFT_DEPRECATED_MSG(Msg)
 #endif
 #if __has_feature(modules)
-@import Foundation;
 #endif
 
 #pragma clang diagnostic ignored "-Wproperty-attribute-mismatch"
@@ -183,21 +182,6 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wnullability"
 
-SWIFT_MODULE_NAMESPACE_PUSH("LogKit")
-
-@interface NSFileManager (SWIFT_EXTENSION(LogKit))
-/// This method attempts to ensure that a file is available at the specified URL. It will attempt to create an
-/// empty file if one does not already exist at that location.
-/// \param at The URL of the file to ensure availability of.
-///
-/// \param createDirectories Indicates whether intermediate directories should be created if
-/// necessary, before creating the file, if is does not exist.
-///
-///
-/// throws:
-/// <code>NSError</code> with domain <code>NSURLErrorDomain</code>
-- (BOOL)ensureFileAt:(NSURL * _Nonnull)URL createDirectories:(BOOL)createDirectories error:(NSError * _Nullable * _Nullable)error;
-@end
-
+SWIFT_MODULE_NAMESPACE_PUSH("SwiftyBeaver")
 SWIFT_MODULE_NAMESPACE_POP
 #pragma clang diagnostic pop

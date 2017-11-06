@@ -73,8 +73,8 @@ class AuthViewController: NSViewController
     {
         self.authStatusField.stringValue = ""
         self.authProgressWheel.startAnimation(nil)
-        
-        let _ssl = (x_useSSL == NSOnState) ? "https" : "http"
+   
+        let _ssl = (NSControl.StateValue.init(x_useSSL!) == NSControl.StateValue.on) ? "https" : "http"
         let _url: String = "\(_ssl)://\(x_mpServer!):\(x_mpPort!)\(URI_PREFIX)/auth/token"
         
         let _params: Parameters = ["authUser":authUserID.stringValue, "authPass":authUserPass.stringValue]

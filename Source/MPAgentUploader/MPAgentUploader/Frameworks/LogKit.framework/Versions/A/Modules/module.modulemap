@@ -7,4 +7,5 @@ framework module LogKit {
 
 module LogKit.Swift {
     header "LogKit-Swift.h"
+    requires objc
 }

@@ -34,6 +34,6 @@ class HeaderView : NSView {
     override func draw(_ dirtyRect: NSRect) {
         
         let gradient = NSGradient.init(starting: NSColor.darkGray, ending: NSColor.black)
-        gradient?.draw(from: NSMakePoint(0,0), to: NSMakePoint(0,self.frame.size.height), options: .drawsAfterEndingLocation)
+        gradient?.draw(from: NSMakePoint(0,0), to: NSMakePoint(0,self.frame.size.height), options: NSGradient.DrawingOptions.drawsAfterEndingLocation)
     }
 }
