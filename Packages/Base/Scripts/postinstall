@@ -22,7 +22,8 @@ sysMinorVersion=${tempMinorVersion%%.*}
 
 # Current Logged in user info
 cUsr="null"
-if [ -e "${SRC}/ccusr" ]; then
+if [ -e "${SRC}/ccusr" ]; 
+then
 	cUsr=`${SRC}/ccusr`
 	echo "Current User is: $cUsr"
 fi
@@ -60,7 +61,8 @@ existsAndDelete ()
 	fi
 }
 
-function runClientActions {
+function runClientActions 
+{
 
 	/Library/MacPatch/Client/MPAgent -c
 	sleep 1
@@ -103,10 +105,14 @@ function runClientActions {
 	fi
 }
 
-function removeOldRegFiles {
+function removeOldRegFiles 
+{
 	existsAndDelete "/Library/Application Support/MacPatch/MacPatch.keychain"
-	existsAndDelete "/Library/Application Support/MacPatch/.keys"
-	existsAndDelete "/Library/Application Support/MacPatch/.keyHash"
+	#existsAndDelete "/Library/Application Support/MacPatch/.keys"
+	#existsAndDelete "/Library/Application Support/MacPatch/.keyHash"
+	#existsAndDelete "/Library/Application Support/MacPatch/.MacPatch.keychain"
+	existsAndDelete "/Library/Application Support/MacPatch/gov.llnl.mp.plist"
+	existsAndDelete "/Library/Application Support/MacPatch/gov.llnl.mpagent.plist"
 }
 # ******************************************************************
 # Set Up Python Virtualenv
@@ -190,33 +196,30 @@ if [ ! -d "/Library/Application Support/MPClientStatus" ]; then
 fi
 chmod +a 'everyone allow read,write,delete,add_file,file_inherit,directory_inherit' "/Library/Application Support/MPClientStatus"
 
-# Define swuad plist vars
-agentPrefs="/Library/Preferences/gov.llnl.mpagent"
-agentPrefsPlist="/Library/Preferences/gov.llnl.mpagent.plist"
-
-# ******************************************************************
-# Migration data ...
-#
-if [ -f "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist" ]; then
-	"${SRC}/MPPrefMigrate" -F "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist" -T "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
-fi
+agentPrefs="/Library/Application Support/MacPatch/gov.llnl.mpagent"
+agentPrefsPlist="/Library/Application Support/MacPatch/gov.llnl.mpagent.plist"
 
 # ******************************************************************
 # Set Agent Plist data ...
 #
-if [ -e "${SRC}/gov.llnl.mpagent.plist" ]; then
-	echo "Backup old plist file..."
-	echo "Migrate settings from old plist to new"
-	"${SRC}/mergePrefs.py" -b -i "${SRC}/gov.llnl.mpagent.plist" -t "${agentPrefsPlist}"
+if [ ! -d /Library/Application\ Support/MacPatch ]; then
+	mkdir -p /Library/Application\ Support/MacPatch
 fi
 
+# Add Initial Agent Config Data
+cp "${SRC}/gov.llnl.mpagent.plist" /Library/Application\ Support/MacPatch/gov.llnl.mpagent.plist
+
 # Add new option to stage patches
-defaults write "${agentPrefsPlist}" PreStageUpdates -bool YES
+# defaults write "${agentPrefsPlist}" PreStageUpdates -bool YES
 
 # Copy in client version info
 if [ -e "${SRC}/.mpVersion.plist" ]; then
 	cp "${SRC}/.mpVersion.plist" "/Library/MacPatch/Client/.mpVersion.plist"
 fi
+
+# Set Permissions
+chown -R root:admin "/Library/Application Support/MacPatch"
+chmod -R 775 "/Library/Application Support/MacPatch" 
 
 # ******************************************************************
 # Run Agent Components to populate DB with current info ************
@@ -260,7 +263,7 @@ fi
 
 # ******************************************************************
 # Run Client Check-in
-
+CLIENTID=`/Library/MacPatch/Client/MPAgent -C`
 
 regEnabled=`defaults read "${agentPrefsPlist}" registrationEnabled`
 case "$regEnabled" in
