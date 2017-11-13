@@ -24,7 +24,6 @@
  */
 
 #import "MPPatchScan.h"
-#import "MPDefaults.h"
 #import "MPDataMgr.h"
 #import "MPOSCheck.h"
 #import "MPBundle.h"
@@ -87,9 +86,10 @@
 	NSDictionary *tmpDict;
 	NSArray *customPatches;
 	customPatches = [self retrieveCustomPatchScanList];
-	if ([customPatches count] == 0)
+    if ([customPatches count] == 0) {
+        qlwarning(@"Custom patch scan list is empty, no custom patches will be scaned for.");
 		return resultArr;
-	
+    }
 	// 2. Scan the host
 	NSMutableDictionary *patch;
 	BOOL result = NO;
@@ -135,11 +135,12 @@
     NSError *wsErr = nil;
     MPRESTfull *mprest = [[MPRESTfull alloc] init];
     
-    NSString *urlPath = [@"/api/v1/client/patch/scan/1" stringByAppendingPathComponent:settings.ccuid];
+    NSString *urlPath = [@"/api/v1/client/patch/scan/2" stringByAppendingPathComponent:settings.ccuid];
     BOOL rest_result = [mprest postDataToWS:urlPath data:@{@"rows":patchesNeeded} error:&wsErr];
     if (rest_result)
     {
-        logit(lcl_vInfo,@"Data post to web service (%@), returned true.", urlPath);
+        logit(lcl_vInfo,@"[MPPatchScan][scanForPatches]: Data post to web service (%@), returned true.", urlPath);
+        logit(lcl_vDebug,@"Data post to web service (%@), returned true.", urlPath);
         notifyInfo = @{@"patchesNeeded":[NSNumber numberWithInt:(int)[patchesNeeded count]]};
     }
     else
@@ -169,8 +170,10 @@
 	NSDictionary *tmpDict;
 	NSArray *customPatches;
 	customPatches = [self retrieveCustomPatchScanList];
-	if ([customPatches count] == 0)
-		return resultArr;
+    if ([customPatches count] == 0) {
+        qlwarning(@"Custom patch scan list is empty, no custom patches will be scaned for.");
+        return resultArr;
+    }
 	
 	// 2. Scan the host
 	NSMutableDictionary *patch;

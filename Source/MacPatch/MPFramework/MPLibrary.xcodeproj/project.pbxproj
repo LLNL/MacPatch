@@ -23,27 +23,15 @@
 		8F138F9D1F9958B4007F8AA8 /* MPRESTfull.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F138F9B1F9958B4007F8AA8 /* MPRESTfull.m */; };
 		8F2E697B19229A85001BF9D6 /* MPFailedRequests.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2E697919229A85001BF9D6 /* MPFailedRequests.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2E697C19229A85001BF9D6 /* MPFailedRequests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2E697A19229A85001BF9D6 /* MPFailedRequests.m */; };
-		8F315B9B19212DEB0031FF73 /* MPServerList.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F315B9919212DEB0031FF73 /* MPServerList.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F315B9C19212DEB0031FF73 /* MPServerList.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F315B9A19212DEB0031FF73 /* MPServerList.m */; };
+		8F382F0F1FB970BE00129063 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F382F0E1FB970B300129063 /* CFNetwork.framework */; };
 		8F3D85961F708E96001FBE8A /* MPHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3D858E1F708E96001FBE8A /* MPHTTPRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F3D85971F708E96001FBE8A /* MPHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D858F1F708E96001FBE8A /* MPHTTPRequest.m */; };
 		8F3D85981F708E96001FBE8A /* MPWSResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3D85901F708E96001FBE8A /* MPWSResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F3D85991F708E96001FBE8A /* MPWSResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D85911F708E96001FBE8A /* MPWSResult.m */; };
 		8F3D859C1F708E96001FBE8A /* STHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3D85941F708E96001FBE8A /* STHTTPRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F3D859D1F708E96001FBE8A /* STHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D85951F708E96001FBE8A /* STHTTPRequest.m */; };
-		8F47F0F718EDFD6D00158396 /* MPNetRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F47F0EF18EDFD6D00158396 /* MPNetRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F47F0F818EDFD6D00158396 /* MPNetRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F47F0F018EDFD6D00158396 /* MPNetRequest.m */; };
-		8F47F0F918EDFD6D00158396 /* MPNetServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F47F0F118EDFD6D00158396 /* MPNetServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F47F0FA18EDFD6D00158396 /* MPNetServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F47F0F218EDFD6D00158396 /* MPNetServer.m */; };
-		8F47F0FB18EDFD6D00158396 /* MPJsonResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F47F0F318EDFD6D00158396 /* MPJsonResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F47F0FC18EDFD6D00158396 /* MPJsonResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F47F0F418EDFD6D00158396 /* MPJsonResult.m */; };
-		8F47F0FD18EDFD6D00158396 /* Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F47F0F518EDFD6D00158396 /* Reachability.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		8F47F0FE18EDFD6D00158396 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F47F0F618EDFD6D00158396 /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		8F47F10118EE000100158396 /* MPNetConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F47F0FF18EE000100158396 /* MPNetConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F47F10218EE000100158396 /* MPNetConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F47F10018EE000100158396 /* MPNetConfig.m */; };
 		8F4B1DEE16DD1D6400E15A9E /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 724EE9841698A57A007FD391 /* Constants.m */; };
 		8F4B1DEF16DD1D6400E15A9E /* MPNetworkUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA7EA1D161DEF81001748EA /* MPNetworkUtils.m */; };
-		8F4B1DF116DD1D6400E15A9E /* MPDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB778D140C30AE00D86586 /* MPDefaults.m */; };
 		8F4B1DF216DD1D6400E15A9E /* MPDiskUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6BA41215C0E59A00F44501 /* MPDiskUtil.m */; };
 		8F4B1DF316DD1D6400E15A9E /* MPLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB7ABE140D588F00D86586 /* MPLog.m */; };
 		8F4B1DF416DD1D6400E15A9E /* MPSystemInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA7EA4B161E3B48001748EA /* MPSystemInfo.m */; };
@@ -67,7 +55,6 @@
 		8F4B1E1516DD1D6400E15A9E /* LCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB775D140C2F0700D86586 /* LCLLogFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8F4B1E1716DD1D8C00E15A9E /* Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 724EE9831698A57A007FD391 /* Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E1816DD1D8C00E15A9E /* MPNetworkUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA7EA1C161DEF81001748EA /* MPNetworkUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F4B1E1A16DD1D8C00E15A9E /* MPDefaults.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB778C140C30AE00D86586 /* MPDefaults.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E1B16DD1D8C00E15A9E /* MPDiskUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6BA41115C0E59A00F44501 /* MPDiskUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E1C16DD1D8C00E15A9E /* MPLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB7ABD140D588F00D86586 /* MPLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F4B1E1D16DD1D8C00E15A9E /* MPSystemInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA7EA4A161E3B47001748EA /* MPSystemInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -110,8 +97,6 @@
 		8F5970BF1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F5970BD1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m */; };
 		8F6580721F2116C3006B147C /* GCDTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6580701F2116C3006B147C /* GCDTask.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F6580731F2116C3006B147C /* GCDTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6580711F2116C3006B147C /* GCDTask.m */; };
-		8FC1410F1CEFA35700153D5D /* MPResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC1410D1CEFA35700153D5D /* MPResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FC141101CEFA35700153D5D /* MPResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC1410E1CEFA35700153D5D /* MPResult.m */; };
 		8FC1B5551E4E7894008844DF /* MPClientInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC1B5531E4E7894008844DF /* MPClientInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FC1B5561E4E7894008844DF /* MPClientInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC1B5541E4E7894008844DF /* MPClientInfo.m */; };
 		8FC444171D00921900EF328C /* NSString+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC444151D00921900EF328C /* NSString+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -195,24 +180,13 @@
 		8F138F9B1F9958B4007F8AA8 /* MPRESTfull.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPRESTfull.m; sourceTree = "<group>"; };
 		8F2E697919229A85001BF9D6 /* MPFailedRequests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPFailedRequests.h; sourceTree = "<group>"; };
 		8F2E697A19229A85001BF9D6 /* MPFailedRequests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPFailedRequests.m; sourceTree = "<group>"; };
-		8F315B9919212DEB0031FF73 /* MPServerList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPServerList.h; sourceTree = "<group>"; };
-		8F315B9A19212DEB0031FF73 /* MPServerList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPServerList.m; sourceTree = "<group>"; };
+		8F382F0E1FB970B300129063 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		8F3D858E1F708E96001FBE8A /* MPHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPHTTPRequest.h; sourceTree = "<group>"; };
 		8F3D858F1F708E96001FBE8A /* MPHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPHTTPRequest.m; sourceTree = "<group>"; };
 		8F3D85901F708E96001FBE8A /* MPWSResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPWSResult.h; sourceTree = "<group>"; };
 		8F3D85911F708E96001FBE8A /* MPWSResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPWSResult.m; sourceTree = "<group>"; };
 		8F3D85941F708E96001FBE8A /* STHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STHTTPRequest.h; sourceTree = "<group>"; };
 		8F3D85951F708E96001FBE8A /* STHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STHTTPRequest.m; sourceTree = "<group>"; };
-		8F47F0EF18EDFD6D00158396 /* MPNetRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPNetRequest.h; sourceTree = "<group>"; };
-		8F47F0F018EDFD6D00158396 /* MPNetRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPNetRequest.m; sourceTree = "<group>"; };
-		8F47F0F118EDFD6D00158396 /* MPNetServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPNetServer.h; sourceTree = "<group>"; };
-		8F47F0F218EDFD6D00158396 /* MPNetServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPNetServer.m; sourceTree = "<group>"; };
-		8F47F0F318EDFD6D00158396 /* MPJsonResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPJsonResult.h; sourceTree = "<group>"; };
-		8F47F0F418EDFD6D00158396 /* MPJsonResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPJsonResult.m; sourceTree = "<group>"; };
-		8F47F0F518EDFD6D00158396 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
-		8F47F0F618EDFD6D00158396 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		8F47F0FF18EE000100158396 /* MPNetConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPNetConfig.h; sourceTree = "<group>"; };
-		8F47F10018EE000100158396 /* MPNetConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPNetConfig.m; sourceTree = "<group>"; };
 		8F4B1DE316DD1BC600E15A9E /* libMacPatch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMacPatch.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F4B1DE716DD1BC600E15A9E /* MacPatch-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MacPatch-Prefix.pch"; sourceTree = "<group>"; };
 		8F4B1DE816DD1BC600E15A9E /* MacPatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MacPatch.h; sourceTree = "<group>"; };
@@ -266,8 +240,6 @@
 		8FBB10B9152F6D7900A45934 /* NSMutableDictionary+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+Helper.m"; sourceTree = "<group>"; };
 		8FBB10BD152F712400A45934 /* NSDictionary+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Helper.h"; sourceTree = "<group>"; };
 		8FBB10BE152F712400A45934 /* NSDictionary+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Helper.m"; sourceTree = "<group>"; };
-		8FC1410D1CEFA35700153D5D /* MPResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPResult.h; sourceTree = "<group>"; };
-		8FC1410E1CEFA35700153D5D /* MPResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPResult.m; sourceTree = "<group>"; };
 		8FC1B5531E4E7894008844DF /* MPClientInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPClientInfo.h; sourceTree = "<group>"; };
 		8FC1B5541E4E7894008844DF /* MPClientInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPClientInfo.m; sourceTree = "<group>"; };
 		8FC444151D00921900EF328C /* NSString+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Base64.h"; sourceTree = "<group>"; };
@@ -360,6 +332,7 @@
 				8FE5609B16DE6D6A00BB7600 /* CoreServices.framework in Frameworks */,
 				8FE5609C16DE6D6D00BB7600 /* IOKit.framework in Frameworks */,
 				8FE5609D16DE6D6F00BB7600 /* CoreFoundation.framework in Frameworks */,
+				8F382F0F1FB970BE00129063 /* CFNetwork.framework in Frameworks */,
 				8FE5609E16DE6D7200BB7600 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -390,7 +363,6 @@
 			children = (
 				8F3D858D1F708E7A001FBE8A /* Networking NEW */,
 				8FDBABD51F74809E0025F0FF /* MP Settings */,
-				8F47F0EE18EDFD5A00158396 /* Networking */,
 				8FA6A76C1B90D6FE006A329B /* Inventory */,
 				8FCB7ABD140D588F00D86586 /* MPLog.h */,
 				8FCB7ABE140D588F00D86586 /* MPLog.m */,
@@ -437,10 +409,10 @@
 			children = (
 				8F3D858E1F708E96001FBE8A /* MPHTTPRequest.h */,
 				8F3D858F1F708E96001FBE8A /* MPHTTPRequest.m */,
-				8F3D859E1F708EB7001FBE8A /* Model */,
-				8F3D859F1F708ED6001FBE8A /* Third Party Classes */,
 				8F138F9A1F9958B4007F8AA8 /* MPRESTfull.h */,
 				8F138F9B1F9958B4007F8AA8 /* MPRESTfull.m */,
+				8F3D859E1F708EB7001FBE8A /* Model */,
+				8F3D859F1F708ED6001FBE8A /* Third Party Classes */,
 			);
 			name = "Networking NEW";
 			sourceTree = "<group>";
@@ -461,27 +433,6 @@
 				8F3D85951F708E96001FBE8A /* STHTTPRequest.m */,
 			);
 			name = "Third Party Classes";
-			sourceTree = "<group>";
-		};
-		8F47F0EE18EDFD5A00158396 /* Networking */ = {
-			isa = PBXGroup;
-			children = (
-				8F47F0EF18EDFD6D00158396 /* MPNetRequest.h */,
-				8F47F0F018EDFD6D00158396 /* MPNetRequest.m */,
-				8F47F0F118EDFD6D00158396 /* MPNetServer.h */,
-				8F47F0F218EDFD6D00158396 /* MPNetServer.m */,
-				8F47F0F318EDFD6D00158396 /* MPJsonResult.h */,
-				8F47F0F418EDFD6D00158396 /* MPJsonResult.m */,
-				8F47F0F518EDFD6D00158396 /* Reachability.h */,
-				8F47F0F618EDFD6D00158396 /* Reachability.m */,
-				8F47F0FF18EE000100158396 /* MPNetConfig.h */,
-				8F47F10018EE000100158396 /* MPNetConfig.m */,
-				8F315B9919212DEB0031FF73 /* MPServerList.h */,
-				8F315B9A19212DEB0031FF73 /* MPServerList.m */,
-				8FC1410D1CEFA35700153D5D /* MPResult.h */,
-				8FC1410E1CEFA35700153D5D /* MPResult.m */,
-			);
-			name = Networking;
 			sourceTree = "<group>";
 		};
 		8F4B1DE516DD1BC600E15A9E /* MacPatch */ = {
@@ -739,6 +690,7 @@
 		8FEA3EE51649726400103E80 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F382F0E1FB970B300129063 /* CFNetwork.framework */,
 				8FE5609516DE6CFD00BB7600 /* Security.framework */,
 				8FE5609316DE6CF700BB7600 /* Foundation.framework */,
 				8FE5609116DE6CF100BB7600 /* SystemConfiguration.framework */,
@@ -774,7 +726,6 @@
 			files = (
 				8F4B1E1716DD1D8C00E15A9E /* Constants.h in Headers */,
 				8F4B1E1816DD1D8C00E15A9E /* MPNetworkUtils.h in Headers */,
-				8F4B1E1A16DD1D8C00E15A9E /* MPDefaults.h in Headers */,
 				8F4B1E1B16DD1D8C00E15A9E /* MPDiskUtil.h in Headers */,
 				8F4B1E1C16DD1D8C00E15A9E /* MPLog.h in Headers */,
 				8F4B1E1D16DD1D8C00E15A9E /* MPSystemInfo.h in Headers */,
@@ -808,15 +759,10 @@
 				8F4B1EC416DD5FDD00E15A9E /* NSFileManager+Helper.h in Headers */,
 				8F4B1F2B16DE639100E15A9E /* NSDate+Helper.h in Headers */,
 				8FDBAC101F74909A0025F0FF /* FMXDatabaseManager.h in Headers */,
-				8F47F10118EE000100158396 /* MPNetConfig.h in Headers */,
-				8F47F0FB18EDFD6D00158396 /* MPJsonResult.h in Headers */,
 				8FDBAC091F74909A0025F0FF /* FMDBx.h in Headers */,
-				8F47F0F718EDFD6D00158396 /* MPNetRequest.h in Headers */,
-				8F47F0F918EDFD6D00158396 /* MPNetServer.h in Headers */,
 				8FDBAC0A1F74909A0025F0FF /* FMXColumnMap.h in Headers */,
 				8F4B1F3716DE64DA00E15A9E /* MPSWTasks.h in Headers */,
 				8F00CD0517610F1D008CC39E /* MPCodeSign.h in Headers */,
-				8F315B9B19212DEB0031FF73 /* MPServerList.h in Headers */,
 				8FEC938717CBFEFB00AA9C1C /* MPApplePatch.h in Headers */,
 				8FDBAC1A1F74909A0025F0FF /* FMXTableMap.h in Headers */,
 				8FDBAC161F74909A0025F0FF /* FMXModel.h in Headers */,
@@ -824,7 +770,6 @@
 				8FDBAC181F74909A0025F0FF /* FMXQuery.h in Headers */,
 				8FE03DCC1B60020B005D39EE /* NSData+Base64.h in Headers */,
 				8FC444171D00921900EF328C /* NSString+Base64.h in Headers */,
-				8FC1410F1CEFA35700153D5D /* MPResult.h in Headers */,
 				8F6580721F2116C3006B147C /* GCDTask.h in Headers */,
 				8F0011921F8947A8009F75EC /* Server.h in Headers */,
 				8F00118F1F8947A8009F75EC /* Suserver.h in Headers */,
@@ -854,7 +799,6 @@
 				8FE560D016DE899B00BB7600 /* MPSWInstaller.h in Headers */,
 				8FE560D616DE932900BB7600 /* MPAgentController.h in Headers */,
 				8FE6EEB81B9A035800E8F8E1 /* InventoryPlugin.h in Headers */,
-				8F47F0FD18EDFD6D00158396 /* Reachability.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -931,7 +875,6 @@
 			files = (
 				8F4B1DEE16DD1D6400E15A9E /* Constants.m in Sources */,
 				8F4B1DEF16DD1D6400E15A9E /* MPNetworkUtils.m in Sources */,
-				8F4B1DF116DD1D6400E15A9E /* MPDefaults.m in Sources */,
 				8F4B1DF216DD1D6400E15A9E /* MPDiskUtil.m in Sources */,
 				8F3D85971F708E96001FBE8A /* MPHTTPRequest.m in Sources */,
 				8F057FA41F95310D006C1F10 /* MPClientKey.m in Sources */,
@@ -948,30 +891,23 @@
 				8F4B1DFD16DD1D6400E15A9E /* MPBundle.m in Sources */,
 				8F4B1DFE16DD1D6400E15A9E /* MPFileCheck.m in Sources */,
 				8F5970BF1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m in Sources */,
-				8F47F0FC18EDFD6D00158396 /* MPJsonResult.m in Sources */,
 				8F4B1DFF16DD1D6400E15A9E /* MPOSCheck.m in Sources */,
 				8F4B1E0016DD1D6400E15A9E /* MPScript.m in Sources */,
 				8FF831631DEF7ACF005DC5AD /* MPSimpleKeychain.m in Sources */,
 				8F4B1E0116DD1D6400E15A9E /* MPInstaller.m in Sources */,
-				8F47F0F818EDFD6D00158396 /* MPNetRequest.m in Sources */,
 				8FF831611DEF7ACF005DC5AD /* MPKeyItem.m in Sources */,
 				8F3D859D1F708E96001FBE8A /* STHTTPRequest.m in Sources */,
 				8F4B1E0316DD1D6400E15A9E /* MPDataMgr.m in Sources */,
 				8F4B1E0616DD1D6400E15A9E /* NSString+Helper.m in Sources */,
 				8F4B1E0716DD1D6400E15A9E /* NSFileManager+DirectoryLocations.m in Sources */,
-				8FC141101CEFA35700153D5D /* MPResult.m in Sources */,
 				8F4B1E0816DD1D6400E15A9E /* NSDictionary+Helper.m in Sources */,
 				8F4B1E0916DD1D6400E15A9E /* NSMutableDictionary+Helper.m in Sources */,
-				8F47F10218EE000100158396 /* MPNetConfig.m in Sources */,
 				8F4B1E1416DD1D6400E15A9E /* lcl.m in Sources */,
 				8F4B1E1516DD1D6400E15A9E /* LCLLogFile.m in Sources */,
-				8F315B9C19212DEB0031FF73 /* MPServerList.m in Sources */,
 				8F4B1EC016DD5FB400E15A9E /* NSString+Hash.m in Sources */,
 				8F6580731F2116C3006B147C /* GCDTask.m in Sources */,
 				8F3D85991F708E96001FBE8A /* MPWSResult.m in Sources */,
 				8F138F9D1F9958B4007F8AA8 /* MPRESTfull.m in Sources */,
-				8F47F0FE18EDFD6D00158396 /* Reachability.m in Sources */,
-				8F47F0FA18EDFD6D00158396 /* MPNetServer.m in Sources */,
 				8F4B1EC616DD5FDD00E15A9E /* NSFileManager+Helper.m in Sources */,
 				8F4B1F2D16DE639100E15A9E /* NSDate+Helper.m in Sources */,
 				8F4B1F3916DE64DA00E15A9E /* MPSWTasks.m in Sources */,
@@ -1095,6 +1031,7 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -1138,6 +1075,7 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;

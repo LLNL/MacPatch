@@ -69,6 +69,9 @@ static BOOL gDone = false;
 
 // Private Methods
 @interface MPSelfPatchAppDelegate ()
+{
+    MPSettings *settings;
+}
 
 // Helper
 - (void)connect;
@@ -179,25 +182,13 @@ static BOOL gDone = false;
         }
     }
 	fm = [NSFileManager defaultManager];
-
-    // Get Defaults
-    mpDefaults = [[MPDefaults alloc] init];
-    [self setDefaults:[mpDefaults defaults]];
-    
+    settings = [MPSettings sharedInstance];
 
 	// Center the Window
 	[window center];
-	
-	if ([fm fileExistsAtPath:AGENT_PREFS_PLIST] == YES) {	
-		if ([fm isReadableFileAtPath:AGENT_PREFS_PLIST] == NO) {
-			if ([self setPermissionsForFile:AGENT_PREFS_PLIST] == NO) {
-				logit(lcl_vError,@"Error, unable to set permissions needed to read agent plist file.");
-			}	
-		}
-        /* Need a Dialog here with error info */
-	}
     
-	[patchGroupLabel setStringValue:[defaults objectForKey:@"PatchGroup"]];
+	[patchGroupLabel setStringValue:settings.agent.patchGroup];
+    
 	// Make sure the cancel button is not enabled
 	[spCancelButton setEnabled:NO];
     
@@ -886,7 +877,6 @@ done:
     {
         NSError *appleScanError = nil;
         NSError *customScanError = nil;
-        [self setDefaults:[mpDefaults readDefaults]];
         
         [arrayController removeObjects:[arrayController arrangedObjects]];
         dispatch_async(dispatch_get_main_queue(), ^(void){
@@ -1012,17 +1002,6 @@ done:
             logit(lcl_vInfo,@"Scan results posted to webservice.");
         }
         
-        /* CEH
-        mpws = [[MPWebServices alloc] init];
-        wsErr = nil;
-        [mpws postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
-        if (wsErr) {
-            logit(lcl_vError,@"Scan results posted to webservice returned false.");
-            logit(lcl_vError,@"%@",wsErr.localizedDescription);
-        } else {
-            logit(lcl_vInfo,@"Scan results posted to webservice.");
-        }
-         */
         if (killTaskThread == YES) {
             [self progress:@"Canceling request..."];
             [self scanComplete:NO];
@@ -1044,7 +1023,7 @@ done:
                 // If no items in array, lets bail...
                 if ([approvedApplePatches count] == 0 ) {
                     [self progress:@"No Patch Group patches found."];
-                    logit(lcl_vInfo,@"No apple updates found for \"%@\" patch group.",[defaults objectForKey:@"PatchGroup"]);
+                    logit(lcl_vInfo,@"No apple updates found for \"%@\" patch group.",settings.agent.patchGroup);
                 } else {
                     // Build Approved Patches
                     [self progress:@"Building approved patch list..."];

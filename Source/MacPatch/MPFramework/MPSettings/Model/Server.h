@@ -25,11 +25,15 @@
 
 @interface Server : NSObject
 
-@property (nonatomic, strong) NSString * hostname;
-@property (nonatomic, assign) NSInteger isproxy;
+@property (nonatomic, strong) NSString  *host;
 @property (nonatomic, assign) NSInteger port;
-@property (nonatomic, assign) NSInteger useclientcert;
 @property (nonatomic, assign) NSInteger usessl;
+@property (nonatomic, assign) NSInteger allowSelfSigned;
+@property (nonatomic, assign) NSInteger isMaster;
+@property (nonatomic, assign) NSInteger isProxy;
+// Use TLS Auth
+@property (nonatomic, assign) NSInteger useclientcert;
+
 
 -(instancetype)initWithDictionary:(NSDictionary *)dictionary;
 

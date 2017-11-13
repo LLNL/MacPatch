@@ -166,4 +166,13 @@
  */
 - (BOOL)postAgentHasInventoryData:(NSError **)err;
 
+/**
+ Get an array of software catalogs to display
+ 
+ @return NSArray
+ */
+- (NSArray *)getSoftwareCatalogs:(NSError **)err;
+
+
+
 @end

@@ -34,6 +34,4 @@
 - (BOOL)verifyAppleDevBinary:(NSString *)aFilePath error:(NSError **)err;
 - (BOOL)verifyBinary:(NSString *)aFilePath requirement:(NSString *)aRequirement error:(NSError **)err;
 
-+ (BOOL)checkSignature:(NSString *)aStringPath;
-
 @end

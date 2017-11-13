@@ -780,7 +780,7 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="1042" y="676" width="480" height="131"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
-            <value key="minSize" type="size" width="480" height="396"/>
+            <value key="minSize" type="size" width="480" height="131"/>
             <view key="contentView" misplaced="YES" id="557">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="131"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -885,7 +885,7 @@
                     </scrollView>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="131" y="327.5"/>
+            <point key="canvasLocation" x="-158" y="38"/>
         </window>
         <arrayController id="588" userLabel="Client Info Array Controller">
             <declaredKeys>

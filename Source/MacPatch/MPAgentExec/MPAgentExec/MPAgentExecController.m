@@ -223,9 +223,11 @@
     // 0 = All, 1 = Apple, 2 = Custom
     if ((aFilter == 0) || (aFilter == 1)) {
         approvedApplePatches = [patchGroupPatches objectForKey:@"AppleUpdates"];
+        logit(lcl_vInfo,@"approvedApplePatches: %@",approvedApplePatches);
     }
     if ((aFilter == 0) || (aFilter == 2)) {
         approvedCustomPatches = [patchGroupPatches objectForKey:@"CustomUpdates"];
+        logit(lcl_vInfo,@"approvedCustomPatches: %@",approvedCustomPatches);
     }
     
     // Scan for Apple Patches
@@ -244,6 +246,7 @@
         applePatchesArray = [mpAsus scanForAppleUpdates];
         
         // post found apple patches to web service
+        
         if ([self wsPostPatchScanResults:applePatchesArray type:0]) {
             logit(lcl_vInfo,@"Scan results posted to webservice.");
         } else {
@@ -326,10 +329,20 @@
     if ((aFilter == 0) || (aFilter == 2))
     {
         logit(lcl_vInfo,@"Scanning for custom patch vulnerabilities...");
+        // scanForCustomUpdates posts results to web service
         customPatchesArray = (NSMutableArray *)[mpAsus scanForCustomUpdates];
         
-        logit(lcl_vDebug,@"Custom Patches Needed: %@",customPatchesArray);
-        logit(lcl_vDebug,@"Approved Custom Patches: %@",approvedCustomPatches);
+        // post found custom patches to web service
+        /*
+        if ([self wsPostPatchScanResults:customPatchesArray type:1]) {
+            logit(lcl_vInfo,@"Scan results posted to webservice.");
+        } else {
+            logit(lcl_vError,@"Scan results posted to webservice returned false.");
+        }
+        */
+        
+        logit(lcl_vInfo,@"Custom Patches Needed: %@",customPatchesArray);
+        logit(lcl_vInfo,@"Approved Custom Patches: %@",approvedCustomPatches);
         
         // Filter List of Patches containing only the approved patches
         logit(lcl_vInfo,@"Building approved patch list...");
@@ -338,7 +351,11 @@
             customPatch	= [customPatchesArray objectAtIndex:i];
             for (int x=0;x < [approvedCustomPatches count]; x++)
             {
+                
                 approvedPatch = [approvedCustomPatches objectAtIndex:x];
+                
+                logit(lcl_vInfo,@"[approvedPatch]%@ = [customPatch]%@",approvedPatch,customPatch);
+                
                 if ([[customPatch objectForKey:@"patch_id"] isEqualTo:[approvedPatch objectForKey:@"patch_id"]])
                 {
                     logit(lcl_vInfo,@"Patch %@ approved for update.",[customPatch objectForKey:@"description"]);
@@ -2106,14 +2123,21 @@ done:
     logit(lcl_vDebug,@"Download software from: %@",[aTask valueForKeyPath:@"Software.sw_type"]);
 
     NSError *dlErr = nil;
+    
+    /*
     NSURLResponse *response;
     MPNetConfig *mpnc = [[MPNetConfig alloc] init];
     MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
     NSURLRequest *urlReq = [req buildDownloadRequest:_url];
     NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
-
+     */
+    
+    MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
+    NSString *dlPath = [req runSyncFileDownload:_url downloadDirectory:NSTemporaryDirectory() error:&dlErr];
+    
     if (dlErr) {
         logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+        return NO;
     }
     if (!dlPath) {
         logit(lcl_vError,@"Error, downloaded file path is nil.");
@@ -2148,38 +2172,34 @@ done:
         return NO;
     }
 
-    logit(lcl_vDebug,@"returnCode: %d",[req errorCode]);
-    // Software was downloaded
-    if ([req errorCode] == 0)
+    logit(lcl_vInfo,@"Begin install for (%@).",[aTask objectForKey:@"name"]);
+    int result = -1;
+    int pResult = -1;
+
+    result = [self installSoftwareViaProxy:aTask];
+
+    if (result == 0)
     {
-        logit(lcl_vInfo,@"Begin install for (%@).",[aTask objectForKey:@"name"]);
-        int result = -1;
-        int pResult = -1;
-
-        result = [self installSoftwareViaProxy:aTask];
-
-        if (result == 0)
-        {
-            // Software has been installed, now flag for reboot
-            if ([[aTask valueForKeyPath:@"Software.reboot"] isEqualTo:@"1"]) {
-                needsReboot++;
-            }
-            if ([[aTask valueForKeyPath:@"Software.auto_patch"] isEqualTo:@"1"]) {
-                [self postNotificationTo:noteName info:@"Auto Patching is enabled, begin patching..." isGlobal:YES];
-                pResult = [self patchSoftwareViaProxy:aTask];
-                [NSThread sleepForTimeInterval:5];
-            }
-
-            [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Installing [taskid:%@]: %@ completed.",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
-            [self recordInstallSoftwareItem:aTask];
-
-            [self postInstallResults:result resultText:@"" task:aTask];
-            return YES;
-        } else {
-            [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Failed [taskid:%@]: %@ failed to install.",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
-            return NO;
+        // Software has been installed, now flag for reboot
+        if ([[aTask valueForKeyPath:@"Software.reboot"] isEqualTo:@"1"]) {
+            needsReboot++;
         }
+        if ([[aTask valueForKeyPath:@"Software.auto_patch"] isEqualTo:@"1"]) {
+            [self postNotificationTo:noteName info:@"Auto Patching is enabled, begin patching..." isGlobal:YES];
+            pResult = [self patchSoftwareViaProxy:aTask];
+            [NSThread sleepForTimeInterval:5];
+        }
+
+        [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Installing [taskid:%@]: %@ completed.",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
+        [self recordInstallSoftwareItem:aTask];
+
+        [self postInstallResults:result resultText:@"" task:aTask];
+        return YES;
+    } else {
+        [self postNotificationTo:noteName info:[NSString stringWithFormat:@"Failed [taskid:%@]: %@ failed to install.",tID,[aTask objectForKey:@"name"]] isGlobal:YES];
+        return NO;
     }
+    
 
     return NO;
 }
@@ -2292,7 +2312,8 @@ done:
     result = [req runSyncPOST:urlPath body:data];
     
     if (result.statusCode >= 200 && result.statusCode <= 299) {
-        logit(lcl_vInfo,@"Data post to web service (%@), returned true.", urlPath);
+        logit(lcl_vInfo,@"[MPAgentExecController][postDataToWS]: Data post to web service (%@), returned true.", urlPath);
+        //logit(lcl_vDebug,@"Data post to web service (%@), returned true.", urlPath);
         logit(lcl_vDebug,@"Data Result: %@",result.result);
     } else {
         logit(lcl_vError,@"Data post to web service (%@), returned false.", urlPath);
@@ -2313,7 +2334,7 @@ done:
     wsresult = [req runSyncGET:urlPath];
     
     if (wsresult.statusCode >= 200 && wsresult.statusCode <= 299) {
-        logit(lcl_vInfo,@"Get Data from web service (%@) returned true.",urlPath);
+        logit(lcl_vDebug,@"Get Data from web service (%@) returned true.",urlPath);
         logit(lcl_vDebug,@"Data Result: %@",wsresult.result);
         result = wsresult.result;
     } else {

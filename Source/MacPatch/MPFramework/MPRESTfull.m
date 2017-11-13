@@ -29,7 +29,7 @@
     self = [super init];
     if (self)
     {
-        qlinfo(@"MPRESTfull init");
+        qldebug(@"MPRESTfull init");
         settings = [MPSettings sharedInstance];
         self.ccuid = settings.ccuid;
     }
@@ -73,7 +73,7 @@
     wsresult = [req runSyncGET:urlPath];
     
     if (wsresult.statusCode >= 200 && wsresult.statusCode <= 299) {
-        logit(lcl_vInfo,@"Get Data from web service (%@) returned true.",urlPath);
+        logit(lcl_vDebug,@"Get Data from web service (%@) returned true.",urlPath);
         logit(lcl_vDebug,@"Data Result: %@",wsresult.result);
         result = wsresult.result;
     } else {
@@ -105,7 +105,7 @@
     result = [req runSyncPOST:urlPath body:data];
     
     if (result.statusCode >= 200 && result.statusCode <= 299) {
-        logit(lcl_vInfo,@"Data post to web service (%@), returned true.", urlPath);
+        logit(lcl_vDebug,@"Data post to web service (%@), returned true.", urlPath);
         logit(lcl_vDebug,@"Data Result: %@",result.result);
     } else {
         logit(lcl_vError,@"Data post to web service (%@), returned false.", urlPath);
@@ -349,8 +349,8 @@
         urlPath = [NSString stringWithFormat:@"/api/v2/client/register/%@/%@",self.ccuid,key];
     }
     
-    qldebug(@"[postPatchInstallResults][urlPath] %@",urlPath);
-    qldebug(@"[postPatchInstallResults][data] %@",regData);
+    qldebug(@"[postAgentRegistration][urlPath] %@",urlPath);
+    qldebug(@"[postAgentRegistration][data] %@",regData);
     
     result = [self postDataToWS:urlPath data:regData error:&error];
     if (result) {
@@ -371,7 +371,6 @@
 {
     BOOL        result = NO;
     NSString    *urlPath;
-    NSError     *error = nil;
     if (!key) {
         urlPath = [NSString stringWithFormat:@"/api/v2/client/register/status/%@",self.ccuid];
     } else {
@@ -536,8 +535,8 @@
     
     if (wsresult.statusCode >= 200 && wsresult.statusCode <= 299)
     {
-        logit(lcl_vInfo,@"Web Service Status code %d",(int)wsresult.statusCode);
-        logit(lcl_vInfo,@"Get Data from web service (%@) returned true.",urlPath);
+        logit(lcl_vDebug,@"Web Service Status code %d",(int)wsresult.statusCode);
+        logit(lcl_vDebug,@"Get Data from web service (%@) returned true.",urlPath);
         logit(lcl_vDebug,@"Data Result: %@",wsresult.result);
         result = [[wsresult.result objectForKey:@"data"] boolValue];
     }
@@ -577,4 +576,42 @@
     
     return result;
 }
+
+/**
+ Get an array of software catalogs to display
+
+ @return NSArray
+ */
+- (NSArray *)getSoftwareCatalogs:(NSError **)err
+{
+    NSError *ws_err = nil;
+    NSDictionary *ws_result;
+    NSArray *result = nil;
+    
+    NSString *urlPath = [NSString stringWithFormat:@"/api/v2/sw/groups/%@",self.ccuid];
+    qldebug(@"[getSoftwareTasksForGroup][urlPath] %@",urlPath);
+    
+    ws_result = [self getDataFromWS:urlPath error:&ws_err];
+    if (ws_err) {
+        *err = ws_err;
+        return nil;
+    }
+    
+    if ([ws_result objectForKey:@"data"])
+    {
+        if ([[ws_result objectForKey:@"data"] isKindOfClass:[NSArray class]])
+        {
+            qldebug(@"Web Servce result: %@",ws_result);
+            result = [ws_result objectForKey:@"data"];
+        }
+        else
+        {
+            qlerror(@"Result was not of type array.");
+            qlerror(@"Result: %@", ws_result);
+        }
+    }
+    
+    return result;
+}
+
 @end

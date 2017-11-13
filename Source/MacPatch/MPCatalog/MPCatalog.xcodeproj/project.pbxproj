@@ -17,7 +17,6 @@
 		8FD88FF416DFDDC700A870A3 /* SWDistInfoController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88FF016DFDDC700A870A3 /* SWDistInfoController.xib */; };
 		8FD88FF516DFDDC700A870A3 /* MPCatalogV2.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8FD88FF116DFDDC700A870A3 /* MPCatalogV2.icns */; };
 		8FD8900316DFDDE600A870A3 /* MPCatalogAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88FFA16DFDDE500A870A3 /* MPCatalogAppDelegate.m */; };
-		8FD8900416DFDDE600A870A3 /* MPCatalog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD88FFC16DFDDE500A870A3 /* MPCatalog.m */; };
 		8FD8900616DFDDE600A870A3 /* PreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8900016DFDDE600A870A3 /* PreferenceController.m */; };
 		8FD8900716DFDDE600A870A3 /* SWDistInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8900216DFDDE600A870A3 /* SWDistInfoController.m */; };
 		8FD8901216DFDE2E00A870A3 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8900816DFDE2D00A870A3 /* Carbon.framework */; };
@@ -67,8 +66,6 @@
 		8FD88FF716DFDDDA00A870A3 /* MPCatalog-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MPCatalog-Prefix.pch"; sourceTree = "<group>"; };
 		8FD88FF916DFDDE500A870A3 /* MPCatalogAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCatalogAppDelegate.h; sourceTree = "<group>"; };
 		8FD88FFA16DFDDE500A870A3 /* MPCatalogAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCatalogAppDelegate.m; sourceTree = "<group>"; };
-		8FD88FFB16DFDDE500A870A3 /* MPCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCatalog.h; sourceTree = "<group>"; };
-		8FD88FFC16DFDDE500A870A3 /* MPCatalog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCatalog.m; sourceTree = "<group>"; };
 		8FD88FFF16DFDDE500A870A3 /* PreferenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferenceController.h; sourceTree = "<group>"; };
 		8FD8900016DFDDE600A870A3 /* PreferenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferenceController.m; sourceTree = "<group>"; };
 		8FD8900116DFDDE600A870A3 /* SWDistInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWDistInfoController.h; sourceTree = "<group>"; };
@@ -201,8 +198,6 @@
 				8FD8901F16DFE0D000A870A3 /* MPWorkerProtocol.h */,
 				8FD88FF916DFDDE500A870A3 /* MPCatalogAppDelegate.h */,
 				8FD88FFA16DFDDE500A870A3 /* MPCatalogAppDelegate.m */,
-				8FD88FFB16DFDDE500A870A3 /* MPCatalog.h */,
-				8FD88FFC16DFDDE500A870A3 /* MPCatalog.m */,
 				8F7B8B531CB03C9000FB940F /* Views */,
 				8F7B8B521CB03C7700FB940F /* Controllers */,
 				8FD88FED16DFDDB900A870A3 /* Resources */,
@@ -333,7 +328,6 @@
 			files = (
 				8FD88FD716DFDD9200A870A3 /* main.m in Sources */,
 				8FD8900316DFDDE600A870A3 /* MPCatalogAppDelegate.m in Sources */,
-				8FD8900416DFDDE600A870A3 /* MPCatalog.m in Sources */,
 				8FD8900616DFDDE600A870A3 /* PreferenceController.m in Sources */,
 				8FD8900716DFDDE600A870A3 /* SWDistInfoController.m in Sources */,
 				8F95C6B31C598A54008FA31D /* RebootWindow.m in Sources */,

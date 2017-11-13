@@ -75,6 +75,9 @@
     _stdoutSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ,[stdoutPipe fileHandleForReading].fileDescriptor, 0, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     _stderrSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ,[stderrPipe fileHandleForReading].fileDescriptor, 0, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     
+    //_stdoutSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ,[stdoutPipe fileHandleForReading].fileDescriptor, 0, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+    //_stderrSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ,[stderrPipe fileHandleForReading].fileDescriptor, 0, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+    
     /* Set stdout source event handler to read data and send it out. */
     dispatch_source_set_event_handler(_stdoutSource, ^ {
         void* buffer = malloc(GCDTASK_BUFFER_MAX);

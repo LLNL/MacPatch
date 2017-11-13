@@ -30,7 +30,6 @@
 
 @class PreferenceController;
 @class SWDistInfoController;
-@class MPDefaults;
 
 @interface MPCatalogAppDelegate : NSObject <NSApplicationDelegate, MPWorkerClient, NSTabViewDelegate, MPNetRequestController>
 {
@@ -63,7 +62,6 @@
 	id                              proxy;
 
 @private
-    MPDefaults              *mpDefaults;
 	BOOL					isDownloading;
     BOOL                    cancelInstalls;
     NSDictionary            *_defaults;
@@ -90,7 +88,6 @@
 @property (nonatomic, strong)          NSOperationQueue     *queue;
 @property (nonatomic, strong)          NSMutableArray       *selectedItems;
 @property (nonatomic, strong)          NSArray              *swDistGroupsArray;
-@property (nonatomic, strong)          MPDefaults           *mpDefaults;
 
 @property (nonatomic, strong) IBOutlet NSPanel              *rebootPanel;
 @property (nonatomic, strong) IBOutlet NSPanel              *swDistInfoPanel;

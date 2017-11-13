@@ -29,12 +29,9 @@
 #import "MPPatchScan.h"
 #import "InstallAppleUpdate.h"
 
-@class MPDefaults;
-
 @interface ScanAndPatchVC : NSViewController <NSTableViewDelegate,MPScannerDelegate,MPPatchScanDelegate,InstallAppleUpdateDelegate>
 {
     NSFileManager                   *fm;
-    MPDefaults                      *mpDefauts;
     MPScanner                       *mpScanner;
     
     // Main Window

@@ -86,8 +86,8 @@ class ViewController: NSViewController, AuthViewControllerDelegate
         self.headerView.wantsLayer = true
         headerViewVersionLabel.stringValue = "Version " + (Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String)
         self.mpServerHost.placeholderString = "MacPatch Server"
-        self.mpServerPort.stringValue = "3600"
-        self.mpServerPort.placeholderString = "3600"
+        //self.mpServerPort.stringValue = "3600"
+        //self.mpServerPort.placeholderString = "3600"
         self.resetUI()
     }
 
@@ -988,6 +988,7 @@ class ViewController: NSViewController, AuthViewControllerDelegate
     {
         do {
             log.info("Flatten package, \(package)")
+			log.info("Flatten package, \(flatten_package)")
             _ = try Spawn(args: ["/usr/sbin/pkgutil", "--flatten", package, flatten_package]) { str in
                 log.debug(str)
             }
@@ -1008,11 +1009,25 @@ class ViewController: NSViewController, AuthViewControllerDelegate
     func signPackage(_ package: String) -> Bool
     {
         do {
+			var hasErr = false
+			
             log.info("Sign package, \(package)")
             let signed_package_name = package.replacingOccurrences(of: "toSign_", with: "")
+			let sign_args = ["/usr/bin/productsign", "--sign", self.signingIdentity.stringValue, package, signed_package_name]
+			log.info(sign_args.joined(separator: " "))
+			
             _ = try Spawn(args: ["/usr/bin/productsign", "--sign", self.signingIdentity.stringValue, package, signed_package_name]) { str in
+				log.debug("Sign result: \(str)")
+				if (str.contains(find: "error:")) {
+					log.error("\(str)")
+					hasErr = true
+				}
             }
-            
+			
+			if (hasErr) {
+				return false
+			}
+			
             try fm.removeItem(atPath: package)
             return true
         } catch {

@@ -28,7 +28,6 @@
 
 @class MPAsus;
 @class PrefsController;
-@class MPDefaults;
 
 @interface MPSelfPatchAppDelegate : NSObject <MPWorkerClient> 
 {    
@@ -58,8 +57,6 @@
 	NSString            *mpHost;
 	NSString            *mpHostPort;
     NSDictionary        *defaults;
-    MPDefaults          *mpDefaults;
-	
 }
 
 @property (nonatomic, strong) NSString *mpHost;

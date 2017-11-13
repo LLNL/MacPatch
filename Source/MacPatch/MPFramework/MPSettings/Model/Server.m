@@ -25,11 +25,16 @@
 
 #import "Server.h"
 
-NSString *const kServerHostname      = @"hostname";
-NSString *const kServerIsproxy       = @"isproxy";
-NSString *const kServerPort          = @"port";
-NSString *const kServerUseclientcert = @"useclientcert";
-NSString *const kServerUsessl        = @"usessl";
+
+NSString *const kServerHostname         = @"host";
+NSString *const kServerPort             = @"port";
+NSString *const kServerUseSSL           = @"useHTTPS";
+NSString *const kServerAllowSelfSigned  = @"allowSelfSigned";
+NSString *const kServerIsMaster         = @"serverType";
+NSString *const kServerIsProxy          = @"serverType";
+
+NSString *const kServerUseclientcert    = @"useclientcert";
+
 
 @interface Server ()
 @end
@@ -44,23 +49,33 @@ NSString *const kServerUsessl        = @"usessl";
 {
 	self = [super init];
 	if(![dictionary[kServerHostname] isKindOfClass:[NSNull class]]){
-		self.hostname = dictionary[kServerHostname];
+		self.host = dictionary[kServerHostname];
 	}
+    
+    if(![dictionary[kServerPort] isKindOfClass:[NSNull class]]){
+        self.port = [dictionary[kServerPort] integerValue];
+    }
+    
+    if(![dictionary[kServerUseSSL] isKindOfClass:[NSNull class]]){
+        self.usessl = [dictionary[kServerUseSSL] integerValue];
+    }
+    
+    if(![dictionary[kServerAllowSelfSigned] isKindOfClass:[NSNull class]]){
+        self.allowSelfSigned = [dictionary[kServerAllowSelfSigned] integerValue];
+    }
 
-	if(![dictionary[kServerIsproxy] isKindOfClass:[NSNull class]]){
-		self.isproxy = [dictionary[kServerIsproxy] integerValue];
+	if(![dictionary[kServerIsProxy] isKindOfClass:[NSNull class]]){
+        if ([dictionary[kServerIsProxy] integerValue] == 2)
+            self.isProxy = 1;
 	}
-
-	if(![dictionary[kServerPort] isKindOfClass:[NSNull class]]){
-		self.port = [dictionary[kServerPort] integerValue];
-	}
+    
+    if(![dictionary[kServerIsMaster] isKindOfClass:[NSNull class]]){
+        if ([dictionary[kServerIsMaster] integerValue] == 1)
+            self.isMaster = 1;
+    }
 
 	if(![dictionary[kServerUseclientcert] isKindOfClass:[NSNull class]]){
 		self.useclientcert = [dictionary[kServerUseclientcert] integerValue];
-	}
-
-	if(![dictionary[kServerUsessl] isKindOfClass:[NSNull class]]){
-		self.usessl = [dictionary[kServerUsessl] integerValue];
 	}
 
 	return self;
@@ -73,13 +88,27 @@ NSString *const kServerUsessl        = @"usessl";
 -(NSDictionary *)toDictionary
 {
 	NSMutableDictionary * dictionary = [NSMutableDictionary dictionary];
-	if(self.hostname != nil){
-		dictionary[kServerHostname] = self.hostname;
+	if(self.host != nil){
+		dictionary[kServerHostname] = self.host;
 	}
-	dictionary[kServerIsproxy] = @(self.isproxy);
+	
 	dictionary[kServerPort] = @(self.port);
+    dictionary[kServerUseSSL] = @(self.usessl);
+    dictionary[kServerAllowSelfSigned] = @(self.allowSelfSigned);
 	dictionary[kServerUseclientcert] = @(self.useclientcert);
-	dictionary[kServerUsessl] = @(self.usessl);
+    
+    if (self.isMaster == 1) {
+        dictionary[kServerIsMaster] = @(1);
+    } else {
+        dictionary[kServerIsMaster] = @(0);
+    }
+    
+    if (self.isProxy == 1) {
+        dictionary[kServerIsMaster] = @(2);
+    } else {
+        dictionary[kServerIsMaster] = @(0);
+    }
+	
 	return dictionary;
 
 }
@@ -92,13 +121,15 @@ NSString *const kServerUsessl        = @"usessl";
  */
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-	if(self.hostname != nil){
-		[aCoder encodeObject:self.hostname forKey:kServerHostname];
+	if(self.host != nil){
+		[aCoder encodeObject:self.host forKey:kServerHostname];
 	}
-	[aCoder encodeObject:@(self.isproxy) forKey:kServerIsproxy];
     [aCoder encodeObject:@(self.port) forKey:kServerPort];
+    [aCoder encodeObject:@(self.usessl) forKey:kServerUseSSL];
+    [aCoder encodeObject:@(self.allowSelfSigned) forKey:kServerAllowSelfSigned];
+	[aCoder encodeObject:@(self.isProxy) forKey:kServerIsProxy];
+    [aCoder encodeObject:@(self.isMaster) forKey:kServerIsMaster];
     [aCoder encodeObject:@(self.useclientcert) forKey:kServerUseclientcert];
-    [aCoder encodeObject:@(self.usessl) forKey:kServerUsessl];
 }
 
 /**
@@ -107,13 +138,14 @@ NSString *const kServerUsessl        = @"usessl";
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
 	self = [super init];
-	self.hostname = [aDecoder decodeObjectForKey:kServerHostname];
-	self.isproxy = [[aDecoder decodeObjectForKey:kServerIsproxy] integerValue];
-	self.port = [[aDecoder decodeObjectForKey:kServerPort] integerValue];
+	self.host            = [aDecoder decodeObjectForKey:kServerHostname];
+    self.port            = [[aDecoder decodeObjectForKey:kServerPort] integerValue];
+    self.usessl          = [[aDecoder decodeObjectForKey:kServerUseSSL] integerValue];
+    self.allowSelfSigned = [[aDecoder decodeObjectForKey:kServerAllowSelfSigned] integerValue];
+	self.isProxy         = [[aDecoder decodeObjectForKey:kServerIsProxy] integerValue];
+    self.isMaster        = [[aDecoder decodeObjectForKey:kServerIsMaster] integerValue];
 	self.useclientcert = [[aDecoder decodeObjectForKey:kServerUseclientcert] integerValue];
-	self.usessl = [[aDecoder decodeObjectForKey:kServerUsessl] integerValue];
 	return self;
-
 }
 
 /**
@@ -122,13 +154,13 @@ NSString *const kServerUsessl        = @"usessl";
 - (instancetype)copyWithZone:(NSZone *)zone
 {
 	Server *copy = [Server new];
-
-	copy.hostname = [self.hostname copy];
-	copy.isproxy = self.isproxy;
-	copy.port = self.port;
+	copy.host = [self.host copy];
+    copy.port = self.port;
+    copy.usessl = self.usessl;
+    copy.allowSelfSigned = self.allowSelfSigned;
+	copy.isProxy = self.isProxy;
+	copy.isMaster = self.isMaster;
 	copy.useclientcert = self.useclientcert;
-	copy.usessl = self.usessl;
-
 	return copy;
 }
 @end

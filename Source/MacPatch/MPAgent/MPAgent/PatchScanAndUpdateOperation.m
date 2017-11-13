@@ -27,6 +27,9 @@
 #import "MacPatch.h"
 
 @interface PatchScanAndUpdateOperation ()
+{
+    MPCodeSign *cs;
+}
 
 - (void)runPatchScan;
 - (void)runPatchScanAndUpdate;
@@ -44,14 +47,16 @@
 
 - (id)init
 {
-	if ((self = [super init])) {
+    self = [super init];
+	if (self)
+    {
 		scanType    = 0;
         taskPID     = -99;
 		isExecuting = NO;
         isFinished  = NO;
 		fm          = [NSFileManager defaultManager];
-	}	
-	
+        cs          = [[MPCodeSign alloc] init];
+	}
 	return self;
 }
 
@@ -128,7 +133,6 @@
         else
         {
             NSError *err = nil;
-            MPCodeSign *cs = [[MPCodeSign alloc] init];
             BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
             if (err) {
                 logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
@@ -174,7 +178,6 @@
         else
         {
             NSError *err = nil;
-            MPCodeSign *cs = [[MPCodeSign alloc] init];
             BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
             if (err) {
                 logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);
@@ -217,7 +220,6 @@
             logit(lcl_vError,@"Unable to find MPAgentExec app.");
         } else {
             NSError *err = nil;
-            MPCodeSign *cs = [[MPCodeSign alloc] init];
             BOOL result = [cs verifyAppleDevBinary:appPath error:&err];
             if (err) {
                 logit(lcl_vError,@"%ld: %@",err.code,err.localizedDescription);

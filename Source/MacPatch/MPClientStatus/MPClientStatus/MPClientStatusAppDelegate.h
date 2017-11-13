@@ -27,7 +27,7 @@
 #import "MPWorkerProtocol.h"
 #import "VDKQueue.h"
 
-@class MPDefaults, MPAsus, MPAppUsage;
+@class MPAsus, MPAppUsage;
 
 @interface MPClientStatusAppDelegate : NSObject <MPWorkerClient,VDKQueueDelegate,NSUserNotificationCenterDelegate>
 {

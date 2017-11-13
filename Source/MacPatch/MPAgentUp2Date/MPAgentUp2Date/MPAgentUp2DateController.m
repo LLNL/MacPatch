@@ -52,7 +52,7 @@ NSInteger const TaskErrorTimedOut = 900001;
 - (void)taskTimeout:(NSNotification *)aNotification;
 
 - (BOOL)scanForMigrationConfig;
-- (MPNetServer *)migrationServerConfig;
+// - (MPNetServer *)migrationServerConfig;
 
 - (NSData *)getRequestWithURIforREST:(NSString *)aURI error:(NSError **)err;
 - (id)restGetRequestforURI:(NSString *)aURI resultType:(NSString *)resType error:(NSError **)err;
@@ -336,6 +336,7 @@ done:
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
     NSString *res = nil;
+    /* CEH
     MPNetConfig *mpNetConfig;
     BOOL isMigration = NO;
     isMigration = [self scanForMigrationConfig];
@@ -388,7 +389,7 @@ done:
             continue;
         }
     }
-
+     */
     return res;
 }
 
@@ -626,7 +627,8 @@ done:
     
     return NO;
 }
-
+/* CEH - Need new method
+ 
 - (MPNetServer *)migrationServerConfig
 {
     NSDictionary *_altConf = [NSDictionary dictionaryWithContentsOfFile:_migrationPlist];
@@ -648,6 +650,7 @@ done:
     logit(lcl_vError,@"Migration Plist was nil.");
     return nil;
 }
+*/
 
 - (BOOL)validateRemoteFingerprint:(NSString *)url
 {
@@ -660,136 +663,6 @@ done:
 /*
  These methods are for migration
 */
-
-- (NSData *)getRequestWithURIforREST:(NSString *)aURI error:(NSError **)err
-{
-    MPNetServer *server = [self migrationServerConfig];
-    if (!server) {
-        return nil;
-    }
-    
-    if (self.verifyFingerprint) {
-        NSString *url = [NSString stringWithFormat:@"https://%@:%d",server.host,(int)server.port];
-        BOOL isValidCert = [self validateRemoteFingerprint:url];
-        if (!isValidCert) {
-            qlerror(@"Remote Certificate finger print verify failed.");
-            return nil;
-        }
-    }
-
-    MPNetConfig *mpNetConfig = [[MPNetConfig alloc] initWithServer:server];
-    
-    NSError *error = nil;
-    NSURLResponse *response;
-    
-    MPNetRequest *req;
-    NSURLRequest *urlReq;
-    NSData *res = nil;
-    NSArray *servers = [mpNetConfig servers];
-    for (MPNetServer *srv in servers)
-    {
-        qlinfo(@"Trying Server %@",srv.host);
-        req = [[MPNetRequest alloc] initWithMPServer:srv];
-        error = nil;
-        urlReq =  [req buildJSONGETRequest:aURI error:&error];
-        if (error) {
-            if (err != NULL) {
-                *err = error;
-            }
-            qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
-            continue;
-        }
-        error = nil;
-        if (urlReq)
-        {
-            res = nil;
-            res = [req sendSynchronousRequest:urlReq returningResponse:&response error:&error];
-            if (error) {
-                if (err != NULL) {
-                    *err = error;
-                }
-                qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
-                continue;
-            }
-            // Make any previouse error pointers nil, now that we have a valid host/connection
-            if (err != NULL) {
-                *err = nil;
-            }
-            break;
-        } else {
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
-            qlerror(@"%@",error.localizedDescription);
-            if (err != NULL) {
-                *err = error;
-            }
-            continue;
-        }
-    }
-    
-    return res;
-}
-
-- (id)restGetRequestforURI:(NSString *)aURI resultType:(NSString *)resType error:(NSError **)err
-{
-    NSError *wsErr = nil;
-    NSData *reqData;
-    id result;
-    
-    @try
-    {
-        reqData = [self getRequestWithURIforREST:aURI error:&wsErr];
-        if (wsErr) {
-            if (err != NULL) *err = wsErr;
-            logit(lcl_vError,@"%@",wsErr.localizedDescription);
-            return nil;
-        } else {
-            // Parse JSON result, if error code is not 0
-            wsErr = nil;
-            result = [self returnRequestWithType:reqData resultType:resType error:&wsErr];
-            if (wsErr) {
-                if (err != NULL) *err = wsErr;
-                logit(lcl_vError,@"%@",wsErr.localizedDescription);
-                return nil;
-            }
-            logit(lcl_vDebug,@"%@",result);
-            return result;
-        }
-        
-    }
-    @catch (NSException * e) {
-        logit(lcl_vError,@"[NSException]: %@",e);
-    }
-    // Should not get here
-    return nil;
-}
-
-// Parses Request Result using know reponse result type (json, string)
-- (id)returnRequestWithType:(NSData *)requestData resultType:(NSString *)resultType error:(NSError **)err
-{
-    MPJsonResult *jres = [[MPJsonResult alloc] init];
-    [jres setJsonData:requestData];
-    NSError *error = nil;
-    id result;
-    
-    if ([resultType isEqualToString:@"json"]) {
-        result = [jres returnJsonResult:&error];
-        qldebug(@"JSON Result: %@",result);
-    } else {
-        result = [jres returnResult:&error];
-    }
-    
-    if (error) {
-        if (err != NULL) {
-            *err = error;
-        } else {
-            qlerror(@"%@",error.localizedDescription);
-        }
-        return nil;
-    }
-    
-    return result;
-}
 
 - (NSDictionary *)getAgentUpdates:(NSString *)curAppVersion build:(NSString *)curBuildVersion error:(NSError **)err
 {

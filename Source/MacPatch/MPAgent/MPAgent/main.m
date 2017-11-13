@@ -25,6 +25,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 #import "AgentController.h"
 #import "MPAgentRegister.h"
 #import "MPInv.h"
@@ -42,8 +43,8 @@ const char * consoleUser(void);
 
 int main (int argc, char * argv[])
 {
-	@autoreleasepool {
-    
+	@autoreleasepool
+    {
 		int a_Type              = 99;
 		BOOL echoToConsole      = NO;
 		BOOL debugLogging       = NO;
@@ -86,8 +87,6 @@ int main (int argc, char * argv[])
                 {"SWScanUpdate" 	,no_argument	    ,0, 'S'},
                 {"Profile"          ,no_argument	    ,0, 'p'},
                 {"WebServicePost"   ,no_argument	    ,0, 'w'},
-                {"Servers"          ,no_argument	    ,0, 'n'},
-                {"SUServers"        ,no_argument	    ,0, 'z'},
 				{"Echo"				,no_argument		,0, 'e'},
 				{"Verbose"			,no_argument		,0, 'V'},
 				{"version"			,no_argument		,0, 'v'},
@@ -110,7 +109,7 @@ int main (int argc, char * argv[])
 			};
 			// getopt_long stores the option index here.
 			int option_index = 0;
-			c = getopt_long (argc, argv, "dqDTcsuiaUGSpwnzeVvhr::R::t:ACk:l:m:xZ", long_options, &option_index);
+			c = getopt_long (argc, argv, "dqDTcsuiaUGSpweVvhr::R::t:ACk:l:m:xZ", long_options, &option_index);
 			
 			// Detect the end of the options.
 			if (c == -1)
@@ -151,12 +150,6 @@ int main (int argc, char * argv[])
                 case 'p':
 					a_Type = 9;
 					break;
-                case 'n':
-					a_Type = 10;
-					break;
-                case 'z':
-                    a_Type = 13;
-                    break;
                 case 'w':
 					a_Type = 11;
 					break;
@@ -412,8 +405,6 @@ void usage(void)
 	printf(" -d \tRun as background daemon.\n");
     printf(" -q \tRun as background daemon using operation queues.\n");
 	printf(" -c \t --CheckIn \t\tRun client checkin.\n");
-    printf(" -n \t --Servers \t\tRun server list verify/update.\n");
-    printf(" -z \t --SUServers \t\tRun SUS server list verify/update.\n");
     printf(" -w \t --WebServicePost \tRe-post failed post attempts.\n\n");
     printf("OS Profiles \n\n");
     printf(" -p \t --Profile \tScan & Install macOS profiles.\n\n");

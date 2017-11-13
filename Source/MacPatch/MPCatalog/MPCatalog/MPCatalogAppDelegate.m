@@ -197,6 +197,9 @@
 
 // Private Methods
 @interface MPCatalogAppDelegate ()
+{
+    MPSettings *settings;
+}
 
 // Reboot
 - (IBAction)showRebootPanel:(id)sender;
@@ -265,7 +268,6 @@
 
 @implementation MPCatalogAppDelegate
 
-@synthesize mpDefaults;
 @synthesize defaults = _defaults;
 
 @synthesize window;
@@ -307,8 +309,7 @@
     fm = [NSFileManager defaultManager];
     queue = [[NSOperationQueue alloc] init];
     selectedItems = [[NSMutableArray alloc] init];
-    mpDefaults = [[MPDefaults alloc] init];
-    [self setDefaults:[mpDefaults defaults]];
+    settings = [MPSettings sharedInstance];
     
     // User Defaults 
     NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
@@ -480,43 +481,33 @@
 {
     @autoreleasepool
     {
-        [swDistGroupsButton removeAllItems];
-        /*
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [swDistGroupsButton removeAllItems];
+        });
+        
         NSError *error = nil;
-        NSArray *catalogs;
-        MPWebServices *mpws = [[MPWebServices alloc] init];
-        if ([[mpDefaults defaults] objectForKey:@"SWDistGroupState"]) {
-            catalogs = [mpws getSWDistGroupsWithState:[[mpDefaults defaults] objectForKey:@"SWDistGroupState"] error:&error];
-        } else {
-            catalogs = [mpws getSWDistGroups:&error];
-        }
-
+        NSArray *catalogs = [NSArray array];
+        MPRESTfull *rest = [[MPRESTfull alloc] init];
+        
+        catalogs = [rest getSoftwareCatalogs:&error];
+        
         if (error) {
             logit(lcl_vError,@"%@",error.localizedDescription);
-            if ([[mpDefaults defaults] objectForKey:@"SWDistGroup"]) {
-                [swDistGroupsButton addItemWithTitle:[[mpDefaults defaults] objectForKey:@"SWDistGroup"]];
-            } else {
-                [swDistGroupsButton addItemWithTitle:@"Missing_SWDistGroup"];
-            }
+            [swDistGroupsButton addItemWithTitle:settings.agent.swDistGroup];
             return;
         }
-        if ([catalogs count] > 0) {
+        
+        if ([catalogs count] > 0)
+        {
             [self setSwDistGroupsArray:catalogs];
             for (NSDictionary *n in catalogs) {
-                [swDistGroupsButton addItemWithTitle:[n objectForKey:@"Name"]];
+                [swDistGroupsButton addItemWithTitle:n[@"Name"]];
             }
-
-            if ([[swDistGroupsButton itemTitles] containsObject:[[mpDefaults defaults] objectForKey:@"SWDistGroup"]]) {
-                [swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:[[mpDefaults defaults] objectForKey:@"SWDistGroup"]]];
-            }
+            [swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:settings.agent.swDistGroup]];
         } else {
-            if ([[mpDefaults defaults] objectForKey:@"SWDistGroup"]) {
-                [swDistGroupsButton addItemWithTitle:[[mpDefaults defaults] objectForKey:@"SWDistGroup"]];
-            } else {
-                [swDistGroupsButton addItemWithTitle:@"Missing_SWDistGroup"];
-            }
+            [swDistGroupsButton addItemWithTitle:settings.agent.swDistGroup];
         }
-         */
+        
         [swDistGroupsButton display];
     }
 }
@@ -1391,10 +1382,12 @@
 {
     @autoreleasepool
     {
-        [progressBar setHidden:NO];
-        [progressBar setIndeterminate:YES];
-        [progressBar startAnimation:self];
-        [progressBar display];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [progressBar setHidden:NO];
+            [progressBar setIndeterminate:YES];
+            [progressBar startAnimation:self];
+            [progressBar display];
+        });
         
         [statusTextStatus setStringValue:@"Downloading Software Distribution Content..."];
         [NSThread sleepForTimeInterval:2];
@@ -1421,7 +1414,9 @@
             [statusTextStatus setStringValue:@"Done"];
         }
         
-        [progressBar stopAnimation:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [progressBar stopAnimation:nil];
+        });
         [self checkAndInstallMandatoryApplications];
     }
 }

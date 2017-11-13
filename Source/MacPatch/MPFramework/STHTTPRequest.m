@@ -1009,7 +1009,7 @@ static STHTTPRequestCookiesStorage globalCookiesStoragePolicy = STHTTPRequestCoo
     self.errorBlock(self.error);
 }
 
-+ (void)setBackgroundCompletionHandler:(void(^)())completionHandler forSessionIdentifier:(NSString *)sessionIdentifier
++ (void)setBackgroundCompletionHandler:(void(^)(void))completionHandler forSessionIdentifier:(NSString *)sessionIdentifier
 {
     if (!sessionCompletionHandlersForIdentifier) {
         sessionCompletionHandlersForIdentifier = [NSMutableDictionary dictionary];
@@ -1265,7 +1265,7 @@ didReceiveResponse:(NSURLResponse *)response
     
     if ([[self domain] isEqualToString:@"STHTTPRequest"] && ([self code] == 401)) return YES;
     
-    if ([[self domain] isEqualToString:NSURLErrorDomain] && ([self code] == kCFURLErrorUserCancelledAuthentication || [self code] == kCFURLErrorUserAuthenticationRequired)) return YES;
+    if ([[self domain] isEqualToString:NSURLErrorDomain] && ([self code] == NSURLErrorUserCancelledAuthentication || [self code] == NSURLErrorUserCancelledAuthentication)) return YES;
     
     return NO;
 }

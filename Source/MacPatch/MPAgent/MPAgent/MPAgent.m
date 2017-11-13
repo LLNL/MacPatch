@@ -24,6 +24,7 @@
  */
 
 #import "MPAgent.h"
+#import <SystemConfiguration/SystemConfiguration.h>
 #import <IOKit/IOKitLib.h>
 #import "MacPatch.h"
 

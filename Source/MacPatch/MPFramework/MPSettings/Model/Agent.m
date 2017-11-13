@@ -28,17 +28,17 @@
 NSString *const kAgentDescriptionField  = @"Description";
 NSString *const kAgentClientGroup       = @"clientGroup";
 NSString *const kAgentGroupId           = @"group_id";
-NSString *const kAgentPatchClient       = @"patchClient";
-NSString *const kAgentPatchGroup        = @"patchGroup";
-NSString *const kAgentPatchServer       = @"patchServer";
-NSString *const kAgentPatchState        = @"patchState";
-NSString *const kAgentReboot            = @"reboot";
-NSString *const kAgentSwDistGroup       = @"swDistGroup";
+NSString *const kAgentPatchClient       = @"allow_client";
+NSString *const kAgentPatchGroup        = @"patch_group";
+NSString *const kAgentPatchServer       = @"allow_server";
+NSString *const kAgentPatchState        = @"patch_state";
+NSString *const kAgentReboot            = @"allow_reboot";
+NSString *const kAgentSwDistGroup       = @"software_group";
 NSString *const kAgentSwDistGroupAdd    = @"swDistGroupAdd";
 NSString *const kAgentSwDistGroupAddID  = @"swDistGroupAddID";
-NSString *const kAgentSwDistGroupID     = @"swDistGroupID";
-NSString *const kAgentVerifySignatures  = @"verifySignatures";
-NSString *const kAgentPreStagePatches   = @"preStagePatches";
+NSString *const kAgentSwDistGroupID     = @"software_group_id";
+NSString *const kAgentVerifySignatures  = @"verify_signatures";
+NSString *const kAgentPreStagePatches   = @"pre_stage_patches";
 
 @interface Agent ()
 @end

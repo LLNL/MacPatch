@@ -1182,7 +1182,7 @@ done:
         
     } else {
         logit(lcl_vInfo,@"floor(NSAppKitVersionNumber): %f",floor(NSAppKitVersionNumber));
-        logit(lcl_vInfo,@"NSAppKitVersionNumber10_9:    %d",NSAppKitVersionNumber10_9);
+        logit(lcl_vInfo,@"NSAppKitVersionNumber10_9:    %f",NSAppKitVersionNumber10_9);
         logit(lcl_vWarning,@"Current OS does not support NSUserNotification");
     }
 }

@@ -28,8 +28,8 @@
 @property (strong) NSArray* arguments;
 @property (strong) NSDictionary* environment;
 @property BOOL hasExecuted;
-@property (nonatomic, assign) __block dispatch_source_t stdoutSource;
-@property (nonatomic, assign) __block dispatch_source_t stderrSource;
+@property (nonatomic, strong) __block dispatch_source_t stdoutSource;
+@property (nonatomic, strong) __block dispatch_source_t stderrSource;
 
 
 

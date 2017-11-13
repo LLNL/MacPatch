@@ -33,7 +33,6 @@
 {
     MPServerConnection *mpServerConnection;
     
-    NSDictionary    *_defaults;
     NSString        *_cuuid;
     NSString        *_appPid;
     
@@ -50,7 +49,6 @@
     NSString        *errorMsg;
 }
 
-@property (nonatomic, strong) NSDictionary          *_defaults;
 @property (nonatomic, strong) NSString              *_cuuid;
 @property (nonatomic, strong) NSString              *_appPid;
 

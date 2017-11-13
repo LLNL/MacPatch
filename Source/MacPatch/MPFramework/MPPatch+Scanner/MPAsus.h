@@ -70,7 +70,6 @@
 
 - (BOOL)downloadAppleUpdate:(NSString *)updateName;
 
-- (NSData *)installResultsToXML:(NSArray *)aInstalledPatches;
 - (NSArray *)installResultsToDictArray:(NSArray *)aInstalledPatches type:(NSString *)aType;
 
 // Third Party Updates Installs

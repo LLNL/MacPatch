@@ -63,7 +63,6 @@
 		8F4911BF1DFC6E310018CA70 /* PreferencesGeneralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesGeneralViewController.swift; path = Preferences/PreferencesGeneralViewController.swift; sourceTree = "<group>"; };
 		8F4911C31DFDEB4E0018CA70 /* FileUploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileUploader.swift; sourceTree = "<group>"; };
 		8FEEC2B21DFF5FB8001133F7 /* HeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
-		8FF253E11FACDCD0006B0491 /* SwiftyBeaver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyBeaver.framework; path = MPAgentUploader/Frameworks/SwiftyBeaver.framework; sourceTree = "<group>"; };
 		8FF253E41FACDF0D006B0491 /* LogKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LogKit.framework; path = MPAgentUploader/Frameworks/LogKit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -119,7 +118,6 @@
 			isa = PBXGroup;
 			children = (
 				8FF253E41FACDF0D006B0491 /* LogKit.framework */,
-				8FF253E11FACDCD0006B0491 /* SwiftyBeaver.framework */,
 				8F2BC9E11DF884EC009BA318 /* Alamofire.framework */,
 			);
 			name = Frameworks;

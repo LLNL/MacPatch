@@ -10,7 +10,6 @@
 #import "MacPatch.h"
 #import "MPWSResult.h"
 #import "STHTTPRequest.h"
-
 #import <CommonCrypto/CommonHMAC.h>
 
 #undef  ql_component
@@ -18,7 +17,8 @@
 
 @interface MPHTTPRequest ()
 {
-    NSFileManager *fm;
+    NSFileManager   *fm;
+    MPSettings      *settings;
 }
 
 @property (nonatomic)         BOOL      allowSelfSignedCert;
@@ -42,7 +42,8 @@
     self = [super init];
     if (self)
     {
-        fm = [NSFileManager defaultManager];
+        fm       = [NSFileManager defaultManager];
+        settings = [MPSettings sharedInstance];
         
         self.requestCount = -1;
         self.allowSelfSignedCert = NO;
@@ -67,40 +68,49 @@
         [self populateServerArrayUsingAgentPlist];
         [self setClientKey:@"NA"];
     }
-    
     return self;
 }
 
 - (void)populateServerArray
 {
-    MPServerList *s = [MPServerList new];
-    NSArray *servers = [s getLocalServerArray];
-    self.serverArray = [servers copy];
-    if (self.serverArray.count <= 0) {
+    if (!settings.servers || settings.servers.count <= 0)
+    {
         [self populateServerArrayUsingAgentPlist];
+    }
+    else
+    {
+        self.serverArray = [settings.servers copy];
     }
 }
 
 - (void)populateServerArrayUsingAgentPlist
 {
     NSMutableArray *_servers = [NSMutableArray new];
-    
     NSDictionary *agentData = [NSDictionary dictionaryWithContentsOfFile:MP_AGENT_DEPL_PLIST];
-    NSDictionary *server = @{@"host": agentData[@"MPServerAddress"], @"port": agentData[@"MPServerPort"], @"serverType": @(1),
-                             @"allowSelfSigned": agentData[@"MPServerAllowSelfSigned"], @"useHTTPS": agentData[@"MPServerSSL"]};
-    [_servers addObject:server];
     
-    NSDictionary *proxy = nil;
+    Server *server1 = [[Server  alloc] init];
+    server1.host = agentData[@"MPServerAddress"];
+    server1.port = [agentData[@"MPServerPort"] integerValue];
+    server1.usessl = [agentData[@"MPServerSSL"] integerValue];
+    server1.allowSelfSigned = [agentData[@"MPServerAllowSelfSigned"] integerValue];
+    server1.isMaster = 1;
+    server1.isProxy = 0;
+    [_servers addObject:server1];
+    
     if (agentData[@"MPProxyEnabled"])
     {
         if ([agentData[@"MPProxyEnabled"] integerValue] == 1)
         {
-            proxy = @{@"host": agentData[@"MPProxyServerAddress"], @"port": agentData[@"MPProxyServerPort"], @"serverType": @(2),
-                      @"allowSelfSigned": agentData[@"MPServerAllowSelfSigned"], @"useHTTPS": agentData[@"MPServerSSL"]};
-            [_servers addObject:proxy];
+            Server *server2 = [[Server  alloc] init];
+            server2.host = agentData[@"MPProxyServerAddress"];
+            server2.port = [agentData[@"MPProxyServerPort"] integerValue];
+            server2.usessl = [agentData[@"MPServerSSL"] integerValue];
+            server2.allowSelfSigned = [agentData[@"MPServerAllowSelfSigned"] integerValue];
+            server2.isMaster = 0;
+            server2.isProxy = 1;
+            [_servers addObject:server2];
         }
     }
-    
     self.serverArray = _servers;
 }
 
@@ -122,7 +132,7 @@
         return [@"/private/tmp" stringByAppendingPathComponent:appName];
     }
     
-    NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
+    NSString *tempDirectoryPath = [fm stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
     free(tempDirectoryNameCString);
     
     tempFilePath = [tempDirectoryPath stringByAppendingPathComponent:[urlPath lastPathComponent]];
@@ -148,10 +158,11 @@
     }
     
     self.allowSelfSignedCert = NO;
-    MPNetServer *server = [MPNetServer serverObjectWithDictionary:[self.serverArray objectAtIndex:self.requestCount]];
-    self.allowSelfSignedCert = server.allowSelfSigned;
+    Server *server = [self.serverArray objectAtIndex:self.requestCount];
+    if (server.allowSelfSigned == 1)
+        self.allowSelfSignedCert = YES;
     
-    NSString *url = [NSString stringWithFormat:@"%@://%@:%d%@",server.useHTTPS ? @"https":@"http", server.host, (int)server.port, urlPath];
+    NSString *url = [NSString stringWithFormat:@"%@://%@:%d%@",server.usessl ? @"https":@"http", server.host, (int)server.port, urlPath];
     qlinfo(@"URL: %@",url);
     
     __block STHTTPRequest *r = [STHTTPRequest requestWithURLString:url];
@@ -204,10 +215,11 @@
     }
     
     self.allowSelfSignedCert = NO;
-    MPNetServer *server = [MPNetServer serverObjectWithDictionary:[self.serverArray objectAtIndex:self.requestCount]];
-    self.allowSelfSignedCert = server.allowSelfSigned;
+    Server *server = [self.serverArray objectAtIndex:self.requestCount];
+    if (server.allowSelfSigned == 1)
+        self.allowSelfSignedCert = YES;
     
-    NSString *url = [NSString stringWithFormat:@"%@://%@:%d%@",server.useHTTPS ? @"https":@"http", server.host, (int)server.port, urlPath];
+    NSString *url = [NSString stringWithFormat:@"%@://%@:%d%@",server.usessl ? @"https":@"http", server.host, (int)server.port, urlPath];
     qlinfo(@"URL: %@",url);
     
     __block STHTTPRequest *r = [STHTTPRequest requestWithURLString:url];
@@ -283,12 +295,14 @@
     
     // Create URL
     self.allowSelfSignedCert = NO;
-    MPNetServer *server = [MPNetServer serverObjectWithDictionary:[self.serverArray objectAtIndex:self.requestCount]];
-    self.allowSelfSignedCert = server.allowSelfSigned;
-    NSString *url = [NSString stringWithFormat:@"%@://%@:%d%@",server.useHTTPS ? @"https":@"http", server.host, (int)server.port, urlPath];
+    Server *server = [self.serverArray objectAtIndex:self.requestCount];
+    if (server.allowSelfSigned == 1)
+        self.allowSelfSignedCert = YES;
+    NSString *url = [NSString stringWithFormat:@"%@://%@:%d%@",server.usessl ? @"https":@"http", server.host, (int)server.port, urlPath];
     qlinfo(@"Download URL: %@",url);
     
     __block STHTTPRequest *r = [STHTTPRequest requestWithURLString:url];
+    r.timeoutSeconds = 20;
     r.allowSelfSignedCert = server.allowSelfSigned;
     [r setHeaderWithName:@"X-Agent-ID" value:@"MacPatch"];
     
@@ -310,6 +324,8 @@
         // Return as NSProgressIndicator and NSTextField
         float progress = ((float)totalBytesReceived) / totalBytesExpectedToReceive;
         double percentComplete = progress*100.0;
+        
+        qlinfo(@"Downloading file %d",(int)percentComplete);
         
         if (progressPercent) {
             [progressPercent setStringValue:[NSString stringWithFormat:@"%d",(int)percentComplete]];
@@ -334,11 +350,13 @@
     // Error block
     r.errorBlock = ^(NSError *error)
     {
+        qlerror(@"File download error %@", error.localizedDescription);
         [weakSelf runDownloadRequest:urlPath downloadDirectory:(NSString *)dlDir
                             progress:progressBar progressPercent:progressPercent
                           completion:(void (^)(NSString *fileName, NSString *filePath, NSError *error))completion];
     };
     
+    qlinfo(@"startAsynchronous");
     [r startAsynchronous];
 }
 
@@ -351,17 +369,15 @@
 - (MPWSResult *)runSyncGET:(NSString *)urlPath body:(NSDictionary *)body
 {
     MPWSResult *wsResult = nil;
-    MPNetServer *server;
     NSString *url;
     
-    for (NSDictionary *srvDict in self.serverArray)
+    for (Server *server in self.serverArray)
     {
         self.allowSelfSignedCert = NO;
+        if (server.allowSelfSigned == 1)
+            self.allowSelfSignedCert = YES;
         
-        server = [MPNetServer serverObjectWithDictionary:srvDict];
-        self.allowSelfSignedCert = server.allowSelfSigned;
-        
-        url = [NSString stringWithFormat:@"%@://%@:%d%@",server.useHTTPS ? @"https":@"http", server.host, (int)server.port, urlPath];
+        url = [NSString stringWithFormat:@"%@://%@:%d%@",server.usessl ? @"https":@"http", server.host, (int)server.port, urlPath];
         qlinfo(@"URL: %@",url);
         wsResult = [self syncronusGETWithURL:url body:body];
         if ((int)wsResult.statusCode == 200 || (int)wsResult.statusCode == 201) {
@@ -376,16 +392,15 @@
 - (MPWSResult *)runSyncPOST:(NSString *)urlPath body:(NSDictionary *)body
 {
     MPWSResult *wsResult = nil;
-    
-    MPNetServer *server;
     NSString *url;
-    for (NSDictionary *srvDict in self.serverArray)
+    for (Server *server in self.serverArray)
     {
         self.allowSelfSignedCert = NO;
-        server = [MPNetServer serverObjectWithDictionary:srvDict];
-        self.allowSelfSignedCert = server.allowSelfSigned;
+        if (server.allowSelfSigned == 1)
+            self.allowSelfSignedCert = YES;
         
-        url = [NSString stringWithFormat:@"%@://%@:%d%@",server.useHTTPS ? @"https":@"http", server.host, (int)server.port, urlPath];
+        qldebug(@"[runSyncPOST][server]: %@",server.toDictionary);
+        url = [NSString stringWithFormat:@"%@://%@:%d%@",server.usessl ? @"https":@"http", server.host, (int)server.port, urlPath];
         qldebug(@"[runSyncPOST] URL: %@",url);
         wsResult = [self syncronusPOSTWithURL:url body:body];
         if ((int)wsResult.statusCode == 200 || (int)wsResult.statusCode == 201) {
@@ -397,6 +412,124 @@
     return wsResult;
 }
 
+
+- (NSString *)runSyncFileDownload:(NSString *)urlPath downloadDirectory:(NSString *)dlDir error:(NSError * __autoreleasing *)err
+{
+    qlinfo(@"[runSyncFileDownload][urlPath], %@", urlPath);
+    
+    // Create Download Directory if it does not exist
+    if (![fm fileExistsAtPath:dlDir]) {
+        [fm createDirectoryAtPath:dlDir withIntermediateDirectories:YES attributes:NULL error:NULL];
+    }
+    
+    // Set File name and File path
+    __block NSString *flName = [urlPath lastPathComponent];
+    __block NSString *flPath = [dlDir stringByAppendingPathComponent:flName];
+    
+    // If downloaded file exists, remove it first
+    if ([fm fileExistsAtPath:flPath]) {
+        [fm removeItemAtPath:flPath error:NULL];
+    }
+    
+    // requestCount is the server index of the servers array
+    // this gets incremented on failed attempts
+    if (self.requestCount == -1) {
+        self.requestCount++;
+    } else {
+        if (self.requestCount >= (self.serverArray.count - 1)) {
+            NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Error, could not download file, failed all servers."};
+            NSError *srverr = [NSError errorWithDomain:@"gov.llnl.mphttprequest" code:1001 userInfo:userInfo];
+            if (err != NULL) {
+                *err = srverr;
+            }
+            return nil;
+        } else {
+            self.requestCount++;
+        }
+    }
+    
+    self.allowSelfSignedCert = NO;
+    Server *server = [self.serverArray objectAtIndex:self.requestCount];
+    if (server.allowSelfSigned == 1)
+        self.allowSelfSignedCert = YES;
+    
+    NSString *url = [NSString stringWithFormat:@"%@://%@:%d%@",server.usessl ? @"https":@"http", server.host, (int)server.port, urlPath];
+    qlinfo(@"URL: %@",url);
+    
+    __block __typeof(self) weakSelf = self;
+    
+    dispatch_semaphore_t    sem;
+    __block NSString        *dlFilePath = [dlDir stringByAppendingPathComponent:[urlPath lastPathComponent]];
+    __block NSURLResponse   *responsePtr;
+    __block NSError         *urlErr = nil;
+    
+    sem = dispatch_semaphore_create(0);
+    
+    NSURLSessionDownloadTask *downloadTask;
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfiguration.timeoutIntervalForRequest = 10.0;
+    sessionConfiguration.timeoutIntervalForResource = 3600.0;
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration];
+    
+    downloadTask = [session downloadTaskWithURL:[NSURL URLWithString:url]
+                                    completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
+                                        
+                                        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                                        NSLog(@"response status code: %ld", (long)[httpResponse statusCode]);
+                                        
+                                        if (error)
+                                        {
+                                            urlErr = error;
+                                            qlerror(@"File download error %@", error.localizedDescription);
+                                            [weakSelf runSyncFileDownload:urlPath downloadDirectory:dlDir error:err];
+                                        }
+                                        else
+                                        {
+                                            if (responsePtr != NULL) {
+                                                responsePtr = response;
+                                            }
+
+                                            qlinfo(@"dlFilePath, %@", dlFilePath);
+                                            qlinfo(@"location, %@", location.path);
+                                            
+                                            NSFileManager *fileManager = [NSFileManager defaultManager];
+                                            NSError *cperror;
+                                            BOOL fileOKToMove = YES;
+                                            if ([fileManager fileExistsAtPath:dlFilePath]) {
+                                                cperror = nil;
+                                                [fileManager removeItemAtPath:dlFilePath error:&cperror];
+                                                if (cperror) {
+                                                    fileOKToMove = NO;
+                                                    qlerror(@"Error removing old downloaded file.");
+                                                    qlerror(@"%@",cperror.localizedDescription);
+                                                }
+                                            }
+                                            
+                                            //moving the file from temp location to app's own directory
+                                            if (fileOKToMove)
+                                            {
+                                                cperror = nil;
+                                                BOOL fileCopied = [fileManager moveItemAtPath:[location path] toPath:dlFilePath error:&cperror];
+                                                
+                                                if (cperror) {
+                                                    qlinfo(@"cperror, %@", cperror.localizedDescription);
+                                                }
+                                                
+                                                NSLog(fileCopied ? @"Yes" : @"No");
+                                            }
+                                        }
+
+                                        dispatch_semaphore_signal(sem);
+                               }];
+    
+    [downloadTask resume];
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    return dlFilePath;
+}
+
+
+
+/*
 - (NSString *)runSyncFileDownload:(NSString *)urlPath downloadDirectory:(NSString *)dlDir error:(NSError **)err
 {
     __block NSString *_fileName;
@@ -404,7 +537,7 @@
     __block NSError *_err;
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
+    qlinfo(@"[runSyncFileDownload][urlPath]: %@", urlPath );
     [self runDownloadRequest:urlPath
            downloadDirectory:dlDir
                     progress:nil
@@ -413,10 +546,13 @@
      {
          if (_error)
          {
+             qlinfo(@"[runSyncFileDownload][_error]: %@", _error.localizedDescription );
              _err = [_error copy];
          }
          else
          {
+             qlinfo(@"[runSyncFileDownload][fileName]: %@", fileName );
+             qlinfo(@"[runSyncFileDownload][filePath]: %@", filePath );
              _fileName = fileName;
              _filePath = filePath;
          }
@@ -429,9 +565,10 @@
         if (_err) *err = _err;
     }
     
+    qldebug(@"[runSyncFileDownload][done]: %@", _filePath );
     return _filePath;
 }
-
+*/
 #pragma mark - Private Methdos
 - (MPWSResult *)syncronusGETWithURL:(NSString *)aURL body:(NSDictionary *)body
 {

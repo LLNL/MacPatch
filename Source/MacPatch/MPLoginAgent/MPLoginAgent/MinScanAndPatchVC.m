@@ -24,6 +24,9 @@
 extern OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSend);
 
 @interface MinScanAndPatchVC ()
+{
+    MPSettings *settings;
+}
 
 // Main
 - (void)scanAndPatch;
@@ -76,7 +79,7 @@ extern OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSend);
         alreadyInit = YES;
         
         fm = [NSFileManager defaultManager];
-        mpDefauts = [[MPDefaults alloc] init];
+        settings = [MPSettings sharedInstance];
         mpScanner = [[MPScanner alloc] init];
         mpScanner.delegate = self;
         cancelTask = FALSE;
@@ -388,7 +391,7 @@ OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSendID)
             // If no items in array, lets bail...
             if ([approvedApplePatches count] == 0 ) {
                 qlinfo(@"No Patch Group patches found.");
-                qlinfo(@"No apple updates found for \"%@\" patch group.",[[mpDefauts defaults] objectForKey:@"PatchGroup"]);
+                qlinfo(@"No apple updates found for \"%@\" patch group.",settings.agent.patchGroup);
             } else {
                 // Build Approved Patches
                 qlinfo(@"Building approved apple patch list...");

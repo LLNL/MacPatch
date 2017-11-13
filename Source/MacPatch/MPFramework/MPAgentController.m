@@ -32,6 +32,9 @@
 #include <sys/reboot.h>
 
 @interface MPAgentController ()
+{
+    MPSettings *settings;
+}
 
 @property (nonatomic, readwrite, assign) int errorCode;
 @property (nonatomic, readwrite, strong) NSString *errorMsg;
@@ -43,7 +46,6 @@
 @synthesize errorCode;
 @synthesize errorMsg;
 
-@synthesize _defaults;
 @synthesize _cuuid;
 @synthesize _appPid;
 @synthesize iLoadMode;
@@ -56,21 +58,22 @@
     if (self)
     {
         fm              = [NSFileManager defaultManager];
-        MPDefaults *d   = [[MPDefaults alloc] init];
         mpAsus          = [[MPAsus alloc] init];
         mpDataMgr       = [[MPDataMgr alloc] init];
+        settings        = [MPSettings sharedInstance];
         
-        [self set_defaults:d.defaults];
 		[self set_cuuid:[MPSystemInfo clientUUID]];
 		[self setILoadMode:NO];
 		[self setForceRun:NO];
 		
 		// Add Debug Output
+        /* CEH
 		if ([_defaults hasKey:@"MPAgentExecDebug"]) {
 			if ([[_defaults objectForKey:@"MPAgentExecDebug"] isEqualTo:@"1"]) {
 				lcl_configure_by_name("*", lcl_vDebug);
 			}	
-		}	
+		}
+         */
     }
     return self;    
 }
@@ -94,11 +97,13 @@
 
 -(void)overRideDefaults:(NSDictionary *)aDict
 {
+    /* CEH
 	NSMutableDictionary *_d = [NSMutableDictionary dictionaryWithDictionary:_defaults];
 	for (id key in [aDict allKeys]) {
 		[_d setObject:[aDict objectForKey:key] forKey:key];
 	}	
 	[self set_defaults:(NSDictionary *)_d];
+     */
 }
 
 - (void)scanForPatches
@@ -232,7 +237,7 @@
                 
                 // If no items in array, lets bail...
                 if ([approvedApplePatches count] == 0 ) {
-                    logit(lcl_vInfo,@"No apple updates found for \"%@\" patch group.",[_defaults objectForKey:@"PatchGroup"]);
+                    logit(lcl_vInfo,@"No apple updates found for \"%@\" patch group.",settings.agent.patchGroup);
                 } else {
                     // Build Approved Patches
                     logit(lcl_vInfo,@"Building approved patch list...");
@@ -453,28 +458,20 @@ done:
 	NSString *_osType = nil;
 	_osType = [[MPSystemInfo osVersionInfo] objectForKey:@"ProductName"];
 	if ([_osType isEqualToString:@"Mac OS X"]) {
-		if ([_defaults objectForKey:@"AllowClient"]) {
-			if (![[_defaults objectForKey:@"AllowClient"] isEqualToString:@"1"]) {
-				logit(lcl_vInfo,@"Host is a Mac OS X Client and AllowClient property is set to false. No updates will be applied.");
-				[self removeTaskRunning:kMPPatchUPDATE];
-                return;
-			}
-		}
+        if (settings.agent.patchClient == 0) {
+            logit(lcl_vInfo,@"Host is a Mac OS X Client and AllowClient property is set to false. No updates will be applied.");
+            [self removeTaskRunning:kMPPatchUPDATE];
+            return;
+        }
 	}
 
 	logit(lcl_vInfo, @"Validating server install status.");
 	if ([_osType isEqualToString:@"Mac OS X Server"]) {
-		if ([_defaults objectForKey:@"AllowServer"]) {
-			if (![[_defaults objectForKey:@"AllowServer"] isEqualToString:@"1"]) {
-				logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is set to false. No updates will be applied.");
-				[self removeTaskRunning:kMPPatchUPDATE];
-                return;
-			}
-		} else {
-			logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is not defined. No updates will be applied.");
-			[self removeTaskRunning:kMPPatchUPDATE];
+		if (settings.agent.patchServer == 0) {
+            logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is set to false. No updates will be applied.");
+            [self removeTaskRunning:kMPPatchUPDATE];
             return;
-		}
+        }
 	}
 
 	if (iLoadMode == YES) {
@@ -828,18 +825,19 @@ done:
 	// If any patches that were installed needed a reboot
 	if (installedPatchesNeedingReboot > 0) {
 		if (hasConsoleUserLoggedIn == NO) {
-			if ([_defaults objectForKey:@"Reboot"]) {
-				if ([[_defaults objectForKey:@"Reboot"] isEqualTo:@"1"]) {
-					logit(lcl_vInfo,@"Patches have been installed that require a reboot. Rebooting system now.");
-					int rb = 0;
-					rb = reboot(RB_AUTOBOOT);
-				} else {
-					logit(lcl_vInfo,@"Patches have been installed that require a reboot. Please reboot the systems as soon as possible.");
-					[self removeTaskRunning:kMPPatchUPDATE];
-                    return;
-				}
-				
-			}
+			if (settings.agent.reboot == 1) {
+                logit(lcl_vInfo,@"Patches have been installed that require a reboot. Rebooting system now.");
+                [self removeTaskRunning:kMPPatchUPDATE];
+                
+                int rb = 0;
+                rb = reboot(RB_AUTOBOOT);
+                
+            } else {
+                logit(lcl_vInfo,@"Patches have been installed that require a reboot. Please reboot the systems as soon as possible.");
+                [self removeTaskRunning:kMPPatchUPDATE];
+                return;
+            }
+			
 		}	
 	}
 	
@@ -896,31 +894,22 @@ done:
 	NSString *_osType = nil;
 	_osType = [[MPSystemInfo osVersionInfo] objectForKey:@"ProductName"];
 	if ([_osType isEqualToString:@"Mac OS X"]) {
-		if ([_defaults objectForKey:@"AllowClient"]) {
-			if (![[_defaults objectForKey:@"AllowClient"] isEqualToString:@"1"]) {
-				logit(lcl_vInfo,@"Host is a Mac OS X Client and AllowClient property is set to false. No updates will be applied.");
-				[self removeTaskRunning:kMPPatchUPDATE];
-                [self setErrorCode:0];
-                return;
-			}	
+		if (settings.agent.patchClient == 0) {
+            logit(lcl_vInfo,@"Host is a Mac OS X Client and AllowClient property is set to false. No updates will be applied.");
+            [self removeTaskRunning:kMPPatchUPDATE];
+            [self setErrorCode:0];
+            return;
 		}
 	}
     
 	logit(lcl_vInfo, @"Validating server install status.");
 	if ([_osType isEqualToString:@"Mac OS X Server"]) {
-		if ([_defaults objectForKey:@"AllowServer"]) {
-			if (![[_defaults objectForKey:@"AllowServer"] isEqualToString:@"1"]) {
-				logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is set to false. No updates will be applied.");
-				[self removeTaskRunning:kMPPatchUPDATE];
-                [self setErrorCode:0];
-                return;
-			}	
-		} else {
-			logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is not defined. No updates will be applied.");
-			[self removeTaskRunning:kMPPatchUPDATE];
+        if (settings.agent.patchServer == 0) {
+            logit(lcl_vInfo,@"Host is a Mac OS X Server and AllowServer property is set to false. No updates will be applied.");
+            [self removeTaskRunning:kMPPatchUPDATE];
             [self setErrorCode:0];
             return;
-		}
+        }
 	}
     
     // Begin Patching Process
@@ -1153,17 +1142,14 @@ done:
 	// If any patches that were installed needed a reboot
 	if (installedPatchesNeedingReboot > 0) {
 		if (hasConsoleUserLoggedIn == NO) {
-			if ([_defaults objectForKey:@"Reboot"]) {
-				if ([[_defaults objectForKey:@"Reboot"] isEqualTo:@"1"]) {
-					logit(lcl_vInfo,@"Patches have been installed that require a reboot. Rebooting system now.");
-					int rb = 0;
-					rb = reboot(RB_AUTOBOOT);
-				} else {
-					logit(lcl_vInfo,@"Patches have been installed that require a reboot. Please reboot the systems as soon as possible.");
-					goto done;
-				}
-				
-			}
+			if (settings.agent.reboot == 1) {
+                logit(lcl_vInfo,@"Patches have been installed that require a reboot. Rebooting system now.");
+                int rb = 0;
+                rb = reboot(RB_AUTOBOOT);
+            } else {
+                logit(lcl_vInfo,@"Patches have been installed that require a reboot. Please reboot the systems as soon as possible.");
+                goto done;
+            }
 		}	
 	}
 	

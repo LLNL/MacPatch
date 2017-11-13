@@ -32,12 +32,12 @@
 @interface MPAgentUp2DateController : NSObject 
 {
 	MPServerConnection *mpServerConnection;
+    
     NSString        *_cuuid;
     NSString        *_appPid;
 	NSDictionary    *_updateData;
     NSDictionary    *_osVerDictionary;
     
-    MPDefaults      *mpDefaults;
     MPAsus          *mpAsus;
     MPDataMgr       *mpDataMgr;
 }

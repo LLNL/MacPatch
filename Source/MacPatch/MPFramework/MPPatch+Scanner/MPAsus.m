@@ -27,11 +27,20 @@
 #import "MPNetworkUtils.h"
 #import "MPPatchScan.h"
 #import "Constants.h"
-#import "MPNetConfig.h"
-#import "MPNetRequest.h"
+//#import "MPNetConfig.h"
+//#import "MPNetRequest.h"
 
 #undef  ql_component
 #define ql_component lcl_cMPAsus
+
+@interface MPAsus ()
+{
+    NSFileManager *fm;
+    MPSettings *settings;
+    Agent *agent;
+}
+
+@end
 
 @implementation MPAsus
 
@@ -52,37 +61,22 @@
     self = [super init];
 	if (self)
     {
+        fm = [NSFileManager defaultManager];
         mpNetworkUtils = [[MPNetworkUtils alloc] init];
-        MPDefaults *mpDefaults = [[MPDefaults alloc] init];
-        defaults = [mpDefaults defaults];
+        settings = [MPSettings sharedInstance];
+        agent = settings.agent;
 
-        if ([defaults objectForKey:@"PatchGroup"]) {
-			[self setPatchGroup:[defaults objectForKey:@"PatchGroup"]];
-		} else {
-			[self setPatchGroup:@"RecommendedPatches"];
-		}
-
-		if ([defaults objectForKey:@"AllowClient"]) {
-			NSString *cVal = [defaults objectForKey:@"AllowServer"];
-			if ([cVal isEqualToString:@"1"] || [cVal isEqualToString:@"Y"] || [cVal isEqualToString:@"Yes"] || [cVal isEqualToString:@"T"] || [cVal isEqualToString:@"True"]) {
-				[self setAllowClient:YES];
-			} else {
-				[self setAllowClient:NO];
-			}
-		} else {
-			[self setAllowClient:YES];
-		}
-
-		if ([defaults objectForKey:@"AllowServer"]) {
-			NSString *sVal = [defaults objectForKey:@"AllowServer"];
-			if ([sVal isEqualToString:@"1"] || [sVal isEqualToString:@"Y"] || [sVal isEqualToString:@"Yes"] || [sVal isEqualToString:@"T"] || [sVal isEqualToString:@"True"]) {
-				[self setAllowServer:YES];
-			} else {
-				[self setAllowServer:NO];
-			}
-		} else {
-			[self setAllowServer:NO];
-		}
+        if (agent.patchClient == 1 || agent.patchServer == 1) {
+            [self setAllowClient:YES];
+        } else {
+            [self setAllowClient:NO];
+        }
+        
+        if (agent.patchServer == 1) {
+            [self setAllowServer:YES];
+        } else {
+            [self setAllowServer:NO];
+        }
     }
     return self;
 }
@@ -121,45 +115,14 @@
     NSString *_atFile = @"/private/tmp/.MPAuthRun";
     NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
     NSString *_rbText = @"reboot";
+    
     // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
     NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
     [rebootPlist writeToFile:_rbFile atomically:YES];
     [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
-    [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
-    [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
-}
-
-- (NSData *)installResultsToXML:(NSArray *)aInstalledPatches
-{
-	/*
-	 <?xml version="1.0" encoding="UTF-8"?>
-	 <root>
-	 <cuuid></cuuid>
-	 <idate></idate>
-	 <patch></patch>
-	 <patch></patch>
-	 </root>
-	 */
-	
-	NSXMLElement *root = (NSXMLElement *)[NSXMLNode elementWithName:@"root"];
-	NSXMLDocument *xmlDoc = [[NSXMLDocument alloc] initWithRootElement:root];
-	[xmlDoc setVersion:@"1.0"];
-	[xmlDoc setCharacterEncoding:@"UTF-8"];
-	
-	[root addChild:[NSXMLNode elementWithName:@"cuuid" stringValue:[MPSystemInfo clientUUID]]];
-	
-	[root addChild:[NSXMLNode elementWithName:@"idate" stringValue:[MPDate dateTimeStamp]]];
-	
-	NSEnumerator *enumerator = [aInstalledPatches objectEnumerator];
-	id anObject;
-	while ((anObject = [enumerator nextObject])) {
-		[root addChild:[NSXMLNode elementWithName:@"patch" stringValue:anObject]];
-	}
-	
-	NSData *xmlData = [xmlDoc XMLDataWithOptions:NSXMLNodePrettyPrint];
-
-	return xmlData;
+    [fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
+    [fm setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
 }
 
 - (NSArray *)installResultsToDictArray:(NSArray *)aInstalledPatches type:(NSString *)aType
@@ -460,16 +423,27 @@ done:
 
 #pragma mark Custom Patch install
 
--(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
+- (NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
+    NSString *res = nil;
+    NSError *error = nil;
+    MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
+    res = [req runSyncFileDownload:aURL downloadDirectory:@"/tmp" error:&error];
+    if (error) {
+        if (err != NULL) {
+            *err = error;
+        }
+    }
+    // Error, if file does not exists, or URL is not valid
     
+    
+    /* CEH
     MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
     NSError *error = nil;
     NSURLResponse *response;
     
     MPNetRequest *req;
     NSURLRequest *urlReq;
-    NSString *res = nil;
     NSArray *servers = [mpNetConfig servers];
     for (MPNetServer *srv in servers)
     {
@@ -503,7 +477,7 @@ done:
             continue;
         }
     }
-    
+    */
     return res;
 }
 
@@ -609,7 +583,7 @@ done:
         return [@"/private/tmp" stringByAppendingPathComponent:appName];
 	}
 	
-	NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
+	NSString *tempDirectoryPath = [fm stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
 	free(tempDirectoryNameCString);
 
 	tempFilePath = [tempDirectoryPath stringByAppendingPathComponent:[aURL lastPathComponent]];	

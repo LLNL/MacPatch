@@ -29,7 +29,7 @@
 #import "WorkerConnectionMonitor.h"
 #import "MPWorker.h"
 
-static void setUpLogging();
+static void setUpLogging(void);
 
 int main(int argc, const char * argv[])
 {
@@ -68,7 +68,7 @@ int main(int argc, const char * argv[])
     return 0;
 }
 
-static void setUpLogging ()
+static void setUpLogging (void)
 {
 	// Setup logging
 	BOOL enableDebug = NO;
