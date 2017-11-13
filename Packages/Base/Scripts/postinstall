@@ -2,9 +2,8 @@
 
 # ***************************************************************************************
 # PostFlight Script for MacPatch Client Installer
-# ver 2.1.0
-# Created By Charles Heizer
-# LLNL
+# ver 3.0.0
+# Created By Charles Heizer @ LLNL
 #
 # ***************************************************************************************
 
@@ -63,16 +62,8 @@ existsAndDelete ()
 
 function runClientActions 
 {
-
+	# Check in
 	/Library/MacPatch/Client/MPAgent -c
-	sleep 1
-
-	# Get Server List
-	/Library/MacPatch/Client/MPAgent -n
-	sleep 1
-
-	# Get SU Server List
-	/Library/MacPatch/Client/MPAgent -z
 	sleep 1
 
 	# Run Client Inventory Scan
@@ -87,32 +78,17 @@ function runClientActions
 		sleep 1
 		
 		# Run Client AV Scan
-		/Library/MacPatch/Client/MPAgentExec -a
-		sleep 1
-	else
-		CNT=`/usr/libexec/PlistBuddy -c "Print mpTasks" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist | grep Dict | wc -l`
-		#loop CNT
-		NXTDAY=$(date -j -v+1d +"%Y-%m-%d")
-		INT=0
-		while [ $INT -lt $CNT ]; do 
-			if [ `/usr/libexec/PlistBuddy -c "Print :mpTasks:$INT:cmd" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist` == "kMPVulScan" ]; then
-				/usr/libexec/PlistBuddy -c "Set :mpTasks:$INT:startdate $NXTDAY" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist
-			elif [ `/usr/libexec/PlistBuddy -c "Print :mpTasks:$INT:cmd" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist` == "kMPVulUpdate" ]; then
-				/usr/libexec/PlistBuddy -c "Set :mpTasks:$INT:startdate $NXTDAY" /Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist
-			fi
-			INT=`expr $INT + 1`
-		done
+		# /Library/MacPatch/Client/MPAgentExec -a
+		# sleep 1
 	fi
 }
 
 function removeOldRegFiles 
 {
 	existsAndDelete "/Library/Application Support/MacPatch/MacPatch.keychain"
-	#existsAndDelete "/Library/Application Support/MacPatch/.keys"
-	#existsAndDelete "/Library/Application Support/MacPatch/.keyHash"
-	#existsAndDelete "/Library/Application Support/MacPatch/.MacPatch.keychain"
+	existsAndDelete "/Library/Application Support/MacPatch/.keyHash"
+	existsAndDelete "/Library/Application Support/MacPatch/.MacPatch.keychain"
 	existsAndDelete "/Library/Application Support/MacPatch/gov.llnl.mp.plist"
-	existsAndDelete "/Library/Application Support/MacPatch/gov.llnl.mpagent.plist"
 }
 # ******************************************************************
 # Set Up Python Virtualenv
@@ -289,9 +265,10 @@ useParking=$c
 
 if [ $regEnabled == 1 ]; then
 	# Check to see if the client is already registered
-	/Library/MacPatch/Client/MPAgent -R
+	res=`/Library/MacPatch/Client/MPAgent -R`
 	if [ $? == 1 ]; then
 		sleep 1
+		# Remove old reg files, since client is not registered
 		removeOldRegFiles
 		# If reg key file exists we use that
 		# Register Client With Provided Key
@@ -344,14 +321,12 @@ sleep 3
 # ******************************************************************
 # Start LaunchAgent Apps *******************************************
 #
-# Note: On Mac OS X 10.6 and higher they have to stoped and started as 
-# the current logged in user.
-#
 
 if [ "$cUsr" != "null" ]; then
 	su -l $cUsr -c 'launchctl load -wF /Library/LaunchAgents/gov.llnl.mp.status.plist'
 fi
 
+# Kill the ClientStatus app, launchctl does not restart the app only the service
 /usr/bin/killall MPClientStatus
 
 # Without this, may have a hard time upgrading 

@@ -61,19 +61,7 @@ fi
 # ***************************************************************************************
 # MacPatch Pre-Deployment
 #
-
-# Remove the temp Migration Dir if exists
-if [ -d "/private/tmp/MPMigration" ]; then
-	rm -rf "/private/tmp/MPMigration"
-fi
-
-mkdir -p "/private/tmp/MPMigration"
-
-if [ -f "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist" ]; then
-	cp "/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist" "/private/tmp/MPMigration/gov.llnl.mp.tasks.plist"
-fi		
-
-
+		
 if [ -d "$MPClientDir" ]; then
 	echo "Removing $MPClientDir"
 	rm -rf "$MPClientDir"
