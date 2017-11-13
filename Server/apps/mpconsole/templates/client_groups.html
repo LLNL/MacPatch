@@ -33,14 +33,15 @@ Client Groups
 
 	$( document ).ready(function()
 	{
-		$('#table').bootstrapTable({
+		$('#table').bootstrapTable(
+		{
 			striped: true,
 			pagination: true,
 			sidePagination: 'client',
 			pageList: ['10', '25', '50', '100', 'All'],
 			search: true,
 			showRefresh: false,
-			resizable: true,
+			resizable: false,
 			sortable: true,
 			showColumns: false,
 			idField: 'group_id',

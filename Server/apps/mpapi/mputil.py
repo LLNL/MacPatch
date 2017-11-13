@@ -16,8 +16,11 @@ import hmac
 from ldap3 import Server, Connection
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 
+import json
+from M2Crypto import RSA, util
+
 from . import db
-from . model import MPAgentRegistration, MpClient, AdmGroupUsers, AdmUsers, AdmUsersInfo
+from . model import MPAgentRegistration, MpClient, AdmGroupUsers, AdmUsers, AdmUsersInfo, MpSiteKeys
 from . mplogger import log_Debug, log_Info, log_Error
 
 # ----------------------------------------------------------------------------
@@ -92,8 +95,9 @@ def isValidClientID(ClientID):
 		if not current_app.config['VERIFY_CLIENTID']:
 			return True
 
-
-	client_obj = MpClient.query.filter_by(cuuid=ClientID).first()
+	# Old Way, now check if client is registered
+	# client_obj = MpClient.query.filter_by(cuuid=ClientID).first()
+	client_obj = MPAgentRegistration.query.filter_by(cuuid=ClientID).first()
 
 	if client_obj:
 		return True
@@ -411,3 +415,20 @@ def return_data_for_server_key(key):
 		return _config[key]
 	else:
 		return _config
+
+# ----------------------------------------------------------------------------
+'''
+	Sign Message
+'''
+
+def signResultData(data):
+	qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
+	if qKeys is not None:
+		message = json.dumps(data)
+		sha1_hash = hashlib.sha1(message).digest()
+		rsa = RSA.load_key_string(qKeys.priKey.encode('utf-8'), callback=util.no_passphrase_callback)
+		signature = rsa.private_encrypt(sha1_hash, RSA.pkcs1_padding).encode('hex')
+
+		return signature
+	else:
+		return None

@@ -28,7 +28,7 @@
 								<label>Catalog URL</label>
 							</div>
 							<div class="col-sm-7">
-								<textarea class="form-control" id="catalog_url" rows="4">{{data['catalog_url'] or ''}}</textarea>
+								<textarea class="form-control" id="catalog_url" rows="4" name="catalog_url">{{data['catalog_url'] or ''}}</textarea>
 
 							</div>
 						</div>
@@ -92,12 +92,17 @@
 				cache: false,
 				processData: false,
 				contentType: false,
+				async:true,
 				error: function(jqXHR, textStatus, errorThrown){
 					alert("Server Failed to Update");
-				}
+				},
+				success : function(data) {
+                    // optional: do something when server-side processing is done
+                }
 			});
 
 			$('#modalDialog').modal('hide');
+			$("#myForm") = '';
 	   });
 	});
 </script>

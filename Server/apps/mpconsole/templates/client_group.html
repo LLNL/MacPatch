@@ -166,6 +166,18 @@ Client Group - {{group_name}}
 						</div>
 						<div class="row row-grid top10">
 							<div class="col-md-4">
+								<label>Pre-Stage Patches</label>
+							</div>
+							<div class="col-md-3">
+								<select class="form-control" name="pre_stage_patches">
+									<option value="1" {% if "1" == settings.pre_stage_patches %}selected{% endif %}>Yes</option>
+									<option value="0" {% if "0" == settings.pre_stage_patches %}selected{% endif %}>No</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="row row-grid top10">
+							<div class="col-md-4">
 							</div>
 							<div class="col-md-3 text-right">
 								<button type="button" class="btn btn-primary" id="settingsSaveButton">Save Settings</button>
@@ -223,7 +235,7 @@ Client Group - {{group_name}}
 			pageList: ['10', '25', '50', '100', 'All'],
 			search: true,
 			showRefresh: true,
-			resizable: true,
+			resizable: false,
 			sortable: true,
 			showColumns: true,
 			idField: 'cuuid',

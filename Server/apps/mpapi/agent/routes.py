@@ -14,6 +14,7 @@ from .. import db
 from .. mputil import *
 from .. model import *
 from .. mplogger import *
+from .. servers.routes import serverListForID, ServerInfo, suServerListForID
 
 parser = reqparse.RequestParser()
 
@@ -332,9 +333,22 @@ class MP_AgentConfigInfo(MPResource):
 
 			qGroupSettingsRev = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
 			if qGroupSettingsRev is not None:
-				agentConfigInfo["rev"] = qGroupSettingsRev.rev_settings
+				agentConfigInfo["settings"] = {'agent': qGroupSettingsRev.rev_settings,'tasks': qGroupSettingsRev.rev_tasks}
 				agentConfigInfo["group_id"] = group_id
-				agentConfigInfo["mdate"] = ""
+
+			else:
+				qGroupSettingsRev = MPGroupConfig()
+				setattr(qGroupSettingsRev, 'group_id', group_id)
+				setattr(qGroupSettingsRev, 'rev', 1)
+				setattr(qGroupSettingsRev, 'rev_tasks', 1)
+				setattr(qGroupSettingsRev, 'tasks_version', 1)
+				db.session.add(qGroupSettingsRev)
+				db.session.commit()
+
+				agentConfigInfo["settings"] = {'agent': 1, 'tasks': 1}
+
+			agentConfigInfo["settings"]['suservers'] = self.suserverRev()
+			agentConfigInfo["settings"]['servers'] = self.serverRev()
 
 			if group_id != 0:
 				return {"errorno": 0, "errormsg": 'none', "result": {'type': 'AgentConfigInfo', 'data': agentConfigInfo}}, 200
@@ -345,12 +359,27 @@ class MP_AgentConfigInfo(MPResource):
 
 			log_Error('[AgentConfigInfo][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))
 			return {"result": {}, "errorno": 500, "errormsg": exc.message}, 500
+
 		except Exception as e:
 
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			log_Error('[AgentConfigInfo][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
+
+	def suserverRev(self):
+		q = MpAsusCatalogList.query.filter(MpAsusCatalogList.listid == '1').first()
+		if q is not None:
+			return q.version
+		else:
+			return 0
+
+	def serverRev(self):
+		q = MpServerList.query.filter(MpServerList.listid == '1').first()
+		if q is not None:
+			return q.version
+		else:
+			return 0
 
 class MP_AgentConfig(MPResource):
 
@@ -371,27 +400,59 @@ class MP_AgentConfig(MPResource):
 					log_Error('[AgentConfig][GET]: Failed to verify Signature for client (' + cuuid + ')')
 					return {'result': '', 'errorno': 424, 'errormsg': 'Failed to verify Signature'}, 424
 
-			agentConfig = {}
+			qClient = MpClient.query.filter(MpClient.cuuid == cuuid).first()
+
+			# Return Payload Struct
+			agentConfig = {'schema': 310, 'revs': {}, 'settings': { 'agent': { 'rev': 0, 'data': {} }, 'servers': { 'rev': 0, 'data': [] },
+													'suservers': {'rev': 0, 'data': []}, 'tasks': { 'rev': 0, 'data': [] } }}
+
+			d_revs = {'agent':0,'servers':0,'suservers':0,'tasks':0}
+			d_agent = {}
+
 			group_id = 0
 			qGroupMembership = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == cuuid).first()
 			if qGroupMembership is not None:
 				group_id = qGroupMembership.group_id
+			else:
+				# No Group Membership, return Default for now
+				qGroup = MpClientGroups.query.filter(MpClientGroups.group_name == 'Default').first()
+				group_id = qGroup.group_id
+
 
 			qAgentSettings= MpClientSettings.query.filter(MpClientSettings.group_id == group_id).all()
 			if qAgentSettings is not None:
 				for row in qAgentSettings:
 					if row.key == "patch_group":
-						agentConfig["patch_group_id"] = row.value
-						agentConfig[row.key] = self.patchGroupName(row.value)
+						d_agent["patch_group_id"] = row.value
+						d_agent[row.key] = self.patchGroupName(row.value)
 					elif row.key == "inherited_software_group":
-						agentConfig["inherited_software_group_id"] = row.value
-						agentConfig[row.key] = self.swGroupName(row.value)
+						d_agent["inherited_software_group_id"] = row.value
+						d_agent[row.key] = self.swGroupName(row.value)
 					elif row.key == "software_group":
-						agentConfig["software_group_id"] = row.value
-						agentConfig[row.key] = self.swGroupName(row.value)
+						d_agent["software_group_id"] = row.value
+						d_agent[row.key] = self.swGroupName(row.value)
 					else:
-						agentConfig[row.key] = row.value
-						
+						d_agent[row.key] = row.value
+
+			d_revs['agent'] = self.agentSettingsRev(group_id)
+			agentConfig['settings']['agent']['rev'] = d_revs['agent']
+			agentConfig['settings']['agent']['data'] = d_agent
+
+			_serversData = serverListForID(1)
+			agentConfig['settings']['servers']['rev'] = _serversData.version
+			agentConfig['settings']['servers']['data'] = _serversData.servers
+			d_revs['servers'] = _serversData.version
+
+			_suserversData = suServerListForID(1, qClient.osver)
+			agentConfig['settings']['suservers']['rev'] = _suserversData.version
+			agentConfig['settings']['suservers']['data'] = _suserversData.servers
+			d_revs['suservers'] = _suserversData.version
+
+			agentConfig['settings']['tasks'] = self.getTasksData(group_id)
+			d_revs['tasks'] = agentConfig['settings']['tasks']['rev']
+
+			agentConfig['revs'] = d_revs
+
 			if group_id != 0:
 				return {"errorno": 0, "errormsg": 'none', "result": {'type': 'AgentConfig', 'data': agentConfig}}, 200
 			else:
@@ -406,6 +467,10 @@ class MP_AgentConfig(MPResource):
 			log_Error('[AgentConfig][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
 
+	def agentSettingsRev(self,group_id):
+		qGroupInf = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
+		return qGroupInf.rev_settings
+
 	def swGroupName(self, id):
 		res = MpSoftwareGroup.query.filter(MpSoftwareGroup.gid == id).first()
 		if res is not None:
@@ -419,6 +484,20 @@ class MP_AgentConfig(MPResource):
 			return res.name
 		else:
 			return "NA"
+
+	def getTasksData(self, group_id):
+
+		result = {'rev': 0, 'data': []}
+		tasks = []
+		qGroupInf = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
+		result['rev'] = qGroupInf.rev_tasks
+
+		qTasks = MpClientTasks.query.filter(MpClientTasks.group_id == group_id).all()
+		for row in qTasks:
+			tasks.append(row.asDict)
+
+		result['data'] = tasks
+		return result
 
 class MP_AgentConfigVersion(MPResource):
 
@@ -463,7 +542,6 @@ class MP_AgentConfigVersion(MPResource):
 			log_Error('[AgentConfigVersion][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': 0}, 500
-
 
 ''' ------------------------------- '''
 ''' NOT A WEB SERVICE CLASS         '''

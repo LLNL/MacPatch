@@ -1,18 +1,22 @@
-from flask import request
 from flask_restful import reqparse
 # from flask_restful_swagger import swagger
 
-from . import *
-from .. import db
-from . agentRegistration import *
-from .. mputil import *
-from .. model import *
-from .. mplogger import *
+import base64
+import hashlib
+from datetime import datetime
 
 from M2Crypto import RSA
-import hashlib
-import base64
-from datetime import datetime
+from flask_restful import reqparse
+
+from . import *
+
+from .. model import *
+from .. mplogger import *
+from .. mputil import *
+from .. shared.agentRegistration import *
+
+
+# from flask_restful_swagger import swagger
 
 # Client Reg Test
 class Test(MPResource):
@@ -61,6 +65,8 @@ class Registration(MPResource):
 		'''
 
 		content = request.get_json(silent=True)
+		print content
+
 		if all(key in content for key in ("cKey", "CPubKeyPem", "ClientHash", "HostName", "SerialNo")):
 
 			valid_reg_key   = False

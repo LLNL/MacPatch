@@ -8,6 +8,7 @@ import json
 import uuid
 import base64
 import hashlib
+import sys
 from datetime import datetime
 
 from . import software
@@ -41,7 +42,7 @@ def groups():
 			_row['title'] = c.info
 			_cols.append(_row)
 
-	options = {0:"Development", 1:"Production", 2:"QA"}
+	options = {0:"Development", 1:"Production", 2:"QA", 3:"Disabled"}
 
 	_rows = []
 	for r in qGet:
@@ -49,14 +50,19 @@ def groups():
 		for c in _cols:
 			_obj = "r." + c['field']
 			_objVal = eval(_obj)
-
-			if c['field'] == 'mdate':
+			try:
+				if c['field'] == 'mdate':
+					_drow[c['field']] = _objVal.strftime("%Y-%m-%d %H:%M:%S")
+				elif c['field'] == 'state':
+					_drow[c['field']] = options[_objVal]
+				else:
+					_drow[c['field']] = _objVal
+			except Exception as e:
+				exc_type, exc_obj, exc_tb = sys.exc_info()
+				print r.asDict
+				print c['field']
 				print _objVal
-				_drow[c['field']] = _objVal.strftime("%Y-%m-%d %H:%M:%S")
-			elif c['field'] == 'state':
-				_drow[c['field']] = options[_objVal]
-			else:
-				_drow[c['field']] = _objVal
+				print e.message
 
 		_rows.append(_drow)
 

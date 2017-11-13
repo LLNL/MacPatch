@@ -94,8 +94,18 @@ def register_extensions(app):
 	migrate.init_app(app, db)
 
 def register_blueprints(app):
+
+	if app.config['ALLOW_CONTENT_DOWNLOAD']:
+		# If Debug, allow file download, else prod use NGINX
+		# for file downloads
+		from .main import main as bp_main
+		app.register_blueprint(bp_main, url_prefix='/mp-content')
+
 	from .agent import agent as bp_agent
 	app.register_blueprint(bp_agent, url_prefix=app.config['URL_PREFIX'])
+
+	from .agent_2 import agent_2 as bp_agent_2
+	app.register_blueprint(bp_agent_2, url_prefix='/api/v2')
 
 	from .antivirus import antivirus as bp_antivirus
 	app.register_blueprint(bp_antivirus, url_prefix=app.config['URL_PREFIX'])
@@ -109,14 +119,26 @@ def register_blueprints(app):
 	from .checkin import checkin as bp_checkin
 	app.register_blueprint(bp_checkin, url_prefix=app.config['URL_PREFIX'])
 
+	from .checkin_2 import checkin_2 as bp_checkin_2
+	app.register_blueprint(bp_checkin_2, url_prefix='/api/v2')
+
 	from .inventory import inventory as bp_inventory
 	app.register_blueprint(bp_inventory, url_prefix=app.config['URL_PREFIX'])
+
+	from .inventory_2 import inventory_2 as bp_inventory_2
+	app.register_blueprint(bp_inventory_2, url_prefix='/api/v2')
 
 	from .mac_profiles import mac_profiles as bp_mac_profiles
 	app.register_blueprint(bp_mac_profiles, url_prefix=app.config['URL_PREFIX'])
 
+	from .mac_profiles_2 import mac_profiles_2 as bp_mac_profiles_2
+	app.register_blueprint(bp_mac_profiles_2, url_prefix='/api/v2')
+
 	from .patches import patches as bp_patches
 	app.register_blueprint(bp_patches, url_prefix=app.config['URL_PREFIX'])
+
+	from .patches_2 import patches_2 as bp_patches_2
+	app.register_blueprint(bp_patches_2, url_prefix='/api/v2')
 
 	from .provisioning import provisioning as bp_provisioning
 	app.register_blueprint(bp_provisioning, url_prefix=app.config['URL_PREFIX'])
@@ -124,11 +146,20 @@ def register_blueprints(app):
 	from .register import register as bp_register
 	app.register_blueprint(bp_register, url_prefix=app.config['URL_PREFIX'])
 
+	from .register_2 import register_2 as bp_register_2
+	app.register_blueprint(bp_register_2, url_prefix='/api/v2')
+
 	from .servers import servers as bp_servers
 	app.register_blueprint(bp_servers, url_prefix=app.config['URL_PREFIX'])
 
+	from .servers_2 import servers_2 as bp_servers_2
+	app.register_blueprint(bp_servers_2, url_prefix='/api/v2')
+
 	from .software import software as bp_software
 	app.register_blueprint(bp_software, url_prefix=app.config['URL_PREFIX'])
+
+	from .software_2 import software_2 as bp_software_2
+	app.register_blueprint(bp_software_2, url_prefix='/api/v2')
 
 	from .srv_utils import srv as bp_srv_utils
 	app.register_blueprint(bp_srv_utils, url_prefix=app.config['URL_PREFIX'])

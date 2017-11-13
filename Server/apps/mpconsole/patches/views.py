@@ -128,6 +128,34 @@ def applePatchWizardUpdate():
 
 	return render_template('patches/patches_apple.html')
 
+''' AJAX Request '''
+@patches.route('/apple/bulk/toQA',methods=['GET'])
+@cross_origin()
+def migrateApplePatchesToQA():
+
+	query = ApplePatchAdditions.query.filter(ApplePatchAdditions.patch_state == 'Create').all()
+	if query is not None:
+		for row in query:  # all() is extra
+			row.patch_state = 'QA'
+
+	db.session.commit()
+
+	return json.dumps({'data': {}}, default=json_serial), 200
+
+''' AJAX Request '''
+@patches.route('/apple/bulk/toProd',methods=['GET'])
+@cross_origin()
+def migrateApplePatchesToProd():
+
+	query = ApplePatchAdditions.query.filter(ApplePatchAdditions.patch_state == 'QA').all()
+	if query is not None:
+		for row in query:  # all() is extra
+			row.patch_state = 'Production'
+
+	db.session.commit()
+
+	return json.dumps({'data': {}}, default=json_serial), 200
+
 '''
 ----------------------------------------------------------------
 Custom Patches
@@ -541,7 +569,7 @@ def patchGroupMemberDelete(id):
 @login_required
 def patchGroupContentEdit(id):
 	patchGroup = MpPatchGroup().query.filter(MpPatchGroup.id == id).first()
-	columns = [('Enabled','Enabled'), ('id','id'), ('suname', 'suname'), ('name','Patch'), ('title', 'Title'), ('version','Version'),
+	columns = [('state','state'), ('id','id'), ('suname', 'suname'), ('name','Patch'), ('title', 'Title'), ('version','Version'),
 				('reboot', 'Reboot'), ('type', 'Patch Type'), ('severity','Severity'),
 				('patch_state','Patch State'),  ('postdate','Post Date')]
 
@@ -590,27 +618,107 @@ def patchGroupContentEdit(id):
 
 	return render_template('patches/patch_group_patches.html', name=patchGroup.name, pid=id, data=_results, columns=columns, isOwner=_type, groupID=id)
 
+@patches.route('/group/list/<group_id>')
+def patchGroupContent(group_id):
+
+	total = 0
+	patchGroup = MpPatchGroup().query.filter(MpPatchGroup.id == group_id).first()
+	columns = [('state','state'), ('id','id'), ('suname', 'suname'), ('name','Patch'), ('title', 'Title'), ('version','Version'),
+				('reboot', 'Reboot'), ('type', 'Patch Type'), ('severity','Severity'),
+				('patch_state','Patch State'),  ('postdate','Post Date')]
+
+	if patchGroup.type == 0:
+		_pType = "'Production'"
+	elif patchGroup.type == 1:
+		_pType = "'Production','QA'"
+	elif patchGroup.type == 2:
+		_pType = "'Production','QA','Dev'"
+	else:
+		_pType = "'Production'"
+
+	# Get Reboot Count
+	sql = text("""SELECT DISTINCT b.*, IFNULL(p.patch_id , 'NA') as Enabled
+				FROM
+					combined_patches_view b
+				LEFT JOIN (
+					SELECT patch_id FROM mp_patch_group_patches
+					Where patch_group_id = '""" + group_id + """'
+				) p ON b.id = p.patch_id
+				WHERE b.patch_state IN (""" + _pType + """)""")
+
+	print sql
+	result = db.engine.execute(sql)
+	_results = []
+	for v in result:
+		_row = {}
+		for column, value in v.items():
+			if column != 'patch_install_weight' and column != 'patch_reboot_override' and column != 'size' and column != 'active':
+				if column == 'postdate':
+					if value is not None:
+						_row[column] = value.strftime("%Y-%m-%d %H:%M:00")
+					else:
+						_row[column] = "1970-01-01 12:00:00"
+				elif column == 'Enabled':
+					if value == 'NA':
+						_row['state'] = 0
+					else:
+						_row['state'] = 1
+				else:
+					# Check for \r\n in tile to clean up, javascript does not like it
+					if isinstance(value, unicode):
+						_row[column] = value.replace('\n', ' ').replace('\r', '')
+					else:
+						_row[column] = value
+
+		_results.append(_row)
+
+	return json.dumps({'data': _results, 'total': total}, default=json_serial), 200
+
 @patches.route('/group/add/<group_id>/<patch_id>')
+@login_required
 def patchGroupContentAdd(group_id, patch_id):
 
+
 	if isOwnerOfGroup(group_id):
-		patchGroupPatch = MpPatchGroupPatches()
-		setattr(patchGroupPatch, 'patch_group_id', group_id)
-		setattr(patchGroupPatch, 'patch_id', patch_id)
-		db.session.add(patchGroupPatch)
-		db.session.commit()
+		qry = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id,
+												MpPatchGroupPatches.patch_id == patch_id).first()
+		if qry is None:
+			patchGroupPatch = MpPatchGroupPatches()
+			setattr(patchGroupPatch, 'patch_group_id', group_id)
+			setattr(patchGroupPatch, 'patch_id', patch_id)
+			db.session.add(patchGroupPatch)
+			db.session.commit()
 	else:
 		return json.dumps({'error': 401, 'errormsg': 'Unauthorized user.'}),401
 
 	return json.dumps({'error': 0}), 200
 
+@patches.route('/group/add/bulk/<group_id>', methods=['POST'])
+@login_required
+def patchGroupContentAddBulk(group_id):
+	dataStr = request.data
+	data = json.loads(dataStr)
+
+	for patch_id in data:
+		qry = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id,
+												MpPatchGroupPatches.patch_id == patch_id).first()
+		if qry is None:
+			qryAdd = MpPatchGroupPatches()
+			setattr(qryAdd, 'patch_group_id', group_id)
+			setattr(qryAdd, 'patch_id', patch_id)
+			db.session.add(qryAdd)
+
+	db.session.commit()
+	return json.dumps({'errorno': 0}), 200
+
 @patches.route('/group/remove/<group_id>/<patch_id>')
 def patchGroupContentDel(group_id, patch_id):
 
 	if isOwnerOfGroup(group_id):
-		patchGroupPatch = MpPatchGroupPatches().query.filter(MpPatchGroupPatches.patch_group_id == group_id,
+		patchGroupPatch = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id,
 															MpPatchGroupPatches.patch_id == patch_id).first()
 		if patchGroupPatch is not None:
+			print "Remove " + patchGroupPatch.patch_id
 			db.session.delete(patchGroupPatch)
 			db.session.commit()
 	else:
@@ -649,7 +757,7 @@ def patchGroupPatchesSave(group_id):
 			else:
 				if patch['type'] == "Apple":
 					row["name"] = patch['name']
-					row["patchid"] = patch['id']
+					row["patch_id"] = patch['id']
 					row["baseline"] = "0"
 					row["patch_install_weight"] = patch['patch_install_weight']
 					row["patch_reboot_override"] = patch['patch_reboot_override']
@@ -658,7 +766,7 @@ def patchGroupPatchesSave(group_id):
 					_patchData['AppleUpdates'].append(row)
 					continue
 				else:
-					row["patchid"] = patch['id']
+					row["patch_id"] = patch['id']
 					row["patch_install_weight"] = patch['patch_install_weight']
 					row["severity"] = patch['severity']
 					row["patches"] = customDataForPatchID(patch['id'])
@@ -745,74 +853,15 @@ Patch Status
 @login_required
 def requiredList():
 	columns = [('cuuid', 'Client ID', '0'), ('patch', 'Patch', '1'), ('description', 'Description', '1'),
-				('restart', 'Reboot', '1'),
-				('hostname', 'HostName', '1'), ('ipaddr', 'IP Address', '1'), ('osver', 'OS Version', '1'),
-				('type', 'Type', '1'),('mdate', 'Date', '1')]
+				('restart', 'Reboot', '1'), ('hostname', 'HostName', '1'), ('ipaddr', 'IP Address', '1'),
+				('osver', 'OS Version', '1'), ('type', 'Type', '1'),('date', 'Date', '1')]
 
 	return render_template('patches/patches_detected.html', columns=columns, pageTitle="Required Patches")
-'''
-def requiredList():
-
-	now = datetime.now()
-	columns = [('cuuid','Client ID','0'),('patch','Patch','1'),('description','Description','1'),('restart','Reboot','1'),
-	('hostname','HostName','1'),('ipaddr','IP Address','1'),('osver','OS Version','1'),('type','Type','1'),('mdate','Days Needed','1')]
-
-	colsForQuery = ['cuuid','patch','description','restart','mdate']
-	qApple = MpClientPatchesApple.query.join(MpClient, MpClient.cuuid == MpClientPatchesApple.cuuid).add_columns(
-		MpClient.hostname, MpClient.osver, MpClient.ipaddr).all()
-
-	qThird = MpClientPatchesThird().query.join(MpClient, MpClient.cuuid == MpClientPatchesThird.cuuid).add_columns(
-		MpClient.hostname, MpClient.osver, MpClient.ipaddr).all()
-
-	_results = []
-	for p in qApple:
-		row = {}
-		for x in colsForQuery:
-			y = "p[0]."+x
-			if x == 'mdate':
-				row[x] = daysFromDate(now, eval(y))
-			elif x == 'restart':
-				if eval(y)[0] == 'Y':
-					row[x] = 'Yes'
-				else:
-					row[x] = 'No'
-			else:
-				row[x] = eval(y)
-
-		row['type'] = 'Apple'
-		row['hostname'] = p.hostname
-		row['ipaddr'] = p.ipaddr
-		row['osver'] = p.osver
-		_results.append(row)
-
-	for p in qThird:
-		row = {}
-		for x in colsForQuery:
-			y = "p[0]."+x
-			if x == 'mdate':
-				row[x] = daysFromDate(now, eval(y))
-			elif x == 'restart':
-				if eval(y)[0] == 'Y':
-					row[x] = 'Yes'
-				else:
-					row[x] = 'No'
-			else:
-				row[x] = eval(y)
-
-		row['type'] = 'Third'
-		row['hostname'] = p.hostname
-		row['ipaddr'] = p.ipaddr
-		row['osver'] = p.osver
-		_results.append(row)
-
-
-	return render_template('patch_status.html', data=_results, columns=columns, pageTitle="Required Patches")
-'''
 
 ''' AJAX Route '''
 @patches.route('/required/<limit>/<offset>/<search>/<sort>/<order>')
 def requiredListPaged(limit,offset,search,sort,order):
-
+	# This has to be cleaned up
 	total = 0
 	getNewTotal = True
 	if 'my_search_name' in session:
@@ -826,9 +875,19 @@ def requiredListPaged(limit,offset,search,sort,order):
 		session['my_search_total'] = 0
 		session['my_search'] = None
 
-	colsForQuery = ['cuuid', 'patch', 'description', 'type', 'restart', 'mdate']
+	# Query for Data
 	qResult = requiredQuery(search, int(offset), int(limit), sort, order, getNewTotal)
-	query = qResult[0]
+
+	# Result is a tuple, records = 0, rowCount = 1
+	_result = qResult[0]
+
+	# Parse results, and create list for json result
+	_results = []
+	for v in _result:
+		_row = {}
+		for column, value in v.items():
+			_row[column] = value
+		_results.append(_row)
 
 	session['my_search_name'] = 'requiredList'
 
@@ -837,65 +896,63 @@ def requiredListPaged(limit,offset,search,sort,order):
 		session['my_search_total'] = total
 		session['my_search'] = search
 
-	_results = []
-	for p in query:
-		row = {}
-		for x in colsForQuery:
-			y = "p[0]."+x
-			if x == 'mdate':
-				row[x] = eval(y)
-			elif x == 'type':
-				row[x] = eval(y).title()
-			else:
-				row[x] = eval(y)
-
-		row['hostname'] = p.hostname
-		row['ipaddr'] = p.ipaddr
-		row['osver'] = p.osver
-		_results.append(row)
-
 	return json.dumps({'data': _results, 'total': total}, default=json_serial), 200
 
-def requiredQuery(filterStr='undefined', page=0, page_size=0, sort='mdate', order='desc', getCount=True):
+def requiredQuery(filterStr='undefined', page=0, page_size=0, sort='date', order='desc', getCount=True):
+
+	columns = [('cuuid', 'Client ID', '0'), ('patch', 'Patch', '1'), ('description', 'Description', '1'),
+				('restart', 'Reboot', '1'), ('hostname', 'HostName', '1'), ('ipaddr', 'IP Address', '1'),
+				('osver', 'OS Version', '1'), ('type', 'Type', '1'),('date', 'Date', '1')]
 
 	if sort == 'undefined':
-		sort = 'mp_client_patches.mdate'
+		sort = 'date'
+	if order == 'undefined':
+		sort = 'desc'
 
-	if sort in ['mdate', 'patch', 'patch_id', 'type', 'description', 'restart']:
-		sort = 'mp_client_patches.'+sort
-
-	if sort in ['hostname', 'ipaddr', 'osver']:
-		sort = 'mp_clients.' + sort
-
+	# Define Sort and Order By
 	order_by_str = sort + ' ' + order
 
+	sql0 = None
+	sql1 = None
+	res1 = None
+
 	filterStr = str(filterStr)
+	offset = page * page_size
+
 	if filterStr == 'undefined' or len(filterStr) <= 0:
-		query = MpClientPatches.query.join(MpClient, MpClient.cuuid == MpClientPatches.cuuid).add_columns(
-			MpClient.hostname, MpClient.osver, MpClient.ipaddr).order_by(str(order_by_str))
+		# Query for All Records, sql0 is used for count, sql1 is the query for paging
+		sql0 = text("""SELECT date FROM mp_client_patches_full_view""")
+		sql1 = text("""SELECT v.*, c.hostname, c.ipaddr, c.osver FROM mp_client_patches_full_view v
+					Left Join mp_clients c ON c.cuuid = v.cuuid
+					ORDER BY """ + order_by_str + """ LIMIT """ + str(offset) + """,""" + str(page_size))
 	else:
-		query = MpClientPatches.query.join(MpClient, MpClient.cuuid == MpClientPatches.cuuid).add_columns(
-			MpClient.hostname, MpClient.osver, MpClient.ipaddr).filter(or_(MpClientPatches.patch.contains(filterStr),
-																		MpClientPatches.patch_id.contains(filterStr),
-																		MpClientPatches.type.contains(filterStr),
-																		MpClientPatches.description.contains(filterStr),
-																		MpClientPatches.restart.contains(filterStr),
-																		MpClient.hostname.contains(filterStr),
-																		MpClient.osver.contains(filterStr),
-																		MpClient.ipaddr.contains(filterStr))).order_by(str(order_by_str))
+		# Query used when searching, sql0 is not used for count since search is the total
+		isFirst = True
+		whereStr = 'WHERE'
+		for col in columns:
+			if col[2] == '1':
+				if isFirst:
+					whereStr = whereStr + " " + col[0] + " like '%" + filterStr + "%'"
+					isFirst = False
+				else:
+					whereStr = whereStr + " OR " + col[0] + " like '%" + filterStr + "%'"
 
-	# count of rows
-	if getCount:
-		rowCounter = query.count()
-	else:
-		rowCounter = 0
+		sql1 = text("""SELECT v.*, c.hostname, c.ipaddr, c.osver FROM mp_client_patches_full_view v
+					Left Join mp_clients c ON c.cuuid = v.cuuid
+					""" + whereStr + """
+					ORDER BY """ + order_by_str + """ LIMIT """ + str(offset) + """,""" + str(page_size))
 
-	if page_size:
-		query = query.limit(page_size)
-	if page:
-		# query = query.offset(page*page_size)
-		query = query.offset(page)
-	return (query, rowCounter)
+	# Execute the SQL statement(s)
+	if sql0 is not None:
+		res1 = db.engine.execute(sql0)
+		recCounter = res1.rowcount
+
+	if sql1 is not None:
+		result = db.engine.execute(sql1)
+		recCounter = result.rowcount
+
+	# Return tuple, query results and a record count
+	return (result, recCounter)
 
 @patches.route('/installed')
 @login_required

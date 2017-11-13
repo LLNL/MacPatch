@@ -78,7 +78,7 @@ class SoftwareTasksForGroup(MPResource):
 				return {'errorno': 0, 'errormsg': '', 'result': _group_data['result']}, 200
 			else:
 				log_Error('[SoftwareTasksForGroup][Get][%s] Group (%s) Not Found' % (cuuid, groupName))
-				return {'errorno': 0, 'errormsg': 'Group Not Found', 'result': {}}, 202
+				return {'errorno': 0, 'errormsg': 'No Data for Group', 'result': {}}, 202
 
 		except IntegrityError, exc:
 			log_Error('[SoftwareTasksForGroup][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))

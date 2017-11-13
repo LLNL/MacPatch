@@ -41,9 +41,13 @@ class BaseConfig:
 	VERIFY_CLIENTID         = True
 	REQUIRE_SIGNATURES      = False
 	ALLOW_MIXED_SIGNATURES  = True
+
 	CONTENT_DIR             = '/opt/MacPatch/Content'
+	WEB_CONTENT_DIR 	    = '/opt/MacPatch/Content/Web'
 	AGENT_CONTENT_DIR       = '/opt/MacPatch/Content/Web/clients'
 	PATCH_CONTENT_DIR       = '/opt/MacPatch/Content/Web/patches'
+
+	ALLOW_CONTENT_DOWNLOAD	= False
 
 
 class DevelopmentConfig(BaseConfig):

@@ -183,6 +183,9 @@
 									</ul>
 								</li>
 								<li>
+									<a href="{{ url_for('registration.index') }}"><i class="fa fa-handshake-o fa-fw"></i> Registration</a>
+								</li>
+								<li>
 									<a href="{{ url_for('console.mpServerView') }}"><i class="fa fa-server fa-fw"></i> MacPatch Servers</a>
 								</li>
 								<li>
@@ -251,6 +254,8 @@
 	<!-- jQuery -->
 
 	<script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+
+	{% block jsPre %}{% endblock %}
 
 	<!-- Bootstrap Core JavaScript -->
 	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>

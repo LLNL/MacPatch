@@ -132,7 +132,7 @@ MacPatch Servers
 
 			if (confirm("Are you sure you want to remove these servers?") == true)
 			{
-				var _url = "/servers/asus";
+				var _url = "/console/servers/asus/update";
 				$.ajax({
 					url: _url,
 					type: 'DELETE',
@@ -144,7 +144,7 @@ MacPatch Servers
 						alert(jsonValue.errormsg);
 					},
 					success: function () {
-						alert("Plugin(s) removed successfully.");
+						alert("Software update server(s) removed successfully.");
 						$_table.bootstrapTable('refresh');
 					}
 				});

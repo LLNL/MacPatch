@@ -73,17 +73,16 @@
 			pagination: true,
 			queryParamsType: "limit",
 			sidePagination: "server",
+			showRefresh: true,
 			columns: [
 				{% for col in columns %}
 					{
-
 						{% if col[2] == '0' %}
 						visible: false,
 						{% endif %}
 						sortable: true,
 						field: '{{col[0]}}',
 						title: '{{col[1]}}'
-
 					},
 				{% endfor %}
 			]

@@ -67,11 +67,11 @@ def create_app(config_object=DefaultConfig):
 	# Configure authentication
 	login_manager.init_app(app)
 	login_manager.login_view = "auth.login"
-	toolbar.init_app(app)
+	#toolbar.init_app(app)
 
 	# wrap the flask app and give a heathcheck url
-	health = HealthCheck(app, "/healthcheck")
-	envdump = EnvironmentDump(app, "/environment")
+	#health = HealthCheck(app, "/healthcheck")
+	#envdump = EnvironmentDump(app, "/environment")
 
 	@app.teardown_request
 	def shutdown_session(exception):
@@ -130,14 +130,17 @@ def create_app(config_object=DefaultConfig):
 	from .patches import patches as patches_blueprint
 	app.register_blueprint(patches_blueprint, url_prefix='/patches')
 
+	from .registration import registration as registration_blueprint
+	app.register_blueprint(registration_blueprint, url_prefix='/registration')
+
+	from .reports import reports as reports_blueprint
+	app.register_blueprint(reports_blueprint, url_prefix='/reports')
+
 	from .software import software as software_blueprint
 	app.register_blueprint(software_blueprint, url_prefix='/software')
 
 	from .osmanage import osmanage as osmanage_blueprint
 	app.register_blueprint(osmanage_blueprint, url_prefix='/osmanage')
-
-	from .reports import reports as reports_blueprint
-	app.register_blueprint(reports_blueprint, url_prefix='/reports')
 
 	from .console import console as console_blueprint
 	app.register_blueprint(console_blueprint, url_prefix='/console')

@@ -187,6 +187,7 @@ class UploadAutoPKGPatch(MPResource):
 			upload_dir = os.path.join(current_app.config['PATCH_CONTENT_DIR'], patch_id)
 
 			if not os.path.isdir(upload_dir):
+				log_Debug('[UploadAutoPKGPatch][Post]: Create upload directory  %s' % (upload_dir))
 				os.makedirs(upload_dir)
 
 			file.save(os.path.join(upload_dir, file.filename))

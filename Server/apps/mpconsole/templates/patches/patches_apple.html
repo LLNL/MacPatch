@@ -45,7 +45,7 @@ Apple Patches
 				pageList: ['10', '20', '50', '100', 'All'],
 				search: true,
 				showRefresh: false,
-				resizable: true,
+				resizable: false,
 				sortable: true,
 				showColumns: false,
 				detailView: true,
@@ -172,6 +172,52 @@ Apple Patches
 			alert('You click description action, row: ' + JSON.stringify(row));
 		}
 	};
+
+	var $table = $('#table');
+	$(function ()
+	{
+		$('#qaButton').click(function ()
+		{
+			if (confirm("Are you sure you want to change the state on all \"Create\" to \"QA\"?") == true)
+			{
+				var _url = "/patches/apple/bulk/toQA";
+				$.ajax({
+					url: _url,
+					type: 'GET',
+					cache: false,
+					error: function (request, status, error)
+					{
+						jsonValue = jQuery.parseJSON( request.responseText );
+						alert(jsonValue.errormsg);
+					},
+					success: function () {
+						$table.bootstrapTable('refresh');
+					}
+				});
+			}
+		});
+
+		$('#prodButton').click(function ()
+		{
+			if (confirm("Are you sure you want to change the state on all \"QA\" to \"Production\"?") == true)
+			{
+				var _url = "/patches/apple/bulk/toProd";
+				$.ajax({
+					url: _url,
+					type: 'GET',
+					cache: false,
+					error: function (request, status, error)
+					{
+						jsonValue = jQuery.parseJSON( request.responseText );
+						alert(jsonValue.errormsg);
+					},
+					success: function () {
+						$table.bootstrapTable('refresh');
+					}
+				});
+			}
+		});
+	});
 
 	</script>
 {% endblock %}

@@ -2,7 +2,7 @@ from flask import current_app
 
 def log_Crit(logString):
 	current_app.logger.critical(logString)
-	sendMsgOnError(logString)
+	#sendMsgOnError(logString)
 
 def log_Error(logString):
 	current_app.logger.error(logString)

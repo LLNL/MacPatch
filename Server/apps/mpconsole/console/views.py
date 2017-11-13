@@ -1,5 +1,6 @@
 from flask import render_template, jsonify, request, session, g
 from flask.ext.security import login_required
+from sqlalchemy import desc
 import json
 
 from . import console
@@ -144,7 +145,6 @@ def agentDeploy(tab=1):
 			_row[column] = value
 
 		_row['rid'] = v.rid
-		print _row
 		_filters.append(_row)
 
 	groupResult['Agents'] = {'data': _agents, 'columns': sortedCols}
@@ -171,7 +171,6 @@ def agentsList():
 			row[c[0]] = eval(y)
 
 		_results.append(row)
-		print row
 
 	return json.dumps({'data': _results, 'total': 0}, default=json_serial), 200
 
@@ -192,7 +191,6 @@ def agentsFiltersList():
 			row[c[0]] = eval(y)
 
 		_results.append(row)
-		print row
 
 	return json.dumps({'data': _results, 'total': 0}, default=json_serial), 200
 
@@ -244,7 +242,6 @@ def agentConfig():
 def agentDeployRemove():
 
 	_filters = request.form['filters'].split(",")
-	print request.form
 	for f in _filters:
 		q_remove = MpClientAgent.query.filter(MpClientAgent.puuid == str(f)).delete()
 		if q_remove:
@@ -258,7 +255,6 @@ def agentDeployFilterRemove():
 
 	_filters = request.form['filters'].split(",")
 	for f in _filters:
-		print "Remove " + f
 		q_remove = MpClientAgentsFilter.query.filter(MpClientAgentsFilter.rid == int(f)).delete()
 		if q_remove:
 			db.session.commit()
@@ -287,7 +283,9 @@ def agentPluginsList():
 				('pluginVersion', 'Version', '1'), ('hash', 'Hash', '1'), ('active', 'Enabled', '1')]
 
 	# agents = MPPluginHash.query.all()
-	plugins = MPPluginHash.query.order_by("mp_agent_plugins.pluginBundleID").order_by("mp_agent_plugins.rid desc").all()
+	# stmt = select([users_table]).order_by(desc(users_table.c.name))
+	# plugins = MPPluginHash.query.order_by("mp_agent_plugins.pluginBundleID").order_by("mp_agent_plugins.rid desc").all()
+	plugins = MPPluginHash.query.order_by(MPPluginHash.pluginBundleID).order_by(desc(MPPluginHash.rid)).all()
 
 	_results = []
 	for p in plugins:
@@ -391,7 +389,6 @@ def mpServersList():
 				row[c[0]] = res
 
 		_results.append(row)
-		print row
 
 	return json.dumps({'data': _results, 'total': 0}, default=json_serial), 200
 
@@ -406,32 +403,57 @@ def mpServerEdit(id):
 
 	return render_template('mp_server_update.html', data=_filter)
 
-@console.route('/servers/mp/update', methods=['POST'])
+@console.route('/servers/mp/update', methods=['POST', 'DELETE'])
 @login_required
 def mpServerUpdate():
 
 	_form = request.form
-	isNew = False
-	if _form['rid'] == '':
-		isNew = True
-		x = MpServer()
-	else:
+
+	if request.method == 'POST':
+		isNew = False
+		if _form['rid'] == '':
+			isNew = True
+			x = MpServer()
+		else:
+			x = MpServer.query.filter(MpServer.rid == _form['rid']).first()
+
+		setattr(x, 'server', _form['server'])
+		setattr(x, 'port', _form['port'])
+		setattr(x, 'useSSL', _form['useSSL'])
+		setattr(x, 'allowSelfSignedCert', _form['allowSelfSignedCert'])
+		setattr(x, 'isMaster', _form['isMaster'])
+		setattr(x, 'isProxy', _form['isProxy'])
+		setattr(x, 'active', _form['active'])
+		setattr(x, 'listid', '1')
+
+		if isNew:
+			db.session.add(x)
+
+		db.session.commit()
+		updateServerRev()
+
+		return json.dumps({'error': 0}), 200
+
+	elif request.method == 'DELETE':
+
 		x = MpServer.query.filter(MpServer.rid == _form['rid']).first()
+		if x is not None:
+			db.session.delete(x)
+			db.session.commit()
+			updateServerRev()
 
-	setattr(x, 'server', _form['server'])
-	setattr(x, 'port', _form['port'])
-	setattr(x, 'useSSL', _form['useSSL'])
-	setattr(x, 'allowSelfSignedCert', _form['allowSelfSignedCert'])
-	setattr(x, 'isMaster', _form['isMaster'])
-	setattr(x, 'isProxy', _form['isProxy'])
-	setattr(x, 'active', _form['active'])
+		return json.dumps({'error': 0}), 200
 
-	if isNew:
-		db.session.add(x)
+def updateServerRev():
+
+	q = MpServerList.query.filter(MpServerList.listid == '1').first()
+	if q is not None:
+		setattr(q, 'version', q.version + 1)
+	else:
+		setattr(q, 'version', 1)
+		db.session.add(q)
 
 	db.session.commit()
-
-	return json.dumps({'error': 0}), 200
 
 '''
 ----------------------------------------------------------------
@@ -452,9 +474,9 @@ def asusServersView():
 def asusServersList():
 
 	columns = [('rid', 'rid', '0'), ('catalog_url', 'Catalog URL', '1'), ('os_major', 'OS Major', '1'),
-	('os_minor', 'OS Minor', '1'),('proxy', 'Proxy', '1'), ('active', 'Enabled', '1')]
+			   ('os_minor', 'OS Minor', '1'),('proxy', 'Proxy', '1'), ('active', 'Enabled', '1')]
 
-	_servers = MpAsusCatalog.query.order_by("mp_asus_catalogs.os_minor desc").all()
+	_servers = MpAsusCatalog.query.order_by(desc(MpAsusCatalog.os_minor)).all()
 
 	_results = []
 	for p in _servers:
@@ -471,7 +493,6 @@ def asusServersList():
 				row[c[0]] = res
 
 		_results.append(row)
-		print row
 
 	return json.dumps({'data': _results, 'total': 0}, default=json_serial), 200
 
@@ -488,32 +509,57 @@ def asusServerEdit(id):
 
 	return render_template('asus_server_update.html', data=_filter)
 
-@console.route('/servers/asus/update', methods=['POST'])
+@console.route('/servers/asus/update', methods=['POST', 'DELETE'])
 @login_required
 def asusServerUpdate():
 
 	_form = request.form
-	isNew = False
-	if _form['rid'] == '':
-		isNew = True
-		x = MpServer()
+
+	if request.method == 'POST':
+
+		isNew = False
+		if _form['rid'] == '':
+			isNew = True
+			x = MpAsusCatalog()
+		else:
+			x = MpAsusCatalog.query.filter(MpAsusCatalog.rid == _form['rid']).first()
+
+		setattr(x, 'catalog_url', _form['catalog_url'])
+		setattr(x, 'os_major', _form['os_major'])
+		setattr(x, 'os_minor', _form['os_minor'])
+		setattr(x, 'proxy', _form['proxy'])
+		setattr(x, 'active', _form['active'])
+		setattr(x, 'catalog_group_name', 'Default')
+		setattr(x, 'listid', '1')
+
+		if isNew:
+			db.session.add(x)
+
+		db.session.commit()
+		updateASUSRev()
+
+		return json.dumps({'error': 0}), 200
+
+	elif request.method == 'DELETE':
+
+		x = MpAsusCatalog.query.filter(MpAsusCatalog.rid == _form['rid']).first()
+		if x is not None:
+			db.session.delete(x)
+			db.session.commit()
+			updateASUSRev()
+
+		return json.dumps({'error': 0}), 200
+
+def updateASUSRev():
+
+	q = MpAsusCatalogList.query.filter(MpAsusCatalogList.listid == '1').first()
+	if q is not None:
+		setattr(q, 'version', q.version + 1)
 	else:
-		x = MpServer.query.filter(MpServer.rid == _form['rid']).first()
-
-	setattr(x, 'server', _form['server'])
-	setattr(x, 'port', _form['port'])
-	setattr(x, 'useSSL', _form['useSSL'])
-	setattr(x, 'allowSelfSignedCert', _form['allowSelfSignedCert'])
-	setattr(x, 'isMaster', _form['isMaster'])
-	setattr(x, 'isProxy', _form['isProxy'])
-	setattr(x, 'active', _form['active'])
-
-	if isNew:
-		db.session.add(x)
+		setattr(q, 'version', 1)
+		db.session.add(q)
 
 	db.session.commit()
-
-	return json.dumps({'error': 0}), 200
 
 '''
 ----------------------------------------------------------------

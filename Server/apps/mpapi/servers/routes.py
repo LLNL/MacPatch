@@ -92,35 +92,12 @@ class SUServerList(MPResource):
 					log_Error('[SUServerList][Get]: Failed to verify Signature for client (%s)' % (cuuid))
 					return {"result": '', "errorno": 424, "errormsg": 'Failed to verify Signature'}, 424
 
-			q_catalog_list = MpAsusCatalogList.query.filter(MpAsusCatalogList.name == "Default").first()
-			if q_catalog_list is not None:
-				q_cats = MpAsusCatalog.query.filter(MpAsusCatalog.os_major == int(osmajor),
-														MpAsusCatalog.os_minor == int(osminor)).order_by(
-					MpAsusCatalog.c_order.asc()).all()
-			else:
-				result = {'name': 'NA', 'version': '0', 'id': ''}
-				return {'errorno': 0, 'errormsg': '', 'result': result}, 200
+			_osver = '{}.{}'.format(osmajor, osminor)
+			_serverObj = ServerInfo()
+			_serverObj = suServerListForID(1,_osver)
 
-			_su_dict = {'id': q_catalog_list.listid, 'name': q_catalog_list.name, 'version': q_catalog_list.version, 'servers': []}
-
-			_servers = []
-			_catalog = {'os': osminor, 'servers': []}
-			_server_dict = {}
-			if q_cats is not None:
-				for row in q_cats:
-					if row.proxy == 1:
-						_server_dict = {'CatalogURL': row.catalog_url, 'serverType': 1}
-					else:
-						_server_dict = {'CatalogURL': row.catalog_url, 'serverType': 0}
-
-					_servers.append(_server_dict)
-				# Add the to the os version list dict
-				_catalog['servers'] = _servers
-
-			# Add OS vesion servers array to main Dict
-			_su_dict['servers'] = [_catalog]
-			log_Debug('[SUServerList][Get] CUUID: %s Result: %s' % (cuuid, _server_dict))
-			return {'errorno': 0, 'errormsg': '', 'result': _su_dict}, 200
+			log_Debug('[SUServerList][Get] CUUID: %s Result: %s' % (cuuid, _serverObj.struct()))
+			return {'errorno': 0, 'errormsg': '', 'result': _serverObj.struct()}, 200
 
 		except IntegrityError, exc:
 			log_Error('[SUServerList][Get][except] CUUID: %s Message: %s' % (cuuid, exc.message))
@@ -194,25 +171,9 @@ class ServerList(MPResource):
 					log_Error('[ServerList][Get]: Failed to verify Signature for client (%s)' % (cuuid))
 					return {"result": '', "errorno": 424, "errormsg": 'Failed to verify Signature'}, 424
 
-			_serverObj = ServerInfo()
-			_serverList = []
-			log_Debug("[ServerList][Get][%s]: Getting Server list using id (%d)" % (cuuid, list_id))
-			q_result = MpServerList.query.filter(MpServerList.name == "Default", MpServerList.listid == list_id).first()
+			_serverObj = serverListForID(list_id)
 
-			if q_result is not None:
-				setattr(_serverObj, "name", q_result.name)
-				setattr(_serverObj, "version", q_result.version)
-				setattr(_serverObj, "id", q_result.listid)
-
-				q_servers_result = MpServer.query.filter(MpServer.active == 1, MpServer.listid == list_id).all()
-				if q_servers_result is not None:
-					for row in q_servers_result:
-						_srvObj = Server()
-						_server_dict = _srvObj.importFromRowReturnDictionary(row.asDict)
-						_serverList.append(_server_dict)
-
-					setattr(_serverObj, "servers", _serverList)
-
+			if _serverObj is not None:
 				return {'errorno': '0', 'errormsg': '', 'result': _serverObj.struct()}, 200
 
 			# No Result
@@ -222,6 +183,7 @@ class ServerList(MPResource):
 		except IntegrityError, exc:
 			log_Error('[ServerList][Get][except] CUUID: %s Message: %s' % (cuuid, exc.message))
 			return {'errorno': 500, 'errormsg': exc.message, 'result': 0}, 500
+
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			log_Error('[ServerList][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
@@ -273,8 +235,71 @@ class ServerListVersion(MPResource):
 
 ''' ------------------------------- '''
 ''' NOT A WEB SERVICE CLASS         '''
-''' Class for Getting the Scan List '''
 
+def suServerListForID(list_id, os_ver):
+
+	_serverObj = ServerInfo()
+	_serverList = []
+
+	osver = os_ver.split('.')
+
+	q_catalog_list = MpAsusCatalogList.query.filter(MpAsusCatalogList.listid == list_id).first()
+
+	if q_catalog_list is not None:
+		q_cats = MpAsusCatalog.query.filter(MpAsusCatalog.os_major == int(osver[0]), MpAsusCatalog.os_minor == int(osver[1])).order_by(
+			MpAsusCatalog.c_order.asc()).all()
+
+		_serverObj.id = q_catalog_list.listid
+		_serverObj.name = q_catalog_list.name
+		_serverObj.version = q_catalog_list.version
+	else:
+		_serverObj.id = ''
+		_serverObj.name = 'NA'
+		_serverObj.version = '0'
+
+	_catalog = {'os': osver[1], 'servers': []}
+	_server_dict = {}
+	if q_cats is not None:
+		for row in q_cats:
+			if row.proxy == 1:
+				_server_dict = {'CatalogURL': row.catalog_url, 'serverType': 1}
+			else:
+				_server_dict = {'CatalogURL': row.catalog_url, 'serverType': 0}
+
+			_serverList.append(_server_dict)
+		# Add the to the os version list dict
+		_catalog['servers'] = _serverList
+
+	# Add OS vesion servers array to main Dict
+	_serverObj.servers = [_catalog]
+
+	return _serverObj
+
+def serverListForID(list_id):
+
+	_serverObj = ServerInfo()
+	_serverList = []
+
+	q_result = MpServerList.query.filter(MpServerList.name == "Default", MpServerList.listid == list_id).first()
+
+	if q_result is not None:
+		setattr(_serverObj, "name", q_result.name)
+		setattr(_serverObj, "version", q_result.version)
+		setattr(_serverObj, "id", q_result.listid)
+
+		q_servers_result = MpServer.query.filter(MpServer.active == 1, MpServer.listid == list_id).all()
+		if q_servers_result is not None:
+			for row in q_servers_result:
+				_srvObj = Server()
+				_server_dict = _srvObj.importFromRowReturnDictionary(row.asDict)
+				_serverList.append(_server_dict)
+
+			setattr(_serverObj, "servers", _serverList)
+
+		return _serverObj
+
+	else:
+		return None
 
 class ServerInfo(object):
 	def __init__(self):
@@ -288,7 +313,6 @@ class ServerInfo(object):
 
 	def keys(self):
 		return self.__dict__.keys()
-
 
 class Server(object):
 	def __init__(self):

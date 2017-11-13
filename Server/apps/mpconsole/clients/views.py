@@ -421,9 +421,22 @@ def clientGroupClients(name):
 @clients.route('/group/<id>/remove/clients',methods=['POST'])
 def clientGroupClientsRemove(id):
 
-	print request.form['clients']
-	for x in request.form['clients'].split(","):
-		print x
+	usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()
+	if usr is not None or isOwnerOfGroup(id):
+		for x in request.form['clients'].split(","):
+			client = MpClient.query.filter(MpClient.cuuid == x).first()
+			clientGroupMember = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == x, MpClientGroupMembers.group_id == id).first()
+			if clientGroupMember:
+				print "Delete client %s from group %s" %(x, id)
+				db.session.delete(clientGroupMember)
+				db.session.commit()
+
+			if client:
+				print "Delete client " + x
+				db.session.delete(client)
+				db.session.commit()
+			else:
+				return json.dumps({'error': 404, 'errormsg': 'User could not be removed.'}), 404
 
 	'''
 	usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()

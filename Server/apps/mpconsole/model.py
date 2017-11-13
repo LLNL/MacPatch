@@ -36,6 +36,25 @@ class CommonBase(db.Model):
 		return result
 
 	@property
+	def asDictWithRID(self):
+		"""Convert date/datetime to string inorder to jsonify"""
+		result = {}
+		for column in self.__table__.columns:
+			try:
+				if column.type.python_type in [type(date(2000, 1, 1)), type(datetime(2000, 1, 1))]:
+					if getattr(self, column.name) is not None:
+						result[column.name] = str(getattr(self, column.name))
+					else:
+						# don't convert None to string
+						result[column.name] = getattr(self, column.name)
+				else:
+					result[column.name] = getattr(self, column.name)
+			except Exception, e:
+				result[column.name] = getattr(self, column.name)
+
+		return result
+
+	@property
 	def columns(self):
 		results = []
 		for column in self.__table__.columns:
@@ -125,25 +144,25 @@ class MPUser(CommonBase):
 class MPAgentRegistration(CommonBase):
 	__tablename__ = 'mp_agent_registration'
 
-	rid = Column(BigInteger, primary_key=True, autoincrement=True)
-	cuuid = Column(String(50), nullable=False)
-	enabled = Column(Integer, server_default='0')
+	rid = Column(BigInteger, primary_key=True, autoincrement=True, info='rid')
+	cuuid = Column(String(50), nullable=False, info='Client ID')
+	enabled = Column(Integer, server_default='0', info='Enabled')
 	clientKey = Column(String(100), server_default='NA')
 	pubKeyPem = Column(MEDIUMTEXT())
 	pubKeyPemHash = Column(MEDIUMTEXT())
-	hostname = Column(String(255), nullable=False)
-	serialno = Column(String(255), nullable=False)
-	reg_date = Column(DateTime, nullable=False, server_default='1970-01-01 00:00:00')
+	hostname = Column(String(255), nullable=False, info='Hostname')
+	serialno = Column(String(255), nullable=False, info='Serial No')
+	reg_date = Column(DateTime, nullable=False, server_default='1970-01-01 00:00:00', info='Reg Date')
 
 
 # mp_clients_wait_reg
 class MpClientsWantingRegistration(CommonBase):
 	__tablename__ = 'mp_clients_wait_reg'
 
-	rid = Column(BigInteger, primary_key=True, nullable=False, autoincrement=True)
-	cuuid = Column(String(50), nullable=False, unique=True)
-	hostname = Column(String(255), nullable=False)
-	req_date = Column(DateTime, nullable=True)
+	rid = Column(BigInteger, primary_key=True, nullable=False, autoincrement=True, info='rid')
+	cuuid = Column(String(50), nullable=False, unique=True, info='Client ID')
+	hostname = Column(String(255), nullable=False, info='Hostname')
+	req_date = Column(DateTime, nullable=True, info='Request Date')
 
 
 # mp_clients_reg_conf
@@ -171,13 +190,13 @@ class MpClientRegKeys(CommonBase):
 class MpRegKeys(CommonBase):
 	__tablename__ = 'mp_reg_keys'
 
-	rid = Column(BigInteger, primary_key=True, nullable=False, autoincrement=True)
-	regKey = Column(String(255), nullable=False)
-	keyType = Column(Integer, nullable=True, server_default='0')
-	keyQuery = Column(String(255), nullable=False)
-	active = Column(Integer, nullable=True, server_default='1')
-	validFromDate = Column(DateTime, nullable=True, server_default='1970-01-01 00:00:00')
-	validToDate = Column(DateTime, nullable=True, server_default='1970-01-01 00:00:00')
+	rid = Column(BigInteger, primary_key=True, nullable=False, autoincrement=True, info='rid')
+	regKey = Column(String(255), nullable=False, info='Registration Key')
+	keyType = Column(Integer, nullable=True, server_default='0', info='Key Type')
+	keyQuery = Column(String(255), nullable=False, info='Key Query')
+	active = Column(Integer, nullable=True, server_default='1', info='Active')
+	validFromDate = Column(DateTime, nullable=True, server_default='1970-01-01 00:00:00', info='Date - Available From')
+	validToDate = Column(DateTime, nullable=True, server_default='1970-01-01 00:00:00', info='Date - Available To')
 
 # mp_site_keys
 class MpSiteKeys(CommonBase):

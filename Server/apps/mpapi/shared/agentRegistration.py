@@ -1,6 +1,6 @@
-from .. model import *
-from .. import db
-from .. mplogger import *
+from mpapi.model import *
+from mpapi import db
+from mpapi.mplogger import *
 from datetime import datetime
 import sys
 
@@ -147,6 +147,10 @@ def writeRegInfoToDatabase(regInfo, decoded_client_key, enable=1):
 		log_Debug('Add Registration Data Record')
 		db.session.add(regObj)
 		db.session.commit()
+
+		# Add Client to Default Group
+		addClientToGroup(regInfo['cuuid'])
+
 		return True
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -154,4 +158,40 @@ def writeRegInfoToDatabase(regInfo, decoded_client_key, enable=1):
 		db.session.rollback()
 		return False
 
+	return False
+
+def addClientToGroup(ClientID):
+
+	try:
+		defaultGroupID = 0
+		q_defaultGroup = MpClientGroups.query.filter_by(group_name='Default').first()
+		if q_defaultGroup is not None:
+			defaultGroupID = q_defaultGroup.group_id
+		else:
+			log_Error('[Registration][addClientToGroup]: Unable to add client %s to default group. Group not found.' % (ClientID))
+			return False
+
+		# MpClientGroupMembers
+		q_groupMembers = MpClientGroupMembers.query.filter_by(cuuid=ClientID).first()
+		if q_groupMembers is None:
+			q_groupMembers = MpClientGroupMembers()
+			setattr(q_groupMembers, 'cuuid', ClientID)
+			setattr(q_groupMembers, 'group_id', defaultGroupID)
+			log_Info('Add Client (%s) to default group (%s)' % (ClientID, defaultGroupID))
+			db.session.add(q_groupMembers)
+			db.session.commit()
+			return True
+
+		else:
+			log_Error('[Registration][addClientToGroup]: Client %s was found in group assignments.' % (ClientID))
+			return False
+
+
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		log_Error('[Registration][addClientToGroup][Line: %d] Message: %s' % (exc_tb.tb_lineno, e.message))
+		db.session.rollback()
+		return False
+
+	# Should not get here
 	return False

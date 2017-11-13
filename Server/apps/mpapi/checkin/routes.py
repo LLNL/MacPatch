@@ -9,6 +9,8 @@ from .. mputil import *
 from .. model import *
 from .. mplogger import *
 
+from .. register.routes import Registration
+
 parser = reqparse.RequestParser()
 
 # Client Reg Process
@@ -26,8 +28,9 @@ class AgentBase(MPResource):
 
 		try:
 			args = self.reqparse.parse_args()
-			print args
 			_body = request.get_json(silent=True)
+
+			# Need a check to see if registration is required
 
 			if not isValidSignature(self.req_signature, cuuid, request.data, self.req_ts):
 				if current_app.config['ALLOW_MIXED_SIGNATURES']:
@@ -45,10 +48,11 @@ class AgentBase(MPResource):
 				for col in client_obj.columns:
 					if args[col] is not None:
 						if col == 'mdate':
-							setattr(client_obj, col, datetime.now())
+							continue
 						else:
 							setattr(client_obj, col, args[col])
 
+				setattr(client_obj, 'mdate', datetime.now())
 				db.session.commit()
 
 				_settings = self.getClientTasksSettingsRev(cuuid)
@@ -64,14 +68,15 @@ class AgentBase(MPResource):
 				for col in client_object.columns:
 					if args[col] is not None:
 						if col == 'mdate':
-							setattr(client_object, col, datetime.now())
+							continue
 						else:
 							setattr(client_object, col, args[col])
 
+				setattr(client_object, 'mdate', datetime.now())
 				db.session.add(client_object)
 				db.session.commit()
 
-				_settings = getClientTasksSettingsRev(cuuid)
+				_settings = self.getClientTasksSettingsRev(cuuid)
 				return {"errorno": 0, "errormsg": 'none', "result": _settings}, 201
 
 		except IntegrityError, exc:
@@ -86,25 +91,42 @@ class AgentBase(MPResource):
 	def getClientTasksSettingsRev(self, cuuid):
 
 		group_id = 0
-		versions = {'settings':0,'tasks':0,'mpservers':0,'suservers':0}
+		versions = {'agent':0,'tasks':0,'servers':0,'suservers':0}
 		qGroupMembership = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == cuuid).first()
 		if qGroupMembership is not None:
 			group_id = qGroupMembership.group_id
+		else:
+			print "No group assignment"
+			group_id = self.addClientToDefaultGroup(cuuid)
 
 		qGroupSettings = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()
 		if qGroupSettings is not None:
-			versions["settings"] = qGroupSettings.rev_settings
+			versions["agent"] = qGroupSettings.rev_settings
 			versions["tasks"] = qGroupSettings.rev_tasks
 
 		qMPServers = MpServerList.query.filter(MpServerList.listid == 1).first()
 		if qMPServers is not None:
-			versions["mpservers"] = qMPServers.version
+			versions["servers"] = qMPServers.version
 
 		qSUServers = MpAsusCatalogList.query.filter(MpAsusCatalogList.listid == 1).first()
 		if qSUServers is not None:
 			versions["suservers"] = qSUServers.version
 
 		return versions
+
+	def addClientToDefaultGroup(self, cuuid):
+
+		log_Info('[AgentBase][Post]: Adding client (%s) to default client group.' % (cuuid))
+
+		defaultGroup = MpClientGroups.query.filter(MpClientGroups.group_name == 'Default').first()
+		groupMembership = MpClientGroupMembers()
+		setattr(groupMembership, 'cuuid', cuuid)
+		setattr(groupMembership, 'group_id', defaultGroup.group_id)
+		db.session.add(groupMembership)
+		db.session.commit()
+
+		return defaultGroup.group_id
+
 
 # Client Reg Status
 class AgentPlist(MPResource):

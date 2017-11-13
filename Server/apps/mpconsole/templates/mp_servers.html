@@ -133,7 +133,7 @@ MacPatch Servers
 
 			if (confirm("Are you sure you want to remove these servers?") == true)
 			{
-				var _url = "/servers/mp";
+				var _url = "/console/servers/mp/update";
 				$.ajax({
 					url: _url,
 					type: 'DELETE',
@@ -145,7 +145,7 @@ MacPatch Servers
 						alert(jsonValue.errormsg);
 					},
 					success: function () {
-						alert("Plugin(s) removed successfully.");
+						alert("Server(s) removed successfully.");
 						$_table.bootstrapTable('refresh');
 					}
 				});
@@ -158,7 +158,7 @@ MacPatch Servers
 				$('#modalTitle').html('Add MacPatch Server');
 				$('#modalBody').html(data);
 				$('#modalDialog').addClass("modal-mid");
-				$('#modalBody').css({'height':'40vh'});
+				$('#modalBody').css({'height':'420px'});
 				$('#modalDialog').modal('show');
 
 				$("#modalDialog").on("hidden.bs.modal", function () {

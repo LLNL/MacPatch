@@ -184,7 +184,6 @@ class MpSiteKeys(CommonBase):
 	request_new_key = Column(Integer, nullable=True, server_default='0')
 	mdate = Column(DateTime, nullable=True, server_default='1970-01-01 00:00:00')
 
-
 # ------------------------------------------
 ## Main
 
@@ -667,6 +666,18 @@ class MpOsConfigProfilesAssigned(CommonBase):
 	profileID   = Column(String(50), primary_key=True, nullable=False)
 	groupID     = Column(String(50), primary_key=True, nullable=False)
 
+# mp_os_config_profiles_group_policy
+class MpOsProfilesGroupAssigned(CommonBase):
+	__tablename__ = 'mp_os_config_profiles_group_policy'
+
+	rid = Column(BigInteger, primary_key=True, nullable=False, autoincrement=True)
+	gPolicyID = Column(String(50), nullable=False, info="Policy ID")
+	profileID = Column(String(50), nullable=False, info="Profile ID")
+	groupID = Column(String(50), nullable=False, info="Group ID")
+	title = Column(String(255), info="Name")
+	description = Column(Text,  info="Description")
+	enabled = Column(INTEGER(1, unsigned=True), server_default='1', info="Enabled")
+
 # ------------------------------------------
 ## Software
 
@@ -808,7 +819,6 @@ class MpUploadRequest(CommonBase):
 
 	rid         = Column(BigInteger, primary_key=True, autoincrement=True)
 	uid         = Column(String(255), nullable=False)
-	requestid   = Column(String(50), nullable=False)
 	requestid   = Column(String(50), nullable=False)
 	enabled     = Column(Integer, server_default='1')
 	cdate       = Column(DateTime, server_default='1970-01-01 00:00:00')
