@@ -41,6 +41,7 @@
 @interface AgentController ()
 {
     NSOperationQueue                *queue;
+    MPSettings                      *settings;
 
     ClientCheckInOperation          *clientOp;
     AgentScanAndUpdateOperation     *agentOp;
@@ -55,6 +56,7 @@
 @property NSSet          *tasksSet;
 @property NSMutableArray *tasksArray;
 @property NSString       *tasksRev;
+@property NSDate         *settingsFileDate;
 
 @end
 
@@ -67,6 +69,7 @@
     {
         queue = [[NSOperationQueue alloc] init];
         [queue setMaxConcurrentOperationCount:2];
+        settings = [MPSettings sharedInstance];
     }
     return self;
 }
@@ -133,10 +136,9 @@
 - (void)runAsDaemon
 {
     logit(lcl_vDebug,@"Run as daemon.");
-
+    [NSThread detachNewThreadSelector:@selector(watchSettingsForChanges:) toTarget:self withObject:MP_AGENT_SETTINGS];
     [NSThread detachNewThreadSelector:@selector(loadTasksAndWatchForChanges) toTarget:self withObject:nil];
     [NSThread detachNewThreadSelector:@selector(runTasksLoop) toTarget:self withObject:nil];
-    
     [[NSRunLoop currentRunLoop] run];
 }
 
@@ -145,60 +147,65 @@
 {
     @autoreleasepool
     {
-        MPSettings *settings = [MPSettings sharedInstance];
+        [settings refresh];
         logit(lcl_vInfo,@"Client ID: %@",[settings ccuid]);
         
         MPTasks *mpTask = [[MPTasks alloc] init];
         _tasksArray = [[mpTask setNextRunForTasks:settings.tasks] mutableCopy];
         _tasksSet = [NSSet setWithArray:_tasksArray]; // Initial Task Hash
-        
-        [self watchSettingsForChanges:MP_AGENT_SETTINGS];
     }
 }
 
 // New MP 3.1
 - (void)updateChangedTasks
 {
-    MPSettings *settings = [MPSettings sharedInstance];
+    [NSThread sleepForTimeInterval:2.0]; // Add small delay so that the atomic write can happen on settings file
+    [settings refresh];
     
     MPTasks *mpTask = [[MPTasks alloc] init];
     NSMutableArray *newTasksArray = [[mpTask setNextRunForTasks:settings.tasks] mutableCopy];
     
-    NSSet *newTasksSet = [NSSet setWithArray:_tasksArray];
-    if (![_tasksSet isEqual:newTasksSet]) // If they dont match
+    NSSet *newTasksSet = [NSSet setWithArray:newTasksArray];
+    if (![self.tasksSet isEqual:newTasksSet]) // If they dont match
     {
-        _tasksArray = newTasksArray;
-        _tasksSet = newTasksSet;
+        self.tasksArray = newTasksArray;
+        self.tasksSet = newTasksSet;
     }
 }
 
 // New MP 3.1
 - (void)watchSettingsForChanges:(NSString *)path
 {
-    dispatch_queue_t _watchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    int fildes = open([path UTF8String], O_EVTONLY);
-    
-    __block typeof(self) blockSelf = self;
-    __block dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, fildes,
-                                                              DISPATCH_VNODE_DELETE | DISPATCH_VNODE_WRITE | DISPATCH_VNODE_EXTEND |
-                                                              DISPATCH_VNODE_ATTRIB | DISPATCH_VNODE_LINK | DISPATCH_VNODE_RENAME |
-                                                              DISPATCH_VNODE_REVOKE, _watchQueue);
-    dispatch_source_set_event_handler(source, ^{
-        unsigned long flags = dispatch_source_get_data(source);
-        if(flags & DISPATCH_VNODE_DELETE)
-        {
-            dispatch_source_cancel(source);
-            //
-            // DO WHAT YOU NEED HERE
-            [self updateChangedTasks];
-            //
-            [blockSelf watchSettingsForChanges:path];
-        }
-    });
-    dispatch_source_set_cancel_handler(source, ^(void) {
-        close(fildes);
-    });
-    dispatch_resume(source);
+    @autoreleasepool
+    {
+        qlinfo(@"Watching %@ for changes.",path.lastPathComponent);
+        
+        dispatch_queue_t _watchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+        int filedes = open([path UTF8String], O_EVTONLY);
+        
+        __block typeof(self) blockSelf = self;
+        __block dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, filedes,
+                                                                  DISPATCH_VNODE_DELETE | DISPATCH_VNODE_WRITE | DISPATCH_VNODE_EXTEND |
+                                                                  DISPATCH_VNODE_ATTRIB | DISPATCH_VNODE_LINK | DISPATCH_VNODE_RENAME |
+                                                                  DISPATCH_VNODE_REVOKE, _watchQueue);
+        dispatch_source_set_event_handler(source, ^{
+            unsigned long flags = dispatch_source_get_data(source);
+            if(flags & DISPATCH_VNODE_DELETE)
+            {
+                dispatch_source_cancel(source);
+                //
+                // DO WHAT YOU NEED HERE
+                qlinfo(@"%@ has changes. Updating changed tasks.",path.lastPathComponent);
+                [self updateChangedTasks];
+                
+                [blockSelf watchSettingsForChanges:path];
+            }
+        });
+        dispatch_source_set_cancel_handler(source, ^(void) {
+            close(filedes);
+        });
+        dispatch_resume(source);
+    }
 }
 
 // Updated for MP 3.1
@@ -217,11 +224,16 @@
             {
                 @try
                 {
+                    
                     NSDictionary *taskDict;
                     NSTimeInterval _n = 0;
                     // Need to begin loop for tasks
                     for (taskDict in self.tasksArray)
                     {
+                        // For Debug
+                        if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPCheckIn"])
+                            logit(lcl_vTrace,@"%@ - %@",[taskDict objectForKey:@"cmd"],[taskDict objectForKey:@"interval"]);
+                        
                         // If task is Active
                         if ([[taskDict objectForKey:@"active"] isEqualToString:@"1"])
                         {
@@ -364,6 +376,7 @@
 // Used to be run from MPTask class
 - (NSDictionary *)taskWithNewRunDate:(NSDictionary *)aTask missed:(BOOL)wasMissed
 {
+    NSString *intervalStr = 0;
     double next_run = 0;
     NSMutableDictionary *_task = [[NSMutableDictionary alloc] initWithDictionary:aTask];
     
@@ -375,14 +388,17 @@
     else
     {
         /* Once@Time; Recurring@Daily,Weekly,Monthly@Time;Every@seconds */
+        
         NSArray *intervalArray = [[_task objectForKey:@"interval"] componentsSeparatedByString:@"@"];
         if ([[[intervalArray objectAtIndex:0] uppercaseString] isEqualToString:@"EVERY"])
         {
+            intervalStr = [intervalArray objectAtIndex:1];
             next_run = [[_task objectForKey:@"nextrun"] doubleValue] + [[intervalArray objectAtIndex:1] intValue];
         }
         else if ([[[intervalArray objectAtIndex:0] uppercaseString] isEqualToString:@"EVERYRAND"])
         {
             int r = arc4random() % [[intervalArray objectAtIndex:1] intValue];
+            intervalStr = [NSString stringWithFormat:@"%f",r];
             next_run = [[_task objectForKey:@"nextrun"] doubleValue] + r;
         }
         else if ([[[intervalArray objectAtIndex:0] uppercaseString] isEqualToString:@"RECURRING"])
@@ -411,10 +427,12 @@
     }
     
     [_task setObject:[NSNumber numberWithDouble:next_run] forKey:@"nextrun"];
-    logit(lcl_vInfo,@"%@ next run at %@",[_task objectForKey:@"name"],[[NSDate dateWithTimeIntervalSince1970:next_run] descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M:%S %z"
-                                                                                                                                            timeZone:[NSTimeZone localTimeZone]
-                                                                                                                                              locale:nil]);
-    
+    NSString *nextRun = [[NSDate dateWithTimeIntervalSince1970:next_run] descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M:%S %z" timeZone:[NSTimeZone localTimeZone] locale:nil];
+    if ([[aTask objectForKey:@"active"] isEqualTo:@"1"]) {
+        logit(lcl_vInfo,@"%@ next run at %@",_task[@"name"],nextRun);
+    } else {
+        logit(lcl_vInfo,@"%@ next run at %@ (DISABLED TASK)",_task[@"name"],nextRun);
+    }
     return [(NSDictionary *)_task copy];
 }
 
@@ -645,5 +663,7 @@
     */
     exit(0);
 }
+
+
 
 @end

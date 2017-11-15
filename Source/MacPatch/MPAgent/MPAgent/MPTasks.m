@@ -253,9 +253,14 @@
 			[tmpDict setObject:@"0" forKey:@"active"]; // Disable the task
 		}
 	}
-	logit(lcl_vInfo,@"%@ next run at %@",[tmpDict objectForKey:@"name"],[[NSDate dateWithTimeIntervalSince1970:next_run] descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M:%S %z"
-																																			  timeZone:[NSTimeZone localTimeZone]
-																																				locale:nil]);
+    
+    
+    NSString *nextRunStr = [[NSDate dateWithTimeIntervalSince1970:next_run] descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M:%S %z" timeZone:[NSTimeZone localTimeZone] locale:nil];
+    if ([[tmpDict objectForKey:@"active"] isEqualTo:@"1"]) {
+        logit(lcl_vInfo,@"%@ next run at %@",tmpDict[@"name"],nextRunStr);
+    } else {
+        logit(lcl_vInfo,@"%@ next run at %@ (DISABLED TASK)",tmpDict[@"name"],nextRunStr);
+    }
 
 	[tmpDict setObject:[NSNumber numberWithDouble:next_run] forKey:@"nextrun"];
 	NSDictionary *results = [NSDictionary dictionaryWithDictionary:tmpDict];
