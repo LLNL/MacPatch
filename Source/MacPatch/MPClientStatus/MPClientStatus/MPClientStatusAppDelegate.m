@@ -174,7 +174,7 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
     
     // Watch for SoftwareUpdate Launches
     NSNotificationCenter *dc = [[NSWorkspace sharedWorkspace] notificationCenter];
-    [dc addObserver:self selector:@selector(notificationReceived:) name:NSWorkspaceWillLaunchApplicationNotification object:[NSWorkspace sharedWorkspace]];
+    //[dc addObserver:self selector:@selector(notificationReceived:) name:NSWorkspaceWillLaunchApplicationNotification object:[NSWorkspace sharedWorkspace]];
     
     // Setup App monitoring
     mpAppUsage = [[MPAppUsage alloc] init];
@@ -192,7 +192,11 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
     // Run Notification Timer
     [self runMPUserNotificationCenter];
     
-    [self setOpenASUS:NO];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"allowSoftwareUpdate"]) {
+        [self setOpenASUS:[[NSUserDefaults standardUserDefaults] boolForKey:@"allowSoftwareUpdate"]];
+    } else {
+        [self setOpenASUS:NO];
+    }
     
     appRules = @{@"allow":@[],@"deny":@[]};
 }
@@ -207,7 +211,6 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
 
 - (void)updateMenu:(NSTimer *)timer
 {
-    
     static NSMenuItem *menuItem15 = nil;
     static NSMenuItem *menuItem16 = nil;
     static BOOL isShowing = YES;
@@ -430,6 +433,7 @@ done:
     [clientInfoTextField setFont:[NSFont fontWithName:@"Lucida Grande" size:11.0]];
     [clientInfoTextField setStringValue:verInfo];
     
+    /* Removed for MP 3.1
     NSMutableArray *data = [[NSMutableArray alloc] init];
     NSMutableDictionary *dict;
     NSDictionary *mpSwuadDict = [NSDictionary dictionaryWithContentsOfFile:AGENT_PREFS_PLIST];
@@ -445,7 +449,7 @@ done:
     [clientArrayController addObjects:data];
     [clientInfoTableView reloadData];
     [clientInfoTableView deselectAll:self];
-    
+    */
     
     [clientInfoWindow makeKeyAndOrderFront:sender];
     [clientInfoWindow center];
@@ -483,8 +487,8 @@ done:
 
 - (void)performClientCheckInThread
 {
-    @autoreleasepool {
-        
+    @autoreleasepool
+    {
         BOOL didRun = NO;
         didRun = [self performClientCheckInMethod];
         
@@ -530,72 +534,10 @@ done:
     return TRUE;
 }
 
-- (NSDictionary *)systemVersionDictionary
-{
-    NSDictionary *sysVer;
-    
-    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_10) {
-        NSOperatingSystemVersion os = [[NSProcessInfo processInfo] operatingSystemVersion];
-        sysVer = @{@"major":[NSNumber numberWithInt:(int)os.majorVersion],@"minor":[NSNumber numberWithInt:(int)os.minorVersion],@"revision":[NSNumber numberWithInt:(int)os.patchVersion]};
-    } else {
-        SInt32 OSmajor, OSminor, OSrevision;
-        OSErr err1 = Gestalt(gestaltSystemVersionMajor, &OSmajor);
-        OSErr err2 = Gestalt(gestaltSystemVersionMinor, &OSminor);
-        OSErr err3 = Gestalt(gestaltSystemVersionBugFix, &OSrevision);
-        if (!err1 && !err2 && !err3)
-        {
-            sysVer = @{@"major":[NSNumber numberWithInt:OSmajor],@"minor":[NSNumber numberWithInt:OSminor],@"revision":[NSNumber numberWithInt:OSrevision]};
-        }
-    }
-    
-    return sysVer;
-}
-
-- (NSDictionary *)getOSInfo
-{
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSDictionary *results = nil;
-    NSString *clientVerPath = @"/System/Library/CoreServices/SystemVersion.plist";
-    NSString *serverVerPath = @"/System/Library/CoreServices/ServerVersion.plist";
-    
-    if ([fm fileExistsAtPath:serverVerPath] == TRUE) {
-        results = [NSDictionary dictionaryWithContentsOfFile:serverVerPath];
-    } else {
-        if ([fm fileExistsAtPath:clientVerPath] == TRUE) {
-            results = [NSDictionary dictionaryWithContentsOfFile:clientVerPath];
-        }
-    }
-    
-    return results;
-}
-
-- (NSString *)getHostSerialNumber
-{
-    NSString *result = nil;
-    io_registry_entry_t rootEntry = IORegistryEntryFromPath( kIOMasterPortDefault, "IOService:/" );
-    CFTypeRef serialAsCFString = NULL;
-    serialAsCFString = IORegistryEntryCreateCFProperty( rootEntry,
-                                                       CFSTR(kIOPlatformSerialNumberKey),
-                                                       kCFAllocatorDefault,
-                                                       0);
-    
-    IOObjectRelease( rootEntry );
-    if (serialAsCFString == NULL) {
-        result = @"NA";
-    } else {
-        result = [NSString stringWithFormat:@"%@",(__bridge NSString *)serialAsCFString];
-    }
-    
-    if(serialAsCFString) {
-        CFRelease(serialAsCFString);
-    }
-    return result;
-}
-
 #pragma mark Show Last CheckIn Menu
 - (void)showLastCheckIn
 {
-    double secondsToFire = 600.0;
+    double secondsToFire = 300.0;
     logit(lcl_vInfo, @"Start Last CheckIn Data Thread");
     logit(lcl_vInfo, @"Run every %f", secondsToFire);
     
@@ -656,7 +598,7 @@ done:
                                 modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
     
     dispatch_queue_t gcdQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    double secondsToFire = 180.0;
+    double secondsToFire = 175.0;
     
     _timer = CreateDispatchTimer(secondsToFire, gcdQueue, ^{
         logit(lcl_vInfo, @"Start, Display Patch Data Info in menu.");
@@ -714,17 +656,14 @@ done:
             
             [statusMenu update];
             return;
-            
         }
         else if ([data count] <= 0)
         {
-            
             [self setPatchCount:[data count]];
             [statusItem setImage:[NSImage imageNamed:@"mpmenubar_normal.png"]];
             [checkPatchStatusMenuItem setTitle:@"Patches Needed: 0"];
             [checkPatchStatusMenuItem setSubmenu:NULL];
             [statusMenu update];
-            
             
             // Remove Notifications
             if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_9)
@@ -742,8 +681,9 @@ done:
             }
             
             return;
-            
-        } else {
+        }
+        else
+        {
             [self setPatchCount:[data count]];
             [statusItem setImage:[NSImage imageNamed:@"mpmenubar_alert2.png"]];
         }
@@ -842,53 +782,40 @@ done:
 
 #pragma mark -
 #pragma mark Kill SoftwareUpdate GUI App
-- (void)notificationReceived:(NSNotification *)aNotification
+- (void)requestForLaunchingSoftwareUpdate:(NSNumber *)aPID
 {
+    [NSApp activateIgnoringOtherApps:YES];
+
+    [self killApplication:aPID];
+    if (asusAlertOpen == YES)
+        return;
     
-    if ([[[aNotification userInfo] objectForKey:@"NSApplicationPath"] isEqualToString:ASUS_APP_PATH]) {
-        [NSApp activateIgnoringOtherApps:YES];
-        if ([self openASUS] == NO)
-        {
-            [self killApplication:[[aNotification userInfo] objectForKey:@"NSApplicationProcessIdentifier"]];
-            
-            if (asusAlertOpen == YES)
-                return;
-            
-            NSAlert *alert;
-            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableASUS"]) {
-                alert = [NSAlert alertWithMessageText:@"Software Update"
-                                        defaultButton:@"Open Self Patch"
-                                      alternateButton:@"Open Software Update"
-                                          otherButton:@"Cancel"
-                            informativeTextWithFormat:@"To help ensure patch compatibility for this system, updates are now handled by the \"Self Patch\" application.\n\nWarning: Applying patches using Software Update can screw up your system if you have disk encryption installed."];
-            } else {
-                alert = [NSAlert alertWithMessageText:@"Software Update"
-                                        defaultButton:@"Open Self Patch"
-                                      alternateButton:nil
-                                          otherButton:@"Cancel"
-                            informativeTextWithFormat:@"To help ensure patch compatibility for this system, updates are now handled by the \"Self Patch\" application."];
-            }
-            
-            [self setAsusAlertOpen:YES];
-            NSInteger res = [alert runModal];
-            
-            if (res == NSAlertDefaultReturn) {
-                [self openSelfPatchApplications:nil];
-                [self setAsusAlertOpen:NO];
-            } else if (res == NSAlertAlternateReturn) {
-                [self setOpenASUS:YES];
-                [self openSoftwareUpdateApplication:nil];
-                [self setAsusAlertOpen:NO];
-            } else {
-                [self setAsusAlertOpen:NO];
-            }
-            
-        } else {
-            [self setOpenASUS:NO];
-        }
-        
+    NSAlert *alert;
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"allowSoftwareUpdate"]) {
+        alert = [NSAlert alertWithMessageText:@"Software Update"
+                                defaultButton:@"Open Self Patch"
+                              alternateButton:@"Open Software Update"
+                                  otherButton:@"Cancel"
+                    informativeTextWithFormat:@"To help ensure patch compatibility for this system, updates are now handled by the \"Self Patch\" application.\n\nWarning: Applying patches using Software Update can screw up your system if you have disk encryption installed."];
+    } else {
+        alert = [NSAlert alertWithMessageText:@"Software Update"
+                                defaultButton:@"Open Self Patch"
+                              alternateButton:nil
+                                  otherButton:@"Cancel"
+                    informativeTextWithFormat:@"To help ensure patch compatibility for this system, updates are now handled by the \"Self Patch\" application."];
     }
-    
+        
+    [self setAsusAlertOpen:YES];
+    NSInteger res = [alert runModal];
+    if (res == NSAlertDefaultReturn) {
+        [self openSelfPatchApplications:nil];
+        [self setAsusAlertOpen:NO];
+    } else if (res == NSAlertAlternateReturn) {
+        [self openSoftwareUpdateApplication:nil];
+        [self setAsusAlertOpen:NO];
+    } else {
+        [self setAsusAlertOpen:NO];
+    }
 }
 
 - (void)killApplication:(NSNumber *)aPID
@@ -921,8 +848,15 @@ done:
 #pragma mark Record App Usage Info
 - (void)appLaunchNotificationReceived:(NSNotification *)aNotification
 {
-    if ([[aNotification userInfo] objectForKey:@"NSApplicationName"]) {
-        @try {
+    if ([[aNotification userInfo] objectForKey:@"NSApplicationName"])
+    {
+        @try
+        {
+            if ([[[aNotification userInfo] objectForKey:@"NSApplicationPath"] isEqualToString:ASUS_APP_PATH]) {
+                NSNumber *_pid = [[aNotification userInfo] objectForKey:@"NSApplicationProcessIdentifier"];
+                [self requestForLaunchingSoftwareUpdate:_pid];
+            }
+            
             NSBundle *b = [NSBundle bundleWithPath:[[aNotification userInfo] objectForKey:@"NSApplicationPath"]];
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[aNotification userInfo]];
             [userInfo setObject:[[b infoDictionary] objectForKey:@"CFBundleShortVersionString"] forKey:@"CFBundleShortVersionString"];
@@ -931,7 +865,8 @@ done:
             logit(lcl_vDebug,@"Application launched: %@ %@ %@",[alo appName],[alo appPath],[alo appVersion]);
             [mpAppUsage insertLaunchDataForApp:[alo appName] appPath:[alo appPath] appVersion:[alo appVersion]];
         }
-        @catch (NSException *exception) {
+        @catch (NSException *exception)
+        {
             logit(lcl_vError,@"%@",exception);
         }
     }
