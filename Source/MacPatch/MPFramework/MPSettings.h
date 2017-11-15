@@ -25,6 +25,8 @@
 
 + (MPSettings *)sharedInstance;
 
+- (BOOL)refresh;
+- (BOOL)settings;
 - (BOOL)compareAndUpdateSettings:(NSDictionary *)remoteSettingsRevs;
 
 @end

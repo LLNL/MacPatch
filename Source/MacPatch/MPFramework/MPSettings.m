@@ -90,6 +90,10 @@ static MPSettings *_instance;
 }
 
 #pragma mark - Public
+- (BOOL)refresh
+{
+    return [self settings];
+}
 
 - (BOOL)settings
 {
@@ -102,7 +106,7 @@ static MPSettings *_instance;
         qlinfo(@"Writing new agent settings to disk.");
         
         if ([fm isWritableFileAtPath:[MP_AGENT_SETTINGS stringByDeletingLastPathComponent]]) {
-            [_settings writeToFile:MP_AGENT_SETTINGS atomically:NO];
+            [_settings writeToFile:MP_AGENT_SETTINGS atomically:YES];
         } else {
             qlerror(@"Unable to write file to %@",[MP_AGENT_SETTINGS stringByDeletingLastPathComponent]);
             return NO;
@@ -218,7 +222,7 @@ static MPSettings *_instance;
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:MP_AGENT_SETTINGS];
     [dict[@"settings"] setObject:agentSettings forKey:key];
     [dict[@"revs"] setObject:agentSettings[@"rev"] forKey:key];
-    [dict writeToFile:MP_AGENT_SETTINGS atomically:NO];
+    [dict writeToFile:MP_AGENT_SETTINGS atomically:YES];
 }
 
 #pragma mark - Private
