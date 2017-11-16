@@ -1,10 +1,10 @@
 {% block styles %}
 	<!-- Bootstrap Core CSS -->
-	<link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 	<!-- Custom CSS -->
-	<link href="{{ url_for('static', filename='sb-admin/css/sb-admin-2.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/sb-admin-2/css/sb-admin-2.css') }}" rel="stylesheet">
 	<!-- Custom Fonts -->
-	<link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
 
 	<link href="{{ url_for('static', filename='smartwizard/css/bp_main.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='smartwizard/css/smart_wizard.css') }}" rel="stylesheet">
@@ -261,7 +261,7 @@
 						<br>
 						{% for req in data['PKGPREREQ'] %}
 							<p id="rowPrePKG{{req.order}}" style="margin-top:4px;">
-								<img onClick='removeFormField("#rowPrePKG{{req.order}}"); return false;' src="/static/images/cancel.png" style="vertical-align:middle;" height="14" width="14">
+								<img onClick='removeFormField("#rowPrePKG{{req.order}}"); return false;' src="/static/img/cancel.png" style="vertical-align:middle;" height="14" width="14">
 
 								<select name="preSWPKG_{{req.order}}" size="1">
 									{% for x in data['SWLIST'] %}
@@ -290,7 +290,7 @@
 					<div id="divTxtPost">
 						{% for req in data['PKGPOSTREQ'] %}
 							<p id="rowPostPKG{{req.order}}" style="margin-top:4px;">
-								<img onClick='removeFormField("#rowPostPKG{{req.order}}"); return false;' src="/static/images/cancel.png" style="vertical-align:middle;" height="14" width="14">
+								<img onClick='removeFormField("#rowPostPKG{{req.order}}"); return false;' src="/static/img/cancel.png" style="vertical-align:middle;" height="14" width="14">
 
 								<select name="postSWPKG_{{req.order}}" size="1">
 									{% for x in data['SWLIST'] %}
@@ -319,10 +319,10 @@
 
 {% block javascript %}
 	<!-- jQuery -->
-	<script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
 
 	<!-- Bootstrap Core JavaScript -->
-	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
 	<script src="{{ url_for('static', filename='smartwizard/js/jquery.smartWizard-2.0.min.js') }}"></script>
 	<script type="text/javascript">
@@ -335,13 +335,6 @@
 		function onFinishCallback()
 		{
 			var formData = new FormData($('#customPatchForm')[0]);
-			//var form = $('customPatchForm')[0]; // You need to use standart javascript object here
-			//var formData = new FormData(form);
-			//formData.append("mainPackage", Blob);
-
-			//var formData = $('#customPatchForm').serialize();
-			console.log(formData);
-
 			$.ajax({
 				type:'POST',
 				url: '/software/package/save',
@@ -354,10 +347,6 @@
 					alert("successful post");
 				}
 			});
-			// data: $('#customPatchForm').serialize(),
-
-			//$("#customPatchForm").submit();
-			//parent.closeModal();
 		}
 	</script>
 	<script type="text/javascript">
@@ -381,7 +370,7 @@
 			{% endif %}
 
 			document.getElementById(pid).value = id;
-			var rmRef = "<a href='#' onClick='removeFormField(\"#row" + frmFieldName + id +"\"); return false;'><img src='/static/images/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'></a>";
+			var rmRef = "<a href='#' onClick='removeFormField(\"#row" + frmFieldName + id +"\"); return false;'><img src='/static/img/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'></a>";
 			var sel = "&nbsp;<select name='type_"+ id + "' id='"+frmFieldName + id +"' size='1' style='vertical-align:top\;'><option>BundleID</option><option>File</option><option>Script</option></select>&nbsp;&nbsp;";
 
 			$("#"+divid).append("&nbsp;<p id='row" + frmFieldName + id +"' style='margin-top:4px;'>&nbsp;"+sel+"&nbsp;<textarea name='" + frmFieldName + "_" + id + "' id='"+frmFieldName + id +"' cols=\"60\" />&nbsp;<input type='text' name='"+frmFieldName+"Order_"+id+"' value='"+id+"' size='4' style='vertical-align:top\;'><span style='vertical-align:top\;'>(Order)</span>&nbsp;"+rmRef+"</p>");
@@ -394,15 +383,10 @@
 			id = (id - 1) + 2;
 			document.getElementById(pid).value = id;
 			var _row    =  "<p id='row" + frmFieldName + id +"' style='margin-top:4px;'>";
-			var rmRef   = "<img src='/static/images/cancel.png' style='vertical-align:middle;' height='14' width='14' onClick='removeFormField(\"#row" + frmFieldName + id +"\")\; return false\;'>&nbsp;";
-			//var inRef = "<img src='/static/images/info_16.png' style='vertical-align:middle;' height='14' width='14' onClick=\"showList('"+frmFieldName+":"+id+"')\;\">&nbsp;";
+			var rmRef   = "<img src='/static/img/cancel.png' style='vertical-align:middle;' height='14' width='14' onClick='removeFormField(\"#row" + frmFieldName + id +"\")\; return false\;'>&nbsp;";
 			var hdTxt   = "<select name='" + frmFieldName + "_" + id + "' id='"+frmFieldName + id +"' size='1'>{% for x in data['SWLIST'] %}<option value='{{x[0]}}''>{{x[1]}}</option>{% endfor %}</select>";
-			//var inTxt = "<input type='text' size='50' name='pName" + frmFieldName + ":" + id + "' id='pName" + frmFieldName + ":" + id +"' disabled>&nbsp;";
-			//var hdTxt = "<input type='hidden' size='20' name='" + frmFieldName + "_" + id + "' id='"+frmFieldName + id +"'>&nbsp;";
 			var _rowEnd = "&nbsp;&nbsp; <input type='text' name='"+frmFieldName+"Order_"+id+"' value='"+id+"' size='3'> (Order)<p>";
-			//var _htm  = _row + rmRef + inRef + inTxt + hdTxt + _rowEnd;
 			var _htm = _row + rmRef + hdTxt + _rowEnd;
-			console.log(_htm);
 
 			$("#"+divid).append(_htm);
 		}

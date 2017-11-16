@@ -2,7 +2,7 @@
 
 {% block styles %}
 	{{ super() }}
-	<link href="{{ url_for('static', filename='bootstrap-table/css/bootstrap-table.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 
 {%  endblock %}
@@ -25,9 +25,9 @@
 
 {% block javascript %}
 	{{ super() }}
-	<script src="{{ url_for('static', filename='bootstrap-table/js/bootstrap-table.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/extensions/resizable/bootstrap-table-resizable.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/colResizable-1.5.source.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/extensions/resizable/bootstrap-table-resizable.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/col-resizable/colResizable-1.6.min.js') }}"></script>
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 	<script>
 	$( document ).ready(function()
@@ -133,10 +133,8 @@
 		{
 			var ids = $.map($table.bootstrapTable('getSelections'), function (row)
 			{
-				console.log(row);
 				return row.user_id;
 			});
-			console.log(ids);
 
 			if (ids.length > 1) {
 				alert("Please choose only one account to delete at a time.");

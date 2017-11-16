@@ -1,0 +1,40 @@
+{
+	"name" : "colresizable",
+	"version" : "1.6.0",
+    "description" : "jQuery plugin to resize table columns",
+	"title" : "colResizable",
+	"author" : {
+		"name" : "Alvaro Prieto Lauroba",
+		"url" : "http://bacubacu.com/colresizable/"
+	},
+	"licenses" : [{
+			"type" : "MIT",
+			"url" : "MIT-LICENSE.txt"
+		}, {
+			"type" : "GPL",
+			"url" : "GPL-LICENSE.txt"
+		}
+	],
+	"dependencies" : {
+		"jquery" : "1 - 2"
+	},
+
+	"keywords" : [
+		"resize table",
+		"resize columns",
+		"resize",
+		"resizable",
+		"columns",
+		"jquery-plugin",
+		"table",
+		"range slider",
+        "colresizable",
+        "resize table columns",
+        "jquery"
+	],
+	"homepage" : "http://bacubacu.com/colresizable/",
+	"files" : [
+		"colResizable-1.6.min.js",
+		"./samples"
+	]
+}

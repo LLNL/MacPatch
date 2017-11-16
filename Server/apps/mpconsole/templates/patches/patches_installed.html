@@ -2,8 +2,8 @@
 
 {% block styles %}
 	{{ super() }}
-	<link href="{{ url_for('static', filename='bootstrap-table/css/bootstrap-table.css') }}" rel="stylesheet">
-	<link href="{{ url_for('static', filename='bootstrap-table/extensions/editable/bootstrap-editable.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/bootstrap-table-editable.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 {%  endblock %}
 
@@ -23,13 +23,12 @@
 {% block javascript %}
 	{{ super() }}
 
-	<script src="{{ url_for('static', filename='bootstrap-table/js/bootstrap-table.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/extensions/resizable/bootstrap-table-resizable.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/extensions/editable/bootstrap-table-editable.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/extensions/editable/bootstrap-editable.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/colResizable-1.5.source.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/extensions/export/bootstrap-table-export.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/extensions/export/tableExport.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/extensions/resizable/bootstrap-table-resizable.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-table-editable.js') }}"></script>
+	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-editable.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/col-resizable/colResizable-1.6.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js') }}"></script>
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 	<script>
 
@@ -39,7 +38,6 @@
 			striped: true,
 			ajax: function loadMyRows(params)
 			{
-				console.log(params.data);
 				if (params.data.search == '') {
 					params.data.search = undefined;
 				}
@@ -50,9 +48,8 @@
 					url: _url,
 					cache: false,
 					dataType: 'json',
-					success: function(res) {
-						console.log(res);
-
+					success: function(res) 
+					{
 						params.success({
 							me: 'installed',
 							total: res.total,

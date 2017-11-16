@@ -1,0 +1,26 @@
+{
+  "name": "sb-admin-2",
+  "homepage": "https://github.com/panpeter/sb-admin-2",
+  "authors": [
+    "Piotr Wilczek"
+  ],
+  "description": "SB Admin 2 Bootstrap template",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "e4a396dccd",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "e4a396dccd07851186c130bf33dfc08d39d964a7"
+  },
+  "_source": "https://github.com/panpeter/sb-admin-2.git",
+  "_target": "*",
+  "_originalSource": "sb-admin-2",
+  "_direct": true
+}

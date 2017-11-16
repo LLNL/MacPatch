@@ -14,14 +14,14 @@
 
 	{% block styles %}
 		<!-- Bootstrap Core CSS -->
-		<link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+		<link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 		<!-- Custom CSS -->
-		<link href="{{ url_for('static', filename='sb-admin/css/sb-admin-2.css') }}" rel="stylesheet">
-		<link href="{{ url_for('static', filename='bootstrap-table/css/bootstrap-table.css') }}" rel="stylesheet">
-		<link href="{{ url_for('static', filename='bootstrap-table/extensions/editable/bootstrap-editable.css') }}" rel="stylesheet">
+		<link href="{{ url_for('static', filename='bower_components/sb-admin-2/css/sb-admin-2.css') }}" rel="stylesheet">
+		<link href="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.css') }}" rel="stylesheet">
+		<link href="{{ url_for('static', filename='css/bootstrap-table-editable.css') }}" rel="stylesheet">
 
 		<!-- Custom Fonts -->
-		<link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+		<link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
 		<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 
 
@@ -106,11 +106,11 @@
 	{% endblock %}
 
 	<!-- jQuery -->
-	<script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='js/moment.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/moment/min/moment.min.js') }}"></script>
 
 	<!-- Bootstrap Core JavaScript -->
-	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
 	{% block javascript %}
 		<script type="text/javascript">

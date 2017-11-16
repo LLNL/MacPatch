@@ -1,16 +1,16 @@
 {% block styles %}
 	<!-- Bootstrap Core CSS -->
-	<link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 	<!-- Custom CSS -->
-	<link href="{{ url_for('static', filename='sb-admin/css/sb-admin-2.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/sb-admin-2/css/sb-admin-2.css') }}" rel="stylesheet">
 	<!-- Custom Fonts -->
-	<link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
 
-	<link href="{{ url_for('static', filename='jquery-steps/css/jquery.steps.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/jquery.steps/demo/css/jquery.steps.css') }}" rel="stylesheet">
 
 	<link href="{{ url_for('static', filename='css/range.css') }}" rel="stylesheet">
 
-	<link href="{{ url_for('static', filename='selectize/css/selectize.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/selectize/dist/css/selectize.css') }}" rel="stylesheet">
 
 	<style type="text/css" media="screen">
 		#spanLink {
@@ -147,7 +147,7 @@
 						<input type="hidden" id="reqid" value="0">
 						<div class="optionBox">
 							<div class="block">
-								<p><h5><span class="add" id='spanLink'><img src="/static/images/process_add_16.png"/> Add Criteria</span></h5><p>
+								<p><h5><span class="add" id='spanLink'><img src="/static/img/process_add_16.png"/> Add Criteria</span></h5><p>
 							</div>
 						</div>
 					</div>
@@ -162,19 +162,19 @@
 
 {% block javascript %}
 	<!-- jQuery -->
-	<script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
 
 	<!-- Bootstrap Core JavaScript -->
-	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
 	<!-- jQuery Step Wizard -->
-	<script src="{{ url_for('static', filename='jquery-steps/lib/modernizr-2.6.2.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='jquery-steps/js/jquery.steps.js') }}"></script>
+
+	<script src="{{ url_for('static', filename='bower_components/jquery.steps/build/jquery.steps.min.js') }}"></script>
 
 	<!-- ACE Editor -->
-	<script src="{{ url_for('static', filename='ace/src/ace.js') }}"></script>
+	<script src="{{ url_for('static', filename='static_components/ace/src/ace.js') }}"></script>
 
-	<script src="{{ url_for('static', filename='selectize/js/standalone/selectize.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/selectize/dist/js/standalone/selectize.min.js') }}"></script>
 
 	<script>
 
@@ -288,10 +288,8 @@
 			function addRow(sid, action, data)
 			{
 				if (action != 'Script') {
-					console.log("!Script");
 					createCSS('#editor_' + sid,"height: 40px; width: 600px;white-space: pre;");
 				} else {
-					console.log("File");
 					createCSS('#editor_' + sid,"height: 240px; width: 600px;white-space: pre;");
 				}
 
@@ -303,7 +301,7 @@
 				// Left Column
 				_htm = _htm + '<div class="col-md-2">';
 				// Remove Image
-				_htm = _htm + '<span class="remove"><img src="/static/images/cancel.png" style="vertical-align:top;margin-top:2px;" height="14" width="14"></span>';
+				_htm = _htm + '<span class="remove"><img src="/static/img/cancel.png" style="vertical-align:top;margin-top:2px;" height="14" width="14"></span>';
 				_htm = _htm + "&nbsp;";
 
 				// Criteria Type

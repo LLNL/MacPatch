@@ -1,0 +1,17 @@
+{
+  "name": "sb-admin-2",
+  "version": "0.0.1",
+  "homepage": "https://github.com/panpeter/sb-admin-2",
+  "authors": [
+    "Piotr Wilczek"
+  ],
+  "description": "SB Admin 2 Bootstrap template",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

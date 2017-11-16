@@ -1,6 +1,6 @@
 {% block styles %}
-	<link href="{{ url_for('static', filename='bootstrap-table/css/bootstrap-table.css') }}" rel="stylesheet">
-	<link href="{{ url_for('static', filename='bootstrap-table/extensions/editable/bootstrap-editable.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/bootstrap-table-editable.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 
 	<style>
@@ -80,7 +80,6 @@
 	   $("#modalSaveButton").click(function()
 	   {
 			var formData = new FormData($('#myForm')[0]);
-			console.log(formData);
 
 			$.ajax({
 				type:'POST',

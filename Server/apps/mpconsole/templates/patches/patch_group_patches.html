@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 {% block styles %}
 	<!-- Bootstrap Core CSS -->
-	<link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-	<link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
 
-	<link href="{{ url_for('static', filename='bootstrap-table/css/bootstrap-table.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 	<style>
 		#patchesTable > tbody > tr > td {
@@ -36,13 +36,13 @@
 
 {% block javascript %}
 	<!-- jQuery -->
-	<script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
 	<!-- Bootstrap Core JavaScript -->
-	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
-	<script src="{{ url_for('static', filename='bootstrap-table/js/bootstrap-table.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/extensions/resizable/bootstrap-table-resizable.js') }}"></script>
-	<script src="{{ url_for('static', filename='bootstrap-table/colResizable-1.5.source.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/extensions/resizable/bootstrap-table-resizable.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/col-resizable/colResizable-1.6.min.js') }}"></script>
 
 	<script>
 	$( document ).ready(function()
@@ -88,7 +88,7 @@
 				{% endfor %}
 			],
 			onCheck: function(row, $element) {
-				console.log(row);
+				//console.log(row);
 			},
 			onLoadSuccess: function(data) {
 				removeSelected();

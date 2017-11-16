@@ -2,17 +2,17 @@
 
 {% block styles %}
 	<!-- Bootstrap Core CSS -->
-	<link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 	<!-- Custom CSS -->
-	<link href="{{ url_for('static', filename='sb-admin/css/sb-admin-2.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/sb-admin-2/css/sb-admin-2.css') }}" rel="stylesheet">
 	<!-- Custom Fonts -->
-	<link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
 
-	<link href="{{ url_for('static', filename='jquery-steps/css/jquery.steps.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/jquery.steps/demo/css/jquery.steps.css') }}" rel="stylesheet">
 
 	<link href="{{ url_for('static', filename='css/range.css') }}" rel="stylesheet">
 
-	<link href="{{ url_for('static', filename='selectize/css/selectize.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='bower_components/selectize/dist/css/selectize.css') }}" rel="stylesheet">
 
 	<style type="text/css" media="screen">
 		#spanLink {
@@ -361,7 +361,7 @@
 							<input type="hidden" id="reqPreID" value="0">
 							<div class="blockPre">
 								<label>Pre-Requisite Package(s)</label>
-								<span class="addPre" id='spanLink'><p><h5><img src="/static/images/pkg_add.png"/> Add Package</h5></span><p>
+								<span class="addPre" id='spanLink'><p><h5><img src="/static/img/pkg_add.png"/> Add Package</h5></span><p>
 							</div>
 						</div>
 
@@ -371,7 +371,7 @@
 							<input type="hidden" id="reqPstID" value="0">
 							<div class="blockPost">
 								<label>Post-Requisite Package(s)</label>
-								<span class="addPost" id='spanLink'><p><h5><img src="/static/images/pkg_add.png"/> Add Package</h5></span><p>
+								<span class="addPost" id='spanLink'><p><h5><img src="/static/img/pkg_add.png"/> Add Package</h5></span><p>
 							</div>
 						</div>
 
@@ -387,18 +387,18 @@
 
 {% block javascript %}
 	<!-- jQuery -->
-	<script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
 
 	<!-- Bootstrap Core JavaScript -->
-	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
 	<!-- jQuery Step Wizard -->
-	<script src="{{ url_for('static', filename='jquery-steps/lib/modernizr-2.6.2.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='jquery-steps/js/jquery.steps.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='static_components/modernizr/modernizr.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/jquery.steps/build/jquery.steps.min.js') }}"></script>
 
-	<script src="{{ url_for('static', filename='ace/src/ace.js') }}"></script>
+	<script src="{{ url_for('static', filename='static_components/ace/src/ace.js') }}"></script>
 
-	<script src="{{ url_for('static', filename='selectize/js/standalone/selectize.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/selectize/dist/js/standalone/selectize.min.js') }}"></script>
 
 	<script>
 		$(document).ready(function()
@@ -527,7 +527,7 @@
 				// Left Column
 				_htm = _htm + '<div class="col-md-2">';
 				// Remove Image
-				_htm = _htm + '<span class="remove"><img src="/static/images/cancel.png" style="vertical-align:top;margin-top:2px;" height="14" width="14"></span>';
+				_htm = _htm + '<span class="remove"><img src="/static/img/cancel.png" style="vertical-align:top;margin-top:2px;" height="14" width="14"></span>';
 				_htm = _htm + "&nbsp;";
 				// Order
 				_htm = _htm + "<input type='text' name='"+_order+"' value='"+sid+"' size='4'><small>(Order)</small>";
