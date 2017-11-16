@@ -156,6 +156,22 @@
 								<li>
 									<a href="{{ url_for('osmanage.profiles') }}"><i class="fa fa-list fa-fw"></i> Profiles</a>
 								</li>
+								{% if session.role[0] == 1 %}
+								<li>
+									<a href="{{ url_for('osmanage.appFilters') }}"><i class="fa fa-list fa-fw"></i> .app Access</a>
+								</li>
+								<li>
+									<a href="#"><i class="fa fa-database fa-fw"></i> Security Configuration<span class="fa arrow"></span></a>
+									<ul class="nav nav-third-level">
+										<li>
+											<a href="{{ url_for('patches.requiredList') }}"><i class="fa fa-list-alt fa-fw"></i> Rule Groups</a>
+										</li>
+										<li>
+											<a href="{{ url_for('patches.installedList') }}"><i class="fa fa-list-alt fa-fw"></i> Rules</a>
+										</li>
+									</ul>
+								</li>
+								{% endif %}
 							</ul>
 							<!-- /.nav-second-level -->
 						</li>
@@ -239,8 +255,7 @@
 						</div><!-- /.modal-content -->
 					</div><!-- /.modal-dialog -->
 				</div><!-- /.modal -->
-
-				{% block bodyPanel %}{% endblock %}
+				{% block bodyPanel %}  {% endblock %}
 			</div>
 
 		</div>

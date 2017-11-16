@@ -342,11 +342,24 @@ def savePatchFile(puuid, file):
 
 	return result
 
-@patches.route('/custom/delete',methods=['POST'])
+@patches.route('/custom/delete',methods=['DELETE'])
 @login_required
 def customDelete():
-	print request.form
-	return custom()
+	ids = request.form['patches']
+
+	for puuid in ids.split(","):
+		qGet1 = MpPatch.query.filter(MpPatch.puuid == puuid).first()
+		if qGet1 is not None:
+			db.session.delete(qGet1)
+			MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
+
+		try:
+			db.session.commit()
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			print('Message: %s' % (e.message))
+
+	return json.dumps({'data': {}}, default=json_serial), 200
 
 ''' AJAX Request '''
 @patches.route('/custom/picker',methods=['GET'])

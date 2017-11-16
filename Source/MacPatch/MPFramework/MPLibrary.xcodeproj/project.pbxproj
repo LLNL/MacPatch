@@ -151,6 +151,8 @@
 		8FEC938817CBFEFB00AA9C1C /* MPApplePatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938617CBFEFB00AA9C1C /* MPApplePatch.m */; };
 		8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FEC938917CBFF0F00AA9C1C /* MPCustomPatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FEC938C17CBFF0F00AA9C1C /* MPCustomPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */; };
+		8FF3167B1FBC01CB00CB2B18 /* MPPython.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF316791FBC01C700CB2B18 /* MPPython.m */; };
+		8FF3167C1FBC01CB00CB2B18 /* MPPython.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF3167A1FBC01CA00CB2B18 /* MPPython.h */; };
 		8FF831601DEF7ACF005DC5AD /* MPKeyItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF8315C1DEF7ACF005DC5AD /* MPKeyItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FF831611DEF7ACF005DC5AD /* MPKeyItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8315D1DEF7ACF005DC5AD /* MPKeyItem.m */; };
 		8FF831621DEF7ACF005DC5AD /* MPSimpleKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF8315E1DEF7ACF005DC5AD /* MPSimpleKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -315,6 +317,8 @@
 		8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCustomPatch.m; sourceTree = "<group>"; };
 		8FED886F146462DB00709F8E /* MPASUSCatalogs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPASUSCatalogs.h; sourceTree = "<group>"; };
 		8FED8870146462DB00709F8E /* MPASUSCatalogs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPASUSCatalogs.m; sourceTree = "<group>"; };
+		8FF316791FBC01C700CB2B18 /* MPPython.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPPython.m; sourceTree = "<group>"; };
+		8FF3167A1FBC01CA00CB2B18 /* MPPython.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPPython.h; sourceTree = "<group>"; };
 		8FF8315C1DEF7ACF005DC5AD /* MPKeyItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPKeyItem.h; sourceTree = "<group>"; };
 		8FF8315D1DEF7ACF005DC5AD /* MPKeyItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPKeyItem.m; sourceTree = "<group>"; };
 		8FF8315E1DEF7ACF005DC5AD /* MPSimpleKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSimpleKeychain.h; sourceTree = "<group>"; };
@@ -361,6 +365,7 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8FF316781FBC019400CB2B18 /* NEW */,
 				8F3D858D1F708E7A001FBE8A /* Networking NEW */,
 				8FDBABD51F74809E0025F0FF /* MP Settings */,
 				8FA6A76C1B90D6FE006A329B /* Inventory */,
@@ -717,6 +722,15 @@
 			name = "Third Party Classes";
 			sourceTree = "<group>";
 		};
+		8FF316781FBC019400CB2B18 /* NEW */ = {
+			isa = PBXGroup;
+			children = (
+				8FF3167A1FBC01CA00CB2B18 /* MPPython.h */,
+				8FF316791FBC01C700CB2B18 /* MPPython.m */,
+			);
+			name = NEW;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -791,6 +805,7 @@
 				8F3D859C1F708E96001FBE8A /* STHTTPRequest.h in Headers */,
 				8F3D85961F708E96001FBE8A /* MPHTTPRequest.h in Headers */,
 				8F3D85981F708E96001FBE8A /* MPWSResult.h in Headers */,
+				8FF3167C1FBC01CB00CB2B18 /* MPPython.h in Headers */,
 				8FDBAC0C1F74909A0025F0FF /* FMXCsvTable.h in Headers */,
 				8F5970BE1E9BEA3000DBBEF2 /* MPRemoteFingerprint.h in Headers */,
 				8FC1B5551E4E7894008844DF /* MPClientInfo.h in Headers */,
@@ -877,6 +892,7 @@
 				8F4B1DEF16DD1D6400E15A9E /* MPNetworkUtils.m in Sources */,
 				8F4B1DF216DD1D6400E15A9E /* MPDiskUtil.m in Sources */,
 				8F3D85971F708E96001FBE8A /* MPHTTPRequest.m in Sources */,
+				8FF3167B1FBC01CB00CB2B18 /* MPPython.m in Sources */,
 				8F057FA41F95310D006C1F10 /* MPClientKey.m in Sources */,
 				8F4B1DF316DD1D6400E15A9E /* MPLog.m in Sources */,
 				8FE03DCD1B60020E005D39EE /* NSData+Base64.m in Sources */,

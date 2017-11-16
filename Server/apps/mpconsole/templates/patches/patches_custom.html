@@ -126,6 +126,7 @@
 	{
 		$delButton.click(function ()
 		{
+			/*
 			var ids = $.map($table.bootstrapTable('getSelections'), function (row)
 			{
 				return row.puuid;
@@ -134,6 +135,39 @@
 				field: 'puuid',
 				values: ids
 			});
+			*/
+
+			var rows = $('#table').bootstrapTable('getAllSelections');
+			var rowsArr = [];
+			for (x in rows) {
+				var _patchID = rows[x]['puuid'];
+				rowsArr.push(_patchID);
+			}
+
+			console.log(rowsArr);
+
+			var _url = "/patches/custom/delete";
+			$.ajax({
+				url: _url,
+				type: 'DELETE',
+				cache: false,
+				data: {'patches':rowsArr.toString()},
+				error: function (request, status, error)
+				{
+					jsonValue = jQuery.parseJSON( request.responseText );
+					alert(jsonValue.errormsg);
+				},
+				success: function () {
+					$('#table').bootstrapTable('remove', {
+						field: 'puuid',
+						values: rowsArr
+					});
+					alert("Patch(es) removed successfully.");
+				}
+			});
+
+
+
 		});
 
 		$addButton.click(function ()

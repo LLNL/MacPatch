@@ -321,6 +321,34 @@ def postProfile():
 
 '''
 	-------------------------------------------
+	App Filters
+	-------------------------------------------
+'''
+@osmanage.route('/app_filters')
+@login_required
+def appFilters():
+
+	columns = [('profileID', 'Profile ID', '0'), ('profileIdentifier', 'Profile Identifier', '1'), ('profileName', 'Name', '1'),
+				('profileDescription', 'Description', '1'), ('profileRev', 'Revision', '1'), ('enabled', 'Enabled', '1'),
+				('uninstallOnRemove', 'Uninstall On Remove', '1')]
+
+	profileQuery = MpOsConfigProfiles.query.all()
+
+	_results = []
+	for p in profileQuery:
+		row = {}
+		for c in columns:
+			y = "p."+c[0]
+			if c[0] == 'enabled' or c[0] == 'uninstallOnRemove':
+				row[c[0]] = "Yes" if eval(y) == 1 else "No"
+			else:
+				row[c[0]] = eval(y)
+
+		_results.append(row)
+
+	return render_template('os_managment/os_app_filters.html', data=_results, columns=columns)
+'''
+	-------------------------------------------
 	Global
 	-------------------------------------------
 '''
