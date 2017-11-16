@@ -1,0 +1,45 @@
+{
+  "name": "mpconsole",
+  "homepage": "https://github.com/LLNL/MacPatch",
+  "authors": [
+    "Charles Heizer <heizer1@llnl.gov>"
+  ],
+  "description": "MacPatch Admin Console app",
+  "main": "",
+  "keywords": [
+    "MacPatch",
+    "Admin",
+    "Console"
+  ],
+  "license": "GPLv2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jQuery": "^3.2.1",
+    "bootstrap": "^3.3.7",
+    "jQuery-QueryBuilder": "^2.4.4",
+    "morris.js": "morrisjs#^0.5.1",
+    "bootstrap-table": "^1.11.1",
+    "metisMenu": "^2.7.1",
+    "moment": "^2.19.2",
+    "raphael": "^2.2.7",
+    "selectize": "^0.12.4",
+    "jquery.steps": "jquery-steps#^1.1.0",
+    "chart.js": "chartjs#^2.7.1",
+    "font-awesome": "^4.7.0",
+    "smalot-bootstrap-datetimepicker": "bootstrap-datetimepicker-master#^2.4.4",
+    "col-resizable": "^1.6.0",
+    "chosen": "^1.8.2",
+    "interactjs": "interact#^1.2.9",
+    "sql-parser": "^1.1.0"
+  },
+  "notes": [
+    "ace and modernizr do not work via bower, will keep trying in future",
+    "bootstrap-table-editable si static, bug with current version, need 1 back"
+  ]
+}
