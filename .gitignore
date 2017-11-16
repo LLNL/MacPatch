@@ -9,19 +9,20 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
-develop-eggs/
+
+#build/
+#develop-eggs/
 
 downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
+#eggs/
+#.eggs/
+#lib/
+#lib64/
+#parts/
+#sdist/
+#var/
+#*.egg-info/
+#.installed.cfg
 #*.egg
 
 # PyInstaller
