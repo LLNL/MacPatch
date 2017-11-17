@@ -142,3 +142,5 @@ iOSInjectionProject/
 # Misc
 Source_dev/
 ._static
+*.log
+*.log.*
