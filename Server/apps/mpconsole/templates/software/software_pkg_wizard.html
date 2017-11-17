@@ -160,7 +160,7 @@
 								<div style="font-size:12px;padding-bottom:10px;">
 									{% if data['PKG'].sw_url %}
 									<a href="/mp-content/{{data['PKG'].sw_url}}">
-										<img src="{{ url_for('static', filename='images/arrow_down.png') }}" height="14" />{{ data['PKG'].sw_url.split("/") | last }} ({{data['PKG'].sw_hash }})
+										<img src="{{ url_for('static', filename='img/arrow_down.png') }}" height="14" />{{ data['PKG'].sw_url.split("/") | last }} ({{data['PKG'].sw_hash }})
 									</a>
 									{% endif %}
 								</div>

@@ -556,13 +556,13 @@ Client Group - {{group_name}}
 		if (value == 'true') {
 			return [
 				'<div class="operateWidth-md">',
-				'<img src="{{ url_for("static", filename="images/Reboot_32.png") }}" title="Reboot Required" height="22" width="22">',
+				'<img src="{{ url_for("static", filename="img/Reboot_32.png") }}" title="Reboot Required" height="22" width="22">',
 				'</div>'
 			].join('');
 		} else {
 			return [
 				'<div class="operateWidth-md">',
-				'<img src="{{ url_for("static", filename="images/empty.png") }}" height="22" width="22">',
+				'<img src="{{ url_for("static", filename="img/empty.png") }}" height="22" width="22">',
 				'</div>'
 			].join('');
 		}

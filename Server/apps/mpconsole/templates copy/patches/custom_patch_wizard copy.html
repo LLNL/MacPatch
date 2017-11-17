@@ -144,7 +144,7 @@
     <div id="step-2">
         <div id="wrapper">
             <div style="float:left;" id="1"><h4>Patch Criteria</h4></div>
-            <div style="float:right;" id="2"><a onClick="showHelp();"><img src="{{ url_for('static', filename='images/help.png') }}" /></a></div>
+            <div style="float:right;" id="2"><a onClick="showHelp();"><img src="{{ url_for('static', filename='img/help.png') }}" /></a></div>
             <div style="clear:both"></div>
         </div>
 
@@ -195,7 +195,7 @@
 
         <h3>
             <a href="#" onClick="addFormCriteriaField('reqPatchCriteria','reqid','divTxtReq'); return false;">
-                <img src="/static/images/process_add_16.png" />Add Criteria
+                <img src="/static/img/process_add_16.png" />Add Criteria
             </a>
         </h3>
         <input type="hidden" id="reqid" value="0">
@@ -218,7 +218,7 @@
                         <input type='text' name='reqPatchCriteriaOrder_{{xi}}' value='{{xi}}' size='3' style='vertical-align:top;'>
                         <span style='vertical-align:top;'>(Order)</span>&nbsp;
                         <a href='##' onClick='removeFormField("#rowreqPatchCriteria{{xi}}"); return false;'>
-                            <img src='/static/images/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'>
+                            <img src='/static/img/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'>
                         </a>
                     </p>
                     {% set xi = xi + 1 %}
@@ -258,7 +258,7 @@
                 <input type="file" name="mainPatchFile" message="Error [Patch File]: A patch package name is required.">
                 <div style="font-size:10px;padding:10px;">
                     <a href="http://#CGI.SERVER_NAME#/mp-content{{data.pkg_url}}" style="font-size:12px;">
-                        <img src="/static/images/arrow_down.png" height="14"/>{{data.pkg_name or ''}} ({{data.pkg_hash or ''}})
+                        <img src="/static/img/arrow_down.png" height="14"/>{{data.pkg_name or ''}} ({{data.pkg_hash or ''}})
                     </a>
                 </div>
             </div>
@@ -299,7 +299,7 @@
         <label>Pre-Requisite Package(s)</label>
         <h4>
             <a href="#" onClick="addFormField('prePatchPKG','preid','divTxtPre'); return false;">
-                <img src="/static/images/pkg_add.png"/>Add
+                <img src="/static/img/pkg_add.png"/>Add
             </a>
         </h4>
         {% set preStartID = 0 %}
@@ -308,8 +308,8 @@
                 {% if req.type == 0 %}
                     {% set preStartID = preStartID + 1 %}
                     <p id="rowprePatchPKG[req.type_order]" style="margin-top:4px;">
-                        <img onClick='removeFormField("##rowprePatchPKG{{req.type_order}}"); return false;' src="/static/images/cancel.png" style="vertical-align:middle;" height="14" width="14">
-                        <img src='/static/images/info.png' style='vertical-align:middle;' height='14' width='14' onClick="showList('prePatchPKG:{{req.type_order}}');">
+                        <img onClick='removeFormField("##rowprePatchPKG{{req.type_order}}"); return false;' src="/static/img/cancel.png" style="vertical-align:middle;" height="14" width="14">
+                        <img src='/static/img/info.png' style='vertical-align:middle;' height='14' width='14' onClick="showList('prePatchPKG:{{req.type_order}}');">
                         <input type='hidden' size='20' name="prePatchPKG_{{req.type_order}}" id="prePatchPKG{{req.type_order}}" value="{{req.puuid_ref}}">
                         <input type='text' size='50' name="pNameprePatch:{{req.type_order}}" id="pNameprePatch:{{req.type_order}}" value="[getPatchInfo(dataReq.puuid_ref)]">
                         &nbsp; <input type="text" name="prePatchPKGOrder_{{req.type_order}}" value="{{req.type_order}}" size="3"> (Order)&nbsp;
@@ -324,7 +324,7 @@
         <label>Post-Requisite Package(s)</label>
         <h4>
             <a href="#" onClick="addFormField('postPatchPKG','postid','divTxtPost'); return false;">
-                <img src="/static/images/pkg_add.png"/>Add
+                <img src="/static/img/pkg_add.png"/>Add
             </a>
         </h4>
         <input type="hidden" id="postid" value="0">
@@ -332,8 +332,8 @@
             {% for req in dataReq %}
                 {% if req.type == 1 %}
                     <p id="rowpostPatchPKG{{req.type_order}}" style="margin-top:4px;">
-                        <img onClick='removeFormField("#rowpostPatchPKG{{req.type_order}}"); return false;' src="/static/images/cancel.png" style="vertical-align:middle;" height="14" width="14">
-                        <img src='/static/images/info.png' style='vertical-align:middle;' height='14' width='14' onClick="showList('postPatchPKG:{{req.type_order}}');">
+                        <img onClick='removeFormField("#rowpostPatchPKG{{req.type_order}}"); return false;' src="/static/img/cancel.png" style="vertical-align:middle;" height="14" width="14">
+                        <img src='/static/img/info.png' style='vertical-align:middle;' height='14' width='14' onClick="showList('postPatchPKG:{{req.type_order}}');">
                         <input type='hidden' size='20' name="postPatchPKG_{{req.type_order}}" id="postPatchPKG{{req.type_order}}" value="{{req.puuid_ref}}">
                         <input type='text' size='50' name="pNamepostPatch:{{req.type_order}}" id="pNamepostPatch:{{req.type_order}}" value="[getPatchInfo(dataCrit.puuid_ref)]">
                         &nbsp;
@@ -435,7 +435,7 @@
             {% endif %}
 
             document.getElementById(pid).value = id;
-            var rmRef = "<a href='#' onClick='removeFormField(\"#row" + frmFieldName + id +"\"); return false;'><img src='/static/images/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'></a>";
+            var rmRef = "<a href='#' onClick='removeFormField(\"#row" + frmFieldName + id +"\"); return false;'><img src='/static/img/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'></a>";
             var sel = "&nbsp;<select name='type_"+ id + "' id='"+frmFieldName + id +"' size='1' style='vertical-align:top\;'><option>BundleID</option><option>File</option><option>Script</option></select>&nbsp;&nbsp;";
 
             $("#"+divid).append("&nbsp;<p id='row" + frmFieldName + id +"' style='margin-top:4px;'>&nbsp;"+sel+"&nbsp;<textarea name='" + frmFieldName + "_" + id + "' id='"+frmFieldName + id +"' cols=\"60\" />&nbsp;<input type='text' name='"+frmFieldName+"Order_"+id+"' value='"+id+"' size='4' style='vertical-align:top\;'><span style='vertical-align:top\;'>(Order)</span>&nbsp;"+rmRef+"</p>");
@@ -447,8 +447,8 @@
             id = (id - 1) + 2;
             document.getElementById(pid).value = id;
             var _row =  "<p id='row" + frmFieldName + id +"' style='margin-top:4px;'>";
-            var rmRef = "<img src='/static/images/cancel.png' style='vertical-align:middle;' height='14' width='14' onClick='removeFormField(\"#row" + frmFieldName + id +"\")\; return false\;'>&nbsp;";
-            var inRef = "<img src='/static/images/info_16.png' style='vertical-align:middle;' height='14' width='14' onClick=\"showList('"+frmFieldName+":"+id+"')\;\">&nbsp;";
+            var rmRef = "<img src='/static/img/cancel.png' style='vertical-align:middle;' height='14' width='14' onClick='removeFormField(\"#row" + frmFieldName + id +"\")\; return false\;'>&nbsp;";
+            var inRef = "<img src='/static/img/info_16.png' style='vertical-align:middle;' height='14' width='14' onClick=\"showList('"+frmFieldName+":"+id+"')\;\">&nbsp;";
             var inTxt = "<input type='text' size='50' name='pName" + frmFieldName + ":" + id + "' id='pName" + frmFieldName + ":" + id +"' disabled>&nbsp;";
             var hdTxt = "<input type='hidden' size='20' name='" + frmFieldName + "_" + id + "' id='"+frmFieldName + id +"'>&nbsp;";
             var _rowEnd = "<input type='text' name='"+frmFieldName+"Order_"+id+"' value='"+id+"' size='4'>(Order)&nbsp;<p>";

@@ -119,7 +119,7 @@
 							<div style="font-size:12px;padding:10px;">
 								{% if data['PKG'].sw_url %}
 								<a href="/mp-content/{{data['PKG'].sw_url}}">
-									<img src="{{ url_for('static', filename='images/arrow_down.png') }}" height="14" />{{ data['PKG'].sw_url.split("/") | last }} ({{data['PKG'].sw_hash }})
+									<img src="{{ url_for('static', filename='img/arrow_down.png') }}" height="14" />{{ data['PKG'].sw_url.split("/") | last }} ({{data['PKG'].sw_hash }})
 								</a>
 								{% endif %}
 							</div>
@@ -253,7 +253,7 @@
 					<label>Pre-Requisite Package(s)</label>
 					<h4>
 						<a href="#" onClick="addFormField('preSWPKG','preid','divTxtPre'); return false;">
-							<img src="{{ url_for('static', filename='images/pkg_add.png') }}" />Add
+							<img src="{{ url_for('static', filename='img/pkg_add.png') }}" />Add
 						</a>
 					</h4>
 
@@ -261,7 +261,7 @@
 						<br>
 						{% for req in data['PKGPREREQ'] %}
 							<p id="rowPrePKG{{req.order}}" style="margin-top:4px;">
-								<img onClick='removeFormField("#rowPrePKG{{req.order}}"); return false;' src="/static/images/cancel.png" style="vertical-align:middle;" height="14" width="14">
+								<img onClick='removeFormField("#rowPrePKG{{req.order}}"); return false;' src="/static/img/cancel.png" style="vertical-align:middle;" height="14" width="14">
 
 								<select name="preSWPKG_{{req.order}}" size="1">
 									{% for x in data['SWLIST'] %}
@@ -283,14 +283,14 @@
 					<label>Post-Requisite Package(s)</label>
 					<h4>
 						<a href="#" onClick="addFormField('postSWPKG','postid','divTxtPost'); return false;">
-							<img src="{{ url_for('static', filename='images/pkg_add.png') }}" />Add
+							<img src="{{ url_for('static', filename='img/pkg_add.png') }}" />Add
 						</a>
 					</h4>
 
 					<div id="divTxtPost">
 						{% for req in data['PKGPOSTREQ'] %}
 							<p id="rowPostPKG{{req.order}}" style="margin-top:4px;">
-								<img onClick='removeFormField("#rowPostPKG{{req.order}}"); return false;' src="/static/images/cancel.png" style="vertical-align:middle;" height="14" width="14">
+								<img onClick='removeFormField("#rowPostPKG{{req.order}}"); return false;' src="/static/img/cancel.png" style="vertical-align:middle;" height="14" width="14">
 
 								<select name="postSWPKG_{{req.order}}" size="1">
 									{% for x in data['SWLIST'] %}
@@ -381,7 +381,7 @@
 			{% endif %}
 
 			document.getElementById(pid).value = id;
-			var rmRef = "<a href='#' onClick='removeFormField(\"#row" + frmFieldName + id +"\"); return false;'><img src='/static/images/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'></a>";
+			var rmRef = "<a href='#' onClick='removeFormField(\"#row" + frmFieldName + id +"\"); return false;'><img src='/static/img/cancel.png' style='vertical-align:top;margin-top:2px;' height='14' width='14'></a>";
 			var sel = "&nbsp;<select name='type_"+ id + "' id='"+frmFieldName + id +"' size='1' style='vertical-align:top\;'><option>BundleID</option><option>File</option><option>Script</option></select>&nbsp;&nbsp;";
 
 			$("#"+divid).append("&nbsp;<p id='row" + frmFieldName + id +"' style='margin-top:4px;'>&nbsp;"+sel+"&nbsp;<textarea name='" + frmFieldName + "_" + id + "' id='"+frmFieldName + id +"' cols=\"60\" />&nbsp;<input type='text' name='"+frmFieldName+"Order_"+id+"' value='"+id+"' size='4' style='vertical-align:top\;'><span style='vertical-align:top\;'>(Order)</span>&nbsp;"+rmRef+"</p>");
@@ -394,8 +394,8 @@
 			id = (id - 1) + 2;
 			document.getElementById(pid).value = id;
 			var _row    =  "<p id='row" + frmFieldName + id +"' style='margin-top:4px;'>";
-			var rmRef   = "<img src='/static/images/cancel.png' style='vertical-align:middle;' height='14' width='14' onClick='removeFormField(\"#row" + frmFieldName + id +"\")\; return false\;'>&nbsp;";
-			//var inRef = "<img src='/static/images/info_16.png' style='vertical-align:middle;' height='14' width='14' onClick=\"showList('"+frmFieldName+":"+id+"')\;\">&nbsp;";
+			var rmRef   = "<img src='/static/img/cancel.png' style='vertical-align:middle;' height='14' width='14' onClick='removeFormField(\"#row" + frmFieldName + id +"\")\; return false\;'>&nbsp;";
+			//var inRef = "<img src='/static/img/info_16.png' style='vertical-align:middle;' height='14' width='14' onClick=\"showList('"+frmFieldName+":"+id+"')\;\">&nbsp;";
 			var hdTxt   = "<select name='" + frmFieldName + "_" + id + "' id='"+frmFieldName + id +"' size='1'>{% for x in data['SWLIST'] %}<option value='{{x[0]}}''>{{x[1]}}</option>{% endfor %}</select>";
 			//var inTxt = "<input type='text' size='50' name='pName" + frmFieldName + ":" + id + "' id='pName" + frmFieldName + ":" + id +"' disabled>&nbsp;";
 			//var hdTxt = "<input type='hidden' size='20' name='" + frmFieldName + "_" + id + "' id='"+frmFieldName + id +"'>&nbsp;";

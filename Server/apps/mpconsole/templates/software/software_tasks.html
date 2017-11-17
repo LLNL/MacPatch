@@ -113,6 +113,7 @@
 
 	var $table = $('#table'), $delBut = $('#deleteButton'), $addBut = $('#addButton'), $expBut = $('#exportButton'), $impBut = $('#importButton');
 	$(function () {
+		/*
 		$delBut.click(function ()
 		{
 			var task_ids = $.map($table.bootstrapTable('getSelections'), function (row) {
@@ -131,6 +132,36 @@
 
 			alert(task_ids.length + " Software task(s) have been deleted.");
 		});
+		*/
+		$delBut.click(function ()
+		{
+			var rows = $('#table').bootstrapTable('getAllSelections');
+			var rowsArr = [];
+			for (x in rows) {
+				var _tID = rows[x]['tuuid'];
+				rowsArr.push(_tID);
+			}
+
+			var _url = "/software/task/remove";
+			$.ajax({
+				url: _url,
+				type: 'DELETE',
+				cache: false,
+				data: {'tasks':rowsArr.toString()},
+				error: function (request, status, error)
+				{
+					jsonValue = jQuery.parseJSON( request.responseText );
+					alert(jsonValue.errormsg);
+				},
+				success: function () {
+					$('#table').bootstrapTable('remove', {
+						field: 'tuuid',
+						values: rowsArr
+					});
+					alert("Task(s) removed successfully.");
+				}
+			});
+		});
 
 		$addBut.click(function ()
 		{
@@ -145,7 +176,7 @@
 				$('#modalDialog').modal('show');
 
 				$("#modalDialog").on("hidden.bs.modal", function () {
-					$profilesTable.bootstrapTable('refresh');
+					$table.bootstrapTable('refresh');
 				});
 			});
 		});

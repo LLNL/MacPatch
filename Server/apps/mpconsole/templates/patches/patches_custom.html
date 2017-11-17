@@ -3,6 +3,7 @@
 {% block styles %}
 	{{ super() }}
 	<link href="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/bootstrap-table-editable.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 
 {%  endblock %}
@@ -29,8 +30,11 @@
 	{{ super() }}
 	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/extensions/resizable/bootstrap-table-resizable.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-table-editable.js') }}"></script>
+	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-editable.js') }}"></script>
 	<script src="{{ url_for('static', filename='bower_components/col-resizable/colResizable-1.6.min.js') }}"></script>
-	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
+
+
 	<script>
 	$( document ).ready(function()
 	{
@@ -55,7 +59,6 @@
 					detailClose: 'glyphicon glyphicon-minus-sign'
 				},
 				idField: 'puuid',
-
 				columns: [
 				{
 						field: 'state',
@@ -74,18 +77,38 @@
 				{% for col in columnsAll %}
 
 					{% if col.name in columns %}
-						{% if col.name != 'description' %}
 						{
 							field: '{{col.name}}',
 							title: '{{col.info}}',
 							{% if col.name ==  'puuid' or col.name == 'pkg_path' or col.name == 'pkg_url' or col.name == 'description'%}
 							visible: false,
 							{% endif %}
-							sortable: true
-						 },
-						{% endif %}
-					{% endif %}
+							sortable: true,
 
+							{% if col.name == 'active' %}
+							editable: {
+								type: 'select',
+								url:  '/patches/custom/active',
+								source: [
+									{value: 0, text: 'False'},
+									{value: 1, text: 'True'},
+								]
+							},
+							{% endif %}
+							{% if col.name == 'patch_state' %}
+							editable: {
+								type: 'select',
+								url:  '/patches/custom/state',
+								source: [
+									{value: 'Production', text: 'Production'},
+									{value: 'QA', text: 'QA'},
+									{value: 'Create', text: 'Create'},
+									{value: 'AutoPKG', text: 'AutoPKG'},
+								]
+							},
+							{% endif %}
+						},
+					{% endif %}
 				{% endfor %}
 				],
 				data: [
@@ -126,17 +149,6 @@
 	{
 		$delButton.click(function ()
 		{
-			/*
-			var ids = $.map($table.bootstrapTable('getSelections'), function (row)
-			{
-				return row.puuid;
-			});
-			$table.bootstrapTable('remove', {
-				field: 'puuid',
-				values: ids
-			});
-			*/
-
 			var rows = $('#table').bootstrapTable('getAllSelections');
 			var rowsArr = [];
 			for (x in rows) {
@@ -163,9 +175,6 @@
 					alert("Patch(es) removed successfully.");
 				}
 			});
-
-
-
 		});
 
 		$addButton.click(function ()

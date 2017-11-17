@@ -246,7 +246,7 @@ def upgrade():
 	sa.PrimaryKeyConstraint('rid')
 	)
 	op.create_index(op.f('ix_mp_client_group_members_cuuid'), 'mp_client_group_members', ['cuuid'], unique=True)
-	op.create_index(op.f('ix_mp_client_group_members_group_id'), 'mp_client_group_members', ['group_id'], unique=True)
+	op.create_index(op.f('ix_mp_client_group_members_group_id'), 'mp_client_group_members', ['group_id'], unique=False)
 	op.create_table('mp_client_groups',
 	sa.Column('rid', sa.BigInteger(), nullable=False, autoincrement=True),
 	sa.Column('group_id', sa.String(length=50), nullable=False),

@@ -164,9 +164,10 @@ Custom Patches
 @patches.route('/custom')
 @login_required
 def custom():
-	cList = MpPatch.query.all()
+	cList = MpPatch.query.order_by(MpPatch.mdate.desc()).all()
 	cListCols = MpPatch.__table__.columns
-	cListColsLimited = ['puuid', 'patch_name', 'patch_ver', 'bundle_id', 'description', 'patch_severity', 'patch_state', 'patch_reboot', 'active', 'pkg_size', 'pkg_path', 'pkg_url', 'mdate']
+	cListColsLimited = ['puuid', 'patch_name', 'patch_ver', 'bundle_id', 'description',
+	'patch_severity', 'patch_state', 'patch_reboot', 'active', 'pkg_size', 'pkg_path', 'pkg_url', 'mdate']
 
 	return render_template('patches/patches_custom.html', data=cList, columns=cListColsLimited, columnsAll=cListCols)
 
@@ -377,6 +378,34 @@ def customPatchPicker():
 		_results.append(row)
 
 	return json.dumps({'data': _results}, default=json_serial), 200
+
+''' AJAX Request '''
+@patches.route('/custom/state',methods=['POST'])
+@login_required
+def customPatchState():
+	patch_id = request.form.get('pk')
+	state = request.form.get('value')
+
+	qGet = MpPatch.query.filter(MpPatch.puuid == patch_id).first()
+	if qGet is not None:
+		setattr(qGet, 'patch_state', state)
+		db.session.commit()
+
+	return json.dumps({}), 200
+
+''' AJAX Request '''
+@patches.route('/custom/active',methods=['POST'])
+@login_required
+def customPatchActive():
+	patch_id = request.form.get('pk')
+	active = request.form.get('value')
+
+	qGet = MpPatch.query.filter(MpPatch.puuid == patch_id).first()
+	if qGet is not None:
+		setattr(qGet, 'active', active)
+		db.session.commit()
+
+	return json.dumps({}), 200
 
 '''
 ----------------------------------------------------------------
@@ -769,7 +798,7 @@ def patchGroupPatchesSave(group_id):
 				continue
 			else:
 				if patch['type'] == "Apple":
-					row["name"] = patch['name']
+					row["name"] = patch['suname']
 					row["patch_id"] = patch['id']
 					row["baseline"] = "0"
 					row["patch_install_weight"] = patch['patch_install_weight']

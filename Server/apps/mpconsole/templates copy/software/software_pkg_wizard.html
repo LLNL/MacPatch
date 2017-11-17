@@ -160,7 +160,7 @@
 								<div style="font-size:12px;padding-bottom:10px;">
 									{% if data['PKG'].sw_url %}
 									<a href="/mp-content/{{data['PKG'].sw_url}}">
-										<img src="{{ url_for('static', filename='images/arrow_down.png') }}" height="14" />{{ data['PKG'].sw_url.split("/") | last }} ({{data['PKG'].sw_hash }})
+										<img src="{{ url_for('static', filename='img/arrow_down.png') }}" height="14" />{{ data['PKG'].sw_url.split("/") | last }} ({{data['PKG'].sw_hash }})
 									</a>
 									{% endif %}
 								</div>
@@ -361,7 +361,7 @@
 							<input type="hidden" id="reqPreID" value="0">
 							<div class="blockPre">
 								<label>Pre-Requisite Package(s)</label>
-								<span class="addPre" id='spanLink'><p><h5><img src="/static/images/pkg_add.png"/> Add Package</h5></span><p>
+								<span class="addPre" id='spanLink'><p><h5><img src="/static/img/pkg_add.png"/> Add Package</h5></span><p>
 							</div>
 						</div>
 
@@ -371,7 +371,7 @@
 							<input type="hidden" id="reqPstID" value="0">
 							<div class="blockPost">
 								<label>Post-Requisite Package(s)</label>
-								<span class="addPost" id='spanLink'><p><h5><img src="/static/images/pkg_add.png"/> Add Package</h5></span><p>
+								<span class="addPost" id='spanLink'><p><h5><img src="/static/img/pkg_add.png"/> Add Package</h5></span><p>
 							</div>
 						</div>
 
@@ -527,7 +527,7 @@
 				// Left Column
 				_htm = _htm + '<div class="col-md-2">';
 				// Remove Image
-				_htm = _htm + '<span class="remove"><img src="/static/images/cancel.png" style="vertical-align:top;margin-top:2px;" height="14" width="14"></span>';
+				_htm = _htm + '<span class="remove"><img src="/static/img/cancel.png" style="vertical-align:top;margin-top:2px;" height="14" width="14"></span>';
 				_htm = _htm + "&nbsp;";
 				// Order
 				_htm = _htm + "<input type='text' name='"+_order+"' value='"+sid+"' size='4'><small>(Order)</small>";

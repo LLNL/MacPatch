@@ -123,13 +123,22 @@ def swGroupSave():
 	db.session.commit()
 	return groups()
 
-@software.route('/group/delete/<id>', methods=['POST'])
+''' AJAX Route '''
+@software.route('/group/delete/<id>', methods=['DELETE'])
 @login_required
-def swDroupDelete(id):
-	suname = request.form.get('pk')
-	state = request.form.get('value')
+def swGroupDelete(id):
 
-	return groups()
+	print session
+	groupPriv = MpSoftwareGroupPrivs.query.filter(MpSoftwareGroupPrivs.gid == id, MpSoftwareGroupPrivs.isowner == 1,
+	MpSoftwareGroupPrivs.uid == session.get('user') ).first()
+	if groupPriv is not None:
+		# Session user is the owner
+		MpSoftwareGroup.query.filter(MpSoftwareGroup.gid == id).delete()
+		MpSoftwareGroupPrivs.query.filter(MpSoftwareGroupPrivs.gid == id).delete()
+		db.session.commit()
+		return json.dumps({'error':0}), 202
+
+	return json.dumps({'error':401, 'errormsg':'Unauthorized to remove group. Must be the owner of the group.'}), 401
 
 @software.route('/group/filters/<id>')
 @login_required
@@ -391,23 +400,27 @@ def generateTask(id):
 
 	return json.dumps({'error':1,'errormsg':'Software package not found.'}), 404
 
-@software.route('/task/remove/<id>')
+''' AJAX Request '''
+@software.route('/task/remove', methods=['DELETE'])
 @login_required
-def taskRemove(id):
+def taskRemove():
+	_form = request.form.to_dict()
 
-	_task = MpSoftwareTask.query.filter(MpSoftwareTask.tuuid == id).first()
-	if _task is not None:
-		print("Delete sw task %s" % (_task.name))
-		_tasks = MpSoftwareGroupTasks.query.filter(MpSoftwareGroupTasks.sw_task_id == id).all()
-		if _tasks is not None:
-			for x in _tasks:
-				print("Delete %s from sw group %s" % (x.sw_task_id, x.sw_group_id))
-				MpSoftwareGroupTasks.query.filter(MpSoftwareGroupTasks.rid == x.rid).delete()
+	if 'tasks' in _form:
+		for t in _form['tasks'].split(","):
+			_task = MpSoftwareTask.query.filter(MpSoftwareTask.tuuid == t).first()
+			if _task is not None:
+				print("Delete sw task %s" % (_task.name))
+				_tasks = MpSoftwareGroupTasks.query.filter(MpSoftwareGroupTasks.sw_task_id == t).all()
+				if _tasks is not None:
+					for x in _tasks:
+						print("Delete %s from sw group %s" % (x.sw_task_id, x.sw_group_id))
+						MpSoftwareGroupTasks.query.filter(MpSoftwareGroupTasks.rid == x.rid).delete()
 
-		db.session.delete(_task)
-		db.session.commit()
+				db.session.delete(_task)
+				db.session.commit()
 
-	return tasks()
+	return json.dumps({'error':0}), 201
 
 @software.route('/group/<id>/tasks')
 @login_required

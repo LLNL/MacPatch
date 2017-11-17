@@ -9,7 +9,6 @@
 
 {% block pageHeader %}
 Apple Patches
-
 {%  endblock %}
 
 {% block bodyPanel %}
@@ -37,8 +36,8 @@ Apple Patches
 
 	$( document ).ready(function()
 	{
-			$('#table').bootstrapTable({
-
+			$('#table').bootstrapTable(
+			{
 				striped: true,
 				pagination: true,
 				sidePagination: 'client',
@@ -58,7 +57,6 @@ Apple Patches
 					detailClose: 'glyphicon glyphicon-minus-sign'
 				},
 				idField: 'supatchname',
-
 				columns: [
 				{
 					field: 'operate',
@@ -169,7 +167,8 @@ Apple Patches
 				$('#modalDialog').modal('show');
 			});
 		},
-		'click .description': function (e, value, row, index) {
+		'click .description': function (e, value, row, index)
+		{
 			alert('You click description action, row: ' + JSON.stringify(row));
 		}
 	};

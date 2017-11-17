@@ -111,23 +111,27 @@
 				$('#modalDialog').modal('show');
 			});
 		},
-		'click .delete': function (e, value, row, index)
+		'click .remove': function (e, value, row, index)
 		{
-			if (confirm('Are you sure to delete this patch group (' + row['name'] +') ?'))
+			console.log(row);
+			if (confirm('Are you sure to delete this software group (' + row['gName'] +') ?'))
 			{
-				$.post( "/software/group/delete/" + row['id']).done(function(data)
-				{
-					if (data.error == 0) {
+				var _url = "/software/group/delete/" + row['gid'];
+				$.ajax({
+					url: _url,
+					type: 'DELETE',
+					cache: false,
+					error: function (request, status, error)
+					{
+						jsonValue = jQuery.parseJSON( request.responseText );
+						alert(jsonValue.errormsg);
+					},
+					success: function () {
 						$('#table').bootstrapTable('remove', {
-							field: 'id',
-							values: [row.id]
+							field: 'gid',
+							values: [row.gid]
 						});
-					} else {
-						resetModalWindow();
-
-						$('#modalTitle').html('Error, Removing Patch Group');
-						$('#errorBody').html('Delete item error!');
-						$('#modalError').modal('show');
+						alert("Group removed successfully.");
 					}
 				});
 			}
@@ -166,6 +170,7 @@
 				resizable: true,
 				sortable: true,
 				showColumns: false,
+				idField: 'gid',
 				icons: {
 					refresh: 'fa fa-refresh',
 					toggle: 'fa fa-th-list',
@@ -178,26 +183,14 @@
 			});
 	});
 
-	var $table = $('#table'), $delButton = $('#delButton'), $addButton = $('#addButton');
-	$(function () {
-		$delButton.click(function ()
-		{
-			var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
-
-				return row.puuid;
-			});
-			$table.bootstrapTable('remove', {
-				field: 'puuid',
-				values: ids
-			});
-		});
-
+	var $table = $('#table'), $addButton = $('#addButton');
+	$(function ()
+	{
 		$addButton.click(function ()
 		{
 			$.get( "/software/group/add/" + guid() ).done(function(data)
 			{
 				resetModalWindow();
-
 				$('#modalTitle').html("Add Software Group");
 				$('#modalBody').html(data);
 				$('#modalBody').css({'height':'200px'});

@@ -125,9 +125,6 @@ def showReportPaged(id,limit,offset,search,sort,order):
 
 	qResult = requiredQuery(qry_info, search, int(offset), int(limit), sort, order, getNewTotal)
 	query = qResult[0]
-	print qResult[1]
-	print getNewTotal
-	print session
 
 	session['my_inv_search_name'] = 'showReport'
 
@@ -156,9 +153,6 @@ def showReportPaged(id,limit,offset,search,sort,order):
 def requiredQuery(queryInfo, filterStr='undefined', page=0, page_size=0, sort='mdate', order='desc', getCount=True):
 
 	rowCounter = 0
-	print queryInfo
-	print sort
-	print order
 
 	sql_where = ""
 	sql_and = []
@@ -221,9 +215,7 @@ def save():
 @login_required
 def saveReport():
 
-	# print request.form
 	_form = request.form.to_dict()
-	print _form
 
 	isNewReport=True
 	qInv = InvReports()
@@ -303,7 +295,7 @@ def previewTableData(table_name):
 		qStr.insert(3, _form['sql'])
 
 	sql_query = ''.join(qStr)
-	print sql_query
+	# print sql_query
 	query_result = db.engine.execute(sql_query)
 
 	_columns = []
@@ -337,16 +329,12 @@ def previewTableData(table_name):
 		_row = {}
 		if _limitCols:
 			for idx, val in enumerate(row):
-				print val
 				_row[_columns[idx]] = val
 			_results.append(_row)
 		else:
 			for c in sorted(_columns):
 				_row[c] = row[c]
 			_results.append(_row)
-
-	# print _results
-	# _results.append(row.__dict__)
 
 	return json.dumps({'error': 0, 'data': _results, 'cols': _jColumns}, default=json_serial), 200
 
