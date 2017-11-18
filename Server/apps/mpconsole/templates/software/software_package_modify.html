@@ -329,7 +329,7 @@
 		// Init the Wizard
 		$('#wizard').smartWizard({
 			keyNavigation: false,
-			onFinish:onFinishCallback
+			onFinish:onFinishCallback,
 		});
 		// Click the Finish Button at the end of the Wizard
 		function onFinishCallback()
@@ -350,8 +350,6 @@
 		}
 	</script>
 	<script type="text/javascript">
-
-
 		function addFormCriteriaField(frmFieldName, pid, divid)
 		{
 			var id = document.getElementById(pid).value;

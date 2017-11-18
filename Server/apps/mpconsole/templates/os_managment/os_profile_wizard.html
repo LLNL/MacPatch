@@ -197,9 +197,12 @@
 			{
 				headerTag: "h1",
 				bodyTag: "section",
-				labels: {
-					finish: "Save"
-				},
+				{% if session.role[0] != 1 %}
+				enableFinishButton: false,
+				{% endif %}
+				{% if session.role[0] == 1 %}
+				labels: { finish: "Save" },
+				{% endif %}
 				onFinishing: function (event, currentIndex)
 				{
 					// Add ACE Editor Data to form to post

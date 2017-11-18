@@ -180,9 +180,12 @@
 			{
 				headerTag: "h1",
 				bodyTag: "section",
-				labels: {
-					finish: "Save"
-				},
+				{% if session.role[0] != 1 %}
+				enableFinishButton: false,
+				{% endif %}
+				{% if session.role[0] == 1 %}
+				labels: { finish: "Save" },
+				{% endif %}
 				onFinishing: function (event, currentIndex)
 				{
 					var formData = new FormData($('#osProfileForm')[0]);

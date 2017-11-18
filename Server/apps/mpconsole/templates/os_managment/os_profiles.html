@@ -15,8 +15,10 @@
 
 	<table id="table" data-toolbar="#toolbar" class="table table-condensed" data-show-export="true">
 		<div id="toolbar">
+			{% if session.role[0] == 1 %}
 			<button id="addButton" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button>
 			<button id="delButton" type="button" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i></button>
+			{% endif %}
 		</div>
 	</table>
 
@@ -53,18 +55,23 @@
 				idField: 'profileID',
 				columns: [
 				{
-						field: 'state',
-						checkbox: true,
-						rowspan: 1,
-						align: 'center',
-						valign: 'middle'
+					field: 'state',
+					checkbox: true,
+					rowspan: 1,
+					align: 'center',
+					valign: 'middle',
+					width: 40,
+					{% if session.role[0] != 1 %}
+					visible: false,
+					{% endif %}
 				},
 				{
 					field: 'operate',
 					title: '',
 					align: 'center',
 					events: operateEvents,
-					formatter: operateFormatter
+					formatter: operateFormatter,
+					width: 60
 				},
 				{% for col in columns %}
 				{
@@ -144,8 +151,13 @@
 	function operateFormatter(value, row, index)
 	{
 		return [
-			'<a class="edit" href="javascript:void(0)" title="Edit">',
+			{% if session.role[0] == 1 %}
+			'<a class="edit" href="javascript:void(0)" title="Edit Profile">',
 			'<i class="fa fa-pencil fa-lg" aria-hidden="true"></i>',
+			{% else %}
+			'<a class="edit" href="javascript:void(0)" title="Profile Data">',
+			'<i class="fa fa-search fa-lg" aria-hidden="true"></i>',
+			{% endif %}
 			'</a>&nbsp;'
 		].join('');
 	}

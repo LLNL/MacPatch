@@ -426,6 +426,9 @@
 			{
 				headerTag: "h1",
 				bodyTag: "section",
+				{% if session.role[0] != 1 %}
+				enableFinishButton: false,
+				{% endif %}
 				onFinishing: function (event, currentIndex)
 				{
 					// Add ACE Editor Data to form to post
@@ -433,7 +436,6 @@
 					formData.append('sw_pre_install_script', preinstall.getValue());
 					formData.append('sw_post_install_script', postinstall.getValue());
 					formData.append('sw_uninstall_script', uninstall.getValue());
-
 					$.ajax({
 						type:'POST',
 						url: '/software/package/save',

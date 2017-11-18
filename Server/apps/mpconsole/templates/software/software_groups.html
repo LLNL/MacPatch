@@ -15,7 +15,9 @@
 
 	<table id="table" class="table table-condensed" data-row-style="rowStyle" data-toolbar="#toolbar">
 		<div id="toolbar">
+			{% if session.role[0] == 1 %}
 			<button id="addButton" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button>
+			{% endif %}
 		</div>
 	</table>
 
@@ -34,17 +36,28 @@
 
 	function operateEditFormatter(value, row, index)
 	{
-		return [
-			'<a class="tasks" href="javascript:void(0)" title="Add/Remove Software Tasks">',
-			'<i class="glyphicon glyphicon-th-list" aria-hidden="true"></i>',
-			'</a>&nbsp;&nbsp;&nbsp;',
-			'<a class="edit" href="javascript:void(0)" title="Edit Software Group Info">',
-			'<i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>',
-			'</a>&nbsp;&nbsp;&nbsp;',
-			'<a class="remove" href="javascript:void(0)" title="Remove Software Group">',
-			'<i class="glyphicon glyphicon-trash"></i>',
-			'</a>'
-		].join('');
+		var htmlData = [];
+		htmlData.push('<table>');
+		htmlData.push('<tr><td>');
+		if ( '{{session.role[0]}}' == 1 ) {
+			htmlData.push('<a class="tasks" href="javascript:void(0)" title="Add/Remove Software Tasks">');
+			htmlData.push('<i class="glyphicon glyphicon-th-list" aria-hidden="true"></i></a>');
+		} else {
+			htmlData.push('<a class="patches" href="javascript:void(0)" title="View Software Tasks">');
+			htmlData.push('<i class="fa fa-search" aria-hidden="true"></i></a>');
+		}
+		htmlData.push('</td>');
+		if ( '{{session.role[0]}}' == 1 ) {
+			htmlData.push('<td><a class="edit" href="javascript:void(0)" title="Edit Software Group Info">');
+			htmlData.push('<i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>');
+			htmlData.push('</a></td>');
+		}
+		if ( '{{session.role[0]}}' == 1 ) {
+			htmlData.push('<td><a class="remove" href="javascript:void(0)" title="Remove Software Group">');
+			htmlData.push('<i class="fa fa-trash-o"></i></a></td>');
+		}
+		htmlData.push('</tr></table>');
+		return htmlData.join('');
 	}
 	function operateFilterFormatter(value, row, index)
 	{
@@ -143,14 +156,16 @@
 					title: '',
 					align: 'center',
 					events: operateEvents,
-					formatter: operateEditFormatter
+					formatter: operateEditFormatter,
+					width: '100',
 				},
 				{
 					field: 'filter',
 					title: 'Filter',
 					align: 'center',
 					events: operateFilterEvents,
-					formatter: operateFilterFormatter
+					formatter: operateFilterFormatter,
+					width: '80',
 				}];
 
 	_cols.push.apply(_cols, {{data["columns"] | tojson}});

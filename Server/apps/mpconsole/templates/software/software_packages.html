@@ -15,10 +15,12 @@
 
 	<table id="table" class="table table-condensed" data-toolbar="#toolbar">
 		<div id="toolbar">
+			{% if session.role[0] == 1 %}
 			<button id="delButton" type="button" class="btn btn-default" title="Delete Package"><i class="glyphicon glyphicon-trash"></i></button>
 			<button id="addButton" type="button" class="btn btn-default" title="New Package"><i class="glyphicon glyphicon-plus"></i></button>
 			<button id="dupButton" type="button" class="btn btn-default" title="Duplicate Package"><i class="glyphicon glyphicon-duplicate"></i></button>
 			<button id="taskButton" type="button" class="btn btn-default" title="Generate Task from Package"><i class="glyphicon glyphicon-export"></i></button>
+			{% endif %}
 		</div>
 	</table>
 
@@ -38,8 +40,13 @@
 	{
 		var htmlData = [];
 		htmlData.push('<table><tr><td>')
+		{% if session.role[0] == 1 %}
 		htmlData.push('<a class="edit" href="javascript:void(0)" title="Edit Package">');
 		htmlData.push('<i class="fa fa-pencil fa-lg" aria-hidden="true"></i>');
+		{% else %}
+		htmlData.push('<a class="edit" href="javascript:void(0)" title="Package Data">');
+		htmlData.push('<i class="fa fa-search fa-lg" aria-hidden="true"></i>');
+		{% endif %}
 		htmlData.push('</a>');
 		htmlData.push('</td><td>');
 		htmlData.push('<a class="download" href="/mp-content' + row['sw_url'] + '" title="Download Package" target=_blank>');
@@ -53,6 +60,7 @@
 		{
 			$('#myContent').remove();
 			$('#modaliFrame').remove();
+			console.log(row);
 
 			/* New Content */
 			var _url = "/software/package/edit/" + row['suuid'];
@@ -61,7 +69,7 @@
 			' style="width: 98%; height: 98%; position: absolute"></iframe>';
 
 			/ * Show Modal Window */
-			$('#modalTitle').html('Edit Software Package - ' + row['name']);
+			$('#modalTitle').html('Edit Software Package - ' + row['sName']);
 			$('#modalCancelButton').hide();
 			$('#modalSaveButton').hide();
 			$('#modalBody').html(innerHTML);
@@ -76,14 +84,19 @@
 					checkbox: true,
 					rowspan: 1,
 					align: 'center',
-					valign: 'middle'
+					valign: 'middle',
+					width: 40,
+					{% if session.role[0] != 1 %}
+					visible: false,
+					{% endif %}
 				},
 					{
 					field: 'operate',
 					title: '',
 					align: 'center',
 					events: operateEvents,
-					formatter: operateFormatter
+					formatter: operateFormatter,
+					width: 100,
 				},];
 
 	_cols.push.apply(_cols, {{data["columns"] | tojson}});
@@ -91,35 +104,35 @@
 
 	$( document ).ready(function()
 	{
-			$('#table').bootstrapTable(
-			{
-				striped: true,
-				pagination: true,
-				sidePagination: 'client',
-				pageList: ['10', '20', '50', '100', 'All'],
-				search: true,
-				showRefresh: false,
-				resizable: true,
-				sortable: true,
-				showColumns: false,
-				icons: {
-					refresh: 'fa fa-refresh',
-					toggle: 'fa fa-th-list',
-					columns: 'fa fa-columns',
-					detailOpen: 'glyphicon glyphicon-info-sign',
-					detailClose: 'glyphicon glyphicon-minus-sign'
-				},
-				idField: 'suuid',
-				columns: _cols,
-				data: _rows
-			});
+		$('#table').bootstrapTable(
+		{
+			striped: true,
+			pagination: true,
+			sidePagination: 'client',
+			pageList: ['10', '20', '50', '100', 'All'],
+			search: true,
+			showRefresh: false,
+			resizable: true,
+			sortable: true,
+			showColumns: false,
+			icons: {
+				refresh: 'fa fa-refresh',
+				toggle: 'fa fa-th-list',
+				columns: 'fa fa-columns',
+				detailOpen: 'glyphicon glyphicon-info-sign',
+				detailClose: 'glyphicon glyphicon-minus-sign'
+			},
+			idField: 'suuid',
+			columns: _cols,
+			data: _rows
+		});
 	});
 
 	var $table = $('#table'), $delBut = $('#delButton'), $addBut = $('#addButton'), $dupBut = $('#dupButton'), $tskBut = $('#taskButton'), $expBut = $('#exportButton'), $impBut = $('#importButton');
 	$(function () {
 		$delBut.click(function ()
 		{
-
+			{% if session.role[0] == 1 %}
 			var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
 				return row.suuid;
 			});
@@ -132,7 +145,6 @@
 				$.get( "/software/package/delete/" + ids).done(function(data)
 				{
 					var result = JSON.parse(data);
-
 					if (result.error == 0) {
 						$('#table').bootstrapTable('remove', {
 							field: 'suuid',
@@ -154,20 +166,12 @@
 					}
 				});
 			}
-
-			/*
-			var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
-				return row.tuuid;
-			});
-			$table.bootstrapTable('remove', {
-				field: 'tuuid',
-				values: ids
-			});
-			*/
+			{% endif %}
 		});
 
 		$addBut.click(function ()
 		{
+			{% if session.role[0] == 1 %}
 			$('#myContent').remove();
 			$('#modaliFrame').remove();
 
@@ -185,10 +189,12 @@
 			$('#modalBody').css({'height':'770px'});
 			$('#modalDialog').addClass("modal-wide");
 			$('#modalDialog').modal('show');
+			{% endif %}
 		});
 
 		$dupBut.click(function ()
 		{
+			{% if session.role[0] == 1 %}
 			var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
 				return row.suuid;
 			});
@@ -219,11 +225,12 @@
 					}
 				});
 			}
-
+			{% endif %}
 		});
 
 		$tskBut.click(function ()
 		{
+			{% if session.role[0] == 1 %}
 			var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
 				return row.suuid;
 			});
@@ -255,6 +262,7 @@
 					}
 				});
 			}
+			{% endif %}
 		});
 
 		$expBut.click(function ()

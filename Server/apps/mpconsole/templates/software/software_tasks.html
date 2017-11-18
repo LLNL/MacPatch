@@ -15,8 +15,10 @@
 
 	<table id="table" class="table table-condensed" data-toolbar="#toolbar">
 		<div id="toolbar">
+			{% if session.role[0] == 1 %}
 			<button id="addButton" type="button" class="btn btn-default" title="New Software Task"><i class="glyphicon glyphicon-plus"></i></button>
 			<button id="deleteButton" type="button" class="btn btn-default" title="Delete Software Task"><i class="glyphicon glyphicon-trash"></i></button>
+			{% endif %}
 			<!-- TODO
 			<button id="exportButton" type="button" class="btn btn-default" title="Export Software Task"><i class="glyphicon glyphicon-export"></i></button>
 			<button id="importButton" type="button" class="btn btn-default" title="Import Software Task"><i class="glyphicon glyphicon-import"></i></button>
@@ -39,9 +41,11 @@
 	function operateFormatter(value, row, index)
 	{
 		return [
+			{% if session.role[0] == 1 %}
 			'<a class="edit" href="javascript:void(0)" title="Edit">',
 			'<i class="fa fa-pencil fa-lg" aria-hidden="true"></i>',
 			'</a>&nbsp;'
+			{% endif %}
 		].join('');
 	}
 
@@ -72,14 +76,22 @@
 					checkbox: true,
 					rowspan: 1,
 					align: 'center',
-					valign: 'middle'
+					valign: 'middle',
+					width: 60,
+					{% if session.role[0] != 1 %}
+					visible: false,
+					{% endif %}
 				},
 					{
 					field: 'operate',
 					title: '',
 					align: 'center',
 					events: operateEvents,
-					formatter: operateFormatter
+					formatter: operateFormatter,
+					width: 60,
+					{% if session.role[0] != 1 %}
+					visible: false,
+					{% endif %}
 				},];
 
 	_cols.push.apply(_cols, {{data["columns"] | tojson}});
