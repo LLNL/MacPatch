@@ -12,13 +12,11 @@ Patch Groups
 {% endblock %}
 
 {% block bodyPanel %}
-
 	<table id="table" data-toolbar="#toolbar" data-show-export="true">
 		<div id="toolbar">
 			<button id="addButton" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button>
 		</div>
 	</table>
-
 {% endblock %}
 
 
@@ -72,32 +70,33 @@ Patch Groups
 				sortable: true
 			},
 			{% endfor %}
+			{
+				field: 'members',
+				visible: false
+			},
 			],
 			data: [
-			{% for patch in data %}
+			{% for row in data %}
 			{
-				{% for col in columns %}
-					{% if col[0] ==  'user_id' %}
-						{{col[0]}}: '{{patch.user_id}}',
-					{% elif col[0] ==  'mdate' %}
-						{{col[0]}}: '{{patch.mdate or 1970-01-01}}',
-					{% elif col[0] ==  'type' %}
-						{{col[0]}}:
-						{% if patch[0][col[0]] == 2 %}
-							'Dev',
-						{% elif patch[0][col[0]] == 1 %}
-							'QA',
-						{% elif patch[0][col[0]] == 0 %}
-							'Production',
-						{% else %}
-							{{patch[0][col[0]]}},
-						{% endif %}
-
+			{% for col in columns %}
+				{% if col[0] ==  'user_id' %}
+					{{col[0]}}: '{{row['owner']}}',
+				{% elif col[0] ==  'type' %}
+					{{col[0]}}:
+					{% if row['type'] == 2 %}
+						'Dev',
+					{% elif row['type'] == 1 %}
+						'QA',
+					{% elif row['type'] == 0 %}
+						'Production',
 					{% else %}
-						{{col[0]}}: '{{patch[0][col[0]]}}',
+						'NA',
 					{% endif %}
-
-				{% endfor %}
+				{% else %}
+					{{col[0]}}: '{{row[col[0]]}}',
+				{% endif %}
+			{% endfor %}
+					members: '{{row['members']|safe}}',
 			},
 			{% endfor %}
 			]
@@ -106,13 +105,25 @@ Patch Groups
 
 	function operateFormatter(value, row, index)
 	{
+		var hasRights = false;
 		var htmlData = [];
+		var mem = row['members']
+		if( mem.indexOf('{{session.user}}') > -1 ) {
+			hasRights = true;
+		}
+		console.log(row);
 
-		htmlData.push('<table><tr><td>')
-		htmlData.push('<a class="patches" href="javascript:void(0)" title="Add/Remove Patches">');
-		htmlData.push('<i class="fa fa-list-ul" aria-hidden="true"></i></a>');
+		htmlData.push('<table>');
+		htmlData.push('<tr><td>');
+		if ( hasRights || '{{session.role[0]}}' == 1 ) {
+			htmlData.push('<a class="patches" href="javascript:void(0)" title="Add/Remove Patches">');
+			htmlData.push('<i class="fa fa-list-ul" aria-hidden="true"></i></a>');
+		} else {
+			htmlData.push('<a class="patches" href="javascript:void(0)" title="View Patches">');
+			htmlData.push('<i class="fa fa-search" aria-hidden="true"></i></a>');
+		}
 		htmlData.push('</td><td>');
-		if ( '{{session.user}}' == row.user_id || '{{session.role[0]}}' == 1 ) {
+		if ( row['user_id'] == '{{session.user}}' || '{{session.role[0]}}' == 1 ) {
 			htmlData.push('<a class="edit" href="javascript:void(0)" title="Edit Patch Group Info">');
 			htmlData.push('<i class="fa fa-pencil" aria-hidden="true"></i>');
 			htmlData.push('</a>');
@@ -123,7 +134,7 @@ Patch Groups
 		htmlData.push('<a class="admins" href="javascript:void(0)" title="Patch Group Admins">');
 		htmlData.push('<i class="fa fa-users" aria-hidden="true"></i></a>');
 		htmlData.push('</td><td>');
-		if ('{{session.user}}' == row.user_id || '{{session.role[0]}}' == 1 ) {
+		if ( row['user_id'] == '{{session.user}}' || '{{session.role[0]}}' == 1 ) {
 			htmlData.push('<a class="remove" href="javascript:void(0)" title="Remove Patch Group">');
 			htmlData.push('<i class="fa fa-trash-o"></i></a>');
 		} else {

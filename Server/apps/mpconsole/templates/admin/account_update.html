@@ -16,14 +16,26 @@
 
 {% block bodyPanel %}
 <div class="container">
-	<form method='post' action='/console/account/{{data.user_id}}' id="myForm">
+	<form method='post' action='/console/account/{{data.user_id or 'add'}}' id="myForm">
 		<div class="well">
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label">User ID</label>
 				<div class="col-sm-6">
-					<input class="form-control" id="disabledInput" type="text" value="{{data.user_id}}" disabled>
+					{% if data.user_id %}
+						<input class="form-control" id="disabledInput" type="text" value="{{data.user_id}}" disabled>
+					{% else %}
+						<input class="form-control" id="disabledInput" type="text" value="" name="user_id">
+					{% endif %}
 				</div>
 			</div>
+			{% if not data.user_id %}
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">User Password</label>
+				<div class="col-sm-6">
+					<input class="form-control" id="disabledInput" type="password" name="user_pass">
+				</div>
+			</div>
+			{% endif %}
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label">User Type</label>
 				<div class="col-sm-6">

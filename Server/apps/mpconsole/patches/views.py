@@ -34,6 +34,7 @@ def apple():
 	return render_template('patches/patches_apple.html', data=aList, columns=aListCols)
 
 @patches.route('/apple/state',methods=['POST'])
+@login_required
 def appleState():
 	suname = request.form.get('pk')
 	state = request.form.get('value')
@@ -45,6 +46,7 @@ def appleState():
 	return apple()
 
 @patches.route('/apple/severity',methods=['POST'])
+@login_required
 def appleSeverity():
 	suname = request.form.get('pk')
 	severity = request.form.get('value')
@@ -130,6 +132,7 @@ def applePatchWizardUpdate():
 
 ''' AJAX Request '''
 @patches.route('/apple/bulk/toQA',methods=['GET'])
+@login_required
 @cross_origin()
 def migrateApplePatchesToQA():
 
@@ -144,6 +147,7 @@ def migrateApplePatchesToQA():
 
 ''' AJAX Request '''
 @patches.route('/apple/bulk/toProd',methods=['GET'])
+@login_required
 @cross_origin()
 def migrateApplePatchesToProd():
 
@@ -422,11 +426,44 @@ Patch Groups
 def patchGroups():
 
 	cListColsLimited = [('name','Name'), ('id', 'ID'), ('type','Type'), ('user_id', 'Owner'), ('mdate', 'Last Saved')]
-	gmList = PatchGroupMembers.query.filter(PatchGroupMembers.is_owner == '1').all()
-	gmListAlt = MpPatchGroup.query.join(PatchGroupMembers, MpPatchGroup.id == PatchGroupMembers.patch_group_id).add_columns(
-		PatchGroupMembers.is_owner, PatchGroupMembers.user_id).outerjoin(MpPatchGroupData, MpPatchGroup.id == MpPatchGroupData.pid).add_columns(MpPatchGroupData.mdate).filter(PatchGroupMembers.is_owner == '1').order_by(MpPatchGroupData.mdate.desc()).all()
 
-	return render_template('patches/patch_groups.html', data=gmListAlt, columns=cListColsLimited, groupOwners=gmList)
+	gmList = PatchGroupMembers.query.filter(PatchGroupMembers.is_owner == '1').all()
+	grpMembers = PatchGroupMembers.query.all()
+	gmListAlt = MpPatchGroup.query.join(PatchGroupMembers, MpPatchGroup.id == PatchGroupMembers.patch_group_id).add_columns(
+		PatchGroupMembers.is_owner, PatchGroupMembers.user_id).outerjoin(MpPatchGroupData,
+		MpPatchGroup.id == MpPatchGroupData.pid).add_columns(MpPatchGroupData.mdate).filter(PatchGroupMembers.is_owner == '1').order_by(MpPatchGroupData.mdate.desc()).all()
+
+	rows = []
+
+	for x in gmListAlt:
+		print x
+		row = {}
+		members = []
+
+		gData = x[0].asDict
+		gID = gData['id']
+		row = gData
+		# Build List of Group Members, that can edit group
+		for g in grpMembers:
+			if gID == g.patch_group_id:
+				members.append(g.user_id)
+
+		row['members'] = ','.join(members)
+		row['owner'] = x.user_id
+		row['mdate'] = x.mdate
+		rows.append(row)
+
+	print rows
+	# return render_template('patches/patch_groups.html', data=gmListAlt, columns=cListColsLimited, groupOwners=gmList)
+	return render_template('patches/patch_groups.html', data=rows, columns=cListColsLimited)
+
+def json_serial(obj):
+	"""JSON serializer for objects not serializable by default json code"""
+
+	if isinstance(obj, datetime):
+		serial = obj.strftime('%Y-%m-%d %H:%M:%S')
+		return serial
+	raise TypeError("Type not serializable")
 
 # TODO Change to use AJAX
 @patches.route('/patchGroups/add')

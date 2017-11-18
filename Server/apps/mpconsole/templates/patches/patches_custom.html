@@ -60,6 +60,7 @@
 				},
 				idField: 'puuid',
 				columns: [
+				{% if session.role[0] == 1 %}
 				{
 						field: 'state',
 						checkbox: true,
@@ -67,6 +68,7 @@
 						align: 'center',
 						valign: 'middle'
 				},
+				{% endif %}
 				{
 					field: 'operate',
 					title: '',
@@ -85,7 +87,7 @@
 							{% endif %}
 							sortable: true,
 
-							{% if col.name == 'active' %}
+							{% if col.name == 'active' and session.role[0] == 1 %}
 							editable: {
 								type: 'select',
 								url:  '/patches/custom/active',
@@ -95,7 +97,7 @@
 								]
 							},
 							{% endif %}
-							{% if col.name == 'patch_state' %}
+							{% if col.name == 'patch_state' and session.role[0] == 1 %}
 							editable: {
 								type: 'select',
 								url:  '/patches/custom/state',
@@ -204,8 +206,9 @@
 			].join('');
 		} else {
 			return [
-				'<i class="fa fa-pencil fa-lg icon-invisible" aria-hidden="true"></i>',
-				'&nbsp;'
+				'<a class="edit" href="javascript:void(0)" title="Edit">',
+				'<i class="fa fa-search fa-lg" aria-hidden="true"></i>',
+				'</a>&nbsp;'
 			].join('');
 		}
 	}

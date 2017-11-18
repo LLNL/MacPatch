@@ -406,11 +406,16 @@
 				}
 			}
 
+			var _enableFinishButton = true;
+			if ( '{{session.role[0]}}' != '1' ) {
+				_enableFinishButton = false;
+			}
 			// jQuery Wizard
 			$("#customPatchForm").children("div").steps(
 			{
 				headerTag: "h1",
 				bodyTag: "section",
+				enableFinishButton: _enableFinishButton,
 				onFinishing: function (event, currentIndex)
 				{
 					// Add ACE Editor Data to form to post
