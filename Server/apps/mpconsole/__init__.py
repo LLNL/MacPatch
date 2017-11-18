@@ -49,6 +49,9 @@ def create_app(config_object=DefaultConfig):
 	app.config.from_object(config_object)
 	app.config.from_pyfile('../config.cfg', silent=True)
 	app.config.from_pyfile('../conf_console.cfg', silent=True)
+	# Trim White Space from templates
+	app.jinja_env.trim_blocks = True
+	app.jinja_env.lstrip_blocks = True
 
 	# Job Scheduler
 	# Using flask-apscheduler
