@@ -5,19 +5,19 @@
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
  Written by Charles Heizer <heizer1 at llnl.gov>.
  LLNL-CODE-636469 All rights reserved.
- 
+
  This file is part of MacPatch, a program for installing and patching
  software.
- 
+
  MacPatch is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License (as published by the Free
  Software Foundation) version 2, dated June 1991.
- 
+
  MacPatch is distributed in the hope that it will be useful, but WITHOUT ANY
  WARRANTY; without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE. See the terms and conditions of the GNU General Public
  License for more details.
- 
+
  You should have received a copy of the GNU General Public License along
  with MacPatch; if not, write to the Free Software Foundation, Inc.,
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -26,7 +26,7 @@
 '''
   MacPatch Patch Loader Setup Script
   MacPatch Version 3.1.x
-  
+
   Script Version 2.2.0
 '''
 
@@ -44,24 +44,25 @@ from distutils.version import LooseVersion
 import ConfigParser
 import sys
 from sys import exit
-from Crypto.PublicKey import RSA 
+from Crypto.PublicKey import RSA
 
 # ----------------------------------------------------------------------------
 # Script Requires ROOT
 # ----------------------------------------------------------------------------
 if os.geteuid() != 0:
-    exit("\nYou must be an admin user to run this script.\nPlease re-run the script using sudo.\n")
+	exit("\nYou must be an admin user to run this script.\nPlease re-run the script using sudo.\n")
 
 # ----------------------------------------------------------------------------
 # Variables
 # ----------------------------------------------------------------------------
-MP_BASE	 	 = "/opt/MacPatch"
-MP_SRV_BASE	 = "/opt/MacPatch/Server"
-MP_SRV_ETC	 = MP_SRV_BASE+"/etc"
-MP_CONF_FILE = MP_SRV_BASE+"/etc/siteconfig.json"
-MP_SRVC_FILE = MP_SRV_BASE+"/etc/.mpservices.json"
+MP_BASE	 	    = "/opt/MacPatch"
+MP_SRV_BASE	    = "/opt/MacPatch/Server"
+MP_SRV_ETC	    = MP_SRV_BASE+"/etc"
+MP_FLASK_FILE   = MP_SRV_BASE+"/apps/config.cfg"
+MP_CONF_FILE    = MP_SRV_BASE+"/etc/siteconfig.json"
+MP_SRVC_FILE    = MP_SRV_BASE+"/etc/.mpservices.json"
 
-if sys.platform.startswith('linux'):	
+if sys.platform.startswith('linux'):
 	dist_type 	 = platform.dist()[0]
 else:
 	dist_type 	 = "Mac"
@@ -85,11 +86,11 @@ if sys.platform.startswith('linux'):
 		pw = pwd.getpwnam('www-data')
 		if pw:
 			gUID = pw.pw_uid
-			
+
 		gw = grp.getgrnam('www-data')
 		if gw:
 			gGID = gw.gr_gid
-			
+
 	except KeyError:
 		print('User www-data does not exist.')
 		exit(1)
@@ -100,6 +101,30 @@ macServices=["gov.llnl.mp.invd.plist","gov.llnl.mp.py.api.plist","gov.llnl.mp.py
 
 lnxServices=["MPInventoryD3","MPAPI","MPConsole","MPNginx3","MPRsyncServer3"]
 lnxCronSrvs=["MPPatchLoader","MPAVLoader","MPSyncContent"]
+
+# ----------------------------------------------------------------------------
+# Read and write flask config data from file
+# ----------------------------------------------------------------------------
+
+def read_config_file(file_path):
+	config = {}
+	with open(file_path) as f:
+		lines = (line.rstrip() for line in f)
+		for l in lines:
+			if l.rstrip():
+				 if l.startswith("#") == False:
+					config[l.split('=')[0].strip()] = l.split('=')[1].strip().replace("'","")
+
+	return config
+
+def write_config_file(file_path, config, addNotice=True):
+	f = open(file_path,'w+')
+	if addNotice:
+		f.write("# Put Any Global Server & App Config Settings to override any settings\n\n")
+	for key, value in config.iteritems():
+		f.write('{} = \'{}\'\n'.format(key, value))
+
+	f.close()
 
 # ----------------------------------------------------------------------------
 # Script Methods
@@ -118,7 +143,7 @@ def readJSON(filename):
 		fd = open(filename, 'r+')
 		returndata = json.load(fd)
 		fd.close()
-	except: 
+	except:
 		print 'COULD NOT LOAD:', filename
 
 	return returndata
@@ -166,27 +191,27 @@ def repairPermissions():
 			os.system("/usr/sbin/dseditgroup -o edit -a _appserver -t user _www")
 			os.system("/usr/sbin/dseditgroup -o edit -a _www -t user _appserverusr")
 
-		# Change Permissions for Linux & Mac		  
-		for root, dirs, files in os.walk(MP_SRV_BASE):  
-			for momo in dirs:  
+		# Change Permissions for Linux & Mac
+		for root, dirs, files in os.walk(MP_SRV_BASE):
+			for momo in dirs:
 				os.chown(os.path.join(root, momo), gUID, gGID)
 			for momo in files:
 				os.chown(os.path.join(root, momo), gUID, gGID)
-	
+
 		os.chmod("/opt/MacPatch", 0775)
 		os.chmod(MP_SRV_BASE+"/logs", 0775)
 		os.system("chmod -R 0775 "+ MP_SRV_CONT)
-		
+
 		if os_type == "Darwin":
 			os.system("chown root:wheel "+MP_SRV_BASE+"/conf/launchd/*")
 			os.system("chmod 644 "+MP_SRV_BASE+"/conf/launchd/*")
 	except Exception, e:
 		print("Error: %s" % e)
-				
+
 def linuxLoadServices(service):
 
 	_services = list()
-	
+
 	if hasattr(service, 'lower'):
 		if service.lower() == "all":
 			_services = lnxServices
@@ -206,11 +231,11 @@ def linuxLoadServices(service):
 def linuxUnLoadServices(service):
 
 	_services = list()
-	
+
 	if hasattr(service, 'lower'):
 		if service.lower() == "all":
 			_services = lnxServices
-			
+
 		else:
 			if service in lnxServices:
 				_services.append(service)
@@ -223,7 +248,7 @@ def linuxUnLoadServices(service):
 			linuxUnLoadInitServices(srvs)
 
 def linuxLoadInitServices(service):
-	
+
 	print "Loading service "+service
 
 	useSYSTEMD=False
@@ -232,7 +257,7 @@ def linuxLoadInitServices(service):
 	elif (platform.dist()[0] == "redhat" or platform.dist()[0] == "centos") and LooseVersion(platform.dist()[1]) >= LooseVersion("7.0"):
 		useSYSTEMD=True
 	else:
-		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."
 		return
 
 	if useSYSTEMD == True:
@@ -259,7 +284,7 @@ def linuxUnLoadInitServices(service):
 	elif (platform.dist()[0] == "redhat" or platform.dist()[0] == "centos") and LooseVersion(platform.dist()[1]) >= LooseVersion("7.0"):
 		useSYSTEMD=True
 	else:
-		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."
 		return
 
 	if useSYSTEMD == True:
@@ -280,11 +305,11 @@ def linuxUnLoadInitServices(service):
 def linuxLoadCronServices(service):
 	from crontab import CronTab
 	cron = CronTab()
-	
+
 	if service == "MPPatchLoader":
 		print("Loading MPPatchLoader")
 
-		cmd = MP_SRV_CONF + '/scripts/MPSUSPatchSync.py --config ' + MP_SRV_BASE + '/etc/patchloader.json'		
+		cmd = MP_SRV_CONF + '/scripts/MPSUSPatchSync.py --config ' + MP_SRV_BASE + '/etc/patchloader.json'
 		job  = cron.new(command=cmd)
 		job.set_comment("MPPatchLoader")
 		job.hour.every(8)
@@ -300,7 +325,7 @@ def linuxLoadCronServices(service):
 		job.minute.every(30)
 		job.enable()
 		cron.write_to_user(user='root')
-	
+
 	if service == "MPAVLoader":
 		print("Loading MPAVLoader")
 
@@ -336,12 +361,12 @@ def osxLoadServices(service):
 	else:
 		_services = service['services']
 
-			
+
 	for srvc in _services:
 		# Set Permissions
 		os.chown(MP_SRV_BASE+"/conf/launchd/"+srvc, 0, 0)
 		os.chmod(MP_SRV_BASE+"/conf/launchd/"+srvc, 0644)
-		
+
 		_launchdFile = "/Library/LaunchDaemons/"+srvc
 		if os.path.exists(_launchdFile):
 			print "Loading service "+srvc
@@ -350,15 +375,15 @@ def osxLoadServices(service):
 			if os.path.exists(MP_SRV_BASE+"/conf/launchd/"+srvc):
 				if os.path.exists("/Library/LaunchDaemons/"+srvc):
 					os.remove("/Library/LaunchDaemons/"+srvc)
-			
+
 				os.symlink(MP_SRV_BASE+"/conf/launchd/"+srvc,"/Library/LaunchDaemons/"+srvc)
-				
+
 				print "Loading service "+srvc
 				os.system("/bin/launchctl load -w /Library/LaunchDaemons/"+srvc)
-				
+
 			else:
 				print srvc + " was not found in MacPatch Server directory. Service will not load."
-						
+
 def osxUnLoadServices(service):
 	_services = list()
 
@@ -370,7 +395,7 @@ def osxUnLoadServices(service):
 				_services.append(service)
 	else:
 		_services = service['services']
-			
+
 	for srvc in _services:
 		_launchdFile = "/Library/LaunchDaemons/"+srvc
 		if os.path.exists(_launchdFile):
@@ -385,7 +410,7 @@ def setupRsyncFromMaster():
 	'''	Write the Plist With Changes '''
 	theFile = MP_SRV_BASE + "/etc/syncContent.json"
 	prefs = {'MPServerAddress': server_name}
-	
+
 	try:
 		writeJSON(prefs, theFile)
 	except Exception, e:
@@ -396,7 +421,7 @@ def setupRsyncFromMaster():
 		if os.path.exists(MP_SRV_BASE+"/conf/launchd/gov.llnl.mp.sync.plist"):
 			if os.path.exists("/Library/LaunchDaemons/gov.llnl.mp.sync.plist"):
 				os.remove("/Library/LaunchDaemons/gov.llnl.mp.sync.plist")
-			
+
 			os.symlink(MP_SRV_BASE+"/conf/launchd/gov.llnl.mp.sync.plist","/Library/LaunchDaemons/gov.llnl.mp.sync.plist")
 			os.chown(MP_SRV_BASE+"/conf/launchd/gov.llnl.mp.sync.plist", 0, 0)
 			os.chmod(MP_SRV_BASE+"/conf/launchd/gov.llnl.mp.sync.plist", 0644)
@@ -415,7 +440,7 @@ def setupPatchLoader():
 	_srvHost = "127.0.0.1"
 	_srvPort = "3600"
 	_srvUSSL = "Y"
-	
+
 	srvHost = raw_input('\nMaster server address [127.0.0.1]: ')
 	srvHost = srvHost or _srvHost
 
@@ -425,7 +450,7 @@ def setupPatchLoader():
 	if srvUSSL.lower() == "y" or srvUSSL.lower() == "":
 		srvUSSLBOOL = True
 	elif srvUSSL.lower() == "n":
-		srvUSSLBOOL = False	
+		srvUSSLBOOL = False
 
 	prefs['settings']['MPServerAddress'] = srvHost
 	prefs['settings']['MPServerUseSSL'] = srvUSSLBOOL
@@ -441,7 +466,7 @@ def setupPatchLoader():
 		if os.path.exists(MP_SRV_BASE+"/conf/launchd/gov.llnl.mp.sus.sync.plist"):
 			if os.path.exists("/Library/LaunchDaemons/gov.llnl.mp.sus.sync.plist"):
 				os.remove("/Library/LaunchDaemons/gov.llnl.mp.sus.sync.plist")
-			
+
 			os.symlink(MP_SRV_BASE+"/conf/launchd/gov.llnl.mp.sus.sync.plist","/Library/LaunchDaemons/gov.llnl.mp.sus.sync.plist")
 			os.chown(MP_SRV_BASE+"/conf/launchd/gov.llnl.mp.sus.sync.plist", 0, 0)
 			os.chmod(MP_SRV_BASE+"/conf/launchd/gov.llnl.mp.sus.sync.plist", 0644)
@@ -464,7 +489,7 @@ def setupServices():
 		masterType = False
 
 	# Web Services
-	_WEBSERVICES = 'Y' 
+	_WEBSERVICES = 'Y'
 	print ""
 	webService = raw_input('Enable Web Services [%s]' % _WEBSERVICES)
 	webService = webService or _WEBSERVICES
@@ -493,9 +518,9 @@ def setupServices():
 		jData['settings']['services']['mpapi'] = False
 
 	writeJSON(jData,MP_CONF_FILE)
-	
+
 	# Web Admin Console
-	
+
 	_ADMINCONSOLE = 'Y' if masterType else 'N'
 	print ""
 	adminConsole = raw_input('Enable Admin Console Application [%s]' % _ADMINCONSOLE)
@@ -517,13 +542,13 @@ def setupServices():
 			srvsList.append('MPConsole')
 
 	else:
-		
+
 		jData['settings']['services']['console'] = False
 
 	writeJSON(jData,MP_CONF_FILE)
 
 	# Content Sync
-	_CONTENT = 'Y' if masterType else 'N'  
+	_CONTENT = 'Y' if masterType else 'N'
 	print ""
 	print "Content sync allows distribution servers to sync from the master server."
 	cRsync = raw_input('Start Content Sync Service (Master Only) [%s]' % _CONTENT)
@@ -546,7 +571,7 @@ def setupServices():
 		setupPatchLoader()
 		if os_type == 'Darwin':
 			srvsList.append('gov.llnl.mp.sus.sync.plist')
-	
+
 	# Sync From Master
 	if masterType == False:
 		_RSYNC = 'Y'
@@ -577,7 +602,7 @@ def setupServices():
 	return set(srvsList)
 
 def linkStartupScripts(service,action='enable',altType=None):
-	
+
 	print "Copy Startup Script for "+service
 	useSYSTEMD=False
 
@@ -586,7 +611,7 @@ def linkStartupScripts(service,action='enable',altType=None):
 	elif (platform.dist()[0] == "redhat" or platform.dist()[0] == "centos") and LooseVersion(platform.dist()[1]) >= LooseVersion("7.0"):
 		useSYSTEMD=True
 	else:
-		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."	
+		print "Unable to start service ("+service+") at start up. OS("+platform.dist()[0]+") is unsupported."
 		return
 
 	if useSYSTEMD == True:
@@ -607,7 +632,7 @@ def linkStartupScripts(service,action='enable',altType=None):
 			return
 		else:
 			script = MP_SRV_BASE+"/conf/init.d/Ubuntu/"+service
-			link = "/etc/init.d/"+service 
+			link = "/etc/init.d/"+service
 
 			os.chown(script, 0, 0)
 			os.chmod(script, 0755)
@@ -621,40 +646,19 @@ def linkStartupScripts(service,action='enable',altType=None):
 
 class MPDatabase:
 
-	config_file = MP_SRV_BASE+"/etc/siteconfig.json" 
-	ws_alt_conf = MP_SRV_BASE+"/apps/config.cfg"
+	config_file = MP_FLASK_FILE
 
 	def __init__(self):
-		MPDatabase.config_file = MP_SRV_BASE+"/etc/siteconfig.json" 
-		MPDatabase.ws_alt_conf = MP_SRV_BASE+"/apps/config.cfg"
+		MPDatabase.config_file = MP_FLASK_FILE
 
 	def loadConfig(self):
 		config = {}
 		try:
-			fd = open(MPDatabase.config_file, 'r+')
-			config = json.load(fd)
-			fd.close()
-		except: 
-			print 'COULD NOT LOAD:', filename
-			exit(1)
+			config = read_config_file(MP_FLASK_FILE)
+		except:
+			print "COULD NOT LOAD " + config_file + " using empty config."
 
 		return config
-
-	def writeConfig(self, config):
-		print "Writing configuration data to file ..."
-		with open(MPDatabase.config_file, "w") as outfile:
-			json.dump(config, outfile, indent=4)
-
-	def writeFlaskConfig(self, key, value):
-		keyVal = "%s=\"%s\"\n" % (key,value)
-		f = open(MPDatabase.ws_alt_conf,'a')
-		if(os.path.getsize(MPDatabase.ws_alt_conf) > 0):
-			f.write("\n"+keyVal)
-		else:
-			f.write(keyVal)
-			
-		f.close()
-
 
 	def configDatabase(self):
 		conf = self.loadConfig()
@@ -663,37 +667,29 @@ class MPDatabase:
 		os.system('clear')
 		print "Configure MacPatch Database Info..."
 		mp_db_hostname = raw_input("MacPatch Database Server Hostname:  [" + str(system_name) + "]: ") or str(system_name)
-
-		conf["settings"]["database"]["prod"]["dbHost"] = mp_db_hostname
-		conf["settings"]["database"]["ro"]["dbHost"] = mp_db_hostname
+		conf["DB_HOST"] = mp_db_hostname
 
 		mp_db_port = raw_input("MacPatch Database Server Port Number [3306]: ") or "3306"
-		conf["settings"]["database"]["prod"]["dbPort"] = mp_db_port
-		conf["settings"]["database"]["ro"]["dbPort"] = mp_db_port
-		
+		conf["DB_PORT"] = mp_db_port
+
 		mp_db_name = raw_input("MacPatch Database Name [MacPatchDB3]: ") or "MacPatchDB3"
-		conf["settings"]["database"]["prod"]["dbName"] = mp_db_name
-		conf["settings"]["database"]["ro"]["dbName"] = mp_db_name
-		
+		conf["DB_NAME"] = mp_db_name
+
 		mp_db_usr = raw_input("MacPatch Database User Name [mpdbadm]: ") or "mpdbadm"
-		conf["settings"]["database"]["prod"]["username"] = mp_db_usr
-		
+		conf["DB_USER"] = mp_db_usr
+
 		#print('MacPatch Database User (' +mp_db_usr+ ') Password')
 		mp_db_pas = getpass.getpass('MacPatch Database User (' +mp_db_usr+ ') Password:')
-		conf["settings"]["database"]["prod"]["password"] = mp_db_pas
-		
+		conf["DB_PASS"] = mp_db_pas
+
 		#print('MacPatch Database Read Only User (mpdbro) Password:')
 		mp_db_pas_ro = getpass.getpass('MacPatch Database Read Only User (mpdbro) Password:')
-		conf["settings"]["database"]["ro"]["password"] = mp_db_pas_ro
+		conf["DB_USER_RO"] = 'mpdbro'
+		conf["DB_PASS_RO"] = mp_db_pas_ro
 
 		save_answer = raw_input("Would you like the save these settings [Y]?:").upper() or "Y"
 		if save_answer == "Y":
-			self.writeConfig(conf)
-			self.writeFlaskConfig('DB_HOST',mp_db_hostname)
-			self.writeFlaskConfig('DB_PORT',mp_db_port)
-			self.writeFlaskConfig('DB_NAME',mp_db_name)
-			self.writeFlaskConfig('DB_USER',mp_db_usr)
-			self.writeFlaskConfig('DB_PASS',mp_db_pas)
+			write_config_file(MP_FLASK_FILE, conf)
 		else:
 			return self.configDatabase()
 
@@ -703,11 +699,11 @@ class MPDatabase:
 
 class MPLdap:
 
-	config_file = MP_SRV_BASE+"/etc/siteconfig.json" 
+	config_file = MP_SRV_BASE+"/etc/siteconfig.json"
 
 	def __init__(self):
-		
-		MPLdap.config_file = MP_SRV_BASE+"/etc/siteconfig.json" 
+
+		MPLdap.config_file = MP_SRV_BASE+"/etc/siteconfig.json"
 
 	def loadConfig(self):
 		config = {}
@@ -715,7 +711,7 @@ class MPLdap:
 			fd = open(MPLdap.config_file, 'r+')
 			config = json.load(fd)
 			fd.close()
-		except: 
+		except:
 			print 'COULD NOT LOAD:', filename
 			exit(1)
 
@@ -741,7 +737,7 @@ class MPLdap:
 			print "Common ports for Active Directory non secure is 3268, secure is 3269"
 			ldap_port = raw_input("Active Directory/LDAP server port number: ")
 			conf["settings"]["ldap"]["port"] = ldap_port
-			
+
 			use_ldap_ssl = raw_input("Active Directory/LDAP use ssl? [Y]: ").upper() or "Y"
 			if use_ldap_ssl == "Y":
 				print "Please note, you will need to run the addRemoteCert.py script prior to starting the MacPatch Web Admin Console."
@@ -753,7 +749,7 @@ class MPLdap:
 
 			ldap_searchbase = raw_input("Active Directory/LDAP Search Base: ")
 			conf["settings"]["ldap"]["searchbase"] = ldap_searchbase
-			
+
 			ldap_lgnattr = raw_input("Active Directory/LDAP Login Attribute [userPrincipalName]: ") or "userPrincipalName"
 			conf["settings"]["ldap"]["loginAttr"] = ldap_lgnattr
 
@@ -790,7 +786,7 @@ class MPAdmin:
 			fd = open(MPAdmin.config_file, 'r+')
 			config = json.load(fd)
 			fd.close()
-		except: 
+		except:
 			print 'COULD NOT LOAD:', filename
 			exit(1)
 
@@ -805,7 +801,7 @@ class MPAdmin:
 		conf = self.loadConfig()
 
 		os.system('clear')
-		print "Set Default Admin name and password..."    
+		print "Set Default Admin name and password..."
 
 		set_admin_info = raw_input("Would you like to set the admin name and password [Y]:").upper() or "Y"
 		if set_admin_info == "Y":
@@ -841,16 +837,16 @@ class MPConfigDefaults:
 			fd = open(MPConfigDefaults.config_file, 'r+')
 			config = json.load(fd)
 			fd.close()
-		except: 
+		except:
 			print 'COULD NOT LOAD:', MPConfigDefaults.config_file
 			exit(1)
 
 		return config
 
 	def genServerKeys(self):
-		new_key = RSA.generate(4096, e=65537) 
-		public_key = new_key.publickey().exportKey("PEM") 
-		private_key = new_key.exportKey("PEM") 
+		new_key = RSA.generate(4096, e=65537)
+		public_key = new_key.publickey().exportKey("PEM")
+		private_key = new_key.exportKey("PEM")
 		return private_key, public_key
 
 	def writeConfig(self, config):
@@ -872,7 +868,7 @@ class MPConfigDefaults:
 		# Server Keys
 		if not os.path.exists(MP_SRV_KEYS):
 			os.makedirs(MP_SRV_KEYS)
-		
+
 		print "Generating server keys ..."
 		pub_key = MP_SRV_KEYS + "/server_pub.pem"
 		pri_key = MP_SRV_KEYS + "/server_pri.pem"
@@ -887,17 +883,17 @@ class MPConfigDefaults:
 				conf["settings"]["server"]["pubKey"] = pub_key
 		else:
 			print "Server RSA Keys already exist."
-		
+
 		print "Write MPConfigDefaults"
 		print conf["settings"]["server"]
- 		self.writeConfig(conf)			
+		 self.writeConfig(conf)
 
- 	def writeFlaskConfig(self, key, value):
- 		if type(value) == types.BooleanType:
-			keyVal = "%s=%s\n" % (key,value)		
+	 def writeFlaskConfig(self, key, value):
+		 if type(value) == types.BooleanType:
+			keyVal = "%s=%s\n" % (key,value)
 		else:
 			keyVal = "%s=\"%s\"\n" % (key,value)
-		
+
 		f = open(self.ws_alt_conf,'a')
 		if(os.path.getsize(self.ws_alt_conf) > 0):
 			f.write("\n"+keyVal)
@@ -931,7 +927,7 @@ class MPConfigDefaults:
 				self.writeFlaskConfig('REQUIRE_SIGNATURES',True)
 			else:
 				self.writeFlaskConfig('REQUIRE_SIGNATURES',False)
-			
+
 		else:
 			return self.configAgentRequirements()
 
@@ -963,7 +959,7 @@ def main():
 		_adm = MPAdmin()
 		_adm.configAdminUser()
 		sys.exit()
-	
+
 	if args.config_database != False:
 		_db = MPDatabase()
 		_db.configDatabase()
@@ -978,7 +974,7 @@ def main():
 		_api = MPConfigDefaults()
 		_api.configAgentRequirements()
 		sys.exit()
-	
+
 	if args.setup != False:
 		# First Repair permissions
 		repairPermissions()
@@ -1007,7 +1003,7 @@ def main():
 			_enabled_services = {"Linux": {"services": list(srvList)} }
 
 		writeJSON(_enabled_services,MP_SRVC_FILE)
-		
+
 	_srvs = readServicesConfig(os_type)
 	if args.load != None:
 		if _srvs:
@@ -1020,7 +1016,7 @@ def main():
 				linuxLoadServices(args.load)
 			else:
 				osxLoadServices(args.load)
-		
+
 	elif args.unload != None:
 		if _srvs:
 			if os_type == 'Linux':
@@ -1048,4 +1044,3 @@ def usage():
 
 if __name__ == '__main__':
 	main()
-	
