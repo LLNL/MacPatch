@@ -886,7 +886,7 @@ class MPConfigDefaults:
 
 		print "Write MPConfigDefaults"
 		print conf["settings"]["server"]
-		 self.writeConfig(conf)
+		self.writeConfig(conf)
 
 	 def writeFlaskConfig(self, key, value):
 		 if type(value) == types.BooleanType:
