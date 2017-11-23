@@ -35,10 +35,7 @@ Client Agent - Deployment
 				<div id="toolbar">
 					<button id="delAgentButton" type="button" class="btn btn-default" disabled><i class="glyphicon glyphicon-trash"></i></button>
 				</div>
-				<table id="tableAgents" class="table table-condensed" data-row-style="rowStyle" data-toolbar="#toolbar">
-
-				</table>
-
+				<table id="tableAgents" class="table table-condensed" data-row-style="rowStyle" data-toolbar="#toolbar"></table>
 			{% else %}
 				<table id="tableAgents" class="table table-condensed" data-row-style="rowStyle"></table>
 			{% endif %}
@@ -106,7 +103,16 @@ Client Agent - Deployment
 					checkbox: true,
 					rowspan: 1,
 					align: 'center',
-					valign: 'middle'
+					valign: 'middle',
+					width: 40
+				},
+				{
+					field: 'operate',
+					title: '',
+					align: 'center',
+					events: operateEventsAgent,
+					formatter: operateFormatterAgent,
+					width: 60
 				},
 				{% for col in agentCols %}
 					{
@@ -202,6 +208,19 @@ Client Agent - Deployment
 			});
 		});
 	});
+
+	window.operateEventsAgent = {
+
+	};
+
+	function operateFormatterAgent(value, row, index)
+	{
+		var htmlData = [];
+		htmlData.push('<a class="editFilter" href="javascript:void(0)" title="Edit Filter">');
+		htmlData.push('<i class="fa fa-pencil fa-lg" aria-hidden="true"></i>');
+		htmlData.push('</a>');
+		return htmlData.join('');
+	}
 
 	$('#tableAgents').on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function ()
 	{
