@@ -110,6 +110,7 @@
         NSString *cVer = [NSString stringWithFormat:@"%@.%@.%@",[agentVer objectForKey:@"major"],[agentVer objectForKey:@"minor"],[agentVer objectForKey:@"bug"]];
         [agentDict setObject:cVer forKey:@"agent_version"];
         [agentDict setObject:@"false" forKey:@"needsreboot"];
+		[agentDict setObject:[self fileVaultStatus] forKey:@"fileVault"];
         
         if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
             [agentDict setObject:@"true" forKey:@"needsreboot"];
@@ -123,6 +124,27 @@
         logit(lcl_vError,@"No client checkin data will be posted.");
         return nil;
     }
+}
+
+- (NSString *)fileVaultStatus
+{
+	@autoreleasepool {
+		NSTask *task = [[NSTask alloc] init];
+		[task setLaunchPath:@"/usr/bin/fdesetup"];
+		[task setArguments:[NSArray arrayWithObjects:@"status", nil]];
+		
+		NSPipe *pipe = [NSPipe pipe];
+		[task setStandardOutput: pipe];
+		
+		NSFileHandle *file = [pipe fileHandleForReading];
+		[task launch];
+		
+		NSData *data = [file readDataToEndOfFile];
+		NSString *string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+		
+		NSLog (@"%@", string); // FileVault is Off/On.
+		return string;
+	}
 }
 
 @end
