@@ -122,7 +122,16 @@ Client Agent - Deployment
 						{% endif %}
 						sortable: true,
 						field: '{{col[0]}}',
-						title: '{{col[1]}}'
+						title: '{{col[1]}}',
+						{% if col.name == 'active' and session.role[0] == 1 %}
+						editable: {
+							type: 'select',
+							url:  '/patches/custom/active',
+							source: [
+								{value: 0, text: 'False'},
+								{value: 1, text: 'True'},
+							]
+						},
 
 					},
 				{% endfor %}
