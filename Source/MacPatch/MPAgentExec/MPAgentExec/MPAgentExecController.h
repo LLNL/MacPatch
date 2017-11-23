@@ -26,12 +26,11 @@
 #import <Foundation/Foundation.h>
 #import "MacPatch.h"
 #import "MPWorkerProtocol.h"
-#import "MPNetRequest.h"
 
 @class MPAsus;
 @class MPDataMgr;
 
-@interface MPAgentExecController : NSObject <MPWorkerClient, MPNetRequestController>
+@interface MPAgentExecController : NSObject <MPWorkerClient>
 {
     MPAsus          *mpAsus;
     MPDataMgr       *mpDataMgr;

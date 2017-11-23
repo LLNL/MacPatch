@@ -112,6 +112,7 @@
 		8FE560E816DE97CF00BB7600 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */; };
 		8FE560EA16DE97DD00BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E916DE97DD00BB7600 /* Security.framework */; };
 		8FF253E71FACE797006B0491 /* MPFirmware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2FC03D1E205523004710C7 /* MPFirmware.m */; };
+		8FF5B50F1FC659AE006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B50B1FC658EC006F5FB2 /* Python.framework */; };
 		8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F9219959206005A4EEB /* MPAgentRegister.m */; };
 /* End PBXBuildFile section */
 
@@ -230,6 +231,7 @@
 		8FE560E516DE97C700BB7600 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8FE560E916DE97DD00BB7600 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		8FF5B50B1FC658EC006F5FB2 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 		8FF93F9119959206005A4EEB /* MPAgentRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentRegister.h; sourceTree = "<group>"; };
 		8FF93F9219959206005A4EEB /* MPAgentRegister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentRegister.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -263,6 +265,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FF5B50F1FC659AE006F5FB2 /* Python.framework in Frameworks */,
 				8FE560CC16DE71A100BB7600 /* libMacPatch.a in Frameworks */,
 				8F5310011B42EEE400B8D893 /* libsqlite3.dylib in Frameworks */,
 				8F530FEE1B42ED2B00B8D893 /* libxml2.dylib in Frameworks */,
@@ -307,6 +310,7 @@
 		8F4B1EEB16DD77BD00E15A9E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FF5B50B1FC658EC006F5FB2 /* Python.framework */,
 				8F9C2B591DDA1D6B002A39D2 /* StoreFoundation.framework */,
 				8F9C2B571DDA1D4A002A39D2 /* CommerceKit.framework */,
 				8F5310001B42EEE400B8D893 /* libsqlite3.dylib */,

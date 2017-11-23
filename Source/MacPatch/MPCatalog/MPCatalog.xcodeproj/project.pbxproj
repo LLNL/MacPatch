@@ -44,6 +44,7 @@
 		8FD8903B16DFE14300A870A3 /* remove.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8902C16DFE14300A870A3 /* remove.png */; };
 		8FD8903C16DFE14300A870A3 /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8902D16DFE14300A870A3 /* stop.png */; };
 		8FD8903D16DFE14300A870A3 /* Console.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8902E16DFE14300A870A3 /* Console.png */; };
+		8FF5B50D1FC6592E006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B5081FC658CD006F5FB2 /* Python.framework */; };
 		8FFD37EC1FA50E1700115F33 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFD37EB1FA50E1700115F33 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
@@ -98,6 +99,7 @@
 		8FD8902C16DFE14300A870A3 /* remove.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = remove.png; sourceTree = "<group>"; };
 		8FD8902D16DFE14300A870A3 /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
 		8FD8902E16DFE14300A870A3 /* Console.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Console.png; sourceTree = "<group>"; };
+		8FF5B5081FC658CD006F5FB2 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 		8FFD37EB1FA50E1700115F33 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -106,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FF5B50D1FC6592E006F5FB2 /* Python.framework in Frameworks */,
 				8FFD37EC1FA50E1700115F33 /* libsqlite3.tbd in Frameworks */,
 				8FD8901B16DFDE2E00A870A3 /* libMacPatch.a in Frameworks */,
 				8FD8901816DFDE2E00A870A3 /* libicucore.dylib in Frameworks */,
@@ -165,6 +168,7 @@
 		8FD88FC916DFDD9200A870A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FF5B5081FC658CD006F5FB2 /* Python.framework */,
 				8FFD37EB1FA50E1700115F33 /* libsqlite3.tbd */,
 				8FD8900816DFDE2D00A870A3 /* Carbon.framework */,
 				8FD8900916DFDE2D00A870A3 /* Security.framework */,

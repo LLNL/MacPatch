@@ -35,6 +35,7 @@
 		8FD8909D16DFEC3100A870A3 /* MacPatchInstalleArtBlack.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD8909C16DFEC3100A870A3 /* MacPatchInstalleArtBlack.png */; };
 		8FD890CE16E51BFB00A870A3 /* MPBaseRoundIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD890CD16E51BFB00A870A3 /* MPBaseRoundIcon.png */; };
 		8FE6B4831B4C79A1000A0471 /* warn.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE6B4821B4C79A1000A0471 /* warn.png */; };
+		8FF5B5101FC65AF6006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B5071FC658C4006F5FB2 /* Python.framework */; };
 		8FF66A8E19BF5774002379BF /* VDKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF66A8D19BF5774002379BF /* VDKQueue.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
@@ -80,6 +81,7 @@
 		8FD8909C16DFEC3100A870A3 /* MacPatchInstalleArtBlack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MacPatchInstalleArtBlack.png; sourceTree = "<group>"; };
 		8FD890CD16E51BFB00A870A3 /* MPBaseRoundIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MPBaseRoundIcon.png; sourceTree = "<group>"; };
 		8FE6B4821B4C79A1000A0471 /* warn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = warn.png; sourceTree = "<group>"; };
+		8FF5B5071FC658C4006F5FB2 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 		8FF66A8C19BF5774002379BF /* VDKQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VDKQueue.h; sourceTree = "<group>"; };
 		8FF66A8D19BF5774002379BF /* VDKQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VDKQueue.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,6 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FF5B5101FC65AF6006F5FB2 /* Python.framework in Frameworks */,
 				8FD8908D16DFE92C00A870A3 /* libMacPatch.a in Frameworks */,
 				8FD8908F16DFE99500A870A3 /* libsqlite3.dylib in Frameworks */,
 				8FD8908A16DFE92C00A870A3 /* libicucore.dylib in Frameworks */,
@@ -126,6 +129,7 @@
 		8FD8904916DFE84600A870A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FF5B5071FC658C4006F5FB2 /* Python.framework */,
 				8FC36B3C1B45C0850099D214 /* Carbon.framework */,
 				8FD8907C16DFE92C00A870A3 /* Security.framework */,
 				8FD8907D16DFE92C00A870A3 /* SystemConfiguration.framework */,
@@ -404,7 +408,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Charles Heizer (BLZUAP2L36)";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -425,7 +429,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Charles Heizer (BLZUAP2L36)";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

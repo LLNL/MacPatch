@@ -26,12 +26,11 @@
 #import <Cocoa/Cocoa.h>
 #import "MacPatch.h"
 #import "MPWorkerProtocol.h"
-#import "MPNetRequest.h"
 
 @class PreferenceController;
 @class SWDistInfoController;
 
-@interface MPCatalogAppDelegate : NSObject <NSApplicationDelegate, MPWorkerClient, NSTabViewDelegate, MPNetRequestController>
+@interface MPCatalogAppDelegate : NSObject <NSApplicationDelegate, MPWorkerClient, NSTabViewDelegate>
 {
     NSWindow *__unsafe_unretained window;
 	

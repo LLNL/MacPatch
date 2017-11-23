@@ -41,6 +41,7 @@
 		8FE6B4B71B4C86F9000A0471 /* Running.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE6B4AD1B4C86F9000A0471 /* Running.png */; };
 		8FE6B4B81B4C86F9000A0471 /* Success.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE6B4AE1B4C86F9000A0471 /* Success.png */; };
 		8FE6B4B91B4C86F9000A0471 /* Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE6B4AF1B4C86F9000A0471 /* Warning.png */; };
+		8FF5B5061FC658B3006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B5051FC658AD006F5FB2 /* Python.framework */; };
 		8FFD37E21FA391E900115F33 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFD37E11FA391E900115F33 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
@@ -93,6 +94,7 @@
 		8FE6B4AD1B4C86F9000A0471 /* Running.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Running.png; sourceTree = "<group>"; };
 		8FE6B4AE1B4C86F9000A0471 /* Success.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Success.png; sourceTree = "<group>"; };
 		8FE6B4AF1B4C86F9000A0471 /* Warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Warning.png; sourceTree = "<group>"; };
+		8FF5B5051FC658AD006F5FB2 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 		8FFD37E11FA391E900115F33 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -111,6 +113,7 @@
 				8F382EF51FB6303100129063 /* AppKit.framework in Frameworks */,
 				8F382EF61FB6303300129063 /* Cocoa.framework in Frameworks */,
 				8F382EF71FB6303900129063 /* CoreFoundation.framework in Frameworks */,
+				8FF5B5061FC658B3006F5FB2 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +200,7 @@
 		8FFD37E01FA391E800115F33 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FF5B5051FC658AD006F5FB2 /* Python.framework */,
 				8F382EEC1FB6254D00129063 /* Security.framework */,
 				8F382EEB1FB6254500129063 /* SystemConfiguration.framework */,
 				8F382EEA1FB6253600129063 /* IOKit.framework */,

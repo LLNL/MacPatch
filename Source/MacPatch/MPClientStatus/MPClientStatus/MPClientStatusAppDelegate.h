@@ -128,11 +128,6 @@
 // Refresh Status
 - (IBAction)refreshClientStatus:(id)sender;
 
-// Checkin Data
-- (NSDictionary *)systemVersionDictionary;
-- (NSDictionary *)getOSInfo;
-- (NSString *)getHostSerialNumber;
-
 // Show Last CheckIn Info
 - (void)showLastCheckIn;
 - (void)showLastCheckInMethod;
@@ -141,7 +136,6 @@
 - (IBAction)openSoftwareCatalogApplications:(id)sender;
 
 // Kill SoftwareUpdate GUI App
-- (void)notificationReceived:(NSNotification *)aNotification;
 - (void)killApplication:(NSNumber *)aPID;
 - (void)openSoftwareUpdateApplication:(id)sender;
 

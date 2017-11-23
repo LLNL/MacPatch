@@ -34,6 +34,7 @@
 		8FD8911016E5259100A870A3 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8910716E5259100A870A3 /* libz.dylib */; };
 		8FD8911116E5259100A870A3 /* libMacPatch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD8910816E5259100A870A3 /* libMacPatch.a */; };
 		8FD8914116E535C300A870A3 /* WindowViewSubclass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD8914016E535C200A870A3 /* WindowViewSubclass.m */; };
+		8FF5B5021FC65886006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B5011FC6587D006F5FB2 /* Python.framework */; };
 		8FFD37EE1FA5101800115F33 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFD37ED1FA5101800115F33 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
@@ -77,6 +78,7 @@
 		8FD8911216E525F000A870A3 /* MPWorkerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPWorkerProtocol.h; sourceTree = "<group>"; };
 		8FD8913F16E535C200A870A3 /* WindowViewSubclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowViewSubclass.h; sourceTree = "<group>"; };
 		8FD8914016E535C200A870A3 /* WindowViewSubclass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WindowViewSubclass.m; sourceTree = "<group>"; };
+		8FF5B5011FC6587D006F5FB2 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Python.framework; sourceTree = "<group>"; };
 		8FFD37ED1FA5101800115F33 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -96,6 +98,7 @@
 				8FD8910C16E5259100A870A3 /* IOKit.framework in Frameworks */,
 				8FD8910D16E5259100A870A3 /* CoreFoundation.framework in Frameworks */,
 				8F336EA21BA8909E00983D78 /* Carbon.framework in Frameworks */,
+				8FF5B5021FC65886006F5FB2 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,7 +125,8 @@
 		8FD890A916DFEDB700A870A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8FFD37ED1FA5101800115F33 /* libsqlite3.tbd */,
+				8FF5B5011FC6587D006F5FB2 /* Python.framework */,
+				8FD890AA16DFEDB700A870A3 /* Cocoa.framework */,
 				8F336EA11BA8909D00983D78 /* Carbon.framework */,
 				8FD8910016E5259100A870A3 /* Security.framework */,
 				8FD8910116E5259100A870A3 /* SystemConfiguration.framework */,
@@ -133,7 +137,7 @@
 				8FD8910616E5259100A870A3 /* libcrypto.dylib */,
 				8FD8910716E5259100A870A3 /* libz.dylib */,
 				8FD8910816E5259100A870A3 /* libMacPatch.a */,
-				8FD890AA16DFEDB700A870A3 /* Cocoa.framework */,
+				8FFD37ED1FA5101800115F33 /* libsqlite3.tbd */,
 				8FD890AC16DFEDB700A870A3 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -392,6 +396,10 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Self Patch/Self Patch-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -409,6 +417,10 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Self Patch/Self Patch-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";

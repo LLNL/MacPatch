@@ -387,7 +387,8 @@
 	}
 	
 	// If File Exists then delete it
-	if ([fm fileExistsAtPath:[kSP_DATA_Dir stringByAppendingPathComponent:spFileName] isDirectory:NO]) {
+	isDir = NO;
+	if ([fm fileExistsAtPath:[kSP_DATA_Dir stringByAppendingPathComponent:spFileName] isDirectory:&isDir] && isDir) {
         [fm removeItemAtPath:[kSP_DATA_Dir stringByAppendingPathComponent:spFileName] error:NULL];
 	}
 

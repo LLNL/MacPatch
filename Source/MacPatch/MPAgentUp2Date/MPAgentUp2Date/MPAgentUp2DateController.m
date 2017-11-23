@@ -54,9 +54,6 @@ NSInteger const TaskErrorTimedOut = 900001;
 - (BOOL)scanForMigrationConfig;
 // - (MPNetServer *)migrationServerConfig;
 
-- (NSData *)getRequestWithURIforREST:(NSString *)aURI error:(NSError **)err;
-- (id)restGetRequestforURI:(NSString *)aURI resultType:(NSString *)resType error:(NSError **)err;
-- (id)returnRequestWithType:(NSData *)requestData resultType:(NSString *)resultType error:(NSError **)err;
 - (NSDictionary *)getAgentUpdates:(NSString *)curAppVersion build:(NSString *)curBuildVersion error:(NSError **)err;
 
 @end

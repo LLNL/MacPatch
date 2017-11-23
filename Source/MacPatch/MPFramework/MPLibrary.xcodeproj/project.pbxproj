@@ -153,6 +153,7 @@
 		8FEC938C17CBFF0F00AA9C1C /* MPCustomPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC938A17CBFF0F00AA9C1C /* MPCustomPatch.m */; };
 		8FF3167B1FBC01CB00CB2B18 /* MPPython.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF316791FBC01C700CB2B18 /* MPPython.m */; };
 		8FF3167C1FBC01CB00CB2B18 /* MPPython.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF3167A1FBC01CA00CB2B18 /* MPPython.h */; };
+		8FF5B5001FC65861006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B4FF1FC6585D006F5FB2 /* Python.framework */; };
 		8FF831601DEF7ACF005DC5AD /* MPKeyItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF8315C1DEF7ACF005DC5AD /* MPKeyItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FF831611DEF7ACF005DC5AD /* MPKeyItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8315D1DEF7ACF005DC5AD /* MPKeyItem.m */; };
 		8FF831621DEF7ACF005DC5AD /* MPSimpleKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF8315E1DEF7ACF005DC5AD /* MPSimpleKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -319,6 +320,7 @@
 		8FED8870146462DB00709F8E /* MPASUSCatalogs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPASUSCatalogs.m; sourceTree = "<group>"; };
 		8FF316791FBC01C700CB2B18 /* MPPython.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPPython.m; sourceTree = "<group>"; };
 		8FF3167A1FBC01CA00CB2B18 /* MPPython.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPPython.h; sourceTree = "<group>"; };
+		8FF5B4FF1FC6585D006F5FB2 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 		8FF8315C1DEF7ACF005DC5AD /* MPKeyItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPKeyItem.h; sourceTree = "<group>"; };
 		8FF8315D1DEF7ACF005DC5AD /* MPKeyItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPKeyItem.m; sourceTree = "<group>"; };
 		8FF8315E1DEF7ACF005DC5AD /* MPSimpleKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSimpleKeychain.h; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 				8FE5609D16DE6D6F00BB7600 /* CoreFoundation.framework in Frameworks */,
 				8F382F0F1FB970BE00129063 /* CFNetwork.framework in Frameworks */,
 				8FE5609E16DE6D7200BB7600 /* Cocoa.framework in Frameworks */,
+				8FF5B5001FC65861006F5FB2 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -695,6 +698,7 @@
 		8FEA3EE51649726400103E80 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FF5B4FF1FC6585D006F5FB2 /* Python.framework */,
 				8F382F0E1FB970B300129063 /* CFNetwork.framework */,
 				8FE5609516DE6CFD00BB7600 /* Security.framework */,
 				8FE5609316DE6CF700BB7600 /* Foundation.framework */,

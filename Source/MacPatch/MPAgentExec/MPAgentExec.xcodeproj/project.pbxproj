@@ -25,6 +25,7 @@
 		8FE561B116DEB8EF00BB7600 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE561A816DEB8EF00BB7600 /* libz.dylib */; };
 		8FE561B316DEB8EF00BB7600 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE561AA16DEB8EF00BB7600 /* libicucore.dylib */; };
 		8FE561B616DEB99600BB7600 /* MPAgentExecController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE561B516DEB99500BB7600 /* MPAgentExecController.m */; };
+		8FF5B50E1FC6599A006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B50A1FC658E1006F5FB2 /* Python.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -65,6 +66,7 @@
 		8FE561AA16DEB8EF00BB7600 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		8FE561B416DEB99500BB7600 /* MPAgentExecController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentExecController.h; sourceTree = "<group>"; };
 		8FE561B516DEB99500BB7600 /* MPAgentExecController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentExecController.m; sourceTree = "<group>"; };
+		8FF5B50A1FC658E1006F5FB2 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FF5B50E1FC6599A006F5FB2 /* Python.framework in Frameworks */,
 				8FE5611216DE9CB900BB7600 /* libMacPatch.a in Frameworks */,
 				8F5F91EE171C6342001C77D1 /* libxml2.dylib in Frameworks */,
 				8FD88E6E16DFC33600A870A3 /* libsqlite3.dylib in Frameworks */,
@@ -120,6 +123,7 @@
 		8FE560F616DE9A7A00BB7600 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FF5B50A1FC658E1006F5FB2 /* Python.framework */,
 				8FE5611116DE9CB900BB7600 /* libMacPatch.a */,
 				8FD88E6B16DFC31C00A870A3 /* DiskArbitration.framework */,
 				8FD88E6716DFC16300A870A3 /* DirectoryService.framework */,

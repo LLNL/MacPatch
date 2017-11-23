@@ -398,7 +398,7 @@
         else if ([[[intervalArray objectAtIndex:0] uppercaseString] isEqualToString:@"EVERYRAND"])
         {
             int r = arc4random() % [[intervalArray objectAtIndex:1] intValue];
-            intervalStr = [NSString stringWithFormat:@"%f",r];
+			intervalStr = [NSString stringWithFormat:@"%d",r];
             next_run = [[_task objectForKey:@"nextrun"] doubleValue] + r;
         }
         else if ([[[intervalArray objectAtIndex:0] uppercaseString] isEqualToString:@"RECURRING"])

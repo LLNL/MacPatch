@@ -22,6 +22,7 @@
 		8FD88EE216DFCDD100A870A3 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88ED816DFCDD100A870A3 /* libz.dylib */; };
 		8FD88EE316DFCDD100A870A3 /* libMacPatch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88ED916DFCDD100A870A3 /* libMacPatch.a */; };
 		8FD88EE516DFCE0100A870A3 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD88EE416DFCE0100A870A3 /* AppKit.framework */; };
+		8FF5B5041FC6589B006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B5031FC65898006F5FB2 /* Python.framework */; };
 		8FFD37EA1FA5062200115F33 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFD37E91FA5062200115F33 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +62,7 @@
 		8FD88ED916DFCDD100A870A3 /* libMacPatch.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMacPatch.a; path = "../../../../Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug/libMacPatch.a"; sourceTree = "<group>"; };
 		8FD88EE416DFCE0100A870A3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		8FD88EE616DFCE3A00A870A3 /* MPWorker-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MPWorker-Info.plist"; sourceTree = "<group>"; };
+		8FF5B5031FC65898006F5FB2 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 		8FFD37E91FA5062200115F33 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -78,6 +80,7 @@
 				8FD88EDD16DFCDD100A870A3 /* IOKit.framework in Frameworks */,
 				8FD88EDE16DFCDD100A870A3 /* CoreFoundation.framework in Frameworks */,
 				8FD88EDF16DFCDD100A870A3 /* Cocoa.framework in Frameworks */,
+				8FF5B5041FC6589B006F5FB2 /* Python.framework in Frameworks */,
 				8FD88EE016DFCDD100A870A3 /* libicucore.dylib in Frameworks */,
 				8FD88EE216DFCDD100A870A3 /* libz.dylib in Frameworks */,
 				8FD88EE316DFCDD100A870A3 /* libMacPatch.a in Frameworks */,
@@ -107,6 +110,7 @@
 		8FD88EB316DFCD0A00A870A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FF5B5031FC65898006F5FB2 /* Python.framework */,
 				8FFD37E91FA5062200115F33 /* libsqlite3.tbd */,
 				8FD88EE416DFCE0100A870A3 /* AppKit.framework */,
 				8FD88ED016DFCDD100A870A3 /* Security.framework */,
