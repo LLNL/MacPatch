@@ -35,7 +35,10 @@ Client Agent - Deployment
 				<div id="toolbar">
 					<button id="delAgentButton" type="button" class="btn btn-default" disabled><i class="glyphicon glyphicon-trash"></i></button>
 				</div>
-				<table id="tableAgents" class="table table-condensed" data-row-style="rowStyle" data-toolbar="#toolbar"></table>
+				<table id="tableAgents" class="table table-condensed" data-row-style="rowStyle" data-toolbar="#toolbar">
+
+				</table>
+
 			{% else %}
 				<table id="tableAgents" class="table table-condensed" data-row-style="rowStyle"></table>
 			{% endif %}
@@ -97,22 +100,14 @@ Client Agent - Deployment
 			queryParamsType: "limit",
 			sidePagination: "server",
 			showRefresh: true,
+			idField: 'rid',
 			columns: [
 				{
 					field: 'rowState',
 					checkbox: true,
 					rowspan: 1,
 					align: 'center',
-					valign: 'middle',
-					width: 40
-				},
-				{
-					field: 'operate',
-					title: '',
-					align: 'center',
-					events: operateEventsAgent,
-					formatter: operateFormatterAgent,
-					width: 60
+					valign: 'middle'
 				},
 				{% for col in agentCols %}
 					{
@@ -123,16 +118,40 @@ Client Agent - Deployment
 						sortable: true,
 						field: '{{col[0]}}',
 						title: '{{col[1]}}',
-						{% if col.name == 'active' and session.role[0] == 1 %}
+						{% if col[0] == 'active' and session.role[0] == 1 %}
 						editable: {
 							type: 'select',
-							url:  '/patches/custom/active',
+							url:  '/console/agents/update/active',
 							source: [
 								{value: 0, text: 'False'},
 								{value: 1, text: 'True'},
 							]
 						},
-
+						{% endif %}
+						{% if col[0] == 'build' and session.role[0] == 1 %}
+						editable: {
+							type: 'text',
+							url:  '/console/agents/update/build'
+						},
+						{% endif %}
+						{% if col[0] == 'agent_ver' and session.role[0] == 1 %}
+						editable: {
+							type: 'text',
+							url:  '/console/agents/update/agent_ver'
+						},
+						{% endif %}
+						{% if col[0] == 'version' and session.role[0] == 1 %}
+						editable: {
+							type: 'text',
+							url:  '/console/agents/update/version'
+						},
+						{% endif %}
+						{% if col[0] == 'osver' and session.role[0] == 1 %}
+						editable: {
+							type: 'text',
+							url:  '/console/agents/update/osver'
+						},
+						{% endif %}
 					},
 				{% endfor %}
 			]
@@ -217,19 +236,6 @@ Client Agent - Deployment
 			});
 		});
 	});
-
-	window.operateEventsAgent = {
-
-	};
-
-	function operateFormatterAgent(value, row, index)
-	{
-		var htmlData = [];
-		htmlData.push('<a class="editFilter" href="javascript:void(0)" title="Edit Filter">');
-		htmlData.push('<i class="fa fa-pencil fa-lg" aria-hidden="true"></i>');
-		htmlData.push('</a>');
-		return htmlData.join('');
-	}
 
 	$('#tableAgents').on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function ()
 	{
