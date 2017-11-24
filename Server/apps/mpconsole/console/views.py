@@ -208,14 +208,20 @@ def agentsList():
 @console.route('/agents/update/<attr>', methods=['POST'])
 @login_required
 def agentUpdateAttr(attr):
-	#_form = request.form.to_dict()
-	#print _form
 
 	key = request.form.get('pk')
 	attrVal = request.form.get('value')
 
 	agent = MpClientAgent.query.filter(MpClientAgent.rid == key).first()
 	if agent is not None:
+		# If active attr, disable all active columns, only 1 active is allowed per type
+		if attr == 'active' and attrVal == '1':
+			_type = agent.type
+			for row in MpClientAgent.query.filter(MpClientAgent.type == _type).all():
+				row.active = 0
+				db.session.add(row)
+				db.session.commit()
+
 		setattr(agent, attr, attrVal)
 		setattr(agent, 'mdate', datetime.now())
 		db.session.commit()

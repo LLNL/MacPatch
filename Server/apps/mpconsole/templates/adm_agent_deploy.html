@@ -20,17 +20,20 @@
 
 {% block pageHeader %}
 <div class="container-fluid">
-    <div class="row">
+	<div class="row">
 		<div class="col-lg-6 col-xs-12">
 			Client Agent - Deployment
 		</div>
 		<div class="col-lg-6 col-xs-12 text-right">
+			<button class="btn btn-default" onclick='download("/mp-content/clients/{{curAgentID}}/MPClientInstall.pkg.zip")'>
+				<span class="glyphicon glyphicon-save"></span> Current Client Agent
+			</button>
 			<button class="btn btn-default" onclick='download("/mp-content/tools/MPAgentUploader.zip")'>
 				<span class="glyphicon glyphicon-save"></span> Agent Uploader
 			</button>
 			<iframe id="dl-agentuploader" style="display:none;"></iframe>
 		</div>
-    </div><!--  .row -->
+	</div><!--  .row -->
 </div>
 
 
@@ -255,6 +258,11 @@
 				});
 			});
 		});
+	});
+
+	$('#tableAgents').on('editable-save.bs.table', function ()
+	{
+			$('#tableAgents').bootstrapTable('refresh');
 	});
 
 	$('#tableAgents').on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function ()
