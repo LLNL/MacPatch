@@ -569,7 +569,7 @@ Client Group - {{group_name}}
 	/* Events for client table */
 	window.operateEvents =
 	{
-		'click .assign': function (e, value, row, index)
+		'click .mvClientButton': function (e, value, row, index)
 		{
 			$.get( "/clients/show/move/client/" + row['cuuid']).done(function(data)
 			{

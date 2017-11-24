@@ -89,6 +89,8 @@ Client Groups
 					{% for count in counts %}
 						{% if count['group_id'] == g['group_id'] %}
 							'count': {{count['total']}},
+						{% else %}
+							'count': 0,
 						{% endif %}
 					{% endfor %}
 				{% endif %}
@@ -100,23 +102,32 @@ Client Groups
 
 	function operateFormatter(value, row, index)
 	{
-		var _innerHtml = [''];
-		if (gRights.length <= 0) {
-			if (row.group_name == 'Default') {
-					_innerHtml = ['<a class="edit" href="javascript:void(0)" title="Edit">',
-								  '<i class="fa fa-pencil fa-lg" aria-hidden="true"></i>',
-								  '</a>&nbsp;'];
-			}
-		} else {
-			for (i = 0; i < gRights.length; i++) {
-				//if (gRights[i] == row.group_id || row.group_name == 'Default') {
-					_innerHtml = ['<a class="edit" href="javascript:void(0)" title="Edit">',
-								  '<i class="fa fa-pencil fa-lg" aria-hidden="true"></i>',
-								  '</a>&nbsp;'];
-				//}
+		var htmlData = [];
+		htmlData.push('<table>');
+		htmlData.push('<tr><td>');
+		var hasRowRight = false;
+
+		hasRowRight = false;
+		for (i = 0; i < gRights.length; i++) {
+			if (gRights[i] == row.group_id || row.group_name == 'Default') {
+				hasRowRight = true;
 			}
 		}
-		return _innerHtml.join('');
+		if (hasRowRight || row.group_name == 'Default') {
+			htmlData.push('<a class="edit" href="javascript:void(0)" title="Edit">');
+			htmlData.push('<i class="fa fa-pencil fa-lg" aria-hidden="true"></i></a>');
+			htmlData.push('</td><td>');
+		}
+		if (row['group_owner'] == '{{session.user}}' && row['count'] <= 0 && row.group_name != 'Default') {
+			htmlData.push('<a class="remove" href="javascript:void(0)" title="Remove Patch Group">');
+			htmlData.push('<i class="fa fa-trash-o fa-lg"></i></a>');
+			htmlData.push('</td>');
+		} else {
+			htmlData.push('&nbsp;&nbsp;&nbsp;&nbsp;');
+		}
+
+		htmlData.push('</td></tr></table>');
+		return htmlData.join('');
 	}
 
 	window.operateEvents = {
@@ -125,8 +136,38 @@ Client Groups
 			var _url = '/clients/group/' + row.group_id
 			$(location).attr('href',_url);
 		},
-		'click .description': function (e, value, row, index) {
-			alert('You click description action, row: ' + JSON.stringify(row));
+		'click .remove': function (e, value, row, index)
+		{
+			if (confirm('Are you sure you want to delete this patch group (' + row['name'] +') ?'))
+			{
+				var _url = "/clients/group/" + row.group_id;
+				return $.ajax({
+					url: _url,
+					type: 'DELETE',
+					data: {},
+					success: function(data)
+					{
+						$('#table').bootstrapTable('remove', {
+							field: 'group_id',
+							values: [row.group_id]
+						});
+						$('#table').bootstrapTable('refresh');
+					},
+					error: function (xhr, textStatus, errorThrown)
+					{
+						var err = eval("(" + xhr.responseText + ")");
+						resetModalWindow();
+						$('#modalSaveButton').hide();
+						$('#modalCancelButton').html('Close');
+						$('#modalTitle').html('Error, Removing Client Group');
+						$('#modalBody').html(err.errormsg);
+						$('#modalBody').css({'height':'160px'});
+						$('#modalHeader').addClass('panel-heading');
+						$('#modalContent').addClass('panel-danger');
+						$('#modalDialog').modal('show');
+					}
+				});
+			}
 		}
 	};
 
@@ -135,7 +176,6 @@ Client Groups
 		$delButton.click(function ()
 		{
 			var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
-
 				return row.puuid;
 			});
 			$table.bootstrapTable('remove', {

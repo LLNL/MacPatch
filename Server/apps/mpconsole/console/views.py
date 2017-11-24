@@ -147,6 +147,11 @@ def agentDeploy(tab=1):
 
 	groupResult = {}
 
+	_curAgentID = 0
+	qGet0 = MpClientAgent.query.filter(MpClientAgent.active == '1', MpClientAgent.type == 'app').first()
+	if qGet0 is not None:
+		_curAgentID = qGet0.puuid
+
 	qGet1 = MpClientAgent.query.all()
 	cListCols = MpClientAgent.__table__.columns
 	# Sort the Columns based on "doc" attribute
@@ -182,7 +187,7 @@ def agentDeploy(tab=1):
 	groupResult['Filters'] = {'data': _filters, 'columns': sortedFilterCols}
 	groupResult['Admin'] = True
 
-	return render_template('adm_agent_deploy.html', gResults=groupResult, agentCols=columns1, filterCols=columns2, selectedTab=tab)
+	return render_template('adm_agent_deploy.html', gResults=groupResult, agentCols=columns1, filterCols=columns2, selectedTab=tab, curAgentID=_curAgentID)
 
 @console.route('/agents', methods=['GET'])
 @login_required

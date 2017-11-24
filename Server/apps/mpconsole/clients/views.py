@@ -302,84 +302,102 @@ def patchGroupUpdate():
 
 	return clientGroups()
 
-@clients.route('/group/<name>')
+@clients.route('/group/<name>',methods=['GET','DELETE'])
 @login_required
 def clientGroup(name,tab=1):
 	q_defaultGroup = MpClientGroups.query.filter(MpClientGroups.group_id == name, MpClientGroups.group_name == 'Default').first()
-	canEditGroup = False
-	if not isOwnerOfGroup(name) and not isAdminForGroup(name):
+
+	if request.method == 'DELETE':
 		if q_defaultGroup:
-			canEditGroup = True
+			return json.dumps({{'errormsg':'Can not delete default group.'}}), 403
+
+		qMembers = MpClientGroupMembers.query.filter(MpClientGroupMembers.group_id == name).all()
+		print len(qMembers)
+		if qMembers is not None and len(qMembers) >= 1:
+			return json.dumps({'errormsg':'Group still contains agents. Can not delete group while agents are assigned.'}), 401
 		else:
-			return clientGroups()
+			MpClientGroupMembers.query.filter(MpClientGroupMembers.group_id == name).delete()
+			MpClientTasks.query.filter(MpClientTasks.group_id == name).delete()
+			MpClientSettings.query.filter(MpClientSettings.group_id == name).delete()
+			MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == name).delete()
+			MpClientGroups.query.filter(MpClientGroups.group_id == name).delete()
+			db.session.commit()
+			return json.dumps({}), 201
+	else:
+		canEditGroup = False
+		if not isOwnerOfGroup(name) and not isAdminForGroup(name):
+			if q_defaultGroup:
+				canEditGroup = True
+			else:
+				return clientGroups()
 
-	groupResult = {}
+		groupResult = {}
 
-	# cList = MpClient.query.all()
-	cListCols = MpClient.__table__.columns
-	# Cort the Columns based on "doc" attribute
-	sortedCols = sorted(cListCols, key=getDoc)
+		# cList = MpClient.query.all()
+		cListCols = MpClient.__table__.columns
+		# Cort the Columns based on "doc" attribute
+		sortedCols = sorted(cListCols, key=getDoc)
 
-	# Get All Client IDs in with in our group
-	_qcg = MpClientGroups.query.filter(MpClientGroups.group_id == name).with_entities(MpClientGroups.group_name).first()
-	_res = MpClientGroupMembers.query.filter(MpClientGroupMembers.group_id == name).with_entities(MpClientGroupMembers.cuuid).all()
-	_cuuids = [r for r, in _res]
+		# Get All Client IDs in with in our group
+		_qcg = MpClientGroups.query.filter(MpClientGroups.group_id == name).with_entities(MpClientGroups.group_name).first()
+		_res = MpClientGroupMembers.query.filter(MpClientGroupMembers.group_id == name).with_entities(MpClientGroupMembers.cuuid).all()
+		_cuuids = [r for r, in _res]
 
-	# Get All Client Group Admins
-	_admins = []
-	_qadm = MpClientGroupAdmins.query.filter(MpClientGroupAdmins.group_id == name).all()
-	if _qadm:
-		for u in _qadm:
-			_row = {'user_id':u.group_admin,'owner': 'False'}
-			_admins.append(_row)
+		# Get All Client Group Admins
+		_admins = []
+		_qadm = MpClientGroupAdmins.query.filter(MpClientGroupAdmins.group_id == name).all()
+		if _qadm:
+			for u in _qadm:
+				_row = {'user_id':u.group_admin,'owner': 'False'}
+				_admins.append(_row)
 
-	_owner = MpClientGroups.query.filter(MpClientGroups.group_id == name).first()
-	_admins.append({'user_id':_owner.group_owner,'owner': 'True'})
-	_admins = sorted(_admins, key=itemgetter('owner'), reverse=True)
+		_owner = MpClientGroups.query.filter(MpClientGroups.group_id == name).first()
+		_admins.append({'user_id':_owner.group_owner,'owner': 'True'})
+		_admins = sorted(_admins, key=itemgetter('owner'), reverse=True)
 
-	# Run Query of all clients that contain the Client ID
-	sql = text("""select * From mp_clients;""")
-	_q_result = db.engine.execute(sql)
+		# Run Query of all clients that contain the Client ID
+		sql = text("""select * From mp_clients;""")
+		_q_result = db.engine.execute(sql)
 
-	_results = []
-	for v in _q_result:
-		if v.cuuid in _cuuids:
-			_row = {}
-			for column, value in v.items():
-				if column != "cdate":
-					if column == "mdate":
-						_row[column] = value.strftime("%Y-%m-%d %H:%M:%S")
-						_row['clientState'] = clientStatusFromDate(value)
-					else:
-						_row[column] = value
+		_results = []
+		for v in _q_result:
+			if v.cuuid in _cuuids:
+				_row = {}
+				for column, value in v.items():
+					if column != "cdate":
+						if column == "mdate":
+							_row[column] = value.strftime("%Y-%m-%d %H:%M:%S")
+							_row['clientState'] = clientStatusFromDate(value)
+						else:
+							_row[column] = value
 
-			_results.append(_row)
+				_results.append(_row)
 
-	# Client Tasks Columns
-	_qTasksCols = MpClientTasks.__table__.columns
+		# Client Tasks Columns
+		_qTasksCols = MpClientTasks.__table__.columns
 
-	# Data in one dict
-	groupResult['Clients'] = {'data': _results, 'columns': sortedCols}
-	groupResult['Group'] = {'name': _qcg.group_name, 'id':name}
-	groupResult['Software'] = {'catalogs':softwareCatalogs()}  # Used to populate UI for setting
-	groupResult['Patches'] = {'groups': patchGroups()}  # Used to populate UI for setting
-	groupResult['Users'] = {'users': _admins, 'columns': [('user_id','User ID'),('owner','Owner')]}
-	groupResult['Admin'] = isAdminForGroup(name)
-	groupResult['Owner'] = isOwnerOfGroup(name)
+		# Data in one dict
+		groupResult['Clients'] = {'data': _results, 'columns': sortedCols}
+		groupResult['Group'] = {'name': _qcg.group_name, 'id':name}
+		groupResult['Software'] = {'catalogs':softwareCatalogs()}  # Used to populate UI for setting
+		groupResult['Patches'] = {'groups': patchGroups()}  # Used to populate UI for setting
+		groupResult['Users'] = {'users': _admins, 'columns': [('user_id','User ID'),('owner','Owner')]}
+		groupResult['Admin'] = isAdminForGroup(name)
+		groupResult['Owner'] = isOwnerOfGroup(name)
 
-	# Group Settings
-	_settings = getGroupSettings(name)
-	print _settings
-	profileCols = [('profileID', 'Profile ID', '0'), ('gPolicyID', 'Policy Identifier', '0'), ('pName', 'Profile Name', '1'), ('title', 'Title', '1'),
-					('description', 'Description', '1'), ('enabled', 'Enabled', '1')]
-	'''
-	return render_template('client_group.html', data=_results, columns=sortedCols, group_name=_qcg.group_name, group_id=name,
-						tasks=_jData['mpTasks'], tasksCols=_qTasksCols, gResults=groupResult, selectedTab=tab,
-						profileCols=profileCols, readOnly=canEditGroup)
-	'''
-	return render_template('client_group.html', data=_results, columns=sortedCols, group_name=_qcg.group_name, group_id=name,
-						tasksCols=_qTasksCols, gResults=groupResult, selectedTab=tab,
-						profileCols=profileCols, readOnly=canEditGroup, settings=_settings)
+		# Group Settings
+		_settings = getGroupSettings(name)
+		print _settings
+		profileCols = [('profileID', 'Profile ID', '0'), ('gPolicyID', 'Policy Identifier', '0'), ('pName', 'Profile Name', '1'), ('title', 'Title', '1'),
+						('description', 'Description', '1'), ('enabled', 'Enabled', '1')]
+		'''
+		return render_template('client_group.html', data=_results, columns=sortedCols, group_name=_qcg.group_name, group_id=name,
+							tasks=_jData['mpTasks'], tasksCols=_qTasksCols, gResults=groupResult, selectedTab=tab,
+							profileCols=profileCols, readOnly=canEditGroup)
+		'''
+		return render_template('client_group.html', data=_results, columns=sortedCols, group_name=_qcg.group_name, group_id=name,
+							tasksCols=_qTasksCols, gResults=groupResult, selectedTab=tab,
+							profileCols=profileCols, readOnly=canEditGroup, settings=_settings)
 
 '''
 ********************************
