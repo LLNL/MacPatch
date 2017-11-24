@@ -19,7 +19,22 @@
 {%  endblock %}
 
 {% block pageHeader %}
-Client Agent - Deployment
+<div class="container-fluid">
+    <div class="row">
+		<div class="col-lg-6 col-xs-12">
+			Client Agent - Deployment
+		</div>
+		<div class="col-lg-6 col-xs-12 text-right">
+			<button class="btn btn-default" onclick='download("/mp-content/tools/MPAgentUploader.zip")'>
+				<span class="glyphicon glyphicon-save"></span> Agent Uploader
+			</button>
+			<iframe id="dl-agentuploader" style="display:none;"></iframe>
+		</div>
+    </div><!--  .row -->
+</div>
+
+
+
 {%  endblock %}
 
 {% block bodyPanel %}
@@ -68,6 +83,11 @@ Client Agent - Deployment
 	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-editable.js') }}"></script>
 	<script src="{{ url_for('static', filename='bower_components/moment/min/moment.min.js') }}"></script>
 	<script>
+	function download(path) {
+		var iframe = document.getElementById('dl-agentuploader');
+		iframe.src = path;
+	}
+
 	$( document ).ready(function()
 	{
 		$('#tableAgents').bootstrapTable({

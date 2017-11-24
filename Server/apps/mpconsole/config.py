@@ -48,7 +48,8 @@ class BaseConfig:
 	JOBS_FILE = basedir+'/jobs.json'
 	JOBS = []
 
-	SCHEDULER_API_ENABLED = True
+	SCHEDULER_API_ENABLED 		= True
+	ALLOW_CONTENT_DOWNLOAD 		= False
 
 class DevelopmentConfig(BaseConfig):
 
@@ -56,6 +57,7 @@ class DevelopmentConfig(BaseConfig):
 	LOGGING_LEVEL                   = 'debug'
 	DEBUG_TB_INTERCEPT_REDIRECTS    = False
 	SQLALCHEMY_TRACK_MODIFICATIONS  = False
+	ALLOW_CONTENT_DOWNLOAD 			= True
 
 
 class ProductionConfig(BaseConfig):

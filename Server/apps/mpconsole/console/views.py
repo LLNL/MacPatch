@@ -1,7 +1,9 @@
 from flask import render_template, jsonify, request, session, g
 from flask.ext.security import login_required
 from sqlalchemy import desc
+from werkzeug.security import generate_password_hash
 import json
+
 from datetime import datetime
 
 from . import console
@@ -28,38 +30,66 @@ def accounts():
 @console.route('/account/<user_id>',methods=['DELETE'])
 @login_required
 def deleteAdminAccount(user_id):
-	qAdm = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user_id).first()
-	if qAdm is not None:
-		db.session.delete(qAdm)
-		db.session.commit()
-	else:
-		return json.dumps({'errorno': 404}), 404
+	if request.method == 'DELETE':
+		if adminRole():
+			qAdm = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user_id).first()
+			if qAdm is not None:
+				if qAdm.user_type == 1:
+					AdmUsers.query.filter(AdmUsers.user_id == user_id).delete()
+				db.session.delete(qAdm)
+				db.session.commit()
+			else:
+				return json.dumps({'errorno': 404}), 404
 
-	return json.dumps({'errorno': 0}), 200
+		return json.dumps({'errorno': 0}), 200
+	else:
+		return json.dumps({'errorno': 0}), 200
 
 @console.route('/account/<user_id>',methods=['GET'])
 @login_required
 def accountEdit(user_id):
-	_columns = [('user_id', 'User ID', '0'), ('user_type', 'User Type', '1'),
+	_columns = [('user_id', 'User ID', '1'), ('user_type', 'User Type', '1'),
 				('number_of_logins', 'No of Logins', '1'), ('last_login', 'Last Login', '1'), ('enabled', 'Enabled', '1')]
 
 	_accounts = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user_id).first()
 	if _accounts:
 		return render_template('admin/account_update.html', data=_accounts, columns=_columns)
 	else:
-		return
+		return accounts()
 
-@console.route('/account/<user_id>',methods=['POST'])
-def accountUpdate(user_id):
+@console.route('/account/add',methods=['GET','POST'])
+@login_required
+def accountAdd():
+	if request.method == 'GET':
+		_columns = [('user_id', 'User ID', '0'), ('user_type', 'User Type', '1'), ('user_pass', 'User Password', '1'),
+					('number_of_logins', 'No of Logins', '1'), ('last_login', 'Last Login', '1'), ('enabled', 'Enabled', '1')]
 
-	if adminRole():
-		print "Admin"
-	else:
-		print "User"
-	_form = request.form
-	# print _form
-	# print session.get('user')
+		return render_template('admin/account_update.html', data=[], columns=_columns)
 
+	elif request.method == 'POST':
+		data = request.form.to_dict()
+		if adminRole():
+			usrAttrs = ['user_id','user_pass','enabled']
+			usr	= AdmUsers()
+			usrInf = AdmUsersInfo()
+			for key, value in data.iteritems():
+				if key != 'user_type':
+					if key in usrAttrs:
+						if key == 'user_pass':
+							hash_pass = generate_password_hash(value)
+							setattr(usr, key, hash_pass)
+						else:
+							setattr(usr, key, value)
+
+					if key != 'user_pass':
+						setattr(usrInf, key, value)
+
+			setattr(usrInf, 'user_type', 1)
+			db.session.add(usr)
+			db.session.add(usrInf)
+			db.session.commit()
+
+		return accounts()
 
 '''
 ----------------------------------------------------------------
@@ -110,7 +140,7 @@ def agentDeploy(tab=1):
 
 	columns1 = [('puuid', 'puuid', '0'), ('type', 'Type', '0'), ('osver', 'OS Ver', '1'), ('agent_ver', 'Agent Ver', '1'),
 			('version', 'Version', '1'), ('build', 'Build', '1'), ('pkg_name', 'Package', '1'), ('pkg_url', 'Package URL', '1'),
-			('pkg_hash', 'Package Hash', '1'), ('active', 'Active', '1'), ('state', 'State', '0'), ('mdate', 'Mod Date', '1')]
+			('pkg_hash', 'Package Hash', '1'), ('active', 'Active', '1'), ('state', 'State', '1'), ('mdate', 'Mod Date', '1')]
 
 	columns2 = [('rid', 'rid', '0'), ('type', 'Type', '0'), ('attribute', 'Attribute', '1'), ('attribute_oper', 'Operator', '1'),
 			('attribute_filter', 'Filter', '1'), ('attribute_condition', 'Condition', '1')]

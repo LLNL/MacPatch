@@ -121,8 +121,15 @@ def create_app(config_object=DefaultConfig):
 	from .main import main as main_blueprint
 	app.register_blueprint(main_blueprint, url_prefix='/')
 
+	if app.config['ALLOW_CONTENT_DOWNLOAD']:
+		from .content import content as content_blueprint
+		app.register_blueprint(content_blueprint, url_prefix='/mp-content')
+
 	from .auth import auth as auth_blueprint
 	app.register_blueprint(auth_blueprint, url_prefix='/auth')
+
+	from .agent import agent as agent_blueprint
+	app.register_blueprint(agent_blueprint, url_prefix='/agent')
 
 	from .dashboard import dashboard as dashboard_blueprint
 	app.register_blueprint(dashboard_blueprint, url_prefix='/dashboard')
