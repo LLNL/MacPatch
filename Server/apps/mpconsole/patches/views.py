@@ -11,6 +11,7 @@ import uuid
 import sys
 import os
 import hashlib
+import shutil
 
 from datetime import datetime
 import json
@@ -353,8 +354,16 @@ def customDelete():
 	ids = request.form['patches']
 
 	for puuid in ids.split(","):
+		removePatchFromPatchGroupsAlt(puuid)
+
 		qGet1 = MpPatch.query.filter(MpPatch.puuid == puuid).first()
 		if qGet1 is not None:
+			# Need to delete from file system
+			try:
+				_patch_dir = "/opt/MacPatch/Content/Web/patches/" + puuid
+				shutil.rmtree(_patch_dir)
+			except OSError, e:
+				print ("Error: %s - %s." % (e.filename,e.strerror))
 			db.session.delete(qGet1)
 			MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
 
@@ -365,6 +374,15 @@ def customDelete():
 			print('Message: %s' % (e.message))
 
 	return json.dumps({'data': {}}, default=json_serial), 200
+
+def removePatchFromPatchGroupsAlt(patch_id):
+	qGet = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_id == patch_id).all()
+	if qGet is not None:
+		for row in qGet:
+			gID = row.patch_group_id
+			db.session.delete(row)
+			db.session.commit()
+			patchGroupPatchesSave(gID)
 
 ''' AJAX Request '''
 @patches.route('/custom/picker',methods=['GET'])
