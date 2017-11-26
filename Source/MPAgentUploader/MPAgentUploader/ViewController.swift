@@ -1066,54 +1066,90 @@ class ViewController: NSViewController, AuthViewControllerDelegate
      
      - returns: Bool
      */
-    func uploadPackagesToServer(packages: [String], formData: [String: Any]) -> Bool
-    {
-        let aid: String = UUID.init().uuidString
-        
-        let _ssl = (self.useSSL.state == .on) ? "https" : "http"
-        let _url: String = "\(_ssl)://\(self.mpServerHost.stringValue):\(self.mpServerPort.stringValue)\(URI_PREFIX)/agent/upload/\(aid)/\(api_token)"
-        
-        var pkgs = [[String:Any]]()
-        var fileData: NSData
+	func uploadPackagesToServer(packages: [String], formData: [String: Any]) -> Bool
+	{
+		let aid: String = UUID.init().uuidString
+		let _ssl = (self.useSSL.state == .on) ? "https" : "http"
+		let _url: String = "\(_ssl)://\(self.mpServerHost.stringValue):\(self.mpServerPort.stringValue)\(URI_PREFIX)/agent/upload/\(aid)/\(api_token)"
+		
+		var pkgs = [[String:Any]]()
+		var fileData: NSData
+		
+		for p in packages
+		{
+			fileData = try! NSData.init(contentsOfFile: p)
+			let d: [String: Any]
+			
+			if (p.lastPathComponent.contains("Base.pkg"))
+			{
+				d = ["name": "fBase", "fileName": p.lastPathComponent, "data": fileData as Data]
+			}
+			else if (p.lastPathComponent.contains("MPClientInstall.pkg"))
+			{
+				d = ["name": "fComplete", "fileName": p.lastPathComponent, "data": fileData as Data]
+			}
+			else if (p.lastPathComponent.contains("Updater.pkg"))
+			{
+				d = ["name": "fUpdate", "fileName": p.lastPathComponent, "data": fileData as Data]
+			}
+			else
+			{
+				continue
+			}
+			pkgs.append(d)
+		}
+		var didUpload = false
+		let jsonData = try! JSONSerialization.data(withJSONObject: formData, options: [])
+		let semaphore = DispatchSemaphore(value: 0)
+		
+		Alamofire.upload(multipartFormData: { multipartFormData in
+			
+			for f in pkgs {
+				multipartFormData.append(f["data"] as! Data,
+										 withName: f["name"] as! String,
+										 fileName: f["fileName"] as! String,
+										 mimeType: "application/octet-stream")
+			}
 
-        for p in packages {
-            fileData = try! NSData.init(contentsOfFile: p)
-            let d: [String: Any]
-            if (p.lastPathComponent.contains("Base.pkg")) {
-                d = ["name": "fBase", "fileName": p.lastPathComponent, "data": fileData as Data]
-            } else if (p.lastPathComponent.contains("MPClientInstall.pkg")) {
-                d = ["name": "fComplete", "fileName": p.lastPathComponent, "data": fileData as Data]
-            } else if (p.lastPathComponent.contains("Updater.pkg")) {
-                d = ["name": "fUpdate", "fileName": p.lastPathComponent, "data": fileData as Data]
-            } else {
-                continue
-            }
-            pkgs.append(d)
-        }
-        
-        
-        let jsonData = try! JSONSerialization.data(withJSONObject: formData, options: [])
-        
-        if let req = AlamofireSynchronous.uploadRequest(multipartFormData: { (multipartFormData: MultipartFormData) in
-            for f in pkgs {
-                multipartFormData.append(f["data"] as! Data, withName: f["name"] as! String, fileName: f["fileName"] as! String, mimeType: "application/octet-stream")
-            }
-            multipartFormData.append(jsonData, withName: "data")
-            
-        }, to: _url, method: .post) {
-            let res = req.responseJSON()
-            
-            if res.response == nil {
-                return false
-            } else {
-                return true
-            }
+			multipartFormData.append(jsonData, withName: "data")
 
-        }
-        
-        log.error("Should not get here")
-        return false
-    }
+		}, to: _url, encodingCompletion: { encodingResult in
+			switch encodingResult {
+			case .success(let upload, _, _):
+				upload.validate()
+					.responseJSON { response in
+						switch response.result {
+						case .success( _):
+							didUpload = true
+						case .failure(let responseError):
+							let error = responseError as? AFError
+							let message : String
+							if let httpStatusCode = error?.responseCode {
+								switch(httpStatusCode) {
+								case 424:
+									message = "Failed to verify user rights or bad token."
+								case 426:
+									message = "Agent Exists"
+								default:
+									message = responseError as! String
+								}
+							} else {
+								message = responseError as! String
+							}
+							log.error("Upload error: \(message)")
+						}
+						semaphore.signal()
+				}
+			case .failure(let encodingError):
+				log.error("encodingError: \(encodingError)")
+				semaphore.signal()
+			}
+		})
+		
+		_ = semaphore.wait(timeout: .distantFuture)
+		return didUpload
+	}
+	
     
 // MARK: - Notifications
     
