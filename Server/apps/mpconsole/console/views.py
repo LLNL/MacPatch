@@ -27,10 +27,25 @@ def accounts():
 	return render_template('admin/accounts.html', data=_accounts, columns=_columns)
 
 ''' AJAX Method '''
-@console.route('/account/<user_id>',methods=['DELETE'])
+@console.route('/account/<user_id>',methods=['GET','POST','DELETE'])
 @login_required
 def deleteAdminAccount(user_id):
-	if request.method == 'DELETE':
+	if request.method == 'GET':
+		_columns = [('user_id', 'User ID', '1'), ('user_type', 'User Type', '1'),
+					('number_of_logins', 'No of Logins', '1'), ('last_login', 'Last Login', '1'), ('enabled', 'Enabled', '1')]
+
+		_accounts = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user_id).first()
+		if _accounts:
+			return render_template('admin/account_update.html', data=_accounts, columns=_columns)
+		else:
+			return accounts()
+
+	elif request.method == 'POST':
+		data = request.form.to_dict()
+		print data
+		return accounts()
+
+	elif request.method == 'DELETE':
 		if adminRole():
 			qAdm = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user_id).first()
 			if qAdm is not None:
