@@ -758,6 +758,7 @@ class MPLdap:
 
 			ldap_lgnsuf = raw_input("Active Directory/LDAP Login User Name Suffix [None]: ") or ""
 			conf["settings"]["ldap"]["loginUsrSufix"] = ldap_lgnsuf
+			conf["settings"]["ldap"]["enabled"] = True
 
 			save_answer = raw_input("Would you like the save these settings [Y]?:").upper() or "Y"
 			if save_answer == "Y":
@@ -766,7 +767,7 @@ class MPLdap:
 				return self.configLdap()
 
 		else:
-			conf["settings"]["ldap"]["enabled"] = "NO"
+			conf["settings"]["ldap"]["enabled"] = False
 			self.writeConfig(conf)
 
 # ----------------------------------------------------------------------------
