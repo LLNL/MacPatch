@@ -23,6 +23,10 @@ from . import db
 from . model import MPAgentRegistration, MpClient, AdmGroupUsers, AdmUsers, AdmUsersInfo, MpSiteKeys
 from . mplogger import log_Debug, log_Info, log_Error
 
+# This is needed for getting signature of api paylods
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 # ----------------------------------------------------------------------------
 '''
 	Extended flask_restful.Resource
