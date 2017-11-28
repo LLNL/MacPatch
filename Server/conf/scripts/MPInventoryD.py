@@ -67,10 +67,26 @@ myConfig = {
 # Define logging for global use
 logger       = logging.getLogger('MPInventory')
 
-MP_SRV_BASE  = "/opt/MacPatch/Server"
-logFile      = MP_SRV_BASE+"/logs/MPInventory.log"
-invFilesDir  = MP_SRV_BASE+"/InvData/Files"
-confFile     = MP_SRV_BASE+"/etc/siteconfig.json"
+MP_SRV_BASE   = "/opt/MacPatch/Server"
+MP_FLASK_FILE = MP_SRV_BASE+"/apps/config.cfg"
+logFile       = MP_SRV_BASE+"/logs/MPInventory.log"
+invFilesDir   = MP_SRV_BASE+"/InvData/Files"
+confFile      = MP_SRV_BASE+"/etc/siteconfig.json"
+
+# ----------------------------------------------------------------------------
+# Read flask config data from file
+# ----------------------------------------------------------------------------
+
+def read_config_file(file_path):
+	config = {}
+	with open(file_path) as f:
+		lines = (line.rstrip() for line in f)
+		for l in lines:
+			if l.rstrip():
+				 if l.startswith("#") == False:
+					config[l.split('=')[0].strip()] = l.split('=')[1].strip().replace("'","")
+
+	return config
 
 # --------------------------------------------
 # Define Classes
@@ -809,7 +825,8 @@ class App():
 def main():
 	'''Main command processing'''
 	parser = argparse.ArgumentParser(description='Process some args.')
-	parser.add_argument('--config', help="SiteConfig.json file", required=False, default=None)
+	parser.add_argument('--config', help="Flask Global config file", required=False, default=None)
+	parser.add_argument('--config-old', help="SiteConfig.json file", required=False, default=None)
 	parser.add_argument('--debug', help='Set log level to debug', action='store_true')
 	parser.add_argument('--files', help="JSON files to process", required=True)
 	parser.add_argument('--save', help='Saves JSON files', action='store_true')
@@ -838,58 +855,98 @@ def main():
 		sys.exit(1)
 
 	# Make Sure the Config Exists
+	useOldConfig=False
 	confData = []
-	if args.config:
+	if args.config_old:
+		if not os.path.exists(args.config_old):
+			print "Unable to open " + args.config_old +". File not found."
+			sys.exit(1)
+		else:
+			useOldConfig=True
+			confFile = MP_FLASK_FILE
+
+	elif args.config:
 		if not os.path.exists(args.config):
 			print "Unable to open " + args.config +". File not found."
 			sys.exit(1)
 		else:
-			confFile = args.config
+			confFile = MP_FLASK_FILE
+
 	else:
-		if not os.path.exists(confFile):
-			print "Unable to open " + confFile +". File not found."
+		# Fall back to default flask
+		if not os.path.exists(MP_FLASK_FILE):
+			print "Unable to open " + MP_FLASK_FILE +". File not found."
 			sys.exit(1)
 
 	try:
-		with open(confFile) as data_file:
-			confData = json.load(data_file)
+		if useOldConfig:
+			with open(confFile) as data_file:
+				confData = json.load(data_file)
+		else:
+			confData = read_config_file(confFile)
 
 	except OSError:
 		print "Error opening and loading json config file."
 		sys.exit(1)
 
 	_cnf = None
-	if 'prod' in confData['settings']['database']:
-		_cnf = confData['settings']['database']['prod']
-		# pprint.pprint(_cnf)
-	else:
-		raise ValueError("Error, prod was not defined in db config")
-		return None
+	if useOldConfig:
+		if 'prod' in confData['settings']['database']:
+			_cnf = confData['settings']['database']['prod']
+			# pprint.pprint(_cnf)
+		else:
+			raise ValueError("Error, prod was not defined in db config")
+			return None
 
-	if 'dbName' in _cnf:
-		myConfig['database'] = _cnf['dbName']
-	else:
-		raise ValueError("Error, config missing key.")
+		if 'dbName' in _cnf:
+			myConfig['database'] = _cnf['dbName']
+		else:
+			raise ValueError("Error, config missing key.")
 
-	if 'dbHost' in _cnf:
-		myConfig['host'] = _cnf['dbHost']
-	else:
-		raise ValueError("Error, config missing key.")
+		if 'dbHost' in _cnf:
+			myConfig['host'] = _cnf['dbHost']
+		else:
+			raise ValueError("Error, config missing key.")
 
-	if 'dbPort' in _cnf:
-		myConfig['port'] = _cnf['dbPort']
-	else:
-		raise ValueError("Error, config missing key.")
+		if 'dbPort' in _cnf:
+			myConfig['port'] = _cnf['dbPort']
+		else:
+			raise ValueError("Error, config missing key.")
 
-	if 'username' in _cnf:
-		myConfig['user'] = _cnf['username']
-	else:
-		raise ValueError("Error, config missing key.")
+		if 'username' in _cnf:
+			myConfig['user'] = _cnf['username']
+		else:
+			raise ValueError("Error, config missing key.")
 
-	if 'password' in _cnf:
-		myConfig['password'] = _cnf['password']
+		if 'password' in _cnf:
+			myConfig['password'] = _cnf['password']
+		else:
+			raise ValueError("Error, config missing key.")
 	else:
-		raise ValueError("Error, config missing key.")
+		if 'DB_NAME' in confData:
+			myConfig['database'] = confData['DB_NAME']
+		else:
+			raise ValueError("Error, config missing key DB_NAME.")
+
+		if 'DB_HOST' in confData:
+			myConfig['host'] = confData['DB_HOST']
+		else:
+			raise ValueError("Error, config missing key DB_HOST.")
+
+		if 'DB_PORT' in confData:
+			myConfig['port'] = confData['DB_PORT']
+		else:
+			raise ValueError("Error, config missing key DB_PORT.")
+
+		if 'DB_USER' in confData:
+			myConfig['user'] = confData['DB_USER']
+		else:
+			raise ValueError("Error, config missing key DB_USER.")
+
+		if 'DB_PASS' in confData:
+			myConfig['password'] = confData['DB_PASS']
+		else:
+			raise ValueError("Error, config missing key DB_PASS.")
 
 	logger.info('# ------------------------------------------------------')
 	logger.info('# Starting MPInventory                                  ')
