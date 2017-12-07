@@ -42,6 +42,7 @@ class ViewController: NSViewController, AuthViewControllerDelegate
     @IBOutlet weak var signPackageButton: NSButton!
     
     @IBOutlet weak var pluginsPath: NSTextField!
+	@IBOutlet weak var profilesPath: NSTextField!
     @IBOutlet weak var registrationKey: NSTextField!
     
     @IBOutlet weak var agentConfigStatus: NSTextField!
@@ -126,7 +127,7 @@ class ViewController: NSViewController, AuthViewControllerDelegate
             if result.rawValue == NSFileHandlingPanelOKButton {
                 self.migration_plist = (openPanel.url?.path)!
                 self.writeConfigStatus.stringValue = "Migration plist will be added."
-                log.info("choosePlist: \(openPanel.url?.path)")
+				log.info("choosePlist: \(String(describing: openPanel.url?.path))")
             }
         }
     }
@@ -153,7 +154,7 @@ class ViewController: NSViewController, AuthViewControllerDelegate
             if result.rawValue == NSFileHandlingPanelOKButton {
                 self.agentPackage.stringValue = (openPanel.url?.path)!
                 self.uploadButton.isEnabled = true
-                log.info("choosePackage: \(openPanel.url?.path)")
+				log.info("choosePackage: \(String(describing: openPanel.url?.path))")
             }
         }
     }
@@ -173,6 +174,22 @@ class ViewController: NSViewController, AuthViewControllerDelegate
             }
         }
     }
+	
+	@IBAction func chooseProfilesFolder(sender: AnyObject)
+	{
+		let openPanel = NSOpenPanel()
+		openPanel.message = "Please select the MacPatch Client OS Configuration profiles directory."
+		openPanel.allowsMultipleSelection = false
+		openPanel.canChooseDirectories = true
+		openPanel.canCreateDirectories = false
+		openPanel.canChooseFiles = false
+		
+		openPanel.begin { (result) -> Void in
+			if result.rawValue == NSFileHandlingPanelOKButton {
+				self.profilesPath.stringValue = (openPanel.url?.path)!
+			}
+		}
+	}
     
     @IBAction func processAndUploadAgent(sender: AnyObject)
     {
@@ -318,6 +335,20 @@ class ViewController: NSViewController, AuthViewControllerDelegate
                     return
                 }
             }
+			
+			// Write profiles to packages
+			log.info("Write profiles to packages")
+			if (!self.profilesPath.stringValue.isEmpty) {
+				if (!self.writeProfilesToPackage(packages: packages, profiles_directory: self.profilesPath.stringValue)) {
+					log.error("Error writing profiles to package.")
+					DispatchQueue.main.async {
+						self.writeConfigImage.image = NSImage.init(named: NSImage.Name(rawValue: "RedDot"))
+						self.writeConfigStatus.stringValue = "Error writing plugins to package."
+						self.toggleUIEnd()
+					}
+					return
+				}
+			}
             
             // Write Version info to packages
             log.info("Write Version info to packages")
@@ -779,6 +810,50 @@ class ViewController: NSViewController, AuthViewControllerDelegate
         
         return true
     }
+	
+	/**
+	Write profiles to Package
+	
+	- parameter packages: Array of packages
+	- parameter plugins: directory containing profiles
+	
+	- returns: Boolean if succeeds
+	*/
+	func writeProfilesToPackage(packages: [String], profiles_directory: String) -> Bool
+	{
+		if (packages.isEmpty) {
+			log.error("Packages array is empty.")
+			return false
+		}
+		
+		for p in packages {
+			if (p.lastPathComponent == "Base.pkg") {
+				let profiles_dir = p.stringByAppendingPathComponent(path: "Scripts/profiles")
+				
+				if (!fm.fileExists(atPath: profiles_dir)) {
+					try! fm.createDirectory(atPath: profiles_dir, withIntermediateDirectories: true, attributes: [:])
+				}
+				
+				let profiles_array: [String] = self.getProfilesFromDirectory(path: profiles_directory)!
+				if (!profiles_array.isEmpty) {
+					do {
+						log.info("Write profiles to \(profiles_dir)")
+						for profile in profiles_array {
+							log.debug("Write \(profile) to \(profiles_dir.stringByAppendingPathComponent(path: profile.lastPathComponent))")
+							try fm.copyItem(atPath: profile, toPath: profiles_dir.stringByAppendingPathComponent(path: profile.lastPathComponent))
+						}
+						return true
+					} catch {
+						log.error("\(error)")
+						return false
+					}
+				}
+				
+			}
+		}
+		
+		return false
+	}
     
     /**
      Get Array of plugins from a path
@@ -805,6 +880,28 @@ class ViewController: NSViewController, AuthViewControllerDelegate
         }
         return dir_files
     }
+	
+	/**
+	Get Array of profiles from a path
+	
+	- parameter path: Directory Path
+	
+	- returns: Array of Strings
+	*/
+	func getProfilesFromDirectory(path: String) -> [String]?
+	{
+		var dir_files: [String] = []
+		let pkgPredicate = NSPredicate(format: "self ENDSWITH '.mobileconfig'")
+		let dir_files_pre = try! fm.contentsOfDirectory(atPath: path) as [String]
+		let filtered_results = dir_files_pre.filter { pkgPredicate.evaluate(with: $0) }
+		if (!filtered_results.isEmpty)
+		{
+			for x in filtered_results {
+				dir_files.append(path.stringByAppendingPathComponent(path: x))
+			}
+		}
+		return dir_files
+	}
     
     /**
      Write version info plist to package. Also populates dictionaries for 

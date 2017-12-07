@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="17C85a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -389,10 +388,10 @@
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
                     <window key="window" title="MacPatch - Agent Uploader" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-                        <rect key="contentRect" x="196" y="240" width="547" height="647"/>
+                        <rect key="contentRect" x="196" y="240" width="547" height="713"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
-                        <value key="minSize" type="size" width="547" height="647"/>
-                        <value key="maxSize" type="size" width="547" height="647"/>
+                        <value key="minSize" type="size" width="547" height="713"/>
+                        <value key="maxSize" type="size" width="547" height="713"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="I4y-8J-vVg"/>
                         </connections>
@@ -525,11 +524,11 @@ Gw
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="MPAgentUploader" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" autoresizesSubviews="NO" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="547" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="547" height="713"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="MacPatch Server Info" translatesAutoresizingMaskIntoConstraints="NO" id="XZe-ko-IMV">
-                                <rect key="frame" x="17" y="465" width="511" height="94"/>
+                                <rect key="frame" x="17" y="532" width="511" height="94"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" id="lQI-VD-X8E">
                                     <rect key="frame" x="1" y="1" width="509" height="78"/>
@@ -596,7 +595,7 @@ Gw
                                 </view>
                             </box>
                             <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="Options" translatesAutoresizingMaskIntoConstraints="NO" id="LcU-ig-5He">
-                                <rect key="frame" x="17" y="364" width="511" height="97"/>
+                                <rect key="frame" x="17" y="431" width="511" height="97"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" id="xLC-ht-TPQ">
                                     <rect key="frame" x="1" y="1" width="509" height="81"/>
@@ -664,7 +663,7 @@ Gw
                                 </view>
                             </box>
                             <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="Plugins" translatesAutoresizingMaskIntoConstraints="NO" id="WWU-5A-nH0">
-                                <rect key="frame" x="17" y="298" width="511" height="62"/>
+                                <rect key="frame" x="17" y="365" width="511" height="62"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" id="s6b-vs-tnv">
                                     <rect key="frame" x="1" y="1" width="509" height="46"/>
@@ -885,7 +884,7 @@ Gw
                                 </view>
                             </box>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bpA-fw-7T9" customClass="HeaderView" customModule="MPAgentUploader" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="567" width="547" height="80"/>
+                                <rect key="frame" x="0.0" y="634" width="547" height="80"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <subviews>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SIv-th-9mG">
@@ -936,6 +935,45 @@ Gw
                                 <rect key="frame" x="21" y="21" width="424" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </progressIndicator>
+                            <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="OS Config Profiles" translatesAutoresizingMaskIntoConstraints="NO" id="T8A-9f-Hva">
+                                <rect key="frame" x="17" y="299" width="511" height="62"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <view key="contentView" id="cXg-go-inF">
+                                    <rect key="frame" x="1" y="1" width="509" height="46"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lpi-ce-XJe">
+                                            <rect key="frame" x="86" y="14" width="315" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Ckj-7S-Z6f">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Te9-89-LRd">
+                                            <rect key="frame" x="410" y="8" width="87" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="Choose" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dhR-D7-IhT">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="chooseProfilesFolderWithSender:" target="XfG-lQ-9wD" id="swm-RM-2dD"/>
+                                            </connections>
+                                        </button>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TjI-Q7-a7S">
+                                            <rect key="frame" x="16" y="17" width="47" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Folder:" id="XJB-GN-0xO">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </subviews>
+                                </view>
+                            </box>
                         </subviews>
                     </view>
                     <connections>
@@ -955,6 +993,7 @@ Gw
                         <outlet property="pluginsPath" destination="jxX-uq-bvh" id="s5B-HA-qZP"/>
                         <outlet property="postPackageImage" destination="Ht7-Ns-cTQ" id="VmB-Gt-ZtU"/>
                         <outlet property="postPackageStatus" destination="osM-9T-tef" id="TsY-ph-GMy"/>
+                        <outlet property="profilesPath" destination="lpi-ce-XJe" id="TRl-SL-rMx"/>
                         <outlet property="progressBar" destination="E4m-Pl-FuR" id="HGq-9a-8Do"/>
                         <outlet property="registrationKey" destination="SFK-C8-urO" id="Wl9-Ev-WuC"/>
                         <outlet property="signPackageButton" destination="7xJ-QI-X1p" id="uzF-sD-tgE"/>
@@ -968,7 +1007,7 @@ Gw
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="YOh-Ne-xki"/>
             </objects>
-            <point key="canvasLocation" x="138" y="585"/>
+            <point key="canvasLocation" x="-136.5" y="680.5"/>
         </scene>
     </scenes>
     <resources>
