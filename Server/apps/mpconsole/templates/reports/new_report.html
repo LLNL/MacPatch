@@ -2,6 +2,17 @@
 
 {% block styles %}
 	{{ super() }}
+    <!-- Bootstrap Core CSS -->
+		<link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+		<!-- Custom CSS -->
+		<link href="{{ url_for('static', filename='bower_components/sb-admin-2/css/sb-admin-2.css') }}" rel="stylesheet">
+		<link href="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.css') }}" rel="stylesheet">
+		<link href="{{ url_for('static', filename='css/bootstrap-table-editable.css') }}" rel="stylesheet">
+		<!-- Custom Fonts -->
+		<link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+
+
+
 	<link href="{{ url_for('static', filename='css/query-builder.mp.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='bower_components/chosen/chosen.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
@@ -107,7 +118,7 @@
 			<strong>NOTE:</strong> Queries limied to only 10 records.
 		</div>
 		<div id="preview">
-			<table id="table" data-toolbar="#toolbar" class="table table-condensed"></table>
+			<table id="table" data-toolbar="#toolbar" class="table table-condensed" style="width:auto"></table>
 		</div>
 	</div>
 </div>
