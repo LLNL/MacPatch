@@ -994,7 +994,7 @@ done:
         // post patches to web service
         wsErr = nil;
         BOOL ws_res = NO;
-        ws_res = [rest postClientScanDataWithType:applePatchesArray type:0 error:&wsErr];
+        ws_res = [rest postClientScanDataWithType:applePatchesArray type:1 error:&wsErr];
         if (wsErr) {
             logit(lcl_vError,@"Scan results posted to webservice returned false.");
             logit(lcl_vError,@"%@",wsErr.localizedDescription);

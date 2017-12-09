@@ -247,7 +247,7 @@
         
         // post found apple patches to web service
         
-        if ([self wsPostPatchScanResults:applePatchesArray type:0]) {
+        if ([self wsPostPatchScanResults:applePatchesArray type:1]) {
             logit(lcl_vInfo,@"Scan results posted to webservice.");
         } else {
             logit(lcl_vError,@"Scan results posted to webservice returned false.");
