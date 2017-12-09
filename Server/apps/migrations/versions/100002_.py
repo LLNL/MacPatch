@@ -79,6 +79,15 @@ def upgrade():
 	op.create_index(op.f('ix_mp_client_agents_type'), 'mp_client_agents', ['type'], unique=False)
 	op.create_index(op.f('ix_mp_client_agents_agent_ver'), 'mp_client_agents', ['agent_ver'], unique=False)
 
+	op.drop_index(op.f('ix_mp_client_group_admin_group_admin'), table_name='mp_client_group_admin')
+	op.create_index(op.f('ix_mp_client_group_admin_group_admin'), 'mp_client_group_admin', ['group_admin'], unique=False)
+
+	op.drop_index(op.f('ix_mp_client_group_admin_group_id'), table_name='mp_client_group_admin')
+	op.create_index(op.f('ix_mp_client_group_admin_group_id'), 'mp_client_group_admin', ['group_id'], unique=False)
+
+	op.drop_index(op.f('ix_mp_client_group_members_cuuid'), table_name='mp_client_group_members')
+	op.create_index(op.f('ix_mp_client_group_members_cuuid'), 'mp_client_group_members', ['cuuid'], unique=False)
+
 	### end Alembic commands ###
 	u_qstr1="ALTER TABLE `mp_group_config` ADD COLUMN `tasks_version` bigint AFTER `rev_tasks`;"
 	op.execute(u_qstr1)
