@@ -17,13 +17,13 @@ class PatchScan():
 		patch_state = self.agent_settings.patch_state
 
 		if patch_state.lower() == "all":
-			_state = ("Production","QA")
+			_state = ["Production","QA"]
 		elif patch_state.lower() == "create":
-			_state = ("Create")
+			_state = ["Create"]
 		elif patch_state.lower() == "qa":
-			_state = ("QA")
+			_state = ["QA"]
 		else:
-			_state = ("Production")
+			_state = ["Production"]
 
 		# Query DataBase get all Custom Patches based on bundle and version
 		if severity is None or severity.lower() == 'all':
@@ -34,7 +34,7 @@ class PatchScan():
 		else:
 			q = MpPatch.query.with_entities(MpPatch.puuid, MpPatch.patch_name, MpPatch.patch_ver, MpPatch.bundle_id,
 										MpPatch.patch_reboot, MpPatch.patch_state, MpPatch.active, MpPatch.rid, MpPatch.patch_severity
-										).filter(MpPatch.active == 1, MpPatch.patch_state == 'All', MpPatch.patch_severity == severity).order_by(
+										).filter(MpPatch.active == 1, MpPatch.patch_state.in_(["Production","QA"]), MpPatch.patch_severity == severity).order_by(
 			MpPatch.bundle_id.desc()).all()
 
 		bundleList = []

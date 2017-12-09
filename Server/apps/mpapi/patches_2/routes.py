@@ -15,7 +15,6 @@ from .. shared.patches import *
 
 parser = reqparse.RequestParser()
 
-
 # Get Patch Group Patches
 class PatchGroupPatches(MPResource):
 
