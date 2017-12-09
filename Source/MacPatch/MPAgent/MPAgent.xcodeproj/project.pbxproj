@@ -80,6 +80,9 @@
 		8F530FF21B42ED5D00B8D893 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F530FF11B42ED5D00B8D893 /* DiskArbitration.framework */; };
 		8F530FF41B42ED7000B8D893 /* DirectoryService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F530FF31B42ED7000B8D893 /* DirectoryService.framework */; };
 		8F5310011B42EEE400B8D893 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5310001B42EEE400B8D893 /* libsqlite3.dylib */; };
+		8F53E2051FDA077F004D4C32 /* LocalAdminAccounts.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F53E2041FDA077F004D4C32 /* LocalAdminAccounts.m */; };
+		8F53E2081FDA0E4A004D4C32 /* SmartCardReaderList.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F53E2071FDA0E4A004D4C32 /* SmartCardReaderList.m */; };
+		8F53E20A1FDA18BB004D4C32 /* PCSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F53E2091FDA18BB004D4C32 /* PCSC.framework */; };
 		8F6D32461CD3C34E006B1094 /* MPOSUpgrade.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6D32451CD3C34E006B1094 /* MPOSUpgrade.m */; };
 		8F9C2B531DDA1D0E002A39D2 /* MPAppStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C2B521DDA1D0E002A39D2 /* MPAppStore.m */; };
 		8F9C2B561DDA1D17002A39D2 /* CKSoftwareProduct+ASProduct.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C2B551DDA1D17002A39D2 /* CKSoftwareProduct+ASProduct.m */; };
@@ -178,6 +181,11 @@
 		8F530FF11B42ED5D00B8D893 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		8F530FF31B42ED7000B8D893 /* DirectoryService.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DirectoryService.framework; path = System/Library/Frameworks/DirectoryService.framework; sourceTree = SDKROOT; };
 		8F5310001B42EEE400B8D893 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		8F53E2031FDA077F004D4C32 /* LocalAdminAccounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalAdminAccounts.h; sourceTree = "<group>"; };
+		8F53E2041FDA077F004D4C32 /* LocalAdminAccounts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalAdminAccounts.m; sourceTree = "<group>"; };
+		8F53E2061FDA0E4A004D4C32 /* SmartCardReaderList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartCardReaderList.h; sourceTree = "<group>"; };
+		8F53E2071FDA0E4A004D4C32 /* SmartCardReaderList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartCardReaderList.m; sourceTree = "<group>"; };
+		8F53E2091FDA18BB004D4C32 /* PCSC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PCSC.framework; path = System/Library/Frameworks/PCSC.framework; sourceTree = SDKROOT; };
 		8F6D32441CD3C34E006B1094 /* MPOSUpgrade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPOSUpgrade.h; sourceTree = "<group>"; };
 		8F6D32451CD3C34E006B1094 /* MPOSUpgrade.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPOSUpgrade.m; sourceTree = "<group>"; };
 		8F9C2B511DDA1D0E002A39D2 /* MPAppStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAppStore.h; sourceTree = "<group>"; };
@@ -265,6 +273,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F53E20A1FDA18BB004D4C32 /* PCSC.framework in Frameworks */,
 				8FF5B50F1FC659AE006F5FB2 /* Python.framework in Frameworks */,
 				8FE560CC16DE71A100BB7600 /* libMacPatch.a in Frameworks */,
 				8F5310011B42EEE400B8D893 /* libsqlite3.dylib in Frameworks */,
@@ -310,6 +319,7 @@
 		8F4B1EEB16DD77BD00E15A9E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F53E2091FDA18BB004D4C32 /* PCSC.framework */,
 				8FF5B50B1FC658EC006F5FB2 /* Python.framework */,
 				8F9C2B591DDA1D6B002A39D2 /* StoreFoundation.framework */,
 				8F9C2B571DDA1D4A002A39D2 /* CommerceKit.framework */,
@@ -432,6 +442,8 @@
 				8FA6A86E1B9621BF006A329B /* MPServerEntry.m */,
 				8FA6A86F1B9621BF006A329B /* MPUsersAndGroups.h */,
 				8FA6A8701B9621BF006A329B /* MPUsersAndGroups.m */,
+				8F53E2031FDA077F004D4C32 /* LocalAdminAccounts.h */,
+				8F53E2041FDA077F004D4C32 /* LocalAdminAccounts.m */,
 				8FA6A8711B9621BF006A329B /* NSDirectoryServices.h */,
 				8FA6A8721B9621BF006A329B /* NSDirectoryServices.m */,
 				8FA6A8731B9621BF006A329B /* NSMetadataQuery+Synchronous.h */,
@@ -444,6 +456,8 @@
 				8F9C2B551DDA1D17002A39D2 /* CKSoftwareProduct+ASProduct.m */,
 				8F2FC03C1E205523004710C7 /* MPFirmware.h */,
 				8F2FC03D1E205523004710C7 /* MPFirmware.m */,
+				8F53E2061FDA0E4A004D4C32 /* SmartCardReaderList.h */,
+				8F53E2071FDA0E4A004D4C32 /* SmartCardReaderList.m */,
 			);
 			path = Inventory;
 			sourceTree = "<group>";
@@ -608,6 +622,7 @@
 				8FE03DD11B600C5A005D39EE /* MPAgentUpdater.m in Sources */,
 				8FA6A8791B9621BF006A329B /* CHDiskInfo.m in Sources */,
 				8F4B1EF016DD77BD00E15A9E /* main.m in Sources */,
+				8F53E2051FDA077F004D4C32 /* LocalAdminAccounts.m in Sources */,
 				8F2FC03E1E205523004710C7 /* MPFirmware.m in Sources */,
 				8FE03DD91B601AC6005D39EE /* AVSoftware.m in Sources */,
 				8F4B1F0616DD77FF00E15A9E /* MPAgent.m in Sources */,
@@ -633,6 +648,7 @@
 				8F4B1F1916DE634600E15A9E /* AntiVirusScanAndUpdateOperation.m in Sources */,
 				8FA6A8781B9621BF006A329B /* CHDisk.m in Sources */,
 				8F4B1F1A16DE634600E15A9E /* InventoryOperation.m in Sources */,
+				8F53E2081FDA0E4A004D4C32 /* SmartCardReaderList.m in Sources */,
 				8FA6A87A1B9621BF006A329B /* MacAppStoreDataItem.m in Sources */,
 				8F4B1F1B16DE634600E15A9E /* PatchScanAndUpdateOperation.m in Sources */,
 				8F4B1F1C16DE634600E15A9E /* MPSWDistTaskOperation.m in Sources */,

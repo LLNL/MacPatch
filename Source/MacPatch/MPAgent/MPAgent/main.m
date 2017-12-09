@@ -435,6 +435,7 @@ void usage(void)
     printf(" \t\tDiskInfo\n");
     printf(" \t\tUsers\n");
     printf(" \t\tGroups\n");
+	printf(" \t\tLocalAdminAccounts\n");
     printf(" \t\tFileVault\n");
     printf(" \t\tPowerManagment\n");
     printf(" \t\tBatteryInfo\n");

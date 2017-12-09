@@ -41,11 +41,13 @@
 #import "MPInventoryPlugin.h"
 #import "InventoryPlugin.h"
 #import "MPFirmware.h"
+#import "LocalAdminAccounts.h"
+#import "SmartCardReaderList.h"
 
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
-#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,SINetworkInfo,AppStoreApps,Plugins,FirmwarePasswordInfo"
+#define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,SINetworkInfo,AppStoreApps,Plugins,FirmwarePasswordInfo,LocalAdminAccounts,SmartCardReaders"
 #define kTasksPlist             @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
 #define kInvHashData            @"/Library/MacPatch/Client/Data/.gov.llnl.mp.inv.data.plist"
 
@@ -248,7 +250,11 @@
                 tmpArr = [self parseAgentServerInfo];
             } else if ([[item objectForKey:@"type"] isEqual:@"FirmwarePasswordInfo"]) {
                 tmpArr = [self parseFirmwarePasswordData];
-            }
+			} else if ([[item objectForKey:@"type"] isEqual:@"LocalAdminAccounts"]) {
+				tmpArr = [self parseLocalAdminAccounts];
+			} else if ([[item objectForKey:@"type"] isEqual:@"SmartCardReaders"]) {
+				tmpArr = [self parseSmartCardReaders];
+			}
 
 			if (tmpArr) {
                 //
@@ -1477,6 +1483,19 @@ done:
     return _groups;
 }
 
+- (NSArray *)parseLocalAdminAccounts
+{
+	LocalAdminAccounts *la = [[LocalAdminAccounts alloc] init];
+	NSArray *_groups = [la gatherLocalAdminAccounts];
+	if (_groups.count <= 0)
+	{
+		logit(lcl_vError,@"Error, no admin acounts found in query.");
+		return nil;
+	}
+	
+	return _groups;
+}
+
 - (NSArray *)parseFileVaultInfo
 {
     MPFileVaultInfo *fv = [[MPFileVaultInfo alloc] init];
@@ -1720,6 +1739,14 @@ done:
     
     NSArray *res = [NSArray arrayWithObject:(NSDictionary *)fwDict];
     return res;
+}
+
+- (NSArray *)parseSmartCardReaders
+{
+	NSArray *result;
+	SmartCardReaderList *scl = [[SmartCardReaderList alloc] init];
+	result = [scl getSmartCardReaders];
+	return result;
 }
 
 #pragma mark Helper

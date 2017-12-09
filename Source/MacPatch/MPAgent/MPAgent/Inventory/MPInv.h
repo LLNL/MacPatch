@@ -63,6 +63,7 @@
 - (NSArray *)parseLocalDiskInfo;
 - (NSArray *)parseLocalUsers;
 - (NSArray *)parseLocalGroups;
+- (NSArray *)parseLocalAdminAccounts;
 - (NSArray *)parseFileVaultInfo;
 - (NSArray *)parsePowerManagmentInfo;
 - (NSArray *)parseBatteryInfo;

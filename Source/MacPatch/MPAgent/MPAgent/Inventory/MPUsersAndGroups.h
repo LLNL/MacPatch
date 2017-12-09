@@ -37,4 +37,6 @@
 - (NSArray *)getLocalUsers:(NSError **)error;
 - (NSArray *)getLocalGroups:(NSError **)error;
 
+- (NSDictionary *)getInfoForUserGUID:(NSString *)userGUID;
+
 @end
