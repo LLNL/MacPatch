@@ -4,6 +4,8 @@ from flask_restful import reqparse
 from sqlalchemy.exc import IntegrityError
 from ast import literal_eval
 
+from M2Crypto import RSA, util
+
 from . import *
 from .. import db
 from .. mputil import *

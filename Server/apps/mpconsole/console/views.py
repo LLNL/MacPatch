@@ -39,12 +39,17 @@ def deleteAdminAccount(user_id):
 			return render_template('admin/account_update.html', data=_accounts, columns=_columns)
 		else:
 			return accounts()
-
 	elif request.method == 'POST':
 		data = request.form.to_dict()
 		print data
+		if adminRole():
+			qAdm = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user_id).first()
+			if qAdm is not None:
+				for key, value in data.iteritems():
+					setattr(qAdm, key, value)
+				db.session.commit()
+				
 		return accounts()
-
 	elif request.method == 'DELETE':
 		if adminRole():
 			qAdm = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user_id).first()

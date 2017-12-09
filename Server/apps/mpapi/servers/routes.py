@@ -10,7 +10,6 @@ from .. mplogger import *
 
 parser = reqparse.RequestParser()
 
-
 class SUSCatalogs(MPResource):
 	def __init__(self):
 		self.reqparse = reqparse.RequestParser()
@@ -72,7 +71,6 @@ class SUSCatalogs(MPResource):
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
-
 class SUServerList(MPResource):
 	def __init__(self):
 		self.reqparse = reqparse.RequestParser()
@@ -107,7 +105,6 @@ class SUServerList(MPResource):
 			log_Error('[SUServerList][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
-
 
 class SUSListVersion(MPResource):
 	def __init__(self):
@@ -151,7 +148,6 @@ class SUSListVersion(MPResource):
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
-
 class ServerList(MPResource):
 	def __init__(self):
 		self.reqparse = reqparse.RequestParser()
@@ -189,7 +185,6 @@ class ServerList(MPResource):
 			log_Error('[ServerList][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
-
 
 class ServerListVersion(MPResource):
 	def __init__(self):
@@ -231,7 +226,6 @@ class ServerListVersion(MPResource):
 			log_Error('[ServerListVersion][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
-
 
 ''' ------------------------------- '''
 ''' NOT A WEB SERVICE CLASS         '''
@@ -345,7 +339,6 @@ class Server(object):
 				self.serverType = 2
 
 		return self.struct()
-
 
 # Add Routes Resources
 # Old

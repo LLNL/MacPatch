@@ -28,6 +28,7 @@ def create_app(config_object=DefaultConfig):
 	app.config.from_object(config_object)
 	app.config.from_pyfile('../config.cfg', silent=True)
 	app.config.from_pyfile('../conf_wsapi.cfg', silent=True)
+	app.config['JSON_SORT_KEYS'] = False
 
 	# Configure SQLALCHEMY_DATABASE_URI for MySQL
 	_uri = "mysql+mysqlconnector://%s:%s@%s:%s/%s" % (app.config['DB_USER'], app.config['DB_PASS'], app.config['DB_HOST'], app.config['DB_PORT'], app.config['DB_NAME'])

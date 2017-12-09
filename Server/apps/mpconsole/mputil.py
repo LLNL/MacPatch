@@ -11,6 +11,14 @@ import json
 import os.path
 from . mplogger import log_Debug, log_Info, log_Error
 
+import json
+import hashlib
+from M2Crypto import RSA, util
+
+from . import db
+from . model import MPAgentRegistration, MpClient, AdmGroupUsers, AdmUsers, AdmUsersInfo, MpSiteKeys
+from . mplogger import log_Debug, log_Info, log_Error
+
 # ----------------------------------------------------------------------------
 '''
 	Read Server Config file
@@ -58,3 +66,15 @@ def return_data_for_server_key(key):
 		return _config[key]
 	else:
 		return _config
+
+def signResultData(data):
+	qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
+	if qKeys is not None:
+		message = json.dumps(data)
+		sha1_hash = hashlib.sha1(message).digest()
+		rsa = RSA.load_key_string(qKeys.priKey.encode('utf-8'), callback=util.no_passphrase_callback)
+		signature = rsa.private_encrypt(sha1_hash, RSA.pkcs1_padding).encode('hex')
+
+		return signature
+	else:
+		return None

@@ -127,7 +127,6 @@ class AgentBase(MPResource):
 
 		return defaultGroup.group_id
 
-
 # Client Reg Status
 class AgentPlist(MPResource):
 
@@ -194,7 +193,6 @@ class AgentPlist(MPResource):
 			log_Error('[AgentPlist][Post][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
-
 # Client Info/Status
 class AgentStatus(MPResource):
 
@@ -236,9 +234,46 @@ class AgentStatus(MPResource):
 			log_Error('[AgentStatus][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
+# Server Public Key Check
+class CheckServerKey(MPResource):
+
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		super(CheckServerKey, self).__init__()
+
+	def get(self, cuuid):
+		try:
+			if not isValidClientID(cuuid):
+				log_Error('[CheckServerKey][Get]: Failed to verify ClientID (%s)' % (cuuid))
+				return {"result": '', "errorno": 424, "errormsg": 'Failed to verify ClientID'}, 424
+
+			if not isValidSignature(self.req_signature, cuuid, self.req_uri, self.req_ts):
+				if current_app.config['ALLOW_MIXED_SIGNATURES'] == True:
+					log_Info('[CheckServerKey][Get]: ALLOW_MIXED_SIGNATURES is enabled.')
+				else:
+					log_Error('[CheckServerKey][Get]: Failed to verify Signature for client (%s)' % (cuuid))
+					return {"result": '', "errorno": 424, "errormsg": 'Failed to verify Signature'}, 424
+
+			qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
+			if qKeys is not None:
+				res = {'pubKey': qKeys.pubKey, 'puKeyHash': qKeys.pubKeyHash}
+				return {"result": res, "errorno": 0, "errormsg": 'none'}, 200
+			else:
+				log_Error('[CheckServerKey][Get]: Active Server keys not found')
+				return {"result": '', "errorno": 404, "errormsg": 'Active Server keys not found'}, 404
+
+		except IntegrityError, exc:
+			log_Error('[CheckServerKey][Get][IntegrityError]: CUUID: %s Message: %s' % (cuuid, exc.message))
+			return {"result": '', "errorno": 500, "errormsg": exc.message}, 500
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[CheckServerKey][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
+			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
 # Add Routes Resources
-checkin_api.add_resource(AgentBase, '/client/checkin/<string:cuuid>')
-checkin_api.add_resource(AgentPlist, '/client/checkin/plist/<string:cuuid>')
+checkin_api.add_resource(AgentBase,			'/client/checkin/<string:cuuid>')
+checkin_api.add_resource(AgentPlist, 		'/client/checkin/plist/<string:cuuid>')
 
-checkin_api.add_resource(AgentStatus, '/client/checkin/info/<string:cuuid>')
+checkin_api.add_resource(AgentStatus, 		'/client/checkin/info/<string:cuuid>')
+
+checkin_api.add_resource(CheckServerKey,	'/client/server/key/<string:cuuid>')

@@ -1,6 +1,6 @@
 from mpapi import db
 
-# Rev 6
+# Rev 7
 #
 
 from datetime import *
@@ -228,6 +228,7 @@ class MpClient(CommonBase):
 
 # mp_clients_plist
 class MpClientPlist(CommonBase):
+	# Deprecated as of MP3.1
 	__tablename__ = 'mp_clients_plist'
 
 	rid                 = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -275,7 +276,7 @@ class MpClientGroupAdmins(CommonBase):
 	__tablename__ = 'mp_client_group_admin'
 
 	rid             = Column(BigInteger, primary_key=True, autoincrement=True)
-	group_id        = Column(String(50), nullable=False, index=True, unique=True)
+	group_id        = Column(String(50), nullable=False, index=True, unique=False)
 	group_admin     = Column(String(255), nullable=False, index=True, unique=False)
 
 # mp_client_group_members
@@ -291,7 +292,7 @@ class MpClientTasks(CommonBase):
 	__tablename__ = 'mp_client_tasks'
 
 	rid             = Column(BigInteger, primary_key=True, autoincrement=True)
-	group_id        = Column(String(50), nullable=False, index=True, unique=True)
+	group_id        = Column(String(50), nullable=False, index=True, unique=False)
 
 	id  			= Column(INTEGER(4, unsigned=True),   info="Task ID")
 	name 			= Column(String(255), nullable=False, info="Name")

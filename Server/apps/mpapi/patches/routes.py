@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import reqparse
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
+from collections import OrderedDict
 
 from . import *
 from .. import db
@@ -9,6 +10,7 @@ from .. mputil import *
 from .. model import *
 from .. mplogger import *
 from .. shared.patches import *
+
 
 parser = reqparse.RequestParser()
 
@@ -155,7 +157,24 @@ class PatchGroupPatches(MPResource):
 					q_data = MpPatchGroupData.query.filter(MpPatchGroupData.pid == group_id, MpPatchGroupData.data_type == 'JSON').first()
 					if q_data is not None:
 						if q_data.data:
-							return {"result": q_data.data, "errorno": 0, "errormsg": ''}, 200
+							_patches = []
+							_res_data = json.loads(q_data.data)
+							_custom_patches = _res_data['CustomUpdates']
+							for patch in _custom_patches:
+								_str_to_sign = None
+								_str_chunks = []
+								_keys = ["baseline","env","hash","name","postinst","preinst","reboot","size","type","url"]
+								_loc_patches = patch['patches']
+								for p in _loc_patches:
+									for k in _keys:
+										_str_chunks.append(p[k])
+
+								_str_to_sign = ''.join(_str_chunks)
+								patch['patch_sig'] = signData(_str_to_sign)
+								_patches.append(patch)
+
+							_res_data['CustomUpdates'] = _patches
+							return {"result": _res_data, "errorno": 0, "errormsg": ''}, 200
 			else:
 				log_Error('[PatchGroupPatches][Get][%s]: No patch group (%s) found.' % (cuuid, patchGroup))
 				return {"result": '', "errorno": 404, "errormsg": 'Not Found'}, 404
@@ -352,7 +371,6 @@ class PatchScanData(MPResource):
 
 		return
 
-
 # Post Client Patch Install Data
 class PatchInstallData(MPResource):
 
@@ -430,6 +448,65 @@ class PatchInstallData(MPResource):
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
+# Read Saved PatchGroup patches and add signatures
+class SavePatchGroupPatches(MPResource):
+
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		super(SavePatchGroupPatches, self).__init__()
+
+	def get(self, groupID):
+		try:
+			# Get Patch Group ID from Name
+			group_id = 'NA'
+			q_group = MpPatchGroup.query.filter(MpPatchGroup.id == groupID).first()
+			if q_group is not None:
+				if q_group.id:
+					group_id = q_group.id
+
+					# Get Patch Group Patches Data
+					q_data = MpPatchGroupData.query.filter(MpPatchGroupData.pid == group_id, MpPatchGroupData.data_type == 'JSON').first()
+					if q_data is not None:
+						_patches = []
+						_res_data = json.loads(q_data.data)
+						_custom_patches = _res_data['CustomUpdates']
+						for patch in _custom_patches:
+							_str_to_sign = None
+							_str_chunks = []
+							_keys = ["baseline","env","hash","name","postinst","preinst","reboot","size","type","url"]
+							_loc_patches = patch['patches']
+							for p in _loc_patches:
+								for k in _keys:
+									_str_chunks.append(p[k])
+
+							_str_to_sign = ''.join(_str_chunks)
+							patch['patch_sig'] = signData(_str_to_sign)
+							_patches.append(patch)
+
+						_res_data['CustomUpdates'] = _patches
+
+						try:
+							setattr(q_data, 'data', json.dumps(_res_data))
+							db.session.commit()
+							return {"result": {}, "errorno": 0, "errormsg": ''}, 201
+						except IntegrityError, exc:
+							log_Error('[SavePatchGroupPatches][Get][IntegrityError][SAVE]: Message: %s' % (exc.message))
+							db.session.rollback()
+
+					# No Data
+					return {"result": {}, "errorno": 0, "errormsg": 'No group data to update'}, 200
+			else:
+				log_Error('[PatchGroupPatches][Get]: No patch group (%s) found.' % (groupID))
+				return {"result": '', "errorno": 404, "errormsg": 'Not Found'}, 404
+
+		except IntegrityError, exc:
+			log_Error('[PatchGroupPatches][Get][IntegrityError]: Message: %s' % (exc.message))
+			return {"result": '', "errorno": 500, "errormsg": exc.message}, 500
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[PatchGroupPatches][Get][Exception][Line: %d]: Message: %s' % (exc_tb.tb_lineno, e.message))
+			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
+
 # --------------------------------------------------------------------
 # Add Routes Resources
 patches_api.add_resource(ClientPatchStatus,     '/client/patch/status/<string:cuuid>')
@@ -450,3 +527,6 @@ patches_api.add_resource(PatchGroupPatchesRev,  '/client/patch/group/rev/<string
 patches_api.add_resource(PatchScanData,         '/client/patch/scan/<string:patch_type>/<string:cuuid>')
 # Post Client Patch Install Data
 patches_api.add_resource(PatchInstallData,      '/client/patch/install/<string:patch>/<string:patch_type>/<string:cuuid>')
+
+# Update will be fixed in 3.1, should be done in console
+patches_api.add_resource(SavePatchGroupPatches, '/client/update/patch/group/<string:groupID>')

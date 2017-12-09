@@ -6,11 +6,13 @@ import json
 import uuid
 import os
 import os.path
+import sys
 from operator import itemgetter
 
 from . import clients
 from .. import login_manager
 from .. model import *
+from .. mplogger import *
 from .. import db
 
 '''
@@ -239,6 +241,7 @@ def clientGroupUserRemove(id, user_id):
 		else:
 			return json.dumps({'error': 404, 'errormsg': 'User could not be removed.'}), 404
 
+	log("Remove user {} from client group {}".format(user_id, id))
 	return json.dumps({'error': 0}), 200
 
 @clients.route('/group/user/modify',methods=['POST'])
@@ -246,17 +249,24 @@ def clientGroupUserRemove(id, user_id):
 def clientGroupUserModify():
 	id = request.form.get('group_id')
 	uid = request.form.get('user_id')
+	log("{} added user {} to client group {}".format(session['user'], uid, id))
 
-	adm = MpClientGroupAdmins().query.filter(MpClientGroupAdmins.group_id == id, MpClientGroupAdmins.group_admin == uid).first()
-	if adm:
-		setattr(adm, 'patch_state', state)
-	else:
-		adm = MpClientGroupAdmins()
-		setattr(adm, 'group_id', id)
-		setattr(adm, 'group_admin', uid)
-		db.session.add(adm)
+	try:
+		adm = MpClientGroupAdmins().query.filter(MpClientGroupAdmins.group_id == id, MpClientGroupAdmins.group_admin == uid).first()
+		if adm:
+			setattr(adm, 'group_id', id)
+			setattr(adm, 'group_admin', uid)
+		else:
+			adm = MpClientGroupAdmins()
+			setattr(adm, 'group_id', id)
+			setattr(adm, 'group_admin', uid)
+			db.session.add(adm)
 
-	db.session.commit()
+		db.session.commit()
+
+	except:
+		log_Error("Error {}".format(sys.exc_info()[0]))
+
 	return clientGroup(id,5)
 
 @clients.route('/group/update',methods=['POST'])

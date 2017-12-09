@@ -50,8 +50,11 @@ class SoftwareTasksForGroup(MPResource):
 				if q_sw_group_data is not None and q_sw_group_data.gData is not None:
 					_group_data = json.loads(q_sw_group_data.gData)
 
+			_tasks_new = []
+			_tasksData = []
+			_tasksData = _group_data['result']['Tasks']
+
 			if osver != "*":
-				_tasks_new = []
 				_result = _group_data['result']
 				_tasks = _result['Tasks']
 				for task in _tasks:
@@ -89,6 +92,69 @@ class SoftwareTasksForGroup(MPResource):
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
+class SaveSoftwareTasksForGroup(MPResource):
+
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		super(SaveSoftwareTasksForGroup, self).__init__()
+
+	def get(self, cuuid, groupID):
+
+		try:
+			if self.req_agent == 'iLoad':
+				log_Info("[SaveSoftwareTasksForGroup][Get]: iLoad Request from %s" % (cuuid))
+
+			_group_id = None
+			_group_data = None
+			q_sw_group = MpSoftwareGroup.query.filter(MpSoftwareGroup.gid == groupID).first()
+			if q_sw_group is not None and q_sw_group.gid is not None:
+				_group_id = q_sw_group.gid
+			else:
+				log_Error('[SaveSoftwareTasksForGroup][Get][%s] Group (%s) Not Found' % (cuuid, groupID))
+				return {'errorno': 404, 'errormsg': 'Group Not Found', 'result': ''}, 404
+
+			if _group_id is not None:
+				q_sw_group_data = MpSoftwareTasksData.query.filter(MpSoftwareTasksData.gid == groupID).first()
+				if q_sw_group_data is not None and q_sw_group_data.gData is not None:
+					_group_data = json.loads(q_sw_group_data.gData)
+
+			_tasks_new = []
+			_tasksData = _group_data['result']['Tasks']
+			for task in _tasksData:
+				#task['sw_signature'] = signData(task['Software'])
+				task['sw_signature'] = self.signSoftwareTask(task['Software'])
+				_tasks_new.append(task)
+
+			try:
+				_group_data['result']['Tasks'] = _tasks_new
+				jData = json.dumps(_group_data)
+				setattr(q_sw_group_data, 'gData', jData)
+				db.session.commit()
+				return {"result": {}, "errorno": 0, "errormsg": ''}, 201
+			except IntegrityError, exc:
+				log_Error('[SaveSoftwareTasksForGroup][Get][IntegrityError][SAVE] CUUID: %s Message: %s' % (cuuid, exc.message))
+				db.session.rollback()
+
+
+		except IntegrityError, exc:
+			log_Error('[SaveSoftwareTasksForGroup][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))
+			return {"result": '', "errorno": 500, "errormsg": exc.message}, 500
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[SaveSoftwareTasksForGroup][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
+			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
+
+
+	def signSoftwareTask(self,data):
+		_keys = ['auto_patch','name','patch_bundle_id','reboot','sid','state','sw_env_var','sw_hash','sw_post_install','sw_pre_install','sw_size','sw_type','sw_uninstall','sw_url','vendor','vendorUrl','version']
+		_str_to_sign = None
+		_str_chunks = []
+		for k in _keys:
+			_str_chunks.append(data[k])
+
+		_str_to_sign = ''.join(_str_chunks)
+		_signed_str = signData(_str_to_sign)
+		return _signed_str
 
 class SoftwareTaskForTaskID(MPResource):
 
@@ -212,7 +278,6 @@ class SoftwareTaskForTaskID(MPResource):
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
-
 class SoftwareDistributionGroups(MPResource):
 
 	def __init__(self):
@@ -260,7 +325,6 @@ class SoftwareDistributionGroups(MPResource):
 			log_Error('[SoftwareDistributionGroups][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
 				exc_tb.tb_lineno, cuuid, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
-
 
 class SoftwareInstallResult(MPResource):
 
@@ -385,3 +449,6 @@ software_api.add_resource(SoftwareDistributionGroups,    '/sw/groups/<string:cuu
 software_api.add_resource(SoftwareDistributionGroups,    '/sw/groups/<string:cuuid>/<string:state>', endpoint='wState')
 
 software_api.add_resource(SoftwareInstallResult,         '/sw/installed/<string:cuuid>')
+
+# Update will be fixed in 3.1, should be done in console
+software_api.add_resource(SaveSoftwareTasksForGroup,     '/sw/update/tasks/<string:cuuid>/<string:groupID>')

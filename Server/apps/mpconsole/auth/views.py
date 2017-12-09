@@ -7,11 +7,15 @@ from . import auth
 from .. import db
 from .. model import *
 from .. mputil import *
+from .. mplogger import *
 from . forms import LoginForm
 
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
+	form = LoginForm()
+	if form.username.data is not None:
+		log("Begin login attempt for user %s" % (form.username.data))
 
 	_ldapConf = return_data_for_root_key('ldap')
 	_localAdm = return_data_for_root_key('users')
@@ -20,7 +24,6 @@ def login():
 	if 'admin' in _localAdm:
 		tryLocalAdmin = _localAdm['admin']['enabled']
 
-	form = LoginForm()
 	if form.validate_on_submit():
 		user = AdmUsers.query.filter(AdmUsers.user_id == form.username.data).first()
 		if tryLocalAdmin:
@@ -42,6 +45,8 @@ def login():
 					session['user'] = form.username.data
 					recordLoginAndAssignIfNeeded(user.user_id, 0)
 					setLoginSessionInfo(user.user_id)
+
+					log("Local admin login sucessful for user %s" % (form.username.data))
 					return redirect(url_for('dashboard.index', username=user.user_id))
 
 		if user is not None and user.check_password(form.password.data):
@@ -51,10 +56,15 @@ def login():
 				session['user'] = form.username.data
 				recordLoginAndAssignIfNeeded(user.user_id, 1)
 				setLoginSessionInfo(user.user_id)
+
+				log("Console user login sucessful for user %s" % (form.username.data))
 				return redirect(url_for('dashboard.index', username=user.user_id))
+			else:
+				log("User %s account is not enabled." % (form.username.data))
 
 		else:
 			if _ldapConf['enabled']:
+				log_Debug("Ldap is enabled.")
 				userID = ''
 				if 'loginUsrPrefix' in _ldapConf:
 					if _ldapConf['loginUsrPrefix'] != 'LOGIN-PREFIX':
@@ -96,6 +106,8 @@ def login():
 							login_user(user, form.remember_me.data)
 							recordLoginAndAssignIfNeeded(user.user_id, 2)
 							setLoginSessionInfo(user.user_id)
+
+							log("LDAP login sucessful for user %s" % (form.username.data))
 							return redirect(url_for('dashboard.index', username=user.user_id))
 					else:
 						user = AdmUsers()
@@ -108,9 +120,13 @@ def login():
 						login_user(user, form.remember_me.data)
 						recordLoginAndAssignIfNeeded(user.user_id, 2)
 						setLoginSessionInfo(user.user_id)
+
+						log("LDAP login sucessful for user %s" % (form.username.data))
 						return redirect(url_for('dashboard.index', username=user.user_id))
 
 		flash('Incorrect username or password.')
+		log_Error("Failed login attempt for user %s" % (form.username.data))
+
 	return render_template("login.html", form=form)
 
 def accountExists(user_id):
@@ -180,6 +196,8 @@ def setLoginSessionInfo(user_id):
 
 @auth.route("/logout")
 def logout():
+	log("Log out user %s" % (session['user']))
+
 	logout_user()
 	session.clear()
 	return redirect(url_for('main.index'))

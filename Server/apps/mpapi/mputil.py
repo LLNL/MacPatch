@@ -16,16 +16,16 @@ import hmac
 from ldap3 import Server, Connection
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 
-import json
 from M2Crypto import RSA, util
+
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA256, SHA
+from base64 import b64encode, b64decode
 
 from . import db
 from . model import MPAgentRegistration, MpClient, AdmGroupUsers, AdmUsers, AdmUsersInfo, MpSiteKeys
 from . mplogger import log_Debug, log_Info, log_Error
-
-# This is needed for getting signature of api paylods
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 # ----------------------------------------------------------------------------
 '''
@@ -436,3 +436,34 @@ def signResultData(data):
 		return signature
 	else:
 		return None
+
+def signData(data):
+	qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
+	if qKeys is not None:
+		# Using SHA1 padding
+		rsakey = RSA.importKey(qKeys.priKey)
+		signer = PKCS1_v1_5.new(rsakey)
+		digest = SHA.new()
+
+		print "------------------------------------------------------------------------------------------"
+		print data
+
+		digest.update(data)
+		sign = signer.sign(digest)
+		return b64encode(sign)
+	else:
+		return None
+
+def verifySignedData(signature, data):
+	qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
+	if qKeys is not None:
+		# Using SHA1 padding
+		rsakey = RSA.importKey(qKeys.pubKey)
+		signer = PKCS1_v1_5.new(rsakey)
+		digest = SHA.new()
+
+		digest.update(data)
+		if signer.verify(digest, b64decode(signature)):
+			return True
+
+	return False

@@ -156,7 +156,7 @@
 								<li>
 									<a href="{{ url_for('osmanage.profiles') }}"><i class="fa fa-list fa-fw"></i> Profiles</a>
 								</li>
-								{% if session.role[0] == 100 %}
+								{% if session.role[0] == 1 %}
 								<li>
 									<a href="{{ url_for('osmanage.appFilters') }}"><i class="fa fa-list fa-fw"></i> .app Access</a>
 								</li>
