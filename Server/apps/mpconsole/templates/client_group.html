@@ -292,76 +292,6 @@ Client Group - {{group_name}}
 			]
 		});
 
-		$('#tableTasksOld').bootstrapTable(
-		{
-			striped: true,
-			pagination: true,
-			sidePagination: 'client',
-			pageList: ['10', '25', '50', '100', 'All'],
-			search: true,
-			showRefresh: true,
-			resizable: true,
-			sortable: true,
-			showColumns: true,
-			idField: 'id',
-
-			columns: [
-			{% for tcol in tasksCols %}
-			{
-				field: '{{tcol.name}}',
-				title: '{{tcol.info}}',
-				{% if tcol.name == 'id' or tcol.name == 'idrev' or tcol.name == 'parent' or tcol.name == 'cmdalt'
-				 or tcol.name == 'mode' or tcol.name == 'idsig' or tcol.name == 'group_id' or tcol.name == 'rid'
-				 or tcol.name == 'scope' or tcol.name == 'startdate' or tcol.name == 'enddate'%}
-				visible: false,
-				{% endif %}
-				{% if tcol.name == 'active' %}
-				editable: {
-					type: 'select',
-					url: '/clients/group/{{gResults['Group']['id']}}/task/active',
-					source: [
-						{value: 'False', text: 'False'},
-						{value: 'True', text: 'True'},
-					]
-				},
-				{% endif %}
-				{% if tcol.name ==  'interval' %}
-				editable: {
-					type: 'text',
-					url: '/clients/group/{{gResults['Group']['id']}}/task/interval'
-				},
-				{% endif %}
-				{% if tcol.name ==  'startdate' or tcol.name ==  'enddate' %}
-				editable: {
-					type: 'date',
-					format: 'yyyy-mm-dd',
-					viewformat: 'yyyy-mm-dd',
-					url: '/clients/group/{{gResults['Group']['id']}}/task/{{tcol.name}}'
-				},
-				{% endif %}
-				sortable: true
-			},
-			{% endfor %}
-			],
-			data: [
-			{% for t in tasks %}
-			{
-				{% for tcol in tasksCols %}
-				{% if tcol.name == 'active' %}
-					{% if t[tcol.name] == '1' %}
-						{{tcol.name}}: 'True',
-					{% else %}
-						{{tcol.name}}: 'False',
-					{% endif %}
-				{% else %}
-					{{tcol.name}}: '{{t[tcol.name]}}',
-				{% endif %}
-				{% endfor %}
-			},
-			{% endfor %}
-			]
-		});
-
 		$tasksTable.bootstrapTable(
 		{
 			striped: true,
@@ -693,11 +623,6 @@ Client Group - {{group_name}}
 			}
 		}
 	};
-
-	function refreshProfilesTable()
-	{
-		//console.log("Damn");
-	}
 
 	var $table = $('#tableUsers'), $addButton = $('#addButton'),
 	$_settingsSaveButton = $('#settingsSaveButton'), $_delClientButton = $('#delClientButton'),

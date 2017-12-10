@@ -283,33 +283,15 @@ def patchGroupUpdate():
 		_add = True
 		clientGroup = MpClientGroups()
 
-	'''
-	if _owner:
-		patchGroupMember = PatchGroupMembers().query.filter(PatchGroupMembers.patch_group_id == _gid,PatchGroupMembers.is_owner == 1).first()
-		_owner = patchGroupMember.user_id
-	else:
-		patchGroupMember = PatchGroupMembers()
-		usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()
-		_owner = usr.user_id
-	'''
-
 	setattr(clientGroup, 'group_name', _group_name)
 	setattr(clientGroup, 'group_owner', _group_owner)
 	if _add:
 		setattr(clientGroup, 'group_id', _group_id)
 		db.session.add(clientGroup)
-
-	'''
-	setattr(patchGroupMember, 'user_id', _owner)
-	setattr(patchGroupMember, 'patch_group_id', _gid)
-	setattr(patchGroupMember, 'is_owner', 1)
-
-	if _add:
-		db.session.add(patchGroupMember)
-	'''
+		# Add Default Settings
+		groupDefaultSettings(_group_id)
 
 	db.session.commit()
-
 	return clientGroups()
 
 @clients.route('/group/<name>',methods=['GET','DELETE'])
@@ -511,11 +493,9 @@ def showClientMove(id):
 ********************************
 '''
 @clients.route('/group/<id>/settings',methods=['POST'])
+@login_required
 def groupSettings(id):
 	_form = request.form
-	for x in _form:
-		print x
-		print _form[x]
 
 	# Revision Increment
 	cfg = MPGroupConfig().query.filter(MPGroupConfig.group_id == id).first()
@@ -544,6 +524,47 @@ def groupSettings(id):
 
 	db.session.commit()
 	return json.dumps({'error': 0}), 200
+
+# Add Default Settings to new group
+def groupDefaultSettings(id):
+	mpc = MpClientSettings().query.filter(MpClientSettings.group_id == id).all()
+	if mpc is not None and len(mpc) >= 1:
+		# Log that group settings already exist
+		return False
+
+	patchGroup = MpPatchGroup.query.filter(MpPatchGroup.name == 'Default').first()
+	swGroup = MpSoftwareGroup.query.filter(MpSoftwareGroup.gName == 'Default').first()
+	form = {'patch_group': patchGroup.id,
+			'software_group': swGroup.gid,
+			'inherited_software_group':'None',
+			'allow_client':'1',
+			'allow_server':'1',
+			'allow_reboot':'1',
+			'verify_signatures':'0',
+			'patch_state':'Production',
+			'pre_stage_patches':'1'}
+
+	# Revision Increment
+	cfg = MPGroupConfig().query.filter(MPGroupConfig.group_id == id).first()
+	if cfg:
+		rev = cfg.rev_settings + 1
+		setattr(cfg, 'rev_settings', rev)
+	else:
+		cfg = MPGroupConfig()
+		setattr(cfg, 'group_id', id)
+		setattr(cfg, 'rev_settings', 1)
+		setattr(cfg, 'rev_tasks', 1)
+		db.session.add(cfg)
+
+	for key, value in form.iteritems():
+		mpc = MpClientSettings()
+		setattr(mpc, 'group_id', id)
+		setattr(mpc, 'key', key)
+		setattr(mpc, 'value', str(value))
+		db.session.add(mpc)
+
+	db.session.commit()
+	return True
 
 def getGroupSettings(id):
 	mpc = MpClientSettings().query.filter(MpClientSettings.group_id == id).all()

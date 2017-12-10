@@ -28,6 +28,7 @@ def addDefaultData():
 	addDefaultServerConfig()
 	addDefaultClientGroup()
 	addDefaultTasksToClientGroup()
+	addDefaultSettingsClientGroup()
 
 # Agent Registration Settings ------------------------------------------------
 def hasRegConfig():
@@ -349,6 +350,48 @@ def readDefaultTasks():
 		tasks = jData['mpTasks']
 
 	return tasks
+
+def hasDefaultSettingsClientGroup():
+	res = MpClientGroups.query.filter(MpClientGroups.group_name == 'Default').first()
+	if res is not None:
+		settings  = MpClientSettings.query.filter(MpClientSettings.group_id == res.group_id).all()
+		if len(settings) >= 8:
+			return True
+		else:
+			return False
+	else:
+		return False
+
+def addDefaultSettingsClientGroup():
+	# Check for config
+	if hasDefaultSettingsClientGroup():
+		return False
+
+	# Add Agent Config
+	clientGrp = MpClientGroups.query.filter(MpClientGroups.group_name == 'Default').first()
+	groupID = clientGrp.group_id
+
+	patchGroup = MpPatchGroup.query.filter(MpPatchGroup.name == 'Default').first()
+	swGroup = MpSoftwareGroup.query.filter(MpSoftwareGroup.gName == 'Default').first()
+	form = {'patch_group': patchGroup.id,
+			'software_group': swGroup.gid,
+			'inherited_software_group':'None',
+			'allow_client':'1',
+			'allow_server':'1',
+			'allow_reboot':'1',
+			'verify_signatures':'0',
+			'patch_state':'Production',
+			'pre_stage_patches':'1'}
+
+	for key, value in form.iteritems():
+		mpcs = MpClientSettings()
+		setattr(mpcs, 'group_id', groupID)
+		setattr(mpcs, 'key', key)
+		setattr(mpcs, 'value', str(value))
+		db.session.add(mpcs)
+
+	db.session.commit()
+	return True
 
 '''
 	Commands for mpconsole.py
