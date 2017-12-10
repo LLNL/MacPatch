@@ -77,8 +77,8 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-	   $("#modalSaveButton").click(function()
-	   {
+		$("#modalSaveButton").click(function()
+		{
 			var formData = new FormData($('#myForm')[0]);
 
 			$.ajax({
@@ -97,6 +97,7 @@
 			});
 
 			$('#modalDialog').modal('hide');
-	   });
+			$('#myForm') = '';
+		});
 	});
 </script>
