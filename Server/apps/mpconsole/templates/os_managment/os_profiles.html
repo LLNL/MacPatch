@@ -79,6 +79,8 @@
 					title: '{{col[1]}}',
 					{% if col[0] == 'profileID' %}
 					visible: false,
+					{% elif col[2] == '0' %}
+					visible: false,
 					{% endif %}
 					sortable: true
 				},

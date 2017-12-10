@@ -20,8 +20,7 @@ from .. import db
 @osmanage.route('/profiles')
 @login_required
 def profiles():
-
-	columns = [('profileID', 'Profile ID', '0'), ('profileIdentifier', 'Profile Identifier', '1'), ('profileName', 'Name', '1'),
+	columns = [('profileID', 'Profile ID', '0'), ('profileIdentifier', 'Profile Identifier', '0'), ('profileName', 'Name', '1'),
 				('profileDescription', 'Description', '1'), ('profileRev', 'Revision', '1'), ('enabled', 'Enabled', '1'),
 				('uninstallOnRemove', 'Uninstall On Remove', '1')]
 

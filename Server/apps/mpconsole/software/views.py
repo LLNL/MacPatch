@@ -40,6 +40,7 @@ def groups():
 
 			_row['field'] = c.name
 			_row['title'] = c.info
+			_row['sortable'] = True
 			_cols.append(_row)
 
 	options = {0:"Development", 1:"Production", 2:"QA", 3:"Disabled"}
@@ -104,9 +105,29 @@ def swGroupSave():
 	group_owner = request.form.get('user_id')
 
 	mpsg = MpSoftwareGroup.query.filter(MpSoftwareGroup.gid == group_id).first()
+
 	if mpsg:
-		setattr(mpsg, 'gName', group_name)
-		setattr(mpsg, 'gDescription', group_description)
+		mpsgp = MpSoftwareGroupPrivs.query.filter(MpSoftwareGroupPrivs.gid == group_id, MpSoftwareGroupPrivs.isowner == 1).first()
+		mpsgpUsr = MpSoftwareGroupPrivs.query.filter(MpSoftwareGroupPrivs.gid == group_id, MpSoftwareGroupPrivs.uid == session.get('user')).first()
+		# Permissions
+		# Owner or Admin = 2, group admin = 1
+		is_admin = 0
+
+		# set rights for owner or site admin
+		if mpsgp is not None:
+			if session.get('user_id') == '1' or mpsg.uid == session.get('user'):
+				is_admin = 2
+
+		# Set rights for standard group admin
+		if mpsgpUsr is not None:
+			is_admin = 1
+
+		if is_admin >= 1:
+			setattr(mpsg, 'gName', group_name)
+			setattr(mpsg, 'gDescription', group_description)
+		if is_admin == 2:
+			setattr(mpsgp, 'uid', group_owner)
+
 	else:
 		mpsqp = MpSoftwareGroupPrivs()
 		mpsg = MpSoftwareGroup()
@@ -127,11 +148,10 @@ def swGroupSave():
 @software.route('/group/delete/<id>', methods=['DELETE'])
 @login_required
 def swGroupDelete(id):
-
-	print session
 	groupPriv = MpSoftwareGroupPrivs.query.filter(MpSoftwareGroupPrivs.gid == id, MpSoftwareGroupPrivs.isowner == 1,
 	MpSoftwareGroupPrivs.uid == session.get('user') ).first()
-	if groupPriv is not None:
+	# Must be owner or default admin
+	if groupPriv is not None or session.get('user_id') == '1':
 		# Session user is the owner
 		MpSoftwareGroup.query.filter(MpSoftwareGroup.gid == id).delete()
 		MpSoftwareGroupPrivs.query.filter(MpSoftwareGroupPrivs.gid == id).delete()

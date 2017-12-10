@@ -174,7 +174,26 @@ def custom():
 	cListColsLimited = ['puuid', 'patch_name', 'patch_ver', 'bundle_id', 'description',
 	'patch_severity', 'patch_state', 'patch_reboot', 'active', 'pkg_size', 'pkg_path', 'pkg_url', 'mdate']
 
-	return render_template('patches/patches_custom.html', data=cList, columns=cListColsLimited, columnsAll=cListCols)
+	return render_template('patches/patches_custom.html', data={}, columns=cListColsLimited, columnsAll=cListCols)
+
+''' AJAX Request '''
+@patches.route('/custom/list',methods=['GET'])
+@cross_origin()
+def customList():
+
+	_clist = MpPatch.query.order_by(MpPatch.mdate.desc()).all()
+	_clistCols = ['puuid', 'patch_name', 'patch_ver', 'bundle_id', 'description',
+				'patch_severity', 'patch_state', 'patch_reboot', 'active',
+				'pkg_size', 'pkg_path', 'pkg_url', 'mdate']
+	_results = []
+	for r in _clist:
+		_dict = r.asDict
+		_row = {}
+		for col in _clistCols:
+			_row[col] = _dict[col]
+		_results.append(_row)
+
+	return json.dumps({'data': _results}, default=json_serial), 200
 
 @patches.route('/customPatchWizardAdd')
 @login_required
