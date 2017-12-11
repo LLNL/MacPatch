@@ -43,7 +43,7 @@
 			htmlData.push('<a class="tasks" href="javascript:void(0)" title="Add/Remove Software Tasks">');
 			htmlData.push('<i class="glyphicon glyphicon-th-list" aria-hidden="true"></i></a>');
 		} else {
-			htmlData.push('<a class="patches" href="javascript:void(0)" title="View Software Tasks">');
+			htmlData.push('<a class="tasks" href="javascript:void(0)" title="View Software Tasks">');
 			htmlData.push('<i class="fa fa-search" aria-hidden="true"></i></a>');
 		}
 		htmlData.push('</td>');
@@ -93,7 +93,11 @@
 			resetModalWindow();
 
 			var _url = "/software/group/" + row['gid'] + "/tasks";
-			var innerHTML = '<iframe src="' + _url + '" id="modaliFrame"' +
+			var innerHTML = '<div id="modalLoading">' +
+			 ' <img id="overlayImg" src="{{ url_for("static", filename="img/35.svg")}}" style="display:block;margin:auto;padding-top:10%;" />' +
+			 ' <h1 style="text-align: center; color: white; ">Loading...</h1>' +
+			 '</div>' +
+			 ' <iframe src="' + _url + '" id="modaliFrame"' +
 			 ' frameborder="0" allowtransparency="true"' +
 			 ' style="width: 98%; height: 98%; position: absolute"></iframe>';
 
@@ -106,7 +110,6 @@
 		},
 		'click .edit': function (e, value, row, index)
 		{
-
 			$.get( "/software/group/edit/" + row['gid']).done(function(data)
 			{
 				resetModalWindow();
