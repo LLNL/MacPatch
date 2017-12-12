@@ -110,7 +110,8 @@
         NSString *cVer = [NSString stringWithFormat:@"%@.%@.%@",[agentVer objectForKey:@"major"],[agentVer objectForKey:@"minor"],[agentVer objectForKey:@"bug"]];
         [agentDict setObject:cVer forKey:@"agent_version"];
         [agentDict setObject:@"false" forKey:@"needsreboot"];
-		[agentDict setObject:[self fileVaultStatus] forKey:@"fileVault"];
+		[agentDict setObject:[self fileVaultStatus] forKey:@"fileVaultStatus"];
+		[agentDict setObject:[self firmwareStatus] forKey:@"firmwareStatus"];
         
         if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
             [agentDict setObject:@"true" forKey:@"needsreboot"];
@@ -143,7 +144,37 @@
 		NSString *string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
 		
 		NSLog (@"%@", string); // FileVault is Off/On.
-		return string;
+		return [string trim];
+	}
+}
+
+- (NSString *)firmwareStatus
+{
+	@autoreleasepool
+	{
+		if (NSAppKitVersionNumber <= NSAppKitVersionNumber10_10)
+		{
+			// We are not running on Yosemite
+			return @"Password Enabled: OS Not Supported";
+			
+		} else {
+			
+			NSTask *task = [[NSTask alloc] init];
+			[task setLaunchPath:@"/usr/sbin/firmwarepasswd"];
+			[task setArguments:[NSArray arrayWithObjects:@"-check", nil]];
+			
+			NSPipe *pipe = [NSPipe pipe];
+			[task setStandardOutput: pipe];
+			
+			NSFileHandle *file = [pipe fileHandleForReading];
+			[task launch];
+			
+			NSData *data = [file readDataToEndOfFile];
+			NSString *string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+			
+			NSLog (@"%@", string); // FileVault is Off/On.
+			return [string trim];
+		}
 	}
 }
 

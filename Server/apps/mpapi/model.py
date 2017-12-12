@@ -225,6 +225,7 @@ class MpClient(CommonBase):
 	agent_build     = Column(String(10), server_default='0', info='Agent Build', doc='4')
 	client_version  = Column(String(20), server_default='NA', info='Client Ver', doc='5')
 	fileVaultStatus = Column(String(255), nullable=True, server_default='NA', info='FileVault Status', doc='13')
+	firmwareStatus  = Column(String(255), nullable=True, server_default='NA', info='Firmware Status', doc='14')
 
 # mp_clients_plist
 class MpClientPlist(CommonBase):
