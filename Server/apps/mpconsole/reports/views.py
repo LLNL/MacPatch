@@ -18,8 +18,8 @@ from .. import db
 @login_required
 def new():
 	inv_tables = []
-	inv_tables.append('mp_clients_plist')
-	inv_tables.append('mp_clients')
+	inv_tables.append(['mp_clients_plist',0])
+	inv_tables.append(['mp_clients',0])
 
 	sql_tables = '''
 		Select DISTINCT TABLE_NAME
@@ -28,17 +28,28 @@ def new():
 		AND TABLE_SCHEMA='MacPatchDB3';'''
 	result = db.engine.execute(sql_tables)
 	for row in result:
-		inv_tables.append(str(row[0]))
+		inv_tables.append([str(row[0]),0])
 
-	return render_template('reports/new_report.html', tables=inv_tables, data={}, columns={})
+	return render_template('reports/new_report.html', tables=inv_tables, data={}, columns={}, selTables=[], selColumns=[])
 
 # This is a UI Request
 @reports.route('/edit/<id>')
 @login_required
 def editReport(id):
+
+	_selTables = []
+	_selColumns = []
+	_selQuery = ""
+	qInv = InvReports.query.filter(InvReports.rid == id).first()
+	if qInv is not None:
+		_selTables = qInv.rtable.split(",")
+		_selColumns = qInv.rcolumns.split(",")
+		_selQuery = qInv.rquery
+
+	raw_tables = []
 	inv_tables = []
-	inv_tables.append('mp_clients_plist')
-	inv_tables.append('mp_clients')
+	raw_tables.append('mp_clients_plist')
+	raw_tables.append('mp_clients')
 
 	sql_tables = '''
 		Select DISTINCT TABLE_NAME
@@ -47,9 +58,20 @@ def editReport(id):
 		AND TABLE_SCHEMA='MacPatchDB3';'''
 	result = db.engine.execute(sql_tables)
 	for row in result:
-		inv_tables.append(str(row[0]))
+		_tbl = str(row[0])
+		raw_tables.append(_tbl)
 
-	return render_template('reports/new_report.html', tables=inv_tables, data={}, columns={}, filter={})
+	for table in raw_tables:
+		_tbl = [table,0]
+		for t in _selTables:
+			if t == table:
+				_tbl = [table,1]
+				break
+
+		inv_tables.append(_tbl)
+
+	return render_template('reports/new_report.html', tables=inv_tables, data={}, columns={}, filter={},
+							selTables=_selTables, selColumns=_selColumns, selQuery=_selQuery)
 
 ''' AJAX Method '''
 @reports.route('/list')

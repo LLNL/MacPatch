@@ -2,7 +2,7 @@
 
 {% block styles %}
 	{{ super() }}
-    <!-- Bootstrap Core CSS -->
+	<!-- Bootstrap Core CSS -->
 		<link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 		<!-- Custom CSS -->
 		<link href="{{ url_for('static', filename='bower_components/sb-admin-2/css/sb-admin-2.css') }}" rel="stylesheet">
@@ -73,13 +73,12 @@
 						<td>
 							<select name="tables" size="14" multiple="no" style="min-width:320px;" id='tables'>
 								{% for table in tables %}
-									<option>{{table}}</option>
+									<option {% if table[1] == 1 %}selected{% endif %}>{{table[0]}}</option>
 								{% endfor %}
 							</select>
 						</td>
 						<td>
-							<select name="tables" size="14" multiple="yes" style="min-width:320px;" id='columns'>
-							</select>
+							<select name="tables" size="14" multiple="yes" style="min-width:320px;" id='columns'></select>
 						</td>
 					</tr>
 					<tr>
@@ -118,7 +117,7 @@
 			<strong>NOTE:</strong> Queries limied to only 10 records.
 		</div>
 		<div id="preview">
-			<table id="table" data-toolbar="#toolbar" class="table table-condensed" style="width:auto"></table>
+			<table id="table" data-toolbar="#toolbar" class="table table-condensed" style="width:auto;"></table>
 		</div>
 	</div>
 </div>
@@ -164,6 +163,49 @@
 		var selected_table = "";
 		var selected_colums = "";
 		var table_filters = "";
+
+		// Check to see if we need to get columns
+		$('#tables option').each(function()
+		{
+			if($(this).is(':selected'))
+			{
+				selected_table = this.value;
+				var cols = {{ selColumns|tojson }};
+				_url = "/reports/table/fields/"+this.value;
+				$.get(_url, function(data, status) {
+					var jData = $.parseJSON(data);
+					table_filters = jData.data;
+					console.log("***");
+					console.log(table_filters);
+					// Populate Columns
+					$('#columns').empty();
+					$('#columns').append($('<option></option>').val("*").html("*"));
+					$.each(jData.data, function(i, p) {
+						var _selected = false;
+						for (var i in cols) {
+							if (cols[i].trim() == p.id) {
+								_selected = true;
+								break;
+							}
+						}
+						if (_selected) {
+							$('#columns').append($('<option selected></option>').val(p.id).html(p.id));
+						} else {
+							$('#columns').append($('<option></option>').val(p.id).html(p.id));
+						}
+					});
+
+					if (cols.length >= 1) {
+						$('#queryButtons').show();
+						{% if selQuery %};
+							setupQueryBuilder(table_filters, '');
+							$('#builder').queryBuilder('setRulesFromSQL', "{{selQuery|safe}}");
+							$('#btn-preview-filter').show();
+						{% endif %}
+					}
+				});
+			}
+		});
 
 		$('#tables').on('change', function()
 		{
@@ -317,12 +359,12 @@
 		$('#builder').queryBuilder(
 		{
 			plugins: [
-
 				'not-group',
 				'sortable'
 			],
 			filters: filters
 		});
 	}
+
 	</script>
 {% endblock %}

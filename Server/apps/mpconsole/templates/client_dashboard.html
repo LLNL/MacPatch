@@ -32,8 +32,35 @@
 
 <body>
 	{% block bodyPanel %}
-
 	<div class="span12 pagination-centered">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="container">
+							<div class="row">
+								<div class="col-sm-4" style="font-size:small;"><b>Client ID:</b> {{cData.cuuid}}</div>
+								<div class="col-sm-4" style="font-size:small;"><b>IP Address:</b> {{cData.ipaddr}}</div>
+								<div class="col-sm-4" style="font-size:small;"><b>Filevault:</b> {{cData.fileVaultStatus}}</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-4" style="font-size:small;"><b>OS Version:</b> {{cData.osver}}</div>
+								<div class="col-sm-4" style="font-size:small;"><b>MAC Address:</b> {{cData.macaddr}}</div>
+								<div class="col-sm-4" style="font-size:small;"><b>Firmware:</b> {{cData.firmwareStatus}}</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-4" style="font-size:small;"><b>Current User:</b> {{cData.consoleuser}}</div>
+								<div class="col-sm-4" style="font-size:small;"><b>Serial No:</b> {{cData.serialno}}</div>
+								<div class="col-sm-4" style="font-size:small;"><b>Reboot Needed:</b> {{cData.needsreboot}}</div>
+							</div>
+							<div class="row">
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-sm-6">
 				<div class="panel panel-default">
@@ -83,7 +110,7 @@
 					</div>
 					<!-- /.panel-heading -->
 					<div class="panel-body">
-                        <table id="invTable" class="table table-striped table-condensed table-bordered table-hover" data-show-export="true" style="width:auto"></table>
+						<table id="invTable" class="table table-striped table-condensed table-bordered table-hover" data-show-export="true" style="width:auto"></table>
 					</div>
 				</div>
 			</div>
