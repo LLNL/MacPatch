@@ -68,9 +68,12 @@
     NSDictionary *result = nil;
     MPHTTPRequest *req;
     MPWSResult *wsresult;
+	
+	NSString *encodedUrl = [urlPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	logit(lcl_vDebug,@"Encoded URL Path: %@",encodedUrl);
     
     req = [[MPHTTPRequest alloc] init];
-    wsresult = [req runSyncGET:urlPath];
+	wsresult = [req runSyncGET:encodedUrl];
     
     if (wsresult.statusCode >= 200 && wsresult.statusCode <= 299) {
         logit(lcl_vDebug,@"Get Data from web service (%@) returned true.",urlPath);
@@ -100,9 +103,12 @@
 {
     MPHTTPRequest *req;
     MPWSResult *result;
-    
+	
+	NSString *encodedUrl = [urlPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    logit(lcl_vDebug,@"Encoded URL Path: %@",encodedUrl);
+	
     req = [[MPHTTPRequest alloc] init];
-    result = [req runSyncPOST:urlPath body:data];
+    result = [req runSyncPOST:encodedUrl body:data];
     
     if (result.statusCode >= 200 && result.statusCode <= 299) {
         logit(lcl_vDebug,@"Data post to web service (%@), returned true.", urlPath);

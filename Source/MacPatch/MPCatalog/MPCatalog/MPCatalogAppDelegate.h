@@ -84,6 +84,7 @@
 @property (nonatomic, strong) IBOutlet NSToolbarItem		*refreshButton;
 @property (nonatomic, strong) IBOutlet NSToolbarItem		*infoButton;
 @property (nonatomic, strong) IBOutlet NSPopUpButton		*swDistGroupsButton;
+@property (nonatomic, strong) IBOutlet NSPopUpButton		*swGroupsPopupButton;
 @property (nonatomic, strong)          NSOperationQueue     *queue;
 @property (nonatomic, strong)          NSMutableArray       *selectedItems;
 @property (nonatomic, strong)          NSArray              *swDistGroupsArray;

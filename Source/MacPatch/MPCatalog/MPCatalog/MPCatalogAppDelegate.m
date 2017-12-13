@@ -282,6 +282,7 @@
 @synthesize refreshButton;
 @synthesize infoButton;
 @synthesize swDistGroupsButton;
+@synthesize swGroupsPopupButton;
 @synthesize selectedItems;
 @synthesize swDistGroupsArray;
 
@@ -302,6 +303,10 @@
 {
 	// Center the Window
 	[window center];
+	[self loadInitialContent];
+	[swDistGroupsButton addItemWithTitle:@"Bob"];
+	[swDistGroupsButton display];
+	[swDistGroupsButton setEnabled:YES];
 }
 
 - (void)awakeFromNib
@@ -363,11 +368,7 @@
         [[mp_SOFTWARE_DATA_DIR URLByAppendingPathComponent:@"sw"] setResourceValue:[NSNumber numberWithBool:YES] forKey:NSURLIsHiddenKey error:NULL];
     }
     
-    window.title = [NSString stringWithFormat:@"MP - Software Catalog (%@)",[self.defaults objectForKey:@"SWDistGroup"]];
-    
     [progressBar setUsesThreadedAnimation:YES];
-    [self performSelectorInBackground:@selector(downloadSoftwareContent) withObject:nil];
-    
     [installButton setEnabled:NO];
     [removeButton  setEnabled:NO];
     [cancelButton  setEnabled:NO];
@@ -379,9 +380,53 @@
     logit(lcl_vInfo,@"Start");
     if ([d boolForKey:@"enableDebugLogging"])
         [self setLoggingState:[d boolForKey:@"enableDebugLogging"]];
-    
-    [self performSelectorInBackground:@selector(populateSoftwareGroupsPopupButton) withObject:nil];
+	
     [self.window display];
+}
+
+- (void)loadInitialContent
+{
+	[swDistGroupsButton removeAllItems];
+	
+	NSError *error = nil;
+	NSArray *catalogs = [NSArray array];
+	MPRESTfull *rest = [[MPRESTfull alloc] init];
+	catalogs = [rest getSoftwareCatalogs:&error];
+	
+	if (error) {
+		logit(lcl_vError,@"%@",error.localizedDescription);
+		[swDistGroupsButton addItemWithTitle:settings.agent.swDistGroup];
+		return;
+	}
+	
+	if ([catalogs count] > 0)
+	{
+		[self setSwDistGroupsArray:catalogs];
+		
+		NSMutableSet *titles = [NSMutableSet new];
+		[self setSwDistGroupsArray:catalogs];
+		for (NSDictionary *n in catalogs) {
+			[titles addObject:n[@"Name"]];
+		}
+		
+		NSArray *sorted = [[titles allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+		[swDistGroupsButton addItemsWithTitles:sorted];
+		
+		if (settings.agent.swDistGroup != nil) {
+			[swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:settings.agent.swDistGroup]];
+		} else {
+			[swDistGroupsButton selectItemAtIndex:0];
+		}
+		
+	} else {
+		[swDistGroupsButton addItemWithTitle:settings.agent.swDistGroup];
+	}
+	
+	[swDistGroupsButton display];
+	// Set title
+	window.title = [NSString stringWithFormat:@"MP - Software Catalog (%@)",[[swDistGroupsButton selectedItem] title]];
+	
+	[self performSelectorInBackground:@selector(downloadSoftwareContent) withObject:nil];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
@@ -481,9 +526,7 @@
 {
     @autoreleasepool
     {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [swDistGroupsButton removeAllItems];
-        });
+		[swDistGroupsButton removeAllItems];
         
         NSError *error = nil;
         NSArray *catalogs = [NSArray array];
@@ -499,16 +542,20 @@
         
         if ([catalogs count] > 0)
         {
+			NSMutableSet *titles = [NSMutableSet new];
             [self setSwDistGroupsArray:catalogs];
             for (NSDictionary *n in catalogs) {
-                [swDistGroupsButton addItemWithTitle:n[@"Name"]];
+				[titles addObject:n[@"Name"]];
+				//[swDistGroupsButton addItemWithTitle:n[@"Name"]];
             }
-            [swDistGroupsButton selectItemAtIndex:[[swDistGroupsButton itemTitles] indexOfObject:settings.agent.swDistGroup]];
+			
+			NSArray *sorted = [[titles allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+			[swDistGroupsButton addItemsWithTitles:sorted];
         } else {
             [swDistGroupsButton addItemWithTitle:settings.agent.swDistGroup];
         }
-        
-        [swDistGroupsButton display];
+		
+		[swDistGroupsButton display];
     }
 }
 
@@ -1561,7 +1608,11 @@
         [arrayController removeObjects:[arrayController arrangedObjects]];
         if (_SoftwareArray && [_SoftwareArray count] > 0)
         {
-            [arrayController addObjects:_SoftwareArray];
+			NSSortDescriptor *sortBy;
+			sortBy = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+			NSArray *sortDescriptors = [NSArray arrayWithObject:sortBy];
+			NSArray *sortedArray = [_SoftwareArray sortedArrayUsingDescriptors:sortDescriptors];
+            [arrayController addObjects:sortedArray];
         }
     });
     

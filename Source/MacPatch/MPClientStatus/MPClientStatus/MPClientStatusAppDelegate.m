@@ -223,7 +223,6 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
     
     NSMenu *menu = [timer userInfo];
     
-    
     if (!menuItem15 && !menuItem16) {
         // View Batch Jobs...
         //menuItem15 = [menu itemAtIndex:15];
@@ -235,7 +234,6 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
     if (!isShowing && optionKeyIsPressed) {
         
         NSInteger menuCount = [menu numberOfItems];
-        NSLog(@"menu COunt: %d",(int)menuCount);
         
         //[menu insertItem:menuItem15 atIndex:([menu numberOfItems] - 2)];
         [menu addItem:menuItem15];

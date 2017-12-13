@@ -475,7 +475,7 @@
                                     completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
                                         
                                         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-                                        NSLog(@"response status code: %ld", (long)[httpResponse statusCode]);
+										//NSLog(@"response status code: %ld", (long)[httpResponse statusCode]);
                                         
                                         if (error)
                                         {
@@ -515,7 +515,7 @@
                                                     qlinfo(@"cperror, %@", cperror.localizedDescription);
                                                 }
                                                 
-                                                NSLog(fileCopied ? @"Yes" : @"No");
+												//NSLog(fileCopied ? @"Yes" : @"No");
                                             }
                                         }
 
