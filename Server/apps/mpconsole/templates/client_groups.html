@@ -84,17 +84,13 @@ Client Groups
 				{% for col in columns %}
 					{{col.name}}: '{{g[col.name]}}',
 				{% endfor %}
-
+					'count': 0,
 				{% if counts|length >= 1 %}
 					{% for count in counts %}
 						{% if count['group_id'] == g['group_id'] %}
 							'count': {{count['total']}},
-						{% else %}
-							'count': 0,
 						{% endif %}
 					{% endfor %}
-				{% else %}
-						'count': 0,
 				{% endif %}
 			},
 			{% endfor %}
