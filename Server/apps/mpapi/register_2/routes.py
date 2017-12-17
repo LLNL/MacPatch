@@ -36,7 +36,7 @@ class Registration(MPResource):
 		])
 	'''
 	def post(self, client_id, regKey="NA"):
-		print client_id
+		# print client_id
 		'''
 			Content Dict: cKey, CPubKeyPem, CPubKeyDer, ClientHash
 			cKey = Client Auth Key, used for signatures
@@ -47,9 +47,9 @@ class Registration(MPResource):
 			HostName = Agent Host Name (Used For Parking)
 			SerialNo = System Serial No (Used For Parking)
 		'''
-		print('[Registration][Post]: Register client (%s) succeed.' % (client_id))
+		# print('[Registration][Post]: Register client (%s) succeed.' % (client_id))
 		content = request.get_json(silent=True)
-		print content
+		# print content
 
 		if all(key in content for key in ("cKey", "CPubKeyPem", "ClientHash", "HostName", "SerialNo", "CheckIn")):
 

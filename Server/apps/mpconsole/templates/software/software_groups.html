@@ -32,129 +32,109 @@
 	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-table-editable.js') }}"></script>
 	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-editable.js') }}"></script>
 	<script src="{{ url_for('static', filename='bower_components/col-resizable/colResizable-1.6.min.js') }}"></script>
-	<script>
+	<script type="text/javascript">
 
-	function operateEditFormatter(value, row, index)
-	{
-		var htmlData = [];
-		htmlData.push('<table>');
-		htmlData.push('<tr><td>');
-		if ( '{{session.role[0]}}' == 1 ) {
-			htmlData.push('<a class="tasks" href="javascript:void(0)" title="Add/Remove Software Tasks">');
-			htmlData.push('<i class="glyphicon glyphicon-th-list" aria-hidden="true"></i></a>');
-		} else {
-			htmlData.push('<a class="tasks" href="javascript:void(0)" title="View Software Tasks">');
-			htmlData.push('<i class="fa fa-search" aria-hidden="true"></i></a>');
-		}
-		htmlData.push('</td>');
-		if ( '{{session.role[0]}}' == 1 ) {
-			htmlData.push('<td><a class="edit" href="javascript:void(0)" title="Edit Software Group Info">');
-			htmlData.push('<i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>');
-			htmlData.push('</a></td>');
-		}
-		if ( '{{session.role[0]}}' == 1 ) {
-			htmlData.push('<td><a class="remove" href="javascript:void(0)" title="Remove Software Group">');
-			htmlData.push('<i class="fa fa-trash-o"></i></a></td>');
-		}
-		htmlData.push('</tr></table>');
-		return htmlData.join('');
-	}
-	function operateFilterFormatter(value, row, index)
-	{
-		return [
-			'<a class="filter" href="javascript:void(0)" title="Filter">',
-			'<i class="fa fa-filter fa-lg" aria-hidden="true"></i>',
-			'</a>&nbsp;'
-		].join('');
-	}
-	window.operateFilterEvents = {
-		'click .filter': function (e, value, row, index)
+		function operateEditFormatter(value, row, index)
 		{
-			var _url = "/software/group/filters/" + row['gid'];
-			var innerHTML = '<iframe src="' + _url + '" id="modaliFrame"' +
-			 ' frameborder="0" allowtransparency="true"' +
-			 ' style="width: 98%; height: 98%; position: absolute"></iframe>';
-
-			/ * Show Modal Window */
-			$('#modaliFrame').remove();
-			$('#modalTitle').html('Software Group Filters - '+row['gName']);
-			$('#modalSaveButton').remove();
-			$('#modalCancelButton').show();
-			$('#modalBody').css({'height':'76vh'});
-			$('#modalDialog').addClass("modal-wide");
-			$('#modalBody').html(innerHTML);
-			$('#modalDialog').modal('show');
+			var htmlData = [];
+			htmlData.push('<table>');
+			htmlData.push('<tr><td>');
+			if ( '{{session.role[0]}}' == 1 ) {
+				htmlData.push('<a class="tasks" href="javascript:void(0)" title="Add/Remove Software Tasks">');
+				htmlData.push('<i class="glyphicon glyphicon-th-list" aria-hidden="true"></i></a>');
+			} else {
+				htmlData.push('<a class="tasks" href="javascript:void(0)" title="View Software Tasks">');
+				htmlData.push('<i class="fa fa-search" aria-hidden="true"></i></a>');
+			}
+			htmlData.push('</td>');
+			if ( '{{session.role[0]}}' == 1 ) {
+				htmlData.push('<td><a class="edit" href="javascript:void(0)" title="Edit Software Group Info">');
+				htmlData.push('<i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>');
+				htmlData.push('</a></td>');
+			}
+			if ( '{{session.role[0]}}' == 1 ) {
+				htmlData.push('<td><a class="remove" href="javascript:void(0)" title="Remove Software Group">');
+				htmlData.push('<i class="fa fa-trash-o"></i></a></td>');
+			}
+			htmlData.push('</tr></table>');
+			return htmlData.join('');
 		}
-	}
 
-	window.operateEvents = {
-		'click .tasks': function (e, value, row, index)
+		function operateFilterFormatter(value, row, index)
 		{
-			resetModalWindow();
+			return [
+				'<a class="swfilter" href="javascript:void(0)" title="Software Group Filter">',
+				'<i class="fa fa-filter fa-lg" aria-hidden="true"></i></a>&nbsp;'
+			].join('');
+		}
 
-			var _url = "/software/group/" + row['gid'] + "/tasks";
-			var innerHTML = '<div id="modalLoading">' +
-			 ' <img id="overlayImg" src="{{ url_for("static", filename="img/35.svg")}}" style="display:block;margin:auto;padding-top:10%;" />' +
-			 ' <h1 style="text-align: center; color: white; ">Loading...</h1>' +
-			 '</div>' +
-			 ' <iframe src="' + _url + '" id="modaliFrame"' +
-			 ' frameborder="0" allowtransparency="true"' +
-			 ' style="width: 98%; height: 98%; position: absolute"></iframe>';
-
-			$('#modalTitle').html('Add/Remove Software Tasks : ' + row['gName']);
-			$('#modalFooter').hide();
-			$('#modalBody').html(innerHTML);
-			$('#modalBody').css({'height':'80vh'});
-			$('#modalDialog').addClass("modal-wide");
-			$('#modalDialog').modal('show');
-		},
-		'click .edit': function (e, value, row, index)
-		{
-			$.get( "/software/group/edit/" + row['gid']).done(function(data)
+		window.operateEvents = {
+			'click .tasks': function (e, value, row, index)
 			{
 				resetModalWindow();
 
-				/* New Content */
-				var innerHTML = '<div id="myContent">' + data + '</div>';
+				var _url = "/software/group/" + row['gid'] + "/tasks";
+				var innerHTML = '<div id="modalLoading">' +
+				 ' <img id="overlayImg" src="{{ url_for("static", filename="img/35.svg")}}" style="display:block;margin:auto;padding-top:10%;" />' +
+				 ' <h1 style="text-align: center; color: white; ">Loading...</h1>' +
+				 '</div>' +
+				 ' <iframe src="' + _url + '" id="modaliFrame"' +
+				 ' frameborder="0" allowtransparency="true"' +
+				 ' style="width: 98%; height: 98%; position: absolute"></iframe>';
 
-				/ * Show Modal Window */
-				$('#modaliFrame').remove();
-				$('#modalTitle').html('Edit Software Group Info');
-				$('#modalCancelButton').show();
-				$('#modalDialog').removeClass("modal-wide");
-				$('#modalBody').css({'height':'200px'});
+				$('#modalTitle').html('Add/Remove Software Tasks : ' + row['gName']);
+				$('#modalFooter').hide();
 				$('#modalBody').html(innerHTML);
+				$('#modalBody').css({'height':'80vh'});
+				$('#modalDialog').addClass("modal-wide");
 				$('#modalDialog').modal('show');
-			});
-		},
-		'click .remove': function (e, value, row, index)
-		{
-			console.log(row);
-			if (confirm('Are you sure to delete this software group (' + row['gName'] +') ?'))
+			},
+			'click .edit': function (e, value, row, index)
 			{
-				var _url = "/software/group/delete/" + row['gid'];
-				$.ajax({
-					url: _url,
-					type: 'DELETE',
-					cache: false,
-					error: function (request, status, error)
-					{
-						jsonValue = jQuery.parseJSON( request.responseText );
-						alert(jsonValue.errormsg);
-					},
-					success: function () {
-						$('#table').bootstrapTable('remove', {
-							field: 'gid',
-							values: [row.gid]
-						});
-						alert("Group removed successfully.");
-					}
-				});
-			}
-		},
-	};
+				$.get( "/software/group/edit/" + row['gid']).done(function(data)
+				{
+					resetModalWindow();
 
-	var _cols = [{
+					/* New Content */
+					var innerHTML = '<div id="myContent">' + data + '</div>';
+
+					/ * Show Modal Window */
+					$('#modaliFrame').remove();
+					$('#modalTitle').html('Edit Software Group Info');
+					$('#modalCancelButton').show();
+					$('#modalDialog').removeClass("modal-wide");
+					$('#modalBody').css({'height':'200px'});
+					$('#modalBody').html(innerHTML);
+					$('#modalDialog').modal('show');
+				});
+			},
+			'click .remove': function (e, value, row, index)
+			{
+				if (confirm('Are you sure to delete this software group (' + row['gName'] +') ?'))
+				{
+					var _url = "/software/group/delete/" + row['gid'];
+					$.ajax({
+						url: _url,
+						type: 'DELETE',
+						cache: false,
+						error: function (request, status, error)
+						{
+							jsonValue = jQuery.parseJSON( request.responseText );
+							alert(jsonValue.errormsg);
+						},
+						success: function () {
+							$('#table').bootstrapTable('remove', {
+								field: 'gid',
+								values: [row.gid]
+							});
+							alert("Group removed successfully.");
+						}
+					});
+				}
+			}
+		}
+
+		var _cols = [{
 					field: 'operate',
 					title: '',
 					align: 'center',
@@ -166,16 +146,15 @@
 					field: 'filter',
 					title: 'Filter',
 					align: 'center',
-					events: operateFilterEvents,
 					formatter: operateFilterFormatter,
 					width: '80',
 				}];
 
-	_cols.push.apply(_cols, {{data["columns"] | tojson}});
-	var _rows = {{data["rows"] | tojson}};
+		_cols.push.apply(_cols, {{data["columns"] | tojson}});
+		var _rows = {{data["rows"] | tojson}};
 
-	$( document ).ready(function()
-	{
+		$( document ).ready(function()
+		{
 			$('#table').bootstrapTable(
 			{
 				striped: true,
@@ -197,26 +176,45 @@
 					detailClose: 'glyphicon glyphicon-minus-sign'
 				},
 				columns: _cols,
-				data: _rows
-			});
-	});
-
-	var $table = $('#table'), $addButton = $('#addButton');
-	$(function ()
-	{
-		$addButton.click(function ()
-		{
-			$.get( "/software/group/add/" + guid() ).done(function(data)
-			{
-				resetModalWindow();
-				$('#modalTitle').html("Add Software Group");
-				$('#modalBody').html(data);
-				$('#modalBody').css({'height':'200px'});
-				$('#modalDialog').modal('show');
+				data: _rows,
 			});
 		});
-	});
 
+		$("table").on('click-cell.bs.table', function(event, field, value, row, $element)
+		{
+			if (field == 'filter')
+			{
+				var _url = "/software/group/filters/" + row.gid;
+				var innerHTML = '<iframe src="' + _url + '" id="modaliFrame"' +
+				 ' frameborder="0" allowtransparency="true"' +
+				 ' style="width: 98%; height: 98%; position: absolute"></iframe>';
+				/* Show Modal Window */
+				$('#modaliFrame').remove();
+				$('#modalTitle').html('Software Group Filters - '+row['gName']);
+				$('#modalSaveButton').remove();
+				$('#modalCancelButton').show();
+				$('#modalBody').css({'height':'76vh'});
+				$('#modalDialog').addClass("modal-wide");
+				$('#modalBody').html(innerHTML);
+				$('#modalDialog').modal('show');
+			}
+	  });
+
+		var $table = $('#table'), $addButton = $('#addButton');
+		$(function ()
+		{
+			$addButton.click(function ()
+			{
+				$.get( "/software/group/add/" + guid() ).done(function(data)
+				{
+					resetModalWindow();
+					$('#modalTitle').html("Add Software Group");
+					$('#modalBody').html(data);
+					$('#modalBody').css({'height':'200px'});
+					$('#modalDialog').modal('show');
+				});
+			});
+		});
 	</script>
 
 	<script type="text/javascript">

@@ -286,7 +286,7 @@ def saveGroupFilter(group_id):
 			filter = MpSoftwareGroupFilters.query.filter(MpSoftwareGroupFilters.rid == _form['rid']).first()
 
 	for key, value in _form.iteritems():
-		if key != 'rid' or key != 'gid':
+		if key not in ['rid', 'gid']:
 			setattr(filter, key, value)
 
 	# Add New Record
@@ -294,7 +294,6 @@ def saveGroupFilter(group_id):
 		db.session.add(filter)
 
 	db.session.commit()
-
 	return json.dumps({'error':0}), 201
 
 '''

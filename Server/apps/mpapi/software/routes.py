@@ -70,7 +70,7 @@ class SoftwareTasksForGroup(MPResource):
 
 					for v, ver in enumerate(_os_vers.split(',')):
 						if LooseVersion(ver) >= LooseVersion(osver):
-							print "%s >= %s" % (ver, osver)
+							# print "%s >= %s" % (ver, osver)
 							_tasks_new.append(task)
 							break
 

@@ -777,7 +777,6 @@ class GenAgentConfig():
 		pass
 
 	def config(self):
-		print "hello"
 
 		# Get Default Config Info, need default agent config ID
 		_defaultConfigID = AgentConfig.query.filter(AgentConfig.isDefault == 1).first()

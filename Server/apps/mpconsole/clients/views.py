@@ -618,7 +618,6 @@ def groupTasks(group_id):
 
 	if add_tasks:
 		# Add Missing Tasks
-		print "Add Tasks"
 		addMissingTasks(group_id, file_tasks['mpTasks'], file_tasks['version'])
 
 	tasks = MpClientTasks.query.filter(MpClientTasks.group_id == group_id).all()
