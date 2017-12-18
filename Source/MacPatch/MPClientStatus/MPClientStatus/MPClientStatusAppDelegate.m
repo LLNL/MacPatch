@@ -413,6 +413,35 @@ done:
     [self cleanup];
 }
 
+- (NSDictionary *)getAgentCheckInDataViaProxy
+{
+	NSDictionary *result = nil;
+	NSError *error = nil;
+	if (!proxy) {
+		[self connect:&error];
+		if (error) {
+			logit(lcl_vError,@"%@",error.localizedDescription);
+			goto done;
+		}
+		if (!proxy) {
+			logit(lcl_vError,@"Could not create proxy object.");
+			goto done;
+		}
+	}
+	
+	@try
+	{
+		result = [proxy clientCheckInData];
+	}
+	@catch (NSException *e) {
+		logit(lcl_vError,@"Colect client checkin data, %@", e);
+	}
+	
+done:
+	[self cleanup];
+	return result;
+}
+
 #pragma mark -
 #pragma mark Client Info
 - (IBAction)getMPClientVersionInfo:(id)sender
@@ -509,8 +538,9 @@ done:
 // Performs a client checkin
 - (BOOL)performClientCheckInMethod
 {
-    MPClientInfo *ci = [[MPClientInfo alloc] init];
-    NSDictionary *agentData = [ci agentData];
+	// MPClientInfo *ci = [[MPClientInfo alloc] init];
+	// NSDictionary *agentData = [ci agentData];
+	NSDictionary *agentData = [self getAgentCheckInDataViaProxy];
     if (agentData) {
         NSDictionary *revsDict;
         NSError *wsError = nil;

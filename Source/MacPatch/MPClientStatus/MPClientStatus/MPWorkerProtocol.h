@@ -81,6 +81,9 @@
 // Inventory Collection
 - (int)collectInventoryData;
 
+// Collect Client Checkin Data
+- (NSDictionary *)clientCheckInData;
+
 // Misc
 - (NSString *)createAppSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask directoryAttributes:(in bycopy NSDictionary *)attributes;
 

@@ -170,8 +170,15 @@
 			
 			NSData *data = [file readDataToEndOfFile];
 			NSString *string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-
-			return [string trim];
+			logit(lcl_vDebug, @"[firmwarepasswd][check]: %@",string);
+			
+			if ([[string trim].lowercaseString isEqualToString:[@"Password Enabled: No" lowercaseString]]) {
+				return [string trim];
+			} else if ([[string trim].lowercaseString isEqualToString:[@"Password Enabled: Yes" lowercaseString]]) {
+				return [string trim];
+			} else {
+				return @"Error: Collection failed.";
+			}
 		}
 	}
 }

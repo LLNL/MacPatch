@@ -1673,6 +1673,14 @@ done:
     return taskResult;
 }
 
+// Proxy Method
+- (NSDictionary *)clientCheckInData
+{
+	MPClientInfo *ci = [[MPClientInfo alloc] init];
+	NSDictionary *agentData = [ci agentData];
+	return agentData;
+}
+
 #pragma mark AuthPlugin
 - (void)logoutInstallCompletion:(int)taskAction
 {
