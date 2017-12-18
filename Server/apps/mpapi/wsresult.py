@@ -1,8 +1,5 @@
 import json
-import hashlib
-from M2Crypto import RSA, util
-
-from . model import MpSiteKeys
+from . mputil import *
 
 class WSResult():
 
@@ -34,21 +31,9 @@ class WSResult():
 
 	def genSignature(self):
 		if self.data['data'] is not None:
-			return self.signResultData(self.data['data'])
+			return signData(json.dumps(self.data['data']))
 		else:
 			return "ERRDATA"
-
-	def signResultData(self, data):
-		qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
-		if qKeys is not None:
-			message = json.dumps(data)
-			sha1_hash = hashlib.sha1(message).digest()
-			rsa = RSA.load_key_string(qKeys.priKey.encode('utf-8'), callback=util.no_passphrase_callback)
-			signature = rsa.private_encrypt(sha1_hash, RSA.pkcs1_padding).encode('hex')
-
-			return signature
-		else:
-			return None
 
 class WSData():
 

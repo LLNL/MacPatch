@@ -11,9 +11,10 @@ import json
 import os.path
 from . mplogger import log_Debug, log_Info, log_Error
 
-import json
-import hashlib
-from M2Crypto import RSA, util
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA256, SHA
+from base64 import b64encode, b64decode, encodestring
 
 from . import db
 from . model import MPAgentRegistration, MpClient, AdmGroupUsers, AdmUsers, AdmUsersInfo, MpSiteKeys
@@ -67,14 +68,35 @@ def return_data_for_server_key(key):
 	else:
 		return _config
 
-def signResultData(data):
+# ----------------------------------------------------------------------------
+'''
+	Sign Message
+'''
+
+def signData(data):
 	qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
 	if qKeys is not None:
-		message = json.dumps(data)
-		sha1_hash = hashlib.sha1(message).digest()
-		rsa = RSA.load_key_string(qKeys.priKey.encode('utf-8'), callback=util.no_passphrase_callback)
-		signature = rsa.private_encrypt(sha1_hash, RSA.pkcs1_padding).encode('hex')
+		# Using SHA1 padding
+		rsakey = RSA.importKey(qKeys.priKey)
+		signer = PKCS1_v1_5.new(rsakey)
+		digest = SHA.new()
 
-		return signature
+		digest.update(data)
+		sign = signer.sign(digest)
+		return b64encode(sign)
 	else:
 		return None
+
+def verifySignedData(signature, data):
+	qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
+	if qKeys is not None:
+		# Using SHA1 padding
+		rsakey = RSA.importKey(qKeys.pubKey)
+		signer = PKCS1_v1_5.new(rsakey)
+		digest = SHA.new()
+
+		digest.update(data)
+		if signer.verify(digest, b64decode(signature)):
+			return True
+
+	return False

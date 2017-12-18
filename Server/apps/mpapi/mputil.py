@@ -16,12 +16,10 @@ import hmac
 from ldap3 import Server, Connection
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 
-from M2Crypto import RSA, util
-
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA256, SHA
-from base64 import b64encode, b64decode
+from base64 import b64encode, b64decode, encodestring
 
 from . import db
 from . model import MPAgentRegistration, MpClient, AdmGroupUsers, AdmUsers, AdmUsersInfo, MpSiteKeys
@@ -425,18 +423,6 @@ def return_data_for_server_key(key):
 	Sign Message
 '''
 
-def signResultData(data):
-	qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
-	if qKeys is not None:
-		message = json.dumps(data)
-		sha1_hash = hashlib.sha1(message).digest()
-		rsa = RSA.load_key_string(qKeys.priKey.encode('utf-8'), callback=util.no_passphrase_callback)
-		signature = rsa.private_encrypt(sha1_hash, RSA.pkcs1_padding).encode('hex')
-
-		return signature
-	else:
-		return None
-
 def signData(data):
 	qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
 	if qKeys is not None:
@@ -444,9 +430,6 @@ def signData(data):
 		rsakey = RSA.importKey(qKeys.priKey)
 		signer = PKCS1_v1_5.new(rsakey)
 		digest = SHA.new()
-
-		print "------------------------------------------------------------------------------------------"
-		print data
 
 		digest.update(data)
 		sign = signer.sign(digest)

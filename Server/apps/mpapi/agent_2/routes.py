@@ -10,6 +10,7 @@ from .. mplogger import *
 from .. servers_2.routes import serverListForID, suServerListForID
 from .. agent.routes import AgentUpdates
 import plistlib
+import json
 
 parser = reqparse.RequestParser()
 
@@ -59,7 +60,7 @@ class _AgentConfigInfo(MPResource):
 			agentConfigInfo["settings"]['servers'] = self.serverRev()
 
 			if group_id != 0:
-				return {"errorno": 0, "errormsg": 'none', "result": {'type': 'AgentConfigInfo', 'data': agentConfigInfo}, 'signature': signResultData(agentConfigInfo)}, 200
+				return {"errorno": 0, "errormsg": 'none', "result": {'type': 'AgentConfigInfo', 'data': agentConfigInfo}, 'signature': signData(json.dumps(agentConfigInfo))}, 200
 			else:
 				return {"errorno": 404, "errormsg": 'Settings version or client group membersion not found.', "result": {'type': 'AgentConfigInfo', 'data': {}}}, 404
 
@@ -161,7 +162,7 @@ class _AgentConfig(MPResource):
 			agentConfig['revs'] = d_revs
 
 			if group_id != 0:
-				return {"errorno": 0, "errormsg": 'none', "result": {'type': 'AgentConfig', 'data': agentConfig}, 'signature': signResultData(agentConfig)}, 200
+				return {"errorno": 0, "errormsg": 'none', "result": {'type': 'AgentConfig', 'data': agentConfig}, 'signature': signData(json.dumps(agentConfig))}, 200
 			else:
 				return {"errorno": 404, "errormsg": 'Settings version or client group membersion not found.', "result": {'type': 'AgentConfig', 'data': {}}}, 404
 
