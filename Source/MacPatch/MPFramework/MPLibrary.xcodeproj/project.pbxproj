@@ -101,6 +101,8 @@
 		8FC1B5561E4E7894008844DF /* MPClientInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC1B5541E4E7894008844DF /* MPClientInfo.m */; };
 		8FC444171D00921900EF328C /* NSString+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC444151D00921900EF328C /* NSString+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FC444181D00921900EF328C /* NSString+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC444161D00921900EF328C /* NSString+Base64.m */; };
+		8FCF55221FE8A1F8002E829A /* NSTask+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF55201FE8A1F8002E829A /* NSTask+Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FCF55231FE8A1F8002E829A /* NSTask+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FCF55211FE8A1F8002E829A /* NSTask+Helper.m */; };
 		8FDBABDA1F7480B20025F0FF /* MPSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDBABD61F7480B20025F0FF /* MPSettings.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FDBABDB1F7480B20025F0FF /* MPSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDBABD71F7480B20025F0FF /* MPSettings.m */; };
 		8FDBABEA1F7490740025F0FF /* FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDBABDF1F7490740025F0FF /* FMDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -265,6 +267,8 @@
 		8FCB77A7140C315B00D86586 /* NSString+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Helper.m"; sourceTree = "<group>"; };
 		8FCB7ABD140D588F00D86586 /* MPLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPLog.h; sourceTree = "<group>"; };
 		8FCB7ABE140D588F00D86586 /* MPLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPLog.m; sourceTree = "<group>"; };
+		8FCF55201FE8A1F8002E829A /* NSTask+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTask+Helper.h"; sourceTree = "<group>"; };
+		8FCF55211FE8A1F8002E829A /* NSTask+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTask+Helper.m"; sourceTree = "<group>"; };
 		8FDBABD61F7480B20025F0FF /* MPSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSettings.h; sourceTree = "<group>"; };
 		8FDBABD71F7480B20025F0FF /* MPSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPSettings.m; sourceTree = "<group>"; };
 		8FDBABDF1F7490740025F0FF /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDatabase.h; path = FMDB/FMDatabase.h; sourceTree = "<group>"; };
@@ -599,6 +603,8 @@
 		8FCB77A3140C314C00D86586 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				8FCF55201FE8A1F8002E829A /* NSTask+Helper.h */,
+				8FCF55211FE8A1F8002E829A /* NSTask+Helper.m */,
 				8F4B1EBB16DD5FB400E15A9E /* NSString+Hash.h */,
 				8F4B1EBC16DD5FB400E15A9E /* NSString+Hash.m */,
 				8FCB77A6140C315B00D86586 /* NSString+Helper.h */,
@@ -798,6 +804,7 @@
 				8F0011901F8947A8009F75EC /* Agent.h in Headers */,
 				8F057FA31F95310D006C1F10 /* MPClientKey.h in Headers */,
 				8FEC938B17CBFF0F00AA9C1C /* MPCustomPatch.h in Headers */,
+				8FCF55221FE8A1F8002E829A /* NSTask+Helper.h in Headers */,
 				8FDBABF01F7490740025F0FF /* FMDatabaseQueue.h in Headers */,
 				8FDBABEE1F7490740025F0FF /* FMDatabasePool.h in Headers */,
 				8FDBABF31F7490740025F0FF /* FMResultSet.h in Headers */,
@@ -908,6 +915,7 @@
 				8F4B1DFB16DD1D6400E15A9E /* MPPatchScan.m in Sources */,
 				8F4B1DF716DD1D6400E15A9E /* MPNSTask.m in Sources */,
 				8F4B1DFC16DD1D6400E15A9E /* MPASUSCatalogs.m in Sources */,
+				8FCF55231FE8A1F8002E829A /* NSTask+Helper.m in Sources */,
 				8F4B1DFD16DD1D6400E15A9E /* MPBundle.m in Sources */,
 				8F4B1DFE16DD1D6400E15A9E /* MPFileCheck.m in Sources */,
 				8F5970BF1E9BEA3000DBBEF2 /* MPRemoteFingerprint.m in Sources */,

@@ -92,6 +92,7 @@
 #import "NSDate+Helper.h"
 #import "NSData+Base64.h"
 #import "NSString+Base64.h"
+#import "NSTask+Helper.h"
 
 // -- Models
 // Settings

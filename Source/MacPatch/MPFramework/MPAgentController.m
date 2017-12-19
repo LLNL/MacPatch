@@ -241,20 +241,25 @@
                 } else {
                     // Build Approved Patches
                     logit(lcl_vInfo,@"Building approved patch list...");
-                    
-                    for (int i=0; i<[applePatchesArray count]; i++) {
-                        for (int x=0;x < [approvedApplePatches count]; x++) {
-                            if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"name"] isEqualTo:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"]]) {
-                                logit(lcl_vInfo,@"Approved update %@",[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"]);
+					NSDictionary *_curApplePatch;
+                    for (int i=0; i < [applePatchesArray count]; i++)
+					{
+						_curApplePatch = [applePatchesArray objectAtIndex:i];
+                        for (int x=0;x < [approvedApplePatches count]; x++)
+						{
+                            if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"name"] isEqualTo:[_curApplePatch objectForKey:@"patch"]])
+							{
+                                logit(lcl_vInfo,@"Approved update %@",[_curApplePatch objectForKey:@"patch"]);
                                 logit(lcl_vDebug,@"Approved: %@",[approvedApplePatches objectAtIndex:x]);
+								
                                 tmpDict = [[NSMutableDictionary alloc] init];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"] forKey:@"patch"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"description"] forKey:@"description"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"restart"] forKey:@"restart"];
-                                [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"version"] forKey:@"version"];
+                                [tmpDict setObject:[_curApplePatch objectForKey:@"patch"] forKey:@"patch"];
+                                [tmpDict setObject:[_curApplePatch objectForKey:@"description"] forKey:@"description"];
+                                [tmpDict setObject:[_curApplePatch objectForKey:@"restart"] forKey:@"restart"];
+                                [tmpDict setObject:[_curApplePatch objectForKey:@"version"] forKey:@"version"];
                                 
-                                if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"]) {
-                                    
+                                if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"])
+								{
                                     [tmpDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"] forKey:@"hasCriteria"];
                                     if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"] boolValue] == YES) {
                                         if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] && [[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] count] > 0) {
@@ -265,6 +270,7 @@
                                         }
                                     }	
                                 }
+								
                                 [tmpDict setObject:@"Apple" forKey:@"type"];
                                 logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
                                 [approvedUpdatesArray addObject:tmpDict];

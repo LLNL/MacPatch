@@ -235,9 +235,9 @@
 				[tmpDict setObject:[self getSizeFromDescription:[tmpDict objectForKey:@"description"]] forKey:@"size"];
 				[tmpDict setObject:[self getRecommendedFromDescription:[tmpDict objectForKey:@"description"]] forKey:@"recommended"];
 				if ([[[strArr objectAtIndex:(i+1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] containsString:@"[restart]" ignoringCase:YES] == TRUE) {
-					[tmpDict setObject:@"Y" forKey:@"restart"];
+					[tmpDict setObject:@"Yes" forKey:@"restart"];
 				} else {
-					[tmpDict setObject:@"N" forKey:@"restart"];
+					[tmpDict setObject:@"No" forKey:@"restart"];
 				}
 				
 				[tmpAppleUpdates addObject:tmpDict];
@@ -434,50 +434,6 @@ done:
             *err = error;
         }
     }
-    // Error, if file does not exists, or URL is not valid
-    
-    
-    /* CEH
-    MPNetConfig *mpNetConfig = [[MPNetConfig alloc] init];
-    NSError *error = nil;
-    NSURLResponse *response;
-    
-    MPNetRequest *req;
-    NSURLRequest *urlReq;
-    NSArray *servers = [mpNetConfig servers];
-    for (MPNetServer *srv in servers)
-    {
-        qlinfo(@"Trying Server %@",srv.host);
-        req = [[MPNetRequest alloc] initWithMPServer:srv];
-        error = nil;
-        urlReq = [req buildDownloadRequest:aURL];
-        if (urlReq)
-        {
-            res = nil;
-            res = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
-            if (error) {
-                if (err != NULL) {
-                    *err = error;
-                }
-                qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
-                continue;
-            }
-            // Make any previouse error pointers nil, now that we have a valid host/connection
-            if (err != NULL) {
-                *err = nil;
-            }
-            break;
-        } else {
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
-            qlerror(@"%@",error.localizedDescription);
-            if (err != NULL) {
-                *err = error;
-            }
-            continue;
-        }
-    }
-    */
     return res;
 }
 

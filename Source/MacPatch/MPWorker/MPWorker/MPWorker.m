@@ -1049,9 +1049,9 @@ done:
 				[tmpDict setObject:[self getSizeFromDescription:[tmpDict objectForKey:@"description"]] forKey:@"size"];
 				[tmpDict setObject:[self getRecommendedFromDescription:[tmpDict objectForKey:@"description"]] forKey:@"recommended"];
 				if ([[[strArr objectAtIndex:(i+1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] containsString:@"[restart]" ignoringCase:YES] == TRUE) {
-					[tmpDict setObject:@"Y" forKey:@"restart"];
+					[tmpDict setObject:@"Yes" forKey:@"restart"];
 				} else {
-					[tmpDict setObject:@"N" forKey:@"restart"];
+					[tmpDict setObject:@"No" forKey:@"restart"];
 				}
 				
 				[tmpAppleUpdates addObject:tmpDict];

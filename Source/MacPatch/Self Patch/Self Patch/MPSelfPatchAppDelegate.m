@@ -1027,7 +1027,7 @@ done:
                 } else {
                     // Build Approved Patches
                     [self progress:@"Building approved patch list..."];
-                    
+					NSString *_rebootStr;
                     for (int i=0; i<[applePatchesArray count]; i++) {
                         for (int x=0;x < [approvedApplePatches count]; x++) {
                             if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"name"] isEqualTo:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"]]) {
@@ -1037,7 +1037,9 @@ done:
                                 [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"patch"] forKey:@"patch"];
                                 [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"description"] forKey:@"description"];
                                 [tmpDict setObject:[[applePatchesArray objectAtIndex:i] objectForKey:@"restart"] forKey:@"restart"];
-                                if ([[[[applePatchesArray objectAtIndex:i] objectForKey:@"restart"] uppercaseString] isEqualTo:@"Y"] || [[[[applePatchesArray objectAtIndex:i] objectForKey:@"restart"] uppercaseString] isEqualTo:@"YES"])
+								
+								_rebootStr = [[[applePatchesArray objectAtIndex:i] objectForKey:@"restart"] uppercaseString];
+                                if ([_rebootStr isEqualTo:@"Y"] || [_rebootStr isEqualTo:@"YES"])
                                 {
                                     [tmpDict setObject:rebootImage forKey:@"reboot"];
                                 } else {
