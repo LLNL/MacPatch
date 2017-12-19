@@ -2371,9 +2371,9 @@ done:
 {
     NSString *urlPath;
     // 1 = Apple, 2 = Third
-    if (type == 0) {
+    if (type == 1) {
         urlPath = [NSString stringWithFormat:@"/api/v1/client/patch/scan/1/%@",settings.ccuid];
-    } else if ( type == 1 ) {
+    } else if ( type == 2 ) {
         urlPath = [NSString stringWithFormat:@"/api/v1/client/patch/scan/2/%@",settings.ccuid];
     } else {
         //Err
