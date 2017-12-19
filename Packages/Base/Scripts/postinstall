@@ -211,10 +211,10 @@ fi
 # ******************************************************************
 # Install Included Profiles - With PRE prefix 	********************
 #
-if [ -d "${SRC}" ]; then
+if [ -d "${SRC}/profiles" ]; then
 	# Find all mobileconfig files not begin with pst
 	# will install pst at the end of the script
-	find "$SRC" -type f ! -name "pst*.mobileconfig" -print0 | while read -d $'\0' file
+	find "$SRC/profiles" -type f ! -name "post*.mobileconfig" -print0 | while read -d $'\0' file
 	do
 		/usr/bin/profiles -I -F "$file"
 	done
@@ -344,7 +344,7 @@ fi
 # ******************************************************************
 # Install Included Profiles - With POST prefix 	********************
 #
-if [ -d "${SRC}" ]; then
+if [ -d "${SRC}/profiles" ]; then
 	for file in "${SRC}"/profiles/post*.mobileconfig; do
 		if [ -f "$file" ]; then
 			/usr/bin/profiles -I -F "$file"
