@@ -11,9 +11,11 @@ import hashlib
 import sys
 from datetime import datetime
 
-from . import software
-from .. model import *
+from .  import software
 from .. import db
+from .. model import *
+from .. modes import *
+from .. mplogger import *
 
 '''
 	-------------------------------------------------

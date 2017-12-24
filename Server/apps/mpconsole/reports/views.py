@@ -8,10 +8,11 @@ import sys
 from sqlalchemy import text
 from datetime import datetime
 
-from . import reports
+from .  import reports
+from .. import db
 from .. import login_manager
 from .. model import *
-from .. import db
+from .. mplogger import *
 
 # This is a UI Request
 @reports.route('/new')

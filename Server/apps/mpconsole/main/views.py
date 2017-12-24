@@ -1,10 +1,9 @@
 from flask import render_template
 from flask_login import login_required, current_user
 
-from . import main
+from .  import main
 from .. import login_manager
 from .. model import *
-
 
 @login_manager.user_loader
 def load_user(userid):

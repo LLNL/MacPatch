@@ -12,13 +12,15 @@ import sys
 import os
 import hashlib
 import shutil
-
-from datetime import datetime
 import json
 
-from . import patches
-from .. model import *
+from datetime import datetime
+
+from .  import patches
 from .. import db
+from .. model import *
+from .. modes import *
+from .. mplogger import *
 
 '''
 ----------------------------------------------------------------
@@ -37,26 +39,34 @@ def apple():
 @patches.route('/apple/state',methods=['POST'])
 @login_required
 def appleState():
-	suname = request.form.get('pk')
-	state = request.form.get('value')
+	if localAdmin() or adminRole():
+		suname = request.form.get('pk')
+		state = request.form.get('value')
 
-	patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == suname).first()
-	setattr(patchAdds, 'patch_state', state)
-	db.session.commit()
+		patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == suname).first()
+		setattr(patchAdds, 'patch_state', state)
+		db.session.commit()
 
-	return apple()
+	else:
+		log_Error("{} does not have permission to change apple patch state.".format(session.get('user')))
+
+	return redirect(url_for('patches.apple'))
 
 @patches.route('/apple/severity',methods=['POST'])
 @login_required
 def appleSeverity():
-	suname = request.form.get('pk')
-	severity = request.form.get('value')
+	if localAdmin() or adminRole():
+		suname = request.form.get('pk')
+		severity = request.form.get('value')
 
-	patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == suname).first()
-	setattr(patchAdds, 'severity', severity)
-	db.session.commit()
+		patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == suname).first()
+		setattr(patchAdds, 'severity', severity)
+		db.session.commit()
 
-	return apple()
+	else:
+		log_Error("{} does not have permission to change apple patch state.".format(session.get('user')))
+
+	return redirect(url_for('patches.apple'))
 
 @patches.route('/applePatchWizard/<rid>')
 @login_required
@@ -96,70 +106,82 @@ def applePatchWizard(rid):
 @login_required
 def applePatchWizardUpdate():
 
-	critDict = dict(request.form)
-	suname = request.form['supatchname']
-	akey = request.form['akey']
+	if localAdmin() or adminRole():
+		critDict = dict(request.form)
+		suname = request.form['supatchname']
+		akey = request.form['akey']
 
-	# Set / Update Values in MP Apple Patch Additions table
-	patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == request.form['supatchname']).first()
-	setattr(patchAdds, 'patch_reboot', request.form['patch_reboot'])
-	setattr(patchAdds, 'patch_install_weight', request.form['patchInstallWeight'])
-	setattr(patchAdds, 'severity', request.form['patch_severity'])
-	db.session.commit()
+		# Set / Update Values in MP Apple Patch Additions table
+		patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == request.form['supatchname']).first()
+		setattr(patchAdds, 'patch_reboot', request.form['patch_reboot'])
+		setattr(patchAdds, 'patch_install_weight', request.form['patchInstallWeight'])
+		setattr(patchAdds, 'severity', request.form['patch_severity'])
+		db.session.commit()
 
-	# Remove Criteria before adding new / updating
-	ApplePatchCriteria.query.filter(ApplePatchCriteria.supatchname == request.form['supatchname']).delete()
-	db.session.commit()
+		# Remove Criteria before adding new / updating
+		ApplePatchCriteria.query.filter(ApplePatchCriteria.supatchname == request.form['supatchname']).delete()
+		db.session.commit()
 
-	for key in critDict:
-		if "reqCri_Order_" in key:
-			nid = str(str(critDict[key][0]).split("_")[-1])
-			order = critDict[key][0]
+		for key in critDict:
+			if "reqCri_Order_" in key:
+				nid = str(str(critDict[key][0]).split("_")[-1])
+				order = critDict[key][0]
 
-			patchCrit = ApplePatchCriteria()
-			setattr(patchCrit, 'puuid', akey)
-			setattr(patchCrit, 'supatchname', suname)
-			setattr(patchCrit, 'type', critDict["reqCri_type_" + nid][0])
-			setattr(patchCrit, 'type_action', critDict["reqCri_type_action_" + nid][0])
-			setattr(patchCrit, 'type_data', critDict["reqCri_type_data_" + nid][0])
-			setattr(patchCrit, 'type_order', order)
-			setattr(patchCrit, 'cdate', datetime.now())
-			setattr(patchCrit, 'mdate', datetime.now())
+				patchCrit = ApplePatchCriteria()
+				setattr(patchCrit, 'puuid', akey)
+				setattr(patchCrit, 'supatchname', suname)
+				setattr(patchCrit, 'type', critDict["reqCri_type_" + nid][0])
+				setattr(patchCrit, 'type_action', critDict["reqCri_type_action_" + nid][0])
+				setattr(patchCrit, 'type_data', critDict["reqCri_type_data_" + nid][0])
+				setattr(patchCrit, 'type_order', order)
+				setattr(patchCrit, 'cdate', datetime.now())
+				setattr(patchCrit, 'mdate', datetime.now())
 
-			db.session.add(patchCrit)
-			db.session.commit()
+				db.session.add(patchCrit)
+				db.session.commit()
 
-	return render_template('patches/patches_apple.html')
+		log("{} updated apple patch {}({}).".format(session.get('user'), suname, akey))
+
+	else:
+		log_Error("{} does not have permission to update apple patch.".format(session.get('user')))
+
+	return redirect(url_for('patches.apple'))
 
 ''' AJAX Request '''
 @patches.route('/apple/bulk/toQA',methods=['GET'])
 @login_required
 @cross_origin()
 def migrateApplePatchesToQA():
+	if localAdmin() or adminRole():
+		query = ApplePatchAdditions.query.filter(ApplePatchAdditions.patch_state == 'Create').all()
+		if query is not None:
+			for row in query:  # all() is extra
+				row.patch_state = 'QA'
 
-	query = ApplePatchAdditions.query.filter(ApplePatchAdditions.patch_state == 'Create').all()
-	if query is not None:
-		for row in query:  # all() is extra
-			row.patch_state = 'QA'
+		db.session.commit()
+		return json.dumps({'data': {}}, default=json_serial), 200
 
-	db.session.commit()
-
-	return json.dumps({'data': {}}, default=json_serial), 200
+	else:
+		log_Error("{} does not have permission to migrate apple patch(s) to QA state.".format(session.get('user')))
+		return json.dumps({'data': {}}, default=json_serial), 403
 
 ''' AJAX Request '''
 @patches.route('/apple/bulk/toProd',methods=['GET'])
 @login_required
 @cross_origin()
 def migrateApplePatchesToProd():
+	if localAdmin() or adminRole():
+		query = ApplePatchAdditions.query.filter(ApplePatchAdditions.patch_state == 'QA').all()
+		if query is not None:
+			for row in query:  # all() is extra
+				row.patch_state = 'Production'
 
-	query = ApplePatchAdditions.query.filter(ApplePatchAdditions.patch_state == 'QA').all()
-	if query is not None:
-		for row in query:  # all() is extra
-			row.patch_state = 'Production'
+		db.session.commit()
+		return json.dumps({'data': {}}, default=json_serial), 200
 
-	db.session.commit()
-
-	return json.dumps({'data': {}}, default=json_serial), 200
+	else:
+		log_Error("{} does not have permission to migrate apple patch(s) to Production state.".format(session.get('user')))
+		return json.dumps({'data': {}}, default=json_serial), 403
 
 '''
 ----------------------------------------------------------------
@@ -249,9 +271,13 @@ def customPatchWizard(puuid):
 @patches.route('/customPatchWizard/update',methods=['POST'])
 @login_required
 def customPatchWizardUpdate():
-
 	# Get Patch ID
 	puuid = request.form['puuid']
+
+	# Check Permissions
+	if not localAdmin() and not adminRole():
+		log_Error("{} does not have permission to change custom patch {}.".format(session.get('user'), puuid))
+		return json.dumps({'data': {}}, default=json_serial), 403
 
 	# Save File, returns path to file
 	_file = request.files['mainPatchFile']
@@ -327,6 +353,8 @@ def customPatchWizardUpdate():
 
 	try:
 		db.session.commit()
+		log("{} updated custom patch {}.".format(session.get('user'), puuid))
+
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		print('Message: %s' % (e.message))
@@ -371,10 +399,12 @@ def savePatchFile(puuid, file):
 @login_required
 def customDelete():
 	ids = request.form['patches']
+	if not localAdmin() and not adminRole():
+		log_Error("{} does not have permission to delete custom patch(s).".format(session.get('user')))
+		return json.dumps({'data': {}}, default=json_serial), 403
 
 	for puuid in ids.split(","):
 		removePatchFromPatchGroupsAlt(puuid)
-
 		qGet1 = MpPatch.query.filter(MpPatch.puuid == puuid).first()
 		if qGet1 is not None:
 			# Need to delete from file system
@@ -385,6 +415,7 @@ def customDelete():
 				print ("Error: %s - %s." % (e.filename,e.strerror))
 			db.session.delete(qGet1)
 			MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
+			log("{} delete custom patch {}({}).".format(session.get('user'), qGet1.patch_name, puuid))
 
 		try:
 			db.session.commit()
@@ -427,6 +458,10 @@ def customPatchState():
 	patch_id = request.form.get('pk')
 	state = request.form.get('value')
 
+	if not localAdmin() and not adminRole():
+		log_Error("{} does not have permission to change custom patch {} state.".format(session.get('user'), patch_id))
+		return json.dumps({}), 403
+
 	qGet = MpPatch.query.filter(MpPatch.puuid == patch_id).first()
 	if qGet is not None:
 		setattr(qGet, 'patch_state', state)
@@ -440,6 +475,10 @@ def customPatchState():
 def customPatchActive():
 	patch_id = request.form.get('pk')
 	active = request.form.get('value')
+
+	if not localAdmin() and not adminRole():
+		log_Error("{} does not have permission to change custom patch {} active state.".format(session.get('user'), patch_id))
+		return json.dumps({}), 403
 
 	qGet = MpPatch.query.filter(MpPatch.puuid == patch_id).first()
 	if qGet is not None:
@@ -471,7 +510,6 @@ def patchGroups():
 		MpPatchGroup.id == MpPatchGroupData.pid).add_columns(MpPatchGroupData.mdate).filter(PatchGroupMembers.is_owner == '1').order_by(MpPatchGroupData.mdate.desc()).all()
 
 	rows = []
-
 	for x in gmListAlt:
 		print x
 		row = {}
@@ -490,8 +528,6 @@ def patchGroups():
 		row['mdate'] = x.mdate
 		rows.append(row)
 
-	print rows
-	# return render_template('patches/patch_groups.html', data=gmListAlt, columns=cListColsLimited, groupOwners=gmList)
 	return render_template('patches/patch_groups.html', data=rows, columns=cListColsLimited)
 
 def json_serial(obj):
@@ -527,6 +563,9 @@ def patchGroupEdit(id):
 @patches.route('/patchGroups/update',methods=['POST'])
 @login_required
 def patchGroupUpdate():
+	if not localAdmin() and not adminRole():
+		log_Error("{} does not have permission to update patch group.".format(session.get('user')))
+		return json.dumps({}), 403
 
 	_add = False  # Add New Record vs Update
 	_gid  = request.form['gid']
@@ -556,6 +595,9 @@ def patchGroupUpdate():
 	if _add:
 		setattr(patchGroup, 'id', _gid)
 		db.session.add(patchGroup)
+		log("{} added new patch group {}.".format(session.get('user'), _name))
+	else:
+		log("{} updated patch group {}.".format(session.get('user'), _name))
 
 	setattr(patchGroupMember, 'user_id', _owner)
 	setattr(patchGroupMember, 'patch_group_id', _gid)
@@ -565,26 +607,27 @@ def patchGroupUpdate():
 		db.session.add(patchGroupMember)
 
 	db.session.commit()
-
-	return patchGroups()
+	return redirect(url_for('patches.patchGroups'))
 
 ''' AJAX Request '''
 @patches.route('/patchGroups/delete/<id>',methods=['POST'])
 @login_required
 def patchGroupDelete(id):
+	qGroup = MpPatchGroup.query.filter(MpPatchGroup.id == id).first()
+	groupName = qGroup.name
+	if not localAdmin() and not adminRole() and not isOwnerOfGroup(id):
+		log_Error("{} does not have permission to delete patch group {}.".format(session.get('user'), groupName))
+		return json.dumps({}), 403
 
-	if isOwnerOfGroup(id) or session['role'][0] == 1:
-		# Remove Group
-		MpPatchGroup.query.filter(MpPatchGroup.id == id).delete()
-		PatchGroupMembers.query.filter(PatchGroupMembers.patch_group_id == id).delete()
-		MpPatchGroupData.query.filter(MpPatchGroupData.pid == id).delete()
-		MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == id).delete()
-		db.session.commit()
+	# Remove Group
+	db.session.delete(qGroup)
+	PatchGroupMembers.query.filter(PatchGroupMembers.patch_group_id == id).delete()
+	MpPatchGroupData.query.filter(MpPatchGroupData.pid == id).delete()
+	MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == id).delete()
+	db.session.commit()
 
-		return json.dumps({'error': 0}), 200
-	else:
-		# print "Will Not Remove Group"
-		return json.dumps({'error': 399}), 200
+	log_Error("{} deleted patch group {}.".format(session.get('user'), groupName))
+	return json.dumps({'error': 0}), 200
 
 '''
 	------------------------------------
@@ -599,7 +642,6 @@ def patchGroupDelete(id):
 @patches.route('/patchGroups/admins/<id>')
 @login_required
 def patchGroupAdmins(id):
-
 	columns = [('rid', 'Row ID', '0'),('user_id', 'User ID', '1'), ('is_owner', 'Owner', '1')]
 	return render_template('patches/patch_group_admins.html', group_id=id, columns=columns)
 
@@ -610,7 +652,6 @@ def patchGroupAdmins(id):
 '''
 @patches.route('/patchGroup/members/<id>')
 def patchGroupMembers(id):
-
 	rowCounter = 0
 	patchGroupMembers = PatchGroupMembers.query.filter(PatchGroupMembers.patch_group_id == id).all()
 	colsForQuery = ['rid', 'user_id', 'is_owner']
@@ -634,7 +675,10 @@ def patchGroupMembers(id):
 '''
 @patches.route('/patchGroup/member/add/<id>', methods=['POST'])
 def patchGroupMemberAdd(id):
-	# print dict(request.form)
+	if not localAdmin() and not adminRole() and not isOwnerOfGroup(id):
+		log_Error("{} does not have permission to add patch group member.".format(session.get('user')))
+		return json.dumps({}), 403
+
 	pk = request.form.get('pk')
 	user_id = request.form.get('value')
 
@@ -651,6 +695,7 @@ def patchGroupMemberAdd(id):
 		setattr(patchGroupMember, 'is_owner', 0)
 		db.session.add(patchGroupMember)
 
+	log("{} added patch group member {} to {}.".format(session.get('user'), user_id, patch_group_id))
 	db.session.commit()
 	return json.dumps({'errorno': 0}), 200
 
@@ -662,15 +707,19 @@ def patchGroupMemberAdd(id):
 '''
 @patches.route('/patchGroup/member/delete/<id>', methods=['POST'])
 def patchGroupMemberDelete(id):
-	# print dict(request.form)
+	if not localAdmin() and not adminRole() and not isOwnerOfGroup(id):
+		log_Error("{} does not have permission to delete patch group member.".format(session.get('user')))
+		return json.dumps({}), 403
+
 	ids = request.form.get('ids')
 	for id, user_id in enumerate(ids.split(',')):
 		qry = PatchGroupMembers.query.filter(PatchGroupMembers.patch_group_id == id, PatchGroupMembers.user_id == user_id).first()
 		if qry is not None:
 			if qry.is_owner == 0:
+				log("{} deleted member {} from patch group {}.".format(session.get('user'), qry.user_id, id))
 				db.session.delete(qry)
 			else:
-				print "{} is a owner. An owner can not deleted.".format(user_id)
+				log_Error("{} is a owner. An owner can not be deleted.".format(user_id))
 				return json.dumps({'errorno': 0}), 403
 
 	db.session.commit()
@@ -762,7 +811,6 @@ def patchGroupContent(group_id):
 				) p ON b.id = p.patch_id
 				WHERE b.patch_state IN (""" + _pType + """)""")
 
-	print sql
 	result = db.engine.execute(sql)
 	_results = []
 	for v in result:
@@ -793,25 +841,29 @@ def patchGroupContent(group_id):
 @patches.route('/group/add/<group_id>/<patch_id>')
 @login_required
 def patchGroupContentAdd(group_id, patch_id):
+	if not localAdmin() and not adminRole() and not isOwnerOfGroup(group_id):
+		log_Error("{} does not have permission to add content to patch group {}.".format(session.get('user'), group_id))
+		return json.dumps({}), 403
 
-
-	if isOwnerOfGroup(group_id):
-		qry = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id,
-												MpPatchGroupPatches.patch_id == patch_id).first()
-		if qry is None:
-			patchGroupPatch = MpPatchGroupPatches()
-			setattr(patchGroupPatch, 'patch_group_id', group_id)
-			setattr(patchGroupPatch, 'patch_id', patch_id)
-			db.session.add(patchGroupPatch)
-			db.session.commit()
-	else:
-		return json.dumps({'error': 401, 'errormsg': 'Unauthorized user.'}),401
+	qry = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id,
+											MpPatchGroupPatches.patch_id == patch_id).first()
+	if qry is None:
+		log("{} added patch {} to patch group {}.".format(session.get('user'), patch_id, group_id))
+		patchGroupPatch = MpPatchGroupPatches()
+		setattr(patchGroupPatch, 'patch_group_id', group_id)
+		setattr(patchGroupPatch, 'patch_id', patch_id)
+		db.session.add(patchGroupPatch)
+		db.session.commit()
 
 	return json.dumps({'error': 0}), 200
 
 @patches.route('/group/add/bulk/<group_id>', methods=['POST'])
 @login_required
 def patchGroupContentAddBulk(group_id):
+	if not localAdmin() and not adminRole() and not isOwnerOfGroup(group_id):
+		log_Error("{} does not have permission to add bulk content to patch group {}.".format(session.get('user'), group_id))
+		return json.dumps({}), 403
+
 	dataStr = request.data
 	data = json.loads(dataStr)
 
@@ -819,6 +871,7 @@ def patchGroupContentAddBulk(group_id):
 		qry = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id,
 												MpPatchGroupPatches.patch_id == patch_id).first()
 		if qry is None:
+			log("{} added patch {} to patch group {}.".format(session.get('user'), patch_id, group_id))
 			qryAdd = MpPatchGroupPatches()
 			setattr(qryAdd, 'patch_group_id', group_id)
 			setattr(qryAdd, 'patch_id', patch_id)
@@ -829,16 +882,16 @@ def patchGroupContentAddBulk(group_id):
 
 @patches.route('/group/remove/<group_id>/<patch_id>')
 def patchGroupContentDel(group_id, patch_id):
+	if not localAdmin() and not adminRole() and not isOwnerOfGroup(group_id):
+		log_Error("{} does not have permission to remove content from patch group {}.".format(session.get('user'), group_id))
+		return json.dumps({}), 403
 
-	if isOwnerOfGroup(group_id):
-		patchGroupPatch = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id,
-															MpPatchGroupPatches.patch_id == patch_id).first()
-		if patchGroupPatch is not None:
-			print "Remove " + patchGroupPatch.patch_id
-			db.session.delete(patchGroupPatch)
-			db.session.commit()
-	else:
-		return json.dumps({'error': 401, 'errormsg': 'Unauthorized user.'}), 401
+	patchGroupPatch = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id,
+														MpPatchGroupPatches.patch_id == patch_id).first()
+	if patchGroupPatch is not None:
+		log("{} removed patch {} from patch group {}.".format(session.get('user'), patch_id, group_id))
+		db.session.delete(patchGroupPatch)
+		db.session.commit()
 
 	return json.dumps({'error': 0}), 200
 
@@ -850,7 +903,10 @@ def patchGroupContentDel(group_id, patch_id):
 '''
 @patches.route('/group/save/<group_id>')
 def patchGroupPatchesSave(group_id):
-	# print dict(request.form)
+	if not localAdmin() and not adminRole() and not isOwnerOfGroup(group_id):
+		log_Error("{} does not have permission to save content for patch group {}.".format(session.get('user'), group_id))
+		return json.dumps({}), 403
+
 	_now = datetime.now()
 	dts = _now.strftime('%Y%m%d%H%M%S')
 
@@ -906,14 +962,14 @@ def patchGroupPatchesSave(group_id):
 		setattr(pData, 'pid', group_id)
 		db.session.add(pData)
 
+	log("{} saved content for patch group {}.".format(session.get('user'), group_id))
 	db.session.commit()
 	return json.dumps({'errorno': 0}), 200
 
+# Private
 def patchDataForPatchID(patch_id):
-	sql = text("""SELECT * from combined_patches_view
-					Where id = '""" + patch_id + """'""")
-
-	result = db.engine.execute(sql)
+	sql = text("""SELECT * from combined_patches_view Where id = ':patchID'""")
+	result = db.engine.execute(sql, patchID=patch_id)
 	_results = []
 	for v in result:
 		_results.append(dict(v))
@@ -924,6 +980,7 @@ def patchDataForPatchID(patch_id):
 
 	return _results[0]
 
+# Private
 def applePatchHasCriteria(patch_id):
 	crit = ApplePatchCriteria.query.filter(ApplePatchCriteria.puuid == patch_id).all()
 	if crit is not None:
@@ -931,6 +988,7 @@ def applePatchHasCriteria(patch_id):
 	else:
 		return "FALSE"
 
+# Private
 def customDataForPatchID(patch_id):
 	_results = []
 	patches = MpPatch.query.filter(MpPatch.puuid == patch_id).all()
@@ -951,10 +1009,10 @@ def customDataForPatchID(patch_id):
 
 	return _results
 
+# Private
 def removePatchFromPatchGroups(patch_id):
 	# This will delete a missing patch from all patch groups
 	qry = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_id == patch_id).all()
-	# TODO add logging for this
 	if qry is not None:
 		for q in qry:
 			db.session.delete(q)
@@ -1073,7 +1131,6 @@ def requiredQuery(filterStr='undefined', page=0, page_size=0, sort='date', order
 @patches.route('/installed')
 @login_required
 def installedList():
-
 	columns = [('cuuid','Client ID','0'),('patch','Patch','0'),('patch_name','Patch Name','1'),('hostname','HostName','1'),('ipaddr','IP Address','1'),
 	('osver','OS Version','1'),('type','Type','1'),('mdate','Install Date','1')]
 
@@ -1082,7 +1139,6 @@ def installedList():
 ''' AJAX Route '''
 @patches.route('/installed/<limit>/<offset>/<search>')
 def installedListPaged(limit,offset,search):
-
 	total = 0
 	getNewTotal = True
 	if 'my_search_name' in session:

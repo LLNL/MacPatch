@@ -1,4 +1,20 @@
 from flask import session
+from . model import AdmUsersInfo
+
+def localAdmin():
+	qUsr = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == session['user']).first()
+	if qUsr is not None:
+		if qUsr.user_type == 0 and qUsr.enabled == 1:
+			return True
+
+	return False
+
+def groupAdminRights(groupid):
+	qUsr = MpClientGroupAdmins.query.filter(MpClientGroupAdmins.group_admin == session['user'], MpClientGroupAdmins.group_id == groupid).first()
+	if qUsr is not None:
+		return True
+
+	return False
 
 def adminRole():
 	_x = session['role']
@@ -21,7 +37,7 @@ def agentUploadRole():
 
 	return False
 
-def apiRole():	
+def apiRole():
 	_x = session['role']
 	if _x[3] == 1:
 		return True

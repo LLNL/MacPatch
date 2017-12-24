@@ -6,8 +6,8 @@ from operator import itemgetter
 
 from .  import dashboard
 from .. import login_manager
-from .. model import *
 from .. import db
+from .. model import *
 
 @dashboard.route('/dashboard')
 @login_required
@@ -25,10 +25,8 @@ def index():
 
 	# Get Reboot Count
 	rbData = []
-	sql2 = text("""SELECT needsReboot,
-				Count(*) As Count
-				FROM mp_clients
-				Group By needsReboot""")
+	sql2 = text("""SELECT needsReboot, Count(*) As Count
+				FROM mp_clients Group By needsReboot""")
 
 	rb_result = db.engine.execute(sql2)
 	for row in rb_result:
@@ -52,25 +50,25 @@ def index():
 	# Client Patch Status
 
 	sql4 = text("""
-		Select 	patch, Count(*) As Clients
-		From 	client_patch_status_view
-		Group By patch
-		Order By Clients DESC
-		LIMIT 0, 10 """)
-	sql4a = text("""
-					select patch, COUNT(*) as total
-					from mp_client_patches_apple
-					GROUP BY patch
-					ORDER BY total Desc
-					Limit 0,10
+				Select 	patch, Count(*) As Clients
+				From 	client_patch_status_view
+				Group By patch
+				Order By Clients DESC
+				LIMIT 0, 10
 				""")
-
+	sql4a = text("""
+				select patch, COUNT(*) as total
+				from mp_client_patches_apple
+				GROUP BY patch
+				ORDER BY total Desc
+				Limit 0,10
+				""")
 	sql4b = text("""
-					select patch, COUNT(*) as Total
-					from mp_client_patches_third
-					GROUP BY patch
-					ORDER BY Total Desc
-					Limit 0,10
+				select patch, COUNT(*) as Total
+				from mp_client_patches_third
+				GROUP BY patch
+				ORDER BY Total Desc
+				Limit 0,10
 				""")
 	pch_data_raw = []
 	pch_data = []
@@ -114,7 +112,6 @@ def index():
 	agentver_result = db.engine.execute(sql6)
 	for row in agentver_result:
 		agents_data.append((str(row[0]).title(), str(row[1])))
-
 
 
 	return render_template('dashboard/dashboard.html', clientCount=_client_count, osData=osVerData,

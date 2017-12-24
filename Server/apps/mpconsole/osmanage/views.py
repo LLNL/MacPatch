@@ -10,8 +10,10 @@ import hashlib
 
 from . import osmanage
 from .. import login_manager
-from .. model import *
 from .. import db
+from .. model import *
+from .. modes import *
+from .. mplogger import *
 
 '''
 	This method queries the DB for all uploaded profiles
@@ -84,58 +86,73 @@ def allowed_file(filename):
 
 ''' AJAX Request '''
 @osmanage.route('/profile/save/<profile_id>', methods=['POST'])
+@login_required
 def profileSave(profile_id):
-	# requestForm = request.form
-	formDict = request.form.to_dict()
+	if adminRole() or localAdmin():
+		formDict = request.form.to_dict()
 
-	isNewProfile=False
-	profile = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID == profile_id).first()
-	if profile is None:
-		profile = MpOsConfigProfiles()
-		isNewProfile=True
+		isNewProfile=False
+		profile = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID == profile_id).first()
+		if profile is None:
+			profile = MpOsConfigProfiles()
+			isNewProfile=True
 
-	if 'profileFile' in request.files:
-		# Save File, returns path to file
-		_file = request.files['profileFile']
-		_file_data = _file.read()
+		if 'profileFile' in request.files:
+			# Save File, returns path to file
+			_file = request.files['profileFile']
+			_file_data = _file.read()
 
-		if _file_data and allowed_file(_file.filename):
-			# Gen Hash
-			profile__hash = hashlib.md5(_file_data).hexdigest()
-			setattr(profile, 'profileData', _file_data.encode('string-escape').encode('utf-8'))
-			setattr(profile, 'profileHash', profile__hash)
+			if _file_data and allowed_file(_file.filename):
+				# Gen Hash
+				profile__hash = hashlib.md5(_file_data).hexdigest()
+				setattr(profile, 'profileData', _file_data.encode('string-escape').encode('utf-8'))
+				setattr(profile, 'profileHash', profile__hash)
 
-	# Save Profile Data
-	setattr(profile, 'profileName', formDict['profileName'])
-	setattr(profile, 'profileDescription', formDict['profileDescription'])
-	setattr(profile, 'enabled', formDict['enabled'])
-	setattr(profile, 'uninstallOnRemove', formDict['uninstallOnRemove'])
-	setattr(profile, 'mdate', datetime.now())
+		# Save Profile Data
+		setattr(profile, 'profileName', formDict['profileName'])
+		setattr(profile, 'profileDescription', formDict['profileDescription'])
+		setattr(profile, 'enabled', formDict['enabled'])
+		setattr(profile, 'uninstallOnRemove', formDict['uninstallOnRemove'])
+		setattr(profile, 'mdate', datetime.now())
 
-	if isNewProfile:
-		setattr(profile, 'cdate', datetime.now())
-		setattr(profile, 'profileRev', 1)
-		setattr(profile, 'profileID', profile_id)
-		setattr(profile, 'profileIdentifier', formDict['profileIdentifier'])
-		db.session.add(profile)
+		if isNewProfile:
+			setattr(profile, 'cdate', datetime.now())
+			setattr(profile, 'profileRev', 1)
+			setattr(profile, 'profileID', profile_id)
+			setattr(profile, 'profileIdentifier', formDict['profileIdentifier'])
+			db.session.add(profile)
+			log("{} added new config profile {}.".format(session.get('user'), formDict['profileName']))
+		else:
+			setattr(profile, 'profileRev', (profile.profileRev + 1))
+			log("{} updated config profile {}.".format(session.get('user'), formDict['profileName']))
+
+		db.session.commit()
+		return json.dumps({'error': 0}), 200
+
 	else:
-		setattr(profile, 'profileRev', (profile.profileRev + 1))
-
-	db.session.commit()
-	return json.dumps({'error': 0}), 200
+		log_Error("{} does not have permission to save config profile.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 ''' AJAX Request '''
 @osmanage.route('/profile/delete',methods=['DELETE'])
+@login_required
 def profileDelete():
-	if request.method == 'DELETE':
-		formDict = request.form.to_dict()
-		profile_ids = formDict['profileID'].split(",")
-		for pid in profile_ids:
-			MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID == pid).delete()
+	if adminRole() or localAdmin():
+		if request.method == 'DELETE':
+			formDict = request.form.to_dict()
+			profile_ids = formDict['profileID'].split(",")
+			for pid in profile_ids:
+				delPro = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID == pid).first()
+				if delPro is not None:
+					log_Error("{} deleted config profile {}.".format(session.get('user'), delPro.profileName))
+					db.session.delete(delPro)
 
-		db.session.commit()
+			db.session.commit()
 
-	return json.dumps({'error': 0}), 200
+		return json.dumps({'error': 0}), 200
+	else:
+		log_Error("{} does not have permission to delete config profile.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 '''
 	-------------------------------------------
@@ -143,8 +160,8 @@ def profileDelete():
 	-------------------------------------------
 '''
 @osmanage.route('/profile/group/<group_id>/add',methods=['GET'])
+@login_required
 def addProfileToGroup(group_id):
-
 	profilesQuery = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.enabled == 1).all()
 	profilesRes = []
 	for p in profilesQuery:
@@ -156,8 +173,8 @@ def addProfileToGroup(group_id):
 	return render_template('os_managment/os_profile_wizard.html', profileData={}, profileCriteria={}, profileCriteriaAlt={}, profileArray=profilesRes, groupID=group_id)
 
 @osmanage.route('/profile/group/<group_id>/edit/<policy_id>',methods=['GET'])
+@login_required
 def editProfileInGroup(group_id, policy_id):
-
 	profilesQuery = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.enabled == 1).all()
 
 	profilesRes = []
@@ -188,14 +205,28 @@ def editProfileInGroup(group_id, policy_id):
 
 ''' AJAX Method '''
 @osmanage.route('/profile/<gprofile_id>',methods=['GET','DELETE'])
+@login_required
 def profile(gprofile_id):
-	if request.method == 'DELETE':
-		profileQuery = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.gPolicyID == gprofile_id).delete()
-		MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == gprofile_id).delete()
-		db.session.commit()
 
-		return json.dumps({'error': 0}), 200
-	# TODO
+	if request.method == 'DELETE':
+		profileQuery = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.gPolicyID == gprofile_id).first()
+		if profileQuery is not None:
+			_groupID = profileQuery.groupID
+			_title = profileQuery.title
+			_profile = profileQuery.profileID
+
+			if groupAdminRights(_groupID) or localAdmin():
+				db.session.delete(profileQuery)
+				MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == gprofile_id).delete()
+				db.session.commit()
+
+				log("{} deleted assigned {} config profile {}.".format(session.get('user'), _title, _profile))
+				return json.dumps({'error': 0}), 200
+			else:
+				log_Error("{} does not have permission to delete {} config profile assignment.".format(session.get('user'), _title))
+				return json.dumps({'error': 0}), 403
+
+	# TODO: Not complete
 	if request.method == 'GET':
 		profileQuery = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileid == gprofile_id).first()
 		_result = {}
@@ -206,6 +237,7 @@ def profile(gprofile_id):
 
 ''' AJAX Method '''
 @osmanage.route('/profiles/group/<group_id>', methods=['GET'])
+@login_required
 def groupProfiles(group_id):
 
 	columns = [('profileID', 'Profile ID', '0'), ('gPolicyID', 'Policy Identifier', '0'), ('pName', 'Profile Name', '1'), ('title', 'Title', '1'),
@@ -232,91 +264,97 @@ def groupProfiles(group_id):
 
 ''' AJAX Method '''
 @osmanage.route('/group/profile', methods=['POST'])
+@login_required
 def postProfile():
-
 	_formDict = dict(request.form)
-	gPolicyID = request.form['gPolicyID']
-
-	if gPolicyID is None or len(gPolicyID) <= 0:
-		gPolicyID = str(uuid.uuid4())
 
 	groupID = request.form['groupID']
-
 	if groupID is None or len(groupID) <= 0:
 		return json.dumps({'error': 404}), 404
 
-	profileID = request.form['profileID']
+	if groupAdminRights(groupID) or localAdmin():
+		gPolicyID = request.form['gPolicyID']
+		if gPolicyID is None or len(gPolicyID) <= 0:
+			gPolicyID = str(uuid.uuid4())
 
-	addNew = False
-	qPolicy = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.gPolicyID == gPolicyID).first()
-	if not qPolicy:
-		addNew = True
-		qPolicy = MpOsProfilesGroupAssigned()
+		profileID = request.form['profileID']
 
-	setattr(qPolicy, 'gPolicyID', gPolicyID)
-	setattr(qPolicy, 'profileID', profileID)
-	setattr(qPolicy, 'groupID', groupID)
-	setattr(qPolicy, 'title', request.form['title'])
-	setattr(qPolicy, 'description', request.form['description'])
-	setattr(qPolicy, 'enabled', request.form['enabled'])
-	if addNew:
-		db.session.add(qPolicy)
+		addNew = False
+		qPolicy = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.gPolicyID == gPolicyID).first()
+		if not qPolicy:
+			addNew = True
+			qPolicy = MpOsProfilesGroupAssigned()
 
-	MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == gPolicyID).delete()
+		setattr(qPolicy, 'gPolicyID', gPolicyID)
+		setattr(qPolicy, 'profileID', profileID)
+		setattr(qPolicy, 'groupID', groupID)
+		setattr(qPolicy, 'title', request.form['title'])
+		setattr(qPolicy, 'description', request.form['description'])
+		setattr(qPolicy, 'enabled', request.form['enabled'])
+		if addNew:
+			db.session.add(qPolicy)
+			log("{} added group config profile {}.".format(session.get('user'), profileID))
+		else:
+			log("{} updated group config profile {}.".format(session.get('user'), profileID))
 
-	for key in _formDict:
-		if key.startswith('cri_'):
+		# Set profile assignment policy filter
+		MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == gPolicyID).delete()
+		for key in _formDict:
+			if key.startswith('cri_'):
+					cri = MpOsProfilesCriteria()
+					setattr(cri, 'gPolicyID', gPolicyID)
+					if key == 'cri_os_type':
+						setattr(cri, 'type', 'OSType')
+						setattr(cri, 'type_data', request.form[key])
+						setattr(cri, 'type_order', 1)
+						db.session.add(cri)
+						continue
+
+					if key == 'cri_os_ver':
+						setattr(cri, 'type', 'OSVersion')
+						setattr(cri, 'type_data', request.form[key])
+						setattr(cri, 'type_order', 2)
+						db.session.add(cri)
+						continue
+
+					if key == 'cri_system_type':
+						setattr(cri, 'type', 'SYSType')
+						setattr(cri, 'type_data', request.form[key])
+						setattr(cri, 'type_order', 3)
+						db.session.add(cri)
+						continue
+
+					if key == 'cri_model_type':
+						setattr(cri, 'type', 'ModelType')
+						setattr(cri, 'type_data', request.form[key])
+						setattr(cri, 'type_order', 4)
+						db.session.add(cri)
+						continue
+
+			if key.startswith('req_cri_type_'):
+
+				formLst = key.split('_')
+				nid = formLst[-1]
+				norder = int(request.form['req_cri_order_'+str(nid)])
+				if norder <= 4:
+					norder = norder + 4
+
+				formData = request.form['req_cri_data_'+str(nid)]
+				formType = request.form['req_cri_type_'+str(nid)]
+
 				cri = MpOsProfilesCriteria()
 				setattr(cri, 'gPolicyID', gPolicyID)
-				if key == 'cri_os_type':
-					setattr(cri, 'type', 'OSType')
-					setattr(cri, 'type_data', request.form[key])
-					setattr(cri, 'type_order', 1)
-					db.session.add(cri)
-					continue
+				setattr(cri, 'type', formType)
+				setattr(cri, 'type_data', formData)
+				setattr(cri, 'type_order', norder)
+				db.session.add(cri)
 
-				if key == 'cri_os_ver':
-					setattr(cri, 'type', 'OSVersion')
-					setattr(cri, 'type_data', request.form[key])
-					setattr(cri, 'type_order', 2)
-					db.session.add(cri)
-					continue
+		db.session.commit()
+		return json.dumps({'error': 0}), 200
 
-				if key == 'cri_system_type':
-					setattr(cri, 'type', 'SYSType')
-					setattr(cri, 'type_data', request.form[key])
-					setattr(cri, 'type_order', 3)
-					db.session.add(cri)
-					continue
-
-				if key == 'cri_model_type':
-					setattr(cri, 'type', 'ModelType')
-					setattr(cri, 'type_data', request.form[key])
-					setattr(cri, 'type_order', 4)
-					db.session.add(cri)
-					continue
-
-		if key.startswith('req_cri_type_'):
-
-			formLst = key.split('_')
-			nid = formLst[-1]
-			norder = int(request.form['req_cri_order_'+str(nid)])
-			if norder <= 4:
-				norder = norder + 4
-
-			formData = request.form['req_cri_data_'+str(nid)]
-			formType = request.form['req_cri_type_'+str(nid)]
-
-			cri = MpOsProfilesCriteria()
-			setattr(cri, 'gPolicyID', gPolicyID)
-			setattr(cri, 'type', formType)
-			setattr(cri, 'type_data', formData)
-			setattr(cri, 'type_order', norder)
-			db.session.add(cri)
-
-	db.session.commit()
-
-	return json.dumps({'error': 0}), 200
+	else:
+		log_Error("{} does not have permission to add/update group config profile.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 '''
 	-------------------------------------------
@@ -326,7 +364,6 @@ def postProfile():
 @osmanage.route('/app_filters')
 @login_required
 def appFilters():
-
 	columns = [('profileID', 'Profile ID', '0'), ('profileIdentifier', 'Profile Identifier', '1'), ('profileName', 'Name', '1'),
 				('profileDescription', 'Description', '1'), ('profileRev', 'Revision', '1'), ('enabled', 'Enabled', '1'),
 				('uninstallOnRemove', 'Uninstall On Remove', '1')]

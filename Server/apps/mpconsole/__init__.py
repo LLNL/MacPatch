@@ -156,7 +156,6 @@ def create_app(config_object=DefaultConfig):
 	app.register_blueprint(console_blueprint, url_prefix='/console')
 
 
-
 	return app
 
 '''

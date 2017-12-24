@@ -9,11 +9,13 @@ import os.path
 import sys
 from operator import itemgetter
 
-from . import clients
+from .  import clients
 from .. import login_manager
-from .. model import *
-from .. mplogger import *
 from .. import db
+from .. model import *
+from .. modes import *
+from .. mplogger import *
+
 
 '''
 ----------------------------------------------------------------
@@ -31,8 +33,7 @@ def clientsList():
 					{'name':'needsreboot','label':'Needs Reboot'}, {'name':'agent_version','label':'Agent Ver'},
 					{'name':'client_version','label':'Client Ver'}, {'name':'mdate','label':'Mod Date'},
 					{'name':'cdate','label':'CDate'}]
-	# cListCols = cList.keys()
-	# print cListColNames
+
 	return render_template('clients.html', cData=cList, columns=cListCols, colNames=cListColNames)
 
 '''
@@ -130,12 +131,8 @@ def clientInstalledPatches(client_id):
 @clients.route('/dashboard/inventory/<client_id>/<inv_id>')
 def clientInventoryReport(client_id, inv_id):
 
-	sql = text("""select * From """ + inv_id + """
-				Where cuuid = '""" + client_id + """'""")
-
-	print sql
-
-	_q_result = db.engine.execute(sql)
+	sql = text("""select * From :invID Where cuuid = ':clientID'""")
+	_q_result = db.engine.execute(sql, invID=inv_id, clientID=client_id)
 
 	_results = []
 	_columns = []
@@ -180,18 +177,14 @@ def clientGroups():
 	groups = MpClientGroups.query.all()
 	cols = MpClientGroups.__table__.columns
 
-	'''
 	# Convert Query Result to Array or Dicts to add the count column
-	'''
 	_data = []
 	for g in groups:
 		x = g.asDict
 		x['count'] = 0
 		_data.append(x)
 
-	'''
 	# Get Reboot Count
-	'''
 	sql = text("""select group_id, count(*) as total
 				From mp_client_group_members
 				Group By group_id""")
@@ -205,11 +198,9 @@ def clientGroups():
 
 		_results.append(_row)
 
-	# print _data
-	# print _results
 	_rights = list(accessToGroups())
 
-	''' Return Data '''
+	# Return Data
 	return render_template('client_groups.html', data=_data, columns=cols, counts=_results, rights=_rights)
 
 @clients.route('/group/add')
@@ -218,11 +209,13 @@ def clientGroupAdd():
 	''' Returns an empty set of data to add a new record '''
 	usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()
 	_owner = usr.user_id
+	_group_id = str(uuid.uuid4())
 
 	clientGroup = MpClientGroups()
-	setattr(clientGroup, 'group_id', str(uuid.uuid4()))
+	setattr(clientGroup, 'group_id', _group_id)
 	setattr(clientGroup, 'group_owner', _owner)
 
+	log("{} adding new group {}.".format(_owner, _group_id))
 	return render_template('update_client_group.html', data=clientGroup, type="add")
 
 @clients.route('/group/<id>/user/add',methods=['GET'])
@@ -238,10 +231,10 @@ def clientGroupUserRemove(id, user_id):
 		if uadm:
 			db.session.delete(uadm)
 			db.session.commit()
+			log("{} removed user ({}) from client group {}".format(session.get('user'), user_id, id))
 		else:
 			return json.dumps({'error': 404, 'errormsg': 'User could not be removed.'}), 404
 
-	log("Remove user {} from client group {}".format(user_id, id))
 	return json.dumps({'error': 0}), 200
 
 @clients.route('/group/user/modify',methods=['POST'])
@@ -308,13 +301,20 @@ def clientGroup(name,tab=1):
 		if qMembers is not None and len(qMembers) >= 1:
 			return json.dumps({'errormsg':'Group still contains agents. Can not delete group while agents are assigned.'}), 401
 		else:
-			MpClientGroupMembers.query.filter(MpClientGroupMembers.group_id == name).delete()
-			MpClientTasks.query.filter(MpClientTasks.group_id == name).delete()
-			MpClientSettings.query.filter(MpClientSettings.group_id == name).delete()
-			MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == name).delete()
-			MpClientGroups.query.filter(MpClientGroups.group_id == name).delete()
-			db.session.commit()
-			return json.dumps({}), 201
+			usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()
+			if usr is not None or isOwnerOfGroup(name):
+				MpClientGroupMembers.query.filter(MpClientGroupMembers.group_id == name).delete()
+				MpClientTasks.query.filter(MpClientTasks.group_id == name).delete()
+				MpClientSettings.query.filter(MpClientSettings.group_id == name).delete()
+				MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == name).delete()
+				MpClientGroups.query.filter(MpClientGroups.group_id == name).delete()
+				db.session.commit()
+
+				log("{} deleted client group {}".format(session['user'], name))
+				return json.dumps({}), 201
+			else:
+				log("{} could not delete client group {}. Does not have permission.".format(session['user'], name))
+				return json.dumps({}), 403
 	else:
 		canEditGroup = False
 		if not isOwnerOfGroup(name) and not isAdminForGroup(name):
@@ -406,8 +406,7 @@ def clientGroupClients(name):
 	_cuuids = [r for r, in _res]
 
 	# Run Query of all clients that contain the Client ID
-	sql = text("""select * From mp_clients
-				Where cuuid in ('""" + '\',\''.join(_cuuids) + """')""")
+	sql = text("""select * From mp_clients Where cuuid in ('""" + '\',\''.join(_cuuids) + """')""")
 	_q_result = db.engine.execute(sql)
 
 	_results = []
@@ -424,7 +423,6 @@ def clientGroupClients(name):
 		_results.append(_row)
 
 	jResult = json.dumps(_results)
-
 	return jResult, 200
 
 # Remove/Delete Client
@@ -437,27 +435,18 @@ def clientGroupClientsRemove(id):
 			client = MpClient.query.filter(MpClient.cuuid == x).first()
 			clientGroupMember = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == x, MpClientGroupMembers.group_id == id).first()
 			if clientGroupMember:
-				print "Delete client %s from group %s" %(x, id)
+				log("{} delete client group member {} from group {}".format(session.get('user'), x, id))
 				db.session.delete(clientGroupMember)
 				db.session.commit()
 
 			if client:
-				print "Delete client " + x
+				log("{} delete client {} from group {}".format(session.get('user'), x, id))
 				db.session.delete(client)
 				db.session.commit()
+
 			else:
 				return json.dumps({'error': 404, 'errormsg': 'User could not be removed.'}), 404
 
-	'''
-	usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()
-	if usr.user_id == user_id or isOwnerOfGroup(id):
-		uadm = MpClientGroupAdmins().query.filter(MpClientGroupAdmins.group_id == id, MpClientGroupAdmins.group_admin == user_id).first()
-		if uadm:
-			db.session.delete(uadm)
-			db.session.commit()
-		else:
-			return json.dumps({'error': 404, 'errormsg': 'User could not be removed.'}), 404
-	'''
 	return json.dumps({}), 200
 
 # Move a client to a new group
@@ -472,6 +461,7 @@ def clientMove():
 	for c in _cuuids:
 		groupMember = MpClientGroupMembers().query.filter(MpClientGroupMembers.cuuid == c).first()
 		setattr(groupMember, 'group_id', str(_group_id))
+		log("{} moving client {} from {} to {}".format(session.get('user'), c, _o_group_id, _group_id))
 
 	db.session.commit()
 	return clientGroup(_o_group_id,1)
@@ -480,11 +470,7 @@ def clientMove():
 @clients.route('/show/move/client/<id>')
 @login_required
 def showClientMove(id):
-
 	cGroups = MpClientGroups().query.all()
-	# curGroup = MpClientGroupMembers().query.filter(MpClientGroupMembers.cuuid == id).first()
-
-	# return render_template('move_client_to_group.html', groups=cGroups, curGroup=curGroup.group_id, cuuid=id )
 	return render_template('move_client_to_group.html', groups=cGroups, curGroup=0, cuuid=0)
 
 '''
@@ -495,6 +481,7 @@ def showClientMove(id):
 @clients.route('/group/<id>/settings',methods=['POST'])
 @login_required
 def groupSettings(id):
+	log("{} updating client group {} settings.".format(session.get('user'), id))
 	_form = request.form
 
 	# Revision Increment
@@ -512,10 +499,14 @@ def groupSettings(id):
 	# Remove All Settings & Add New, easier than update
 	mpc = MpClientSettings().query.filter(MpClientSettings.group_id == id).all()
 	if mpc is not None and len(mpc) >= 1:
+		for row in mpc:
+			log_Debug("Current Group Settings[{}]: {} = {}".format(id, row.key, row.value))
+
 		sql = "DELETE FROM mp_client_settings WHERE group_id='" + id + "'"
 		db.engine.execute(sql)
 
 	for f in _form:
+		log_Debug("Updated Group Settings[{}]: {} = {}".format(id, f, str(_form[f])))
 		mpc = MpClientSettings()
 		setattr(mpc, 'group_id', id)
 		setattr(mpc, 'key', f)
@@ -672,28 +663,32 @@ def revGroupTasks(group_id):
 
 # Tasks inline updates
 @clients.route('/group/<id>/task/active',methods=['POST'])
+@login_required
 def taskState(id):
-	key = request.form.get('pk')
-	value = request.form.get('value')
-
-	task = MpClientTasks.query.filter(MpClientTasks.group_id == id, MpClientTasks.cmd == key).first()
-	if task is not None:
-		setattr(task, 'active', value)
-		db.session.commit()
-		revGroupTasks(id)
+	if isOwnerOfGroup(id) or isAdminForGroup(id):
+		key = request.form.get('pk')
+		value = request.form.get('value')
+		log("{} set task {} active state to {} ".format(session.get('user'), key, value))
+		task = MpClientTasks.query.filter(MpClientTasks.group_id == id, MpClientTasks.cmd == key).first()
+		if task is not None:
+			setattr(task, 'active', value)
+			db.session.commit()
+			revGroupTasks(id)
 
 	return clientGroup(id)
 
 @clients.route('/group/<id>/task/interval',methods=['POST'])
+@login_required
 def taskInterval(id):
-	cmd = request.form.get('pk')
-	interval = request.form.get('value')
-
-	task = MpClientTasks.query.filter(MpClientTasks.group_id == id, MpClientTasks.cmd == cmd).first()
-	if task is not None:
-		setattr(task, 'interval', interval)
-		db.session.commit()
-		revGroupTasks(id)
+	if isOwnerOfGroup(id) or isAdminForGroup(id):
+		cmd = request.form.get('pk')
+		interval = request.form.get('value')
+		log("{} set task {} active state to {} ".format(session.get('user'), key, value))
+		task = MpClientTasks.query.filter(MpClientTasks.group_id == id, MpClientTasks.cmd == cmd).first()
+		if task is not None:
+			setattr(task, 'interval', interval)
+			db.session.commit()
+			revGroupTasks(id)
 
 	return clientGroup(id)
 

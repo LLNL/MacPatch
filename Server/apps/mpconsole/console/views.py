@@ -6,10 +6,11 @@ import json
 
 from datetime import datetime
 
-from . import console
-from .. model import *
+from .  import console
 from .. import db
+from .. model import *
 from .. modes import *
+from .. mplogger import *
 
 ''' Global '''
 
@@ -23,7 +24,6 @@ def accounts():
 				('number_of_logins', 'No of Logins', '1'), ('last_login', 'Last Login', '1'), ('enabled', 'Enabled', '1')]
 
 	_accounts = AdmUsersInfo.query.all()
-
 	return render_template('admin/accounts.html', data=_accounts, columns=_columns)
 
 ''' AJAX Method '''
@@ -39,17 +39,24 @@ def deleteAdminAccount(user_id):
 			return render_template('admin/account_update.html', data=_accounts, columns=_columns)
 		else:
 			return accounts()
+
 	elif request.method == 'POST':
 		data = request.form.to_dict()
-		print data
 		if adminRole():
+			log("{} update account {} options.".format(session.get('user'), user_id))
 			qAdm = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user_id).first()
 			if qAdm is not None:
+				for key, value in qAdm.asDict.iteritems():
+					log("Orig: {} = {}".format(key, value))
+
 				for key, value in data.iteritems():
+					log("Updated: {} = {}".format(key, value))
 					setattr(qAdm, key, value)
+
 				db.session.commit()
-				
+
 		return accounts()
+
 	elif request.method == 'DELETE':
 		if adminRole():
 			qAdm = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user_id).first()
@@ -58,6 +65,8 @@ def deleteAdminAccount(user_id):
 					AdmUsers.query.filter(AdmUsers.user_id == user_id).delete()
 				db.session.delete(qAdm)
 				db.session.commit()
+
+				log("{} deleted account {}.".format(session.get('user'), user_id))
 			else:
 				return json.dumps({'errorno': 404}), 404
 
@@ -68,6 +77,7 @@ def deleteAdminAccount(user_id):
 @console.route('/account/<user_id>',methods=['GET'])
 @login_required
 def accountEdit(user_id):
+	# TODO: Permissions
 	_columns = [('user_id', 'User ID', '1'), ('user_type', 'User Type', '1'),
 				('number_of_logins', 'No of Logins', '1'), ('last_login', 'Last Login', '1'), ('enabled', 'Enabled', '1')]
 
@@ -88,7 +98,7 @@ def accountAdd():
 
 	elif request.method == 'POST':
 		data = request.form.to_dict()
-		if adminRole():
+		if adminRole() or localAdmin():
 			usrAttrs = ['user_id','user_pass','enabled']
 			usr	= AdmUsers()
 			usrInf = AdmUsersInfo()
@@ -108,6 +118,7 @@ def accountAdd():
 			db.session.add(usr)
 			db.session.add(usrInf)
 			db.session.commit()
+			log("{} added user account {}.".format(session.get('user'), user_id))
 
 		return accounts()
 
@@ -128,26 +139,31 @@ def tasks():
 
 @console.route('/tasks/assignClientsToGroups',methods=['POST'])
 @login_required
-def assignClientsToGroup():
+def assignClientsToDefaultGroup():
+	if adminRole() or localAdmin():
+		q_defaulGroup = MpClientGroups.query.filter(MpClientGroups.group_name == "default").first()
+		if q_defaultGroup:
+			defaultGroupID = q_defaultGroup.group_id
+		else:
+			return json.dumps({'error': 404, 'errormsg': 'Default group not found.'}), 404
 
-	q_defaultGroup = MpClientGroups.query.filter(MpClientGroups.group_name == "default").first()
-	if q_defaultGroup:
-		defaultGroupID = q_defaultGroup.group_id
+		clients = MpClient.query.all()
+		clientsInGroups = MpClientGroupMembers.query.all()
+
+		for client in clients:
+			if client.cuuid not in clientsInGroups:
+				log("{} adding client {} to group {}.".format(session.get('user'), cuuid, defaultGroupID))
+				addToGroup = MpClientGroupMembers()
+				setattr(addToGroup, 'group_id', defaultGroupID)
+				setattr(addToGroup, 'cuuid', client.cuuid)
+				db.session.add(addToGroup)
+				db.session.commit()
+
+		return json.dumps({'error': 0}), 200
+
 	else:
-		return json.dumps({'error': 404, 'errormsg': 'Default group not found.'}), 404
-
-	clients = MpClient.query.all()
-	clientsInGroups = MpClientGroupMembers.query.all()
-
-	for client in clients:
-		if client.cuuid not in clientsInGroups:
-			addToGroup = MpClientGroupMembers()
-			setattr(addToGroup, 'group_id', defaultGroupID)
-			setattr(addToGroup, 'cuuid', client.cuuid)
-			db.session.add(addToGroup)
-			db.session.commit()
-
-	return json.dumps({'error': 0}), 200
+		log_Error("{} does not have permission to assign clients to group.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 '''
 ----------------------------------------------------------------
@@ -233,26 +249,31 @@ def agentsList():
 @console.route('/agents/update/<attr>', methods=['POST'])
 @login_required
 def agentUpdateAttr(attr):
+	if adminRole() or localAdmin():
+		key = request.form.get('pk')
+		attrVal = request.form.get('value')
 
-	key = request.form.get('pk')
-	attrVal = request.form.get('value')
+		agent = MpClientAgent.query.filter(MpClientAgent.rid == key).first()
+		if agent is not None:
+			# If active attr, disable all active columns, only 1 active is allowed per type
+			if attr == 'active' and attrVal == '1':
+				_type = agent.type
+				for row in MpClientAgent.query.filter(MpClientAgent.type == _type).all():
+					row.active = 0
+					db.session.add(row)
+					db.session.commit()
 
-	agent = MpClientAgent.query.filter(MpClientAgent.rid == key).first()
-	if agent is not None:
-		# If active attr, disable all active columns, only 1 active is allowed per type
-		if attr == 'active' and attrVal == '1':
-			_type = agent.type
-			for row in MpClientAgent.query.filter(MpClientAgent.type == _type).all():
-				row.active = 0
-				db.session.add(row)
-				db.session.commit()
+			setattr(agent, attr, attrVal)
+			setattr(agent, 'mdate', datetime.now())
 
-		setattr(agent, attr, attrVal)
-		setattr(agent, 'mdate', datetime.now())
-		db.session.commit()
+			log("{} setting {} active to {}.".format(session.get('user'), key, value))
+			db.session.commit()
 
-	return json.dumps({'error': 0}), 200
+		return json.dumps({'error': 0}), 200
 
+	else:
+		log_Error("{} does not have permission to update agent attrs.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 @console.route('/agent/filters', methods=['GET'])
 @login_required
@@ -277,9 +298,7 @@ def agentsFiltersList():
 @console.route('/agent/filter/<id>', methods=['GET'])
 @login_required
 def agentFilter(id):
-
 	_filter = {}
-
 	if id != 0:
 		_filter = MpClientAgentsFilter.query.filter(MpClientAgentsFilter.rid == id).first()
 
@@ -288,29 +307,35 @@ def agentFilter(id):
 @console.route('/agent/filter/<id>', methods=['POST'])
 @login_required
 def agentFilterPost(id):
+	if adminRole() or localAdmin():
+		_form = request.form
+		if int(id) == 0:
+			# Add New
+			_filter = MpClientAgentsFilter()
+			setattr(_filter, 'type', 'app')
+			setattr(_filter, 'attribute', _form['attribute'])
+			setattr(_filter, 'attribute_oper', _form['attribute_oper'])
+			setattr(_filter, 'attribute_filter', _form['attribute_filter'])
+			setattr(_filter, 'attribute_condition', _form['attribute_condition'])
 
-	_form = request.form
+			log("{} adding new filter. {} {} {} {}.".format(session.get('user'), _form['attribute'], _form['attribute_oper'], _form['attribute_filter'], _form['attribute_condition']))
+			db.session.add(_filter)
 
-	if int(id) == 0:
-		# Add New
-		_filter = MpClientAgentsFilter()
-		setattr(_filter, 'type', 'app')
-		setattr(_filter, 'attribute', _form['attribute'])
-		setattr(_filter, 'attribute_oper', _form['attribute_oper'])
-		setattr(_filter, 'attribute_filter', _form['attribute_filter'])
-		setattr(_filter, 'attribute_condition', _form['attribute_condition'])
-		db.session.add(_filter)
+		else:
+			# Update
+			_filter = MpClientAgentsFilter.query.filter(MpClientAgentsFilter.rid == id).first()
+			setattr(_filter, 'attribute', _form['attribute'])
+			setattr(_filter, 'attribute_oper', _form['attribute_oper'])
+			setattr(_filter, 'attribute_filter', _form['attribute_filter'])
+			setattr(_filter, 'attribute_condition', _form['attribute_condition'])
+			log("{} updated filter. {} {} {} {}.".format(session.get('user'), _form['attribute'], _form['attribute_oper'], _form['attribute_filter'], _form['attribute_condition']))
+
+		db.session.commit()
+		return json.dumps({'error': 0}), 200
 
 	else:
-		# Update
-		_filter = MpClientAgentsFilter.query.filter(MpClientAgentsFilter.rid == id).first()
-		setattr(_filter, 'attribute', _form['attribute'])
-		setattr(_filter, 'attribute_oper', _form['attribute_oper'])
-		setattr(_filter, 'attribute_filter', _form['attribute_filter'])
-		setattr(_filter, 'attribute_condition', _form['attribute_condition'])
-
-	db.session.commit()
-	return json.dumps({'error': 0}), 200
+		log_Error("{} does not have permission to update agent filter.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 @console.route('/agent/configure')
 @login_required
@@ -320,26 +345,36 @@ def agentConfig():
 @console.route('/agent/deploy', methods=['DELETE'])
 @login_required
 def agentDeployRemove():
+	if adminRole() or localAdmin():
+		_filters = request.form['filters'].split(",")
+		for f in _filters:
+			q_remove = MpClientAgent.query.filter(MpClientAgent.puuid == str(f)).delete()
+			if q_remove:
+				log("{} removed agent {}.".format(session.get('user'), str(f)))
+				db.session.commit()
 
-	_filters = request.form['filters'].split(",")
-	for f in _filters:
-		q_remove = MpClientAgent.query.filter(MpClientAgent.puuid == str(f)).delete()
-		if q_remove:
-			db.session.commit()
+		return json.dumps({'error': 0}), 200
 
-	return json.dumps({'error': 0}), 200
+	else:
+		log_Error("{} does not have permission to delete agent.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 @console.route('/agent/deploy/filter', methods=['DELETE'])
 @login_required
 def agentDeployFilterRemove():
+	if adminRole() or localAdmin():
+		_filters = request.form['filters'].split(",")
+		for f in _filters:
+			q_rm = MpClientAgentsFilter.query.filter(MpClientAgentsFilter.rid == int(f)).first()
+			if q_rm is not None:
+				log("{} removed agent filter {} {} {}.".format(session.get('user'), q_rm.attribute, q_rm.attribute_oper, q_rm.attribute_filter ))
+				db.session.delete(q_rm)
+				db.session.commit()
 
-	_filters = request.form['filters'].split(",")
-	for f in _filters:
-		q_remove = MpClientAgentsFilter.query.filter(MpClientAgentsFilter.rid == int(f)).delete()
-		if q_remove:
-			db.session.commit()
-
-	return json.dumps({'error': 0}), 200
+		return json.dumps({'error': 0}), 200
+	else:
+		log_Error("{} does not have permission to delete agent filter.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 '''
 ----------------------------------------------------------------
@@ -362,9 +397,6 @@ def agentPluginsList():
 	columns = [('rid', 'rid', '0'), ('pluginName', 'Name', '1'), ('pluginBundleID', 'Bundle ID', '1'),
 				('pluginVersion', 'Version', '1'), ('hash', 'Hash', '1'), ('active', 'Enabled', '1')]
 
-	# agents = MPPluginHash.query.all()
-	# stmt = select([users_table]).order_by(desc(users_table.c.name))
-	# plugins = MPPluginHash.query.order_by("mp_agent_plugins.pluginBundleID").order_by("mp_agent_plugins.rid desc").all()
 	plugins = MPPluginHash.query.order_by(MPPluginHash.pluginBundleID).order_by(desc(MPPluginHash.rid)).all()
 
 	_results = []
@@ -392,39 +424,45 @@ def agentPluginsEdit(id):
 @console.route('/agent/plugins/update', methods=['POST'])
 @login_required
 def agentPluginsUpdate():
+	if adminRole() or localAdmin():
+		_form = request.form
+		isNew = False
+		if _form['rid'] == '':
+			isNew = True
+			x = MPPluginHash()
+		else:
+			x = MPPluginHash.query.filter(MPPluginHash.rid == _form['rid']).first()
 
-	_form = request.form
-	isNew = False
-	if _form['rid'] == '':
-		isNew = True
-		x = MPPluginHash()
+		setattr(x, 'pluginName', _form['pluginName'])
+		setattr(x, 'pluginBundleID', _form['pluginBundleID'])
+		setattr(x, 'pluginVersion', _form['pluginVersion'])
+		setattr(x, 'hash', _form['hash'])
+		setattr(x, 'active', _form['active'])
+
+		if isNew:
+			db.session.add(x)
+
+		db.session.commit()
+
+		return json.dumps({'error': 0}), 200
 	else:
-		x = MPPluginHash.query.filter(MPPluginHash.rid == _form['rid']).first()
-
-	setattr(x, 'pluginName', _form['pluginName'])
-	setattr(x, 'pluginBundleID', _form['pluginBundleID'])
-	setattr(x, 'pluginVersion', _form['pluginVersion'])
-	setattr(x, 'hash', _form['hash'])
-	setattr(x, 'active', _form['active'])
-
-	if isNew:
-		db.session.add(x)
-
-	db.session.commit()
-
-	return json.dumps({'error': 0}), 200
+		log_Error("{} does not have permission to add/update agent plugin.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 @console.route('/agent/plugins', methods=['DELETE'])
 @login_required
 def agentPluginsRemove():
+	if adminRole() or localAdmin():
+		_rids = request.form['rid'].split(",")
+		for r in _rids:
+			q_remove = MPPluginHash.query.filter(MPPluginHash.rid == str(r)).delete()
+			if q_remove:
+				db.session.commit()
 
-	_rids = request.form['rid'].split(",")
-	for r in _rids:
-		q_remove = MPPluginHash.query.filter(MPPluginHash.rid == str(r)).delete()
-		if q_remove:
-			db.session.commit()
-
-	return json.dumps({'error': 0}), 200
+		return json.dumps({'error': 0}), 200
+	else:
+		log_Error("{} does not have permission to delete agent plugin.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 '''
 ----------------------------------------------------------------
@@ -434,7 +472,6 @@ def agentPluginsRemove():
 @console.route('/servers/mp')
 @login_required
 def mpServerView():
-
 	columns = [('rid', 'rid', '0'), ('server', 'Server', '1'), ('port', 'Port', '1'), ('useSSL', 'Use SSL', '1'),
 				('allowSelfSignedCert', 'Allow Self-Signed Cert', '1'),('isMaster', 'Master', '1'), ('isProxy', 'Proxy', '1'),
 				('active', 'Enabled', '1')]
@@ -444,7 +481,6 @@ def mpServerView():
 @console.route('/servers/mp/list', methods=['GET'])
 @login_required
 def mpServersList():
-
 	columns = [('rid', 'rid', '0'), ('server', 'Server', '1'), ('port', 'Port', '1'), ('useSSL', 'Use SSL', '1'),
 				('allowSelfSignedCert', 'Allow Self-Signed Cert', '1'), ('isMaster', 'Master', '1'),
 				('isProxy', 'Proxy', '1'),
@@ -486,43 +522,49 @@ def mpServerEdit(id):
 @console.route('/servers/mp/update', methods=['POST', 'DELETE'])
 @login_required
 def mpServerUpdate():
+	if adminRole() or localAdmin():
+		_form = request.form
+		if request.method == 'POST':
+			isNew = False
+			if _form['rid'] == '':
+				isNew = True
+				x = MpServer()
+			else:
+				x = MpServer.query.filter(MpServer.rid == _form['rid']).first()
 
-	_form = request.form
+			setattr(x, 'server', _form['server'])
+			setattr(x, 'port', _form['port'])
+			setattr(x, 'useSSL', _form['useSSL'])
+			setattr(x, 'allowSelfSignedCert', _form['allowSelfSignedCert'])
+			setattr(x, 'isMaster', _form['isMaster'])
+			setattr(x, 'isProxy', _form['isProxy'])
+			setattr(x, 'active', _form['active'])
+			setattr(x, 'listid', '1')
 
-	if request.method == 'POST':
-		isNew = False
-		if _form['rid'] == '':
-			isNew = True
-			x = MpServer()
-		else:
-			x = MpServer.query.filter(MpServer.rid == _form['rid']).first()
+			if isNew:
+				db.session.add(x)
+				log("{} added server {}.".format(session.get('user'), _form['server']))
+			else:
+				log("{} updated server {}.".format(session.get('user'), _form['server']))
 
-		setattr(x, 'server', _form['server'])
-		setattr(x, 'port', _form['port'])
-		setattr(x, 'useSSL', _form['useSSL'])
-		setattr(x, 'allowSelfSignedCert', _form['allowSelfSignedCert'])
-		setattr(x, 'isMaster', _form['isMaster'])
-		setattr(x, 'isProxy', _form['isProxy'])
-		setattr(x, 'active', _form['active'])
-		setattr(x, 'listid', '1')
-
-		if isNew:
-			db.session.add(x)
-
-		db.session.commit()
-		updateServerRev()
-
-		return json.dumps({'error': 0}), 200
-
-	elif request.method == 'DELETE':
-
-		x = MpServer.query.filter(MpServer.rid == _form['rid']).first()
-		if x is not None:
-			db.session.delete(x)
 			db.session.commit()
 			updateServerRev()
+			return json.dumps({'error': 0}), 200
 
-		return json.dumps({'error': 0}), 200
+		elif request.method == 'DELETE':
+
+			x = MpServer.query.filter(MpServer.rid == _form['rid']).first()
+			if x is not None:
+				serverName = x.server
+				db.session.delete(x)
+				db.session.commit()
+				updateServerRev()
+
+			log("{} deleted server {}.".format(session.get('user'), serverName))
+			return json.dumps({'error': 0}), 200
+	else:
+		log_Error("{} does not have permission to update or delete server.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 def updateServerRev():
 
@@ -592,43 +634,50 @@ def asusServerEdit(id):
 @console.route('/servers/asus/update', methods=['POST', 'DELETE'])
 @login_required
 def asusServerUpdate():
+	if adminRole() or localAdmin():
+		_form = request.form
+		suServerURL = _form['catalog_url']
+		if request.method == 'POST':
 
-	_form = request.form
+			isNew = False
+			if _form['rid'] == '':
+				isNew = True
+				x = MpAsusCatalog()
+			else:
+				x = MpAsusCatalog.query.filter(MpAsusCatalog.rid == _form['rid']).first()
 
-	if request.method == 'POST':
+			setattr(x, 'catalog_url', suServerURL)
+			setattr(x, 'os_major', _form['os_major'])
+			setattr(x, 'os_minor', _form['os_minor'])
+			setattr(x, 'proxy', _form['proxy'])
+			setattr(x, 'active', _form['active'])
+			setattr(x, 'catalog_group_name', 'Default')
+			setattr(x, 'listid', '1')
 
-		isNew = False
-		if _form['rid'] == '':
-			isNew = True
-			x = MpAsusCatalog()
-		else:
-			x = MpAsusCatalog.query.filter(MpAsusCatalog.rid == _form['rid']).first()
+			if isNew:
+				db.session.add(x)
+				log("{} added SU server {}.".format(session.get('user'), suServerURL))
+			else:
+				log("{} updated SU server {}.".format(session.get('user'), suServerURL))
 
-		setattr(x, 'catalog_url', _form['catalog_url'])
-		setattr(x, 'os_major', _form['os_major'])
-		setattr(x, 'os_minor', _form['os_minor'])
-		setattr(x, 'proxy', _form['proxy'])
-		setattr(x, 'active', _form['active'])
-		setattr(x, 'catalog_group_name', 'Default')
-		setattr(x, 'listid', '1')
-
-		if isNew:
-			db.session.add(x)
-
-		db.session.commit()
-		updateASUSRev()
-
-		return json.dumps({'error': 0}), 200
-
-	elif request.method == 'DELETE':
-
-		x = MpAsusCatalog.query.filter(MpAsusCatalog.rid == _form['rid']).first()
-		if x is not None:
-			db.session.delete(x)
 			db.session.commit()
 			updateASUSRev()
 
-		return json.dumps({'error': 0}), 200
+			return json.dumps({'error': 0}), 200
+
+		elif request.method == 'DELETE':
+
+			x = MpAsusCatalog.query.filter(MpAsusCatalog.rid == _form['rid']).first()
+			if x is not None:
+				log("{} deleted SU server {}.".format(session.get('user'), x.catalog_url))
+				db.session.delete(x)
+				db.session.commit()
+				updateASUSRev()
+
+			return json.dumps({'error': 0}), 200
+	else:
+		log_Error("{} does not have permission to add or delete SU server.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
 
 def updateASUSRev():
 

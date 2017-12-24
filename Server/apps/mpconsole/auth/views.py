@@ -3,12 +3,13 @@ from flask_login import login_user, logout_user
 
 from ldap3 import Server, Connection, ALL, AUTO_BIND_NO_TLS, SUBTREE, ALL_ATTRIBUTES
 
-from . import auth
+from .  import auth
 from .. import db
+from .  forms import LoginForm
 from .. model import *
 from .. mputil import *
 from .. mplogger import *
-from . forms import LoginForm
+
 
 
 @auth.route("/login", methods=["GET", "POST"])
@@ -23,6 +24,7 @@ def login():
 	tryLocalAdmin = False
 	if 'admin' in _localAdm:
 		tryLocalAdmin = _localAdm['admin']['enabled']
+		log_Debug("Local admin enabled: {}".format(tryLocalAdmin))
 
 	if form.validate_on_submit():
 		user = AdmUsers.query.filter(AdmUsers.user_id == form.username.data).first()
@@ -31,7 +33,6 @@ def login():
 			_lPass = _localAdm['admin']['pass']
 			if form.username.data == _lUser:
 				if _lPass == form.password.data:
-
 					if user is None:
 						user = AdmUsers()
 						user.user_id = form.username.data
@@ -41,7 +42,7 @@ def login():
 
 						makeUserAdmin(user.user_id, 0)
 
-					login_user(user, form.remember_me.data)
+					login_user(user)
 					session['user'] = form.username.data
 					recordLoginAndAssignIfNeeded(user.user_id, 0)
 					setLoginSessionInfo(user.user_id)
@@ -52,7 +53,7 @@ def login():
 		if user is not None and user.check_password(form.password.data):
 
 			if accountIsEnabled(user.user_id):
-				login_user(user, form.remember_me.data)
+				login_user(user)
 				session['user'] = form.username.data
 				recordLoginAndAssignIfNeeded(user.user_id, 1)
 				setLoginSessionInfo(user.user_id)
@@ -80,6 +81,7 @@ def login():
 				if 'server' in _ldapConf and 'port' in _ldapConf and 'useSSL' in _ldapConf:
 					_use_ssl = True
 					if _ldapConf['useSSL'] is False:
+						log_Warn('SSL is not enabled for LDAP queries, this is not recommended.')
 						_use_ssl = False
 
 					server = Server(host=_ldapConf['server'], port=int(_ldapConf['port']), use_ssl=_use_ssl)
@@ -91,8 +93,6 @@ def login():
 								search_filter='(&(objectClass=*)(userPrincipalName=userID))',
 								search_scope=SUBTREE, attributes=ALL_ATTRIBUTES, get_operational_attributes=True)
 
-					# print conn.response_to_json()
-
 					if accountExists(form.username.data):
 						if accountIsEnabled(form.username.data):
 							if user is None:
@@ -103,7 +103,7 @@ def login():
 								db.session.commit()
 
 							session['user'] = form.username.data
-							login_user(user, form.remember_me.data)
+							login_user(user)
 							recordLoginAndAssignIfNeeded(user.user_id, 2)
 							setLoginSessionInfo(user.user_id)
 
@@ -117,7 +117,7 @@ def login():
 						db.session.commit()
 
 						session['user'] = form.username.data
-						login_user(user, form.remember_me.data)
+						login_user(user)
 						recordLoginAndAssignIfNeeded(user.user_id, 2)
 						setLoginSessionInfo(user.user_id)
 
@@ -201,18 +201,3 @@ def logout():
 	logout_user()
 	session.clear()
 	return redirect(url_for('main.index'))
-
-'''
-@auth.route("/signup", methods=["GET", "POST"])
-def signup():
-	form = SignupForm()
-	if form.validate_on_submit():
-		user = User(email=form.email.data,
-					username=form.username.data,
-					password = form.password.data)
-		db.session.add(user)
-		db.session.commit()
-		flash('Welcome, {}! Please login.'.format(user.username))
-		return redirect(url_for('.login'))
-	return render_template("signup.html", form=form)
-'''
