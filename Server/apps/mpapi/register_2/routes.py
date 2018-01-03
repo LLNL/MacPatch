@@ -13,6 +13,8 @@ from .. shared.agentRegistration import *
 from M2Crypto import RSA
 import hashlib
 import base64
+import uuid
+import os
 
 
 # Client Reg Process
@@ -36,6 +38,7 @@ class Registration(MPResource):
 		])
 	'''
 	def post(self, client_id, regKey="NA"):
+		log_Info('[Registration][Post]: Register client (%s) using key (%s).' % (client_id, regKey))
 		# print client_id
 		'''
 			Content Dict: cKey, CPubKeyPem, CPubKeyDer, ClientHash
@@ -62,10 +65,12 @@ class Registration(MPResource):
 
 			# Is Client Already Registered
 			if isClientRegistered(client_id):
+				log_Info('[Registration][Post]: Client (%s) already registered.' % (client_id))
 				return {"result": '', "errorno": 406, "errormsg": 'Failed to register client.'}, 406
 
 			# AutoReg is disabled
 			if auto_reg is False:
+				log_Info('[Registration][Post]: Using registration key, autoreg not enabled.')
 				# Verify Reg Key for Client ID
 				validKey = isValidRegKey(regKey, client_id)
 
@@ -168,20 +173,35 @@ class RegistrationStatus(MPResource):
 
 		return {"result": {'data':False}, "errorno": 204, "errormsg": ""}, 204
 
-
 ''' Private Methods '''
 def verifyClientHash(encodedKey, hash):
-	_lHash = hashlib.sha1(encodedKey).hexdigest()
-	if _lHash.lower() == hash.lower():
-		return True
+	if encodedKey is not None:
+		_lHash = hashlib.sha1(encodedKey).hexdigest()
+		if _lHash.lower() == hash.lower():
+			return True
+		else:
+			return False
 	else:
 		return False
 
 def decodeClientKey(encodedKey):
-	priKeyFile = return_data_for_server_key('priKey')
-	priv = RSA.load_key(priKeyFile)
-	decrypted = priv.private_decrypt(base64.b64decode(encodedKey), RSA.pkcs1_padding)
-	return decrypted
+	try:
+		qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()
+		priKeyFile = "/tmp/." + str(uuid.uuid4())
+		f = open(priKeyFile, "w")
+		f.write(qKeys.priKey)
+		f.close()
+
+		priv = RSA.load_key(priKeyFile)
+		decrypted = priv.private_decrypt(base64.b64decode(encodedKey), RSA.pkcs1_padding)
+		os.remove(priKeyFile)
+		return decrypted
+
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		log_Error('[Registration][decodeClientKey][Line: %d] Message: %s' % (exc_tb.tb_lineno, e.message))
+		db.session.rollback()
+		return None
 
 # Add Routes Resources
 register_2_api.add_resource(Registration,         '/client/register/<string:client_id>', endpoint='noRegKey')
