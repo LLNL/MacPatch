@@ -131,8 +131,8 @@ def clientInstalledPatches(client_id):
 @clients.route('/dashboard/inventory/<client_id>/<inv_id>')
 def clientInventoryReport(client_id, inv_id):
 
-	sql = text("""select * From :invID Where cuuid = ':clientID'""")
-	_q_result = db.engine.execute(sql, invID=inv_id, clientID=client_id)
+	sql = text("select * From {} where cuuid = '{}'".format(inv_id, client_id))
+	_q_result = db.engine.execute(sql)
 
 	_results = []
 	_columns = []
@@ -297,7 +297,6 @@ def clientGroup(name,tab=1):
 			return json.dumps({{'errormsg':'Can not delete default group.'}}), 403
 
 		qMembers = MpClientGroupMembers.query.filter(MpClientGroupMembers.group_id == name).all()
-		print len(qMembers)
 		if qMembers is not None and len(qMembers) >= 1:
 			return json.dumps({'errormsg':'Group still contains agents. Can not delete group while agents are assigned.'}), 401
 		else:
@@ -379,7 +378,6 @@ def clientGroup(name,tab=1):
 
 		# Group Settings
 		_settings = getGroupSettings(name)
-		print _settings
 		profileCols = [('profileID', 'Profile ID', '0'), ('gPolicyID', 'Policy Identifier', '0'), ('pName', 'Profile Name', '1'), ('title', 'Title', '1'),
 						('description', 'Description', '1'), ('enabled', 'Enabled', '1')]
 		'''
@@ -683,7 +681,7 @@ def taskInterval(id):
 	if isOwnerOfGroup(id) or isAdminForGroup(id):
 		cmd = request.form.get('pk')
 		interval = request.form.get('value')
-		log("{} set task {} active state to {} ".format(session.get('user'), key, value))
+		log("{} set task {} active state to {} ".format(session.get('user'), cmd, interval))
 		task = MpClientTasks.query.filter(MpClientTasks.group_id == id, MpClientTasks.cmd == cmd).first()
 		if task is not None:
 			setattr(task, 'interval', interval)
