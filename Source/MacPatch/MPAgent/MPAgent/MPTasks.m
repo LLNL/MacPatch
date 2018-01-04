@@ -71,10 +71,10 @@
 		if ([[tmpDict objectForKey:@"cmd"] isEqualToString:@"kMPCheckIn"]) {
 			if ([intervalArray count] == 2) {
 				if ([intervalArray objectAtIndex:0] == NULL || [intervalArray objectAtIndex:1] == NULL) {
-					[tmpDict setObject:@"Every@900" forKey:@"interval"];
+					[tmpDict setObject:@"Every@300" forKey:@"interval"];
 				}
 			} else if ([intervalArray count] == 3) {
-				[tmpDict setObject:@"Every@900" forKey:@"interval"];
+				[tmpDict setObject:@"Every@300" forKey:@"interval"];
 			}
 		} else if ([[tmpDict objectForKey:@"cmd"] isEqualToString:@"kMPAgentCheck"]) {
 			if ([intervalArray count] == 2) {
@@ -202,6 +202,27 @@
 			} else {
 				next_run = [[NSDate addDayToInterval:[[tmpDict objectForKey:@"nextrun"] intValue]] timeIntervalSince1970];
 			}
+		}
+		else if ([[[intervalArray objectAtIndex:1] uppercaseString] isEqualToString:@"DAILYRAND"])
+		{
+			int dailyRandDelay = arc4random() % 1800; //Default is 30min
+			if (intervalArray.count == 4) {
+				dailyRandDelay = arc4random() % [[intervalArray objectAtIndex:3] intValue];
+			}
+			
+			if (![tmpDict objectForKey:@"nextrun"]) {
+				// If Less than right now ...
+				logit(lcl_vTrace,@"%ld < %ld",(long)[[NSDate dateFromString:_dt] timeIntervalSince1970], (long)[[NSDate date] timeIntervalSince1970]);
+				if ([[NSDate dateFromString:_dt] timeIntervalSince1970] > [[NSDate date] timeIntervalSince1970]) {
+					next_run = 	(double)[[NSDate dateFromString:_dt] timeIntervalSince1970];
+				} else {
+					next_run = [[NSDate addDayToInterval:[[NSDate dateFromString:_dt] timeIntervalSince1970]] timeIntervalSince1970];
+				}
+			} else {
+				next_run = [[NSDate addDayToInterval:[[tmpDict objectForKey:@"nextrun"] intValue]] timeIntervalSince1970];
+			}
+			
+			next_run = (double)(next_run + dailyRandDelay);
 		}
 		else if ([[[intervalArray objectAtIndex:1] uppercaseString] isEqualToString:@"WEEKLY"]) 
 		{

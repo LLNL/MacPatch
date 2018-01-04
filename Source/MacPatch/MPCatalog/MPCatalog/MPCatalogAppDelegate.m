@@ -987,7 +987,7 @@
                     
                     __block NSError *dlErr = nil;
                     MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
-                    NSString *dlPath = [req createTempDownloadDir:urlPath]; // Create temp download dir
+                    NSString *dlPath = [req createTempDownloadDir:d[@"id"]]; // Create temp download dir
                     
                     // *****************************************
                     // Start download
@@ -995,7 +995,8 @@
                     dispatch_async(dispatch_get_main_queue(), ^(void){
                         [statusTextStatus setStringValue:[NSString stringWithFormat:@"Downloading %@",[d objectForKey:@"name"]]];
                     });
-                    
+					
+                    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
                     [req runDownloadRequest:urlPath downloadDirectory:dlPath progress:progressBar progressPercent:nil completion:^(NSString *fileName, NSString *filePath, NSError *error)
                      {
                          if (error) {
@@ -1009,8 +1010,10 @@
                                  [statusTextStatus setStringValue:[NSString stringWithFormat:@"Successfully downloaded %@",fileName]];
                              });
                          }
+						 dispatch_semaphore_signal(sem);
                      }];
-                    
+					
+                    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
                     // *****************************************
                     // There was an error downloding the file, no install can ocure
                     // *****************************************
@@ -1025,7 +1028,7 @@
                     // *****************************************
                     // Create Destination Dir
                     // *****************************************
-                    NSString *decodedName = [[dlPath lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                    NSString *decodedName = [[urlPath lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     dlErr = nil;
                     if ([fm fileExistsAtPath:swLoc] == NO) {
                         [fm createDirectoryAtPath:swLoc withIntermediateDirectories:YES attributes:nil error:&dlErr];
@@ -1037,8 +1040,9 @@
                     // *****************************************
                     // Move Downloaded File to Destination
                     // *****************************************
+					logit(lcl_vDebug,@"Moving downloaded file %@ to destination %@.",dlPath, [swLoc stringByAppendingPathComponent:decodedName]);
                     dlErr = nil;
-                    [fm moveItemAtPath:dlPath toPath:[swLoc stringByAppendingPathComponent:decodedName] error:&dlErr];
+                    [fm moveItemAtPath:[dlPath stringByAppendingPathComponent:decodedName] toPath:[swLoc stringByAppendingPathComponent:decodedName] error:&dlErr];
                     if (dlErr) {
                         logit(lcl_vError,@"Error[%d], trying to move downloaded file to %@.",(int)[dlErr code],swLoc);
                     }

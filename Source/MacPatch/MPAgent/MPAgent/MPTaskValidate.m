@@ -25,10 +25,10 @@
 
 #import "MPTaskValidate.h"
 
-NSString * const kMPCheckIn			= @"Every@900";
+NSString * const kMPCheckIn			= @"Every@300";
 NSString * const kMPAgentCheck		= @"Every@3600";
 NSString * const kMPVulScan			= @"Recurring@Daily@12:00:00";
-NSString * const kMPVulUpdate		= @"Recurring@Daily@12:10:00";
+NSString * const kMPVulUpdate		= @"Recurring@Daily@12:30:00";
 NSString * const kMPAVCheck			= @"EVERYRAND@14400";
 NSString * const kMPAVInfo			= @"EVERYRAND@1800";
 NSString * const kMPInvScan			= @"EVERY@21600";
@@ -39,7 +39,7 @@ NSString * const kMPSrvList         = @"EVERY@600";
 NSString * const kMPSUSrvList       = @"EVERY@1800";
 NSString * const kMPAppStore        = @"EVERY@7200";
 NSString * const kStartDate			= @"2017-01-01";
-NSString * const kEndDate			= @"2050-01-01";
+NSString * const kEndDate			= @"2030-01-01";
 NSString * const kMPPatchCrit		= @"EVERY@1800";
 
 #pragma mark -
@@ -175,8 +175,20 @@ NSString * const kMPPatchCrit		= @"EVERY@1800";
 			return NO;	
 		}
 		NSString *_mod = [[aInterval objectAtIndex:1] uppercaseString];
-		if ([_mod isEqualToString:@"DAILY"] || [_mod isEqualToString:@"WEEKLY"] || [_mod isEqualToString:@"MONTHLY"]) {
+		if ([_mod isEqualToString:@"DAILY"] || [_mod isEqualToString:@"DAILYRAND"] || [_mod isEqualToString:@"WEEKLY"] || [_mod isEqualToString:@"MONTHLY"]) {
 			return [[aInterval objectAtIndex:2] isValidTimeString];
+		} else {
+			return NO;
+		}
+	}
+	
+	// Only DailyRand can have 4 options
+	if ([aInterval count] == 4) {
+		if ([aInterval objectAtIndex:0] == NULL || [aInterval objectAtIndex:1] == NULL || [aInterval objectAtIndex:2] == NULL || [aInterval objectAtIndex:3] == NULL) {
+			return NO;
+		}
+		if ([[[aInterval objectAtIndex:0] uppercaseString] isEqual:@"DAILYRAND"]) {
+			return [[aInterval objectAtIndex:3] isValidNumberString];
 		} else {
 			return NO;
 		}

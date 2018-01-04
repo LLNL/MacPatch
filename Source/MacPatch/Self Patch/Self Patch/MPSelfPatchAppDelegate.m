@@ -1458,8 +1458,11 @@ done:
                         // -------------------------------------------
                         if ([[currPatchToInstallDict objectForKey:@"preinst"] length] > 0 && [[currPatchToInstallDict objectForKey:@"preinst"] isEqualTo:@"NA"] == NO) {
                             [self progress:[NSString stringWithFormat:@"Begin pre install script."]];
-                            
-                            NSString *preInstScript = [[currPatchToInstallDict objectForKey:@"preinst"] decodeBase64AsString];
+							NSString *preInstScript = [currPatchToInstallDict objectForKey:@"preinst"];
+							if ([[currPatchToInstallDict objectForKey:@"preinst"] isBase64String]) {
+								preInstScript = [[currPatchToInstallDict objectForKey:@"preinst"] decodeBase64AsString];
+							}
+							
                             logit(lcl_vDebug,@"preInstScript=%@",preInstScript);
                             if ([self runScript:preInstScript] != 0 ) 
                             {
@@ -1520,8 +1523,12 @@ done:
                         // -------------------------------------------
                         if ([[currPatchToInstallDict objectForKey:@"postinst"] length] > 0 && [[currPatchToInstallDict objectForKey:@"postinst"] isEqualTo:@"NA"] == NO) {
                             [self progress:[NSString stringWithFormat:@"Begin post install script."]];
-                            
-                            NSString *postInstScript = [[currPatchToInstallDict objectForKey:@"postinst"] decodeBase64AsString];
+							
+							NSString *postInstScript = [currPatchToInstallDict objectForKey:@"postinst"];
+							if ([[currPatchToInstallDict objectForKey:@"postinst"] isBase64String]) {
+								postInstScript = [[currPatchToInstallDict objectForKey:@"postinst"] decodeBase64AsString];
+							}
+							
                             logit(lcl_vDebug,@"postInstScript=%@",postInstScript);
                             if ([self runScript:postInstScript] != 0 ) 
                             {
