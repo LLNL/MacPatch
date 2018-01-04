@@ -1091,7 +1091,8 @@ def requiredQuery(filterStr='undefined', page=0, page_size=0, sort='date', order
 	res1 = None
 
 	filterStr = str(filterStr)
-	offset = page * page_size
+	#offset = page * page_size
+	offset = page
 
 	if filterStr == 'undefined' or len(filterStr) <= 0:
 		# Query for All Records, sql0 is used for count, sql1 is the query for paging
@@ -1119,14 +1120,14 @@ def requiredQuery(filterStr='undefined', page=0, page_size=0, sort='date', order
 	# Execute the SQL statement(s)
 	if sql0 is not None:
 		res1 = db.engine.execute(sql0)
-		recCounter = res1.rowcount
+		recCounter1 = res1.rowcount
 
 	if sql1 is not None:
 		result = db.engine.execute(sql1)
-		recCounter = result.rowcount
+		recCounter2 = result.rowcount
 
 	# Return tuple, query results and a record count
-	return (result, recCounter)
+	return (result, recCounter1, recCounter2)
 
 @patches.route('/installed')
 @login_required
@@ -1182,7 +1183,7 @@ def installedListPaged(limit,offset,search):
 
 	return json.dumps({'data': _results, 'total': total}, default=json_serial), 200
 
-def installedQuery(filterStr='undefined', page=0, page_size=0, getCount=True):
+def installedQuery(filterStr='undefined', page=0, page_size=0, sort='date', order='desc', getCount=True):
 
 	if filterStr == 'undefined' or len(filterStr) <= 0:
 		query = MpInstalledPatch.query.join(MpClient, MpClient.cuuid == MpInstalledPatch.cuuid).add_columns(
