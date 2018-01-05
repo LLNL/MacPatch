@@ -107,8 +107,10 @@
         [agentDict setObject:[settings ostype] forKey:@"ostype"];
         [agentDict setObject:@"0" forKey:@"agent_version"];
         [agentDict setObject:[agentVer objectForKey:@"build"] forKey:@"agent_build"];
-        NSString *cVer = [NSString stringWithFormat:@"%@.%@.%@",[agentVer objectForKey:@"major"],[agentVer objectForKey:@"minor"],[agentVer objectForKey:@"bug"]];
-        [agentDict setObject:cVer forKey:@"agent_version"];
+        NSString *aVer = [NSString stringWithFormat:@"%@.%@.%@",[agentVer objectForKey:@"major"],[agentVer objectForKey:@"minor"],[agentVer objectForKey:@"bug"]];
+		NSString *cVer = [NSString stringWithFormat:@"%@.%@.%@.%@",[agentVer objectForKey:@"major"],[agentVer objectForKey:@"minor"],[agentVer objectForKey:@"bug"],[agentVer objectForKey:@"build"]];
+        [agentDict setObject:aVer forKey:@"agent_version"];
+		[agentDict setObject:cVer forKey:@"client_version"];
         [agentDict setObject:@"false" forKey:@"needsreboot"];
 		[agentDict setObject:[self fileVaultStatus] forKey:@"fileVaultStatus"];
 		[agentDict setObject:[self firmwareStatus] forKey:@"firmwareStatus"];
