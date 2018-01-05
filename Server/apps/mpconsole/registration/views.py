@@ -31,6 +31,9 @@ def index():
 		if 'Key' not in col.name:
 			_regClientCols.append({'name':col.name, 'label': col.info})
 
+	# Add Group Name Col
+	_regClientCols.insert(4,{'name': 'group_name', 'label': 'Client Group'})
+
 	qPrkCols = MpClientsWantingRegistration.__table__.columns
 	for col in qPrkCols:
 		_prkClientCols.append({'name':col.name, 'label': col.info})
@@ -81,17 +84,27 @@ def keys():
 @login_required
 def clients():
 	_results = []
-	_columns = []
-	qCols = MPAgentRegistration.__table__.columns
-	qGet = MPAgentRegistration.query.all()
+	qGetGrps = MpClientGroups.query.all()
+	qGet = MPAgentRegistration.query.join(MpClientGroupMembers, MpClientGroupMembers.cuuid == MPAgentRegistration.cuuid).add_columns(MpClientGroupMembers.group_id).all()
 
-	for col in qCols:
-		_columns.append({'name':col.name, 'label': col.info})
+	_groups = []
+	for g in qGetGrps:
+		_groups.append({'group_id':g.group_id,'group_name':g.group_name})
 
 	for x in qGet:
-		_results.append(x.asDictWithRID)
+		d = x[0].asDictWithRID
+		# Remove Keys, dont want this data handed back
+		d.pop('pubKeyPem', None)
+		d.pop('clientKey', None)
+		d.pop('pubKeyPemHash', None)
+		d['group_name'] = searchForGroup(x[1], _groups)
+		_results.append(d)
 
-	return json.dumps({'data': _results, 'total': 0}, default=json_serial), 200
+	return json.dumps({'data': _results, 'total': len(_results)}, default=json_serial), 200
+
+def searchForGroup(group, list):
+	res = (item for item in list if item["group_id"] == group).next()
+	return res['group_name']
 
 # JSON
 @registration.route('/registered/client/<client_id>',methods=['DELETE'])
@@ -162,7 +175,6 @@ def addKey():
 					setattr(key, i, data[i])
 
 		db.session.commit()
-		print data
 		return json.dumps({}), 200
 
 @registration.route('/key/edit/<rid>',methods=['GET','POST','DELETE'])
@@ -195,7 +207,6 @@ def editKey(rid):
 					setattr(key, i, data[i])
 
 		db.session.commit()
-		print data
 		return json.dumps({}), 200
 
 def json_serial(obj):
