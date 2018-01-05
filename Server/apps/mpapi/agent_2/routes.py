@@ -1,6 +1,13 @@
 from flask import request, abort, current_app
 from flask_restful import reqparse
 from sqlalchemy.exc import IntegrityError
+from distutils.version import LooseVersion, StrictVersion
+from werkzeug import secure_filename
+from datetime import datetime
+from ast import literal_eval
+import sys
+import plistlib
+import json
 
 from . import *
 from .. import db
@@ -9,8 +16,6 @@ from .. model import *
 from .. mplogger import *
 from .. servers_2.routes import serverListForID, suServerListForID
 from .. agent.routes import AgentUpdates
-import plistlib
-import json
 
 parser = reqparse.RequestParser()
 
