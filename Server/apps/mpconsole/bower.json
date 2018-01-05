@@ -36,10 +36,11 @@
     "col-resizable": "^1.6.0",
     "chosen": "^1.8.2",
     "interactjs": "interact#^1.2.9",
-    "sql-parser": "^1.1.0"
+    "sql-parser": "^1.1.0",
+    "tableExport.jquery.plugin": "^1.9.8",
   },
   "notes": [
     "ace and modernizr do not work via bower, will keep trying in future",
-    "bootstrap-table-editable si static, bug with current version, need 1 back"
+    "bootstrap-table-editable is static, bug with current version, need 1 back"
   ]
 }

@@ -28,7 +28,9 @@
 	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-table-editable.js') }}"></script>
 	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-editable.js') }}"></script>
 	<script src="{{ url_for('static', filename='bower_components/col-resizable/colResizable-1.6.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/extensions/export/bootstrap-table-export.js') }}"></script>
+    <script src="{{ url_for('static', filename='bower_components/tableexport.jquery.plugin/tableExport.min.js') }}"></script>
+
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 	<script>
 
@@ -70,6 +72,8 @@
 			pagination: true,
 			queryParamsType: "limit",
 			sidePagination: "server",
+			showRefresh: true,
+			exportTypes: ['csv', 'excel', 'json', 'xml', 'txt'],
 			columns: [
 				{% for col in columns %}
 					{
