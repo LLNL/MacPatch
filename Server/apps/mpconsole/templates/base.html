@@ -201,9 +201,11 @@
 										</li>
 									</ul>
 								</li>
+                                {% endif %}
 								<li>
 									<a href="{{ url_for('registration.index') }}"><i class="fa fa-handshake-o fa-fw"></i> Registration</a>
 								</li>
+                                {% if session.role[0] == 1 %}
 								<li>
 									<a href="{{ url_for('console.mpServerView') }}"><i class="fa fa-server fa-fw"></i> MacPatch Servers</a>
 								</li>
