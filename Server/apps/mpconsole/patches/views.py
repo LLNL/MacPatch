@@ -1030,7 +1030,7 @@ def requiredList():
 				('restart', 'Reboot', '1'), ('hostname', 'HostName', '1'), ('ipaddr', 'IP Address', '1'),
 				('osver', 'OS Version', '1'), ('type', 'Type', '1'),('date', 'Date', '1')]
 
-	return render_template('patches/patches_detected.html', columns=columns, pageTitle="Required Patches")
+	return render_template('patches/patches_detected.html', columns=columns, pageTitle="Detected Patches")
 
 ''' AJAX Route '''
 @patches.route('/required/<limit>/<offset>/<search>/<sort>/<order>')
@@ -1138,8 +1138,8 @@ def installedList():
 	return render_template('patches/patches_installed.html', columns=columns, pageTitle="Installed Patches")
 
 ''' AJAX Route '''
-@patches.route('/installed/<limit>/<offset>/<search>')
-def installedListPaged(limit,offset,search):
+@patches.route('/installed/<limit>/<offset>/<search>/<sort>/<order>')
+def installedListPaged(limit,offset,search,sort,order):
 	total = 0
 	getNewTotal = True
 	if 'my_search_name' in session:
@@ -1154,7 +1154,7 @@ def installedListPaged(limit,offset,search):
 		session['my_search'] = None
 
 	colsForQuery = ['cuuid', 'patch', 'patch_name', 'type', 'mdate']
-	qResult = installedQuery(search, int(offset), int(limit), getNewTotal)
+	qResult = installedQuery(search, int(offset), int(limit), sort, order, getNewTotal)
 	query = qResult[0]
 
 	session['my_search_name'] = 'installedList'
@@ -1183,18 +1183,30 @@ def installedListPaged(limit,offset,search):
 
 	return json.dumps({'data': _results, 'total': total}, default=json_serial), 200
 
-def installedQuery(filterStr='undefined', page=0, page_size=0, sort='date', order='desc', getCount=True):
+def installedQuery(filterStr='undefined', page=0, page_size=0, sort='mdate', order='desc', getCount=True):
+	clientCols = ['hostname','osver','ipaddr']
+
+	if sort == 'undefined':
+		sort = 'mdate'
+	if order == 'undefined':
+		sort = 'desc'
+
+	order_by_str = sort + ' ' + order
+	if sort in clientCols:
+		order_by_str = 'mp_clients_' + order_by_str
+	else:
+		order_by_str = 'mp_installed_patches.' + order_by_str
 
 	if filterStr == 'undefined' or len(filterStr) <= 0:
 		query = MpInstalledPatch.query.join(MpClient, MpClient.cuuid == MpInstalledPatch.cuuid).add_columns(
-			MpClient.hostname, MpClient.osver, MpClient.ipaddr)
+			MpClient.hostname, MpClient.osver, MpClient.ipaddr).order_by(order_by_str)
 	else:
 		query = MpInstalledPatch.query.join(MpClient, MpClient.cuuid == MpInstalledPatch.cuuid).add_columns(
 			MpClient.hostname, MpClient.osver, MpClient.ipaddr).filter(or_(MpInstalledPatch.patch.contains(filterStr),
 																		MpInstalledPatch.patch_name.contains(filterStr),
 																		MpInstalledPatch.type.contains(filterStr),
 																		MpClient.hostname.contains(filterStr),
-																		MpClient.ipaddr.contains(filterStr)))
+																		MpClient.ipaddr.contains(filterStr))).order_by(order_by_str)
 
 	# count of rows
 	if getCount:
@@ -1205,8 +1217,8 @@ def installedQuery(filterStr='undefined', page=0, page_size=0, sort='date', orde
 	if page_size:
 		query = query.limit(page_size)
 	if page:
-		# query = query.offset(page*page_size)
 		query = query.offset(page)
+
 	return (query, rowCounter)
 
 

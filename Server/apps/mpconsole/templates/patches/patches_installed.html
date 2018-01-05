@@ -38,11 +38,17 @@
 			striped: true,
 			ajax: function loadMyRows(params)
 			{
-				if (params.data.search == '') {
+			    if (params.data.search == '') {
 					params.data.search = undefined;
 				}
+				if (params.data.sort == '') {
+					params.data.sort = 'mdate';
+				}
+				if (params.data.order == '') {
+					params.data.order = desc;
+				}
 
-				var _url = "/patches/installed/" + params.data.limit +"/"+ params.data.offset +"/"+ params.data.search;
+				var _url = "/patches/installed/" + params.data.limit +"/"+ params.data.offset +"/"+ params.data.search +"/"+ params.data.sort +"/"+ params.data.order;
 				$.ajax({
 					type: 'GET',
 					url: _url,

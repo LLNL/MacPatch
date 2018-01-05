@@ -125,7 +125,7 @@
 									<a href="#"><i class="fa fa-database fa-fw"></i> Patch Status<span class="fa arrow"></span></a>
 									<ul class="nav nav-third-level">
 										<li>
-											<a href="{{ url_for('patches.requiredList') }}"><i class="fa fa-list-alt fa-fw"></i> Required</a>
+											<a href="{{ url_for('patches.requiredList') }}"><i class="fa fa-list-alt fa-fw"></i> Detected</a>
 										</li>
 										<li>
 											<a href="{{ url_for('patches.installedList') }}"><i class="fa fa-list-alt fa-fw"></i> Installed</a>
@@ -157,6 +157,7 @@
 									<a href="{{ url_for('osmanage.profiles') }}"><i class="fa fa-list fa-fw"></i> Profiles</a>
 								</li>
 								{% if session.role[0] == 1 %}
+                                <!--
 								<li>
 									<a href="{{ url_for('osmanage.appFilters') }}"><i class="fa fa-list fa-fw"></i> .app Access</a>
 								</li>
@@ -171,6 +172,7 @@
 										</li>
 									</ul>
 								</li>
+								-->
 								{% endif %}
 							</ul>
 							<!-- /.nav-second-level -->

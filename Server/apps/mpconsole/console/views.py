@@ -266,7 +266,7 @@ def agentUpdateAttr(attr):
 			setattr(agent, attr, attrVal)
 			setattr(agent, 'mdate', datetime.now())
 
-			log("{} setting {} active to {}.".format(session.get('user'), key, value))
+			log("{} setting {} active to {}.".format(session.get('user'), key, attrVal))
 			db.session.commit()
 
 		return json.dumps({'error': 0}), 200
