@@ -73,6 +73,9 @@ class ViewController: NSViewController, AuthViewControllerDelegate
     var agent_dictionary: [String: Any] = [:]
     var updater_dictionary: [String: Any] = [:]
     var migration_plist: String = ""
+	
+	var plugins_list: [String: Any] = [:]
+	var profiles_list: [String: Any] = [:]
     
     
     override func viewDidLoad() {
@@ -445,13 +448,18 @@ class ViewController: NSViewController, AuthViewControllerDelegate
             // Post Packages
             // ---------------------------------
             log.info("Post Package")
-            if (!self.defaults.bool(forKey: "doNotUpload")) {
+            if (!self.defaults.bool(forKey: "doNotUpload"))
+			{
                 var xp:[String] = []
                 for fpkg in flattend_packages {
                     xp.append(fpkg.replacingOccurrences(of: "toSign_", with: "").stringByAppendingPathExtension(ext: "zip")!)
                 }
+				
+				// Gather Plugins and Profiles data
+				
                 
-                let fdata: [String: Any] = ["app":self.agent_dictionary,"update":self.updater_dictionary]
+				let fdata: [String: Any] = ["app":self.agent_dictionary,"update":self.updater_dictionary,
+											"plugins":self.collectPluginsData(), "profiles":self.collectProfilesData()]
                 if(!self.uploadPackagesToServer(packages: xp, formData: fdata)) {
                     log.error("Error posting packages.")
                     DispatchQueue.main.async {
@@ -783,8 +791,10 @@ class ViewController: NSViewController, AuthViewControllerDelegate
             return false
         }
         
-        for p in packages {
-            if (p.lastPathComponent == "Base.pkg") {
+        for p in packages
+		{
+            if (p.lastPathComponent == "Base.pkg")
+			{
                 let plugins_dir = p.stringByAppendingPathComponent(path: "Scripts/Plugins")
                 
                 if (!fm.fileExists(atPath: plugins_dir)) {
@@ -1247,7 +1257,71 @@ class ViewController: NSViewController, AuthViewControllerDelegate
 		return didUpload
 	}
 	
-    
+// MARK: - Plugins and Profile Data
+	
+	/**
+	Collects info on all plugins included with the agent install
+	
+	- returns: Array of Dictionaries
+	*/
+	func collectPluginsData() -> [[String:Any]]
+	{
+		var result = [[String:Any]]()
+		
+		let _plugins: [String] = self.getPluginsFromDirectory(path: self.pluginsPath.stringValue)!
+		for p in _plugins
+		{
+			let b = Bundle.init(path: p)
+			let d = b?.infoDictionary
+			let x = ["plugin": p.lastPathComponent,
+					 "bundleIdentifier": (d!["CFBundleIdentifier"] ?? "NA"),
+					 "version": (d!["CFBundleShortVersionString"] ?? "NA")]
+			result.append(x)
+		}
+
+		return result
+	}
+	
+	/**
+	Collects info on all profiles included with the agent install
+	
+	- returns: Array of Dictionaries
+	*/
+	func collectProfilesData() -> [[String:Any]]
+	{
+		var result = [[String:Any]]()
+		let _profiles: [String] = self.getProfilesFromDirectory(path: self.profilesPath.stringValue)!
+		for p in _profiles
+		{
+			let _profileConverted = self.convertSignedProfile(profile: p)
+			let payload: NSDictionary? = NSDictionary(contentsOfFile: _profileConverted)
+			_ = try? FileManager.default.removeItem(atPath: _profileConverted)
+			let x = ["displayName": (payload!["PayloadDisplayName"] ?? "NA"),
+					 "identifier": (payload!["PayloadIdentifier"] ?? "NA"),
+					 "organization": (payload!["PayloadOrganization"] ?? "NA"),
+					 "version": (payload!["PayloadVersion"] ?? "NA"),
+					 "fileName": p.lastPathComponent]
+			
+			result.append(x)
+		}
+		
+		return result
+	}
+	
+	func convertSignedProfile(profile: String) -> String
+	{
+		let uuid = "/tmp/\(UUID().uuidString)"
+		let task = Process()
+		
+		task.launchPath = "/usr/bin/security"
+		task.arguments = ["cms","-D", "-i", profile, "-o", uuid] //multiple options
+		
+		task.launch()
+		task.waitUntilExit()
+		return uuid
+	}
+	
+	
 // MARK: - Notifications
     
     @objc func toggleLoggingLevel(notification: Notification)
