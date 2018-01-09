@@ -31,6 +31,7 @@ import Cocoa
 import Alamofire
 import LogKit
 
+
 class ViewController: NSViewController, AuthViewControllerDelegate
 {
     @IBOutlet weak var mpServerPort: NSTextField!
@@ -901,15 +902,26 @@ class ViewController: NSViewController, AuthViewControllerDelegate
 	func getProfilesFromDirectory(path: String) -> [String]?
 	{
 		var dir_files: [String] = []
+		var dir_files_pre: [String] = []
 		let pkgPredicate = NSPredicate(format: "self ENDSWITH '.mobileconfig'")
-		let dir_files_pre = try! fm.contentsOfDirectory(atPath: path) as [String]
-		let filtered_results = dir_files_pre.filter { pkgPredicate.evaluate(with: $0) }
-		if (!filtered_results.isEmpty)
-		{
-			for x in filtered_results {
-				dir_files.append(path.stringByAppendingPathComponent(path: x))
+		
+		
+		do {
+			dir_files_pre = try fm.contentsOfDirectory(atPath: path)
+		} catch let error as NSError {
+			// handle errors
+			print(error.localizedDescription)
+		}
+		if (dir_files_pre.count >= 1) {
+			let filtered_results = dir_files_pre.filter { pkgPredicate.evaluate(with: $0) }
+			if (!filtered_results.isEmpty) {
+				for x in filtered_results {
+					dir_files.append(path.stringByAppendingPathComponent(path: x))
+				}
 			}
 		}
+		
+		//let dir_files_pre = try! fm.contentsOfDirectory(atPath: path) as [String]
 		return dir_files
 	}
     
@@ -1177,7 +1189,8 @@ class ViewController: NSViewController, AuthViewControllerDelegate
 	{
 		let aid: String = UUID.init().uuidString
 		let _ssl = (self.useSSL.state == .on) ? "https" : "http"
-		let _url: String = "\(_ssl)://\(self.mpServerHost.stringValue):\(self.mpServerPort.stringValue)\(URI_PREFIX)/agent/upload/\(aid)/\(api_token)"
+		let _url: String = "\(_ssl)://\(self.mpServerHost.stringValue):\(self.mpServerPort.stringValue)/api/v2/agent/upload/\(aid)/\(api_token)"
+		log.info("API URL: \(_url)")
 		
 		var pkgs = [[String:Any]]()
 		var fileData: NSData
@@ -1208,6 +1221,9 @@ class ViewController: NSViewController, AuthViewControllerDelegate
 		var didUpload = false
 		let jsonData = try! JSONSerialization.data(withJSONObject: formData, options: [])
 		let semaphore = DispatchSemaphore(value: 0)
+		
+		let jstring = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)
+		log.info("JSON Data: \(jstring)")
 		
 		Alamofire.upload(multipartFormData: { multipartFormData in
 			
@@ -1311,13 +1327,7 @@ class ViewController: NSViewController, AuthViewControllerDelegate
 	func convertSignedProfile(profile: String) -> String
 	{
 		let uuid = "/tmp/\(UUID().uuidString)"
-		let task = Process()
-		
-		task.launchPath = "/usr/bin/security"
-		task.arguments = ["cms","-D", "-i", profile, "-o", uuid] //multiple options
-		
-		task.launch()
-		task.waitUntilExit()
+		let result1 = run("/usr/bin/security", "cms", "-D", "-i", profile, "-o", uuid)
 		return uuid
 	}
 	
