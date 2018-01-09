@@ -120,12 +120,21 @@ NSInteger const TaskErrorTimedOut = 900001;
         logit(lcl_vError,@"Agent updater info is not available.");
         return 0;
     }
-
-	logit(lcl_vDebug,@"WS Result: %@",updateInfo);
+	
+	NSDictionary *updateDataDict;
+	if (!updateInfo[@"data"]) {
+		logit(lcl_vError,@"Agent updater info data is not available.");
+		return 0;
+	} else {
+		updateDataDict = updateInfo[@"data"];
+	}
+	
+	
+	logit(lcl_vDebug,@"WS Result: %@",updateDataDict);
 	logit(lcl_vInfo,@"Evaluate local versions for updates.");
 	// See if the update is needed
 	int needsUpdate = 0;
-	if ([[updateInfo objectForKey:@"updateAvailable"] boolValue] == YES) {
+	if ([updateDataDict[@"updateAvailable"] boolValue] == YES) {
         needsUpdate++;
 	}
 	
@@ -135,7 +144,7 @@ NSInteger const TaskErrorTimedOut = 900001;
 		logit(lcl_vInfo,@"Client agent is up to date.");
 	}
 	
-	[self set_updateData:updateInfo];
+	[self set_updateData:updateDataDict];
 	return needsUpdate;
 }
 
@@ -333,60 +342,24 @@ done:
 -(NSString *)downloadUpdate:(NSString *)aURL error:(NSError **)err
 {
     NSString *res = nil;
-    /* CEH
-    MPNetConfig *mpNetConfig;
-    BOOL isMigration = NO;
-    isMigration = [self scanForMigrationConfig];
-    
-    if (isMigration) {
-        MPNetServer *_server = [self migrationServerConfig];
-        if (!_server) {
-            qlerror(@"Migration server info is nil, no download can happen.");
-            return res;
-        }
-        mpNetConfig = [[MPNetConfig alloc] initWithServer:_server];
-    } else {
-        mpNetConfig = [[MPNetConfig alloc] init];
-    }
-    
-    NSArray *servers = [mpNetConfig servers];
-    NSURLResponse *response;
-    MPNetRequest *req;
-    NSURLRequest *urlReq;
-    NSError *error = nil;
-    
-    for (MPNetServer *srv in servers)
-    {
-        qlinfo(@"Trying Server %@",srv.host);
-        req = [[MPNetRequest alloc] initWithMPServer:srv];
-        urlReq = [req buildDownloadRequest:aURL];
-        error = nil;
-        if (urlReq)
-        {
-            res = [req downloadFileRequest:urlReq returningResponse:&response error:&error];
-            if (error) {
-                if (err != NULL) {
-                    *err = error;
-                }
-                qlerror(@"[%@][%d](%@ %d): %@",srv.host,(int)srv.port,error.domain,(int)error.code,error.localizedDescription);
-                continue;
-            }
-            // Make any previouse error pointers nil, now that we have a valid host/connection
-            if (err != NULL) {
-                *err = nil;
-            }
-            break;
-        } else {
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"NSURLRequest was nil." forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:NSOSStatusErrorDomain code:-1001 userInfo:userInfo];
-            qlerror(@"%@",error.localizedDescription);
-            if (err != NULL) {
-                *err = error;
-            }
-            continue;
-        }
-    }
-     */
+
+	NSError *dlErr = nil;
+	MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
+	NSString *dlPath = [req runSyncFileDownload:aURL downloadDirectory:NSTemporaryDirectory() error:&dlErr];
+	
+	if (dlErr) {
+		logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+		return res;
+	}
+	if (!dlPath) {
+		logit(lcl_vError,@"Error, downloaded file path is nil.");
+		logit(lcl_vError,@"No install will occure.");
+		return res;
+	} else {
+		logit(lcl_vDebug,@"Downloaded update file %@",dlPath);
+		res = dlPath;
+	}
+	
     return res;
 }
 

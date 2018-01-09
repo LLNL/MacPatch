@@ -128,7 +128,7 @@ int main (int argc, char * argv[])
 		logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
 	}
         
-        NSFileManager *fm = [NSFileManager defaultManager];
+	NSFileManager *fm = [NSFileManager defaultManager];
 	NSError *error = nil;
 	NSArray *files = [fm contentsOfDirectoryAtPath:@"/Users/Shared/.mpUpdate" error:&error];
 	
