@@ -31,10 +31,35 @@ Apple Patches
 @login_required
 def apple():
 	aListCols = ApplePatch.__table__.columns
-	aList = ApplePatch.query.join(ApplePatchAdditions, ApplePatch.supatchname == ApplePatchAdditions.supatchname).add_columns(
-		ApplePatchAdditions.severity,ApplePatchAdditions.patch_state).order_by(ApplePatch.postdate.desc()).all()
 
-	return render_template('patches/patches_apple.html', data=aList, columns=aListCols)
+	return render_template('patches/patches_apple.html', data={}, columns=aListCols)
+
+''' AJAX Request '''
+@patches.route('/apple/list',methods=['GET'])
+@login_required
+@cross_origin()
+def applePatchesList():
+	aList = ApplePatch.query.join(ApplePatchAdditions, ApplePatch.supatchname == ApplePatchAdditions.supatchname).add_columns(
+		ApplePatchAdditions.severity, ApplePatchAdditions.patch_state).order_by(ApplePatch.postdate.desc()).all()
+
+	cols = ['akey', 'description', 'description64','osver_support', 'patch_state', 'patchname',
+			'postdate', 'restartaction', 'severity','severity_int', 'supatchname', 'title', 'version']
+
+	_results = []
+	for r in aList:
+		_dict = r[0].asDict
+		_row = {}
+		for col in cols:
+			if col in _dict:
+				_row[col] = _dict[col]
+
+		_row['severity'] = r.severity
+		_row['patch_state'] = r.patch_state
+		_results.append(_row)
+
+
+	return json.dumps({'data': _results}, default=json_serial), 200
+
 
 @patches.route('/apple/state',methods=['POST'])
 @login_required
