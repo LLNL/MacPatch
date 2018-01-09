@@ -509,6 +509,7 @@ class UploadAgentPackage(MPResource):
 				setattr(agentProfile, 'puuid', agent_id)
 				setattr(agentProfile, 'displayName', _profile['displayName'])
 				setattr(agentProfile, 'identifier', _profile['identifier'])
+				setattr(agentProfile, 'organization', _profile['organization'])
 				setattr(agentProfile, 'version', _profile['version'])
 				setattr(agentProfile, 'fileName', _profile['fileName'])
 				db.session.add(agentProfile)
@@ -918,6 +919,19 @@ class GenAgentConfig():
 		else:
 			log_Error("[serverDataOfType]: Type not accepted.")
 			return None
+
+def fileHashSHA1(file):
+	BUF_SIZE = 65536  # lets read stuff in 64kb chunks!
+	sha1 = hashlib.sha1()
+
+	with open(file, 'rb') as f:
+		while True:
+			data = f.read(BUF_SIZE)
+			if not data:
+				break
+			sha1.update(data)
+
+	return sha1.hexdigest()
 
 # Add Routes Resources
 agent_2_api.add_resource(_AgentUpdate,          '/agent/update/<string:client_id>/<string:agentver>/<string:agentbuild>')
