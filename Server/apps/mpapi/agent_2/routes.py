@@ -420,6 +420,14 @@ class UploadAgentPackage(MPResource):
 				return {"result": '', "errorno": 425, "errormsg": 'Failed to verify uploaded files.'}, 425
 
 			# Verify if Agent already exists
+			pluginsData = []
+			profilesData = []
+
+			if 'plugins' in fData:
+				pluginsData = fData['plugins']
+			if 'profiles' in fData:
+				profilesData = fData['profiles']
+
 			agent_ver = fData['app']['agent_ver']
 			app_ver = fData['app']['version']
 			app_build = fData['app']['build']
@@ -486,6 +494,25 @@ class UploadAgentPackage(MPResource):
 			setattr(agentObjUpdt, 'mdate', datetime.now())
 			log_Debug('[MP_UploadAgentPackage][Post]: Add Updater Agent Data Record')
 			db.session.add(agentObjUpdt)
+
+			# Add Profiles & Plugins
+			for _plugin in pluginsData:
+				agentPlugin = MpClientAgentPlugins()
+				setattr(agentPlugin, 'puuid', agent_id)
+				setattr(agentPlugin, 'plugin', _plugin['plugin'])
+				setattr(agentPlugin, 'bundleIdentifier', _plugin['bundleIdentifier'])
+				setattr(agentPlugin, 'version', _plugin['version'])
+				db.session.add(agentPlugin)
+
+			for _profile in profilesData:
+				agentProfile = MpClientAgentProfiles()
+				setattr(agentProfile, 'puuid', agent_id)
+				setattr(agentProfile, 'displayName', _profile['displayName'])
+				setattr(agentProfile, 'identifier', _profile['identifier'])
+				setattr(agentProfile, 'version', _profile['version'])
+				setattr(agentProfile, 'fileName', _profile['fileName'])
+				db.session.add(agentProfile)
+
 			db.session.commit()
 
 			return {"result": '', "errorno": 0, "errormsg": ""}, 200

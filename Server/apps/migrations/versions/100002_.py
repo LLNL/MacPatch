@@ -74,6 +74,28 @@ def upgrade():
 		sa.PrimaryKeyConstraint('rid')
 	)
 
+	op.create_table('mp_client_agent_plugins',
+		sa.Column('rid', sa.BigInteger(), nullable=False, autoincrement=True),
+		sa.Column('puuid', sa.String(length=50), server_default='', nullable=False),
+		sa.Column('plugin', sa.String(length=255), nullable=False),
+		sa.Column('bundleIdentifier', sa.String(length=255), nullable=True),
+		sa.Column('version', sa.String(length=10), nullable=True),
+		sa.PrimaryKeyConstraint('rid')
+	)
+	op.create_index(op.f('ix_client_agent_plugins_puuid'), 'mp_client_agent_plugins', ['puuid'], unique=False)
+
+	op.create_table('mp_client_agent_profiles',
+		sa.Column('rid', sa.BigInteger(), nullable=False, autoincrement=True),
+		sa.Column('puuid', sa.String(length=50), server_default='', nullable=False),
+		sa.Column('displayName', sa.String(length=255), nullable=False),
+		sa.Column('identifier', sa.String(length=255), nullable=True),
+		sa.Column('organization', sa.String(length=255), nullable=True),
+		sa.Column('version', sa.String(length=10), nullable=True),
+		sa.Column('fileName', sa.String(length=255), nullable=True),
+		sa.PrimaryKeyConstraint('rid')
+	)
+	op.create_index(op.f('ix_client_agent_profiles_puuid'), 'mp_client_agent_profiles', ['puuid'], unique=False)
+
 	# Update Indexes
 	op.create_index(op.f('ix_mp_software_groups_name'), 'mp_software_groups', ['gName'], unique=False)
 	op.create_index(op.f('ix_mp_client_agents_type'), 'mp_client_agents', ['type'], unique=False)
@@ -108,6 +130,12 @@ def downgrade():
 	op.drop_table('mp_inv_reports')
 	op.drop_table('mp_os_config_profiles_criteria')
 	op.drop_table('mp_os_config_profiles_group_policy')
+
+	op.drop_index(op.f('ix_client_agent_plugins_puuid'), table_name='mp_client_agent_plugins')
+	op.drop_table('mp_client_agent_plugins')
+
+	op.drop_index(op.f('ix_client_agent_profiles_puuid'), table_name='mp_client_agent_profiles')
+	op.drop_table('mp_client_agent_profiles')
 
 	### end Alembic commands ###
 	d_qstr1 = "ALTER TABLE `mp_group_config` DROP COLUMN `tasks_version`;"

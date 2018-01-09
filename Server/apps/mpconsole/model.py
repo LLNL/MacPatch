@@ -1,6 +1,6 @@
 from mpconsole import db
 
-# Rev 7
+# Rev 8
 #
 
 from datetime import *
@@ -569,6 +569,29 @@ class MpClientAgentsFilter(CommonBase):
 	attribute_oper 		= Column(String(10), nullable=False, info="Operator")
 	attribute_filter 	= Column(String(255), nullable=False, info="Filter")
 	attribute_condition = Column(String(10), nullable=False, info="Condition")
+
+# mp_client_agent_plugins
+class MpClientAgentPlugins(CommonBase):
+	__tablename__ = 'mp_client_agent_plugins'
+
+	rid 				= Column(BigInteger, primary_key=True, autoincrement=True)
+	puuid 				= Column(String(50), nullable=False)
+	plugin				= Column(String(255), info="Plugin")
+	bundleIdentifier	= Column(String(255), info="Bundle Identifier")
+	version				= Column(String(10), info="Version")
+
+# mp_client_agent_profiles
+class MpClientAgentProfiles(CommonBase):
+	__tablename__ = 'mp_client_agent_profiles'
+
+	rid 			= Column(BigInteger, primary_key=True, autoincrement=True)
+	puuid 			= Column(String(50), nullable=False)
+	displayName		= Column(String(255), info="Display Name")
+	identifier		= Column(String(255), info="Identifier")
+	organization	= Column(String(255), info="Organization")
+	version			= Column(String(10), info="Version")
+	fileName		= Column(String(255), info="File Name")
+
 
 # ------------------------------------------
 ## AntiVirus
