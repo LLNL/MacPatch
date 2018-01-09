@@ -20,22 +20,55 @@ from .. mplogger import *
 '''
 ----------------------------------------------------------------
 '''
-@clients.route('/clients')
+@clients.route('')
 @login_required
 def clientsList():
-	cList = MpClient.query.all()
-	cListCols = MpClient.__table__.columns.keys()
-	cListColNames = [{'name':'rid','label':'rid'}, {'name':'cuuid', 'label':'CUUID'},
+	cListColNames = [{'name':'cuuid', 'label':'CUUID'},{'name': 'client_group', 'label': 'Client Group'},
 					{'name':'hostname','label':'Host Name'},{'name':'computername','label':'Computer Name'},
+					{'name': 'addomain', 'label': 'AD-Domain'}, {'name': 'addn', 'label': 'AD-DistinguishedName'},
 					{'name':'ipaddr','label':'IP Address'}, {'name':'macaddr','label':'MAC Address'},
-					{'name': 'serialNo', 'label': 'Serial No'}, {'name':'osver','label':'OS Ver'},
-					{'name':'ostype','label':'OS Type'}, {'name':'consoleUser','label':'Console User'},
-					{'name':'needsreboot','label':'Needs Reboot'}, {'name':'agent_version','label':'Agent Ver'},
-					{'name':'client_version','label':'Client Ver'}, {'name':'mdate','label':'Mod Date'},
-					{'name':'cdate','label':'CDate'}]
+					{'name': 'serialno', 'label': 'Serial No'},{'name': 'fileVaultStatus', 'label': 'FileVault'},
+					{'name': 'firmwareStatus', 'label': 'Firmware'},{'name':'osver','label':'OS Ver'},
+					{'name':'consoleuser','label':'Console User'},{'name':'needsreboot','label':'Needs Reboot'},
+					{'name':'client_version','label':'Client Ver'}, {'name':'mdate','label':'Mod Date'}]
 
-	return render_template('clients.html', cData=cList, columns=cListCols, colNames=cListColNames)
+	return render_template('clients.html', cData=[], columns=[], colNames=cListColNames)
 
+# JSON Routes
+@clients.route('/list')
+def clientsListJSON():
+	_results = []
+	clients = MpClient.query.outerjoin(MpClientGroupMembers, MpClientGroupMembers.cuuid == MpClient.cuuid).add_columns(MpClientGroupMembers.group_id).outerjoin(
+		MPIDirectoryServices, MPIDirectoryServices.cuuid == MpClient.cuuid).add_columns(MPIDirectoryServices.mpa_ADDomain, MPIDirectoryServices.mpa_distinguishedName).all()
+	clientGroups = MpClientGroups.query.all()
+
+
+	colNames = [{'name':'cuuid', 'label':'CUUID'},{'name': 'client_group', 'label': 'Client Group'},
+					{'name':'hostname','label':'Host Name'},{'name':'computername','label':'Computer Name'},
+					{'name': 'addomain', 'label': 'AD-Domain'}, {'name': 'addn', 'label': 'AD-DistinguishedName'},
+					{'name':'ipaddr','label':'IP Address'}, {'name':'macaddr','label':'MAC Address'},
+					{'name': 'serialno', 'label': 'Serial No'},{'name': 'fileVaultStatus', 'label': 'FileVault'},
+					{'name': 'firmwareStatus', 'label': 'Firmware'},{'name':'osver','label':'OS Ver'},
+					{'name':'consoleuser','label':'Console User'},{'name':'needsreboot','label':'Needs Reboot'},
+					{'name':'client_version','label':'Client Ver'}, {'name':'mdate','label':'Mod Date'}]
+
+	_groups = []
+	for g in clientGroups:
+		_groups.append({'group_id': g.group_id, 'group_name': g.group_name})
+
+	for c in clients:
+		_dict = c[0].asDict
+		_dict['client_group'] = searchForGroup(c[1], _groups)
+		_dict['addomain'] = c.mpa_ADDomain
+		_dict['addn'] = c.mpa_distinguishedName
+		_results.append(_dict)
+
+
+	return json.dumps({'data': _results}, default=json_serial), 200
+
+def searchForGroup(group, list):
+	res = (item for item in list if item["group_id"] == group).next()
+	return res['group_name']
 '''
 ----------------------------------------------------------------
 	Client
