@@ -3,8 +3,11 @@ from flask.ext.security import login_required
 from sqlalchemy import desc
 from werkzeug.security import generate_password_hash
 import json
+import re
+import uuid
 
 from datetime import datetime
+from hashlib import sha1, sha256
 
 from .  import console
 from .. import db
@@ -576,6 +579,73 @@ def updateServerRev():
 		db.session.add(q)
 
 	db.session.commit()
+
+
+class logline(object):  # no instance of this class should be created
+
+	def __init__(self):
+		self.date = ''
+		self.app = ''
+		self.level = ''
+		self.text = ''
+
+	def parseLine(self,line):
+		_date = line.split(",")
+		self.date = _date[0]
+		x = re.search('\[(.*?)\]\[(.*?)\]', line)
+		self.app = x.group(1)
+		self.level = x.group(2)
+		self.text = line.split("---")[1]
+
+	def printLine(self):
+		row = {}
+		row['date'] = self.date
+		row['app'] = self.app
+		row['level'] = self.level
+		row['text'] = self.text
+		return row
+
+@console.route('/server/log/<server>', methods=['GET'])
+@login_required
+def serversLog(server):
+
+	_uuid = str(uuid.uuid4())
+	dt  = datetime.now()
+	dts = str((dt - datetime(1970, 1, 1)).total_seconds())
+	srvHashStr = "{}{}{}".format(_uuid,dt,"mpwsapi")
+	srvHash = sha256(srvHashStr).hexdigest()
+
+	qry = MpServerLogReq()
+	setattr(qry, 'uuid', _uuid)
+	setattr(qry, 'dts', dts)
+	setattr(qry, 'type', "mpwsapi")
+	db.session.add(qry)
+	db.session.commit()
+
+	columns = [('date', 'Date', '1'), ('app', 'App', '1'), ('level', 'Level', '1'), ('text', 'Message', '1')]
+	return render_template('logs.html', columns=columns, server=server, skey=srvHash, uuid=_uuid)
+
+@console.route('/server/log/<server>/<type>', methods=['GET'])
+@login_required
+def apiLog(server,type):
+	columns = [('date', 'Date', '1'), ('app', 'App', '1'), ('level', 'Level', '1'), ('text', 'Message', '1')]
+	_results = parseLogFile(type)
+	return json.dumps({'data': _results, 'total': len(_results)}, default=json_serial), 200
+
+def parseLogFile(type):
+	logFile = '/opt/MacPatch/Server/apps/logs/mpconsole.log'
+	if type == 'mpwsapi':
+		logFile = '/opt/MacPatch/Server/apps/logs/mpwsapi.log'
+
+	l = logline()
+	lines = []
+	with open(logFile, "r") as ins:
+		for line in ins:
+			l.parseLine(line.rstrip('\n'))
+			lines.append(l.printLine())
+
+	return lines
+
 
 '''
 ----------------------------------------------------------------

@@ -1,6 +1,6 @@
 from mpconsole import db
 
-# Rev 8
+# Rev 9
 #
 
 from datetime import *
@@ -201,6 +201,15 @@ class MpSiteKeys(CommonBase):
 	active = Column(Integer, nullable=True, server_default='1')
 	request_new_key = Column(Integer, nullable=True, server_default='0')
 	mdate = Column(DateTime, nullable=True, server_default='1970-01-01 00:00:00')
+
+# mp_server_log_req
+class MpServerLogReq(CommonBase):
+	__tablename__ = 'mp_server_log_req'
+
+	rid = Column(BigInteger, primary_key=True, nullable=False, autoincrement=True)
+	uuid = Column(String(50), nullable=False)
+	dts = Column(String(255), nullable=False)
+	type = Column(String(255), nullable=False)
 
 # ------------------------------------------
 ## Main

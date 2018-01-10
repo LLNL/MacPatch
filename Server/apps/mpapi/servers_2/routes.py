@@ -1,6 +1,9 @@
 from flask import request
 from flask_restful import reqparse
 from sqlalchemy.exc import IntegrityError
+from hashlib import sha1, sha256
+import uuid
+
 
 from . import *
 from .. import db
@@ -171,6 +174,57 @@ class ServersVersion(MPResource):
 			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
 
 
+class ServerLog(MPResource):
+
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		super(ServerLog, self).__init__()
+
+	def get(self, reqid, type, serverkey):
+		try:
+			_results = []
+			qry = MpServerLogReq.query.filter(MpServerLogReq.uuid == reqid).first()
+			if qry is None:
+				return {'data': _results, 'total': len(_results)}, 404
+
+			# Get DateTime
+			dt = datetime.now()
+			dts = (dt - datetime(1970, 1, 1)).total_seconds()
+
+			# Key Has Expired
+			if (dts - float(qry.dts)) > 600:
+				return {'data': _results, 'total': len(_results)}, 401
+
+			srvHashStr = "{}{}{}".format(qry.uuid, qry.dts, qry.type)
+			srvHash = sha256(srvHashStr).hexdigest()
+
+			# Verify Hash
+			if srvHash != serverkey:
+				return {'data': _results, 'total': len(_results)}, 403
+
+			_results = self.parseLogFile(type)
+
+			return {'data': _results, 'total': len(_results)}, 200
+
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[ServerList][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
+				exc_tb.tb_lineno, cuuid, e.message))
+			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
+
+	def parseLogFile(self, type):
+		logFile = '/opt/MacPatch/Server/apps/logs/mpconsole.log'
+		if type == 'mpwsapi':
+			logFile = '/opt/MacPatch/Server/apps/logs/mpwsapi.log'
+
+		l = logline()
+		lines = []
+		with open(logFile, "r") as ins:
+			for line in ins:
+				l.parseLine(line.rstrip('\n'))
+				lines.append(l.printLine())
+
+		return lines
 ''' ------------------------------- '''
 ''' NOT A WEB SERVICE CLASS         '''
 
@@ -263,6 +317,29 @@ class Server(object):
 
 		return self.struct()
 
+class logline(object):  # no instance of this class should be created
+
+	def __init__(self):
+		self.date = ''
+		self.app = ''
+		self.level = ''
+		self.text = ''
+
+	def parseLine(self,line):
+		_date = line.split(",")
+		self.date = _date[0]
+		x = re.search('\[(.*?)\]\[(.*?)\]', line)
+		self.app = x.group(1)
+		self.level = x.group(2)
+		self.text = line.split("---")[1]
+
+	def printLine(self):
+		row = {}
+		row['date'] = self.date
+		row['app'] = self.app
+		row['level'] = self.level
+		row['text'] = self.text
+		return row
 
 # Add Routes Resources
 
@@ -272,3 +349,5 @@ servers_2_api.add_resource(SUServers,      		'/suservers/<string:cuuid>')
 
 servers_2_api.add_resource(ServersVersion, 		'/servers/version/<string:cuuid>')
 servers_2_api.add_resource(Servers,        		'/servers/<string:cuuid>')
+
+servers_2_api.add_resource(ServerLog,        	'/server/log/<string:reqid>/<string:type>/<string:serverkey>')

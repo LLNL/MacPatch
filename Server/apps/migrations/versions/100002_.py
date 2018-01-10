@@ -96,6 +96,14 @@ def upgrade():
 	)
 	op.create_index(op.f('ix_client_agent_profiles_puuid'), 'mp_client_agent_profiles', ['puuid'], unique=False)
 
+	op.create_table('mp_server_log_req',
+		sa.Column('rid', sa.BigInteger(), nullable=False, autoincrement=True),
+		sa.Column('uuid', sa.String(length=50), server_default='', nullable=False),
+		sa.Column('dts', sa.String(length=255), nullable=False),
+		sa.Column('type', sa.String(length=255), nullable=True),
+		sa.PrimaryKeyConstraint('rid')
+	)
+
 	# Update Indexes
 	op.create_index(op.f('ix_mp_software_groups_name'), 'mp_software_groups', ['gName'], unique=False)
 	op.create_index(op.f('ix_mp_client_agents_type'), 'mp_client_agents', ['type'], unique=False)
@@ -136,6 +144,8 @@ def downgrade():
 
 	op.drop_index(op.f('ix_client_agent_profiles_puuid'), table_name='mp_client_agent_profiles')
 	op.drop_table('mp_client_agent_profiles')
+
+	op.drop_table('mp_server_log_req')
 
 	### end Alembic commands ###
 	d_qstr1 = "ALTER TABLE `mp_group_config` DROP COLUMN `tasks_version`;"

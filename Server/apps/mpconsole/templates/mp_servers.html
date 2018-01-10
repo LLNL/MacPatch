@@ -93,6 +93,9 @@ MacPatch Servers
 		return [
 			'<a class="edit" href="javascript:void(0)" title="Edit">',
 			'<i class="fa fa-pencil fa-lg" aria-hidden="true"></i>',
+			'</a>&nbsp;&nbsp;&nbsp;',
+			'<a class="log" href="javascript:void(0)" title="LogFile">',
+			'<i class="fa fa-file-text-o fa-lg" aria-hidden="true"></i>',
 			'</a>&nbsp;'
 		].join('');
 	}
@@ -102,7 +105,9 @@ MacPatch Servers
 	window.operateEvents = {
 		'click .edit': function (e, value, row, index)
 		{
-			$.get( "/console/servers/mp/" + row['rid']).done(function(data) {
+			$.get( "/console/servers/mp/" + row['rid']).done(function(data)
+			{
+			    resetModalWindow();
 				$('#modalTitle').html('Edit MacPatch Server');
 				$('#modalBody').html(data);
 				$('#modalDialog').addClass("modal-mid");
@@ -112,6 +117,19 @@ MacPatch Servers
 				$("#modalDialog").on("hidden.bs.modal", function () {
 					$_table.bootstrapTable('refresh');
 				});
+			});
+		},
+		'click .log': function (e, value, row, index)
+		{
+			$.get( "/console/server/log/"+row['server']).done(function(data)
+			{
+			    resetModalWindow();
+				$('#modalTitle').html('MacPatch Server - API Log');
+				$('#modalBody').html(data);
+				$('#modalBody').css({'height':'80vh'});
+			    $('#modalDialog').addClass("modal-wide");
+				$('#modalDialog').modal('show');
+                $('#modalSaveButton').hide();
 			});
 		},
 		'click .description': function (e, value, row, index) {
@@ -153,7 +171,9 @@ MacPatch Servers
 
 		$_addPluginButton.click(function ()
 		{
-			$.get( "/console/servers/mp/0").done(function(data) {
+			$.get( "/console/servers/mp/0").done(function(data)
+			{
+			    resetModalWindow();
 				$('#modalTitle').html('Add MacPatch Server');
 				$('#modalBody').html(data);
 				$('#modalDialog').addClass("modal-mid");
