@@ -90,14 +90,24 @@ MacPatch Servers
 
 	function operateFormatter(value, row, index)
 	{
-		return [
-			'<a class="edit" href="javascript:void(0)" title="Edit">',
-			'<i class="fa fa-pencil fa-lg" aria-hidden="true"></i>',
-			'</a>&nbsp;&nbsp;&nbsp;',
-			'<a class="log" href="javascript:void(0)" title="LogFile">',
-			'<i class="fa fa-file-text-o fa-lg" aria-hidden="true"></i>',
-			'</a>&nbsp;'
-		].join('');
+	    var htmlData = [];
+		htmlData.push('<table>');
+		htmlData.push('<tr>');
+
+        htmlData.push('<td><a class="edit" href="javascript:void(0)" title="Edit">');
+        htmlData.push('<i class="fa fa-pencil fa-lg" aria-hidden="true"></i></a>');
+        htmlData.push('</td>');
+
+        htmlData.push('<td><a class="logA" href="javascript:void(0)" title="API Log">');
+        htmlData.push('<i class="fa fa-file-text-o fa-lg" aria-hidden="true"> API</i></a>');
+        htmlData.push('</td>');
+
+        htmlData.push('<td><a class="logC" href="javascript:void(0)" title="Console Log">');
+        htmlData.push('<i class="fa fa-file-text-o fa-lg" aria-hidden="true"> Console</i></a>');
+        htmlData.push('</td>');
+
+		htmlData.push('</tr></table>');
+		return htmlData.join('');
 	}
 
 	var $_table = $('#table');
@@ -119,15 +129,30 @@ MacPatch Servers
 				});
 			});
 		},
-		'click .log': function (e, value, row, index)
+		'click .logA': function (e, value, row, index)
 		{
-			$.get( "/console/server/log/"+row['server']).done(function(data)
+			$.get( "/console/server/log/"+row['server']+"/mpwsapi").done(function(data)
 			{
 			    resetModalWindow();
-				$('#modalTitle').html('MacPatch Server - API Log');
+				$('#modalTitle').html(row['server'] + ' - API Log');
 				$('#modalBody').html(data);
-				$('#modalBody').css({'height':'80vh'});
+				$('#modalBody').css({'height':'90vh'});
 			    $('#modalDialog').addClass("modal-wide");
+			    $('#modalFooter').hide();
+				$('#modalDialog').modal('show');
+                $('#modalSaveButton').hide();
+			});
+		},
+		'click .logC': function (e, value, row, index)
+		{
+			$.get( "/console/server/log/"+row['server']+"/mpconsole").done(function(data)
+			{
+			    resetModalWindow();
+				$('#modalTitle').html(row['server'] + ' - API Log');
+				$('#modalBody').html(data);
+				$('#modalBody').css({'height':'90vh'});
+			    $('#modalDialog').addClass("modal-wide");
+			    $('#modalFooter').hide();
 				$('#modalDialog').modal('show');
                 $('#modalSaveButton').hide();
 			});

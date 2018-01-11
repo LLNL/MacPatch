@@ -3,6 +3,7 @@ from flask_restful import reqparse
 from sqlalchemy.exc import IntegrityError
 from hashlib import sha1, sha256
 import uuid
+import re
 
 
 from . import *
@@ -195,36 +196,42 @@ class ServerLog(MPResource):
 			if (dts - float(qry.dts)) > 600:
 				return {'data': _results, 'total': len(_results)}, 401
 
-			srvHashStr = "{}{}{}".format(qry.uuid, qry.dts, qry.type)
-			srvHash = sha256(srvHashStr).hexdigest()
+			#srvHashStr = "{}{}{}".format(qry.uuid, qry.dts, qry.type)
+			#srvHash = sha256(srvHashStr).hexdigest()
 
 			# Verify Hash
-			if srvHash != serverkey:
-				return {'data': _results, 'total': len(_results)}, 403
+			#if srvHash != serverkey:
+			#	return {'data': _results, 'total': len(_results)}, 403
 
 			_results = self.parseLogFile(type)
-
 			return {'data': _results, 'total': len(_results)}, 200
 
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[ServerList][Get][Exception][Line: %d] CUUID: %s Message: %s' % (
-				exc_tb.tb_lineno, cuuid, e.message))
-			return {'errorno': 500, 'errormsg': e.message, 'result': ''}, 500
+			log_Error('[ServerLog][Get][Exception][Line: %d] Message: %s' % (exc_tb.tb_lineno, e.message))
+			return {'data': [], 'total': 0}, 500
 
 	def parseLogFile(self, type):
-		logFile = '/opt/MacPatch/Server/apps/logs/mpconsole.log'
-		if type == 'mpwsapi':
-			logFile = '/opt/MacPatch/Server/apps/logs/mpwsapi.log'
+		try:
+			logFile = '/tmp/fool'
+			if type == 'mpwsapi':
+				logFile = '/opt/MacPatch/Server/apps/logs/mpwsapi.log'
+			elif type == 'mpconsole':
+				logFile = '/opt/MacPatch/Server/apps/logs/mpconsole.log'
 
-		l = logline()
-		lines = []
-		with open(logFile, "r") as ins:
-			for line in ins:
-				l.parseLine(line.rstrip('\n'))
-				lines.append(l.printLine())
+			l = logline()
+			lines = []
+			with open(logFile, "r") as ins:
+				for line in ins:
+					l.parseLine(line.rstrip('\n'))
+					lines.insert(0, l.printLine())
 
-		return lines
+			return lines
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[ServerList][Get][Exception][Line: %d] Message: %s' % (exc_tb.tb_lineno, e.message))
+			return []
+
 ''' ------------------------------- '''
 ''' NOT A WEB SERVICE CLASS         '''
 
@@ -326,12 +333,16 @@ class logline(object):  # no instance of this class should be created
 		self.text = ''
 
 	def parseLine(self,line):
-		_date = line.split(",")
-		self.date = _date[0]
-		x = re.search('\[(.*?)\]\[(.*?)\]', line)
-		self.app = x.group(1)
-		self.level = x.group(2)
-		self.text = line.split("---")[1]
+		try:
+			_date = line.split(",")
+			self.date = _date[0]
+			x = re.search('\[(.*?)\]\[(.*?)\]', line)
+			self.app = x.group(1)
+			self.level = x.group(2)
+			self.text = line.split("---")[1]
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[logline][Exception][Line: %d] %s' % (exc_tb.tb_lineno, e.message))
 
 	def printLine(self):
 		row = {}

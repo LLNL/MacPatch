@@ -2,9 +2,11 @@ from flask import render_template, jsonify, request, session, g
 from flask.ext.security import login_required
 from sqlalchemy import desc
 from werkzeug.security import generate_password_hash
+from flask.ext.cors import cross_origin
 import json
 import re
 import uuid
+import requests
 
 from datetime import datetime
 from hashlib import sha1, sha256
@@ -605,15 +607,15 @@ class logline(object):  # no instance of this class should be created
 		row['text'] = self.text
 		return row
 
-@console.route('/server/log/<server>', methods=['GET'])
+@console.route('/server/log/<server>/<type>', methods=['GET'])
 @login_required
-def serversLog(server):
-
+@cross_origin()
+def serversLog(server,type):
 	_uuid = str(uuid.uuid4())
 	dt  = datetime.now()
 	dts = str((dt - datetime(1970, 1, 1)).total_seconds())
 	srvHashStr = "{}{}{}".format(_uuid,dt,"mpwsapi")
-	srvHash = sha256(srvHashStr).hexdigest()
+	srvHash = sha1(srvHashStr).hexdigest()
 
 	qry = MpServerLogReq()
 	setattr(qry, 'uuid', _uuid)
@@ -622,30 +624,15 @@ def serversLog(server):
 	db.session.add(qry)
 	db.session.commit()
 
+	_data = []
+	_url = "https://{}:3600/api/v2/server/log/{}/{}/{}".format(server, _uuid, type, srvHash)
+	r = requests.get(_url)
+	if r.status_code == 200:
+		rawData = json.loads(r.text)
+		_data = rawData['data']
+
 	columns = [('date', 'Date', '1'), ('app', 'App', '1'), ('level', 'Level', '1'), ('text', 'Message', '1')]
-	return render_template('logs.html', columns=columns, server=server, skey=srvHash, uuid=_uuid)
-
-@console.route('/server/log/<server>/<type>', methods=['GET'])
-@login_required
-def apiLog(server,type):
-	columns = [('date', 'Date', '1'), ('app', 'App', '1'), ('level', 'Level', '1'), ('text', 'Message', '1')]
-	_results = parseLogFile(type)
-	return json.dumps({'data': _results, 'total': len(_results)}, default=json_serial), 200
-
-def parseLogFile(type):
-	logFile = '/opt/MacPatch/Server/apps/logs/mpconsole.log'
-	if type == 'mpwsapi':
-		logFile = '/opt/MacPatch/Server/apps/logs/mpwsapi.log'
-
-	l = logline()
-	lines = []
-	with open(logFile, "r") as ins:
-		for line in ins:
-			l.parseLine(line.rstrip('\n'))
-			lines.append(l.printLine())
-
-	return lines
-
+	return render_template('logs.html', columns=columns, server=server, data=_data)
 
 '''
 ----------------------------------------------------------------
