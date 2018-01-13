@@ -71,11 +71,11 @@ def appleState():
 		patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == suname).first()
 		setattr(patchAdds, 'patch_state', state)
 		db.session.commit()
-
+		return json.dumps({}), 200
 	else:
 		log_Error("{} does not have permission to change apple patch state.".format(session.get('user')))
+		return json.dumps({}), 401
 
-	return redirect(url_for('patches.apple'))
 
 @patches.route('/apple/severity',methods=['POST'])
 @login_required
@@ -87,11 +87,11 @@ def appleSeverity():
 		patchAdds = ApplePatchAdditions.query.filter(ApplePatchAdditions.supatchname == suname).first()
 		setattr(patchAdds, 'severity', severity)
 		db.session.commit()
-
+		return json.dumps({}), 200
 	else:
 		log_Error("{} does not have permission to change apple patch state.".format(session.get('user')))
+		return json.dumps({}), 401
 
-	return redirect(url_for('patches.apple'))
 
 @patches.route('/applePatchWizard/<rid>')
 @login_required

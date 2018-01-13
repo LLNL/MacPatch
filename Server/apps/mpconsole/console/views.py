@@ -609,18 +609,17 @@ class logline(object):  # no instance of this class should be created
 
 @console.route('/server/log/<server>/<type>', methods=['GET'])
 @login_required
-@cross_origin()
 def serversLog(server,type):
 	_uuid = str(uuid.uuid4())
 	dt  = datetime.now()
 	dts = str((dt - datetime(1970, 1, 1)).total_seconds())
-	srvHashStr = "{}{}{}".format(_uuid,dt,"mpwsapi")
+	srvHashStr = "{}{}{}".format(_uuid,dt,type)
 	srvHash = sha1(srvHashStr).hexdigest()
 
 	qry = MpServerLogReq()
 	setattr(qry, 'uuid', _uuid)
 	setattr(qry, 'dts', dts)
-	setattr(qry, 'type', "mpwsapi")
+	setattr(qry, 'type', type)
 	db.session.add(qry)
 	db.session.commit()
 
