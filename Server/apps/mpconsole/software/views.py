@@ -627,7 +627,8 @@ def swPackageData(swID):
 		"auto_patch":str(qSW.auto_patch),
 		"patch_bundle_id":qSW.patch_bundle_id,
 		"state":str(qSW.sState),
-		"sid":str(qSW.suuid)}
+		"sid":str(qSW.suuid),
+		"sw_img_path":str(qSW.sw_img_path)}
 		return sw
 	else:
 		return None
@@ -747,7 +748,8 @@ def editSWPackage(id):
 	_data['PKGCRI_OSVer'] = None
 	_data['SWLIST'] = []
 
-	qGet1 = MpSoftware.query.all()
+	#qGet1 = MpSoftware.query.all()
+	qGet1 = MpSoftware.query.filter(MpSoftware.suuid == id).all()
 	for s in qGet1:
 		if s.suuid == id:
 			_data['PKG'] = s
@@ -902,9 +904,17 @@ def saveSWPackage():
 				setattr(qSWRAdd, k, v)
 
 			db.session.add(qSWRAdd)
+	'''
+		Save the img file
+	'''
+	_imgFile = request.files['sw_img_path']
+	_imgFileData = saveImageFile(_suuid, _imgFile)
+
+	if _imgFileData['filePath'] is not None:
+		setattr(qSW, 'sw_img_path', _imgFileData['filePath'])
 
 	'''
-		Save the file
+		Save the pkg file
 	'''
 	_file = request.files['mainPackage']
 	_fileData = saveSoftwareFile(_suuid, _file)
@@ -935,7 +945,7 @@ def saveSoftwareFile(suuid, file):
 	result['fileSize'] = 0
 
 	# Save uploaded files
-	upload_dir = os.path.join("/tmp", suuid)
+	upload_dir = os.path.join(current_app.config['SW_CONTENT_DIR'], suuid)
 	if not os.path.isdir(upload_dir):
 		os.makedirs(upload_dir)
 
@@ -954,6 +964,29 @@ def saveSoftwareFile(suuid, file):
 
 		result['fileHash'] = hashlib.md5(open(_file_path, 'rb').read()).hexdigest()
 		result['fileSize'] = os.path.getsize(_file_path) / 1024
+
+	return result
+
+def saveImageFile(suuid, file):
+
+	result = {}
+	result['filePath'] = None
+
+	# Save uploaded files
+	upload_dir = os.path.join(current_app.config['SW_CONTENT_DIR'], suuid)
+	if not os.path.isdir(upload_dir):
+		os.makedirs(upload_dir)
+
+	if file is not None and len(file.filename) > 4:
+		filename = secure_filename(file.filename)
+		_file_path = os.path.join(upload_dir, filename)
+		result['filePath'] = os.path.join('/sw', suuid, file.filename)
+
+		if os.path.exists(_file_path):
+			print('Removing existing file (%s)' % (_file_path))
+			os.remove(_file_path)
+
+		file.save(_file_path)
 
 	return result
 

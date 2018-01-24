@@ -42,6 +42,7 @@ class BaseConfig:
 	CONTENT_DIR         = MP_ROOT_DIR+'/Content'
 	AGENT_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/clients'
 	PATCH_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/patches'
+	SW_CONTENT_DIR 		= MP_ROOT_DIR+'/Content/Web/sw'
 
 	CORS_HEADERS        = 'Content-Type'
 

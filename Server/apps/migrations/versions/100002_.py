@@ -122,6 +122,9 @@ def upgrade():
 	u_qstr1="ALTER TABLE `mp_group_config` ADD COLUMN `tasks_version` bigint AFTER `rev_tasks`;"
 	op.execute(u_qstr1)
 
+	u_qstr2 = "ALTER TABLE `mp_software` ADD COLUMN `sw_img_path` bigint AFTER `mdate`;"
+	op.execute(u_qstr2)
+
 	# MPClients
 	op.add_column('mp_clients', sa.Column('fileVaultStatus', sa.String(length=255), nullable=True))
 	op.add_column('mp_clients', sa.Column('firmwareStatus', sa.String(length=255), nullable=True))
@@ -149,6 +152,9 @@ def downgrade():
 
 	### end Alembic commands ###
 	d_qstr1 = "ALTER TABLE `mp_group_config` DROP COLUMN `tasks_version`;"
+	op.execute(d_qstr1)
+
+	d_qstr1 = "ALTER TABLE `mp_software` DROP COLUMN `sw_img_path`;"
 	op.execute(d_qstr1)
 
 	# MPClients

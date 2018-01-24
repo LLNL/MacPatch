@@ -5,7 +5,7 @@ from mpapi import db
 
 from datetime import *
 from sqlalchemy import BigInteger, Column, DateTime, Integer, LargeBinary, String, Text, ForeignKey
-from sqlalchemy.dialects.mysql import LONGTEXT, MEDIUMTEXT, INTEGER
+from sqlalchemy.dialects.mysql import LONGTEXT, MEDIUMTEXT, TEXT, INTEGER
 
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -771,6 +771,7 @@ class MpSoftware(CommonBase):
 	sw_env_var              = Column(String(255), info="Install ENV")
 	cdate                   = Column(DateTime, server_default='1970-01-01 00:00:00', info="Create Date", doc=99)
 	mdate                   = Column(DateTime, server_default='1970-01-01 00:00:00', info="Mod Date", doc=98)
+	sw_img_path 			= Column(TEXT(), info="SW Icon")
 
 # mp_software_criteria
 class MpSoftwareCriteria(CommonBase):

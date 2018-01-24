@@ -147,6 +147,31 @@
 			<!-- Section 2 -->
 			<h1>Package</h1>
 			<section>
+                <h4>Software Icon</h4>
+                <div class="container-fluid">
+                    <div class="form-group">
+						<div class="row top-buffer">
+							<div class="col-md-2">
+								<label>Image</label>
+							</div>
+							<div class="col-md-7">
+								<input type="file" name="sw_img_path">
+								<br>
+								<div style="font-size:12px;padding-bottom:10px;">
+									{% if data['PKG'].sw_img_path %}
+									{{ data['PKG'].sw_img_path }}
+									{% endif %}
+								</div>
+							</div>
+							<div class="col-md-3">
+                                {% if data['PKG'].sw_img_path %}
+                                <img src="/mp-content{{ data['PKG'].sw_img_path }}" height="24" />
+                                {% endif %}
+                            </div>
+						</div>
+                    </div>
+                </div>
+                <br>
 				<h4>Package</h4>
 				<div class="container-fluid">
 					<div class="form-group">
