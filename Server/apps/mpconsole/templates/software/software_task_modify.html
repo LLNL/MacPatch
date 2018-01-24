@@ -91,7 +91,7 @@
 							</div>
 							<div class="col-md-5">
 								<div class='input-group date' id='sw_start_datetime'>
-									<input class="form-control" type="text" name="sw_start_datetime">
+									<input class="form-control" type="text" name="sw_start_datetime" value="{{data['Task']['sw_start_datetime'] or '' }}">
 									<span class="input-group-addon">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</span>
@@ -107,7 +107,7 @@
 							</div>
 							<div class="col-md-5">
 								<div class='input-group date' id='sw_end_datetime'>
-									<input class="form-control" type="text" name="sw_end_datetime">
+									<input class="form-control" type="text" name="sw_end_datetime" value="{{data['Task']['sw_end_datetime'] or '' }}">
 									<span class="input-group-addon">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</span>
