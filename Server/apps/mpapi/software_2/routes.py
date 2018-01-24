@@ -316,6 +316,7 @@ class Software(object):
 		self.patch_bundle_id = ""
 		self.state = ""
 		self.sid = ""
+		self.sw_img_path = ""
 
 	def struct(self):
 		return(self.__dict__)

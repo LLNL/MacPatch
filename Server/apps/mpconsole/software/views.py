@@ -319,7 +319,9 @@ def tasks():
 		for c in colsForQuery:
 
 			if c in ('sw_start_datetime','sw_end_datetime','mdate'):
-				row[c] = eval("d."+c).strftime("%Y-%m-%d %H:%M:%S")
+				dt_obj = eval("d."+c)
+				if dt_obj:
+					row[c] = eval("d."+c).strftime("%Y-%m-%d %H:%M:%S")
 			elif c == 'active':
 				_a = eval("d."+c)
 				row[c] = "Yes" if _a == 1 else "No"

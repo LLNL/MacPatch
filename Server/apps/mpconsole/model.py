@@ -5,7 +5,7 @@ from mpconsole import db
 
 from datetime import *
 from sqlalchemy import BigInteger, Column, DateTime, Integer, LargeBinary, String, Text, ForeignKey
-from sqlalchemy.dialects.mysql import LONGTEXT, MEDIUMTEXT, INTEGER
+from sqlalchemy.dialects.mysql import LONGTEXT, MEDIUMTEXT, TEXT, INTEGER
 
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash

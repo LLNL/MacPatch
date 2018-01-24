@@ -153,11 +153,11 @@
 			{
 				$('#sw_start_datetime').datetimepicker({
 					defaultDate: '{{data['Task']['sw_start_datetime'] or ''}}',
-					format: 'YYYY-MM-DD HH:mm:ss'
+					format: 'yyyy-mm-dd HH:ii:ss'
 				});
 				$('#sw_end_datetime').datetimepicker( {
 					defaultDate: '{{data['Task']['sw_end_datetime'] or '2050-01-01 12:00:00'}}',
-					format: 'YYYY-MM-DD HH:mm:ss'
+					format: 'yyyy-mm-dd HH:ii:ss'
 				});
 
 				$("#modalSaveButton").click(function()
