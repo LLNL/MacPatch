@@ -45,7 +45,8 @@ _all_ = [
 	"flask-cors>=2.0.0",
 	"flask-security>=1.7.0",
 	"yattag>=1.8.0",
-	"pycrypto>=2.6.1"
+	"pycrypto>=2.6.1",
+	"requests>=2.18.4"
 ]
 
 _failed_ = []
