@@ -993,7 +993,7 @@ def patchGroupPatchesSave(group_id):
 
 # Private
 def patchDataForPatchID(patch_id):
-	sql = text("""SELECT * from combined_patches_view Where id = ':patchID'""")
+	sql = text("SELECT * from combined_patches_view Where id = :patchID")
 	result = db.engine.execute(sql, patchID=patch_id)
 	_results = []
 	for v in result:
