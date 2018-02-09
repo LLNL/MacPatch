@@ -15,13 +15,14 @@ from .. shared.patches import *
 
 parser = reqparse.RequestParser()
 
-# Get Patch Group Patches
+# Get Patch Group Patches Fast & Dynamic
 class PatchGroupPatches(MPResource):
 
 	def __init__(self):
 		self.reqparse = reqparse.RequestParser()
 		super(PatchGroupPatches, self).__init__()
 
+	# @cache.cached(timeout=300)
 	def get(self, client_id):
 
 		wsResult = WSResult()
@@ -41,20 +42,49 @@ class PatchGroupPatches(MPResource):
 
 			# Get Patch Group ID for Client
 			group_id = self.getPatchGroupForClient(client_id)
-
-			# Get Patch Group Patches
-			q_data = MpPatchGroupData.query.filter(MpPatchGroupData.pid == group_id, MpPatchGroupData.data_type == 'JSON').first()
-
-			if q_data is not None:
-				if q_data.data:
-					wsData.data = json.loads(q_data.data)
-
-				wsResult.data = wsData.toDict()
-				return wsResult.resultWithSignature(), 200
-
-			else:
+			if group_id is None or group_id == 'NA':
 				log_Error('[PatchGroupPatches][Get][%s]: No patch group (%s) found.' % (client_id, group_id))
 				return wsResult.resultNoSignature(errorno=404, errormsg='Not Found'), 404
+
+			_data = {}
+			_data['Apple'] = []
+			_data['Custom'] = []
+
+			_apple_patches = []
+			_thrid_patches = []
+
+			# Query all sources needed
+			_apple_all = self.appleContent()
+			_appMP_all = self.appleMPAdditions()
+			_third_all = self.allCustomActiveContent()
+
+			# Get Patch Group Patches
+			q_data = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id).all()
+			if q_data is not None:
+				if len(q_data) >= 1:
+					for row in q_data:
+						# Parse Apple Patches
+						for aRow in _apple_all:
+							if row.patch_id == aRow.akey:
+								_apple_patches.append(self.getApplePatchData(aRow, _appMP_all))
+								break
+						# Parse Custom Patches
+						for tRow in _third_all:
+							if row.patch_id == tRow.puuid:
+								patch = tRow.asDict
+								del patch['pkg_path']
+								del patch['cve_id']
+								del patch['patch_severity']
+								del patch['cdate']
+								_thrid_patches.append(patch)
+								break
+
+			_data['Apple'] = _apple_patches
+			_data['Custom'] = _thrid_patches
+
+			wsData.data = _data
+			wsResult.data = wsData.toDict()
+			return wsResult.resultNoSignature(), 200
 
 		except IntegrityError, exc:
 			log_Error('[PatchGroupPatches][Get][IntegrityError] CUUID: %s Message: %s' % (client_id, exc.message))
@@ -65,6 +95,58 @@ class PatchGroupPatches(MPResource):
 			log_Error('[PatchGroupPatches][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, client_id, e.message))
 			return wsResult.resultNoSignature(errorno=500, errormsg=e.message), 500
 
+	# Methods for Content, this way I can cache the results as they dont change often
+	@cache.cached(timeout=300, key_prefix='AppleCachedList')
+	def appleContent(self):
+		return ApplePatch.query.all()
+
+	@cache.cached(timeout=300, key_prefix='AppleMPCachedList')
+	def appleMPAdditions(self):
+		return ApplePatchAdditions.query.all()
+
+	@cache.cached(timeout=300, key_prefix='CustomCachedList')
+	def allCustomActiveContent(self):
+		return MpPatch.query.filter(MpPatch.active == 1).all()
+
+	# Need to add mac patch apple patch additions to the
+	# apple patch object, I'm are creating a model here
+	# thats usable :-)
+	@cache.cached(timeout=300, key_prefix='AppleCombCachedList')
+	def getApplePatchData(self, appleData, patchAdditions):
+		patch = {}
+
+		patch['akey'] = appleData.akey
+		patch['title'] = appleData.title
+		patch['postdate'] = appleData.postdate
+		patch['restartaction'] = appleData.restartaction
+		patch['patch_reboot'] = '0'
+		if appleData.restartaction == 'RequireRestart':
+			patch['patch_reboot'] = '1'
+		patch['supatchname'] = appleData.supatchname
+		patch['version'] = appleData.version
+
+		# MP Addition
+		patch['severity'] = 'High'
+		patch['severity_int'] = '3'
+		patch['patch_state'] = 'Create'
+		patch['patch_install_weight'] = '60'
+
+		for row in patchAdditions:
+			if row.supatchname == appleData.supatchname:
+				patch['severity'] = row.severity
+				patch['severity_int'] = row.severity_int
+				patch['patch_state'] = row.patch_state
+				patch['patch_install_weight'] = row.patch_install_weight
+				if appleData.restartaction == 'NoRestart':
+					if row.patch_reboot == 1:
+						patch['restartaction'] = 'RequireRestart'
+						patch['patch_reboot'] = '1'
+				break
+
+		return patch
+
+	# Get the patch group id for a client id
+	# returns group id or NA
 	def getPatchGroupForClient(self, client_id):
 		patch_group_id = 'NA'
 		group_id = 0
@@ -78,6 +160,7 @@ class PatchGroupPatches(MPResource):
 
 		return patch_group_id
 
+# Get Patch Group Patches Fast & Dynamic
 # Get Patch Scan List filter on OS Ver e.g. 10.9, 10.10 ... (Third Only)
 class PatchScanList(MPResource):
 
@@ -108,7 +191,7 @@ class PatchScanList(MPResource):
 			agentSettings = AgentSettings()
 			agentSettings.populateSettings(client_id)
 
-			_scanList = PatchScan(agentSettings.patch_state)
+			_scanList = PatchScanV2(agentSettings.patch_state)
 			_list = _scanList.getScanList('*', severity)
 
 			if _list is not None:
@@ -131,7 +214,9 @@ class PatchScanList(MPResource):
 # --------------------------------------------------------------------
 # MP Agent 3.1
 # Add Routes Resources
-patches_2_api.add_resource(PatchGroupPatches,		'/client/patch/group/<string:client_id>')
+# New, Dynamic, no need to save patch group
 
-patches_2_api.add_resource(PatchScanList, 			'/client/patch/scan/list/all/<string:client_id>', endpoint='sevAll')
-patches_2_api.add_resource(PatchScanList, 			'/client/patch/scan/list/<string:severity>/<string:client_id>', endpoint='sevCustom')
+patches_3_api.add_resource(PatchGroupPatches,		'/client/patch/group/<string:client_id>')
+
+patches_3_api.add_resource(PatchScanList, 			'/client/patch/scan/list/all/<string:client_id>', endpoint='sevAll')
+patches_3_api.add_resource(PatchScanList, 			'/client/patch/scan/list/<string:severity>/<string:client_id>', endpoint='sevCustom')

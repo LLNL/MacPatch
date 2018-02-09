@@ -110,7 +110,7 @@ class PatchScanListFilterOS(MPResource):
 			log_Debug('[PatchScanListFilterOS][Get]: Args: cuuid=(%s) osver=(%s) state=(%s)' % (cuuid, osver, state))
 
 			_scanList = PatchScan()
-			_list = _scanList.getScanList(osver, severity, state)
+			_list = _scanList.getScanList(osver, severity)
 
 			if _list is not None:
 				result = {'patches': _list}

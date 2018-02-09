@@ -4,7 +4,8 @@ import json
 import subprocess
 from flask import Flask
 from mpapi.config import DevelopmentConfig, ProductionConfig
-from mpapi.extensions import db, migrate
+from mpapi.extensions import db, migrate, cache
+from datetime import datetime
 
 if os.getenv("MPAPI_ENV") == 'prod':
 	DefaultConfig = ProductionConfig
@@ -42,6 +43,9 @@ def create_app(config_object=DefaultConfig):
 
 	handler = logging.handlers.TimedRotatingFileHandler(log_file, when='midnight', interval=1, backupCount=30)
 
+	# This config option will convert all date objects to string
+	app.config['RESTFUL_JSON'] = {'default': json_serial}
+
 	# Set default log level
 	if app.config['DEBUG']:
 		app.logger.setLevel(logging.DEBUG)
@@ -68,6 +72,7 @@ def create_app(config_object=DefaultConfig):
 	read_siteconfig_server_data(app)
 	register_extensions(app)
 	register_blueprints(app)
+	cache.init_app(app, config={'CACHE_TYPE': 'simple'})
 	return app
 
 def read_siteconfig_server_data(app):
@@ -141,6 +146,9 @@ def register_blueprints(app):
 	from .patches_2 import patches_2 as bp_patches_2
 	app.register_blueprint(bp_patches_2, url_prefix='/api/v2')
 
+	from .patches_3 import patches_3 as bp_patches_3
+	app.register_blueprint(bp_patches_3, url_prefix='/api/v3')
+
 	from .provisioning import provisioning as bp_provisioning
 	app.register_blueprint(bp_provisioning, url_prefix=app.config['URL_PREFIX'])
 
@@ -167,3 +175,11 @@ def register_blueprints(app):
 
 	from .status import status as bp_status
 	app.register_blueprint(bp_status, url_prefix=app.config['URL_PREFIX'])
+
+def json_serial(obj):
+	"""JSON serializer for objects not serializable by default json code"""
+
+	if isinstance(obj, datetime):
+		serial = obj.isoformat()
+		return serial
+	raise TypeError("Type not serializable")
