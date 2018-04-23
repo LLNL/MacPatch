@@ -909,24 +909,32 @@ def saveSWPackage():
 	'''
 		Save the img file
 	'''
-	_imgFile = request.files['sw_img_path']
-	_imgFileData = saveImageFile(_suuid, _imgFile)
+	_imgFile = None
+	_imgFileData = None
+	if "sw_img_path" in request.form:
+		_imgFile = request.files['sw_img_path']
+		_imgFileData = saveImageFile(_suuid, _imgFile)
 
-	if _imgFileData['filePath'] is not None:
-		setattr(qSW, 'sw_img_path', _imgFileData['filePath'])
+	if _imgFileData is not None:
+		if _imgFileData['filePath'] is not None:
+			setattr(qSW, 'sw_img_path', _imgFileData['filePath'])
 
 	'''
 		Save the pkg file
 	'''
-	_file = request.files['mainPackage']
-	_fileData = saveSoftwareFile(_suuid, _file)
+	_file = None
+	_fileData = None
+	if "mainPackage" in request.form:
+		_file = request.files['mainPackage']
+		_fileData = saveSoftwareFile(_suuid, _file)
 
 	# Save SW Package Info
-	if _fileData['fileName'] is not None:
-		setattr(qSW, 'sw_size', _fileData['fileSize'])
-		setattr(qSW, 'sw_hash', _fileData['fileHash'])
-		setattr(qSW, 'sw_path', _fileData['filePath'])
-		setattr(qSW, 'sw_url', _fileData['fileURL'])
+	if _fileData is not None:
+		if _fileData['fileName'] is not None:
+			setattr(qSW, 'sw_size', _fileData['fileSize'])
+			setattr(qSW, 'sw_hash', _fileData['fileHash'])
+			setattr(qSW, 'sw_path', _fileData['filePath'])
+			setattr(qSW, 'sw_url', _fileData['fileURL'])
 
 	if _new:
 		db.session.add(qSW)

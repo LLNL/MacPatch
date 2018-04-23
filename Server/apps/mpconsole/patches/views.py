@@ -93,11 +93,11 @@ def appleSeverity():
 		return json.dumps({}), 401
 
 
-@patches.route('/applePatchWizard/<rid>')
+@patches.route('/applePatchWizard/<akey>')
 @login_required
-def applePatchWizard(rid):
+def applePatchWizard(akey):
 
-	cList = ApplePatch.query.filter(ApplePatch.rid == rid).first()
+	cList = ApplePatch.query.filter(ApplePatch.akey == akey).first()
 	# Base64 Encoded Description needs to be decoded and cleaned up
 	desc = base64.b64decode(cList.description64)
 	if "<!DOCTYPE" in desc or "<HTML>" in desc:
@@ -267,7 +267,7 @@ def customPatchWizard(puuid):
 	if patchDict['pkg_postinstall'] is not None:
 			patchDict['pkg_postinstall'] = escapeStringForACEEditor(patchDict['pkg_postinstall'])
 
-	patchCrit = MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).order_by("mp_patches_criteria.type_order asc").all()
+	patchCrit = MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).order_by(MpPatchesCriteria.type_order.asc()).all()
 
 	pathCritLst = []
 	for crit in patchCrit:
@@ -294,91 +294,98 @@ def customPatchWizard(puuid):
 
 ''' AJAX Request '''
 @patches.route('/customPatchWizard/update',methods=['POST'])
-@login_required
+#@cross_origin()
+#@login_required
 def customPatchWizardUpdate():
 	# Get Patch ID
-	puuid = request.form['puuid']
-
-	# Check Permissions
-	if not localAdmin() and not adminRole():
-		log_Error("{} does not have permission to change custom patch {}.".format(session.get('user'), puuid))
-		return json.dumps({'data': {}}, default=json_serial), 403
-
-	# Save File, returns path to file
-	_file = request.files['mainPatchFile']
-	_fileData = savePatchFile(puuid, _file)
-
-	# print request.form
-	critDict = dict(request.form)
-
-	mpPatch = MpPatch.query.filter(MpPatch.puuid == puuid).first()
-	mpPatchCols = MpPatch.__table__.columns
-
-	for key in critDict:
-		for col in mpPatchCols:
-			if col.name == key:
-				_val = request.form[col.name]
-				setattr(mpPatch, col.name, _val)
-				continue
-
-	# Save Patch Package Info
-	if _fileData['fileName'] is not None:
-		setattr(mpPatch, 'pkg_name', os.path.splitext(_fileData['fileName'])[0])
-		setattr(mpPatch, 'pkg_size', _fileData['fileSize'])
-		setattr(mpPatch, 'pkg_hash', _fileData['fileHash'])
-		setattr(mpPatch, 'pkg_path', _fileData['filePath'])
-		setattr(mpPatch, 'pkg_url', _fileData['fileURL'])
-
-	# Delete current criteria
-	MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
-
-	for key in critDict:
-		if key.startswith('req_'):
-
-			patchesCriteria = MpPatchesCriteria()
-			setattr(patchesCriteria, 'puuid', puuid)
-			if key == 'req_os_type':
-				setattr(patchesCriteria, 'type', 'OSType')
-				setattr(patchesCriteria, 'type_data', request.form[key])
-				setattr(patchesCriteria, 'type_order', 1)
-				db.session.add(patchesCriteria)
-				continue
-
-			if key == 'req_os_ver':
-				setattr(patchesCriteria, 'type', 'OSVersion')
-				setattr(patchesCriteria, 'type_data', request.form[key])
-				setattr(patchesCriteria, 'type_order', 2)
-				db.session.add(patchesCriteria)
-				continue
-
-			if key == 'req_os_arch':
-				setattr(patchesCriteria, 'type', 'OSArch')
-				setattr(patchesCriteria, 'type_data', request.form[key])
-				setattr(patchesCriteria, 'type_order', 3)
-				db.session.add(patchesCriteria)
-				continue
-
-		if key.startswith('reqCri_Order_'):
-			formLst = key.split('_')
-			nid = formLst[-1]
-			norder = int(request.form['reqCri_Order_'+str(nid)])
-			if norder <= 3:
-				norder = norder + 3
-			formData = request.form['reqCri_type_data_'+str(nid)]
-			formType = request.form['reqCri_type_'+str(nid)]
-
-			patchesCriteria = MpPatchesCriteria()
-			setattr(patchesCriteria, 'puuid', puuid)
-			setattr(patchesCriteria, 'type', formType)
-			setattr(patchesCriteria, 'type_data', formData)
-			setattr(patchesCriteria, 'type_order', norder)
-
-			db.session.add(patchesCriteria)
-			continue
-
 	try:
-		db.session.commit()
-		log("{} updated custom patch {}.".format(session.get('user'), puuid))
+		req = request
+		puuid = req.form['puuid']
+
+		# Check Permissions
+		if not localAdmin() and not adminRole():
+			log_Error("{} does not have permission to change custom patch {}.".format(session.get('user'), puuid))
+			return json.dumps({'data': {}}, default=json_serial), 403
+
+		# Save File, returns path to file
+		_file = None
+		_fileData = None
+		if "mainPatchFile" in req.form:
+			_file = request.files['mainPatchFile']
+			_fileData = savePatchFile(puuid, _file)
+
+		# print request.form
+		critDict = dict(request.form)
+
+		mpPatch = MpPatch.query.filter(MpPatch.puuid == puuid).first()
+		mpPatchCols = MpPatch.__table__.columns
+
+		for key in critDict:
+			for col in mpPatchCols:
+				if col.name == key:
+					_val = request.form[col.name]
+					setattr(mpPatch, col.name, _val)
+					continue
+
+		# Save Patch Package Info
+		if _fileData is not None:
+			if _fileData['fileName'] is not None:
+				setattr(mpPatch, 'pkg_name', os.path.splitext(_fileData['fileName'])[0])
+				setattr(mpPatch, 'pkg_size', _fileData['fileSize'])
+				setattr(mpPatch, 'pkg_hash', _fileData['fileHash'])
+				setattr(mpPatch, 'pkg_path', _fileData['filePath'])
+				setattr(mpPatch, 'pkg_url', _fileData['fileURL'])
+
+		# Delete current criteria
+		MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
+
+		for key in critDict:
+			if key.startswith('req_'):
+
+				patchesCriteria = MpPatchesCriteria()
+				setattr(patchesCriteria, 'puuid', puuid)
+				if key == 'req_os_type':
+					setattr(patchesCriteria, 'type', 'OSType')
+					setattr(patchesCriteria, 'type_data', request.form[key])
+					setattr(patchesCriteria, 'type_order', 1)
+					db.session.add(patchesCriteria)
+					continue
+
+				if key == 'req_os_ver':
+					setattr(patchesCriteria, 'type', 'OSVersion')
+					setattr(patchesCriteria, 'type_data', request.form[key])
+					setattr(patchesCriteria, 'type_order', 2)
+					db.session.add(patchesCriteria)
+					continue
+
+				if key == 'req_os_arch':
+					setattr(patchesCriteria, 'type', 'OSArch')
+					setattr(patchesCriteria, 'type_data', request.form[key])
+					setattr(patchesCriteria, 'type_order', 3)
+					db.session.add(patchesCriteria)
+					continue
+
+			if key.startswith('reqCri_Order_'):
+				formLst = key.split('_')
+				nid = formLst[-1]
+				norder = int(request.form['reqCri_Order_'+str(nid)])
+				if norder <= 3:
+					norder = norder + 3
+				formData = request.form['reqCri_type_data_'+str(nid)]
+				formType = request.form['reqCri_type_'+str(nid)]
+
+				patchesCriteria = MpPatchesCriteria()
+				setattr(patchesCriteria, 'puuid', puuid)
+				setattr(patchesCriteria, 'type', formType)
+				setattr(patchesCriteria, 'type_data', formData)
+				setattr(patchesCriteria, 'type_order', norder)
+
+				db.session.add(patchesCriteria)
+				continue
+
+
+			db.session.commit()
+			log("{} updated custom patch {}.".format(session.get('user'), puuid))
 
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
