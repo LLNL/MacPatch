@@ -1572,6 +1572,7 @@ done:
     return result;
 }
 
+// Proxy Method
 - (BOOL)removeStagedDirectory:(in bycopy NSString *)stagedDirectory
 {
     BOOL result = NO;
@@ -1589,6 +1590,40 @@ done:
         result = YES;
     }
     return result;
+}
+
+// Proxy Method
+- (BOOL)removeFilesUsingExtensionsFromDirectory:(in bycopy NSString *)stagedDirectory types:(in bycopy NSArray *)types
+{
+	BOOL result = YES;
+
+	NSMutableString *predString = [[NSMutableString alloc] initWithString:@""];
+	for (NSString *t in types)
+	{
+		[predString appendFormat:@"(SELF like [cd] '*.%@')", t];
+		if (![t isEqualToString:[types lastObject]]) {
+			[predString appendString:@" OR "];
+		}
+	}
+	
+	// Example -- @"(SELF like [cd] '*.pkg') OR (SELF like [cd] '*.mpkg')"
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:(NSString *)predString];
+	NSArray *fileList = [[fm contentsOfDirectoryAtPath:stagedDirectory error:NULL] filteredArrayUsingPredicate:predicate];
+	qldebug(@"[removeFilesUsingExtensionsFromDirectory]: Files found %@",fileList);
+
+	NSError *rmErr = nil;
+	for (NSString *f in fileList)
+	{
+		rmErr = nil;
+		[fm removeItemAtPath:f error:&rmErr];
+		if (rmErr)
+		{
+			qlerror(@"Error removing file %@",f);
+			qlerror(@"%@",rmErr);
+		}
+	}
+
+	return result;
 }
 
 #pragma mark SelfPatch Misc

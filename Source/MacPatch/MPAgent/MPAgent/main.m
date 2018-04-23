@@ -417,6 +417,9 @@ void usage(void)
     printf(" -k \t --OSUpgrade \tOS Migration/Upgrade action state (Start/Stop)\n");
     printf(" -l \t --OSLabel \tOS Migration/Upgrade label\n");
     printf(" -m \t --OSUpgradeID \tA Unique Migration/Upgrade ID (Optional Will Auto Gen by default)\n\n");
+	printf("Antivirus (Symantec) \n\n");
+	printf(" -a \t --AVScan \tCollects Antivirus data installed on system.\n");
+	printf(" -U \t --AVUpdate \tUpdates antivirus defs.\n\n");
     printf("Inventory \n");
     printf("Option: -t [ALL] or [SPType]\n\n");
     printf(" -t\tInventory type, All is default.\n");

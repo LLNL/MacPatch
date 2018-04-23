@@ -815,6 +815,35 @@ done:
     return result;
 }
 
+- (BOOL)removeFileFromDirectoryViaProxy:(NSString *)directory extensions:(NSArray *)extensions
+{
+	BOOL result = NO;
+	NSError *error = nil;
+	if (!proxy) {
+		[self connect:&error];
+		if (error) {
+			qlerror(@"%@",error.localizedDescription);
+			goto done;
+		}
+		if (!proxy) {
+			logit(lcl_vError,@"Unable to connect to helper application. Functionality will be diminished.");
+			goto done;
+		}
+	}
+	
+	@try
+	{
+		result = [proxy removeFilesUsingExtensionsFromDirectory:directory types:extensions];
+	}
+	@catch (NSException *e) {
+		logit(lcl_vError,@"removeFileFromDirectoryViaProxy error: %@", e);
+	}
+	
+done:
+	[self cleanup];
+	return result;
+}
+
 #pragma mark -
 #pragma mark SelfPatch
 - (void)showSelfPatchWindow:(id)sender
@@ -1432,7 +1461,18 @@ done:
                             [self updateTableAndArrayControllerWithPatch:patch status:2];
                             break;
                         }
-                        
+						
+						// -------------------------------------------
+						// Remove any packages in dir prior to unzip, for clean up
+						// -------------------------------------------
+						NSString *patchDir = [dlPatchLoc stringByDeletingLastPathComponent];
+						logit(lcl_vInfo,@"Clean up directory %@ before unzipping",patchDir);
+						err = nil;
+						[self removeFileFromDirectoryViaProxy:patchDir extensions:@[@"pkg", @"mpkg"]];
+						if (err) {
+							logit(lcl_vError,@"Error removing files from directory %@. Err Message:%@", patchDir, err.localizedDescription);
+						}
+						
                         // -------------------------------------------
                         // Now we need to unzip
                         // -------------------------------------------

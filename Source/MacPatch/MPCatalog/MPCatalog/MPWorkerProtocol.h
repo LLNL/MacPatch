@@ -23,7 +23,7 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-// MacPatch MPWorkerProtocol.h version 1.7.2
+// MacPatch MPWorkerProtocol.h version 1.7.3
 
 #import <Foundation/Foundation.h>
 
@@ -86,6 +86,7 @@
 
 - (BOOL)unzipFile:(in bycopy NSString *)file error:(NSError **)error;
 - (BOOL)removeStagedDirectory:(in bycopy NSString *)stagedDirectory;
+- (BOOL)removeFilesUsingExtensionsFromDirectory:(in bycopy NSString *)stagedDirectory types:(in bycopy NSArray *)types;
 
 // MPReboot
 - (int)cleanUpRebootFileViaHelper;

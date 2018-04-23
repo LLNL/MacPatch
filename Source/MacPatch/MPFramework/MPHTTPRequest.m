@@ -348,9 +348,9 @@
         completion(flName, flPath,  nil);
     };
     // Error block
-    r.errorBlock = ^(NSError *error)
+    r.errorBlock = ^(NSError *errorBlk)
     {
-        qlerror(@"File download error %@", error.localizedDescription);
+        qlerror(@"File download error %@", errorBlk.localizedDescription);
         [weakSelf runDownloadRequest:urlPath downloadDirectory:(NSString *)dlDir
                             progress:progressBar progressPercent:progressPercent
                           completion:(void (^)(NSString *fileName, NSString *filePath, NSError *error))completion];
@@ -472,14 +472,12 @@
     NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration];
     
     downloadTask = [session downloadTaskWithURL:[NSURL URLWithString:url]
-                                    completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
+                                    completionHandler:^(NSURL *location, NSURLResponse *response, NSError *errorComp) {
                                         
-                                        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-										//NSLog(@"response status code: %ld", (long)[httpResponse statusCode]);
-                                        
-                                        if (error)
+										NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                                        if (errorComp)
                                         {
-                                            urlErr = error;
+                                            urlErr = errorComp;
                                             qlerror(@"File download error %@", error.localizedDescription);
                                             [weakSelf runSyncFileDownload:urlPath downloadDirectory:dlDir error:err];
                                         }
@@ -509,13 +507,10 @@
                                             if (fileOKToMove)
                                             {
                                                 cperror = nil;
-                                                BOOL fileCopied = [fileManager moveItemAtPath:[location path] toPath:dlFilePath error:&cperror];
-                                                
+                                                [fileManager moveItemAtPath:[location path] toPath:dlFilePath error:&cperror];
                                                 if (cperror) {
                                                     qlinfo(@"cperror, %@", cperror.localizedDescription);
                                                 }
-                                                
-												//NSLog(fileCopied ? @"Yes" : @"No");
                                             }
                                         }
 

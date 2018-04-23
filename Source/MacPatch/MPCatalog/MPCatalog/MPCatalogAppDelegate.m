@@ -1029,13 +1029,17 @@
                     // Create Destination Dir
                     // *****************************************
                     NSString *decodedName = [[urlPath lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                    dlErr = nil;
-                    if ([fm fileExistsAtPath:swLoc] == NO) {
-                        [fm createDirectoryAtPath:swLoc withIntermediateDirectories:YES attributes:nil error:&dlErr];
-                        if (dlErr) {
-                            logit(lcl_vError,@"Error[%d], trying to create destination directory. %@.",(int)[dlErr code],swLoc);
-                        }
-                    }
+					// Remove the install sw location if exists
+					if ([fm fileExistsAtPath:swLoc]) {
+						[self removeDirectoryViaProxy:swLoc];
+					}
+					
+					// Create the directory where we will put the installer
+					dlErr = nil;
+					[fm createDirectoryAtPath:swLoc withIntermediateDirectories:YES attributes:nil error:&dlErr];
+					if (dlErr) {
+						logit(lcl_vError,@"Error[%d], trying to create destination directory. %@.",(int)[dlErr code],swLoc);
+					}
                     
                     // *****************************************
                     // Move Downloaded File to Destination
@@ -1819,6 +1823,30 @@ done:
 done:
 	[self cleanup];
 	return results;
+}
+
+- (BOOL)removeDirectoryViaProxy:(NSString *)aDirectory
+{
+	BOOL result = NO;
+	
+	if (!proxy) {
+		[self connect];
+		if (!proxy) {
+			logit(lcl_vError,@"Unable to connect to helper application. Functionality will be diminished.");
+			goto done;
+		}
+	}
+	
+	@try {
+		result = [proxy removeStagedDirectory:aDirectory];
+	}
+	@catch (NSException *e) {
+		logit(lcl_vError,@"removeDirectory error: %@", e);
+	}
+	
+done:
+	[self cleanup];
+	return result;
 }
 
 #pragma mark -

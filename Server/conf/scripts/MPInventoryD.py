@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-	Copyright (c) 2013, Lawrence Livermore National Security, LLC.
+	Copyright (c) 2018, Lawrence Livermore National Security, LLC.
 	Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
 	Written by Charles Heizer <heizer1 at llnl.gov>.
 	LLNL-CODE-636469 All rights reserved.
@@ -25,7 +25,7 @@
 
 '''
 	Script: MPInventory.py
-	Version: 1.1.6
+	Version: 1.1.7
 '''
 
 import logging
@@ -58,7 +58,7 @@ myConfig = {
 	'user': 'mpdbadm',
 	'password': '',
 	'host': 'localhost',
-	'port': '3306',
+	'port': 3306,
 	'database': 'MacPatchDB',
 	'raise_on_warnings': True,
 	'buffered': True
@@ -162,7 +162,7 @@ class MPMySQL:
 		try:
 			self.dbConfig = dbConfig
 			self.db = mydb.connect(**dbConfig)
-			self.dbObj = self.db.cursor()
+			self.dbObj = self.db.cursor(buffered=True)
 			self.tables = self.tablesFromDataBase()
 
 		except mydb.Error as err:
@@ -173,11 +173,12 @@ class MPMySQL:
 			else:
 				logger.error(err)
 		else:
+			self.dbObj.close()
 			self.db.close()
 
 	def tablesFromDataBase(self):
 		_db = mydb.connect(**myConfig)
-		_dbCur = _db.cursor()
+		_dbCur = _db.cursor(buffered=True)
 
 		tables = []
 		try:
@@ -185,19 +186,20 @@ class MPMySQL:
 			for (table_name,) in _dbCur:
 				tables.append(table_name)
 
-			_dbCur.close()
 		except mydb.Error, e:
 			try:
 				logger.error("MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
 			except IndexError:
 				logger.error("MySQL Error: %s" % str(e))
 
+		_dbCur.close()
+		_db.close()
 		return tables
 
 	def columnsForTable(self,tableName):
 
 		_db = mydb.connect(**myConfig)
-		_dbCur = _db.cursor()
+		_dbCur = _db.cursor(buffered=True)
 
 		result = []
 		query = "SELECT column_name, DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,NUMERIC_PRECISION FROM information_schema.columns WHERE table_schema='" + self.dbConfig['database'] +"' AND table_name = '" + tableName + "'"
@@ -223,7 +225,6 @@ class MPMySQL:
 
 				result.append(tmp)
 
-			_dbCur.close()
 		except mydb.Error, e:
 			try:
 				logger.error("MySQL Errors [%d]: %s" % (e.args[0], e.args[1]))
@@ -232,6 +233,8 @@ class MPMySQL:
 				logger.error("MySQL Errors: %s" % str(e))
 				logger.error(query)
 
+		_dbCur.close()
+		_db.close()
 		return result
 
 	def tableExists(self,table):
@@ -313,7 +316,7 @@ class MPMySQL:
 		_result = False
 		_db = mydb.connect(**myConfig)
 		_db.autocommit = True
-		_dbCur = _db.cursor()
+		_dbCur = _db.cursor(buffered=True)
 
 		_sqlArr = []
 		_sqlStrBegin = "CREATE TABLE %s (" % tableName
@@ -370,7 +373,6 @@ class MPMySQL:
 
 		try:
 			_dbCur.execute(_sqlStrExec.encode('ascii',errors='ignore'))
-			_dbCur.close()
 			_result = True
 		except mydb.Error, e:
 			try:
@@ -378,19 +380,23 @@ class MPMySQL:
 			except IndexError:
 				logger.error("MySQL Error: %s" % str(e))
 
+		_dbCur.close()
+		_db.close()
 		return _result
 
 	def alterColumn(self,tableName,field):
 
 		_db = mydb.connect(**myConfig)
 		_db.autocommit = True
-		_dbCur = _db.cursor()
+		_dbCur = _db.cursor(buffered=True)
 
 		_field = self.returnFieldObjectFromField(field)
 		_sqlStr = "ALTER TABLE %s" % tableName
 
 		# is RID field
 		if _field['name'] == 'rid' or _field['name'] == 'mdate' or _field['name'] == 'cuuid':
+			_dbCur.close()
+			_db.close()
 			return False
 		else:
 			_sqlStr = _sqlStr + " CHANGE COLUMN `" + _field['name'] + "` `" + _field['name'] + "` " + _field['dataType']
@@ -424,32 +430,41 @@ class MPMySQL:
 
 		if gDebug:
 			logger.debug(_sqlStr)
+			_dbCur.close()
+			_db.close()
 			return True
 
 		try:
 			_dbCur.execute(_sqlStr.encode('ascii',errors='ignore'))
-			_dbCur.close()
 			logger.info("%s was altered sucessfully." % _field['name'])
+			_dbCur.close()
+			_db.close()
 			return True
 		except mydb.Error, e:
 			try:
 				logger.error("MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
+				_dbCur.close()
+				_db.close()
 				return False
 			except IndexError:
 				logger.error("MySQL Error: %s" % str(e))
+				_dbCur.close()
+				_db.close()
 				return False
 
 	def createColumn(self, tableName, field):
 
 		_db = mydb.connect(**myConfig)
 		_db.autocommit = True
-		_dbCur = _db.cursor()
+		_dbCur = _db.cursor(buffered=True)
 
 		_field = self.returnFieldObjectFromField(field)
 		_sqlStr = "ALTER TABLE %s" % tableName
 
 		# is RID field
 		if _field['name'] == 'rid' or _field['name'] == 'mdate' or _field['name'] == 'cuuid':
+			_dbCur.close()
+			_db.close()
 			return False
 		else:
 			_sqlStr = _sqlStr + " ADD COLUMN `" + _field['name'] + "` " + _field['dataType']
@@ -483,19 +498,26 @@ class MPMySQL:
 
 		if gDebug:
 			logger.debug(_sqlStr)
+			_dbCur.close()
+			_db.close()
 			return True
 
 		try:
 			_dbCur.execute(_sqlStr.encode('ascii',errors='ignore'))
-			_dbCur.close()
 			logger.info("%s was created sucessfully." % _field['name'])
+			_dbCur.close()
+			_db.close()
 			return True
 		except mydb.Error as e:
 			try:
 				logger.error("MySQL Error [%d]: %s" % (e.errno, e.msg))
+				_dbCur.close()
+				_db.close()
 				return False
 			except IndexError:
 				logger.error("MySQL Error: %s" % str(e.msg))
+				_dbCur.close()
+				_db.close()
 				return False
 
 	def removeKeyData(self, tableName, keyVal):
@@ -503,21 +525,28 @@ class MPMySQL:
 		_result = False
 		_db = mydb.connect(**myConfig)
 		_db.autocommit = True
-		_dbCur = _db.cursor()
+		_dbCur = _db.cursor(buffered=True)
 
 		_sqlStr = "Delete from %s where cuuid = '%s'" % (str(tableName), str(keyVal))
 		if gDebug:
 			logger.debug(_sqlStr)
+			_dbCur.close()
+			_db.close()
 			return True
 		try:
 			_dbCur.execute(_sqlStr)
 			_dbCur.close()
+			_db.close()
 			_result = True
 		except mydb.Error, e:
 			try:
 				logger.error("MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
+				_dbCur.close()
+				_db.close()
 			except IndexError:
 				logger.error("MySQL Error: %s" % str(e))
+				_dbCur.close()
+				_db.close()
 
 		return _result
 
@@ -526,7 +555,7 @@ class MPMySQL:
 		_result = False
 		_db = mydb.connect(**myConfig)
 		_db.autocommit = True
-		_dbCur = _db.cursor()
+		_dbCur = _db.cursor(buffered=True)
 
 		_sqlArr = []
 		_sqlStrPre = "UPDATE %s SET" % tableName
@@ -549,18 +578,25 @@ class MPMySQL:
 		_sqlStr = "%s %s %s;" %(_sqlStrPre,','.join(_sqlArr),_sqlStrPst)
 		if gDebug == True:
 			logger.debug(_sqlStr)
+			_dbCur.close()
+			_db.close()
 			return True
 		try:
 			_dbCur.execute(_sqlStr.encode('ascii',errors='ignore'))
-			_dbCur.close();
+			_dbCur.close()
+			_db.close()
 			_result = True
 		except mydb.Error, e:
 			try:
 				logger.error("MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
 				logger.error(_sqlStr)
+				_dbCur.close()
+				_db.close()
 			except IndexError:
 				logger.error("MySQL Error: %s" % str(e))
 				logger.error(_sqlStr)
+				_dbCur.close()
+				_db.close()
 
 		return _result
 
@@ -569,7 +605,7 @@ class MPMySQL:
 		_result = False
 		_db = mydb.connect(**myConfig)
 		_db.autocommit = True
-		_dbCur = _db.cursor()
+		_dbCur = _db.cursor(buffered=True)
 
 		_sqlArrCol = []
 		_sqlArrVal = []
@@ -595,18 +631,25 @@ class MPMySQL:
 		_sqlStr = "%s (%s) Values (%s);" % (_sqlStrPre, ','.join(_sqlArrCol),','.join(_sqlArrVal))
 		if gDebug == True:
 			logger.debug(_sqlStr)
+			_dbCur.close()
+			_db.close()
 			return True
 		try:
 			_dbCur.execute(_sqlStr.encode('ascii',errors='ignore'))
-			_dbCur.close();
+			_dbCur.close()
+			_db.close()
 			_result = True
 		except mydb.Error, e:
 			try:
 				logger.error("MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
 				logger.error(_sqlStr)
+				_dbCur.close()
+				_db.close()
 			except IndexError:
 				logger.error("MySQL Error: %s" % str(e))
 				logger.error(_sqlStr)
+				_dbCur.close()
+				_db.close()
 
 		return _result
 
@@ -909,7 +952,7 @@ def main():
 			raise ValueError("Error, config missing key.")
 
 		if 'dbPort' in _cnf:
-			myConfig['port'] = _cnf['dbPort']
+			myConfig['port'] = int(_cnf['dbPort'])
 		else:
 			raise ValueError("Error, config missing key.")
 
@@ -932,11 +975,6 @@ def main():
 			myConfig['host'] = confData['DB_HOST']
 		else:
 			raise ValueError("Error, config missing key DB_HOST.")
-
-		if 'DB_PORT' in confData:
-			myConfig['port'] = confData['DB_PORT']
-		else:
-			raise ValueError("Error, config missing key DB_PORT.")
 
 		if 'DB_USER' in confData:
 			myConfig['user'] = confData['DB_USER']
