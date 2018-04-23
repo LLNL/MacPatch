@@ -3,12 +3,8 @@ import os
 import argparse
 from sys import platform
 
-_pre_ = [
-	"pip",
-	"setuptools"
-]
-
 _all_ = [
+	"pycrypto>=2.6.1",
 	"alembic>=0.8.7",
 	"aniso8601>=1.1.0",
 	"blinker>=1.4",
@@ -45,8 +41,9 @@ _all_ = [
 	"flask-cors>=2.0.0",
 	"flask-security>=1.7.0",
 	"yattag>=1.8.0",
-	"pycrypto>=2.6.1",
-	"requests>=2.18.4"
+	"requests>=2.18.4",
+	"mysql-connector-python",
+	"uWSGI>=2.0.14"
 ]
 
 _failed_ = []
@@ -58,8 +55,8 @@ CA_CERT     = None
 srcDir      = MP_SRV_BASE+"/apps/_src_"
 cryptoPKG   = srcDir+"/M2Crypto-0.21.1-py2.7-macosx-10.8-intel.egg"
 
-linux = ["M2Crypto==0.24.0", "uWSGI>=2.0.14", "mysql-connector-python-rf>=2.1.3"]
-darwin = ["mysql-connector-python-rf>=2.1.3", ]
+linux = ["M2Crypto==0.24.0"]
+darwin = []
 
 def easyInstall(package):
 	print "Running Easy Install"
@@ -68,13 +65,9 @@ def easyInstall(package):
 		print("Easy Install Python Module: " + package)
 		os.system("easy_install --quiet " + package)
 
-def installAlt(package):
-	# Debugging
-	# pip.main(["install", "--pre", "--upgrade", "--no-index",
-	#         "--find-links=.", package, "--log-file", "log.txt", "-vv"])
-	pip.main(["install", "--quiet", "--no-cache-dir", "--no-index", "--find-links=.", package])
-
 def upgrade(packages, platformStr="linux"):
+	import pip
+
 	for package in packages:
 		if platformStr == 'linux':
 			if CA_CERT is not None:
@@ -90,6 +83,8 @@ def upgrade(packages, platformStr="linux"):
 
 def install(packages, platformStr="linux"):
 	for package in packages:
+		import pip
+
 		print("Installing Python Module: " + package)
 		if platformStr == 'linux':
 			if CA_CERT is not None:
@@ -124,7 +119,6 @@ if __name__ == '__main__':
 
 	print "Running python package installs for operating system type " + osType
 
-	upgrade(_pre_, osType)
 	install(_all_, osType)
 
 	if len(_failed_) > 0:
@@ -138,4 +132,3 @@ if __name__ == '__main__':
 	if platform.startswith('darwin'):
 		print "Install Darwin Packages"
 		install(darwin, osType)
-		# easyInstall(cryptoPKG)
