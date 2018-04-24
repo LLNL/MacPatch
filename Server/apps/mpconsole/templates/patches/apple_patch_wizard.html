@@ -137,6 +137,23 @@
 								</select>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col-md-2">
+								<label>User Install</label>
+							</div>
+							<div class="col-md-8" style="height: 27px;">
+								<select name="user_install" size="1" required="yes">
+									{% if dataAdds.user_install == 1 %}
+									<option value="1" selected>True</option>
+									<option value="0">False</option>
+									{% endif %}
+									{% if dataAdds.user_install == 0 %}
+									<option value="1">True</option>
+									<option value="0" selected>False</option>
+									{% endif %}
+								</select>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>

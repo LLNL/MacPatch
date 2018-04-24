@@ -283,7 +283,7 @@
 							</div>
 							<div class="col-md-7">
 								<br>
-								<input type="file" name="mainPatchFile" message="Error [Patch File]: A patch package name is required.">
+								<input type="file" name="mainPatchFile" id="mainPatchFile" message="Error [Patch File]: A patch package name is required.">
 								<div style="font-size:10px;padding:10px;">
 									<a href="http://#CGI.SERVER_NAME#/mp-content{{data.pkg_url}}" style="font-size:12px;">
 										<img src="/static/img/arrow_down.png" height="14"/>{{data.pkg_name or ''}} ({{data.pkg_hash or ''}})
@@ -420,27 +420,47 @@
 				{
 					// Add ACE Editor Data to form to post
 					var formData = new FormData($('#customPatchForm')[0]);
-					for (i = 0; i < xeditors.length; i++) {
-						var fName = "reqCri_type_data_" + xeditors[i]['id']
-						formData.append(fName, xeditors[i]['instance'].getValue());
+					var formDataNew = new FormData();
+
+					// Loop and add values to new form data obj
+					for (var pair of formData.entries())
+					{
+						//console.log('Eval: '+pair[0]);
+						if (pair[0] == 'mainPatchFile')
+						{
+							if( $('#mainPatchFile').val() == '' )
+							{
+								continue;
+							}
+						}
+						//console.log('Append: '+pair[0]);
+						formDataNew.append(pair[0], pair[1]);
+					}
+					// Add the criteria to form dict as needed
+					for (i = 0; i < xeditors.length; i++)
+					{
+						var fName = "reqCri_type_data_" + xeditors[i]['id'];
+						formDataNew.append(fName, xeditors[i]['instance'].getValue() );
 					}
 
 					$.ajax({
 						type:'POST',
 						url: '/patches/customPatchWizard/update',
-						data: formData,
+						data: formDataNew,
 						cache: false,
 						processData: false,
 						contentType: false,
 						success: function(){
 							alert("Patch Updated Successfully");
+							$('#modalDialog').modal('hide');
+							return true;
 						},
-						error: function(jqXHR, textStatus, errorThrown){
+						error: function(jqXHR, textStatus, errorThrown) {
 							alert("Patch Failed to Update");
+							//$('#modalDialog').modal('hide');
+							return false;
 						}
 					});
-					//$('#modalDialog').modal('hide');
-					return true;
 				},
 				onFinished: function (event, currentIndex)
 				{

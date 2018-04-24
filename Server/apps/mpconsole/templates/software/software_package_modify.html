@@ -334,6 +334,7 @@
 		// Click the Finish Button at the end of the Wizard
 		function onFinishCallback()
 		{
+			alert("Hello");
 			var formData = new FormData($('#customPatchForm')[0]);
 			$.ajax({
 				type:'POST',

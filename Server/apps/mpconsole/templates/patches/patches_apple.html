@@ -38,15 +38,15 @@ Apple Patches
 	{
 			$('#table').bootstrapTable(
 			{
-			    url: "/patches/apple/list",
+				url: "/patches/apple/list",
 				striped: true,
-                pagination: true,
-                sidePagination: 'client',
-                showRefresh: true,
-                pageList: ['10', '25', '50', '100', 'All'],
-                search: true,
-                idField: 'akey',
-                sortable: true,
+				pagination: true,
+				sidePagination: 'client',
+				showRefresh: true,
+				pageList: ['10', '25', '50', '100', 'All'],
+				search: true,
+				idField: 'akey',
+				sortable: true,
 				detailView: true,
 				detailFormatter: detailFormatter,
 				icons: {
@@ -158,7 +158,8 @@ Apple Patches
 	window.operateEvents = {
 		'click .edit': function (e, value, row, index)
 		{
-			$.get( "/patches/applePatchWizard/" + row['rid']).done(function(data) {
+			console.log(row);
+			$.get( "/patches/applePatchWizard/" + row['akey']).done(function(data) {
 				$('#modalBody').html(data);
 				$('#modalSaveButton').hide();
 				$('#modalCancelButton').hide();

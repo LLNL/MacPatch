@@ -147,15 +147,15 @@
 			<!-- Section 2 -->
 			<h1>Package</h1>
 			<section>
-                <h4>Software Icon</h4>
-                <div class="container-fluid">
-                    <div class="form-group">
+				<h4>Software Icon</h4>
+				<div class="container-fluid">
+					<div class="form-group">
 						<div class="row top-buffer">
 							<div class="col-md-2">
 								<label>Image</label>
 							</div>
 							<div class="col-md-7">
-								<input type="file" name="sw_img_path">
+								<input type="file" name="sw_img_path" id="sw_img_path">
 								<br>
 								<div style="font-size:12px;padding-bottom:10px;">
 									{% if data['PKG'].sw_img_path %}
@@ -164,14 +164,14 @@
 								</div>
 							</div>
 							<div class="col-md-3">
-                                {% if data['PKG'].sw_img_path %}
-                                <img src="/mp-content{{ data['PKG'].sw_img_path }}" height="24" />
-                                {% endif %}
-                            </div>
+								{% if data['PKG'].sw_img_path %}
+								<img src="/mp-content{{ data['PKG'].sw_img_path }}" height="24" />
+								{% endif %}
+							</div>
 						</div>
-                    </div>
-                </div>
-                <br>
+					</div>
+				</div>
+				<br>
 				<h4>Package</h4>
 				<div class="container-fluid">
 					<div class="form-group">
@@ -180,7 +180,7 @@
 								<label>Package</label>
 							</div>
 							<div class="col-md-7">
-								<input type="file" name="mainPackage">
+								<input type="file" name="mainPackage" id="mainPackage">
 								<br>
 								<div style="font-size:12px;padding-bottom:10px;">
 									{% if data['PKG'].sw_url %}
@@ -458,29 +458,53 @@
 				{
 					// Add ACE Editor Data to form to post
 					var formData = new FormData($('#softwarePKGForm')[0]);
-					formData.append('sw_pre_install_script', preinstall.getValue());
-					formData.append('sw_post_install_script', postinstall.getValue());
-					formData.append('sw_uninstall_script', uninstall.getValue());
+					var formDataNew = new FormData();
+
+					// Loop and add values to new form data obj
+					for (var pair of formData.entries())
+					{
+						//console.log('Eval: '+pair[0]);
+						if (pair[0] == 'mainPackage' && $('#mainPackage').val() == '')
+						{
+							continue;
+						}
+						if (pair[0] == 'sw_img_path' && $('#sw_img_path').val() == '')
+						{
+							continue;
+						}
+						//console.log('Append: '+pair[0]);
+						formDataNew.append(pair[0], pair[1]);
+					}
+
+					// Add ACE Editor Data to form to post
+					formDataNew.append('sw_pre_install_script', preinstall.getValue());
+					formDataNew.append('sw_post_install_script', postinstall.getValue());
+					formDataNew.append('sw_uninstall_script', uninstall.getValue());
+
 					$.ajax({
 						type:'POST',
 						url: '/software/package/save',
-						data: formData,
+						data: formDataNew,
 						cache: false,
 						processData: false,
 						contentType: false,
 						success: function(){
 							alert("Software Package Saved Successfully");
+							$('#modalDialog').modal('hide');
+							return true;
 						},
-						error: function(jqXHR, textStatus, errorThrown){
+						error: function(jqXHR, textStatus, errorThrown) {
 							alert("Software Package Failed to Save");
+							//$('#modalDialog').modal('hide');
+							return false;
 						}
 					});
-					// $('#modalDialog').modal('hide');
 					return true;
 				},
 				onFinished: function (event, currentIndex)
 				{
 					//alert("Submitted!");
+					$('#modalDialog').modal('hide');
 					parent.closeModal();
 				}
 			});
