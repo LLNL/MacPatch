@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildClient.sh
-# Version: 1.4
+# Version: 1.5
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,19 +12,20 @@
 #	1.1		Added Code Signbing Support
 #   1.2		Added ability to save CODESIGNIDENTITY
 #   1.4		Script No Longer is static location
+#	1.5		Changed Vars for MP 3.1
 #
 # -------------------------------------------------------------
 
 SCRIPT_PARENT=$(dirname $(dirname $0))
 SRCROOT="$SCRIPT_PARENT/Source"
 PKGROOT="$SCRIPT_PARENT/Packages"
-BUILDROOT="/private/tmp/MP/Client"
+BUILDROOT="/private/tmp/MP/Client31"
 BASEPKGVER="3.0.1.0"
 UPDTPKGVER="3.0.1.0"
 PKG_STATE=""
 CODESIGNIDENTITY="*"
 MIN_OS="10.8"
-BUILDPLIST="/Library/Preferences/mp.build.client.plist"
+BUILDPLIST="/Library/Preferences/mp.build.client31.plist"
 if [ -f "$BUILDPLIST" ]; then
 	CODESIGNIDENTITYALT=`defaults read ${BUILDPLIST} name`
 fi
