@@ -141,6 +141,7 @@ def applePatchWizardUpdate():
 		setattr(patchAdds, 'patch_reboot', request.form['patch_reboot'])
 		setattr(patchAdds, 'patch_install_weight', request.form['patchInstallWeight'])
 		setattr(patchAdds, 'severity', request.form['patch_severity'])
+		setattr(patchAdds, 'user_install', request.form['user_install'])
 		db.session.commit()
 
 		# Remove Criteria before adding new / updating
@@ -170,7 +171,7 @@ def applePatchWizardUpdate():
 	else:
 		log_Error("{} does not have permission to update apple patch.".format(session.get('user')))
 
-	return redirect(url_for('patches.apple'))
+	return json.dumps({'data': {}}, default=json_serial), 200
 
 ''' AJAX Request '''
 @patches.route('/apple/bulk/toQA',methods=['GET'])
