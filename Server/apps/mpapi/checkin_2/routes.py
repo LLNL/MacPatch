@@ -1,7 +1,8 @@
-from flask import request
+from flask import request, current_app
 from flask_restful import reqparse
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
+import syslog
 
 from . import *
 from .. import db
@@ -37,6 +38,9 @@ class AgentStatus(MPResource):
 			client_obj = MpClient.query.filter_by(cuuid=client_id).first()
 
 			if client_obj:
+				if "POST_CHECKIN_TO_SYSLOG" in current_app.config:
+					if current_app.config['POST_CHECKIN_TO_SYSLOG'] == True:
+						self.postClientDataToSysLog(client_obj)
 
 				_mdate = "{:%B %d, %Y %H:%M:%S}".format(client_obj.mdate)
 				_mdateAlt = "{:%m/%d/%Y %H:%M:%S}".format(client_obj.mdate)
@@ -53,6 +57,19 @@ class AgentStatus(MPResource):
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			log_Error('[AgentStatus][Get][Exception][Line: %d] client_id: %s Message: %s' % (exc_tb.tb_lineno, client_id, e.message))
 			return {'errorno': 500, 'errormsg': e.message, 'result': {'data': {}, 'type':'AgentStatus'}}, 500
+
+	def postClientDataToSysLog(self, client_obj):
+		# Collection for Syslog and Splunk
+
+		dataStr = "client_id: {}, hostname: {}, ip: {}, mac_address: {}, fileVault_status: {}, os_ver: {}, loggedin_user: {}".format(client_obj.cuuid,
+																																	 client_obj.hostname,
+																																	 client_obj.ipaddr,
+																																	 client_obj.macaddr,
+																																	 client_obj.fileVaultStatus,
+																																	 client_obj.osver,
+																																	 client_obj.consoleuser)
+		syslog.syslog(dataStr)
+		return
 
 # Add Routes Resources
 checkin_2_api.add_resource(AgentStatus, '/client/checkin/info/<string:client_id>')

@@ -41,6 +41,7 @@ class BaseConfig:
 	VERIFY_CLIENTID         = True
 	REQUIRE_SIGNATURES      = False
 	ALLOW_MIXED_SIGNATURES  = True
+	POST_CHECKIN_TO_SYSLOG  = False
 
 	CONTENT_DIR             = '/opt/MacPatch/Content'
 	WEB_CONTENT_DIR 	    = '/opt/MacPatch/Content/Web'
