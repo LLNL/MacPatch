@@ -31,7 +31,7 @@
 RETVAL=$?
 MP_HOME="/opt/MacPatch/Server"
 MP_SCRIPT="${MP_HOME}/conf/scripts"
-MP_INVDIR="${MP_HOME}/InvData/files"
+MP_INVDIR="${MP_HOME}/Data/Inventory/files"
 
 case "$1" in
  start)

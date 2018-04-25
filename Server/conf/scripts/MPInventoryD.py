@@ -70,7 +70,7 @@ logger       = logging.getLogger('MPInventory')
 MP_SRV_BASE   = "/opt/MacPatch/Server"
 MP_FLASK_FILE = MP_SRV_BASE+"/apps/config.cfg"
 logFile       = MP_SRV_BASE+"/logs/MPInventory.log"
-invFilesDir   = MP_SRV_BASE+"/InvData/Files"
+invFilesDir   = MP_SRV_BASE+"/Data/Inventory/files"
 confFile      = MP_SRV_BASE+"/etc/siteconfig.json"
 
 # ----------------------------------------------------------------------------
