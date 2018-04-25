@@ -234,6 +234,7 @@ def clientGroups():
 	_rights = list(accessToGroups())
 
 	# Return Data
+	print _rights
 	return render_template('client_groups.html', data=_data, columns=cols, counts=_results, rights=_rights)
 
 @clients.route('/group/add')
@@ -746,8 +747,14 @@ def isOwnerOfGroup(id):
 
 def isAdminForGroup(id):
 	usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()
+	usrInf = accountInfo()
 
 	if usr:
+		if usrInf:
+			# User_type 0 is the main console admin, has access to everything
+			if usrInf.user_type == 0:
+				return True
+
 		q_admin = MpClientGroupAdmins.query.filter(MpClientGroupAdmins.group_id == id).all()
 		if q_admin:
 			result = False
@@ -763,7 +770,17 @@ def isAdminForGroup(id):
 def accessToGroups():
 	_groups = set([])
 	usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()
+	usrInf = accountInfo()
 	if usr:
+		if usrInf:
+			# User_type 0 is the main console admin, has access to everything
+			if usrInf.user_type == 0:
+				q_groups = MpClientGroups.query.all()
+				for row in q_groups:
+					print row.group_id
+					_groups.add(row.group_id)
+				return _groups
+
 		q_owner = MpClientGroups.query.filter(MpClientGroups.group_owner == usr.user_id).all()
 		if q_owner:
 			for row in q_owner:
@@ -775,6 +792,13 @@ def accessToGroups():
 				_groups.add(row.group_id)
 
 		return _groups
+	else:
+		return None
+
+def accountInfo():
+	usrInf = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == session.get('user')).first()
+	if usrInf:
+		return usrInf
 	else:
 		return None
 
