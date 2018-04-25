@@ -80,6 +80,8 @@ NSString * const OS_MIGRATION_STATUS        = @"/Users/Shared/.migrationid";
 NSString * const MP_AGENT_DEPL_PLIST        = @"/Library/Application Support/MacPatch/gov.llnl.mpagent.plist";
 NSString * const MP_AGENT_SETTINGS          = @"/Library/Application Support/MacPatch/gov.llnl.mp.plist";
 
+NSString * const MP_CRITICAL_UPDATES_PLIST  = @"/Users/Shared/.mpCriUpdates.plist";
+
 @implementation Constants
 
 @end

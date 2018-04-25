@@ -157,6 +157,7 @@
     MPASUSCatalogs      *mpCatalog;
     NSArray             *applePatchesArray;
     NSArray             *approvedApplePatches = nil;
+	NSMutableArray      *userInstallApplePatches = [[NSMutableArray alloc] init];
     NSMutableArray      *customPatchesArray;
     NSArray             *approvedCustomPatches = nil;
     NSMutableArray      *approvedUpdatesArray = [[NSMutableArray alloc] init];
@@ -252,7 +253,7 @@
         } else {
             logit(lcl_vError,@"Scan results posted to webservice returned false.");
         }
-        
+		
         // Process patches
         if (!applePatchesArray)
         {
@@ -278,16 +279,33 @@
                 {
                     // Build Approved Patches
                     logit(lcl_vInfo,@"Building approved patch list...");
+					NSDictionary *_applePatch;
+					NSDictionary *_applePatchApproved;
+					
                     for (int i=0; i<[applePatchesArray count]; i++)
                     {
-                        NSDictionary *_applePatch = [applePatchesArray objectAtIndex:i];
+                        _applePatch = [applePatchesArray objectAtIndex:i];
                         for (int x=0;x < [approvedApplePatches count]; x++)
                         {
-                            NSDictionary *_approvedPatch = [approvedApplePatches objectAtIndex:x];
-                            if ([_approvedPatch[@"name"] isEqualTo:_applePatch[@"patch"]])
+                            _applePatchApproved = [approvedApplePatches objectAtIndex:x];
+                            if ([_applePatchApproved[@"name"] isEqualTo:_applePatch[@"patch"]])
                             {
+								// Check to see if the approved apple patch requires a user
+								// to install the patch, right now this is for 10.13 os updates
+								if ([_applePatchApproved objectForKey:@"user_install"])
+								{
+									if ([[_applePatchApproved objectForKey:@"user_install"] intValue] == 1)
+									{
+										logit(lcl_vInfo,@"Approved (User Install) update %@",_applePatch[@"patch"]);
+										logit(lcl_vDebug,@"Approved: %@",_applePatchApproved);
+										[userInstallApplePatches addObject:@{@"type":@"Apple",@"patch":_applePatch[@"patch"]}];
+										break;
+									}
+								}
+								
+								
                                 logit(lcl_vInfo,@"Approved update %@",_applePatch[@"patch"]);
-                                logit(lcl_vDebug,@"Approved: %@",_approvedPatch);
+                                logit(lcl_vDebug,@"Approved: %@",_applePatchApproved);
                                 
                                 tmpDict = [[NSMutableDictionary alloc] init];
                                 
@@ -295,24 +313,26 @@
                                 [tmpDict setObject:_applePatch[@"description"] forKey:@"description"];
                                 [tmpDict setObject:_applePatch[@"restart"] forKey:@"restart"];
                                 [tmpDict setObject:_applePatch[@"version"] forKey:@"version"];
-                                [tmpDict setObject:_approvedPatch[@"severity"] forKey:@"severity"];
+                                [tmpDict setObject:_applePatchApproved[@"severity"] forKey:@"severity"];
                                 
-                                if ([_approvedPatch objectForKey:@"hasCriteria"])
+                                if ([_applePatchApproved objectForKey:@"hasCriteria"])
                                 {
-                                    [tmpDict setObject:[_approvedPatch objectForKey:@"hasCriteria"] forKey:@"hasCriteria"];
-                                    if ([[_approvedPatch objectForKey:@"hasCriteria"] boolValue] == YES)
+                                    [tmpDict setObject:[_applePatchApproved objectForKey:@"hasCriteria"] forKey:@"hasCriteria"];
+                                    if ([[_applePatchApproved objectForKey:@"hasCriteria"] boolValue] == YES)
                                     {
-                                        if ([_approvedPatch objectForKey:@"criteria_pre"] && [[_approvedPatch objectForKey:@"criteria_pre"] count] > 0) {
-                                            [tmpDict setObject:[_approvedPatch objectForKey:@"criteria_pre"] forKey:@"criteria_pre"];
+                                        if (_applePatchApproved[@"criteria_pre"] && [_applePatchApproved[@"criteria_pre"] count] > 0)
+										{
+                                            [tmpDict setObject:_applePatchApproved[@"criteria_pre"] forKey:@"criteria_pre"];
                                         }
-                                        if ([_approvedPatch objectForKey:@"criteria_post"] && [[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] count] > 0) {
-                                            [tmpDict setObject:[_approvedPatch objectForKey:@"criteria_post"] forKey:@"criteria_post"];
+                                        if (_applePatchApproved[@"criteria_post"] && [_applePatchApproved[@"criteria_post"] count] > 0)
+										{
+                                            [tmpDict setObject:_applePatchApproved[@"criteria_post"] forKey:@"criteria_post"];
                                         }
                                     }
                                 }
                                 
                                 [tmpDict setObject:@"Apple" forKey:@"type"];
-                                [tmpDict setObject:[_approvedPatch objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
+                                [tmpDict setObject:_applePatchApproved[@"patch_install_weight"] forKey:@"patch_install_weight"];
                                 
                                 logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
                                 [approvedUpdatesArray addObject:tmpDict];
@@ -401,6 +421,13 @@ done:
     
     // Sleep 1 sec
     [NSThread sleepForTimeInterval:1];
+	
+	// Write out user_install patches, overwrite the file contents.
+	// The MP_CRITICAL_UPDATES_PLIST constant is for User Install updates
+	if (userInstallApplePatches.count >= 1)
+	{
+		[userInstallApplePatches writeToFile:MP_CRITICAL_UPDATES_PLIST atomically:NO];
+	}
     
     // Re-write file with new patch info
     if (approvedUpdatesArray && [approvedUpdatesArray count] > 0)
@@ -1060,8 +1087,10 @@ done:
                     goto instResult;
                 }
 
-                if ([patch objectForKey:@"criteria_post"]) {
+                if ([patch objectForKey:@"criteria_post"])
+				{
                     logit(lcl_vInfo,@"Processing post-install criteria.");
+					
                     for (i=0;i<[[patch objectForKey:@"criteria_post"] count];i++)
                     {
                         criteriaDictPost = [[patch objectForKey:@"criteria_post"] objectAtIndex:i];
