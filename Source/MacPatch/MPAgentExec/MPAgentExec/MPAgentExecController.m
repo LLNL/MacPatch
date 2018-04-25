@@ -224,11 +224,13 @@
     // 0 = All, 1 = Apple, 2 = Custom
     if ((aFilter == 0) || (aFilter == 1)) {
         approvedApplePatches = [patchGroupPatches objectForKey:@"AppleUpdates"];
-        logit(lcl_vInfo,@"approvedApplePatches: %@",approvedApplePatches);
+		logit(lcl_vInfo,@"Approved %d Apple Patches.",(int)approvedApplePatches.count);
+        logit(lcl_vDebug,@"approvedApplePatches: %@",approvedApplePatches);
     }
     if ((aFilter == 0) || (aFilter == 2)) {
         approvedCustomPatches = [patchGroupPatches objectForKey:@"CustomUpdates"];
-        logit(lcl_vInfo,@"approvedCustomPatches: %@",approvedCustomPatches);
+		logit(lcl_vInfo,@"Approved %d Custom Patches.",(int)approvedCustomPatches.count);
+        logit(lcl_vDebug,@"approvedCustomPatches: %@",approvedCustomPatches);
     }
     
     // Scan for Apple Patches
