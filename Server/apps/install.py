@@ -42,7 +42,7 @@ _all_ = [
 	"flask-security>=1.7.0",
 	"yattag>=1.8.0",
 	"requests>=2.18.4",
-	"mysql-connector-python",
+	"mysql-connector-python-rf",
 	"uWSGI>=2.0.14"
 ]
 

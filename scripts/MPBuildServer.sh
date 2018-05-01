@@ -638,7 +638,7 @@ if command_exists virtualenv ; then
 		if $USEMACOS; then
 			env "CFLAGS=-I/usr/local/include -L/usr/local/lib" python install.py
 		else
-			python install.py --ca "$CA_CERT"
+			python install.py
 		fi
 	fi
 	deactivate
