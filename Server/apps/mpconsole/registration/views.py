@@ -1,5 +1,5 @@
 from flask import render_template, session, request, current_app, redirect, url_for
-from flask.ext.security import login_required
+from flask_security import login_required
 from sqlalchemy import text
 from datetime import datetime
 import json

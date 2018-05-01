@@ -13,7 +13,8 @@ import logging
 import logging.handlers
 from .config import DevelopmentConfig, ProductionConfig
 
-from flask.ext.cors import CORS, cross_origin
+#from flask_cors import CORS, cross_origin
+from flask_cors import CORS, cross_origin
 
 def loadJobs(jobsFile, scheduler):
 

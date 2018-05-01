@@ -113,9 +113,13 @@ Client Groups
 				hasRowRight = true;
 			}
 		}
-		if (hasRowRight || row.group_name == 'Default') {
-			htmlData.push('<a class="edit" href="javascript:void(0)" title="Edit">');
+		if (hasRowRight || row.group_name == 'Default')
+		{
+			htmlData.push('<a class="edit" href="javascript:void(0)" title="Edit Patch Group">');
 			htmlData.push('<i class="fa fa-pencil fa-lg" aria-hidden="true"></i></a>');
+			htmlData.push('</td><td>');
+			htmlData.push('<a class="modify" href="javascript:void(0)" title="Modify Patch Group">');
+			htmlData.push('<i class="fa fa-edit fa-lg"></i></a>');
 			htmlData.push('</td><td>');
 		}
 		if (row['group_owner'] == '{{session.user}}' && row['count'] <= 0 && row.group_name != 'Default') {
@@ -135,6 +139,19 @@ Client Groups
 		{
 			var _url = '/clients/group/' + row.group_id
 			$(location).attr('href',_url);
+		},
+		'click .modify': function (e, value, row, index)
+		{
+			var _url = '/clients/group/modify/'+ row.group_id
+			$.get( _url )
+			.fail(function(jqXHR, textStatus, errorThrown) {
+				alert("Error: Group could not be modified. You dont have rights to do this.");
+			})
+			.done(function(data) {
+				$('#modalBody').html(data);
+				$('#modalBody').css({'height':'200px'});
+				$('#modalDialog').modal('show');
+			});
 		},
 		'click .remove': function (e, value, row, index)
 		{
@@ -172,7 +189,8 @@ Client Groups
 	};
 
 	var $table = $('#table'), $delButton = $('#delButton'), $addButton = $('#addButton');
-	$(function () {
+	$(function ()
+	{
 		$delButton.click(function ()
 		{
 			var ids = $.map($table.bootstrapTable('getSelections'), function (row) {

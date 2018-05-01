@@ -1,9 +1,9 @@
 from flask import render_template, request, session, redirect, url_for
 from werkzeug import secure_filename
-from flask.ext.security import login_required
+from flask_security import login_required
 from sqlalchemy import text, or_
 
-from flask.ext.cors import cross_origin
+from flask_cors import cross_origin
 
 import base64
 import re

@@ -1,5 +1,5 @@
 from flask import render_template, request
-from flask.ext.security import login_required
+from flask_security import login_required
 from datetime import *
 import json
 from datetime import datetime

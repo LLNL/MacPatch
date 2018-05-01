@@ -1,5 +1,5 @@
 from flask import render_template, jsonify, request, session
-from flask.ext.security import login_required
+from flask_security import login_required
 import json
 import base64
 import uuid

@@ -5,9 +5,10 @@ from flask_script import Manager, Command, Option, Server
 from mpdb import *
 import multiprocessing
 
-import warnings
-from flask.exthook import ExtDeprecationWarning
-warnings.simplefilter('ignore', ExtDeprecationWarning)
+# Broken as of Flask 1.0
+#import warnings
+#from flask.exthook import ExtDeprecationWarning
+#warnings.simplefilter('ignore', ExtDeprecationWarning)
 
 from mpconsole import create_app
 from mpconsole.model import *

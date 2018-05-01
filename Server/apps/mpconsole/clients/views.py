@@ -1,5 +1,5 @@
 from flask import render_template, session, request, current_app
-from flask.ext.security import login_required
+from flask_security import login_required
 from sqlalchemy import text
 from datetime import datetime
 import json
@@ -71,7 +71,7 @@ def searchForGroup(group, list):
 	return res['group_name']
 '''
 ----------------------------------------------------------------
-	Client
+	Client - dashboard
 ----------------------------------------------------------------
 '''
 @clients.route('/dashboard/<client_id>')
@@ -234,7 +234,6 @@ def clientGroups():
 	_rights = list(accessToGroups())
 
 	# Return Data
-	print _rights
 	return render_template('client_groups.html', data=_data, columns=cols, counts=_results, rights=_rights)
 
 @clients.route('/group/add')
@@ -251,6 +250,19 @@ def clientGroupAdd():
 
 	log("{} adding new group {}.".format(_owner, _group_id))
 	return render_template('update_client_group.html', data=clientGroup, type="add")
+
+@clients.route('/group/modify/<group_id>')
+@login_required
+def clientGroupModify(group_id):
+	''' Returns an empty set of data to add a new record '''
+	if not isOwnerOfGroup(group_id):
+		return '', 400
+
+	clientGroup = MpClientGroups.query.filter(MpClientGroups.group_id == group_id).first()
+	if clientGroup is None:
+		return '', 400
+
+	return render_template('update_client_group.html', data=clientGroup)
 
 @clients.route('/group/<id>/user/add',methods=['GET'])
 @login_required
@@ -296,9 +308,9 @@ def clientGroupUserModify():
 
 	return clientGroup(id,5)
 
-@clients.route('/group/update',methods=['POST'])
+@clients.route('/group/update/<group_id>',methods=['POST'])
 @login_required
-def patchGroupUpdate():
+def patchGroupUpdate(group_id):
 
 	_add = False
 	_group_id    = request.form['group_id']
@@ -734,8 +746,14 @@ def getDoc(col_obj):
 
 def isOwnerOfGroup(id):
 	usr = AdmUsers.query.filter(AdmUsers.rid == session.get('user_id')).first()
+	usrInf = accountInfo() # Check if console admin account
 
 	if usr:
+		if usrInf:
+			# User_type 0 is the main console admin, has access to everything
+			if usrInf.user_type == 0:
+				return True
+
 		pgroup = MpClientGroups.query.filter(MpClientGroups.group_id == id).first()
 		if pgroup:
 			if pgroup.group_owner == usr.user_id:
@@ -777,7 +795,6 @@ def accessToGroups():
 			if usrInf.user_type == 0:
 				q_groups = MpClientGroups.query.all()
 				for row in q_groups:
-					print row.group_id
 					_groups.add(row.group_id)
 				return _groups
 

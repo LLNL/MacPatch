@@ -1,5 +1,5 @@
 from flask import render_template, request, session
-from flask.ext.security import login_required
+from flask_security import login_required
 from werkzeug.utils import secure_filename
 from sqlalchemy.orm.session import make_transient
 from sqlalchemy import or_
