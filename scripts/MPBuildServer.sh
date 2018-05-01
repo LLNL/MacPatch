@@ -427,7 +427,7 @@ if [ $? != 0 ] ; then
 	easy_install --quiet pip
 fi
 
-pip_mods=( "pip" "setuptools" "virtualenv" "pycrypto" "argparse" "biplist" "python-crontab" "python-dateutil" "requests" "six" "wheel" "mysql-connector-python")
+pip_mods=( "pip" "setuptools" "virtualenv" "pycrypto" "argparse" "biplist" "python-crontab" "python-dateutil" "requests" "six" "wheel" "mysql-connector-python-rf")
 for p in "${pip_mods[@]}"
 do
 	echo " - Installing ${p}, python module."
@@ -486,54 +486,48 @@ echo "See nginx build status in ${MPSERVERBASE}/logs/nginx-build.log"
 echo
 NGINX_SW=`find "${SRC_DIR}" -name "nginx-"* -type f -exec basename {} \; | head -n 1`
 
-function mkNginx () 
-{
-	# APR
-	mkdir -p ${BUILDROOT}/nginx
-	tar xfz ${SRC_DIR}/${NGINX_SW} --strip 1 -C ${BUILDROOT}/nginx
-	cd ${BUILDROOT}/nginx
+mkdir -p ${BUILDROOT}/nginx
+tar xfz ${SRC_DIR}/${NGINX_SW} --strip 1 -C ${BUILDROOT}/nginx
+cd ${BUILDROOT}/nginx
 
-	if $USELINUX; then
-		./configure --prefix=${MPSERVERBASE}/nginx \
-		--with-http_ssl_module \
-		--with-pcre \
-		--user=www-data \
-		--group=www-data > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
-	else
-		export KERNEL_BITS=64
-		./configure --prefix=${MPSERVERBASE}/nginx \
-		--without-http_autoindex_module \
-		--without-http_ssi_module \
-		--with-http_ssl_module \
-		--with-openssl=${TMP_DIR}/openssl \
-		--with-pcre=${TMP_DIR}/pcre  > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
-	fi
+if $USELINUX; then
+	./configure --prefix=${MPSERVERBASE}/nginx \
+	--with-http_ssl_module \
+	--with-pcre \
+	--user=www-data \
+	--group=www-data > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+else
+	export KERNEL_BITS=64
+	./configure --prefix=${MPSERVERBASE}/nginx \
+	--without-http_autoindex_module \
+	--without-http_ssi_module \
+	--with-http_ssl_module \
+	--with-openssl=${TMP_DIR}/openssl \
+	--with-pcre=${TMP_DIR}/pcre  > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+fi
 
-	make  >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
-	make install >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+make  >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+make install >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 
-	mv ${MPSERVERBASE}/nginx/conf/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf.orig
-	if $USEMACOS; then
-		echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
-		cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERBASE}/nginx/conf/nginx.conf
-	else
-		echo " - Copy nginx.conf to ${MPSERVERBASE}/nginx/conf/nginx.conf"
-		cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf
-	fi
-	echo " - Copy nginx sites to ${MPSERVERBASE}/nginx/conf/sites"
-	cp -r ${MPSERVERBASE}/conf/nginx/sites ${MPSERVERBASE}/nginx/conf/sites
+mv ${MPSERVERBASE}/nginx/conf/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf.orig
+if $USEMACOS; then
+	echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERBASE}/nginx/conf/nginx.conf
+else
+	echo " - Copy nginx.conf to ${MPSERVERBASE}/nginx/conf/nginx.conf"
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf
+fi
+echo " - Copy nginx sites to ${MPSERVERBASE}/nginx/conf/sites"
+cp -r ${MPSERVERBASE}/conf/nginx/sites ${MPSERVERBASE}/nginx/conf/sites
 
-	perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $MPSERVERBASE/nginx/conf/nginx.conf
-	FILES=$MPSERVERBASE/nginx/conf/sites/*.conf
-	for f in $FILES
-	do
-		#echo "$f"
-		perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $f
-		perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $f
-	done
-}
-
-mkNginx
+perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $MPSERVERBASE/nginx/conf/nginx.conf
+FILES=$MPSERVERBASE/nginx/conf/sites/*.conf
+for f in $FILES
+do
+	#echo "$f"
+	perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $f
+	perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $f
+done
 
 # ------------------
 # Link & Set Permissions
