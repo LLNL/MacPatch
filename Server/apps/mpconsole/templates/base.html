@@ -47,7 +47,7 @@
 		}
 
 		function aboutConsole() {
-			alert("MacPatch Console 3.1.0 Beta 2")
+			alert("MacPatch Console 3.1.0 Beta 3")
 		}
 	</script>
 </head>
@@ -100,7 +100,7 @@
 						<li>
 							<a href="{{ url_for('dashboard.index') }}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
 						</li>
-                        <li>
+						<li>
 							<a href="{{ url_for('clients.clientsList') }}"><i class="fa fa-desktop fa-fw"></i> Clients</a>
 						</li>
 						<li>
@@ -160,7 +160,7 @@
 									<a href="{{ url_for('osmanage.profiles') }}"><i class="fa fa-list fa-fw"></i> Profiles</a>
 								</li>
 								{% if session.role[0] == 1 %}
-                                <!--
+								<!--
 								<li>
 									<a href="{{ url_for('osmanage.appFilters') }}"><i class="fa fa-list fa-fw"></i> .app Access</a>
 								</li>
@@ -204,11 +204,11 @@
 										</li>
 									</ul>
 								</li>
-                                {% endif %}
+								{% endif %}
 								<li>
 									<a href="{{ url_for('registration.index') }}"><i class="fa fa-handshake-o fa-fw"></i> Registration</a>
 								</li>
-                                {% if session.role[0] == 1 %}
+								{% if session.role[0] == 1 %}
 								<li>
 									<a href="{{ url_for('console.mpServerView') }}"><i class="fa fa-server fa-fw"></i> MacPatch Servers</a>
 								</li>
