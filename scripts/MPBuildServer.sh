@@ -127,9 +127,9 @@ elif [[ "$unamestr" == 'Darwin' ]]; then
 	buildVer=`echo $systemVersion | cut -d . -f 3`
 
 	# Test for Brew
-	if type brew 2>/dev/null; then
-		MACPROMPTFORBREW=false
-	fi
+	# if type brew 2>/dev/null; then
+	#	MACPROMPTFORBREW=false
+	#fi
 fi
 
 # Script Input Args ----------------------------------------------------------
@@ -191,7 +191,9 @@ if $USEMACOS; then
 	fi
 
 	if $MACPROMPTFORBREW; then
-		clear
+		echo 
+		echo "* Brew requirements"
+		echo "-----------------------------------------------------------------------"
 		echo
 		echo "Server Build Requires Brew to be installed."
 		echo
@@ -626,13 +628,13 @@ if command_exists virtualenv ; then
 		env LDFLAGS="-L${OPENSSLPWD}/lib" \
 		CFLAGS="-I${OPENSSLPWD}/include" \
 		SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
-		pip install m2crypto --no-cache-dir --upgrade $CA_STR
+		pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
 
 		env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip install -r pyRequired.txt $CA_STR
 	else
 		# Install M2Crypto first
-		pip install m2crypto --no-cache-dir --upgrade $CA_STR
-		pip install -r pyRequired.txt $CA_STR
+		pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
+		pip -q install -r pyRequired.txt $CA_STR
 	fi
 
 	deactivate
