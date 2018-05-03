@@ -228,7 +228,7 @@ fi
 # ----------------------------------------------------------------------------
 # Main
 # ----------------------------------------------------------------------------
-#clear
+clear
 echo
 echo "* Begin MacPatch Server build."
 echo "-----------------------------------------------------------------------"
@@ -618,7 +618,7 @@ if command_exists virtualenv ; then
 		SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
 		pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
 
-		env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip install -r pyRequired.txt $CA_STR
+		env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip -q install -r pyRequired.txt $CA_STR
 	else
 		# Install M2Crypto first
 		pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
