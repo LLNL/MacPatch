@@ -612,35 +612,29 @@ if command_exists virtualenv ; then
 		fi
 	fi
 
-	virtualenv --no-site-packages --no-pip env
+	virtualenv --no-site-packages env
 	source env/bin/activate
 
-	# Install pip 9.x for install.py to work
-	easy_install -q pip==9.0.3
+	CA_STR=""
+	if [ "$CA_CERT" != "NA" ]; then
+		CA_STR="--cert \"$CA_CERT\""
+	fi
 
-
-	# Install M2Crypto
 	if $USEMACOS; then
+		# Install M2Crypto first
 		OPENSSLPWD=`sudo -u _appserver bash -c "brew --prefix openssl"`
 		env LDFLAGS="-L${OPENSSLPWD}/lib" \
 		CFLAGS="-I${OPENSSLPWD}/include" \
 		SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
-		pip install m2crypto --no-cache-dir --upgrade
+		pip install m2crypto --no-cache-dir --upgrade $CA_STR
+
+		env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip install -r pyRequired.txt $CA_STR
+	else
+		# Install M2Crypto first
+		pip install m2crypto --no-cache-dir --upgrade $CA_STR
+		pip install -r pyRequired.txt $CA_STR
 	fi
 
-	if [ "$CA_CERT" != "NA" ]; then
-		if $USEMACOS; then
-			env "CFLAGS=-I/usr/local/include -L/usr/local/lib" python install.py --ca "$CA_CERT"
-		else
-			python install.py --ca "$CA_CERT"
-		fi
-	else
-		if $USEMACOS; then
-			env "CFLAGS=-I/usr/local/include -L/usr/local/lib" python install.py
-		else
-			python install.py
-		fi
-	fi
 	deactivate
 else
 	echo "virtualenv was not found. Please create virtual env."
