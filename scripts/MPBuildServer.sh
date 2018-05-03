@@ -77,7 +77,6 @@ USELINUX=false
 USERHEL=false
 USEUBUNTU=false
 USEMACOS=false
-USESSL=false
 MACPROMPTFORXCODE=true
 MACPROMPTFORBREW=true
 
@@ -89,12 +88,6 @@ TMP_DIR="${MPBASE}/.build/tmp"
 SRC_DIR="${MPSERVERBASE}/conf/src/server"
 OWNERGRP="79:70"
 CA_CERT="NA"
-
-# PKG Variables
-MP_MAC_PKG=false
-MP_SERVER_PKG_VER="1.5.0.0"
-CODESIGNIDENTITY="*"
-CODESIGNIDENTITYPLIST="/Library/Preferences/mp.build.server.plist"
 
 majorVer="0"
 minorVer="0"
@@ -117,10 +110,7 @@ if [[ $platform == 'linux' ]]; then
 
 elif [[ "$unamestr" == 'Darwin' ]]; then
 	USEMACOS=true
-	if [ -f "$CODESIGNIDENTITYPLIST" ]; then
-		CODESIGNIDENTITYALT=`defaults read ${CODESIGNIDENTITYPLIST} name`
-	fi
-
+	
 	systemVersion=`/usr/bin/sw_vers -productVersion`
 	majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
 	minorVer=`echo $systemVersion | cut -d . -f 2`
@@ -136,11 +126,8 @@ fi
 
 usage() { echo "Usage: $0 [-p Build Mac PKG]" 1>&2; exit 1; }
 
-while getopts "phc:" opt; do
+while getopts "hc:" opt; do
 	case $opt in
-		p)
-			MP_MAC_PKG=true
-			;;
 		c)
 			CA_CERT=${OPTARG}
 			;;
@@ -173,6 +160,9 @@ if $USEMACOS; then
 
 	if $MACPROMPTFORXCODE; then
 		clear
+		echo 
+		echo "* Xcode requirements"
+		echo "-----------------------------------------------------------------------"
 		echo
 		echo "Server Build Requires Xcode Command line tools to be installed"
 		echo "and the license agreement accepted. If you have not done this,"
@@ -205,8 +195,6 @@ if $USEMACOS; then
 		echo "applications before continuing."
 		echo
 		echo "Exapmple: brew install openssl swig gpm"
-		echo
-		echo "Once installed please re-run this script."
 		echo
 		read -p "Would you like to continue (Y/N)? [Y]: " BREWOK
 		BREWOK=${BREWOK:-Y}
@@ -661,6 +649,7 @@ rm -rf ${BUILDROOT}
 # ------------------
 # Set Permissions
 # ------------------
+clear
 echo "Setting Permissions..."
 chmod -R 0775 "${MPBASE}/Content"
 chown -R $OWNERGRP "${MPBASE}/Content"
@@ -669,104 +658,11 @@ chmod -R 0775 "${MPSERVERBASE}/etc"
 chmod -R 0775 "${MPSERVERBASE}/InvData"
 chown -R $OWNERGRP "${MPSERVERBASE}/apps/env"
 
-# ------------------------------------------------------------
-# Create Mac OS X, MacPatch Server PKG
-# ------------------------------------------------------------
-if $MP_MAC_PKG; then
-	#clear
-	echo
-	echo "* Begin creating MacPatch Server PKG for Mac OS X..."
-	echo "-----------------------------------------------------------------------"
-	echo
-	echo
-	# ------------------
-	# Clean up, pre package
-	# ------------------
-	rm -rf "${MPSERVERBASE}/conf/app/.site"
-	find "${MPSERVERBASE}/conf/src" -name apache-tomcat-* -print | xargs -I{} rm {}
-	find "${MPSERVERBASE}/conf/src" -name apr* -print | xargs -I{} rm {}
-	rm -rf "${MPSERVERBASE}/conf/src/openbd"
-	rm -rf "${MPSERVERBASE}/conf/src/linux"
-	rm -rf "${MPSERVERBASE}/conf/init"
-	rm -rf "${MPSERVERBASE}/conf/init.d"
-	rm -rf "${MPSERVERBASE}/conf/systemd"
-
-	# ------------------
-	# Move Files For Packaging
-	# ------------------
-	PKG_FILES_ROOT_MP="${BUILDROOT}/Server/Files/Library/MacPatch"
-
-	cp -R ${GITROOT}/MacPatch\ PKG/Server ${BUILDROOT}
-
-	mv "${MPSERVERBASE}" "${PKG_FILES_ROOT_MP}/"
-	mv "${MPBASE}/Content" "${PKG_FILES_ROOT_MP}/"
-
-	# ------------------
-	# Clean up structure place holders
-	# ------------------
-	echo "Clean up place holder files"
-	find ${PKG_FILES_ROOT_MP} -name ".mpRM" -print | xargs -I{} rm -rf {}
-
-	# ------------------
-	# Create the Server pkg
-	# ------------------
-	mkdir -p "${BUILDROOT}/PKG"
-
-	# Create Server base package
-	echo "Create Server base package"
-	pkgbuild --root "${BUILDROOT}/Server/Files/Library" \
-	--identifier gov.llnl.mp.server \
-	--install-location /Library \
-	--scripts ${BUILDROOT}/Server/Scripts \
-	--version $MP_SERVER_PKG_VER \
-	${BUILDROOT}/PKG/Server.pkg
-
-	# Create the final package with scripts and resources
-	echo "Run product build on MPServer.pkg"
-	productbuild --distribution ${BUILDROOT}/Server/Distribution \
-	--resources ${BUILDROOT}/Server/Resources \
-	--package-path ${BUILDROOT}/PKG \
-	${BUILDROOT}/PKG/_MPServer.pkg
-
-	# Possibly Sign the newly created PKG
-	#clear
-	echo
-	read -p "Would you like to sign the installer PKG (Y/N)? [N]: " SIGNPKG
-	SIGNPKG=${SIGNPKG:-N}
-	echo
-
-	if [ "$SIGNPKG" == "Y" ] || [ "$SIGNPKG" == "y" ] ; then
-		#clear
-		read -p "Please enter you sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
-		CODESIGNIDENTITY=${CODESIGNIDENTITY:-$CODESIGNIDENTITYALT}
-		if [ "$CODESIGNIDENTITY" != "$CODESIGNIDENTITYALT" ]; then
-			defaults write ${CODESIGNIDENTITYPLIST} name "${CODESIGNIDENTITY}"
-		fi
-
-		echo
-		echo  "Signing package..."
-		/usr/bin/productsign --sign "${CODESIGNIDENTITY}" ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
-		if [ $? -eq 0 ]; then
-		# GOOD
-			rm ${BUILDROOT}/PKG/_MPServer.pkg
-		else
-			# FAILED
-			echo "The signing process failed."
-			echo
-			echo "Please sign the package by hand."
-			echo
-			echo "/usr/bin/productsign --sign [IDENTITY] ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg"
-			echo
-		fi
-	else
-		mv ${BUILDROOT}/PKG/_MPServer.pkg ${BUILDROOT}/PKG/MPServer.pkg
-	fi
-
-	# Clean up the base package
-	rm ${BUILDROOT}/PKG/Server.pkg
-
-	# Open the build package dir
-	open ${BUILDROOT}/PKG
-fi
+echo
+echo
+echo "-----------------------------------------------------------------------"
+echo " * Server build has been completed. Please read the \"Server - Install & Setup\""
+echo "   document for the next steps in setting up the MacPatch server."
+echo
 
 exit 0;
