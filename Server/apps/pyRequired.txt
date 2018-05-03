@@ -10,7 +10,7 @@ enum34==1.1.6
 Flask==1.0.1
 Flask-APScheduler==1.8.0
 Flask-BabelEx==0.9.3
-Flask-Cache==0.13.1
+Flask-Caching==1.4.0
 Flask-Cors==3.0.4
 Flask-DebugToolbar==0.10.1
 flask-ldap3-login==0.9.13
