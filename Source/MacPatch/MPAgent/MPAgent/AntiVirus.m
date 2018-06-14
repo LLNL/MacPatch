@@ -242,7 +242,6 @@
                            @"/Applications/Norton Solutions/Symantec AntiVirus.app",
                            @"/Applications/Norton Solutions/Norton AntiVirus.app",
                            @"/Applications/Symantec Solutions/Symantec Endpoint Protection.app",
-                           @"/Applications/Sophos Anti-Virus.app",
                            nil];
     // Find the
     for (NSString *item in avAppArray) {
@@ -265,7 +264,7 @@
     [_tmpAvDict setValue:@"symantec" forKey:@"av_type"];
     [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleExecutable"] forKey:@"app_name"];
     [_tmpAvDict setValue:avApplication forKey:@"app_path"];
-    [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleVersion"] forKey:@"app_version"];
+    [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleShortVersionString"] forKey:@"app_version"];
     [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleShortVersionString"] forKey:@"CFBundleShortVersionString"];
     [_tmpAvDict setValue:[self symantecDefsDate] forKey:@"defs_date"];
     [_tmpAvDict setValue:@"NA" forKey:@"net_defs_date"];
@@ -360,7 +359,7 @@
             logit(lcl_vDebug,@"_defsDate: %@",_defsDate);
         }
     }
-    [self setAvDefsDate:[NSString stringWithString:_defsDate]];
+	[self setAvDefsDate:[_defsDate copy]];
     return _defsDate;
 }
 
@@ -623,7 +622,6 @@
                            @"/Applications/Norton Solutions/Symantec AntiVirus.app",
                            @"/Applications/Norton Solutions/Norton AntiVirus.app",
                            @"/Applications/Symantec Solutions/Symantec Endpoint Protection.app",
-                           @"/Applications/Sophos Anti-Virus.app",
                            nil];
     // Find the
     for (NSString *item in avAppArray) {
@@ -642,15 +640,9 @@
     NSDictionary *_avAppInfo = [NSDictionary dictionaryWithContentsOfFile:[avApplication stringByAppendingPathComponent:@"Contents/Info.plist"]];
     NSMutableDictionary *_tmpAvDict = [[NSMutableDictionary alloc] init];
     [_tmpAvDict setValue:[MPSystemInfo clientUUID] forKey:@"cuuid"];
-    /*
-     [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleExecutable"] forKey:@"CFBundleExecutable"];
-     [_tmpAvDict setValue:avApplication forKey:@"NSBundleResolvedPath"];
-     [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleVersion"] forKey:@"CFBundleVersion"];
-     [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleShortVersionString"] forKey:@"CFBundleShortVersionString"];
-     */
     [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleExecutable"] forKey:@"app_name"];
     [_tmpAvDict setValue:avApplication forKey:@"app_path"];
-    [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleVersion"] forKey:@"app_version"];
+    [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleShortVersionString"] forKey:@"app_version"];
     [_tmpAvDict setValue:[_avAppInfo valueForKey:@"CFBundleShortVersionString"] forKey:@"CFBundleShortVersionString"];
     
     [self setAvApp:avApplication];
@@ -665,6 +657,7 @@
                             @"/Library/Application Support/Symantec/AntiVirus/Engine/V.GRD",
                             @"/Library/Application Support/Norton Solutions Support/Norton AntiVirus/Engine/v.grd",
                             @"/Library/Application Support/Norton Solutions Support/Norton AntiVirus/Engine/V.GRD",
+							@"/Library/Application Support/Symantec/Silo/NFM/Definitions/virusdefs/definfo.dat",
                             nil];
     
     NSString *avDefsAltPath = @"/Library/Application Support/Symantec/LiveUpdate/ActiveRegistry/NAV12Defs.plist";
@@ -680,10 +673,12 @@
     
     if (_avDefsPath == nil)
     {
-        if ([fm fileExistsAtPath:avDefsAltPath]) {
+        if ([fm fileExistsAtPath:avDefsAltPath])
+		{
             logit(lcl_vDebug,@"Reading defs file, %@",avDefsAltPath);
             NSDictionary *newAVDefsFileData = [NSDictionary dictionaryWithContentsOfFile:avDefsAltPath];
-            if (newAVDefsFileData) {
+            if (newAVDefsFileData)
+			{
                 /*
                  Symantec changed the location of the AV Defs file info as of SEP 12.1.4013
                  It's now stored in a plist and easier to get, but the date still has to be
@@ -735,6 +730,12 @@
             logit(lcl_vDebug,@"_defsDate: %@",_defsDate);
             break;
         }
+		else if ([_line containsString:@"CurDefs" ignoringCase:YES])
+		{
+			logit(lcl_vDebug,@"containsString: %@",_line);
+			_defsDate = [[[[_line componentsSeparatedByString:@"="] objectAtIndex:1] componentsSeparatedByString:@" "] objectAtIndex:0];
+			logit(lcl_vDebug,@"_defsDate: %@",_defsDate);
+		}
     }
     [self setAvDefsDate:[NSString stringWithString:_defsDate]];
     return _defsDate;
@@ -759,7 +760,9 @@
         @catch (NSException *exception) {
             logit(lcl_vError,@"%@",exception);
         }
-        result = [NSString stringWithFormat:@"%@%@%@ r%@",strYear,strMonth,strDay,strRev];
+		// Old, change to match SEP 14 format
+		//result = [NSString stringWithFormat:@"%@%@%@ r%@",strYear,strMonth,strDay,strRev];
+		result = [NSString stringWithFormat:@"%@%@%@.%@",strYear,strMonth,strDay,strRev];
     }
     logit(lcl_vDebug,@"Parsed Defs Date: %@",result);
     return result;
