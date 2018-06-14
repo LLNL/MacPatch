@@ -35,7 +35,10 @@ def clientsList():
 	return render_template('clients.html', cData=[], columns=[], colNames=cListColNames)
 
 # JSON Routes
+# This method is called by clients.html for a list of clients
+# This is done so that the refresh can be used
 @clients.route('/list')
+@login_required
 def clientsListJSON():
 	_results = []
 	clients = MpClient.query.outerjoin(MpClientGroupMembers, MpClientGroupMembers.cuuid == MpClient.cuuid).add_columns(MpClientGroupMembers.group_id).outerjoin(
@@ -66,6 +69,7 @@ def clientsListJSON():
 
 	return json.dumps({'data': _results}, default=json_serial), 200
 
+# Helper method to find a group in a list
 def searchForGroup(group, list):
 	res = (item for item in list if item["group_id"] == group).next()
 	return res['group_name']
@@ -84,6 +88,7 @@ def clientsInfo(client_id):
 
 # JSON Routes
 @clients.route('/dashboard/required/<client_id>')
+@login_required
 def clientRequiredPatches(client_id):
 
 	now = datetime.now()
@@ -137,7 +142,9 @@ def clientRequiredPatches(client_id):
 
 	return json.dumps({'data':_results, 'columns': _columns}), 200
 
+# JSON Routes
 @clients.route('/dashboard/installed/<client_id>')
+@login_required
 def clientInstalledPatches(client_id):
 
 	columns = [('patch_name', 'Patch'),('type', 'Type'),('mdate', 'Installed On')]
@@ -161,7 +168,9 @@ def clientInstalledPatches(client_id):
 
 	return json.dumps({'data':_results, 'columns': _columns}, default=json_serial), 200
 
+# JSON Routes
 @clients.route('/dashboard/inventory/<client_id>/<inv_id>')
+@login_required
 def clientInventoryReport(client_id, inv_id):
 
 	sql = text("select * From {} where cuuid = '{}'".format(inv_id, client_id))
