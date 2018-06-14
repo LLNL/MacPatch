@@ -34,6 +34,20 @@ isIload ()
 	echo $pid
 }
 
+killExistsingSUServices ()
+{
+	su1pid=`ps -A | grep softwareupdate_notify_agent | grep -v grep | awk '{print $1}'`
+	if [ -z "$(su1pid)" ]; then
+		kill -9 $(su1pid)
+	fi
+
+	su2pid=`ps -A | grep softwareupdate_download_service | grep -v grep | awk '{print $1}'`
+	if [ -z "$(su2pid)" ]; then
+		kill -9 $(su2pid)
+	fi
+
+}
+
 function setOwner
 {
 	if [ -f "$1" ]; then
@@ -66,21 +80,8 @@ function runClientActions
 	/Library/MacPatch/Client/MPAgent -c
 	sleep 1
 
-	# Run Client Inventory Scan
-	/Library/MacPatch/Client/MPAgent -t All
-	sleep 1
-
-	# If iLoadAssitant is not running, scan for patches, AV, and inventory
-	if [ -z "$(isIload)" ]; then
-
-		# Run Client Vul Scan
-		/Library/MacPatch/Client/MPAgentExec -s
-		sleep 1
-
-		# Run Client AV Scan
-		# /Library/MacPatch/Client/MPAgentExec -a
-		# sleep 1
-	fi
+	# Run Profile Installs
+	/Library/MacPatch/Client/MPAgent -p
 }
 
 function removeOldRegFiles
@@ -351,5 +352,7 @@ if [ -d "${SRC}/profiles" ]; then
 		fi
 	done
 fi
+
+touch /tmp/.mpagentinstalled
 
 exit 0;
