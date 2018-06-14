@@ -834,9 +834,7 @@ done:
 			if (settings.agent.reboot == 1) {
                 logit(lcl_vInfo,@"Patches have been installed that require a reboot. Rebooting system now.");
                 [self removeTaskRunning:kMPPatchUPDATE];
-                
-                int rb = 0;
-                rb = reboot(RB_AUTOBOOT);
+                [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:@[@"reboot"]];
                 
             } else {
                 logit(lcl_vInfo,@"Patches have been installed that require a reboot. Please reboot the systems as soon as possible.");
@@ -851,16 +849,15 @@ done:
     {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
         // 10.9
-		NSString *_atFile = @"/private/tmp/.MPAuthRun";
         NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
 		NSString *_rbText = @"reboot";
         // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
         NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
         [rebootPlist writeToFile:_rbFile atomically:YES];
-        [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        [_rbText writeToFile:MP_AUTHRUN_FILE atomically:YES encoding:NSUTF8StringEncoding error:NULL];
         NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
 		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
-        [fm setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
+        [fm setAttributes:_fileAttr ofItemAtPath:MP_AUTHRUN_FILE error:NULL];
 	} 
 
 	[self removeTaskRunning:kMPPatchUPDATE];
@@ -1150,8 +1147,7 @@ done:
 		if (hasConsoleUserLoggedIn == NO) {
 			if (settings.agent.reboot == 1) {
                 logit(lcl_vInfo,@"Patches have been installed that require a reboot. Rebooting system now.");
-                int rb = 0;
-                rb = reboot(RB_AUTOBOOT);
+                [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:@[@"reboot"]];
             } else {
                 logit(lcl_vInfo,@"Patches have been installed that require a reboot. Please reboot the systems as soon as possible.");
                 goto done;
@@ -1162,16 +1158,15 @@ done:
 	if (launchRebootWindow > 0)
     {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
-		NSString *_atFile = @"/private/tmp/.MPAuthRun";
         NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
 		NSString *_rbText = @"reboot";
         // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
         NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
         [rebootPlist writeToFile:_rbFile atomically:YES];
-        [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        [_rbText writeToFile:MP_AUTHRUN_FILE atomically:YES encoding:NSUTF8StringEncoding error:NULL];
         NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
 		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
-        [fm setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
+        [fm setAttributes:_fileAttr ofItemAtPath:MP_AUTHRUN_FILE error:NULL];
 	} 
     
 done:
