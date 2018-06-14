@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildClient.sh
-# Version: 1.5
+# Version: 1.6
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -13,6 +13,7 @@
 #   1.2		Added ability to save CODESIGNIDENTITY
 #   1.4		Script No Longer is static location
 #	1.5		Changed Vars for MP 3.1
+#	1.6		Updated version numbers
 #
 # -------------------------------------------------------------
 
@@ -20,11 +21,11 @@ SCRIPT_PARENT=$(dirname $(dirname $0))
 SRCROOT="$SCRIPT_PARENT/Source"
 PKGROOT="$SCRIPT_PARENT/Packages"
 BUILDROOT="/private/tmp/MP/Client31"
-BASEPKGVER="3.0.1.0"
-UPDTPKGVER="3.0.1.0"
+BASEPKGVER="3.1.0.0"
+UPDTPKGVER="3.1.0.0"
 PKG_STATE=""
 CODESIGNIDENTITY="*"
-MIN_OS="10.8"
+MIN_OS="10.9"
 BUILDPLIST="/Library/Preferences/mp.build.client31.plist"
 if [ -f "$BUILDPLIST" ]; then
 	CODESIGNIDENTITYALT=`defaults read ${BUILDPLIST} name`
@@ -33,8 +34,8 @@ fi
 if [ -d "$BUILDROOT" ]; then
 	rm -rf ${BUILDROOT}
 else
-	mkdir -p ${BUILDROOT}	
-fi	
+	mkdir -p ${BUILDROOT}
+fi
 
 # Set Client Version
 AGENT_VERS="1.0.0"
@@ -115,7 +116,7 @@ if [ "$SIGNCODE" == "n" ] || [ "$SIGNCODE" == "N" ] || [ "$SIGNCODE" == "y" ] ||
 		if [ "$CODESIGNIDENTITY" != "$CODESIGNIDENTITYALT" ]; then
 			defaults write ${BUILDPLIST} name "${CODESIGNIDENTITY}"
 		fi
-		
+
 		#if [ "${CODESIGNIDENTITY}" == "*" ]; then
 		#	read -p "Please enter you code sigining identity: " CODESIGNIDENTITY
 		#fi
@@ -241,7 +242,7 @@ cp ${BUILDROOT}/Combined/Resources/Background_done.png ${BUILDROOT}/Combined/.MP
 # Re-compress expanded package
 pkgutil --flatten ${BUILDROOT}/Combined/.MPClientInstall ${BUILDROOT}/Combined/MPClientInstall.pkg
 
-# Clean Up 
+# Clean Up
 rm -rf ${BUILDROOT}/Combined/.MPClientInstall
 #rm -rf ${BUILDROOT}/Combined/.MPClientInstall.pkg
 
@@ -264,6 +265,6 @@ if [ "$COPYINSTALLPKG" == "y" ] || [ "$COPYINSTALLPKG" == "Y" ]; then
 	cp "$BUILD_FILE" "${SRCROOT}/Agent/InstallerBuildInfo.txt"
 fi
 
-echo 
+echo
 echo "New Client is located in $BUILDROOT"
 open ${BUILDROOT}
