@@ -3,7 +3,7 @@
 //  MPAgent
 //
 //  Created by Heizer, Charles on 8/8/14.
-//  Copyright (c) 2017 LLNL. All rights reserved.
+//  Copyright (c) 2018 LLNL. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

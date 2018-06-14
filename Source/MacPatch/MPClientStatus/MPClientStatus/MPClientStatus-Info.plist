@@ -34,7 +34,7 @@
 		<true/>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2017 Lawrence Livremore National Laboratory. All rights reserved.</string>
+	<string>Copyright © 2018 Lawrence Livremore National Laboratory. All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>ClientStatusMainMenu</string>
 	<key>NSPrincipalClass</key>

@@ -1,7 +1,7 @@
 //
 //  MPAgentExecController.m
 /*
- Copyright (c) 2017, Lawrence Livermore National Security, LLC.
+ Copyright (c) 2018, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
  Written by Charles Heizer <heizer1 at llnl.gov>.
  LLNL-CODE-636469 All rights reserved.
@@ -649,31 +649,6 @@ done:
 	} else {
 		[self writeTaskRunning:kMPPatchUPDATE];
 	}
-	
-	// Check for console user
-	logit(lcl_vInfo, @"Checking for any logged in users.");
-	BOOL hasConsoleUserLoggedIn = TRUE;
-	@try {
-		hasConsoleUserLoggedIn = [self isLocalUserLoggedIn];
-		if (!hasConsoleUserLoggedIn)
-		{
-			NSError *fileErr = nil;
-			[@"patch" writeToFile:MP_AUTHRUN_FILE atomically:NO encoding:NSUTF8StringEncoding error:&fileErr];
-			if (fileErr)
-			{
-				logit(lcl_vError, @"Error writing out %@ file. %@", MP_AUTHRUN_FILE, fileErr.localizedDescription);
-			}
-			else
-			{
-				// No need to continue, MPLoginAgent will perform the updates
-				// Since no user is logged in.
-				return;
-			}
-		}
-	}
-	@catch (NSException * e) {
-		logit(lcl_vInfo, @"Error getting console user status. %@",e);
-	}
 
 	// Filter - 0 = All,  1 = Apple, 2 = Third
 	NSArray *updatesArray = nil;
@@ -773,6 +748,31 @@ done:
     // -------------------------------------------
 	if (iLoadMode == YES) {
 		printf("Updates to install: %d\n", (int)[updatesArray count]);
+	}
+	
+	// Check for console user
+	logit(lcl_vInfo, @"Checking for any logged in users.");
+	BOOL hasConsoleUserLoggedIn = TRUE;
+	@try {
+		hasConsoleUserLoggedIn = [self isLocalUserLoggedIn];
+		if (!hasConsoleUserLoggedIn)
+		{
+			NSError *fileErr = nil;
+			[@"patch" writeToFile:MP_AUTHRUN_FILE atomically:NO encoding:NSUTF8StringEncoding error:&fileErr];
+			if (fileErr)
+			{
+				logit(lcl_vError, @"Error writing out %@ file. %@", MP_AUTHRUN_FILE, fileErr.localizedDescription);
+			}
+			else
+			{
+				// No need to continue, MPLoginAgent will perform the updates
+				// Since no user is logged in.
+				return;
+			}
+		}
+	}
+	@catch (NSException * e) {
+		logit(lcl_vInfo, @"Error getting console user status. %@",e);
 	}
 
     // -------------------------------------------

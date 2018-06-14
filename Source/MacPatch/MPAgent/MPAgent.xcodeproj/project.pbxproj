@@ -10,58 +10,6 @@
 		8F2D4F2C188EFFB50008853B /* Profiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D4F2B188EFFB50008853B /* Profiles.m */; };
 		8F2E697F1922C330001BF9D6 /* PostFailedWSRequests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2E697E1922C330001BF9D6 /* PostFailedWSRequests.m */; };
 		8F2FC03E1E205523004710C7 /* MPFirmware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2FC03D1E205523004710C7 /* MPFirmware.m */; };
-		8F3665111DE4F90D00899BCC /* MPAgentUpdater.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD01B600C5A005D39EE /* MPAgentUpdater.m */; };
-		8F3665121DE4F90D00899BCC /* CHDiskInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8641B9621BF006A329B /* CHDiskInfo.m */; };
-		8F3665131DE4F90D00899BCC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1EEF16DD77BD00E15A9E /* main.m */; };
-		8F3665141DE4F90D00899BCC /* AVSoftware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD81B601AC6005D39EE /* AVSoftware.m */; };
-		8F3665161DE4F90D00899BCC /* MPAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F0116DD77FF00E15A9E /* MPAgent.m */; };
-		8F3665171DE4F90D00899BCC /* PowerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8761B9621BF006A329B /* PowerProfile.m */; };
-		8F3665181DE4F90D00899BCC /* MPOSUpgrade.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6D32451CD3C34E006B1094 /* MPOSUpgrade.m */; };
-		8F3665191DE4F90D00899BCC /* MPInv.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A86C1B9621BF006A329B /* MPInv.m */; };
-		8F36651A1DE4F90D00899BCC /* AntiVirus.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD51B60195A005D39EE /* AntiVirus.m */; };
-		8F36651D1DE4F90D00899BCC /* AppStoreOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C2B5C1DDA1E33002A39D2 /* AppStoreOperation.m */; };
-		8F36651E1DE4F90D00899BCC /* PostFailedWSRequests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2E697E1922C330001BF9D6 /* PostFailedWSRequests.m */; };
-		8F3665201DE4F90D00899BCC /* MPInventoryPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8851B96230C006A329B /* MPInventoryPlugin.m */; };
-		8F3665211DE4F90D00899BCC /* MPDirectoryServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8681B9621BF006A329B /* MPDirectoryServices.m */; };
-		8F3665221DE4F90D00899BCC /* MPAgentRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F9219959206005A4EEB /* MPAgentRegister.m */; };
-		8F3665231DE4F90D00899BCC /* AgentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F0316DD77FF00E15A9E /* AgentController.m */; };
-		8F3665241DE4F90D00899BCC /* MPFileVaultInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A86A1B9621BF006A329B /* MPFileVaultInfo.m */; };
-		8F3665251DE4F90D00899BCC /* MPAppStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C2B521DDA1D0E002A39D2 /* MPAppStore.m */; };
-		8F3665261DE4F90D00899BCC /* MPUsersAndGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8701B9621BF006A329B /* MPUsersAndGroups.m */; };
-		8F3665271DE4F90D00899BCC /* NSDirectoryServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8721B9621BF006A329B /* NSDirectoryServices.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		8F36652A1DE4F90D00899BCC /* ClientCheckInOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F0C16DE634600E15A9E /* ClientCheckInOperation.m */; };
-		8F36652B1DE4F90D00899BCC /* AgentScanAndUpdateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F0E16DE634600E15A9E /* AgentScanAndUpdateOperation.m */; };
-		8F36652C1DE4F90D00899BCC /* CKSoftwareProduct+ASProduct.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C2B551DDA1D17002A39D2 /* CKSoftwareProduct+ASProduct.m */; };
-		8F36652D1DE4F90D00899BCC /* MPServerEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A86E1B9621BF006A329B /* MPServerEntry.m */; };
-		8F36652E1DE4F90D00899BCC /* BatteryInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8601B9621BF006A329B /* BatteryInfo.m */; };
-		8F36652F1DE4F90D00899BCC /* AntiVirusScanAndUpdateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1016DE634600E15A9E /* AntiVirusScanAndUpdateOperation.m */; };
-		8F3665301DE4F90D00899BCC /* CHDisk.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8621B9621BF006A329B /* CHDisk.m */; };
-		8F3665311DE4F90D00899BCC /* InventoryOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1216DE634600E15A9E /* InventoryOperation.m */; };
-		8F3665321DE4F90D00899BCC /* MacAppStoreDataItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8661B9621BF006A329B /* MacAppStoreDataItem.m */; };
-		8F3665331DE4F90D00899BCC /* PatchScanAndUpdateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1416DE634600E15A9E /* PatchScanAndUpdateOperation.m */; };
-		8F3665341DE4F90D00899BCC /* MPSWDistTaskOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1616DE634600E15A9E /* MPSWDistTaskOperation.m */; };
-		8F3665351DE4F90D00899BCC /* MPTasks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1E16DE635200E15A9E /* MPTasks.m */; };
-		8F3665371DE4F90D00899BCC /* MPTaskValidate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F2216DE635200E15A9E /* MPTaskValidate.m */; };
-		8F3665381DE4F90D00899BCC /* NSMetadataQuery+Synchronous.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8741B9621BF006A329B /* NSMetadataQuery+Synchronous.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		8F3665391DE4F90D00899BCC /* Profiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D4F2B188EFFB50008853B /* Profiles.m */; };
-		8F36653B1DE4F90D00899BCC /* libMacPatch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560CB16DE71A100BB7600 /* libMacPatch.a */; };
-		8F36653C1DE4F90D00899BCC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5310001B42EEE400B8D893 /* libsqlite3.dylib */; };
-		8F36653D1DE4F90D00899BCC /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F530FED1B42ED2B00B8D893 /* libxml2.dylib */; };
-		8F36653E1DE4F90D00899BCC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560DD16DE979E00BB7600 /* libicucore.dylib */; };
-		8F36653F1DE4F90D00899BCC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560D916DE978B00BB7600 /* libz.dylib */; };
-		8F3665401DE4F90D00899BCC /* DirectoryService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F530FF31B42ED7000B8D893 /* DirectoryService.framework */; };
-		8F3665411DE4F90D00899BCC /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F530FF11B42ED5D00B8D893 /* DiskArbitration.framework */; };
-		8F3665421DE4F90D00899BCC /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F530FEF1B42ED5400B8D893 /* OpenDirectory.framework */; };
-		8F3665431DE4F90D00899BCC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560DF16DE97A900BB7600 /* Cocoa.framework */; };
-		8F3665441DE4F90D00899BCC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E116DE97B500BB7600 /* CoreFoundation.framework */; };
-		8F3665451DE4F90D00899BCC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E316DE97BE00BB7600 /* IOKit.framework */; };
-		8F3665461DE4F90D00899BCC /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E516DE97C700BB7600 /* CoreServices.framework */; };
-		8F3665471DE4F90D00899BCC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E916DE97DD00BB7600 /* Security.framework */; };
-		8F3665481DE4F90D00899BCC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */; };
-		8F3665491DE4F90D00899BCC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4B1EEC16DD77BD00E15A9E /* Foundation.framework */; };
-		8F36654A1DE4F90D00899BCC /* CommerceKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9C2B571DDA1D4A002A39D2 /* CommerceKit.framework */; };
-		8F36654B1DE4F90D00899BCC /* StoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9C2B591DDA1D6B002A39D2 /* StoreFoundation.framework */; };
-		8F36654D1DE4F90D00899BCC /* MPAgent.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F4B1EF316DD77BD00E15A9E /* MPAgent.1 */; };
 		8F4B1EED16DD77BD00E15A9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4B1EEC16DD77BD00E15A9E /* Foundation.framework */; };
 		8F4B1EF016DD77BD00E15A9E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1EEF16DD77BD00E15A9E /* main.m */; };
 		8F4B1EF416DD77BD00E15A9E /* MPAgent.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F4B1EF316DD77BD00E15A9E /* MPAgent.1 */; };
@@ -114,22 +62,11 @@
 		8FE560E616DE97C700BB7600 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E516DE97C700BB7600 /* CoreServices.framework */; };
 		8FE560E816DE97CF00BB7600 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */; };
 		8FE560EA16DE97DD00BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E916DE97DD00BB7600 /* Security.framework */; };
-		8FF253E71FACE797006B0491 /* MPFirmware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2FC03D1E205523004710C7 /* MPFirmware.m */; };
 		8FF5B50F1FC659AE006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B50B1FC658EC006F5FB2 /* Python.framework */; };
 		8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F9219959206005A4EEB /* MPAgentRegister.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8F36654C1DE4F90D00899BCC /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-				8F36654D1DE4F90D00899BCC /* MPAgent.1 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		8F4B1EE716DD77BD00E15A9E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -149,7 +86,6 @@
 		8F2E697E1922C330001BF9D6 /* PostFailedWSRequests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostFailedWSRequests.m; sourceTree = "<group>"; };
 		8F2FC03C1E205523004710C7 /* MPFirmware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPFirmware.h; sourceTree = "<group>"; };
 		8F2FC03D1E205523004710C7 /* MPFirmware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPFirmware.m; sourceTree = "<group>"; };
-		8F3665511DE4F90D00899BCC /* MPAgent_signed_dev */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MPAgent_signed_dev; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F4B1EE916DD77BD00E15A9E /* MPAgent */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MPAgent; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F4B1EEC16DD77BD00E15A9E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8F4B1EEF16DD77BD00E15A9E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -245,30 +181,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		8F36653A1DE4F90D00899BCC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8F36653B1DE4F90D00899BCC /* libMacPatch.a in Frameworks */,
-				8F36653C1DE4F90D00899BCC /* libsqlite3.dylib in Frameworks */,
-				8F36653D1DE4F90D00899BCC /* libxml2.dylib in Frameworks */,
-				8F36653E1DE4F90D00899BCC /* libicucore.dylib in Frameworks */,
-				8F36653F1DE4F90D00899BCC /* libz.dylib in Frameworks */,
-				8F3665401DE4F90D00899BCC /* DirectoryService.framework in Frameworks */,
-				8F3665411DE4F90D00899BCC /* DiskArbitration.framework in Frameworks */,
-				8F3665421DE4F90D00899BCC /* OpenDirectory.framework in Frameworks */,
-				8F3665431DE4F90D00899BCC /* Cocoa.framework in Frameworks */,
-				8F3665441DE4F90D00899BCC /* CoreFoundation.framework in Frameworks */,
-				8F3665451DE4F90D00899BCC /* IOKit.framework in Frameworks */,
-				8F3665461DE4F90D00899BCC /* CoreServices.framework in Frameworks */,
-				8F3665471DE4F90D00899BCC /* Security.framework in Frameworks */,
-				8F3665481DE4F90D00899BCC /* SystemConfiguration.framework in Frameworks */,
-				8F3665491DE4F90D00899BCC /* Foundation.framework in Frameworks */,
-				8F36654A1DE4F90D00899BCC /* CommerceKit.framework in Frameworks */,
-				8F36654B1DE4F90D00899BCC /* StoreFoundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8F4B1EE616DD77BD00E15A9E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -311,7 +223,6 @@
 			isa = PBXGroup;
 			children = (
 				8F4B1EE916DD77BD00E15A9E /* MPAgent */,
-				8F3665511DE4F90D00899BCC /* MPAgent_signed_dev */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -503,23 +414,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8F36650F1DE4F90D00899BCC /* MPAgent_signed_dev */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8F36654E1DE4F90D00899BCC /* Build configuration list for PBXNativeTarget "MPAgent_signed_dev" */;
-			buildPhases = (
-				8F3665101DE4F90D00899BCC /* Sources */,
-				8F36653A1DE4F90D00899BCC /* Frameworks */,
-				8F36654C1DE4F90D00899BCC /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = MPAgent_signed_dev;
-			productName = MPAgent;
-			productReference = 8F3665511DE4F90D00899BCC /* MPAgent_signed_dev */;
-			productType = "com.apple.product-type.tool";
-		};
 		8F4B1EE816DD77BD00E15A9E /* MPAgent */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8F4B1EF716DD77BD00E15A9E /* Build configuration list for PBXNativeTarget "MPAgent" */;
@@ -546,9 +440,6 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = LLNL;
 				TargetAttributes = {
-					8F36650F1DE4F90D00899BCC = {
-						DevelopmentTeam = A827VH86QR;
-					};
 					8F4B1EE816DD77BD00E15A9E = {
 						DevelopmentTeam = BLZUAP2L36;
 					};
@@ -567,54 +458,11 @@
 			projectRoot = "";
 			targets = (
 				8F4B1EE816DD77BD00E15A9E /* MPAgent */,
-				8F36650F1DE4F90D00899BCC /* MPAgent_signed_dev */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		8F3665101DE4F90D00899BCC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8FF253E71FACE797006B0491 /* MPFirmware.m in Sources */,
-				8F3665111DE4F90D00899BCC /* MPAgentUpdater.m in Sources */,
-				8F3665121DE4F90D00899BCC /* CHDiskInfo.m in Sources */,
-				8F3665131DE4F90D00899BCC /* main.m in Sources */,
-				8F3665141DE4F90D00899BCC /* AVSoftware.m in Sources */,
-				8F3665161DE4F90D00899BCC /* MPAgent.m in Sources */,
-				8F3665171DE4F90D00899BCC /* PowerProfile.m in Sources */,
-				8F3665181DE4F90D00899BCC /* MPOSUpgrade.m in Sources */,
-				8F3665191DE4F90D00899BCC /* MPInv.m in Sources */,
-				8F36651A1DE4F90D00899BCC /* AntiVirus.m in Sources */,
-				8F36651D1DE4F90D00899BCC /* AppStoreOperation.m in Sources */,
-				8F36651E1DE4F90D00899BCC /* PostFailedWSRequests.m in Sources */,
-				8F3665201DE4F90D00899BCC /* MPInventoryPlugin.m in Sources */,
-				8F3665211DE4F90D00899BCC /* MPDirectoryServices.m in Sources */,
-				8F3665221DE4F90D00899BCC /* MPAgentRegister.m in Sources */,
-				8F3665231DE4F90D00899BCC /* AgentController.m in Sources */,
-				8F3665241DE4F90D00899BCC /* MPFileVaultInfo.m in Sources */,
-				8F3665251DE4F90D00899BCC /* MPAppStore.m in Sources */,
-				8F3665261DE4F90D00899BCC /* MPUsersAndGroups.m in Sources */,
-				8F3665271DE4F90D00899BCC /* NSDirectoryServices.m in Sources */,
-				8F36652A1DE4F90D00899BCC /* ClientCheckInOperation.m in Sources */,
-				8F36652B1DE4F90D00899BCC /* AgentScanAndUpdateOperation.m in Sources */,
-				8F36652C1DE4F90D00899BCC /* CKSoftwareProduct+ASProduct.m in Sources */,
-				8F36652D1DE4F90D00899BCC /* MPServerEntry.m in Sources */,
-				8F36652E1DE4F90D00899BCC /* BatteryInfo.m in Sources */,
-				8F36652F1DE4F90D00899BCC /* AntiVirusScanAndUpdateOperation.m in Sources */,
-				8F3665301DE4F90D00899BCC /* CHDisk.m in Sources */,
-				8F3665311DE4F90D00899BCC /* InventoryOperation.m in Sources */,
-				8F3665321DE4F90D00899BCC /* MacAppStoreDataItem.m in Sources */,
-				8F3665331DE4F90D00899BCC /* PatchScanAndUpdateOperation.m in Sources */,
-				8F3665341DE4F90D00899BCC /* MPSWDistTaskOperation.m in Sources */,
-				8F3665351DE4F90D00899BCC /* MPTasks.m in Sources */,
-				8F3665371DE4F90D00899BCC /* MPTaskValidate.m in Sources */,
-				8F3665381DE4F90D00899BCC /* NSMetadataQuery+Synchronous.m in Sources */,
-				8F3665391DE4F90D00899BCC /* Profiles.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8F4B1EE516DD77BD00E15A9E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -662,80 +510,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		8F36654F1DE4F90D00899BCC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_INT_CONVERSION = NO;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				DEVELOPMENT_TEAM = A827VH86QR;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "MPAgent/MPAgent-Prefix.pch";
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/usr/include/libxml2,
-					"$(SRCROOT)/MPAgent/PrivateHeaders/**",
-				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-					"-framework",
-					Foundation,
-					"-sectcreate",
-					__TEXT,
-					__info_plist,
-					"MPAgent/MPAgent-Info.plist",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
-			};
-			name = Debug;
-		};
-		8F3665501DE4F90D00899BCC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_INT_CONVERSION = NO;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				DEVELOPMENT_TEAM = A827VH86QR;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "MPAgent/MPAgent-Prefix.pch";
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/usr/include/libxml2,
-					"$(SRCROOT)/MPAgent/PrivateHeaders/**",
-				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-					"-framework",
-					Foundation,
-					"-sectcreate",
-					__TEXT,
-					__info_plist,
-					"MPAgent/MPAgent-Info.plist",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$HOME/Developer/Xcode/include/**";
-			};
-			name = Release;
-		};
 		8F4B1EF516DD77BD00E15A9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -919,15 +693,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8F36654E1DE4F90D00899BCC /* Build configuration list for PBXNativeTarget "MPAgent_signed_dev" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8F36654F1DE4F90D00899BCC /* Debug */,
-				8F3665501DE4F90D00899BCC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		8F4B1EE416DD77BD00E15A9E /* Build configuration list for PBXProject "MPAgent" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
