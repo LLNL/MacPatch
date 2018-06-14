@@ -1,8 +1,7 @@
-from flask import request, current_app, send_from_directory, session, render_template
+from flask import render_template
 
 from . import agent
 from .. model import *
-from .. mputil import *
 
 @agent.route('/download')
 def clientDownload():
