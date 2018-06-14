@@ -36,7 +36,7 @@ root or sudo access will be needed to perform these tasks.
 		- Ubuntu Server 16.04
 - RAM: 4 Gig min
 - MySQL (5.6.x is Recommended)
-- JAVA JDK 1.8.x
+	- 	MySQL 8 not tested.
 
 #### Perquisites <a name='a2'></a>
 - Install MySQL 5.6.x (must have root password)
