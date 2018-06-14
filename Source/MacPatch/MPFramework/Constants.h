@@ -80,6 +80,7 @@ extern NSString * const MP_AGENT_DEPL_PLIST;
 extern NSString * const MP_AGENT_SETTINGS;
 
 extern NSString * const MP_CRITICAL_UPDATES_PLIST;
+extern NSString * const MP_AUTHRUN_FILE;
 
 @interface Constants : NSObject {
 

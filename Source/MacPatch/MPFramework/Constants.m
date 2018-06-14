@@ -81,6 +81,7 @@ NSString * const MP_AGENT_DEPL_PLIST        = @"/Library/Application Support/Mac
 NSString * const MP_AGENT_SETTINGS          = @"/Library/Application Support/MacPatch/gov.llnl.mp.plist";
 
 NSString * const MP_CRITICAL_UPDATES_PLIST  = @"/Users/Shared/.mpCriUpdates.plist";
+NSString * const MP_AUTHRUN_FILE 			= @"/private/tmp/.MPAuthRun";
 
 @implementation Constants
 
