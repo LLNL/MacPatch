@@ -23,7 +23,7 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-// MacPatch MPWorkerProtocol.h version 1.7.3
+// MacPatch MPWorkerProtocol.h version 1.7.4
 
 #import <Foundation/Foundation.h>
 
@@ -77,6 +77,8 @@
 - (void)removeStatusFilesViaHelper;
 
 - (int)stagePatchWithBaseDirectory:(in bycopy NSDictionary *)aPatch directory:(in bycopy NSString *)path;
+
+- (int)runCMD:(in bycopy NSString *)binPath arguments:(in bycopy NSArray *)arguments;
 
 // Inventory Collection
 - (int)collectInventoryData;

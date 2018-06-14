@@ -169,7 +169,7 @@
 - (void)setLogoutHook
 {
     // MP 2.2.0 & Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
-    NSString *_atFile = @"/private/tmp/.MPAuthRun";
+    NSString *_atFile = MP_AUTHRUN_FILE;
     NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
     NSString *_rbText = @"reboot";
     // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun

@@ -1352,16 +1352,15 @@ done:
 - (void)setLogoutHookViaHelper
 {
     // This has been changed in MacPatch 2.2.0
-    NSString *_atFile = @"/private/tmp/.MPAuthRun";
     NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
     NSString *_rbText = @"reboot";
     // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
     NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
     [rebootPlist writeToFile:_rbFile atomically:YES];
-    [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    [_rbText writeToFile:MP_AUTHRUN_FILE atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
     [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
-    [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
+    [[NSFileManager defaultManager] setAttributes:_fileAttr ofItemAtPath:MP_AUTHRUN_FILE error:NULL];
 }
 // Proxy Method
 - (int)setPermissionsForFileViaHelper:(in bycopy NSString *)aFile posixPerms:(unsigned long)posixPermissions
@@ -1599,6 +1598,18 @@ done:
 }
 
 // Proxy Method
+- (int)runCMD:(in bycopy NSString *)binPath arguments:(in bycopy NSArray *)arguments
+{
+	int result = -1;
+	
+	NSTask *task = [NSTask launchedTaskWithLaunchPath:binPath arguments:arguments];
+	[task waitUntilExit];
+	
+	result = [task terminationStatus];
+	return result;
+}
+
+// Proxy Method
 - (BOOL)unzipFile:(in bycopy NSString *)file error:(NSError **)error;
 {
     BOOL result = NO;
@@ -1763,16 +1774,11 @@ done:
 #ifdef DEBUG
     NSLog(@"Reboot would happen ...");
 #else
-    int rb = 0;
-    switch ( taskAction ) {
+    switch ( taskAction )
+	{
         case 0:
-            rb = reboot(RB_AUTOBOOT);
-            qlinfo(@"MPAuthPlugin issued a reboot (%d)",rb);
-            if (rb == -1) {
-                // Try Forcing it :-)
-                qlinfo(@"Attempting to force reboot...");
-                execve("/sbin/reboot",0,0);
-            }
+            qlinfo(@"MPAuthPlugin issued a reboot.");
+            [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:@[@"reboot"]];
             break;
         case 1:
             // Code to just do logout

@@ -1324,16 +1324,11 @@ typedef NSUInteger MPInstallIconStatus;
 #ifdef DEBUG
     qldebug(@"Reboot would happen ...");
 #else
-    int rb = 0;
-    switch ( action ) {
+    switch ( action )
+	{
         case 0:
-            rb = reboot(RB_AUTOBOOT);
-            qlinfo(@"MPAuthPlugin issued a reboot (%d)",rb);
-            if (rb == -1) {
-                // Try Forcing it :-)
-                qlinfo(@"Attempting to force reboot...");
-                execve("/sbin/reboot",0,0);
-            }
+            qlinfo(@"MPAuthPlugin issued a reboot.");
+            [NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:@[@"reboot"]];
             break;
         case 1:
             // Code to just do logout

@@ -261,7 +261,7 @@ done:
 
 + (BOOL)hostNeedsReboot
 {
-	if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"] == TRUE) {
+	if ([[NSFileManager defaultManager] fileExistsAtPath:MP_AUTHRUN_FILE] == TRUE) {
 		return YES;
 	} else {
         return NO;

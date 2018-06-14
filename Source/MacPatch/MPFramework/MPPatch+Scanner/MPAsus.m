@@ -112,17 +112,16 @@
 - (void)writeLogoutHook
 {
     // MP 2.2.0 & Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
-    NSString *_atFile = @"/private/tmp/.MPAuthRun";
     NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
     NSString *_rbText = @"reboot";
     
     // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
     NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
     [rebootPlist writeToFile:_rbFile atomically:YES];
-    [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    [_rbText writeToFile:MP_AUTHRUN_FILE atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
     [fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
-    [fm setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
+    [fm setAttributes:_fileAttr ofItemAtPath:MP_AUTHRUN_FILE error:NULL];
 }
 
 - (NSArray *)installResultsToDictArray:(NSArray *)aInstalledPatches type:(NSString *)aType

@@ -249,31 +249,41 @@ extern OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSend);
     [self rebootOrLogout:0];
 }
 
+- (void)countDownShowRebootButton
+{
+	@autoreleasepool
+	{
+		for (int i = 0; i < 300;i++)
+		{
+			sleep(1);
+		}
+		dispatch_async(dispatch_get_global_queue(0, 0), ^{
+			dispatch_async(dispatch_get_main_queue(), ^{
+				cancelButton.title = @"Reboot";
+				cancelButton.hidden = NO;
+			});
+		});
+	}
+}
+
 - (void)rebootOrLogout:(int)action
 {
-    // exit(0);
-
-    int rb = 0;
-    switch ( action ) {
-        case 0:
-            rb = reboot(RB_AUTOBOOT);
-            qlinfo(@"MPAuthPlugin issued a reboot (%d)",rb);
-            if (rb == -1) {
-                // Try Forcing it :-)
-                //qlinfo(@"Attempting to force reboot...");
-                NSLog(@"Attempting to force reboot...");
-                //execve("/sbin/reboot",0,0);
-            }
-            break;
-        case 1:
-            // Code to just do logout
-            [NSApp performSelector:@selector(terminate:) withObject:nil afterDelay:0.0];
-            break;
-        default:
-            // Code
-            break;
-    }
-
+	switch ( action )
+	{
+		case 0:
+			[NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:@[@"reboot"]];
+			qlinfo(@"MPAuthPlugin issued a launchctl reboot.");
+			[NSThread detachNewThreadSelector:@selector(countDownShowRebootButton) toTarget:self withObject:nil];
+			break;
+		case 1:
+			// just return to loginwindow
+			exit(0);
+			break;
+		default:
+			// Code
+			exit(0);
+			break;
+	}
 }
 
 - (void)toggleStatusProgress
@@ -286,7 +296,6 @@ extern OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSend);
                 [progressBar setUsesThreadedAnimation:YES];
                 [progressBar setHidden:NO];
                 [progressBar startAnimation:nil];
-                //[progressBar performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
             });
         });
         
@@ -298,12 +307,20 @@ extern OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSend);
 
 - (IBAction)cancelOperation:(id)sender
 {
-    [self progress:@"Cancelling, waiting for current request to finish..."];
-    dispatch_async(dispatch_get_main_queue(), ^(void)
-    {
-        cancelButton.enabled = FALSE;
-        self.cancelTask = TRUE;
-    });
+	/*
+	 [self progress:@"Cancelling, waiting for current request to finish..."];
+	 dispatch_async(dispatch_get_main_queue(), ^(void)
+	 {
+	 cancelButton.enabled = FALSE;
+	 self.cancelTask = TRUE;
+	 });
+	 */
+	if ([cancelButton.title isEqualToString:@"Reboot"])
+	{
+		int rb = 0;
+		qlerror(@"User forced a reboot. Some items may not have gotten installed.");
+		rb = reboot(RB_AUTOBOOT);
+	}
 }
 
 - (void)_stopThread
@@ -395,43 +412,64 @@ OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSendID)
             } else {
                 // Build Approved Patches
                 qlinfo(@"Building approved apple patch list...");
-                for (int i=0; i<[apple count]; i++) {
-                    for (int x=0;x < [approvedApplePatches count]; x++) {
-                        if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"name"] isEqualTo:[[apple objectAtIndex:i] objectForKey:@"patch"]])
-                        {
-                            qlinfo(@"Patch %@ approved for update.",[[approvedApplePatches objectAtIndex:x] objectForKey:@"name"]);
-                            
-                            tmpPatchDict = [[NSMutableDictionary alloc] init];
-                            [tmpPatchDict setObject:[NSNumber numberWithBool:YES] forKey:@"selected"];
-                            [tmpPatchDict setObject:[[apple objectAtIndex:i] objectForKey:@"patch"] forKey:@"patch"];
-                            [tmpPatchDict setObject:[[apple objectAtIndex:i] objectForKey:@"size"] forKey:@"size"];
-                            [tmpPatchDict setObject:[[apple objectAtIndex:i] objectForKey:@"description"] forKey:@"description"];
-                            [tmpPatchDict setObject:[[apple objectAtIndex:i] objectForKey:@"restart"] forKey:@"restart"];
-                            [tmpPatchDict setObject:[[apple objectAtIndex:i] objectForKey:@"version"] forKey:@"version"];
-                            [tmpPatchDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"] forKey:@"hasCriteria"];
-                            
-                            if ([[[approvedApplePatches objectAtIndex:x] objectForKey:@"hasCriteria"] boolValue] == YES) {
-                                if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] && [[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] count] > 0) {
-                                    [tmpPatchDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_pre"] forKey:@"criteria_pre"];
-                                }
-                                if ([[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] && [[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] count] > 0) {
-                                    [tmpPatchDict setObject:[[approvedApplePatches objectAtIndex:x] objectForKey:@"criteria_post"] forKey:@"criteria_post"];
-                                }
-                            }
-                            
-                            [tmpPatchDict setObject:@"Apple" forKey:@"type"];
-                            [tmpPatchDict setObject:[[approvedApplePatches objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
-                            
-                            [approvedUpdatesArray addObject:tmpPatchDict];
-                            qldebug(@"Apple Patch Dictionary Added: %@",tmpPatchDict);
-                            break;
-                        }
-                    }
-                }
+				NSDictionary *_applePatch;
+				NSDictionary *_applePatchApproved;
+				
+				for (int i=0; i<[apple count]; i++)
+				{
+					_applePatch = [apple objectAtIndex:i];
+					
+					for (int x=0;x < [approvedApplePatches count]; x++)
+					{
+						_applePatchApproved = [approvedApplePatches objectAtIndex:x];
+						
+						if ([_applePatchApproved[@"name"] isEqualTo:_applePatch[@"patch"]])
+						{
+							if ([_applePatchApproved objectForKey:@"user_install"])
+							{
+								if ([[_applePatchApproved objectForKey:@"user_install"] intValue] == 1)
+								{
+									qlwarning(@"Patch %@ is approved. Will not install due to being a user required install patch.",_applePatch[@"patch"]);
+									break;
+								}
+							}
+							
+							qlinfo(@"Patch %@ approved for update.",_applePatchApproved[@"name"]);
+							
+							tmpPatchDict = [[NSMutableDictionary alloc] init];
+							[tmpPatchDict setObject:[NSNumber numberWithBool:YES] forKey:@"selected"];
+							[tmpPatchDict setObject:_applePatch[@"patch"] forKey:@"patch"];
+							[tmpPatchDict setObject:_applePatch[@"size"] forKey:@"size"];
+							[tmpPatchDict setObject:_applePatch[@"description"] forKey:@"description"];
+							[tmpPatchDict setObject:_applePatch[@"restart"] forKey:@"restart"];
+							[tmpPatchDict setObject:_applePatch[@"version"] forKey:@"version"];
+							[tmpPatchDict setObject:_applePatchApproved[@"hasCriteria"] forKey:@"hasCriteria"];
+							
+							if ([_applePatchApproved[@"hasCriteria"] boolValue] == YES)
+							{
+								if (_applePatchApproved[@"criteria_pre"] && [_applePatchApproved[@"criteria_pre"] count] > 0)
+								{
+									[tmpPatchDict setObject:_applePatchApproved[@"criteria_pre"] forKey:@"criteria_pre"];
+								}
+								if (_applePatchApproved[@"criteria_post"] && [_applePatchApproved[@"criteria_post"] count] > 0)
+								{
+									[tmpPatchDict setObject:_applePatchApproved[@"criteria_post"] forKey:@"criteria_post"];
+								}
+							}
+							
+							[tmpPatchDict setObject:@"Apple" forKey:@"type"];
+							[tmpPatchDict setObject:[[approvedApplePatches objectAtIndex:i] objectForKey:@"patch_install_weight"] forKey:@"patch_install_weight"];
+							
+							[approvedUpdatesArray addObject:tmpPatchDict];
+							qldebug(@"Apple Patch Dictionary Added: %@",tmpPatchDict);
+							break;
+						}
+					}
+				}
             }
         }
     }
-    
+	
     // Filter Custom Patches
     qlinfo(@"Building approved custom patch list...");
     for (int i=0; i<[custom count]; i++) {
@@ -441,7 +479,7 @@ OSStatus MDSendAppleEventToSystemProcess(AEEventID eventToSendID)
             if ([[customPatch objectForKey:@"patch_id"] isEqualTo:[approvedPatch objectForKey:@"patch_id"]])
             {
                 qlinfo(@"Patch %@ approved for update.",[customPatch objectForKey:@"description"]);
-            
+				
                 tmpPatchDict = [[NSMutableDictionary alloc] init];
                 [tmpPatchDict setObject:[NSNumber numberWithBool:YES] forKey:@"selected"];
                 [tmpPatchDict setObject:[customPatch objectForKey:@"patch"] forKey:@"patch"];

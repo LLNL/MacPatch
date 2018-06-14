@@ -115,7 +115,8 @@
 		[agentDict setObject:[self fileVaultStatus] forKey:@"fileVaultStatus"];
 		[agentDict setObject:[self firmwareStatus] forKey:@"firmwareStatus"];
         
-        if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:MP_AUTHRUN_FILE])
+		{
             [agentDict setObject:@"true" forKey:@"needsreboot"];
         }
         

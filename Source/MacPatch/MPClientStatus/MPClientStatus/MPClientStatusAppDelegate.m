@@ -1413,7 +1413,7 @@ done:
 - (IBAction)logoutAndPatch:(id)sender
 {
     // Add .MPAuthRun so that the priv helpr tool runs
-    [[NSFileManager defaultManager] createFileAtPath:@"/private/tmp/.MPAuthRun"
+    [[NSFileManager defaultManager] createFileAtPath:MP_AUTHRUN_FILE
                                             contents:[@"Logout" dataUsingEncoding:NSUTF8StringEncoding]
                                           attributes:nil];
     
@@ -1605,7 +1605,8 @@ done:
 {
     if ([notification.actionButtonTitle isEqualToString:@"Patch"]) {
         // Dont show patch info if reboot is required.
-        if ([[NSFileManager defaultManager] fileExistsAtPath:@"/private/tmp/.MPAuthRun"]) {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:MP_AUTHRUN_FILE])
+		{
             [[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:notification];
         }
     }

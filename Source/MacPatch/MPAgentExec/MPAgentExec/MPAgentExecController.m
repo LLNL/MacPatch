@@ -649,6 +649,31 @@ done:
 	} else {
 		[self writeTaskRunning:kMPPatchUPDATE];
 	}
+	
+	// Check for console user
+	logit(lcl_vInfo, @"Checking for any logged in users.");
+	BOOL hasConsoleUserLoggedIn = TRUE;
+	@try {
+		hasConsoleUserLoggedIn = [self isLocalUserLoggedIn];
+		if (!hasConsoleUserLoggedIn)
+		{
+			NSError *fileErr = nil;
+			[@"patch" writeToFile:MP_AUTHRUN_FILE atomically:NO encoding:NSUTF8StringEncoding error:&fileErr];
+			if (fileErr)
+			{
+				logit(lcl_vError, @"Error writing out %@ file. %@", MP_AUTHRUN_FILE, fileErr.localizedDescription);
+			}
+			else
+			{
+				// No need to continue, MPLoginAgent will perform the updates
+				// Since no user is logged in.
+				return;
+			}
+		}
+	}
+	@catch (NSException * e) {
+		logit(lcl_vInfo, @"Error getting console user status. %@",e);
+	}
 
 	// Filter - 0 = All,  1 = Apple, 2 = Third
 	NSArray *updatesArray = nil;
@@ -768,16 +793,6 @@ done:
 	int installResult = 1;
 	int	launchRebootWindow = 0;
 	int installedPatchesNeedingReboot = 0;
-
-    // Check for console user
-	logit(lcl_vInfo, @"Checking for any logged in users.");
-    BOOL hasConsoleUserLoggedIn = TRUE;
-	@try {
-		hasConsoleUserLoggedIn = [self isLocalUserLoggedIn];
-	}
-	@catch (NSException * e) {
-		logit(lcl_vInfo, @"Error getting console user status. %@",e);
-	}
 
 	logit(lcl_vInfo, @"Begin installing patches.");
     for (i = 0; i < [updatesArray count]; i++) {
@@ -1177,8 +1192,7 @@ done:
 				if (settings.agent.reboot == 1)
                 {
 					logit(lcl_vInfo,@"Patches have been installed that require a reboot. Rebooting system now.");
-					int rb = 0;
-					rb = reboot(RB_AUTOBOOT);
+					[NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:@[@"reboot"]];
 				}
                 else
                 {
@@ -1198,16 +1212,15 @@ done:
     {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
         // 10.9
-        NSString *_atFile = @"/private/tmp/.MPAuthRun";
         NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
 		NSString *_rbText = @"reboot";
         // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
         NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
         [rebootPlist writeToFile:_rbFile atomically:YES];
-        [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        [_rbText writeToFile:MP_AUTHRUN_FILE atomically:YES encoding:NSUTF8StringEncoding error:NULL];
         NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
 		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
-        [fm setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
+        [fm setAttributes:_fileAttr ofItemAtPath:MP_AUTHRUN_FILE error:NULL];
 	}
 
 done:
@@ -1554,8 +1567,7 @@ done:
 				if (settings.agent.reboot == 1)
                 {
 					logit(lcl_vInfo,@"Patches have been installed that require a reboot. Rebooting system now.");
-					int rb = 0;
-					rb = reboot(RB_AUTOBOOT);
+					[NSTask launchedTaskWithLaunchPath:@"/bin/launchctl" arguments:@[@"reboot"]];
 				}
                 else
                 {
@@ -1571,16 +1583,15 @@ done:
     {
 		logit(lcl_vInfo,@"Patches that require reboot need to be installed. Opening reboot dialog now.");
         // 10.9 support
-        NSString *_atFile = @"/private/tmp/.MPAuthRun";
         NSString *_rbFile = @"/private/tmp/.MPRebootRun.plist";
 		NSString *_rbText = @"reboot";
         // Mac OS X 10.9 Support, now using /private/tmp/.MPAuthRun
         NSDictionary *rebootPlist = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"reboot"];
         [rebootPlist writeToFile:_rbFile atomically:YES];
-        [_rbText writeToFile:_atFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        [_rbText writeToFile:MP_AUTHRUN_FILE atomically:YES encoding:NSUTF8StringEncoding error:NULL];
         NSDictionary *_fileAttr =  [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:0777],@"NSFilePosixPermissions",nil];
 		[fm setAttributes:_fileAttr ofItemAtPath:_rbFile error:NULL];
-        [fm setAttributes:_fileAttr ofItemAtPath:_atFile error:NULL];
+        [fm setAttributes:_fileAttr ofItemAtPath:MP_AUTHRUN_FILE error:NULL];
 	}
 
 done:
