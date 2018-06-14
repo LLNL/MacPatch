@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/opt/MacPatch/Server/venv/bin/python
 
 '''
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
@@ -25,7 +25,7 @@
 
 '''
 	Script: MPSUSPatchSync
-	Version: 1.3.0
+	Version: 1.3.1
 
 	Description: This Script read all of the patch information
 	from the apple software update sucatlog files and post the
@@ -184,7 +184,7 @@ def readDistributionFile(distURL):
 
 		root = ET.fromstring(r.text.encode('utf-8'))
 		c = root.findall("./choice[@suDisabledGroupID]")
-		
+
 		if len(c) == 1:
 			for x in c:
 				distData['name'] = x.get('suDisabledGroupID','')
@@ -193,7 +193,7 @@ def readDistributionFile(distURL):
 				if len(x) >= 1:
 					distData['restart'] = x[0].get('onConclusion','NoRestart')
 					distData['suname'] = distData['name'] + "-" + distData['version']
-		
+
 		_strings = root.findtext("./localization/strings")
 
 		# Get Title
@@ -215,8 +215,8 @@ def readDistributionFile(distURL):
 				#distData['description'] = _desc[0]
 				distData['description'] = base64.b64encode(str(_desc[0]).encode('utf-8'))
 
-        # Some of apples patches now have a space where the version number
-        # would go, patch wont install without the space
+		# Some of apples patches now have a space where the version number
+		# would go, patch wont install without the space
 		if distData['version'] == None or distData['version'] == '' or distData['version'] == ' ':
 			distData['suname'] = distData['name'] + "- "
 		else:
@@ -345,8 +345,8 @@ def readSUSCatalogFile(sucatalog, filterList=[], asFile=False):
 		if patch['akey'] in patch['suname']:
 			containsFilterItem = True
 
-        if containsFilterItem == False:
-        	logger.info("Adding patch: " + str(patch['suname']))
+		if containsFilterItem == False:
+			logger.info("Adding patch: " + str(patch['suname']))
 			print("Adding patch: " + str(patch['suname']))
 			patches.append(patch)
 		else:

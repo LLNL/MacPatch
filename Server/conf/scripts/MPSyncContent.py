@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/opt/MacPatch/Server/venv/bin/python
 
 '''
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
@@ -21,6 +21,11 @@
  You should have received a copy of the GNU General Public License along
  with MacPatch; if not, write to the Free Software Foundation, Inc.,
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+'''
+
+'''
+	Script: MPSyncContent
+	Version: 1.0.1
 '''
 
 import datetime

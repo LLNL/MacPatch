@@ -33,6 +33,7 @@
 #     		with the launch services.
 # 3.0.0     Rewritten for new Python Env
 # 3.1.0     Updates to remove tomcat and use new console
+# 3.1.1     All of MP now uses a virtualenv
 #
 #
 # ----------------------------------------------------------------------------
@@ -79,6 +80,7 @@ USEUBUNTU=false
 USEMACOS=false
 MACPROMPTFORXCODE=true
 MACPROMPTFORBREW=true
+USEOLDPY=false
 
 MPBASE="/opt/MacPatch"
 MPSRVCONTENT="${MPBASE}/Content/Web"
@@ -110,7 +112,7 @@ if [[ $platform == 'linux' ]]; then
 
 elif [[ "$unamestr" == 'Darwin' ]]; then
 	USEMACOS=true
-	
+
 	systemVersion=`/usr/bin/sw_vers -productVersion`
 	majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
 	minorVer=`echo $systemVersion | cut -d . -f 2`
@@ -160,7 +162,7 @@ if $USEMACOS; then
 
 	if $MACPROMPTFORXCODE; then
 		clear
-		echo 
+		echo
 		echo "* Xcode requirements"
 		echo "-----------------------------------------------------------------------"
 		echo
@@ -181,7 +183,7 @@ if $USEMACOS; then
 	fi
 
 	if $MACPROMPTFORBREW; then
-		echo 
+		echo
 		echo "* Brew requirements"
 		echo "-----------------------------------------------------------------------"
 		echo
@@ -417,11 +419,35 @@ if [ $? != 0 ] ; then
 	easy_install --quiet pip
 fi
 
-pip_mods=( "pip" "setuptools" "virtualenv" "pycrypto" "argparse" "biplist" "python-crontab" "python-dateutil" "requests" "six" "wheel" "mysql-connector-python-rf")
-for p in "${pip_mods[@]}"
-do
-	echo " - Installing ${p}, python module."
-	if $USELINUX; then
+if ! command_exists virtualenv ; then
+	pip install virtualenv
+fi
+
+if command_exists virtualenv ; then
+	VENV_VER=`virtualenv --version`
+	echo "virtualenv version $VENV_VER"
+	if [ $(ver $VENV_VER) -lt $(ver "15.0.0") ]; then
+		echo "virtualenv is an older version."
+		echo "Install and setup of the virtual environment may not succeed."
+		read -p "Would you like to continue (Y/N)? [Y]: " VENVOK
+		VENVOK=${VENVOK:-Y}
+		if [ "$VENVOK" == "Y" ] || [ "$VENVOK" == "y" ] ; then
+			echo
+		else
+			exit 1
+		fi
+	fi
+
+	virtualenv --no-site-packages ${MPSERVERBASE}/venv
+	source ${MPSERVERBASE}/venv/bin/activate
+
+	pip_mods=( "pycrypto" "argparse" "biplist" "python-dateutil" "requests" "six" "wheel" "mysql-connector-python-rf" )
+	pip_mods_lnx=( "python-crontab" )
+
+	# Install all common python modules
+	for p in "${pip_mods[@]}"
+	do
+		echo " - Installing ${p}, python module."
 		pip install --quiet --upgrade ${p}
 		if [ $? != 0 ] ; then
 			echo " Error installing ${p}"
@@ -430,41 +456,41 @@ do
 			echo " - Trying ${p}, python module again."
 			pip install --egg --quiet --upgrade ${p}
 			if [ $? != 0 ] ; then
-			echo " Error installing ${p}"
-			fi
-		fi
-	else
-		if [[ ${p} == *"python-crontab"* ]]; then
-			continue
-		fi
-
-		if (( $minorVer >= 11 )); then
-			# Needed to install when SIP is active
-			pip install --egg --quiet ${p}
-		else
-			pip install --egg --quiet --no-cache-dir --upgrade ${p}
-		fi
-
-		if [ $? != 0 ] ; then
-			echo " Error installing ${p}"
-			sleep 2
-			echo
-			echo " - Trying ${p}, python module again."
-			if (( $minorVer >= 11 )); then
-				# Needed to install when SIP is active
-				pip install --quiet ${p}
-			else
-				pip install --quiet --upgrade ${p}
-			fi
-
-			if [ $? != 0 ] ; then
 				echo " Error installing ${p}"
 			fi
 		fi
-	fi
-done
+	done
 
-sleep 1
+	# Install linux only python modules
+	if $USELINUX; then
+		for p in "${pip_mods_lnx[@]}"
+		do
+			echo " - Installing ${p}, python module."
+			pip install --quiet --upgrade ${p}
+			if [ $? != 0 ] ; then
+				echo " Error installing ${p}"
+				sleep 2
+				echo
+				echo " - Trying ${p}, python module again."
+				pip install --egg --quiet --upgrade ${p}
+				if [ $? != 0 ] ; then
+					echo " Error installing ${p}"
+				fi
+			fi
+		done
+	fi
+
+	deactivate
+else
+	echo "virtualenv was not found. Please create virtual env after"
+	echo "build script has completed."
+	echo
+	echo "% cd $MPSERVERBASE"
+	echo "% virtualenv venv"
+	echo
+	sleep 5
+fi
+
 
 # ------------------
 # Build NGINX
@@ -632,7 +658,7 @@ else
 	echo "% cd $MPSERVERBASE/apps"
 	echo "% virtualenv --no-site-packages --no-pip env"
 	echo "% source env/bin/activate"
-	echo "% python install.py"
+	echo "% pip -q install -r pyRequired.txt"
 	echo "% deactivate"
 	echo
 fi

@@ -1,23 +1,23 @@
-#!/usr/bin/env python
+#!/opt/MacPatch/Server/venv/bin/python
 
 '''
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
  Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
  Written by Charles Heizer <heizer1 at llnl.gov>.
  LLNL-CODE-636469 All rights reserved.
- 
+
  This file is part of MacPatch, a program for installing and patching
  software.
- 
+
  MacPatch is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License (as published by the Free
  Software Foundation) version 2, dated June 1991.
- 
+
  MacPatch is distributed in the hope that it will be useful, but WITHOUT ANY
  WARRANTY; without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE. See the terms and conditions of the GNU General Public
  License for more details.
- 
+
  You should have received a copy of the GNU General Public License along
  with MacPatch; if not, write to the Free Software Foundation, Inc.,
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -25,14 +25,14 @@
 
 '''
 Script : MPAVDefsSync
-Version : 1.0.1
+Version : 1.0.2
 Description: This script will download the last 3 Symantec AV Defs
-files via ftp from Symantec. It will also delete older AV Defs zip 
+files via ftp from Symantec. It will also delete older AV Defs zip
 files.
 
 Note:
-This script requires the "requests" python module. This is not 
-part of the base python deployment. To install it simply run 
+This script requires the "requests" python module. This is not
+part of the base python deployment. To install it simply run
 
 $ easy_install requests
 
@@ -47,7 +47,7 @@ try:
 	import sys
 	import ftplib
 	import os
-	import re 
+	import re
 	import json
 	import glob
 	import requests
@@ -67,7 +67,7 @@ try:
 	hdlr = logging.FileHandler('/opt/MacPatch/Server/logs/MPAVDefsSync.log')
 	formatter = logging.Formatter('%(asctime)s %(levelname)s --- %(message)s')
 	hdlr.setFormatter(formatter)
-	logger.addHandler(hdlr) 
+	logger.addHandler(hdlr)
 	logger.setLevel(logging.INFO)
 except Exception, e:
 	print "%s" % e
@@ -91,19 +91,19 @@ avConf = plistlib.readPlist(args.plist)
 if avConf.has_key("MPServerAddress"):
 	MPServerName = avConf["MPServerAddress"]
 else:
-	MPServerName = "localhost"	
+	MPServerName = "localhost"
 
-if avConf.has_key("MPServerPort"):	
+if avConf.has_key("MPServerPort"):
 	MPServerPort = avConf["MPServerPort"]
 else:
 	MPServerPort = "3601"
 
-if avConf.has_key("MPServerSSL"):		
+if avConf.has_key("MPServerSSL"):
 	MPServerSSL = avConf["MPServerSSL"]
 else:
 	MPServerSSL = "0"
- 
-if avConf.has_key("avDownloadToFilePaths"):		
+
+if avConf.has_key("avDownloadToFilePaths"):
 	avDefsLoc = avConf["avDownloadToFilePath"]
 else:
 	avDefsLoc = "/opt/MacPatch/Content/Web/sav"
@@ -139,7 +139,7 @@ class avDef:
 	def returnAsDictionary(self):
 		a = {'date':self.date,'type':self.type,'current':self.current,'file':self.file}
 		return a
-	
+
 # ------------------------------
 # Main Methods
 # ------------------------------
@@ -150,7 +150,7 @@ def createDefsLoc():
 		os.makedirs(avDefsLoc)
 
 def downloadSymantecDefs(server='ftp.symantec.com', user='anonymous', password='anonymous', fromDir='/public/english_us_canada/antivirus_definitions/norton_antivirus_mac'):
-	
+
 	ftp = ftplib.FTP(server, user, password)
 	ftp.cwd(fromDir)
 	files = ftp.nlst()
@@ -168,11 +168,11 @@ def downloadSymantecDefs(server='ftp.symantec.com', user='anonymous', password='
 				continue
 
 			fileFullPath = avDefsLoc + '/' + file
-			
+
 			if "NavM9" in file:
 				ppcArray.append(file)
 			else:
-				x86Array.append(file)	
+				x86Array.append(file)
 
 			if not os.path.exists(fileFullPath):
 				if os.access(avDefsLoc, os.W_OK):
@@ -198,7 +198,7 @@ def downloadSymantecDefs(server='ftp.symantec.com', user='anonymous', password='
 	return defsData
 
 def removeAllOutDatedFiles(nFiles):
-	
+
 	# Merge the Arrays
 	newFiles = nFiles['ppc'] + nFiles['x86']
 
@@ -234,16 +234,16 @@ logger.info("-----------------------------------------")
 logger.info("Begin AV Defs Sync                       ")
 logger.info("-----------------------------------------")
 
-avData = downloadSymantecDefs()	
+avData = downloadSymantecDefs()
 if not avData:
 	logger.error("Method returned error, exiting script.")
 	sys.exit(1)
 
 removeAllOutDatedFiles(avData)
 
-# Format AV data to post to web service 
+# Format AV data to post to web service
 # for both PPC and X86
-if 'ppc' in avData:	
+if 'ppc' in avData:
 	i = 0
 	for file in avData['ppc']:
 		if i == 0:
@@ -255,7 +255,7 @@ if 'ppc' in avData:
 		ppc.append(a.__dict__)
 		i += 1
 
-if 'x86' in avData:	
+if 'x86' in avData:
 	i = 0
 	for file in avData['x86']:
 		if i == 0:
@@ -265,7 +265,7 @@ if 'x86' in avData:
 		else:
 			a = avDef('x86',file,'NO')
 		x86.append(a.__dict__)
-		i += 1	
+		i += 1
 
 # Post AV Defs Data to web service & database
 logger.info("Posting ppc results to web service.")
