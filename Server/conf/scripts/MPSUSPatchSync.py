@@ -25,7 +25,7 @@
 
 '''
 	Script: MPSUSPatchSync
-	Version: 1.3.1
+	Version: 1.3.2
 
 	Description: This Script read all of the patch information
 	from the apple software update sucatlog files and post the
@@ -212,8 +212,8 @@ def readDistributionFile(distURL):
 		if distData['description'] == None or distData['description'] == '':
 			_desc = re.findall(r'(?<="SU_DESCRIPTION" =).?\'(.*)(?<=</html>)', _strings, re.DOTALL | re.MULTILINE)
 			if len(_desc) >= 1:
-				#distData['description'] = _desc[0]
-				distData['description'] = base64.b64encode(str(_desc[0]).encode('utf-8'))
+				descASCII = _desc[0].encode('ascii', 'ignore').decode('ascii')
+				distData['description'] = base64.b64encode(descASCII)
 
 		# Some of apples patches now have a space where the version number
 		# would go, patch wont install without the space
