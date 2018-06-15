@@ -12,6 +12,7 @@ from mpapi.model import MpAsusCatalogList
 from mpapi.model import MpServer, MpServerList
 from mpapi.model import MpSoftwareGroup, MpSoftwareGroupPrivs
 from mpapi.model import MpClientGroups, MpClient, MpClientGroupMembers, MpClientTasks
+from mpapi.model import MpClientSettings
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
