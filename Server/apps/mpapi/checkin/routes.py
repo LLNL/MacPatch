@@ -96,7 +96,7 @@ class AgentBase(MPResource):
 		if qGroupMembership is not None:
 			group_id = qGroupMembership.group_id
 		else:
-			print "No group assignment"
+			log_Error("No group assignment")
 			group_id = self.addClientToDefaultGroup(cuuid)
 
 		qGroupSettings = MPGroupConfig.query.filter(MPGroupConfig.group_id == group_id).first()

@@ -251,7 +251,6 @@ def filtersQuery(id, filterStr='undefined', page=0, page_size=0, sort='rid', ord
 @login_required
 def addFilterForGroup(group_id):
 	_title = "Add Group Filter"
-	print "Open software_group_filter_modify.html"
 	return render_template('software/software_group_filter_modify.html', title=_title, group_id=group_id, data={})
 
 @software.route('/group/filter/edit/<group_id>/<row_id>', methods=['GET','DELETE'])
@@ -541,7 +540,7 @@ def swGroupTasksRemove(id, task_id):
 def swGroupTasksSave(id):
 	tData = tasksForGroup(id)
 	if tData is None:
-		print "Error: No data to write to database."
+		log_Error("Error: No data to write to database.")
 		return json.dumps({'error':404,'errormsg':"Error: No data to write to database."}), 404
 
 	isNewRecord=False

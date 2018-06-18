@@ -306,8 +306,8 @@ def addDefaultTasksToClientGroup():
 	if res is not None:
 		gid = res.group_id
 	else:
-		print "Default client group does not exist."
-		print "Can not add default agent trasks."
+		log_Error("Default client group does not exist.")
+		log_Error("Can not add default agent trasks.")
 		return False
 
 	# Check for default tasks
@@ -325,7 +325,7 @@ def addDefaultTasksToClientGroup():
 		db.session.commit()
 		return True
 	elif hasTasks == 2:
-		print "There was a problem getting the data on the default tasks."
+		log_Error("There was a problem getting the data on the default tasks.")
 		return False
 
 	return False

@@ -97,10 +97,9 @@ def isValidRegKey(aKey, AgentConfigDataClientID):
 '''
 def isBetweenDates(start, end):
 	if start <= datetime.now() <= end:
-		# print "in between"
+		# "in between"
 		return True
 	else:
-		# print "No!"
 		return False
 
 '''

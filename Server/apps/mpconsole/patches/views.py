@@ -1008,7 +1008,6 @@ def patchDataForPatchID(patch_id):
 		_results.append(dict(v))
 
 	if len(_results) < 1:
-		print "Error"
 		return None
 
 	return _results[0]

@@ -81,10 +81,10 @@ def isValidSignature(Signature, ClientID, Data, TimeStamp):
 		log_Debug('[isValidSignature][Signature][Verified]: %s' % (xSigHash))
 
 		if xSigHash.lower() == Signature.lower():
-			print "Verified"
 			return True
 		else:
-			print "Failed"
+			log_Error("Signature hash verify failed.")
+			log_Error("%s == %s".format(Signature,xSigHash))
 			return False
 	else:
 		return False
@@ -150,7 +150,7 @@ def authUser(username_or_token, password):
 		# Token Was Good
 		return True
 
-	print "Error unable to verify user against any datasource."
+	print("Error unable to verify user against any datasource.")
 	return res
 
 '''
@@ -166,7 +166,7 @@ def defaultAdminAuth(user, password):
 			else:
 				return False
 		else:
-			print "Default admin account is disabled."
+			print("Default admin account is disabled.")
 			return False
 	else:
 		return False
@@ -183,10 +183,10 @@ def dbUserAuth(user, password):
 			if admUser.user_pass.lower() == hash_pass.lower():
 				return True
 			else:
-				print "Error with user name or password."
+				log_Error("Error with user name or password.")
 				return False
 		else:
-			print "Error with user name or password."
+			log_Error("Error with user name or password.")
 			return False
 
 	except:  # catch *all* exceptions
@@ -204,13 +204,13 @@ def ldapAuth(ldap_conf, user, password):
 		conn = Connection(ldap_server, user=user, password=password)
 		didBind = conn.bind()
 		if not didBind:
-			print "Error with user name or password. Unable to bind to ldap server."
+			log_Error("Error with user name or password. Unable to bind to ldap server.")
 			return None
 
 		didSearch = conn.search(ldap_conf['searchbase'], '(&(objectclass=*)('+ldap_conf['loginAttr']+'='+user+'))', attributes=ldap_conf['attributes'].split(','))
 		if not didSearch:
 			conn.unbind()
-			print "Error unable to user info in directory."
+			log_Error("Error unable to find user info in directory.")
 			return None
 		else:
 			res = conn.entries[0]
@@ -236,14 +236,14 @@ def adminUserRights(user):
 		admObj = None
 		admUser = AdmUsers.query.filter(AdmUsers.user_id == user, AdmUsers.enabled == 1).first()
 		if not admUser:
-			print "No user found to check for rights."
+			log_Error("No user (%s) found to check for rights.".format(user))
 			return None
 
 		admObj = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == user, AdmUsersInfo.enabled == 1).first()
 		if admObj:
 			return admObj
 		else:
-			print "User not found or user is disabled."
+			log_Error("User %s not found or user is disabled.".format(user))
 			return None
 
 	except:  # catch *all* exceptions
@@ -309,7 +309,6 @@ def isValidToken(user, token):
 	if user == _user:
 		return True
 	else:
-		print "Verify auth token " + user
 		return False
 
 def verify_auth_token(token):
@@ -368,7 +367,7 @@ def sendEmailMessage(subject, message, address=None):
 		content = headers + "\r\n\r\n" + message
 		session.sendmail('macpatch@your.macpatch.server.com', admEmlLst, content)
 	except:
-		print "Unexpected error:", sys.exc_info()[0]
+		print("Unexpected error:", sys.exc_info()[0])
 
 # ----------------------------------------------------------------------------
 '''
