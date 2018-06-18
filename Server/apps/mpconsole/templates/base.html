@@ -47,7 +47,7 @@
 		}
 
 		function aboutConsole() {
-			alert("MacPatch Console 3.1.0 Beta 3")
+			alert("MacPatch Console 3.1.0")
 		}
 	</script>
 </head>
@@ -76,12 +76,6 @@
 						Welcome {{ session.user }} <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
 					</a>
 					<ul class="dropdown-menu dropdown-user">
-						<!--
-						<li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
-						</li>
-						<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
-						</li>
-						-->
 						<li><a href="#" onclick="aboutConsole();return false;"><i class="fa fa-question-circle fa-fw"></i> About MP Console</a>
 						<li class="divider"></li>
 						<li><a href="{{ url_for('auth.logout')}}"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
