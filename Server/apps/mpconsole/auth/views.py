@@ -89,8 +89,9 @@ def login():
 				conn = Connection(server, user=userID, password=form.password.data)
 
 				if conn.bind():
-					conn.search(search_base=_ldapConf['searchbase'],
-								search_filter='(&(objectClass=*)(userPrincipalName=userID))',
+					_sFilter = "(&(objectClass=*)("+_ldapConf['loginAttr']+"="+userID+"))"
+					#search_filter='(&(objectClass=*)(userPrincipalName=userID))'
+					conn.search(search_base=_ldapConf['searchbase'], search_filter=_sFilter,
 								search_scope=SUBTREE, attributes=ALL_ATTRIBUTES, get_operational_attributes=True)
 
 					if accountExists(form.username.data):
