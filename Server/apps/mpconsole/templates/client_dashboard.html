@@ -25,6 +25,11 @@
 		<!-- Custom Fonts -->
 		<link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
 		<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
+		<style>
+			.clickable {
+				cursor: pointer;
+			}
+		</style>
 	{% endblock %}
 
 
@@ -65,7 +70,10 @@
 			<div class="col-sm-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						Required Patches
+						<span class="clickable">
+							Required Patches
+							<i class="glyphicon glyphicon-chevron-down pull-right"></i>
+						</span>
 					</div>
 					<!-- /.panel-heading -->
 					<div class="panel-body">
@@ -76,7 +84,10 @@
 			<div class="col-sm-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						Last 10 Installed Patches
+						<span class="clickable">
+							Last 10 Installed Patches
+							<i class="glyphicon glyphicon-chevron-down pull-right"></i>
+						</span>
 					</div>
 					<!-- /.panel-heading -->
 					<div class="panel-body">
@@ -224,6 +235,20 @@
 
 			})
 		})
+	});
+	$(document).on('click', '.panel-heading span.clickable', function(e){
+		var $this = $(this);
+		if(!$this.hasClass('panel-collapsed')) {
+			$this.parents('.panel').find('.panel-body').slideUp();
+			$this.addClass('panel-collapsed');
+			$this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+
+		} else {
+			$this.parents('.panel').find('.panel-body').slideDown();
+			$this.removeClass('panel-collapsed');
+			$this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+
+		}
 	});
 	</script>
 	{% endblock %}
