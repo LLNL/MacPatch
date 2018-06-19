@@ -130,8 +130,28 @@ Please remeber the passwords for mpdbadm and mpdbro accounts while running this 
 The MacPatch server software has now been installed and should be up and running. The server is almost ready for accepting clients. There are a few more server configuration settings which need to be configured.
 
 #### First Login <a name='a4a'></a>
-The default user name is “mpadmin” and the password is “*mpadmin*”, Unless it was changed using the “ServerSetup.py” script. You will need to login for the first time with this account to do all of the setup tasks. Once these tasks are completed it’s recommended that this accounts password be changed. This can be done by editing the siteconfig.json file, which is located in /opt/MacPatch/Server/etc/.
+The default user name is “mpadmin” and the password is “\*mpadmin\*”, Unless it was changed using the “ServerSetup.py” script. You will need to login for the first time with this account to do all of the setup tasks. Once these tasks are completed it’s recommended that this account be disabled. This can be done by editing the **siteconfig.json** file, which is located in /opt/MacPatch/Server/etc/.
 
+**From:**
+<pre>
+`"users": {
+    "admin": {
+        "enabled": true, 
+        "name": "mpadmin", 
+        "pass": "*mpadmin*"
+    }
+}`
+</pre>
+**To:**
+<pre>
+`"users": {
+    "admin": {
+        "enabled": false, 
+        "name": "mpadmin", 
+        "pass": "*mpadmin*"
+    }
+}`
+</pre>
 #### Server Configuration <a name='a4b'></a>
 Each MacPatch server needs to be added to the environment. The master server is always added automatically.
 
