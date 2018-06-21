@@ -10,8 +10,7 @@ Clients - All
 {%  endblock %}
 
 {% block bodyPanel %}
-
-	<table id="table"></table>
+	<table id="table" class="table table-condensed"></table>
 {% endblock %}
 
 
@@ -25,15 +24,15 @@ Clients - All
 	{
 			$('#table').bootstrapTable(
 			{
-                url: "/clients/list",
+				url: "/clients/list",
 				striped: true,
-                pagination: true,
-                sidePagination: 'client',
-                showRefresh: true,
-                pageList: ['10', '25', '50', '100', 'All'],
-                search: true,
-                idField: 'cuuid',
-                sortable: true,
+				pagination: true,
+				sidePagination: 'client',
+				showRefresh: true,
+				pageList: ['10', '25', '50', '100', 'All'],
+				search: true,
+				idField: 'cuuid',
+				sortable: true,
 				showColumns: true,
 
 				columns: [
