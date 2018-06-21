@@ -46,11 +46,13 @@ BUILDROOT="${MPBASE}/.build/server"
 
 MPBASEBACK="/tmp/MPUSrvUpgrade"
 GITBRANCH="master"
+MOVECONTENT=true
+MASTERSERVER=true
 # Script Input Args ----------------------------------------------------------
 
-usage() { echo "Usage: $0 [-b GitHub Branch]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-b GitHub Branch] -d (Is Distribution server)" 1>&2; exit 1; }
 
-while getopts "hc:" opt; do
+while getopts "hb:d" opt; do
 	case $opt in
 		b)
 			GITBRANCH=${OPTARG}
@@ -59,6 +61,9 @@ while getopts "hc:" opt; do
 			echo
 			usage
 			exit 1
+			;;
+		d)
+			MASTERSERVER=false
 			;;
 		\?)
 			echo "Invalid option: -$OPTARG" >&2
@@ -106,24 +111,25 @@ fi
 # 1) Shutdown all services
 $MPSERVERBASE/conf/scripts/setup/ServerSetup.py --unload All
 
-mkdir -p /tmp/MPUSrvUpgrade/Server/nginx/conf
-cp $MPSERVERBASE/nginx/conf/nginx.conf /tmp/MPUSrvUpgrade/Server/nginx/conf
-cp -r $MPSERVERBASE/nginx/conf/sites /tmp/MPUSrvUpgrade/Server/nginx/conf/sites
-
 # etc files
 mkdir -p /tmp/MPUSrvUpgrade/Server/etc
-cp $MPSERVERBASE/etc /tmp/MPUSrvUpgrade/Server/etc
+cp -r $MPSERVERBASE/etc /tmp/MPUSrvUpgrade/Server/
 
 # py app files
 mkdir -p /tmp/MPUSrvUpgrade/Server/apps
 cp $MPSERVERBASE/apps/*.cfg /tmp/MPUSrvUpgrade/Server/apps
 
 # Move the content files to tmp location
-mv $MPSERVERBASE/Content /tmp/MPUSrvUpgrade/Content
-
+if $MOVECONTENT; then
+	mv $MPSERVERBASE/Content /tmp/MPUSrvUpgrade/Content
+fi
 #rm -rf /tmp/MPUSrvUpgrade/Content/Web/tools
 
 # Move Base Bir
+if [ -d /opt/MacPatch_back ]; then
+	rm -rf /opt/MacPatch_back
+fi
+
 mv /opt/MacPatch /opt/MacPatch_back
 
 # ----------------------------------------------------------------------------
@@ -141,16 +147,9 @@ git clone https://github.com/LLNL/MacPatch.git -b $GITBRANCH
 # Restore
 # ----------------------------------------------------------------------------
 
-# nignx
-mv $MPSERVERBASE/nginx/conf/nginx.conf $MPSERVERBASE/nginx/conf/nginx.conf.back
-cp /tmp/MPUSrvUpgrade/Server/nginx/conf/nginx.conf $MPSERVERBASE/nginx/conf/nginx.conf
-
-mv $MPSERVERBASE/nginx/conf/sites $MPSERVERBASE/nginx/conf/sites.back
-cp -r /tmp/MPUSrvUpgrade/Server/nginx/sites $MPSERVERBASE/nginx/conf/sites
-
 # etc
 mv $MPSERVERBASE/etc $MPSERVERBASE/etc_orig
-mv /tmp/MPUSrvUpgrade/Server/etc $MPSERVERBASE/etc
+mv /tmp/MPUSrvUpgrade/Server/etc $MPSERVERBASE/
 
 # py app
 mv $MPSERVERBASE/apps/conf_console.cfg $MPSERVERBASE/apps/conf_console.cfg.back
@@ -163,23 +162,27 @@ mv $MPSERVERBASE/apps/conf_wsapi.cfg $MPSERVERBASE/apps/conf_wsapi.cfg.back
 cp /tmp/MPUSrvUpgrade/Server/apps/conf_wsapi.cfg $MPSERVERBASE/apps/conf_wsapi.cfg
 
 # Content
-rm -rf $MPSERVERBASE/Content/Web/clients
-mv /tmp/MPUSrvUpgrade/Content/Web/clients $MPSERVERBASE/Content/Web/clients
+if $MOVECONTENT; then
+	rm -rf $MPSERVERBASE/Content/Web/clients
+	mv /tmp/MPUSrvUpgrade/Content/Web/clients $MPSERVERBASE/Content/Web/clients
 
-rm -rf $MPSERVERBASE/Content/Web/patches
-mv /tmp/MPUSrvUpgrade/Content/Web/patches $MPSERVERBASE/Content/Web/patches
+	rm -rf $MPSERVERBASE/Content/Web/patches
+	mv /tmp/MPUSrvUpgrade/Content/Web/patches $MPSERVERBASE/Content/Web/patches
 
-rm -rf $MPSERVERBASE/Content/Web/sav
-mv /tmp/MPUSrvUpgrade/Content/Web/sav $MPSERVERBASE/Content/Web/sav
+	rm -rf $MPSERVERBASE/Content/Web/sav
+	mv /tmp/MPUSrvUpgrade/Content/Web/sav $MPSERVERBASE/Content/Web/sav
 
-rm -rf $MPSERVERBASE/Content/Web/sw
-mv /tmp/MPUSrvUpgrade/Content/Web/sw $MPSERVERBASE/Content/Web/sw
+	rm -rf $MPSERVERBASE/Content/Web/sw
+	mv /tmp/MPUSrvUpgrade/Content/Web/sw $MPSERVERBASE/Content/Web/sw
+fi
 
-# Update Schema
-cd $MPSERVERBASE/apps
-source env/bin/activate
-./mpapi.py db upgrade head
-deactivate
+if $MASTERSERVER; then
+	# Update Schema, only on master server
+	cd $MPSERVERBASE/apps
+	source env/bin/activate
+	./mpapi.py db upgrade head
+	deactivate
+fi
 
 # Start Services
 $MPSERVERBASE/conf/scripts/setup/ServerSetup.py --load All
