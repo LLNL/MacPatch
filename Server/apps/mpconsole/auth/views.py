@@ -95,13 +95,13 @@ def login():
 								search_scope=SUBTREE, attributes=ALL_ATTRIBUTES, get_operational_attributes=True)
 
 					if accountExists(form.username.data):
-						if accountIsEnabled(form.username.data):
+						if usersExistsInLDAPGroups(conn, form.username.data):
 							if user is None:
-								user = AdmUsers()
-								user.user_id = form.username.data
-								user.user_pass = "NA"
-								db.session.add(user)
-								db.session.commit()
+								user = addUser(form.username.data)
+
+						elif accountIsEnabled(form.username.data):
+							if user is None:
+								user = addUser(form.username.data)
 
 							session['user'] = form.username.data
 							login_user(user)
@@ -111,19 +111,16 @@ def login():
 							log("LDAP login sucessful for user %s" % (form.username.data))
 							return redirect(url_for('dashboard.index', username=user.user_id))
 					else:
-						user = AdmUsers()
-						user.user_id = form.username.data
-						user.user_pass = "NA"
-						db.session.add(user)
-						db.session.commit()
+						if usersExistsInLDAPGroups(conn, form.username.data):
+							user = addUser(form.username.data)
 
-						session['user'] = form.username.data
-						login_user(user)
-						recordLoginAndAssignIfNeeded(user.user_id, 2)
-						setLoginSessionInfo(user.user_id)
+							session['user'] = form.username.data
+							login_user(user)
+							recordLoginAndAssignIfNeeded(user.user_id, 2)
+							setLoginSessionInfo(user.user_id)
 
-						log("LDAP login sucessful for user %s" % (form.username.data))
-						return redirect(url_for('dashboard.index', username=user.user_id))
+							log("LDAP login sucessful for user %s" % (form.username.data))
+							return redirect(url_for('dashboard.index', username=user.user_id))
 
 		flash('Incorrect username or password.')
 		log_Error("Failed login attempt for user %s" % (form.username.data))
@@ -194,6 +191,70 @@ def setLoginSessionInfo(user_id):
 		_role = (_account.admin,_account.autopkg,_account.agentUpload,_account.apiAccess)
 
 	session['role'] = _role
+
+# ----
+# Helper methods
+# ----
+
+def addUser(username):
+	user = AdmUsers()
+	user.user_id = username
+	user.user_pass = "NA"
+	db.session.add(user)
+	db.session.commit()
+	return user
+
+# ----
+# LDAP Group Membership search
+# ----
+
+def usersExistsInLDAPGroups(ldap_conn, user_cn):
+	_ldapConf = return_data_for_root_key('ldap')
+
+	if 'enableGroupFilter' in _ldapConf:
+		if _ldapConf['enableGroupFilter'] == True:
+			if 'groupFilter' in _ldapConf:
+				for group in _ldapConf['groupFilter']:
+					if isUserInGroup(ldap_conn, group, user_cn):
+						return True
+			else:
+				log_Error("enableGroupFilter is active but groupFilter was not found.")
+			# Filter is enabled, user was not found
+			return False
+
+	return True
+
+def isUserInGroup(ldap_conn, groupName, user_cn):
+	_ldapConf = return_data_for_root_key('ldap')
+
+	if ldap_conn.bind():
+		group_filter_str = '(&(objectClass=GROUP)(cn={group_name}))'
+		filter = group_filter_str.replace('{group_name}', groupName)
+		ldap_conn.search(search_base=_ldapConf['searchbase'],search_filter=filter, search_scope=SUBTREE, attributes=ALL_ATTRIBUTES)
+
+		members = []
+		for entry in ldap_conn.response:
+			if 'member' in entry['attributes']:
+				for m in entry['attributes']['member']:
+					members.append(m)
+
+		if len(members) > 0:
+			for member in members:
+				_cn = getMemberCN(ldap_conn, member)
+				if _cn == user_cn:
+					return True
+
+	return False
+
+def getMemberCN(ldap_conn, memberDN):
+	if ldap_conn.bind():
+		ldap_conn.search(search_base=memberDN, search_filter='(objectClass=*)', search_scope=BASE, attributes='cn')
+
+		if len(ldap_conn.entries) == 1:
+			return ldap_conn.entries[0]['cn']
+
+	return None
+
 
 @auth.route("/logout")
 def logout():
