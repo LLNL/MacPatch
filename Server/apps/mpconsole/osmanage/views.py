@@ -24,7 +24,7 @@ from .. mplogger import *
 def profiles():
 	columns = [('profileID', 'Profile ID', '0'), ('profileIdentifier', 'Profile Identifier', '0'), ('profileName', 'Name', '1'),
 				('profileDescription', 'Description', '1'), ('profileRev', 'Revision', '1'), ('enabled', 'Enabled', '1'),
-				('uninstallOnRemove', 'Uninstall On Remove', '1')]
+			   ('isglobal', 'Global', '1'), ('uninstallOnRemove', 'Uninstall On Remove', '1')]
 
 	profileQuery = MpOsConfigProfiles.query.all()
 
@@ -33,7 +33,7 @@ def profiles():
 		row = {}
 		for c in columns:
 			y = "p."+c[0]
-			if c[0] == 'enabled' or c[0] == 'uninstallOnRemove':
+			if c[0] == 'enabled' or c[0] == 'uninstallOnRemove' or c[0] == 'isglobal':
 				row[c[0]] = "Yes" if eval(y) == 1 else "No"
 			else:
 				row[c[0]] = eval(y)
@@ -51,7 +51,7 @@ def profiles():
 def profileAdd():
 
 	profile_id = str(uuid.uuid4())
-	return render_template('os_managment/os_profile_manager.html', profileData={}, profileDataAlt={}, profileDataRE={}, profileID=profile_id)
+	return render_template('os_managment/os_profile_manager.html', profileData={}, profileCriteriaAlt={}, profileDataAlt={}, profileDataRE={}, profileID=profile_id)
 
 '''
 	This method renders the os_profile_manager.html File
@@ -60,7 +60,36 @@ def profileAdd():
 @osmanage.route('/profiles/update/<profile_id>')
 @login_required
 def profileEdit(profile_id):
+
+	cri = {} # Global Criteria
+	groupPolicyID = ''
+
 	profile = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID == profile_id).first()
+
+	if profile is not None:
+		if profile.isglobal == 1:
+			groupPolicy = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == 0, MpOsProfilesGroupAssigned.profileID == profile_id).first()
+			if groupPolicy is not None:
+				groupPolicyID = groupPolicy.gPolicyID
+
+
+				criteriaQuery = MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == groupPolicyID).order_by(
+				MpOsProfilesCriteria.type_order.asc()).all()
+
+				profileCritLst = []
+				for crit in criteriaQuery:
+					patchCritDict = crit.__dict__
+					del patchCritDict['_sa_instance_state']
+					del patchCritDict['rid']
+					if patchCritDict['type'] == "Script":
+						patchCritDict['type_data'] = escapeStringForACEEditor(patchCritDict['type_data'])
+
+					profileCritLst.append(patchCritDict)
+
+				cri = {}
+				for c in criteriaQuery:
+					cri[c.type] = c.type_data
+
 	# Parse BLOB Data
 	pData = str(profile.profileData)
 	pData = unicode(pData, errors='replace')
@@ -74,7 +103,8 @@ def profileEdit(profile_id):
 		pData2 = pData2.replace('\\n', '')  # Remove \n from string purely for formatting
 		pretty_string = indent(pData2,indentation='    ')
 
-	return render_template('os_managment/os_profile_manager.html', profileData=profile, profileDataAlt=pData, profileDataRE=pretty_string, profileID=profile_id)
+	return render_template('os_managment/os_profile_manager.html', profileData=profile, profileDataAlt=pData, profileCriteriaAlt=cri,
+						   profileDataRE=pretty_string, profileID=profile_id, groupPolicyID=groupPolicyID)
 
 ''' Private '''
 '''
@@ -112,6 +142,7 @@ def profileSave(profile_id):
 		setattr(profile, 'profileName', formDict['profileName'])
 		setattr(profile, 'profileDescription', formDict['profileDescription'])
 		setattr(profile, 'enabled', formDict['enabled'])
+		setattr(profile, 'isglobal', formDict['isglobal'])
 		setattr(profile, 'uninstallOnRemove', formDict['uninstallOnRemove'])
 		setattr(profile, 'mdate', datetime.now())
 
@@ -127,11 +158,107 @@ def profileSave(profile_id):
 			log("{} updated config profile {}.".format(session.get('user'), formDict['profileName']))
 
 		db.session.commit()
+
+		if formDict['isglobal'] == '1':
+			gres = updateGlobalProfileCriteria(profile_id, formDict)
+			if gres:
+				log("Global profile criteria was added for {}".format(formDict['profileName']))
+
+
 		return json.dumps({'error': 0}), 200
 
 	else:
 		log_Error("{} does not have permission to save config profile.".format(session.get('user')))
 		return json.dumps({'error': 0}), 403
+
+def updateGlobalProfileCriteria(profile_id, formDict):
+
+	# This is the global group ID
+	groupID = 0
+
+	if groupAdminRights(groupID) or localAdmin():
+
+		gPolicyID = str(uuid.uuid4())
+		if 'gPolicyID' in formDict:
+			if formDict['gPolicyID'] is not None and len(formDict['gPolicyID']) >= 1:
+				gPolicyID = formDict['gPolicyID']
+
+		addNew = False
+		qPolicy = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.gPolicyID == gPolicyID).first()
+		if not qPolicy:
+			addNew = True
+			qPolicy = MpOsProfilesGroupAssigned()
+
+		setattr(qPolicy, 'gPolicyID', gPolicyID)
+		setattr(qPolicy, 'profileID', profile_id)
+		setattr(qPolicy, 'groupID', groupID)
+		setattr(qPolicy, 'title', 'Global')
+		setattr(qPolicy, 'description', 'Global')
+		setattr(qPolicy, 'enabled', formDict['enabled'])
+
+		if addNew:
+			db.session.add(qPolicy)
+			log("{} added global group config profile {}.".format(session.get('user'), profile_id))
+		else:
+			log("{} updated global group config profile {}.".format(session.get('user'), profile_id))
+
+		# Set profile assignment policy filter
+		MpOsProfilesCriteria.query.filter(MpOsProfilesCriteria.gPolicyID == gPolicyID).delete()
+		for key in formDict:
+			if key.startswith('cri_'):
+					cri = MpOsProfilesCriteria()
+					setattr(cri, 'gPolicyID', gPolicyID)
+					if key == 'cri_os_type':
+						setattr(cri, 'type', 'OSType')
+						setattr(cri, 'type_data', formDict[key])
+						setattr(cri, 'type_order', 1)
+						db.session.add(cri)
+						continue
+
+					if key == 'cri_os_ver':
+						setattr(cri, 'type', 'OSVersion')
+						setattr(cri, 'type_data', formDict[key])
+						setattr(cri, 'type_order', 2)
+						db.session.add(cri)
+						continue
+
+					if key == 'cri_system_type':
+						setattr(cri, 'type', 'SYSType')
+						setattr(cri, 'type_data', formDict[key])
+						setattr(cri, 'type_order', 3)
+						db.session.add(cri)
+						continue
+
+					if key == 'cri_model_type':
+						setattr(cri, 'type', 'ModelType')
+						setattr(cri, 'type_data', formDict[key])
+						setattr(cri, 'type_order', 4)
+						db.session.add(cri)
+						continue
+
+			if key.startswith('req_cri_type_'):
+
+				formLst = key.split('_')
+				nid = formLst[-1]
+				norder = int(formDict['req_cri_order_'+str(nid)])
+				if norder <= 4:
+					norder = norder + 4
+
+				formData = formDict['req_cri_data_'+str(nid)]
+				formType = formDict['req_cri_type_'+str(nid)]
+
+				cri = MpOsProfilesCriteria()
+				setattr(cri, 'gPolicyID', gPolicyID)
+				setattr(cri, 'type', formType)
+				setattr(cri, 'type_data', formData)
+				setattr(cri, 'type_order', norder)
+				db.session.add(cri)
+
+		db.session.commit()
+		return True
+	else:
+		log_Error("{} is not an admin no profile criteria can be added.".format(session.get('user')))
+		return False
 
 ''' AJAX Request '''
 @osmanage.route('/profile/delete',methods=['DELETE'])

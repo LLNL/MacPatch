@@ -73,17 +73,18 @@ class ClientProfile():
 			_group_name = q_result.Domain
 		return _group_name
 
-	def profilesForGroup(self, clientGroup):
+	def profilesForGroup(self, clientGroupID):
 		_profiles = []
 
-		q_result = MpOsConfigProfilesAssigned.query.filter(MpOsConfigProfilesAssigned.groupID == clientGroup).all()
-		q_Global = MpOsConfigProfilesAssigned.query.filter(MpOsConfigProfilesAssigned.groupID == 'Global').all()
-		if q_result is not None:
-			for row in q_result:
+		q_grp_result = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == clientGroupID).all()
+		q_glb_result = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == '0').all()
+
+		if q_grp_result is not None:
+			for row in q_grp_result:
 				_profiles.append(row.profileID)
 
-		if q_Global is not None:
-			for row in q_Global:
+		if q_glb_result is not None:
+			for row in q_glb_result:
 				_profiles.append(row.profileID)
 
 		return _profiles
