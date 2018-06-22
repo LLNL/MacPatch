@@ -625,7 +625,7 @@ def serversLog(server,type):
 
 	_data = []
 	_url = "https://{}:3600/api/v2/server/log/{}/{}/{}".format(server, _uuid, type, srvHash)
-	r = requests.get(_url)
+	r = requests.get(_url, verify=False)
 	if r.status_code == 200:
 		rawData = json.loads(r.text)
 		_data = rawData['data']
