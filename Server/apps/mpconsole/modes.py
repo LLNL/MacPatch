@@ -1,5 +1,5 @@
 from flask import session
-from . model import AdmUsersInfo
+from . model import AdmUsersInfo, MpClientGroupAdmins
 
 def localAdmin():
 	qUsr = AdmUsersInfo.query.filter(AdmUsersInfo.user_id == session['user']).first()

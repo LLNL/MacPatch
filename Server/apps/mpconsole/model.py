@@ -1,6 +1,6 @@
 from mpconsole import db
 
-# Rev 9
+# Rev 10
 #
 
 from datetime import *
@@ -709,6 +709,7 @@ class MpOsConfigProfiles(CommonBase):
 	profileHash         = Column(String(50))
 	profileRev          = Column(Integer)
 	enabled             = Column(Integer, server_default='0')
+	isglobal              = Column(INTEGER(1), server_default='0')
 	uninstallOnRemove   = Column(Integer, server_default='1')
 	cdate               = Column(DateTime, server_default='1970-01-01 00:00:00')
 	mdate               = Column(DateTime, server_default='1970-01-01 00:00:00')
