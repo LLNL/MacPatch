@@ -58,8 +58,20 @@ class SoftwareTasksForGroup(MPResource):
 				if q_sw_group_data is not None and q_sw_group_data.gData is not None:
 					_group_data = json.loads(q_sw_group_data.gData)
 
-			# gData from database is pre-formatted {"errorNo":"0","errorMsg":"","result":{"Tasks":[]}}
 
+				# if group request is same as client default group append alt group data
+				_sw_group_id, _sw_group_alt_id = self.softwareGroupsForClient(cuuid)
+				if _sw_group_id == _group_id:
+					q_sw_group_alt_data = MpSoftwareTasksData.query.filter(MpSoftwareTasksData.gid == _sw_group_alt_id).first()
+					if q_sw_group_alt_data is not None and q_sw_group_alt_data.gData is not None:
+						_group_alt_data = json.loads(q_sw_group_alt_data.gData) # Parse the JSON Data
+						_merge_list = _group_data['result']['Tasks'] + _group_alt_data['result']['Tasks'] # Merge Both Tasks Lists
+						_new_tasks = {v['id']:v for v in _merge_list}.values() # Filter out any duplicates
+
+						# Replace old tasks list with new merged list
+						_group_data['result']['Tasks'] = _new_tasks
+
+			# gData from database is pre-formatted {"errorNo":"0","errorMsg":"","result":{"Tasks":[]}}
 			if osver != "*":
 				_tasks_new = []
 				_result = _group_data['result']
@@ -100,6 +112,26 @@ class SoftwareTasksForGroup(MPResource):
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			log_Error('[SoftwareTasksForGroup][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
 			return wsResult.resultNoSignature(errorno=500, errormsg=e.message), 500
+
+	def softwareGroupsForClient(self, clientID):
+
+		group_id = 0
+		sw_group_id = ''
+		sw_group_alt_id = ''
+
+		qGroupMembership = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == clientID).first()
+		if qGroupMembership is not None:
+			group_id = qGroupMembership.group_id
+
+			qGroupSettings = MpClientSettings.query.filter(MpClientSettings.group_id == group_id).all()
+			if qGroupSettings is not None:
+				for row in qGroupSettings:
+					if row.key == 'software_group':
+						sw_group_id = row.value
+					elif row.key == 'inherited_software_group':
+						sw_group_alt_id = row.value
+
+		return sw_group_id, sw_group_alt_id
 
 class SoftwareTaskForTaskID(MPResource):
 
