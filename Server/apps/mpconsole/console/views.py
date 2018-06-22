@@ -123,7 +123,7 @@ def accountAdd():
 			db.session.add(usr)
 			db.session.add(usrInf)
 			db.session.commit()
-			log("{} added user account {}.".format(session.get('user'), user_id))
+			log("{} added user account {}.".format(session.get('user'), data['user_id']))
 
 		return accounts()
 
