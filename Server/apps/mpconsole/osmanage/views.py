@@ -26,13 +26,26 @@ def profiles():
 				('profileDescription', 'Description', '1'), ('profileRev', 'Revision', '1'), ('enabled', 'Enabled', '1'),
 			   ('isglobal', 'Global', '1'), ('uninstallOnRemove', 'Uninstall On Remove', '1')]
 
-	profileQuery = MpOsConfigProfiles.query.all()
+	return render_template('os_managment/os_profiles.html', data=[], columns=columns)
 
+# JSON Routes
+# This method is called by os_profiles.html for a list of profiles
+# This is done so that the refresh can be used
+@osmanage.route('/profiles/list')
+@login_required
+def profilesListJSON():
 	_results = []
+
+	columns = [('profileID', 'Profile ID', '0'), ('profileIdentifier', 'Profile Identifier', '0'),
+			   ('profileName', 'Name', '1'),
+			   ('profileDescription', 'Description', '1'), ('profileRev', 'Revision', '1'), ('enabled', 'Enabled', '1'),
+			   ('isglobal', 'Global', '1'), ('uninstallOnRemove', 'Uninstall On Remove', '1')]
+
+	profileQuery = MpOsConfigProfiles.query.order_by(MpOsConfigProfiles.mdate.desc()).all()
 	for p in profileQuery:
 		row = {}
 		for c in columns:
-			y = "p."+c[0]
+			y = "p." + c[0]
 			if c[0] == 'enabled' or c[0] == 'uninstallOnRemove' or c[0] == 'isglobal':
 				row[c[0]] = "Yes" if eval(y) == 1 else "No"
 			else:
@@ -40,7 +53,7 @@ def profiles():
 
 		_results.append(row)
 
-	return render_template('os_managment/os_profiles.html', data=_results, columns=columns)
+	return json.dumps({'data': _results}, default=json_serial), 200
 
 '''
 	This method renders the os_profile_manager.html File
@@ -551,3 +564,11 @@ def escapeStringForACEEditor(data_string):
 	result = result.replace('${','\${')
 	result = result.replace('}','\}')
 	return result
+
+def json_serial(obj):
+	"""JSON serializer for objects not serializable by default json code"""
+
+	if isinstance(obj, datetime):
+		serial = obj.isoformat()
+		return serial
+	raise TypeError("Type not serializable")

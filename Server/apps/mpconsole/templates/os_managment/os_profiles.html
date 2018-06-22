@@ -13,7 +13,7 @@
 
 {% block bodyPanel %}
 
-	<table id="table" data-toolbar="#toolbar" class="table table-condensed" data-show-export="true">
+	<table id="table" data-toolbar="#toolbar" class="table table-condensed">
 		<div id="toolbar">
 			{% if session.role[0] == 1 %}
 			<button id="addButton" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button>
@@ -34,68 +34,64 @@
 	<script>
 	$( document ).ready(function()
 	{
-			$('#table').bootstrapTable(
-			{
-				striped: true,
-				pagination: true,
-				sidePagination: 'client',
-				pageList: ['10', '25', '50', '100', 'All'],
-				search: true,
-				showRefresh: false,
-				resizable: true,
-				sortable: true,
-				showColumns: false,
-				icons: {
-					refresh: 'fa fa-refresh',
-					toggle: 'fa fa-th-list',
-					columns: 'fa fa-columns',
-					detailOpen: 'glyphicon glyphicon-info-sign',
-					detailClose: 'glyphicon glyphicon-minus-sign'
-				},
-				idField: 'profileID',
-				columns: [
-				{
-					field: 'state',
-					checkbox: true,
-					rowspan: 1,
-					align: 'center',
-					valign: 'middle',
-					width: 40,
-					{% if session.role[0] != 1 %}
-					visible: false,
-					{% endif %}
-				},
-				{
-					field: 'operate',
-					title: '',
-					align: 'center',
-					events: operateEvents,
-					formatter: operateFormatter,
-					width: 60
-				},
-				{% for col in columns %}
-				{
-					field: '{{col[0]}}',
-					title: '{{col[1]}}',
-					{% if col[0] == 'profileID' %}
-					visible: false,
-					{% elif col[2] == '0' %}
-					visible: false,
-					{% endif %}
-					sortable: true
-				},
-				{% endfor %}
-				],
-				data: [
-					{% for d in data %}
-					{
-						{% for col in columns %}
-							{{col[0]}} : `{{ d[col[0]] }}`,
-						{% endfor %}
-					},
-					{% endfor %}
-				]
-			});
+		$('#table').bootstrapTable(
+		  {
+			  url: "/osmanage/profiles/list",
+			  striped: true,
+			  pagination: true,
+			  sidePagination: 'client',
+			  showRefresh: true,
+			  pageList: ['10', '25', '50', '100', 'All'],
+			  search: true,
+			  idField: 'profileID',
+			  sortable: true,
+			  showColumns: true,
+
+			  columns: [
+			  {
+				  field: 'state',
+				  checkbox: true,
+				  rowspan: 1,
+				  align: 'center',
+				  valign: 'middle',
+				  width: 40,
+				  {% if session.role[0] != 1 %}
+				  visible: false,
+				  {% endif %}
+			  },
+			  {
+				  field: 'operate',
+				  title: '',
+				  align: 'center',
+				  events: operateEvents,
+				  formatter: operateFormatter,
+				  width: 60
+			  },
+
+
+			  {% for col in columns %}
+			  {
+				  field: '{{col[0]}}',
+				  title: '{{col[1]}}',
+				  {% if col[0] == 'profileID' %}
+				  visible: false,
+				  {% elif col[2] == '0' %}
+				  visible: false,
+				  {% endif %}
+				  sortable: true
+			  },
+			  {% endfor %}
+			  ],
+			  data: [
+				  {% for d in data %}
+				  {
+					  {% for col in columns %}
+						  {{col[0]}} : `{{ d[col[0]] }}`,
+					  {% endfor %}
+				  },
+				  {% endfor %}
+			  ]
+		});
 	});
 
 	var $table = $('#table'), $delButton = $('#delButton'), $addButton = $('#addButton');
