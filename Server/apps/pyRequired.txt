@@ -36,7 +36,6 @@ Jinja2==2.10
 ldap3==2.5
 Mako==1.0.7
 MarkupSafe==1.0
-mysql-connector-python-rf==2.2.2
 passlib==1.7.1
 protobuf==3.5.2.post1
 pyasn1==0.4.2
@@ -55,3 +54,5 @@ uWSGI==2.0.17
 Werkzeug==0.14.1
 WTForms==2.1
 yattag==1.10.0
+pymysql>=0.9.0
+# mysql-connector-python-rf==2.2.2

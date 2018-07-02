@@ -156,7 +156,9 @@ def readServerMetadata(metaURL):
 					if localization.has_key('title'):
 						title = localization['title']
 					if localization.has_key('description'):
-						description = base64.b64encode(str(localization['description']).encode('utf-8'))
+						descASCII = localization['description'].encode('ascii', 'ignore').decode('ascii')
+						description = base64.b64encode(descASCII)
+						#description = base64.b64encode(str(localization['description']).encode('utf-8'))
 
 		except Exception, e:
 			logger.error("Error: %s" % e)

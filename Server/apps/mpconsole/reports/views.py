@@ -22,11 +22,11 @@ def new():
 	inv_tables.append(['mp_clients_plist',0])
 	inv_tables.append(['mp_clients',0])
 
-	sql_tables = '''
+	sql_tables = text('''
 		Select DISTINCT TABLE_NAME
 		FROM INFORMATION_SCHEMA.COLUMNS
 		WHERE TABLE_NAME LIKE 'mpi_%'
-		AND TABLE_SCHEMA='MacPatchDB3';'''
+		AND TABLE_SCHEMA='MacPatchDB3';''')
 	result = db.engine.execute(sql_tables)
 	for row in result:
 		inv_tables.append([str(row[0]),0])
@@ -52,11 +52,11 @@ def editReport(id):
 	raw_tables.append('mp_clients_plist')
 	raw_tables.append('mp_clients')
 
-	sql_tables = '''
+	sql_tables = text('''
 		Select DISTINCT TABLE_NAME
 		FROM INFORMATION_SCHEMA.COLUMNS
 		WHERE TABLE_NAME LIKE 'mpi_%'
-		AND TABLE_SCHEMA='MacPatchDB3';'''
+		AND TABLE_SCHEMA='MacPatchDB3';''')
 	result = db.engine.execute(sql_tables)
 	for row in result:
 		_tbl = str(row[0])

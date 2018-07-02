@@ -959,7 +959,11 @@ done:
             return;
         }
         NSArray 		*approvedApplePatches 	 = [patchGroupPatches objectForKey:@"AppleUpdates"];
+		[approvedApplePatches writeToFile:@"/tmp/approvedApplePatches.plist" atomically:NO];
+		
         NSArray 		*approvedCustomPatches 	 = [patchGroupPatches objectForKey:@"CustomUpdates"];
+		[approvedCustomPatches writeToFile:@"/tmp/approvedCustomPatches.plist" atomically:NO];
+		
 		NSMutableArray	*userInstallApplePatches = [[NSMutableArray alloc] init];
         
         // Scan for Apple Patches

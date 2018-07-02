@@ -265,7 +265,7 @@ def modelTypeCollection(model):
 
 	# Get Model Info
 	sqlStr = text("""
-				SELECT *, hw.mpa_Model_Identifier AS modelType, cg.group_id as client_group, 
+				SELECT *, hw.mpa_Model_Identifier AS modelType, cg.group_id as client_group,
 				ds.mpa_distinguishedName as addn, ds.mpa_ADDomain as addomain
 				FROM mp_clients mpc
 				LEFT JOIN mpi_SPHardwareOverview hw ON hw.cuuid = mpc.cuuid

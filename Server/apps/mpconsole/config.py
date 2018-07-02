@@ -25,7 +25,7 @@ class BaseConfig:
 	DB_HOST                         = 'localhost'
 	DB_PORT                         = '3306'
 	DB_NAME                         = 'MacPatchDB'
-	SQLALCHEMY_DATABASE_URI         = 'mysql+mysqlconnector://'
+	SQLALCHEMY_DATABASE_URI         = 'mysql+pymysql://'
 	SQLALCHEMY_TRACK_MODIFICATIONS  = False
 	SQLALCHEMY_POOL_SIZE            = 50
 	SQLALCHEMY_POOL_TIMEOUT         = 20
