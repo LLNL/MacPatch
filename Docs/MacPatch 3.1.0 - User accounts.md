@@ -64,7 +64,7 @@ Assiging rights to ldap users is just like a standard account. The only differen
 #### Account Rights <a name='a3'></a>
 
 |Right |Description|
-|---|---|---|---|---|
+|---|---|
 |Admin | This right gives the user admin rights through out the console.|
 |AutoPKG | This right allows the user account to upload new packages using the autopkg tool.  |
 |Agent Upload | This rtight allows the user to upload new MacPatch client agents. |
