@@ -1,4 +1,4 @@
-# MacPatch 3.0.0 - Install & Setup
+# MacPatch 3.1.0 - Server Install & Setup
 
 ### Description
 This document will walk you through the install and setup of the MacPatch 3.x environment.  
@@ -22,7 +22,7 @@ This document will walk you through the install and setup of the MacPatch 3.x en
 * [Download and Add Patch Content](#a5)
 	* [Apple Patches](#a5a)
 	* [Custom Patches](#a5b)
-* [Upload Client Software](#a6)
+* [Client Software](#a6)
 
 ### Prequisits & Requirements
 root or sudo access will be needed to perform these tasks.
@@ -215,13 +215,6 @@ To use "AutoPkg" to add patch content please read the "AutoPkg patch content" [d
 
 --
 
-### Upload Client Software <a name='a6'></a>
+### Client Software <a name='a6'></a>
 
-To upload a client agent you will need to build the client first. Please follow the Building the Client document before continuing.
-
-* Go to “Admin-> Client Agents -> Deploy”
-* Download the “MacPatch Agent Uploader”
-* Double Click the “Agent Uploader.app”
-	* Enter the MacPatch Server
-	* Choose the agent package (e.g. MPClientInstall.pkg.zip)
-	* Click “Upload” button
+["Client - Build and Upload Documenation"](Client - Build and Upload.md)
