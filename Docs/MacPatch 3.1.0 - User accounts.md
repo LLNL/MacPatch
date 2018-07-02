@@ -2,8 +2,8 @@
 
 ### Table of Contents
 * [Default Admin Account](#a1)
-	* [Change Password] (#a1a)
-	* [Disable Admin Account] (#a1b)
+	* [Change Password](#a1a)
+	* [Disable Admin Account](#a1b)
 * [User Accounts](#a2)
 	* [Standard Accounts](#a2a)
 	* [Directory Accounts](#a2b)
