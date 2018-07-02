@@ -217,4 +217,4 @@ To use "AutoPkg" to add patch content please read the "AutoPkg patch content" [d
 
 ### Client Software <a name='a6'></a>
 
-["Client - Build and Upload Documenation"](Client - Build and Upload.md)
+["Client - Build and Upload Documenation"](./Client%20-%20Build%20and%20Upload.md)
