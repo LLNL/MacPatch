@@ -49,7 +49,8 @@ USEUBUNTU=false
 USEMACOS=false
 MACPROMPTFORXCODE=true
 MACPROMPTFORBREW=true
-USEOLDPY=false
+ASUSSERVER="swscan.apple.com"
+LOCALHOST=`hostname`
 
 MPBASE="/opt/MacPatch"
 MPSRVCONTENT="${MPBASE}/Content"
@@ -86,11 +87,6 @@ elif [[ "$unamestr" == 'Darwin' ]]; then
 	majorVer=`echo $systemVersion | cut -d . -f 1,2  | sed 's/\.//g'`
 	minorVer=`echo $systemVersion | cut -d . -f 2`
 	buildVer=`echo $systemVersion | cut -d . -f 3`
-
-	# Test for Brew
-	# if type brew 2>/dev/null; then
-	#	MACPROMPTFORBREW=false
-	#fi
 fi
 
 # Script Input Args ----------------------------------------------------------
@@ -434,7 +430,11 @@ fi
 cp ${MPSERVERBASE}/conf/reposado/preferences.plist ${MPSERVERBASE}/Reposado/code/preferences.plist
 perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
 perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
+perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
 # ask if you want to change hostanme & default sus-content server
+perl -pi -e "s#\[SUS-BASE-SERVER\]#$ASUSSERVER#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
+perl -pi -e "s#\[SUS-SERVER-NAME\]#$LOCALHOST#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
+
 
 # ------------------
 # Link & Set Permissions
@@ -465,7 +465,7 @@ fi
 USER="MacPatch"
 EMAIL="admin@localhost"
 ORG="MacPatch"
-DOMAIN=`hostname`
+DOMAIN="$LOCALHOST"
 COUNTRY="NO"
 STATE="State"
 LOCATION="Country"
