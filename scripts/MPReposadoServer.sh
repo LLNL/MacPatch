@@ -430,6 +430,12 @@ if [ $? != 0 ]l; then
 	mv reposado-master Reposado
 fi
 
+# Copy
+cp ${MPSERVERBASE}/conf/reposado/preferences.plist ${MPSERVERBASE}/Reposado/code/preferences.plist
+perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
+perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
+# ask if you want to change hostanme & default sus-content server
+
 # ------------------
 # Link & Set Permissions
 # ------------------
@@ -502,10 +508,14 @@ chmod -R 0775 "${MPSERVERBASE}/etc"
 # ------------------
 if $USEMACOS; then
 	echo " - Add launchd job to auto start reposado content sync"
+	cp ${MPSERVERBASE}/conf/launchd/gov.llnl.mp.reposado.sync.plist /Library/LaunchDaemons/gov.llnl.mp.reposado.sync.plist
+	chown root:wheel /Library/LaunchDaemons/gov.llnl.mp.reposado.sync.plist
+	chmod 0644 /Library/LaunchDaemons/gov.llnl.mp.reposado.sync.plist
 else
 	echo " - Add cron job to auto start reposado content sync"
 	# Add Crontab
 	# 0 */8 * * * /Library/MacPatch/Reposado/reposado/code/repo_sync
+	echo "Cron job needs to be created"
 fi
 
 
