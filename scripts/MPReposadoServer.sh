@@ -343,6 +343,10 @@ fi
 perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $MPSERVERBASE/nginx/conf/nginx.conf
 
 echo
+echo "* Enable SSL support"
+echo "-----------------------------------------------------------------------"
+
+echo
 echo "Would you like to enable ssl support for Reposado content?"
 echo "Note, http support for content will still be enabled."
 echo
@@ -363,7 +367,9 @@ if $ENABLESSL; then
 	done
 fi
 
-# Clone Reposado SW
+echo
+echo "* Clone Reposado software"
+echo "-----------------------------------------------------------------------"
 cd /opt/MacPatch/Server
 git clone https://github.com/wdas/Reposado.git
 if [ $? != 0 ]l; then
