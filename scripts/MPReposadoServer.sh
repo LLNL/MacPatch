@@ -472,9 +472,12 @@ if $USEMACOS; then
 	chmod 0644 /Library/LaunchDaemons/gov.llnl.mp.reposado.sync.plist
 else
 	echo " - Add cron job to auto start reposado content sync"
-	# Add Crontab
-	# 0 */8 * * * /Library/MacPatch/Reposado/reposado/code/repo_sync
-	echo "Cron job needs to be created"
+	crontab -l > /tmp/mycron
+	#echo new cron into cron file
+	echo "0 */8 * * * /Library/MacPatch/Reposado/reposado/code/repo_sync" >> /tmp/mycron
+	#install new cron file
+	crontab /tmp/mycron
+	rm /tmp/mycron
 fi
 
 
@@ -497,5 +500,15 @@ echo "   Start NGINX:"
 echo "   sudo systemctl enable MPNginx3.service"
 echo "   sudo systemctl start MPNginx3.service"
 echo
+	if $ENABLESSL; then
+		echo
+		echo "   NOTE: SSL is enabled"
+		echo
+		echo "   This server IS using a self-signed certificate."
+		echo "   It's strongly recommended that an actual signed certificate be installed"
+		echo
+		echo "   The NGINX ssl certs and keys live in $certsDir"
+		echo
+	fi
 fi
 exit 0;
