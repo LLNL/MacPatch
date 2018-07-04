@@ -48,9 +48,9 @@ USERHEL=false
 USEUBUNTU=false
 USEMACOS=false
 MACPROMPTFORXCODE=true
-MACPROMPTFORBREW=true
 ASUSSERVER="swscan.apple.com"
 LOCALHOST=`hostname`
+ENABLESSL=false
 
 MPBASE="/opt/MacPatch"
 MPSRVCONTENT="${MPBASE}/Content"
@@ -124,7 +124,6 @@ done
 clear
 
 if $USEMACOS; then
-
 	if $MACPROMPTFORXCODE; then
 		clear
 		echo
@@ -141,31 +140,6 @@ if $USEMACOS; then
 		read -p "Would you like to continue (Y/N)? [Y]: " XCODEOK
 		XCODEOK=${XCODEOK:-Y}
 		if [ "$XCODEOK" == "Y" ] || [ "$XCODEOK" == "y" ] ; then
-			echo
-		else
-			exit 1
-		fi
-	fi
-
-	if $MACPROMPTFORBREW; then
-		echo
-		echo "* Brew requirements"
-		echo "-----------------------------------------------------------------------"
-		echo
-		echo "Server Build Requires Brew to be installed."
-		echo
-		echo "To install brew go to https://brew.sh and follow the install"
-		echo "directions."
-		echo
-		echo "This install requires \"OpenSSL\", \"SWIG\" and \"GPM\" to be installed"
-		echo "using brew. It's recommended that you install these two"
-		echo "applications before continuing."
-		echo
-		echo "Exapmple: brew install openssl swig gpm"
-		echo
-		read -p "Would you like to continue (Y/N)? [Y]: " BREWOK
-		BREWOK=${BREWOK:-Y}
-		if [ "$BREWOK" == "Y" ] || [ "$BREWOK" == "y" ] ; then
 			echo
 		else
 			exit 1
@@ -262,6 +236,8 @@ echo "* Create MacPatch server directory structure."
 echo "-----------------------------------------------------------------------"
 mkdirP ${MPBASE}
 mkdirP ${MPSRVCONTENT}/Reposado
+mkdirP ${MPSRVCONTENT}/Reposado/html
+mkdirP ${MPSRVCONTENT}/Reposado/metadata
 mkdirP ${MPSERVERBASE}/Reposado
 mkdirP ${MPSERVERBASE}/lib
 mkdirP ${MPSERVERBASE}/logs
@@ -273,9 +249,6 @@ if $USEMACOS; then
 	echo
 	echo "* Uncompress source files needed for build"
 	echo "-----------------------------------------------------------------------"
-
-	# Copy Agent Uploader
-	cp ${MPSERVERBASE}/conf/Content/Web/tools/MPAgentUploader.zip ${MPBASE}/Content/Web/tools/
 
 	PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
 	OSSL_SW=`find "${SRC_DIR}" -name "openssl-"* -type f -exec basename {} \; | head -n 1`
@@ -289,48 +262,6 @@ if $USEMACOS; then
 	echo " - Uncompress ${OSSL_SW}"
 	mkdir -p ${TMP_DIR}/openssl
 	tar xfz ${SRC_DIR}/${OSSL_SW} --strip 1 -C ${TMP_DIR}/openssl
-
-	# BREW Software Check
-	XOPENSSL=false
-	declare -i needsInstall=0
-	sudo -u _appserver bash -c "brew list | grep openssl > /dev/null 2>&1"
-	if [ $? != 0 ] ; then
-		# echo "OpenSSL is not installed using brew. Please install openssl."
-		needsInstall=1
-		XOPENSSL=true
-	fi
-
-	XSWIG=false
-	sudo -u _appserver bash -c "brew list | grep swig > /dev/null 2>&1"
-	if [ $? != 0 ] ; then
-		# echo "SWIG is not installed using brew. Please install swig."
-		needsInstall=1
-		XSWIG=true
-	fi
-
-	if [ "$needsInstall" -gt 0 ]; then
-		echo
-		echo
-		echo "* Missing Required Software (brew packages)"
-		echo "--------------------------------------------"
-		if $XOPENSSL; then
-			echo "Please install OpenSSL: brew install openssl"
-		fi
-		if $XSWIG; then
-			echo "Please install SWIG: brew install swig"
-		fi
-		echo
-		echo "Please open a new terminal and install the missing packages"
-		echo "and continue with the script."
-		echo
-		read -p "Ready to continue (Y/N)? [Y]: " BREWSWOK
-		BREWSWOK=${BREWSWOK:-Y}
-		if [ "$BREWSWOK" == "Y" ] || [ "$BREWSWOK" == "y" ] ; then
-			echo
-		else
-			exit 1
-		fi
-	fi
 fi
 
 # ------------------
@@ -342,7 +273,7 @@ if $USELINUX; then
 	echo "-----------------------------------------------------------------------"
 	if $USERHEL; then
 		# Check if needed packges are installed or install
-		pkgs=("gcc" "gcc-c++" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release" "python-devel" "python-setuptools" "python-pip")
+		pkgs=("gcc" "gcc-c++" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release")
 		for i in "${pkgs[@]}"
 		do
 			p=`rpm -qa --qf '%{NAME}\n' | grep -e ${i}$ | head -1`
@@ -353,7 +284,7 @@ if $USELINUX; then
 		done
 	elif $USEUBUNTU; then
 		#statements
-		pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev" "python-dev" "python-pip")
+		pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev")
 		for i in "${pkgs[@]}"
 		do
 			p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
@@ -399,7 +330,8 @@ fi
 
 make  >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 make install >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
-
+ 
+# Backup and Copy NGINX config files 
 mv ${MPSERVERBASE}/nginx/conf/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf.orig
 if $USEMACOS; then
 	echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
@@ -408,15 +340,28 @@ else
 	echo " - Copy nginx.conf to ${MPSERVERBASE}/nginx/conf/nginx.conf"
 	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.repo ${MPSERVERBASE}/nginx/conf/nginx.conf
 fi
-
 perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $MPSERVERBASE/nginx/conf/nginx.conf
-FILES=$MPSERVERBASE/nginx/conf/sites/*.conf
-for f in $FILES
-do
-	#echo "$f"
-	perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $f
-	perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $f
-done
+
+echo
+echo "Would you like to enable ssl support for Reposado content?"
+echo "Note, http support for content will still be enabled."
+echo
+read -p "Enable ssl support for Reposado content (Y/N)? [Y]: " SUSSSL
+SUSSSL=${SUSSSL:-Y}
+if [ "$SUSSSL" == "Y" ] || [ "$SUSSSL" == "y" ] ; then
+	ENABLESSL=true
+fi
+
+if $ENABLESSL; then
+	echo " - Copy nginx sites to ${MPSERVERBASE}/nginx/conf/sites"
+	cp -r ${MPSERVERBASE}/conf/nginx/sites ${MPSERVERBASE}/nginx/conf/sites
+	FILES=$MPSERVERBASE/nginx/conf/sites/*.conf
+	for f in $FILES
+	do
+		perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $f
+		perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $f
+	done
+fi
 
 # Clone Reposado SW
 cd /opt/MacPatch/Server
@@ -426,7 +371,7 @@ if [ $? != 0 ]l; then
 	mv reposado-master Reposado
 fi
 
-# Copy
+# Copy Reposado Plist and set variables
 cp ${MPSERVERBASE}/conf/reposado/preferences.plist ${MPSERVERBASE}/Reposado/code/preferences.plist
 perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
 perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
@@ -440,6 +385,7 @@ perl -pi -e "s#\[SUS-SERVER-NAME\]#$LOCALHOST#g" ${MPSERVERBASE}/Reposado/code/p
 # Link & Set Permissions
 # ------------------
 chown -R $OWNERGRP ${MPSERVERBASE}
+chown -R $OWNERGRP ${MPSRVCONTENT}
 
 # Set Permissions
 if $USEMACOS; then
@@ -452,38 +398,41 @@ fi
 # ------------------------------------------------------------
 # Generate self signed certificates
 # ------------------------------------------------------------
-#clear
-echo
-echo "* Creating self signed SSL certificate"
-echo "-----------------------------------------------------------------------"
-
-certsDir="${MPSERVERBASE}/etc/ssl"
-if [ ! -d "${certsDir}" ]; then
-	mkdirP "${certsDir}"
-fi
-
-USER="MacPatch"
-EMAIL="admin@localhost"
-ORG="MacPatch"
-DOMAIN="$LOCALHOST"
-COUNTRY="NO"
-STATE="State"
-LOCATION="Country"
-
-cd ${certsDir}
-OPTS=(/C="$COUNTRY"/ST="$STATE"/L="$LOCATION"/O="$ORG"/OU="$USER"/CN="$DOMAIN"/emailAddress="$EMAIL")
-COMMAND=(openssl req -new -sha256 -x509 -nodes -days 999 -subj "${OPTS[@]}" -newkey rsa:2048 -keyout server.key -out server.crt)
-
-"${COMMAND[@]}"
-if (( $? )) ; then
-	echo -e "ERROR: Something went wrong!"
-	exit 1
-else
-	echo "Done!"
+if $ENABLESSL; then
 	echo
-	echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
-	echo "if running in a production environment."
-	echo
+	echo "* Creating self signed SSL certificate"
+	echo "-----------------------------------------------------------------------"
+
+	certsDir="${MPSERVERBASE}/etc/ssl"
+	if [ ! -d "${certsDir}" ]; then
+		mkdirP "${certsDir}"
+	fi
+
+	USER="MacPatch"
+	EMAIL="admin@localhost"
+	ORG="MacPatch"
+	DOMAIN="$LOCALHOST"
+	COUNTRY="NO"
+	STATE="State"
+	LOCATION="Country"
+
+	cd ${certsDir}
+	OPTS=(/C="$COUNTRY"/ST="$STATE"/L="$LOCATION"/O="$ORG"/OU="$USER"/CN="$DOMAIN"/emailAddress="$EMAIL")
+	COMMAND=(openssl req -new -sha256 -x509 -nodes -days 999 -subj "${OPTS[@]}" -newkey rsa:2048 -keyout server.key -out server.crt)
+
+	"${COMMAND[@]}"
+	if (( $? )) ; then
+		echo -e "ERROR: Something went wrong!"
+		exit 1
+	else
+		echo "Done!"
+		echo
+		echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
+		echo "if running in a production environment."
+		echo
+		echo "The NGINX ssl certs and keys live in $certsDir"
+		echo
+	fi
 fi
 
 # ------------------
