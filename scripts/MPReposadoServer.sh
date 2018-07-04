@@ -336,9 +336,13 @@ mv ${MPSERVERBASE}/nginx/conf/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf.o
 if $USEMACOS; then
 	echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
 	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.repo.mac ${MPSERVERBASE}/nginx/conf/nginx.conf
+	cp ${MPSERVERBASE}/conf/launchd/gov.llnl.mp.nginx.plist /Library/LaunchDaemons/gov.llnl.mp.nginx.plist
+	chown root:wheel /Library/LaunchDaemons/gov.llnl.mp.nginx.plist
+	chmod 644 /Library/LaunchDaemons/gov.llnl.mp.nginx.plist
 else
 	echo " - Copy nginx.conf to ${MPSERVERBASE}/nginx/conf/nginx.conf"
 	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.repo ${MPSERVERBASE}/nginx/conf/nginx.conf
+	cp ${MPSERVERBASE}/conf/systemd/MPNginx3.service /etc/systemd/system/MPNginx3.service
 fi
 perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $MPSERVERBASE/nginx/conf/nginx.conf
 
@@ -477,8 +481,21 @@ fi
 echo
 echo
 echo "-----------------------------------------------------------------------"
-echo " * Server build has been completed. Please read the \"Server - Install & Setup\""
-echo "   document for the next steps in setting up the MacPatch server."
+echo " * Reposado Server build has been completed."
+echo "   To make the server fully functional, please sync the content then"
+echo "   start the NGINX server."	
 echo
-
+echo "   Sync Content:"
+echo "   % /opt/MacPatch/Server/Reposado/code/repo_sync"
+echo 
+if $USEMACOS; then
+echo "   Start NGINX:"
+echo "   sudo launchctl start /Libaray/LaunchDaemons/gov.llnl.mp.nginx.plist"
+echo
+else
+echo "   Start NGINX:"
+echo "   sudo systemctl enable MPNginx3.service"
+echo "   sudo systemctl start MPNginx3.service"
+echo
+fi
 exit 0;
