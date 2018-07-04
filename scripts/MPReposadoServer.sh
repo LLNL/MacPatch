@@ -33,6 +33,30 @@ if [ "`whoami`" != "root" ] ; then   # If not root user,
    exit 1;
 fi
 
+# Server expectations --------------------------------------------------------
+
+echo
+echo "* Server Expectations"
+echo "-----------------------------------------------------------------------"
+echo
+echo "The MacPatch Reposado server is intended to be installed as a"
+echo "standalone server. While Reposado can be installed side by side with"
+echo "a MacPatch master or distribution server. The added disk space"
+echo "requirements and server resources maybe to much."
+echo 
+echo "This script is intended to install a standalone Reposado server."
+echo "If this host is already setup as a master or distribution server"
+echo "Please do not run the script as it will damage your current server"
+echo "instance on this host."
+echo
+read -p "Would you like to continue (Y/N)? [Y]: " SERVEROK
+XCODEOK=${XCODEOK:-Y}
+if [ "$XCODEOK" == "Y" ] || [ "$XCODEOK" == "y" ] ; then
+	echo
+else
+	exit 1
+fi
+
 # Script Variables -----------------------------------------------------------
 
 platform='unknown'
@@ -481,10 +505,11 @@ else
 fi
 
 
-echo
+clear
 echo
 echo "-----------------------------------------------------------------------"
 echo " * Reposado Server build has been completed."
+echo
 echo "   To make the server fully functional, please sync the content then"
 echo "   start the NGINX server."	
 echo
