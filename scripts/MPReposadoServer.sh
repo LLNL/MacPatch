@@ -369,6 +369,8 @@ else
 	cp ${MPSERVERBASE}/conf/systemd/MPNginx3.service /etc/systemd/system/MPNginx3.service
 fi
 perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $MPSERVERBASE/nginx/conf/nginx.conf
+perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $MPSERVERBASE/nginx/conf/nginx.conf
+
 
 echo
 echo "* Enable SSL support"
@@ -386,7 +388,7 @@ fi
 
 if $ENABLESSL; then
 	echo " - Copy nginx sites to ${MPSERVERBASE}/nginx/conf/sites"
-	cp -r ${MPSERVERBASE}/conf/nginx/sites ${MPSERVERBASE}/nginx/conf/sites
+	cp -r ${MPSERVERBASE}/conf/nginx/sites/reposado_ssl.conf ${MPSERVERBASE}/nginx/conf/sites/reposado_ssl.conf
 	FILES=$MPSERVERBASE/nginx/conf/sites/*.conf
 	for f in $FILES
 	do
