@@ -500,7 +500,7 @@ else
 	echo " - Add cron job to auto start reposado content sync"
 	crontab -l > /tmp/mycron
 	#echo new cron into cron file
-	echo "0 */8 * * * /Library/MacPatch/Reposado/reposado/code/repo_sync" >> /tmp/mycron
+	echo "0 */8 * * * /bin/sudo -u www-data /opt/MacPatch/Reposado/code/repo_sync" >> /tmp/mycron
 	#install new cron file
 	crontab /tmp/mycron
 	rm /tmp/mycron
