@@ -13,7 +13,7 @@
 
 {% block bodyPanel %}
 
-	<table id="table" class="table table-condensed" data-toolbar="#toolbar" data-show-export="true">
+	<table id="table" class="table table-condensed" data-toolbar="#toolbar" data-show-export="true" data-sort-name="mdate" data-sort-order="desc">
 		<div id="toolbar"></div>
 	</table>
 
@@ -29,7 +29,7 @@
 	<script src="{{ url_for('static', filename='static_components/bootstrap-editable/bootstrap-editable.js') }}"></script>
 	<script src="{{ url_for('static', filename='bower_components/col-resizable/colResizable-1.6.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/extensions/export/bootstrap-table-export.js') }}"></script>
-    <script src="{{ url_for('static', filename='bower_components/tableexport.jquery.plugin/tableExport.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bower_components/tableexport.jquery.plugin/tableExport.min.js') }}"></script>
 
 	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 	<script>
@@ -40,13 +40,13 @@
 			striped: true,
 			ajax: function loadMyRows(params)
 			{
-			    if (params.data.search == '') {
+				if (params.data.search == '') {
 					params.data.search = undefined;
 				}
-				if (params.data.sort == '') {
+				if (params.data.sort == '' || params.data.sort == undefined) {
 					params.data.sort = 'mdate';
 				}
-				if (params.data.order == '') {
+				if (params.data.order == '' || params.data.order == undefined) {
 					params.data.order = desc;
 				}
 
@@ -56,7 +56,7 @@
 					url: _url,
 					cache: false,
 					dataType: 'json',
-					success: function(res) 
+					success: function(res)
 					{
 						params.success({
 							me: 'installed',
