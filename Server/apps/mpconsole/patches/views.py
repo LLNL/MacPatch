@@ -728,7 +728,7 @@ def patchGroupMemberAdd(id):
 		setattr(patchGroupMember, 'is_owner', 0)
 		db.session.add(patchGroupMember)
 
-	log("{} added patch group member {} to {}.".format(session.get('user'), user_id, patch_group_id))
+	log("{} added patch group member {} to {}.".format(session.get('user'), user_id, id))
 	db.session.commit()
 	return json.dumps({'errorno': 0}), 200
 
