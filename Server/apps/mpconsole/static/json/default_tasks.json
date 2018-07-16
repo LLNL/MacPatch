@@ -1,5 +1,5 @@
 {
-  "version" : 2,
+  "version" : 3,
   "mpTasks" :
   [
 	{
@@ -8,7 +8,7 @@
 	  "enddate" : "2050-01-01",
 	  "startdate" : "2011-01-01",
 	  "active" : "1",
-	  "interval" : "EVERY@900",
+	  "interval" : "EVERY@300",
 	  "idrev" : "1",
 	  "parent" : "0",
 	  "scope" : "Global",
