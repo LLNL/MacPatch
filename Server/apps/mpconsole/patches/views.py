@@ -1029,8 +1029,14 @@ def customDataForPatchID(patch_id):
 			row = {}
 			row["name"] = p.patch_name
 			row["hash"] = p.pkg_hash
-			row["preinst"] = p.pkg_preinstall or "NA"
-			row["postinst"] = p.pkg_postinstall or "NA"
+			if p.pkg_preinstall is not None:
+				row["preinst"] = base64.b64encode(p.pkg_preinstall)
+			else:
+				row["preinst"] = "NA"
+			if p.pkg_postinstall is not None:
+				row["postinst"] = base64.b64encode(p.pkg_postinstall)
+			else:
+				row["postinst"] = "NA"
 			row["env"] = p.pkg_env_var or "NA"
 			row["reboot"] = p.patch_reboot
 			row["type"] = "1"
