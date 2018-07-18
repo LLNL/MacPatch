@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.1.0
+# Version: 3.2.0
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -34,6 +34,7 @@
 # 3.0.0     Rewritten for new Python Env
 # 3.1.0     Updates to remove tomcat and use new console
 # 3.1.1     All of MP now uses a virtualenv
+# 3.2.0     Replaced bower with yarn for javascript package management
 #
 #
 # ----------------------------------------------------------------------------
@@ -126,7 +127,7 @@ fi
 
 # Script Input Args ----------------------------------------------------------
 
-usage() { echo "Usage: $0 [-p Build Mac PKG]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-c ALT_SSL_CERT]" 1>&2; exit 1; }
 
 while getopts "hc:" opt; do
 	case $opt in
@@ -192,11 +193,11 @@ if $USEMACOS; then
 		echo "To install brew go to https://brew.sh and follow the install"
 		echo "directions."
 		echo
-		echo "This install requires \"OpenSSL\", \"SWIG\" and \"GPM\" to be installed"
+		echo "This install requires \"Yarn\", \"OpenSSL\", \"SWIG\" and \"GPM\" to be installed"
 		echo "using brew. It's recommended that you install these two"
 		echo "applications before continuing."
 		echo
-		echo "Exapmple: brew install openssl swig gpm"
+		echo "Exapmple: brew install yarn openssl swig gpm"
 		echo
 		read -p "Would you like to continue (Y/N)? [Y]: " BREWOK
 		BREWOK=${BREWOK:-Y}
@@ -303,6 +304,7 @@ mkdirP ${MPBASE}/Content/Web/patches
 mkdirP ${MPBASE}/Content/Web/sav
 mkdirP ${MPBASE}/Content/Web/sw
 mkdirP ${MPBASE}/Content/Web/tools
+cp -rp ${MPBASE}/Source/Server ${MPSERVERBASE}
 mkdirP ${MPSERVERBASE}/InvData/files
 mkdirP ${MPSERVERBASE}/lib
 mkdirP ${MPSERVERBASE}/logs
@@ -382,8 +384,10 @@ if $USELINUX; then
 	echo "* Install required linux packages"
 	echo "-----------------------------------------------------------------------"
 	if $USERHEL; then
+		# Add the Yarn repo
+		curl -sLk https://dl.yarnpkg.com/rpm/yarn.repo -o /etc/yum.repos.d/yarn.repo
 		# Check if needed packges are installed or install
-		pkgs=("gcc" "gcc-c++" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release" "python-devel" "python-setuptools" "python-wheel" "python-pip" "swig")
+		pkgs=("gcc" "gcc-c++" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release" "python-devel" "python-setuptools" "python-wheel" "python-pip" "swig" "yarn")
 		for i in "${pkgs[@]}"
 		do
 			p=`rpm -qa --qf '%{NAME}\n' | grep -e ${i}$ | head -1`
@@ -393,8 +397,11 @@ if $USELINUX; then
 			fi
 		done
 	elif $USEUBUNTU; then
+		# Add the Yarn repo
+		curl -sSk https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+		echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 		#statements
-		pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev" "python-dev" "python-pip" "swig")
+		pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev" "python-dev" "python-pip" "swig" "yarn")
 		for i in "${pkgs[@]}"
 		do
 			p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
@@ -454,7 +461,7 @@ if command_exists virtualenv ; then
 			sleep 2
 			echo
 			echo " - Trying ${p}, python module again."
-			pip install --egg --quiet --upgrade ${p}
+			pip install --quiet --upgrade ${p}
 			if [ $? != 0 ] ; then
 				echo " Error installing ${p}"
 			fi
@@ -472,7 +479,7 @@ if command_exists virtualenv ; then
 				sleep 2
 				echo
 				echo " - Trying ${p}, python module again."
-				pip install --egg --quiet --upgrade ${p}
+				pip install --quiet --upgrade ${p}
 				if [ $? != 0 ] ; then
 					echo " Error installing ${p}"
 				fi
@@ -553,7 +560,7 @@ chown -R $OWNERGRP ${MPSERVERBASE}
 
 # Admin Site - App
 echo
-echo "* Configuring tomcat and console app"
+echo "* Configuring Console app"
 echo "-----------------------------------------------------------------------"
 
 # Set Permissions
@@ -563,6 +570,12 @@ if $USEMACOS; then
 	chown root:wheel ${MPSERVERBASE}/conf/launchd/*.plist
 	chmod 0644 ${MPSERVERBASE}/conf/launchd/*.plist
 fi
+
+echo
+echo "* Installing Javascript modules"
+echo
+cd ${MPSERVERBASE}/apps/mpconsole
+yarn install --cwd ${MPSERVERBASE}/apps/mpconsole --modules-folder static/yarn_components --no-bin-links
 
 # ------------------------------------------------------------
 # Generate self signed certificates
