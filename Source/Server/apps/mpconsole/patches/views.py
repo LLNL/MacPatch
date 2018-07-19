@@ -818,6 +818,7 @@ def patchGroupContentEdit(id):
 
 @patches.route('/group/list/<group_id>')
 def patchGroupContent(group_id):
+	args = request.args
 
 	total = 0
 	patchGroup = MpPatchGroup().query.filter(MpPatchGroup.id == group_id).first()
@@ -834,15 +835,16 @@ def patchGroupContent(group_id):
 	else:
 		_pType = "'Production'"
 
-	# Get Reboot Count
 	sql = text("""SELECT DISTINCT b.*, IFNULL(p.patch_id , 'NA') as Enabled
 				FROM
 					combined_patches_view b
 				LEFT JOIN (
 					SELECT patch_id FROM mp_patch_group_patches
-					Where patch_group_id = '""" + group_id + """'
+					Where patch_group_id = '{}'
 				) p ON b.id = p.patch_id
-				WHERE b.patch_state IN (""" + _pType + """)""")
+				WHERE b.patch_state IN (""" + _pType + """)
+				ORDER BY b.{} {};""".format(args['sort'], args['order'])
+				)
 
 	result = db.engine.execute(sql)
 	_results = []
