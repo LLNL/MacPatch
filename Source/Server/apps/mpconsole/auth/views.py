@@ -95,11 +95,15 @@ def login():
 								search_scope=SUBTREE, attributes=ALL_ATTRIBUTES, get_operational_attributes=True)
 
 					if accountExists(form.username.data):
-						if usersExistsInLDAPGroups(conn, form.username.data):
-							if user is None:
-								user = addUser(form.username.data)
+						_usrActIsEnabled = False
+						_usrInLdapGroup = usersExistsInLDAPGroups(conn, form.username.data)
 
-						elif accountIsEnabled(form.username.data):
+						if _usrInLdapGroup:
+							_usrActIsEnabled = accountIsEnabled(form.username.data)
+						else:
+							log_Error("Account %s is not in LDAP group.1")
+
+						if _usrActIsEnabled:
 							if user is None:
 								user = addUser(form.username.data)
 
@@ -110,6 +114,9 @@ def login():
 
 							log("LDAP login sucessful for user %s" % (form.username.data))
 							return redirect(url_for('dashboard.index', username=user.user_id))
+						else:
+							log_Error("Account %s exists but is disabled.")
+
 					else:
 						if usersExistsInLDAPGroups(conn, form.username.data):
 							user = addUser(form.username.data)
