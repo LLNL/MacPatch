@@ -1,0 +1,25 @@
+name: "MacPatch"
+author: "Jorge Escobar <escobar6@llnl.gov>"
+description: "OS X Management Software"
+
+url: "http://macpatch.llnl.gov"
+baseurl: ""
+
+img_media: /static/assets/main/images
+
+google_analytics: UA-78256402-1
+
+collections:
+  docs:
+    output: true
+    permalink: /docs/:path/
+
+# paginate: 10
+
+permalink: pretty
+highlighter: rouge
+
+markdown: kramdown
+kramdown:
+  input: GFM # Enable GitHub Flavored Markdown (fenced code blocks)
+  hard_wrap: false

@@ -1,0 +1,24 @@
+<nav id="header-slim" class="navbar navbar-default">
+
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#siteNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <p id="llnl-menu-tab" class="pull-left"><a href="https://www.llnl.gov"></a></p>
+      <!-- <a class="navbar-brand" href="/">{{ site.name }}</a> -->
+    </div>
+
+    <div id="siteNavbar" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right navbar-collapse">
+        <li id="home" {% if page.url == "/" %} class="active" {% endif %}><a href="/">Home</a></li>
+        <li id="documentation" {% if page.url contains "/docs" %} class="active" {% endif %}><a href="/docs">Documentation</a></li>
+        <li id="github"><a href="https://github.com/LLNL/MacPatch"><span class="fa fa-github fa-lg"></span></a></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
