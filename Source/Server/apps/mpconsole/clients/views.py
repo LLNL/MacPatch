@@ -417,6 +417,11 @@ def clientGroup(name,tab=1):
 						else:
 							_row[column] = value
 
+				# Clean up new lines in data, will break Javascript JSON in UI
+				for key in _row.keys():
+					if not isinstance(_row[key], (long, int)):
+						_row[key] = _row[key].replace('\n', '')
+
 				_results.append(_row)
 
 		# Client Tasks Columns
