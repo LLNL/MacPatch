@@ -61,6 +61,8 @@
 -(void)scanForPatchesWithFilterWaitAndForce:(int)aFilter byPassRunning:(BOOL)aByPass;
 -(void)scanForPatchesWithFilterWaitAndForceWithCritical:(int)aFilter byPassRunning:(BOOL)aByPass critical:(BOOL)aCritical;
 -(void)scanForPatchUsingBundleID:(NSString *)aBundleID;
+// TEST
+- (void)scanForPatchUsingBundleIDAlt:(NSString *)aBundleID error:(NSError **)error;
 
 -(void)scanForPatchesAndUpdate;
 -(void)scanForPatchesAndUpdateWithFilter:(int)aFilter;

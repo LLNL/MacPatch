@@ -318,16 +318,6 @@
                                         profilesOp = [[Profiles alloc] init];
                                         [queue addOperation:profilesOp];
                                         profilesOp = nil;
-                                    /* Servers Request has been removed
-                                    } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPSrvList"]) {
-                                        serverListOp = [[GetServerListOperation alloc] init];
-                                        [queue addOperation:serverListOp];
-                                        serverListOp = nil;
-                                    } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPSUSrvList"]) {
-                                        suServerListOp = [[GetASUSListOperation alloc] init];
-                                        [queue addOperation:suServerListOp];
-                                        suServerListOp = nil;
-                                     */
                                     } else if ([[taskDict objectForKey:@"cmd"] isEqualToString:@"kMPWSPost"]) {
                                         postFailedWSRequestsOp = [[PostFailedWSRequests alloc] init];
                                         [queue addOperation:postFailedWSRequestsOp];

@@ -139,7 +139,7 @@
     MPWSResult *ws_result;
     
     MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
-    NSString *urlPath = [@"/api/v1/client/checkin" stringByAppendingPathComponent:self.ccuid];
+    NSString *urlPath = [@"/api/v2/client/checkin" stringByAppendingPathComponent:self.ccuid];
     
     ws_result = [req runSyncPOST:urlPath body:data];
     
@@ -480,6 +480,50 @@
     return result;
 }
 
+/**
+ Get software task data using software task id (tuuid)
+ 
+ @param taskID Software task id
+ @param err Error object
+ @return NSDictionary
+ */
+- (NSDictionary *)getSoftwareTaskUsingTaskID:(NSString *)taskID error:(NSError **)err
+{
+	if (!taskID) {
+		NSError *tErr = [NSError errorWithDomain:NSCocoaErrorDomain code:-1000 userInfo:@{NSLocalizedDescriptionKey: @"No Task ID Found"}];
+		if (err != NULL) *err = tErr;
+		return nil;
+	}
+	
+	NSError *ws_err = nil;
+	NSDictionary *ws_result;
+	NSDictionary *result = nil;
+	
+	NSString *urlPath = [NSString stringWithFormat:@"/api/v2/sw/task/%@/%@",self.ccuid, taskID];
+	qldebug(@"[getSoftwareTasksForGroup][urlPath] %@",urlPath);
+	
+	ws_result = [self getDataFromWS:urlPath error:&ws_err];
+	if (ws_err) {
+		*err = ws_err;
+		return nil;
+	}
+	
+	if ([ws_result objectForKey:@"data"])
+	{
+		if ([[ws_result objectForKey:@"data"] isKindOfClass:[NSDictionary class]])
+		{
+			qldebug(@"Web Servce result: %@",ws_result);
+			result = [ws_result objectForKey:@"data"];
+		}
+		else
+		{
+			qlerror(@"Result was not of type dictionary.");
+			qlerror(@"Result: %@", ws_result);
+		}
+	}
+	
+	return result;
+}
 
 /**
  Get Hash to run plugin
@@ -618,6 +662,48 @@
     }
     
     return result;
+}
+
+/**
+ Get patch dictionary for a bundle id, this method is used for patching
+ client group required software
+ 
+ @param bundleID plugin bundleid
+ @param err Error object
+ 
+ @return NSDictionary
+ */
+- (NSDictionary *)getPatchForBundleID:(NSString *)bundleID error:(NSError **)err
+{
+	NSError *ws_err = nil;
+	NSDictionary *ws_result;
+	NSDictionary *result = nil;
+	
+	NSString *urlPath = [NSString stringWithFormat:@"/api/v3/patch/bundleID/%@/%@",bundleID,self.ccuid];
+	qldebug(@"[getPatchForBundleID][urlPath] %@",urlPath);
+	
+	ws_result = [self getDataFromWS:urlPath error:&ws_err];
+	if (ws_err) {
+		*err = ws_err;
+		return nil;
+	}
+	
+	
+	if ([ws_result objectForKey:@"data"])
+	{
+		if ([[ws_result objectForKey:@"data"] isKindOfClass:[NSDictionary class]])
+		{
+			qldebug(@"Web Servce result: %@",ws_result);
+			result = [ws_result objectForKey:@"data"];
+		}
+		else
+		{
+			qlerror(@"Result was not of type dictionary.");
+			qlerror(@"Result: %@", ws_result);
+		}
+	}
+	
+	return result;
 }
 
 @end

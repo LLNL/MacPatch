@@ -62,6 +62,9 @@ int main (int argc, char * argv[])
                 {"Update"				,no_argument	    ,0, 'u'},
                 {"UpdateFilter"			,required_argument	,0, 'f'},
                 {"UpdateBundle"			,required_argument	,0, 'B'},
+				
+				{"UpdateBundleAlt"		,required_argument	,0, 'b'},
+				
                 {"Critial"				,no_argument	    ,0, 'x'},
                 {"AgentUpdate"			,no_argument		,0, 'G'},
                 {"AllowClient"			,no_argument	    ,0, 'C'},
@@ -82,7 +85,7 @@ int main (int argc, char * argv[])
             };
             // getopt_long stores the option index here.
             int option_index = 0;
-            c = getopt_long (argc, argv, "Dsuf:B:GCSiFcg:d:P:eVvh", long_options, &option_index);
+            c = getopt_long (argc, argv, "Dsuf:B:b:GCSiFcg:d:P:eVvh", long_options, &option_index);
 
             // Detect the end of the options.
             if (c == -1) {
@@ -110,6 +113,10 @@ int main (int argc, char * argv[])
                         a_Type = 2;
                         _updateBundle = [NSString stringWithUTF8String:optarg];
                         break;
+					case 'b':
+						a_Type = 11;
+						_updateBundle = [NSString stringWithUTF8String:optarg];
+						break;
                     case 'G':
                         a_Type = 5;
                         break;
@@ -246,6 +253,12 @@ int main (int argc, char * argv[])
                 // Scan for and install critical updates
                 [controller scanForPatchesAndUpdateWithFilterCritical:_UpdateType critical:YES];
                 break;
+			case 11:
+				if (_updateBundle) {
+					NSError *_err = nil;
+					[controller scanForPatchUsingBundleIDAlt:_updateBundle error:&_err];
+				}
+				break;
             default:
                 logit(lcl_vError, @"should never have gotten here!");
                 break;

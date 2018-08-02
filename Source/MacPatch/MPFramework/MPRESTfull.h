@@ -140,6 +140,15 @@
 - (NSArray *)getSoftwareTasksForGroup:(NSString *)groupName error:(NSError **)err;
 
 /**
+ Get software task data using software task id (tuuid)
+ 
+ @param taskID Software task id
+ @param err Error object
+ @return NSDictionary
+ */
+- (NSDictionary *)getSoftwareTaskUsingTaskID:(NSString *)taskID error:(NSError **)err;
+
+/**
  Get Hash to run plugin
  
  @param plugin plugin name
@@ -173,6 +182,13 @@
  */
 - (NSArray *)getSoftwareCatalogs:(NSError **)err;
 
-
+/**
+ Get patch dictionary for a bundle id, this method is used for patching
+ client group required software
+ 
+ @param bundleID plugin bundleid
+ @param err Error object
+ */
+- (NSDictionary *)getPatchForBundleID:(NSString *)bundleID error:(NSError **)err;
 
 @end

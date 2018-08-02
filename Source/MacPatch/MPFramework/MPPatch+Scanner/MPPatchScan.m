@@ -169,12 +169,22 @@
 	
 	// 1. Get the list
 	NSDictionary *tmpDict;
-	NSArray *customPatches;
-	customPatches = [self retrieveCustomPatchScanList];
-    if ([customPatches count] == 0) {
+	NSArray *customPatches = [NSArray array];
+	NSArray *customPatchesFull;
+	customPatchesFull = [self retrieveCustomPatchScanList];
+    if ([customPatchesFull count] == 0) {
         qlwarning(@"Custom patch scan list is empty, no custom patches will be scaned for.");
         return resultArr;
     }
+	
+	// Filter Scan list for just the required bundle id
+	NSPredicate *fltr = [NSPredicate predicateWithFormat:@"(bundle_id == %@)", aBundleID];
+	customPatches = [customPatchesFull filteredArrayUsingPredicate:fltr];
+	
+	if ([customPatches count] == 0) {
+		qlwarning(@"Custom patch scan list is empty, no custom patches will be scaned for.");
+		return resultArr;
+	}
 	
 	// 2. Scan the host
 	NSMutableDictionary *patch;

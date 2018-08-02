@@ -23,7 +23,7 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-// MacPatch MPWorkerProtocol.h version 1.7.5
+// MacPatch MPWorkerProtocol.h version 1.7.6
 
 #import <Foundation/Foundation.h>
 
@@ -85,6 +85,8 @@
 
 // Collect Client Checkin Data
 - (NSDictionary *)clientCheckInData;
+//
+- (void)updateClientGroupSettingViaHelper:(in bycopy NSDictionary *)settingsRevs;
 
 // Misc
 - (NSString *)createAppSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask directoryAttributes:(in bycopy NSDictionary *)attributes;

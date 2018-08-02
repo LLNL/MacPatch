@@ -247,11 +247,11 @@ NSString *const kRefreshStatusIconNotification      = @"kRefreshStatusIconNotifi
         menuItem16 = [menu itemAtIndex:([menu numberOfItems] -1)];
     }
     
-    if (!isShowing && optionKeyIsPressed) {
-        
-        NSInteger menuCount = [menu numberOfItems];
-        
+    if (!isShowing && optionKeyIsPressed)
+	{
+		//NSInteger menuCount = [menu numberOfItems];
         //[menu insertItem:menuItem15 atIndex:([menu numberOfItems] - 2)];
+		
         [menu addItem:menuItem15];
         [menuItem15 setEnabled:YES];
         [menuItem15 setHidden:NO];
@@ -479,6 +479,34 @@ done:
 	return result;
 }
 
+- (void)updateClientGroupSettingViaProxy:(NSDictionary *)settingsRevs
+{
+	NSError *error = nil;
+	if (!proxy) {
+		[self connect:&error];
+		if (error) {
+			logit(lcl_vError,@"%@",error.localizedDescription);
+			goto done;
+		}
+		if (!proxy) {
+			logit(lcl_vError,@"Could not create proxy object.");
+			goto done;
+		}
+	}
+	
+	@try
+	{
+		[proxy updateClientGroupSettingViaHelper:settingsRevs];
+	}
+	@catch (NSException *e) {
+		logit(lcl_vError,@"Update client group settings failed. %@", e);
+	}
+	
+done:
+	[self cleanup];
+	return;
+}
+
 #pragma mark -
 #pragma mark Client Info
 - (IBAction)getMPClientVersionInfo:(id)sender
@@ -575,8 +603,6 @@ done:
 // Performs a client checkin
 - (BOOL)performClientCheckInMethod
 {
-	// MPClientInfo *ci = [[MPClientInfo alloc] init];
-	// NSDictionary *agentData = [ci agentData];
 	NSDictionary *agentData = [self getAgentCheckInDataViaProxy];
     if (agentData) {
         NSDictionary *revsDict;
@@ -591,6 +617,7 @@ done:
         }
         
         // CEH - Update Settings once implemented via mpworker
+		[self updateClientGroupSettingViaProxy:revsDict];
         
         // Update the UI info
         [self showLastCheckInMethod];
@@ -1502,7 +1529,7 @@ done:
         
     } else {
         logit(lcl_vInfo,@"floor(NSAppKitVersionNumber): %f",floor(NSAppKitVersionNumber));
-        logit(lcl_vInfo,@"NSAppKitVersionNumber10_9:    %f",NSAppKitVersionNumber10_9);
+        logit(lcl_vInfo,@"NSAppKitVersionNumber10_9:    %d",NSAppKitVersionNumber10_9);
         logit(lcl_vWarning,@"Current OS does not support NSUserNotification");
     }
 }

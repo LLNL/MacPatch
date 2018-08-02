@@ -975,7 +975,7 @@ typedef NSUInteger MPInstallIconStatus;
     NSDictionary  *patchGroupPatches = nil;
     MPRESTfull    *rest = [[MPRESTfull alloc] init];
     
-    BOOL           useLocalPatchesFile = NO;
+	// BOOL           useLocalPatchesFile = NO;
     
     patchGroupPatches = [rest getApprovedPatchesForClient:&error];
     if (error) {

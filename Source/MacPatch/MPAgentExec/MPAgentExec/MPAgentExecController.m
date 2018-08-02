@@ -610,14 +610,14 @@ done:
             if ([[customPatch objectForKey:@"patch_id"] isEqualTo:[approvedPatch objectForKey:@"patch_id"]]) {
                 logit(lcl_vInfo,@"Patch %@ approved for update.",[customPatch objectForKey:@"description"]);
                 tmpDict = [[NSMutableDictionary alloc] init];
-                [tmpDict setObject:[customPatch objectForKey:@"patch"] forKey:@"patch"];
-                [tmpDict setObject:[customPatch objectForKey:@"description"] forKey:@"description"];
-                [tmpDict setObject:[customPatch objectForKey:@"restart"] forKey:@"restart"];
-                [tmpDict setObject:[customPatch objectForKey:@"version"] forKey:@"version"];
+                [tmpDict setObject:customPatch[@"patch"] forKey:@"patch"];
+                [tmpDict setObject:customPatch[@"description"] forKey:@"description"];
+                [tmpDict setObject:customPatch[@"restart"] forKey:@"restart"];
+                [tmpDict setObject:customPatch[@"version"] forKey:@"version"];
                 [tmpDict setObject:approvedPatch forKey:@"patches"];
-                [tmpDict setObject:[customPatch objectForKey:@"patch_id"] forKey:@"patch_id"];
-                [tmpDict setObject:@"Third" forKey:@"type"];
-                [tmpDict setObject:[customPatch objectForKey:@"bundleID"] forKey:@"bundleID"];
+                [tmpDict setObject:customPatch[@"patch_id"] forKey:@"patch_id"];
+                [tmpDict setObject:customPatch[@"bundleID"] forKey:@"bundleID"];
+				[tmpDict setObject:@"Third" forKey:@"type"];
 
                 logit(lcl_vDebug,@"Custom Patch Dictionary Added: %@",tmpDict);
                 [approvedUpdatesArray addObject:tmpDict];
@@ -629,6 +629,64 @@ done:
 
     [self setApprovedPatches:[NSArray arrayWithArray:approvedUpdatesArray]];
     logit(lcl_vInfo,@"Patch Scan Completed.");
+}
+
+- (void)scanForPatchUsingBundleIDAlt:(NSString *)aBundleID error:(NSError **)error
+{
+	NSMutableArray      *approvedUpdatesArray = [NSMutableArray new];
+	NSMutableDictionary *tmpDict;
+	
+	// Get Patch Data For BundleID
+	// Get patch data from web service based using bundle id
+	MPRESTfull *mprest = [[MPRESTfull alloc] init];
+	NSError *err = nil;
+	NSDictionary *patchForBundleID = [mprest getPatchForBundleID:aBundleID error:&err];
+	if (err) {
+		logit(lcl_vError,@"%@",err.localizedDescription);
+		*error = err;
+		return;
+	}
+	
+	if (!patchForBundleID) {
+		logit(lcl_vError,@"There was a issue getting the approved patch data for the bundle id, scan will exit.");
+		return;
+	}
+	
+	logit(lcl_vInfo,@"Scanning for custom patch vulnerabilities...");
+	logit(lcl_vInfo,@"Scanning for custom patch vulnerabilities for %@", aBundleID);
+	NSMutableArray *customPatchesFound = (NSMutableArray *)[mpAsus scanForCustomUpdateUsingBundleID:aBundleID];
+	
+	logit(lcl_vDebug,@"Custom Patches Needed: %@",customPatchesFound);
+	logit(lcl_vDebug,@"Approved Patches: %@",patchForBundleID);
+	
+	// Filter List of Patches containing only the approved patches
+	NSDictionary *customPatch, *approvedPatch;
+	logit(lcl_vInfo,@"Building approved patch list...");
+	for (int i=0; i < [customPatchesFound count]; i++)
+	{
+		customPatch	= [customPatchesFound objectAtIndex:i];
+		if ([customPatch[@"patch_id"] isEqualTo:patchForBundleID[@"puuid"]])
+		{
+			logit(lcl_vInfo,@"Patch %@ approved for update.",customPatch[@"patch"]);
+			tmpDict = [[NSMutableDictionary alloc] init];
+			[tmpDict setObject:customPatch[@"patch"] forKey:@"patch"];
+			[tmpDict setObject:customPatch[@"description"] forKey:@"description"];
+			[tmpDict setObject:customPatch[@"restart"] forKey:@"restart"];
+			[tmpDict setObject:customPatch[@"version"] forKey:@"version"];
+			[tmpDict setObject:customPatch[@"patch_id"] forKey:@"patch_id"];
+			[tmpDict setObject:customPatch[@"bundleID"] forKey:@"bundleID"];
+			[tmpDict setObject:patchForBundleID forKey:@"patchData"];
+			
+			[approvedUpdatesArray addObject:tmpDict];
+			tmpDict = nil;
+			break;
+		}
+
+	}
+	
+	logit(lcl_vDebug,@"Approved Updates %@",approvedUpdatesArray);
+	logit(lcl_vInfo,@"Patch Scan Completed.");
+	return;
 }
 
 -(void)scanForPatchesAndUpdate
@@ -2165,14 +2223,6 @@ done:
     logit(lcl_vDebug,@"Download software from: %@",[aTask valueForKeyPath:@"Software.sw_type"]);
 
     NSError *dlErr = nil;
-    
-    /*
-    NSURLResponse *response;
-    MPNetConfig *mpnc = [[MPNetConfig alloc] init];
-    MPNetRequest *req = [[MPNetRequest alloc] initWithMPServerArrayAndController:self servers:[mpnc servers]];
-    NSURLRequest *urlReq = [req buildDownloadRequest:_url];
-    NSString *dlPath = [req downloadFileRequest:urlReq returningResponse:&response error:&dlErr];
-     */
     
     MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
     NSString *dlPath = [req runSyncFileDownload:_url downloadDirectory:NSTemporaryDirectory() error:&dlErr];

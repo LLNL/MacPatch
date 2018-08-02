@@ -23,7 +23,7 @@
  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-// MacPatch MPWorkerProtocol.h version 1.7.3
+// MacPatch MPWorkerProtocol.h version 1.7.6
 
 #import <Foundation/Foundation.h>
 
@@ -78,8 +78,15 @@
 
 - (int)stagePatchWithBaseDirectory:(in bycopy NSDictionary *)aPatch directory:(in bycopy NSString *)path;
 
+- (int)runCMD:(in bycopy NSString *)binPath arguments:(in bycopy NSArray *)arguments;
+
 // Inventory Collection
 - (int)collectInventoryData;
+
+// Collect Client Checkin Data
+- (NSDictionary *)clientCheckInData;
+//
+- (void)updateClientGroupSettingViaHelper:(in bycopy NSDictionary *)settingsRevs;
 
 // Misc
 - (NSString *)createAppSupportDirectoryForDomain:(NSSearchPathDomainMask)aDomainMask directoryAttributes:(in bycopy NSDictionary *)attributes;
@@ -90,6 +97,10 @@
 
 // MPReboot
 - (int)cleanUpRebootFileViaHelper;
+
+// Diag Data
+- (int)collectAgentDiagnosticsDataViaHelper;
+
 
 
 @end

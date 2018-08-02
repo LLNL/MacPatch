@@ -1768,6 +1768,14 @@ done:
 	return agentData;
 }
 
+// Proxy Method
+- (void)updateClientGroupSettingViaHelper:(in bycopy NSDictionary *)settingsRevs
+{
+	MPSettings *set = [MPSettings sharedInstance];
+	[set compareAndUpdateSettings:settingsRevs];
+	return;
+}
+
 #pragma mark AuthPlugin
 - (void)logoutInstallCompletion:(int)taskAction
 {
@@ -1826,6 +1834,12 @@ done:
         }
     }
     return 0;
+}
+
+// Proxy Method
+- (int)collectAgentDiagnosticsDataViaHelper
+{
+	return 0;
 }
 
 @end

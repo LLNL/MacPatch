@@ -62,6 +62,7 @@
 		8FE560E616DE97C700BB7600 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E516DE97C700BB7600 /* CoreServices.framework */; };
 		8FE560E816DE97CF00BB7600 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */; };
 		8FE560EA16DE97DD00BB7600 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560E916DE97DD00BB7600 /* Security.framework */; };
+		8FE8A7F22112564500E8796E /* Software.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF7E9CF210A558B00678B93 /* Software.m */; };
 		8FF5B50F1FC659AE006F5FB2 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF5B50B1FC658EC006F5FB2 /* Python.framework */; };
 		8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F9219959206005A4EEB /* MPAgentRegister.m */; };
 /* End PBXBuildFile section */
@@ -176,6 +177,8 @@
 		8FE560E716DE97CF00BB7600 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8FE560E916DE97DD00BB7600 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		8FF5B50B1FC658EC006F5FB2 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
+		8FF7E9CE210A558B00678B93 /* Software.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Software.h; sourceTree = "<group>"; };
+		8FF7E9CF210A558B00678B93 /* Software.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Software.m; sourceTree = "<group>"; };
 		8FF93F9119959206005A4EEB /* MPAgentRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentRegister.h; sourceTree = "<group>"; };
 		8FF93F9219959206005A4EEB /* MPAgentRegister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentRegister.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -385,6 +388,7 @@
 		8FE03DD21B601926005D39EE /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8FF7E9CD210A557300678B93 /* Software */,
 				8FE03DD31B601938005D39EE /* AntiVirus */,
 				8FE03DCE1B600C26005D39EE /* AgentUpdater */,
 				8FA6A85E1B9621BF006A329B /* Inventory */,
@@ -409,6 +413,15 @@
 				8FE03DD81B601AC6005D39EE /* AVSoftware.m */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		8FF7E9CD210A557300678B93 /* Software */ = {
+			isa = PBXGroup;
+			children = (
+				8FF7E9CE210A558B00678B93 /* Software.h */,
+				8FF7E9CF210A558B00678B93 /* Software.m */,
+			);
+			name = Software;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -485,6 +498,7 @@
 				8FF93F9319959206005A4EEB /* MPAgentRegister.m in Sources */,
 				8F4B1F0716DD77FF00E15A9E /* AgentController.m in Sources */,
 				8FA6A87C1B9621BF006A329B /* MPFileVaultInfo.m in Sources */,
+				8FE8A7F22112564500E8796E /* Software.m in Sources */,
 				8F9C2B531DDA1D0E002A39D2 /* MPAppStore.m in Sources */,
 				8FA6A87F1B9621BF006A329B /* MPUsersAndGroups.m in Sources */,
 				8FA6A8801B9621BF006A329B /* NSDirectoryServices.m in Sources */,
