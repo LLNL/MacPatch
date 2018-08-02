@@ -231,7 +231,7 @@ class ViewController: NSViewController, AuthViewControllerDelegate
             log.info("Begin Processing Agent Packages")
             // If Signing is turned on check for signature value
             if (self.signPackageButton.state == .on) {
-                if (self.signingIdentity.stringValue.characters.count <= 0) {
+                if (self.signingIdentity.stringValue.count <= 0) {
                     log.error("Property signingIdentity is selected but value is not set.")
                     DispatchQueue.main.async {
                         _ = self.alertWithOK(title: "Missing Identity", infoText: "You have choosen to sign the packages but did not enter an identity name. Please enter an identity name and try again.")
@@ -1327,7 +1327,7 @@ class ViewController: NSViewController, AuthViewControllerDelegate
 	func convertSignedProfile(profile: String) -> String
 	{
 		let uuid = "/tmp/\(UUID().uuidString)"
-		let result1 = run("/usr/bin/security", "cms", "-D", "-i", profile, "-o", uuid)
+		_ = run("/usr/bin/security", "cms", "-D", "-i", profile, "-o", uuid)
 		return uuid
 	}
 	
