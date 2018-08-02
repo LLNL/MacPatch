@@ -145,7 +145,7 @@ cp -R ${PKGROOT}/Updater ${BUILDROOT}
 cp -R ${PKGROOT}/Combined ${BUILDROOT}
 
 mv ${BUILDROOT}/Release/ccusr ${BUILDROOT}/Base/Scripts/ccusr
-mv ${BUILDROOT}/Release/MPPrefMigrate ${BUILDROOT}/Base/Scripts/MPPrefMigrate
+#mv ${BUILDROOT}/Release/MPPrefMigrate ${BUILDROOT}/Base/Scripts/MPPrefMigrate
 mv ${BUILDROOT}/Release/MPAgentUp2Date ${BUILDROOT}/Updater/Files/Library/MacPatch/Updater/
 mv ${BUILDROOT}/Release/MPLoginAgent.app ${BUILDROOT}/Base/Files/Library/PrivilegedHelperTools/
 cp -R ${BUILDROOT}/Release/* ${BUILDROOT}/Base/Files/Library/MacPatch/Client/
