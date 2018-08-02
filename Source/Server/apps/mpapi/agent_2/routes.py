@@ -117,7 +117,7 @@ class _AgentConfig(MPResource):
 
 			# Return Payload Struct
 			agentConfig = {'schema': 310, 'revs': {}, 'settings': { 'agent': { 'rev': 0, 'data': {} }, 'servers': { 'rev': 0, 'data': [] },
-													'suservers': {'rev': 0, 'data': []}, 'tasks': { 'rev': 0, 'data': [] } }}
+													'suservers': {'rev': 0, 'data': []}, 'tasks': { 'rev': 0, 'data': [] }, 'software': {'data': []} }}
 
 			d_revs = {'agent':0,'servers':0,'suservers':0,'tasks':0}
 			d_agent = {}
@@ -147,6 +147,11 @@ class _AgentConfig(MPResource):
 					else:
 						d_agent[row.key] = row.value
 
+			qClientGroup = MpClientGroups.query.filter(MpClientGroups.group_id == group_id).first()
+			if qClientGroup is not None:
+				d_agent['client_group'] = qClientGroup.group_name
+				d_agent['client_group_id'] = group_id
+
 			d_revs['agent'] = self.agentSettingsRev(group_id)
 			agentConfig['settings']['agent']['rev'] = d_revs['agent']
 			agentConfig['settings']['agent']['data'] = d_agent
@@ -163,6 +168,9 @@ class _AgentConfig(MPResource):
 
 			agentConfig['settings']['tasks'] = self.getTasksData(group_id)
 			d_revs['tasks'] = agentConfig['settings']['tasks']['rev']
+
+			sw_data = self.clientGroupSoftwareTasks(client_id)
+			agentConfig['settings']['software']['data'] = []
 
 			agentConfig['revs'] = d_revs
 
@@ -211,6 +219,45 @@ class _AgentConfig(MPResource):
 
 		result['data'] = tasks
 		return result
+
+	def clientGroupSoftwareTasks(self, client_id):
+		try:
+
+			res = []
+			client_obj = MpClient.query.filter_by(cuuid=client_id).first()
+			client_group = MpClientGroupMembers.query.filter_by(cuuid=client_obj.cuuid).first()
+
+			if client_group is not None:
+				swids_Obj = MpClientGroupSoftware.query.filter(MpClientGroupSoftware.group_id == client_group.group_id).all()
+				for i in swids_Obj:
+					res.append({'tuuid':i.tuuid})
+
+			return res
+
+		except IntegrityError, exc:
+			log_Error('[AgentBase_v2][softwareTasksForClientGroup][IntegrityError]: client_id: %s Message: %s' % (client_id, exc.message))
+			return []
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[AgentBase_v2][softwareTasksForClientGroup][Exception][Line: %d] client_id: %s Message: %s' % (exc_tb.tb_lineno, client_id, e.message))
+			return []
+
+	def criteriaForSUUID(self, suuid):
+		res = MpSoftwareCriteria.query.filter(MpSoftwareCriteria.suuid == suuid).all()
+		cri = SWObjCri()
+		criData = {}
+		if res is not None and len(res) >= 1:
+			for row in res:
+				if row.type == "OSArch":
+					criData['os_arch'] = row.type_data
+				elif row.type == "OSType":
+					criData['os_type'] = row.type_data
+				elif row.type == "OSVersion":
+					criData['os_vers'] = row.type_data
+
+			cri.importDict(criData)
+		return cri.asDict()
+
 
 class _AgentUpdate(MPResource):
 

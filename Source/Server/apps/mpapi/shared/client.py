@@ -37,6 +37,8 @@ class AgentSettings():
 		self.software_group = None
 		self.software_group_id = None
 		self.verify_signatures = None
+		self.client_group = None
+		self.client_group_id = None
 
 	def populateSettings(self, client_id):
 
@@ -45,6 +47,10 @@ class AgentSettings():
 		qGroupMembership = MpClientGroupMembers.query.filter(MpClientGroupMembers.cuuid == client_id).first()
 		if qGroupMembership is not None:
 			_group_id = qGroupMembership.group_id
+			self.client_group_id = _group_id
+			qClientGroup = MpClientGroups.query.filter(MpClientGroups.group_id == _group_id ).first()
+			if qClientGroup is not None:
+				self.client_group = qClientGroup.group_name
 
 		qGroupData = MpClientSettings.query.filter(MpClientSettings.group_id == _group_id).all()
 		if qGroupData is not None:

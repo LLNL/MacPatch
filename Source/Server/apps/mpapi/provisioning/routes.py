@@ -73,7 +73,8 @@ class ClientGroups(MPResource):
 			groups = []
 			if qGet is not None:
 				for row in qGet:
-					groups.append(row[0])
+					if row[0] is not None:
+						groups.append(row[0])
 			else:
 				return {"result": [], "errorno": 0, "errormsg": 'No data found.'}, 204
 

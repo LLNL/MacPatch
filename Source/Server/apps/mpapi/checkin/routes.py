@@ -50,7 +50,12 @@ class AgentBase(MPResource):
 						if col == 'mdate':
 							continue
 						else:
-							setattr(client_obj, col, args[col])
+							_args_Val = args[col]
+							if not isinstance(_args_Val, (long, int)):
+								# Remove any new line chars before adding to DB
+								_args_Val = _args_Val.replace('\n', '')
+
+							setattr(client_obj, col, _args_Val)
 
 				setattr(client_obj, 'mdate', datetime.now())
 				db.session.commit()
@@ -70,7 +75,12 @@ class AgentBase(MPResource):
 						if col == 'mdate':
 							continue
 						else:
-							setattr(client_object, col, args[col])
+							_args_Val = args[col]
+							if not isinstance(_args_Val, (long, int)):
+								# Remove any new line chars before adding to DB
+								_args_Val = _args_Val.replace('\n', '')
+
+							setattr(client_object, col, _args_Val)
 
 				setattr(client_object, 'mdate', datetime.now())
 				db.session.add(client_object)

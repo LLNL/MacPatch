@@ -723,21 +723,15 @@
 				row.remove();
 			});
 
-		});
-	</script>
+			var preinstall = ace.edit("pkg_preinstall");
+            		preinstall.setTheme("ace/theme/eclipse");
+		        preinstall.setFontSize('10px');
+            		preinstall.getSession().setMode("ace/mode/sh");
 
-
-	<script>
-
-		var preinstall = ace.edit("pkg_preinstall");
-		preinstall.setTheme("ace/theme/eclipse");
-		preinstall.setFontSize('10px');
-		preinstall.getSession().setMode("ace/mode/sh");
-
-		var postinstall = ace.edit("pkg_postinstall");
-		postinstall.setTheme("ace/theme/eclipse");
-		postinstall.setFontSize('10px');
-		postinstall.getSession().setMode("ace/mode/sh");
+			var postinstall = ace.edit("pkg_postinstall");
+			postinstall.setTheme("ace/theme/eclipse");
+			postinstall.setFontSize('10px');
+			postinstall.getSession().setMode("ace/mode/sh");
 
 	</script>
 {% endblock %}

@@ -1,6 +1,6 @@
 from mpconsole import db
 
-# Rev 10
+# Rev 11
 #
 
 from datetime import *
@@ -296,6 +296,14 @@ class MpClientGroupMembers(CommonBase):
 	rid         = Column(BigInteger, primary_key=True, autoincrement=True)
 	group_id    = Column(String(50), nullable=False, index=True, unique=False)
 	cuuid       = Column(String(255), nullable=False, index=True, unique=False)
+
+# mp_client_group_software
+class MpClientGroupSoftware(CommonBase):
+	__tablename__ = 'mp_client_group_software'
+
+	rid         = Column(BigInteger, primary_key=True, autoincrement=True)
+	group_id    = Column(String(50), nullable=False, index=True, unique=False)
+	tuuid       = Column(String(50), nullable=False, index=True, unique=False)
 
 # mp_client_tasks
 class MpClientTasks(CommonBase):

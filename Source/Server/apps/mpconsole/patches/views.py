@@ -315,7 +315,6 @@ def customPatchWizardUpdate():
 			_file = request.files['mainPatchFile']
 			_fileData = savePatchFile(puuid, _file)
 
-		# print request.form
 		critDict = dict(request.form)
 
 		mpPatch = MpPatch.query.filter(MpPatch.puuid == puuid).first()
@@ -390,7 +389,7 @@ def customPatchWizardUpdate():
 
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
-		print('Message: %s' % (e.message))
+		log_Error('Message: %s' % (e.message))
 		return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
 
 	return json.dumps({'data': {}}, default=json_serial), 200
@@ -418,7 +417,7 @@ def savePatchFile(puuid, file):
 		result['fileURL']  = os.path.join('patches', puuid, file.filename)
 
 		if os.path.exists(_file_path):
-			print('Removing existing file (%s)' % (_file_path))
+			log_Info('Removing existing file (%s)' % (_file_path))
 			os.remove(_file_path)
 
 		file.save(_file_path)
@@ -445,16 +444,17 @@ def customDelete():
 				_patch_dir = "/opt/MacPatch/Content/Web/patches/" + puuid
 				shutil.rmtree(_patch_dir)
 			except OSError, e:
-				print ("Error: %s - %s." % (e.filename,e.strerror))
+				log_Error("Error: %s - %s." % (e.filename,e.strerror))
+
 			db.session.delete(qGet1)
-			MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
+			MpPatchesCrEiteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
 			log("{} delete custom patch {}({}).".format(session.get('user'), qGet1.patch_name, puuid))
 
 		try:
 			db.session.commit()
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			print('Message: %s' % (e.message))
+			log_Error('Message: %s' % (e.message))
 
 	return json.dumps({'data': {}}, default=json_serial), 200
 
@@ -544,7 +544,6 @@ def patchGroups():
 
 	rows = []
 	for x in gmListAlt:
-		print x
 		row = {}
 		members = []
 
@@ -818,6 +817,7 @@ def patchGroupContentEdit(id):
 
 @patches.route('/group/list/<group_id>')
 def patchGroupContent(group_id):
+
 	args = request.args
 
 	total = 0
@@ -842,9 +842,9 @@ def patchGroupContent(group_id):
 					SELECT patch_id FROM mp_patch_group_patches
 					Where patch_group_id = '{}'
 				) p ON b.id = p.patch_id
-				WHERE b.patch_state IN (""" + _pType + """)
+				WHERE b.patch_state IN (""" + _pType + """) 
 				ORDER BY b.{} {};""".format(args['sort'], args['order'])
-				)
+			   )
 
 	result = db.engine.execute(sql)
 	_results = []
@@ -953,7 +953,6 @@ def patchGroupPatchesSave(group_id):
 	_patchGroupPatches = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id).all()
 	if _patchGroupPatches is not None:
 		for p in _patchGroupPatches:
-			# print p
 			row = {}
 			patch = patchDataForPatchID(p.patch_id)
 			if patch is None:

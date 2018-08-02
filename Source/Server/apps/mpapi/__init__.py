@@ -35,39 +35,44 @@ def create_app(config_object=DefaultConfig):
 	_uri = "mysql+pymysql://%s:%s@%s:%s/%s" % (app.config['DB_USER'], app.config['DB_PASS'], app.config['DB_HOST'], app.config['DB_PORT'], app.config['DB_NAME'])
 	app.config['SQLALCHEMY_DATABASE_URI'] = _uri
 
-	# Configure logging
+	# Configure logging location and log file name
 	log_file = app.config['LOGGING_LOCATION'] + "/mpwsapi.log"
 	if not os.path.exists(app.config['LOGGING_LOCATION']):
 		os.makedirs(app.config['LOGGING_LOCATION'])
 		subprocess.call(['chmod', '2775', app.config['LOGGING_LOCATION']])
 
-	handler = logging.handlers.TimedRotatingFileHandler(log_file, when='midnight', interval=1, backupCount=30)
-
 	# This config option will convert all date objects to string
 	app.config['RESTFUL_JSON'] = {'default': json_serial}
 
 	# Set default log level
+	_log_level = logging.INFO
+
+	# If app is set to debug set logging to debug
 	if app.config['DEBUG']:
-		app.logger.setLevel(logging.DEBUG)
-	else:
-		app.logger.setLevel(logging.INFO)
+		app.config['LOGGING_LEVEL'] = 'debug'
 
 	if app.config['LOGGING_LEVEL'].lower() == 'info':
-		app.logger.setLevel(logging.INFO)
+		_log_level = logging.INFO
 	elif app.config['LOGGING_LEVEL'].lower() == 'debug':
-		app.logger.setLevel(logging.DEBUG)
+		_log_level = logging.DEBUG
 	elif app.config['LOGGING_LEVEL'].lower() == 'warning':
-		app.logger.setLevel(logging.WARNING)
+		_log_level = logging.WARNING
 	elif app.config['LOGGING_LEVEL'].lower() == 'error':
-		app.logger.setLevel(logging.ERROR)
+		_log_level = logging.ERROR
 	elif app.config['LOGGING_LEVEL'].lower() == 'critical':
-		app.logger.setLevel(logging.CRITICAL)
+		_log_level = logging.CRITICAL
 	else:
-		app.logger.setLevel(logging.INFO)
+		_log_level = logging.INFO
 
+	# Set and Enable Logging
+	handler = logging.handlers.TimedRotatingFileHandler(log_file, when='midnight', interval=1, backupCount=30)
+	handler.setLevel(_log_level) # This is needed for log rotation
+	# Set log file formatting
 	formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
 	handler.setFormatter(formatter)
+	# Add handler and set app log level
 	app.logger.addHandler(handler)
+	app.logger.setLevel(_log_level)
 
 	read_siteconfig_server_data(app)
 	register_extensions(app)

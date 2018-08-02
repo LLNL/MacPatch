@@ -11,6 +11,7 @@ from .. mputil import *
 from .. model import *
 from .. mplogger import *
 from .. wsresult import *
+from .. shared.software import *
 
 parser = reqparse.RequestParser()
 
@@ -324,6 +325,63 @@ class SoftwareGroups(MPResource):
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			log_Error('[SoftwareDistributionGroups][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
 			return wsResult.resultNoSignature(errorno=500, errormsg=e.message), 500
+
+class SoftwareForClientGroup(MPResource):
+
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		super(SoftwareForClientGroup, self).__init__()
+
+	def get(self, client_id):
+		try:
+
+			if not isValidClientID(client_id):
+				log_Error('[AgentStatus][Get]: Failed to verify ClientID (%s)' % (client_id))
+				return {"result": {'data': {}, 'type':'AgentStatus'}, "errorno": 424, "errormsg": 'Failed to verify ClientID'}, 424
+
+			if not isValidSignature(self.req_signature, client_id, self.req_uri, self.req_ts):
+				if current_app.config['ALLOW_MIXED_SIGNATURES'] == True:
+					log_Info('[AgentStatus][Get]: ALLOW_MIXED_SIGNATURES is enabled.')
+				else:
+					log_Error('[AgentStatus][Get]: Failed to verify Signature for client (%s)' % (client_id))
+					return {"result": {'data': {}, 'type':'AgentStatus'}, "errorno": 424, "errormsg": 'Failed to verify Signature'}, 424
+
+			res = []
+			client_obj = MpClient.query.filter_by(cuuid=client_id).first()
+			client_group = MpClientGroupMembers.query.filter_by(cuuid=client_obj.cuuid).first()
+
+			if client_group is not None:
+				swids_Obj = MpClientGroupSoftware.query.filter(MpClientGroupSoftware.group_id == client_group.group_id).all()
+				for i in swids_Obj:
+					res.append({'tuuid':i.tuuid})
+
+			return {"result": {'data': res, 'type':'RequiredSoftware'}, "errorno": 0, "errormsg": 'none'}, 200
+
+
+		except IntegrityError, exc:
+			log_Error('[AgentStatus][Get][IntegrityError]: client_id: %s Message: %s' % (client_id, exc.message))
+			return {"result": {'data': {}, 'type':'AgentStatus'}, "errorno": 500, "errormsg": exc.message}, 500
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			log_Error('[AgentStatus][Get][Exception][Line: %d] client_id: %s Message: %s' % (exc_tb.tb_lineno, client_id, e.message))
+			return {'errorno': 500, 'errormsg': e.message, 'result': {'data': {}, 'type':'AgentStatus'}}, 500
+
+	def criteriaForSUUID(self, suuid):
+		res = MpSoftwareCriteria.query.filter(MpSoftwareCriteria.suuid == suuid).all()
+		cri = SWObjCri()
+		criData = {}
+		if res is not None and len(res) >= 1:
+			for row in res:
+				if row.type == "OSArch":
+					criData['os_arch'] = row.type_data
+				elif row.type == "OSType":
+					criData['os_type'] = row.type_data
+				elif row.type == "OSVersion":
+					criData['os_vers'] = row.type_data
+
+			cri.importDict(criData)
+		return cri.asDict()
+
 # ----------------------------------
 # Private Class
 # ----------------------------------
@@ -396,3 +454,7 @@ software_2_api.add_resource(SoftwareTaskForTaskID,		'/sw/task/<string:cuuid>/<st
 
 software_2_api.add_resource(SoftwareGroups,				'/sw/groups/<string:cuuid>', endpoint='woState')
 software_2_api.add_resource(SoftwareGroups,    			'/sw/groups/<string:cuuid>/<string:state>', endpoint='wState')
+
+
+software_2_api.add_resource(SoftwareForClientGroup,		'/sw/required/<string:client_id>')
+

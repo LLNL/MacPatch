@@ -23,9 +23,9 @@ Patch Groups
 {% block javascript %}
 	{{ super() }}
 	<script src="{{ url_for('static', filename='yarn_components/bootstrap-table/dist/bootstrap-table.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='yarn_components/bootstrap-editable/js/index.js') }}"></script>
-
+	<link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
 	<script>
+
 	$( document ).ready(function()
 	{
 		$('#table').bootstrapTable(
@@ -123,7 +123,7 @@ Patch Groups
 			htmlData.push('<i class="fa fa-pencil" aria-hidden="true"></i>');
 			htmlData.push('</a>');
 		} else {
-			htmlData.push('&nbsp;&nbsp;&nbsp;');
+			htmlData.push('&nbsp;&nbsp;');
 		}
 		htmlData.push('</td><td>');
 		htmlData.push('<a class="admins" href="javascript:void(0)" title="Patch Group Admins">');
@@ -133,7 +133,7 @@ Patch Groups
 			htmlData.push('<a class="remove" href="javascript:void(0)" title="Remove Patch Group">');
 			htmlData.push('<i class="fa fa-trash-o"></i></a>');
 		} else {
-			htmlData.push('&nbsp;&nbsp;&nbsp;');
+			htmlData.push('&nbsp;&nbsp;');
 		}
 		htmlData.push('</td></tr></table>');
 		return htmlData.join('');
