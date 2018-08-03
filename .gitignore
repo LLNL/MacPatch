@@ -132,3 +132,7 @@ Source_dev/
 *.log
 *.log.*
 working/
+
+# MacPatch, ignore root dir items
+/Server
+/Content
