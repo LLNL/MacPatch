@@ -13,7 +13,7 @@ import sys
 import json
 import os.path
 import hmac
-from ldap3 import Server, Connection
+from ldap3 import Server, Connection, ALL, AUTO_BIND_NO_TLS, SUBTREE, ALL_ATTRIBUTES
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 
 from Crypto.PublicKey import RSA
@@ -23,7 +23,7 @@ from base64 import b64encode, b64decode, encodestring
 
 from . import db
 from . model import MPAgentRegistration, MpClient, AdmGroupUsers, AdmUsers, AdmUsersInfo, MpSiteKeys
-from . mplogger import log_Debug, log_Info, log_Error
+from . mplogger import *
 
 # ----------------------------------------------------------------------------
 '''
@@ -198,20 +198,47 @@ def dbUserAuth(user, password):
 	LDAP User Auth
 '''
 def ldapAuth(ldap_conf, user, password):
-
 	try:
-		ldap_server = Server(ldap_conf['server'], port=ldap_conf['port'], use_ssl=ldap_conf['useSSL'])
-		conn = Connection(ldap_server, user=user, password=password)
+		userID = ''
+		usr_prefix = ''
+		usr_suffix = ''
+		if 'loginUsrPrefix' in ldap_conf:
+			if ldap_conf['loginUsrPrefix'] != 'LOGIN-PREFIX':
+				usr_prefix = ldap_conf['loginUsrPrefix']
+
+		if 'loginUsrSufix' in ldap_conf:
+			if ldap_conf['loginUsrSufix'] != 'LOGIN-SUFFIX':
+				usr_suffix = ldap_conf['loginUsrSufix']
+
+		userID = usr_prefix + user + usr_suffix
+
+		server = None
+		if 'server' in ldap_conf and 'port' in ldap_conf and 'useSSL' in ldap_conf:
+			_use_ssl = True
+			if ldap_conf['useSSL'] is False:
+				log_Warn('SSL is not enabled for LDAP queries, this is not recommended.')
+				_use_ssl = False
+
+			if not isinstance(ldap_conf['port'], int):
+				ldap_conf['port'] = int(ldap_conf['port'])
+
+			server = Server(host=ldap_conf['server'], port=ldap_conf['port'], use_ssl=_use_ssl)
+
+		conn = Connection(server, user=userID, password=password)
+
 		didBind = conn.bind()
 		if not didBind:
 			log_Error("Error with user name or password. Unable to bind to ldap server.")
-			return None
+			return False
 
-		didSearch = conn.search(ldap_conf['searchbase'], '(&(objectclass=*)('+ldap_conf['loginAttr']+'='+user+'))', attributes=ldap_conf['attributes'].split(','))
+		_sFilter = "(&(objectClass=*)(" + ldap_conf['loginAttr'] + "=" + userID + "))"
+		didSearch = conn.search(search_base=ldap_conf['searchbase'], search_filter=_sFilter,
+					search_scope=SUBTREE, attributes=ALL_ATTRIBUTES, get_operational_attributes=True)
+
 		if not didSearch:
 			conn.unbind()
 			log_Error("Error unable to find user info in directory.")
-			return None
+			return False
 		else:
 			res = conn.entries[0]
 			conn.unbind()
@@ -219,8 +246,8 @@ def ldapAuth(ldap_conf, user, password):
 
 	except:  # catch *all* exceptions
 		e = sys.exc_info()[0]
-		print e
-		return None
+		log_Error(e)
+		return False
 
 '''
 	User Rights Methods
