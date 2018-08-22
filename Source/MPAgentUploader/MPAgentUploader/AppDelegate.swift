@@ -43,19 +43,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     let defaults = UserDefaults.standard
     
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
-        /*
-        let console = ConsoleDestination()
-        let file = FileDestination()
-        
-        file.logFileURL = URL(string: logPath)
-        file.format = "$Dyyyy-MM-dd HH:mm:ss.SSS$d $C$L$c: $M"
-        
-        log.addDestination(console)
-        log.addDestination(file)
-        */
-        
+    func applicationDidFinishLaunching(_ aNotification: Notification)
+	{
         log = LXLogger(endpoints: [
             
             LXRotatingFileEndpoint(
@@ -94,12 +83,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSWorkspace.shared.openFile(logFile, withApplication: "Console")
         
     }
+	
+	@IBAction func resetAuthInfo(_ sender: NSObject?)
+	{
+		NotificationCenter.default.post(name: Notification.Name("ResetAuthToken"), object: nil)
+	}
     
     @IBAction func pressed(sender: AnyObject) {
         if let window = NSApplication.shared.mainWindow {
             if let viewController = window.contentViewController as? ViewController {
                 // do stuff
-                print("Hello")
                 viewController.displayMigrationPlistSheet()
             }
         }

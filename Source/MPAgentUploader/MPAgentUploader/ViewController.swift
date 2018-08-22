@@ -87,6 +87,7 @@ class ViewController: NSViewController, AuthViewControllerDelegate
         NotificationCenter.default.addObserver(self, selector: #selector(self.toggleAgentUpload(notification:)), name: Notification.Name("AgentUpload"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setLogLevel(notification:)), name: Notification.Name("setLogLevel"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.toggleSelfSigned(notification:)), name: Notification.Name("SelfSigned"), object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(self.resetAuthToken(notification:)), name: Notification.Name("ResetAuthToken"), object: nil)
         
         self.headerView.wantsLayer = true
         headerViewVersionLabel.stringValue = "Version " + (Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String)
@@ -194,6 +195,25 @@ class ViewController: NSViewController, AuthViewControllerDelegate
 			}
 		}
 	}
+	
+	
+	
+	
+	@objc func resetAuthToken(notification: NSNotification)
+	{
+		let a = NSAlert()
+		a.messageText = "Reset Authentication?"
+		a.informativeText = "Are you sure you would like to reset your authentication data.?"
+		a.addButton(withTitle: "Reset")
+		a.addButton(withTitle: "Cancel")
+		a.alertStyle = NSAlert.Style.warning
+		
+		a.beginSheetModal(for: self.view.window!, completionHandler: { (modalResponse) -> Void in
+			if modalResponse == NSApplication.ModalResponse.alertFirstButtonReturn {
+				self.api_token = "NA"
+			}
+		})
+	}
     
     @IBAction func processAndUploadAgent(sender: AnyObject)
     {
@@ -205,6 +225,11 @@ class ViewController: NSViewController, AuthViewControllerDelegate
                 return manager
             }()
         }
+		
+		if (UserDefaults.standard.string(forKey: "server") != self.mpServerHost.stringValue) {
+			self.displayAuthSheet(sender: self)
+			return
+		}
         
         // Check for api_token, if no token then display auth dialog
         if (self.api_token.isEmpty || self.api_token == "NA") {

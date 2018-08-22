@@ -85,6 +85,7 @@ class AuthViewController: NSViewController
             switch response.result
             {
             case .failure(let error):
+				log.error("\(error.localizedDescription)")
                 self.authStatusField.stringValue = error.localizedDescription
             
             case .success(let resultData):
