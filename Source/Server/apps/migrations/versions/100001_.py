@@ -814,7 +814,7 @@ def upgrade():
 	### end Alembic commands ###
 
 	### Add MacPatch VIEWS ###
-	qstr = ''' CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_clients_view` AS
+	qstr = '''DROP VIEW IF EXISTS `mp_clients_view`; CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_clients_view` AS
 	select `mp_clients`.`cuuid` AS `cuuid`,`mp_clients`.`serialno` AS `serialNo`,
 	`mp_clients`.`hostname` AS `hostname`,`mp_clients`.`computername` AS `computername`,
 	`mp_clients`.`ipaddr` AS `ipaddr`,`mp_clients`.`macaddr` AS `macaddr`,`mp_clients`.`osver` AS `osver`,
@@ -840,7 +840,7 @@ def upgrade():
 	'''
 	op.execute(qstr)
 
-	qstr1='''CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_apple_view` AS
+	qstr1='''DROP VIEW IF EXISTS `mp_client_patches_apple_view`; CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_apple_view` AS
 	select `mpca`.`rid` AS `rid`,`mpca`.`cuuid` AS `cuuid`,`mpca`.`mdate` AS `date`,`mpca`.`patch` AS `patch`,
 	`mpca`.`type` AS `type`,`mpca`.`description` AS `description`,`mpca`.`size` AS `size`,
 	`mpca`.`recommended` AS `recommended`,`mpca`.`restart` AS `restart`,`ap`.`akey` AS `patch_id`
@@ -848,7 +848,7 @@ def upgrade():
 	'''
 	op.execute(qstr1)
 
-	qstr2='''CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_third_view` AS
+	qstr2='''DROP VIEW IF EXISTS `mp_client_patches_third_view`; CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_third_view` AS
 	select `mpca`.`rid` AS `rid`,`mpca`.`cuuid` AS `cuuid`,`mpca`.`mdate` AS `date`,
 	concat(`mpp`.`patch_name`,'-',`mpp`.`patch_ver`) AS `patch`,`mpca`.`type` AS `type`,
 	`mpca`.`description` AS `description`,`mpca`.`size` AS `size`,`mpca`.`recommended` AS `recommended`,
@@ -857,7 +857,7 @@ def upgrade():
 	'''
 	op.execute(qstr2)
 
-	qstr3='''CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_full_view` AS
+	qstr3='''DROP VIEW IF EXISTS `mp_client_patches_full_view`; CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patches_full_view` AS
 	select `mp_client_patches_apple_view`.`cuuid` AS `cuuid`,`mp_client_patches_apple_view`.`date` AS `date`,
 	`mp_client_patches_apple_view`.`patch` AS `patch`,`mp_client_patches_apple_view`.`type` AS `type`,
 	`mp_client_patches_apple_view`.`description` AS `description`,`mp_client_patches_apple_view`.`size` AS `size`,
@@ -872,7 +872,7 @@ def upgrade():
 	'''
 	op.execute(qstr3)
 
-	qstr4='''CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `combined_patches_view` AS
+	qstr4='''DROP VIEW IF EXISTS `combined_patches_view`; CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `combined_patches_view` AS
 	select distinct `ap`.`akey` AS `id`,`ap`.`patchname` AS `name`,`ap`.`version` AS `version`,
 	`ap`.`postdate` AS `postdate`,`ap`.`title` AS `title`,
 	(case when (`ap`.`restartaction` = 'NoRestart') then  'No' when (`ap`.`restartaction` = 'RequireRestart') then  'Yes' end) AS `reboot`,
@@ -891,7 +891,7 @@ def upgrade():
 	'''
 	op.execute(qstr4)
 
-	qstr5='''CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patch_status_view` AS
+	qstr5='''DROP VIEW IF EXISTS `mp_client_patch_status_view`; CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `mp_client_patch_status_view` AS
 	select `a`.`cuuid` AS `cuuid`,`a`.`date` AS `date`,`a`.`patch` AS `patch`,`a`.`type` AS `type`,
 	`a`.`description` AS `description`,`a`.`size` AS `size`,`a`.`recommended` AS `recommended`,
 	`a`.`restart` AS `restart`,`a`.`patch_id` AS `patch_id`,`cci`.`hostname` AS `hostname`,
@@ -903,7 +903,7 @@ def upgrade():
 	'''
 	op.execute(qstr5)
 
-	qstr6='''CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `client_patch_status_view` AS select
+	qstr6='''DROP VIEW IF EXISTS `client_patch_status_view`; CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `client_patch_status_view` AS select
 	`a`.`cuuid` AS `cuuid`,`a`.`date` AS `date`,`a`.`patch` AS `patch`,`a`.`type` AS `type`,`a`.`description` AS `description`,
 	`a`.`size` AS `size`,`a`.`recommended` AS `recommended`,`a`.`restart` AS `restart`,`a`.`patch_id` AS `patch_id`,
 	`cci`.`hostname` AS `hostname`,`cci`.`Domain` AS `ClientGroup`,`cci`.`ipaddr` AS `ipaddr`,
