@@ -324,7 +324,8 @@
     SecTrustedApplicationRef MPUpdateAgent = NULL;
     
     result = SecTrustedApplicationCreateFromPath(NULL, &me);
-    result = SecTrustedApplicationCreateFromPath("/Library/MacPatch/Client/MPAgent", &MPAgent);
+	result = SecTrustedApplicationCreateFromPath(NULL, &MPAgent);
+	result = SecTrustedApplicationCreateFromPath("/Library/MacPatch/Client/MPAgent", &MPAgent);
     result = SecTrustedApplicationCreateFromPath("/Library/MacPatch/Client/MPAgentExec", &MPAgentExec);
     result = SecTrustedApplicationCreateFromPath("/Library/MacPatch/Client/MPWorker", &MPWorker);
     result = SecTrustedApplicationCreateFromPath("/Library/MacPatch/Client/MPCatalog.app", &MPCatalog);

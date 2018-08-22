@@ -30,4 +30,6 @@
 - (BOOL)hasKey:(id)aKey;
 - (NSString *)urlEncodedString;
 
+- (id)objectForKey:(id)aKey default:(id)aDefault;
+- (BOOL)validKey:(NSString *)key;
 @end

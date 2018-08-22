@@ -169,7 +169,7 @@
 					logit(lcl_vError,@"%@",err.localizedDescription);
 					continue;
 				}
-				logit(lcl_vError,@"Begin installing %@.",swTask[@"name"]);
+				logit(lcl_vInfo,@"Begin installing %@.",swTask[@"name"]);
 				int res = [sw installSoftwareTask:swTask];
 				if (res != 0) {
 					logit(lcl_vError,@"Required software, %@ failed to install.",swTask[@"name"]);

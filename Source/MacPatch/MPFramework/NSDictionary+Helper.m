@@ -62,4 +62,30 @@ static NSString *urlEncode(id object)
 	}
 	return [parts componentsJoinedByString: @"&"];
 }
+
+
+- (id)objectForKey:(id)aKey default:(id)aDefault
+{
+	id ret = [self objectForKey: aKey];
+	if ( ret == nil ) {
+		return aDefault;
+	} else {
+		return ret;
+	}
+}
+
+- (BOOL)validKey:(NSString *)key
+{
+	BOOL success = NO;
+	id obj = self[key];
+	if ( obj != nil ) {
+		if ( obj != (id)[NSNull null] ) {
+			success = YES;
+		}
+	}
+	
+	return success;
+}
+
+
 @end

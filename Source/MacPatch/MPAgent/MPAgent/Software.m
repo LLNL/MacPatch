@@ -82,17 +82,101 @@
 	return self;
 }
 
+- (BOOL)downloadSWTask:(NSDictionary *)swTask error:(NSError **)err
+{
+	BOOL taskCanBeInstalled = [self softwareTaskCriteriaCheck:swTask];
+	if (!taskCanBeInstalled) {
+		NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
+		[errorDetail setValue:@"Software Task failed basic criteria check." forKey:NSLocalizedDescriptionKey];
+		*err = [NSError errorWithDomain:@"gov.llnl.mp.sw.install" code:1001 userInfo:errorDetail];
+		return NO;
+	}
+	
+	logit(lcl_vInfo,@"Installing %@ (%@).",swTask[@"name"],swTask[@"id"]);
+	logit(lcl_vInfo,@"INFO: %@",[swTask valueForKeyPath:@"Software.sw_type"]);
+	
+	// Create Path to download software to
+	NSString *swLoc = NULL;
+	NSString *swLocBase = [SOFTWARE_DATA_DIR stringByAppendingPathComponent:@"sw"];
+	swLoc = [NSString pathWithComponents:@[swLocBase, swTask[@"id"]]];
+	
+	// Verify Disk space requirements before downloading and installing
+	long long stringToLong = 0;
+	stringToLong = [[swTask valueForKeyPath:@"Software.sw_size"] longLongValue];
+	
+	MPDiskUtil *mpd = [[MPDiskUtil alloc] init];
+	if ([mpd diskHasEnoughSpaceForPackage:stringToLong] == NO)
+	{
+		logit(lcl_vError,@"This system does not have enough free disk space to install the following software %@",swTask[@"name"]);
+		return NO;
+	}
+	
+	// Create Download URL
+	NSString *_url = [@"/mp-content" stringByAppendingPathComponent:[swTask valueForKeyPath:@"Software.sw_url"]];
+	logit(lcl_vDebug,@"Download software from: %@",[swTask valueForKeyPath:@"Software.sw_type"]);
+	
+	NSError *dlErr = nil;
+	MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
+	NSString *dlPath = [req runSyncFileDownload:_url downloadDirectory:NSTemporaryDirectory() error:&dlErr];
+	
+	if (dlErr) {
+		logit(lcl_vError,@"Error[%d], trying to download file.",(int)[dlErr code]);
+		return NO;
+	}
+	if (!dlPath) {
+		logit(lcl_vError,@"Error, downloaded file path is nil.");
+		logit(lcl_vError,@"No install will occure.");
+		return NO;
+	}
+	
+	// Create Destination Dir
+	dlErr = nil;
+	if ([fm fileExistsAtPath:swLoc] == NO) {
+		[fm createDirectoryAtPath:swLoc withIntermediateDirectories:YES attributes:nil error:&dlErr];
+		if (dlErr) {
+			logit(lcl_vError,@"Error[%d], trying to create destination directory. %@.",(int)[dlErr code],swLoc);
+		}
+	}
+	
+	// Move Downloaded File to Destination
+	if ([fm fileExistsAtPath:[swLoc stringByAppendingPathComponent:[dlPath lastPathComponent]]]) {
+		// File Exists, remove it first
+		dlErr = nil;
+		[fm removeItemAtPath:[swLoc stringByAppendingPathComponent:[dlPath lastPathComponent]] error:&dlErr];
+		if (dlErr) {
+			logit(lcl_vError,@"%@",dlErr.localizedDescription);
+			return NO;
+		}
+	}
+	dlErr = nil;
+	[fm moveItemAtPath:dlPath toPath:[swLoc stringByAppendingPathComponent:[dlPath lastPathComponent]] error:&dlErr];
+	if (dlErr) {
+		logit(lcl_vError,@"Error[%d], trying to move downloaded file to %@.",(int)[dlErr code],swLoc);
+		logit(lcl_vError,@"No install will occure.");
+		return NO;
+	}
+	return YES;
+}
+
+
 - (int)installSoftwareTask:(NSDictionary *)swTaskDict
 {
+	NSError *err = nil;
+	// Download SW
+	if (![self downloadSWTask:swTaskDict error:&err]) {
+		return 1;
+	}
+	
+	
 	int result = 0;
 	NSString *pkgType = [[swTaskDict valueForKeyPath:@"Software.sw_type"] uppercaseString];
-	NSError *err = nil;
 	MPCrypto *mpCrypto = [[MPCrypto alloc] init];
 	NSString *fHash;
 	MPAsus *mpa = [[MPAsus alloc] init];
 	NSArray *pathComp;
 	NSString *zipFileName;
 	NSString *dmgFile;
+	err = nil;
 	
 	if ([pkgType isEqualToString:@"SCRIPTZIP"])
 	{
@@ -277,7 +361,9 @@
 			}
 		}
 		
-	} else {
+	}
+	else
+	{
 		// Install Type Not Supported
 		result = 2;
 	}
@@ -372,13 +458,47 @@
 
 #pragma mark - Private Methods
 
-
 - (NSString *)downloadedSWPath:(NSDictionary *)dict
 {
 	NSString *swFile;
 	NSString *swFileName = [[dict valueForKeyPath:@"Software.sw_url"] lastPathComponent];
 	swFile = [NSString pathWithComponents:@[SOFTWARE_DATA_DIR,@"sw",dict[@"id"],swFileName]];
 	return swFile;
+}
+
+// Private
+- (BOOL)softwareTaskCriteriaCheck:(NSDictionary *)aTask
+{
+	logit(lcl_vInfo,@"Checking %@ criteria.",[aTask objectForKey:@"name"]);
+	
+	MPOSCheck *mpos = [[MPOSCheck alloc] init];
+	NSDictionary *_SoftwareCriteria = [aTask objectForKey:@"SoftwareCriteria"];
+	
+	// OSArch
+	if ([mpos checkOSArch:[_SoftwareCriteria objectForKey:@"arch_type"]]) {
+		logit(lcl_vDebug,@"OSArch=TRUE: %@",[_SoftwareCriteria objectForKey:@"arch_type"]);
+	} else {
+		logit(lcl_vInfo,@"OSArch=FALSE: %@",[_SoftwareCriteria objectForKey:@"arch_type"]);
+		return NO;
+	}
+	
+	// OSType
+	if ([mpos checkOSType:[_SoftwareCriteria objectForKey:@"os_type"]]) {
+		logit(lcl_vDebug,@"OSType=TRUE: %@",[_SoftwareCriteria objectForKey:@"os_type"]);
+	} else {
+		logit(lcl_vInfo,@"OSType=FALSE: %@",[_SoftwareCriteria objectForKey:@"os_type"]);
+		return NO;
+	}
+	// OSVersion
+	if ([mpos checkOSVer:[_SoftwareCriteria objectForKey:@"os_vers"]]) {
+		logit(lcl_vDebug,@"OSVersion=TRUE: %@",[_SoftwareCriteria objectForKey:@"os_vers"]);
+	} else {
+		logit(lcl_vInfo,@"OSVersion=FALSE: %@",[_SoftwareCriteria objectForKey:@"os_vers"]);
+		return NO;
+	}
+	
+	mpos = nil;
+	return YES;
 }
 
 #pragma mark Task methods
