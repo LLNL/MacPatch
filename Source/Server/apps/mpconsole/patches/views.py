@@ -289,9 +289,10 @@ def customPatchWizard(puuid):
 			_hasOSArch = True
 			break
 
+	base_url = request.url_root
 	return render_template('patches/custom_patch_wizard.html', data=patch, columns=patchCols, dataAlt=patchDict,
 							dataCrit=patchCrit, dataCritLen=patchCritLen, dataCritAlt=pathCritLst,
-							hasOSArch=_hasOSArch, dataReq=patchReq)
+							hasOSArch=_hasOSArch, dataReq=patchReq, baseurl=base_url)
 
 ''' AJAX Request '''
 @patches.route('/customPatchWizard/update',methods=['POST'])
@@ -385,6 +386,7 @@ def customPatchWizardUpdate():
 
 
 			db.session.commit()
+
 			log("{} updated custom patch {}.".format(session.get('user'), puuid))
 
 	except Exception as e:

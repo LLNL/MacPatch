@@ -51,6 +51,7 @@ class GetAuthToken(MPResource):
 			_body = request.get_json(silent=True)
 			if not _body:
 				_body = literal_eval(request['data'])
+
 			'''
 				Dict format of get auth token request
 				{'authUser': 'tom', 'authPass': 'passiton'}

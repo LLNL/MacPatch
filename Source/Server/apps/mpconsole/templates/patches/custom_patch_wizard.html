@@ -285,7 +285,7 @@
 								<br>
 								<input type="file" name="mainPatchFile" id="mainPatchFile" message="Error [Patch File]: A patch package name is required.">
 								<div style="font-size:10px;padding:10px;">
-									<a href="http://#CGI.SERVER_NAME#/mp-content{{data.pkg_url}}" style="font-size:12px;">
+									<a href="{{baseurl}}mp-content{{data.pkg_url}}" style="font-size:12px;">
 										<img src="/static/img/arrow_down.png" height="14"/>{{data.pkg_name or ''}} ({{data.pkg_hash or ''}})
 									</a>
 								</div>
@@ -724,14 +724,14 @@
 			});
 
 			var preinstall = ace.edit("pkg_preinstall");
-            		preinstall.setTheme("ace/theme/eclipse");
-		        preinstall.setFontSize('10px');
-            		preinstall.getSession().setMode("ace/mode/sh");
+            preinstall.setTheme("ace/theme/eclipse");
+            preinstall.setFontSize('10px');
+            preinstall.getSession().setMode("ace/mode/sh");
 
-			var postinstall = ace.edit("pkg_postinstall");
-			postinstall.setTheme("ace/theme/eclipse");
-			postinstall.setFontSize('10px');
-			postinstall.getSession().setMode("ace/mode/sh");
-
+            var postinstall = ace.edit("pkg_postinstall");
+            postinstall.setTheme("ace/theme/eclipse");
+            postinstall.setFontSize('10px');
+            postinstall.getSession().setMode("ace/mode/sh");
+		});
 	</script>
 {% endblock %}
