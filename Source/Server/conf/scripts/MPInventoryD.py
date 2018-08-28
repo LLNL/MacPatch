@@ -25,7 +25,7 @@
 
 '''
 	Script: MPInventory.py
-	Version: 1.1.8
+	Version: 1.1.9
 '''
 
 import logging
@@ -59,7 +59,7 @@ myConfig = {
 	'password': '',
 	'host': 'localhost',
 	'port': 3306,
-	'database': 'MacPatchDB',
+	'database': 'MacPatchDB3',
 	'raise_on_warnings': True,
 	'buffered': True
 }
@@ -70,7 +70,7 @@ logger       = logging.getLogger('MPInventory')
 MP_SRV_BASE   = "/opt/MacPatch/Server"
 MP_FLASK_FILE = MP_SRV_BASE+"/apps/config.cfg"
 logFile       = MP_SRV_BASE+"/logs/MPInventory.log"
-invFilesDir   = MP_SRV_BASE+"/Data/Inventory/files"
+invFilesDir   = MP_SRV_BASE+"/InvData/files"
 confFile      = MP_SRV_BASE+"/etc/siteconfig.json"
 
 # ----------------------------------------------------------------------------
