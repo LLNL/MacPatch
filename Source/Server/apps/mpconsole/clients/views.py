@@ -61,7 +61,10 @@ def clientsListJSON():
 
 	for c in clients:
 		_dict = c[0].asDict
-		_dict['client_group'] = searchForGroup(c[1], _groups)
+		_dict['client_group'] = ''
+		_client_group = searchForGroup(c[1], _groups)
+		if _client_group is not None:
+			_dict['client_group'] = _client_group
 		_dict['addomain'] = c.mpa_ADDomain
 		_dict['addn'] = c.mpa_distinguishedName
 		_results.append(_dict)
@@ -71,8 +74,14 @@ def clientsListJSON():
 
 # Helper method to find a group in a list
 def searchForGroup(group, list):
+	if not group:
+		return None
+		
 	res = (item for item in list if item["group_id"] == group).next()
-	return res['group_name']
+	if res['group_name']:
+		return res['group_name']
+	else:
+		return None
 '''
 ----------------------------------------------------------------
 	Client - dashboard
@@ -423,7 +432,10 @@ def clientGroup(name,tab=1):
 
 				for key in _row.keys():
 					if not isinstance(_row[key], (long, int)):
-						_row[key] = _row[key].replace('\n', '')
+						if _row[key]:
+							_row[key] = _row[key].replace('\n', '')
+						else:
+							_row[key] = ''
 
 				_results.append(_row)
 
