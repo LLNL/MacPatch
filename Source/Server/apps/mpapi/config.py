@@ -39,6 +39,7 @@ class BaseConfig:
 	# MacPatch App Options
 	SITECONFIG_FILE         = '/opt/MacPatch/Server/etc/siteconfig.json'
 	VERIFY_CLIENTID         = True
+	VERIFY_CLIENTID_OLD     = True
 	REQUIRE_SIGNATURES      = False
 	ALLOW_MIXED_SIGNATURES  = True
 	POST_CHECKIN_TO_SYSLOG  = False
