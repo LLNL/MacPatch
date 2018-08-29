@@ -67,6 +67,14 @@ if [ -d "$MPClientDir" ]; then
 	rm -rf "$MPClientDir"
 fi
 
+if [ -f /Library/Application\ Support/MacPatch/gov.llnl.mp.plist ]; then
+	rm -f /Library/Application\ Support/MacPatch/gov.llnl.mp.plist
+fi
+
+if [ -f /Library/Application\ Support/MacPatch/gov.llnl.mpagent.plist ]; then
+	rm -f /Library/Application\ Support/MacPatch/gov.llnl.mpagent.plist
+fi
+
 # Clean up old downloads
 if [ -d "/Library/Application Support/MacPatch/SW_Data/sw" ]; then
 	rm -rf /Library/Application\ Support/MacPatch/SW_Data/sw/*
