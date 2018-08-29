@@ -1036,11 +1036,13 @@ done:
 			}
 			
 			// Strip the White Space and any New line data
-			tmpStr = [[strArr objectAtIndex:i] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+			// tmpStr = [[strArr objectAtIndex:i] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+			tmpStr = [[strArr objectAtIndex:i] stringByTrimmingWhitespaceFromFront];
 			
 			// If the object/string starts with *,!,- then allow it
 			if ([[tmpStr substringWithRange:NSMakeRange(0,1)] isEqual:@"*"] || [[tmpStr substringWithRange:NSMakeRange(0,1)] isEqual:@"!"] || [[tmpStr substringWithRange:NSMakeRange(0,1)] isEqual:@"-"]) {
 				tmpDict = [[NSMutableDictionary alloc] init];
+				logit(lcl_vInfo,@"Apple Update RAW: %@",tmpStr);
 				logit(lcl_vInfo,@"Apple Update: %@",[tmpStr substringWithRange:NSMakeRange(2,([tmpStr length]-2))]);
 				[tmpDict setObject:[tmpStr substringWithRange:NSMakeRange(2,([tmpStr length]-2))] forKey:@"patch"];
 				[tmpDict setObject:@"Apple" forKey:@"type"];

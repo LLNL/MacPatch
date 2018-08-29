@@ -1045,14 +1045,17 @@ done:
 
                     for (int i=0; i<[applePatchesArray count]; i++)
 					{
+						
 						_applePatch = [applePatchesArray objectAtIndex:i];
+						logit(lcl_vInfo,@"Checking Apple Patch: %@",_applePatch[@"patch"]);
+						logit(lcl_vDebug,@"Checking Apple Patch Dict: %@",_applePatch);
 						
                         for (int x=0;x < [approvedApplePatches count]; x++)
 						{
 							_applePatchApproved = [approvedApplePatches objectAtIndex:x];
-							
                             if ([_applePatchApproved[@"name"] isEqualTo:_applePatch[@"patch"]])
 							{
+								logit(lcl_vInfo,@"Apple Patch Match Found");
 								logit(lcl_vDebug,@"Apple Data: %@",_applePatch);
 								logit(lcl_vDebug,@"MP Data: %@",_applePatchApproved);
 								
@@ -1111,6 +1114,7 @@ done:
 								[tmpDict setObject:@"Apple" forKey:@"type"];
 								[tmpDict setObject:_applePatchApproved[@"patch_install_weight"] forKey:@"patch_install_weight"];
 								logit(lcl_vDebug,@"Apple Patch Dictionary Added: %@",tmpDict);
+								logit(lcl_vInfo,@"Approved (User Install) update %@",_applePatch[@"patch"]);
 								[approvedUpdatesArray addObject:tmpDict];
 								break;
                             }

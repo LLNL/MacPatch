@@ -46,4 +46,6 @@
 - (BOOL)isNSStringType;
 
 - (BOOL)isBase64String;
+
+- (NSString *)stringByTrimmingWhitespaceFromFront;
 @end

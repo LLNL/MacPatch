@@ -248,4 +248,14 @@
 	return NO;
 }
 
+- (NSString *)stringByTrimmingWhitespaceFromFront
+{
+	const char *cStringValue = [self UTF8String];
+	
+	int i;
+	for (i = 0; cStringValue[i] != '\0' && isspace(cStringValue[i]); i++);
+	
+	return [self substringFromIndex:i];
+}
+
 @end
