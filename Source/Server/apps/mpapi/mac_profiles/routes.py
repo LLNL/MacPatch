@@ -77,7 +77,9 @@ class ClientProfile():
 		_profiles = []
 
 		q_grp_result = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == clientGroupID).all()
-		q_glb_result = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == '0').all()
+		q_glb_result = MpOsConfigProfilesAssigned.query.filter(MpOsConfigProfilesAssigned.groupID == 'Global').all()
+		#q_glb_result = MpOsProfilesGroupAssigned.query.filter(MpOsProfilesGroupAssigned.groupID == '0').all()
+
 
 		if q_grp_result is not None:
 			for row in q_grp_result:
