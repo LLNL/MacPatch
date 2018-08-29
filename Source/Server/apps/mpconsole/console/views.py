@@ -692,9 +692,8 @@ def asusServerEdit(id):
 def asusServerUpdate():
 	if adminRole() or localAdmin():
 		_form = request.form
-		suServerURL = _form['catalog_url']
 		if request.method == 'POST':
-
+			suServerURL = _form['catalog_url']
 			isNew = False
 			if _form['rid'] == '':
 				isNew = True
@@ -722,13 +721,15 @@ def asusServerUpdate():
 			return json.dumps({'error': 0}), 200
 
 		elif request.method == 'DELETE':
-
-			x = MpAsusCatalog.query.filter(MpAsusCatalog.rid == _form['rid']).first()
-			if x is not None:
-				log("{} deleted SU server {}.".format(session.get('user'), x.catalog_url))
-				db.session.delete(x)
-				db.session.commit()
-				updateASUSRev()
+			_rid = _form.get('rid')
+			_rids = _rid.split(",")
+			for r in _rids:
+				x = MpAsusCatalog.query.filter(MpAsusCatalog.rid == r).first()
+				if x is not None:
+					log("{} deleted SU server {}.".format(session.get('user'), x.catalog_url))
+					db.session.delete(x)
+					db.session.commit()
+					updateASUSRev()
 
 			return json.dumps({'error': 0}), 200
 	else:

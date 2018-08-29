@@ -842,9 +842,9 @@ def patchGroupContent(group_id):
 					combined_patches_view b
 				LEFT JOIN (
 					SELECT patch_id FROM mp_patch_group_patches
-					Where patch_group_id = '{}'
+					Where patch_group_id = '""" + group_id + """'
 				) p ON b.id = p.patch_id
-				WHERE b.patch_state IN (""" + _pType + """) 
+				WHERE b.patch_state IN (""" + _pType + """)
 				ORDER BY b.{} {};""".format(args['sort'], args['order'])
 			   )
 
