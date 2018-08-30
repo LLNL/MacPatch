@@ -409,7 +409,11 @@ def agentVersionCollection(version):
 		_dict = row[0].asDict
 		_dict['addomain'] = row.mpa_ADDomain
 		_dict['addn'] = row.mpa_distinguishedName
-		_dict['client_group'] = _client_Groups[row.group_id]
+		if row.group_id and _client_Groups[row.group_id]:
+			_dict['client_group'] = _client_Groups[row.group_id]
+		else:
+			_dict['client_group'] = "NA"
+			
 		_results.append(_dict)
 
 	return _results, colNames
