@@ -488,33 +488,12 @@ Client Group - {{group_name}}
 		$('#tableProfiles').bootstrapTable(
 		{
 			striped: true,
-			ajax: function loadMyRows(params)
-			{
-				if (params.data.search == '') {
-					params.data.search = undefined;
-				}
-				// /profiles/group/<groupid>
-				var _url = "/osmanage/profiles/group/{{group_id}}";
-				$.ajax({
-					type: 'GET',
-					url: _url,
-					cache: false,
-					dataType: 'json',
-					success: function(res)
-					{
-						params.success({
-							total: res.total,
-							rows: res.data
-						});
-					}
-				});
-			},
+			url: "/osmanage/profiles/group/{{group_id}}",
 			search: true,
 			pageSize: 20,
 			pageList: [5, 10, 20, 50, 100, 200],
 			pagination: true,
-			queryParamsType: "limit",
-			sidePagination: "server",
+			sidePagination: "client",
 			showRefresh: true,
 			columns: [
 				{
@@ -664,11 +643,11 @@ Client Group - {{group_name}}
 	{
 		'click .removeSW': function (e, value, row, index)
 		{
-			
+
 		},
 		'click .addSW': function (e, value, row, index)
 		{
-			
+
 		}
 	};
 
@@ -683,11 +662,11 @@ Client Group - {{group_name}}
 	{
 		'click .removeProv': function (e, value, row, index)
 		{
-			
+
 		},
 		'click .addProv': function (e, value, row, index)
 		{
-			
+
 		}
 	};
 
