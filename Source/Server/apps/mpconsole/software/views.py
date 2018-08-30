@@ -905,12 +905,13 @@ def saveSWPackage():
 				setattr(qSWRAdd, k, v)
 
 			db.session.add(qSWRAdd)
+			
 	'''
 		Save the img file
 	'''
 	_imgFile = None
 	_imgFileData = None
-	if "sw_img_path" in request.form:
+	if 'sw_img_path' in request.files:
 		_imgFile = request.files['sw_img_path']
 		_imgFileData = saveImageFile(_suuid, _imgFile)
 
@@ -923,9 +924,9 @@ def saveSWPackage():
 	'''
 	_file = None
 	_fileData = None
-	if "mainPackage" in request.form:
-		_file = request.files['mainPackage']
-		_fileData = saveSoftwareFile(_suuid, _file)
+	if 'mainPackage' in request.files:
+		mainFile = request.files['mainPackage']
+		_fileData = saveSoftwareFile(_suuid, mainFile)
 
 	# Save SW Package Info
 	if _fileData is not None:
