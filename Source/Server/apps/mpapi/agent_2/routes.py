@@ -330,7 +330,7 @@ class _AgentUpdaterUpdate(MPResource):
 			if _update is not None:
 				log_Info('[AgentUpdaterUpdate][GET]: Update is needed for client_id: %s' % (client_id))
 				log_Debug('[AgentUpdaterUpdate][GET]: Update client_id: %s DICT: %s' % (client_id, _update))
-				return {"result": {'type': 'AgentUpdaterUpdate', 'data': _update}, "errorno": 0, "errormsg": 'none', 'signature': signResultData(_update)}, 200
+				return {"result": {'type': 'AgentUpdaterUpdate', 'data': _update}, "errorno": 0, "errormsg": 'none', 'signature': signData(_update)}, 200
 
 			else:
 				log_Info('[AgentUpdaterUpdate][GET]: No update is needed for client_id: %s' % (client_id))
