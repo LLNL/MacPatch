@@ -746,7 +746,7 @@ def patchGroupMemberDelete(id):
 		return json.dumps({}), 403
 
 	ids = request.form.get('ids')
-	for id, user_id in enumerate(ids.split(',')):
+	for rid, user_id in enumerate(ids.split(',')):
 		qry = PatchGroupMembers.query.filter(PatchGroupMembers.patch_group_id == id, PatchGroupMembers.user_id == user_id).first()
 		if qry is not None:
 			if qry.is_owner == 0:

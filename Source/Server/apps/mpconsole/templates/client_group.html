@@ -487,8 +487,8 @@ Client Group - {{group_name}}
 
 		$('#tableProfiles').bootstrapTable(
 		{
-			striped: true,
 			url: "/osmanage/profiles/group/{{group_id}}",
+			striped: true,
 			search: true,
 			pageSize: 20,
 			pageList: [5, 10, 20, 50, 100, 200],
@@ -510,14 +510,12 @@ Client Group - {{group_name}}
 				},
 				{% for col in profileCols %}
 					{
-
 						{% if col[2] == '0' %}
 						visible: false,
 						{% endif %}
 						sortable: true,
 						field: '{{col[0]}}',
 						title: '{{col[1]}}'
-
 					},
 				{% endfor %}
 			]

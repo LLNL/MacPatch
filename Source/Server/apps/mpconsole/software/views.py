@@ -905,7 +905,7 @@ def saveSWPackage():
 				setattr(qSWRAdd, k, v)
 
 			db.session.add(qSWRAdd)
-			
+
 	'''
 		Save the img file
 	'''
@@ -932,7 +932,7 @@ def saveSWPackage():
 	if _fileData is not None:
 		if _fileData['fileName'] is not None:
 			setattr(qSW, 'sw_size', _fileData['fileSize'])
-			setattr(qSW, 'sw_hash', _fileData['fileHash'])
+			setattr(qSW, 'sw_hash', _fileData['fileHash'].upper())
 			setattr(qSW, 'sw_path', _fileData['filePath'])
 			setattr(qSW, 'sw_url', _fileData['fileURL'])
 
@@ -964,7 +964,7 @@ def saveSoftwareFile(suuid, file):
 		filename = secure_filename(file.filename)
 		_file_path = os.path.join(upload_dir, filename)
 		result['filePath'] = _file_path
-		result['fileURL']  = os.path.join('sw', suuid, file.filename)
+		result['fileURL']  = os.path.join('/sw', suuid, file.filename)
 
 		if os.path.exists(_file_path):
 			print('Removing existing file (%s)' % (_file_path))

@@ -105,7 +105,7 @@ def upgrade():
 	u_qstr1="ALTER TABLE `mp_group_config` ADD COLUMN `tasks_version` bigint AFTER `rev_tasks`;"
 	op.execute(u_qstr1)
 
-	u_qstr2 = "ALTER TABLE `mp_software` ADD COLUMN `sw_img_path` bigint AFTER `mdate`;"
+	u_qstr2 = "ALTER TABLE `mp_software` ADD COLUMN `sw_img_path` text AFTER `mdate`;"
 	op.execute(u_qstr2)
 
 	# MPClients
