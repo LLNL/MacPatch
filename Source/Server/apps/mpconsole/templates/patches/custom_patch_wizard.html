@@ -260,7 +260,7 @@
 								<label>PreInstall Script</label>
 							</div>
 							<div class="col-md-7">
-								<div id="pkg_preinstall"></div>
+								<div id="pkg_preinstall">{{data.pkg_preinstall or ''}}</div>
 							</div>
 							<div class="col-md-2">
 								<small>Note: The return code of "0" is True.</small>
@@ -443,6 +443,13 @@
 						formDataNew.append(fName, xeditors[i]['instance'].getValue() );
 					}
 
+					var preValue = ace.edit("pkg_preinstall").getValue();
+					formDataNew.append('pkg_preinstall', preValue );
+					var pstValue = ace.edit("pkg_postinstall").getValue();
+					formDataNew.append('pkg_postinstall', pstValue );
+
+					var res = true;
+
 					$.ajax({
 						type:'POST',
 						url: '/patches/customPatchWizard/update',
@@ -453,14 +460,16 @@
 						success: function(){
 							alert("Patch Updated Successfully");
 							$('#modalDialog').modal('hide');
-							return true;
+							res = true;
 						},
 						error: function(jqXHR, textStatus, errorThrown) {
 							alert("Patch Failed to Update");
 							//$('#modalDialog').modal('hide');
-							return false;
+							res = false;
 						}
 					});
+
+					return res;
 				},
 				onFinished: function (event, currentIndex)
 				{
