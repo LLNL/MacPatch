@@ -384,10 +384,8 @@ def customPatchWizardUpdate():
 				db.session.add(patchesCriteria)
 				continue
 
-
-			db.session.commit()
-
-			log("{} updated custom patch {}.".format(session.get('user'), puuid))
+		db.session.commit()
+		log("{} updated custom patch {}.".format(session.get('user'), puuid))
 
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
