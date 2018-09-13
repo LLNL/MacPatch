@@ -782,7 +782,6 @@ class MpSoftware(CommonBase):
 	sw_env_var              = Column(String(255), info="Install ENV")
 	cdate                   = Column(DateTime, server_default='1970-01-01 00:00:00', info="Create Date", doc=99)
 	mdate                   = Column(DateTime, server_default='1970-01-01 00:00:00', info="Mod Date", doc=98)
-
 	sw_img_path 			= Column(TEXT(), info="SW Icon")
 
 # mp_software_criteria

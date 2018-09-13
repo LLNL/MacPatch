@@ -7,5 +7,4 @@ from .. mputil import *
 
 @content.route('/<path:file>')
 def content(file):
-	print current_app.config['CONTENT_DIR'] + "/Web/" + file
 	return send_from_directory(current_app.config['CONTENT_DIR'] + "/Web/", file, as_attachment=True)

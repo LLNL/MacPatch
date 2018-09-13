@@ -266,6 +266,15 @@ def clientGroupAdd():
 	setattr(clientGroup, 'group_id', _group_id)
 	setattr(clientGroup, 'group_owner', _owner)
 
+	fileData = defaultTasks()
+	file_tasks = fileData['mpTasks']
+	for task in file_tasks:
+		task['group_id'] = _group_id
+		_t = MpClientTasks(**task)
+		db.session.add(_t)
+		db.session.commit()
+		_t = None
+
 	log("{} adding new group {}.".format(_owner, _group_id))
 	return render_template('update_client_group.html', data=clientGroup, type="add")
 

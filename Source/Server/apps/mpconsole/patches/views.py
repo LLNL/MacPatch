@@ -2,6 +2,7 @@ from flask import render_template, request, session, redirect, url_for
 from werkzeug import secure_filename
 from flask_security import login_required
 from sqlalchemy import text, or_
+from sqlalchemy.orm.session import make_transient
 
 from flask_cors import cross_origin
 
@@ -21,6 +22,7 @@ from .. import db
 from .. model import *
 from .. modes import *
 from .. mplogger import *
+from .. mputil import *
 
 '''
 ----------------------------------------------------------------
@@ -384,6 +386,7 @@ def customPatchWizardUpdate():
 				db.session.add(patchesCriteria)
 				continue
 
+
 		db.session.commit()
 		log("{} updated custom patch {}.".format(session.get('user'), puuid))
 
@@ -427,6 +430,66 @@ def savePatchFile(puuid, file):
 
 	return result
 
+@patches.route('/custom/duplicate/<patch_id>',methods=['POST'])
+@login_required
+def customDuplicate(patch_id):
+
+	if not localAdmin() and not adminRole():
+		log_Error("{} does not have permission to duplicate custom patch.".format(session.get('user')))
+		return json.dumps({'data': {}}, default=json_serial), 403
+
+
+	qGet1 = MpPatch.query.filter(MpPatch.puuid == patch_id).first()
+	if qGet1 is not None:
+		make_transient(qGet1)
+
+		_new_puuid = str(uuid.uuid4())
+		_new_patch_name = "Copy_"+qGet1.patch_name
+		qGet1.rid = None
+		setattr(qGet1, 'puuid', _new_puuid)
+		setattr(qGet1, 'patch_name', _new_patch_name)
+		setattr(qGet1, 'patch_state', "Create")
+		setattr(qGet1, 'active', "0")
+
+		_pkg_path = qGet1.pkg_path
+		_pkg_url = qGet1.pkg_url
+		setattr(qGet1, 'pkg_path', _pkg_path.replace(patch_id, _new_puuid))
+		setattr(qGet1, 'pkg_url', _pkg_url.replace(patch_id, _new_puuid))
+
+		db.session.add(qGet1)
+
+		# Duplicate patch criteria
+		qGet2 = MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == patch_id).all()
+		if qGet2 is not None:
+			for x in qGet2:
+				make_transient(x)
+				x.rid = None
+				setattr(x, 'puuid', _new_puuid)
+				db.session.add(x)
+
+		# Need to duplicate patch on file system
+		try:
+			_patch_dir0 = "/opt/MacPatch/Content/Web/patches/" + patch_id
+			if os.path.exists(_patch_dir0):
+				_patch_dir1 = "/opt/MacPatch/Content/Web/patches/" + _new_puuid
+				copytree(_patch_dir0,_patch_dir1)
+			else:
+				log("{}, unable to duplicate custom patch {}({}). Directory does not exist".format(session.get('user'), qGet1.patch_name, patch_id))
+
+		except OSError, e:
+			log_Error("Error: %s - %s." % (e.filename,e.strerror))
+
+
+		log("{} duplicate custom patch {}({}).".format(session.get('user'), qGet1.patch_name, patch_id))
+
+	try:
+		db.session.commit()
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		log_Error('Message: %s' % (e.message))
+
+	return json.dumps({'data': {}}, default=json_serial), 200
+
 @patches.route('/custom/delete',methods=['DELETE'])
 @login_required
 def customDelete():
@@ -447,7 +510,7 @@ def customDelete():
 				log_Error("Error: %s - %s." % (e.filename,e.strerror))
 
 			db.session.delete(qGet1)
-			MpPatchesCrEiteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
+			MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
 			log("{} delete custom patch {}({}).".format(session.get('user'), qGet1.patch_name, puuid))
 
 		try:
@@ -714,7 +777,7 @@ def patchGroupMemberAdd(id):
 	pk = request.form.get('pk')
 	user_id = request.form.get('value')
 
-	patchGroupMember = PatchGroupMembers.query.filter(PatchGroupMembers.patch_group_id == id, PatchGroupMembers.user_id == pk).first()
+	patchGroupMember = PatchGroupMembers.query.filter(PatchGroupMembers.patch_group_id == id, PatchGroupMembers.user_id == user_id).first()
 	if patchGroupMember is not None:
 		# We only edit the non owners
 		if patchGroupMember.is_owner != 1:
@@ -842,7 +905,7 @@ def patchGroupContent(group_id):
 					SELECT patch_id FROM mp_patch_group_patches
 					Where patch_group_id = '""" + group_id + """'
 				) p ON b.id = p.patch_id
-				WHERE b.patch_state IN (""" + _pType + """)
+				WHERE b.patch_state IN (""" + _pType + """) 
 				ORDER BY b.{} {};""".format(args['sort'], args['order'])
 			   )
 

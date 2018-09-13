@@ -318,7 +318,6 @@ def previewTableData(table_name):
 		qStr.insert(3, _form['sql'])
 
 	sql_query = ''.join(qStr)
-	# print sql_query
 	query_result = db.engine.execute(sql_query)
 
 	_columns = []

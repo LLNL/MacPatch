@@ -62,10 +62,7 @@ def groups():
 					_drow[c['field']] = _objVal
 			except Exception as e:
 				exc_type, exc_obj, exc_tb = sys.exc_info()
-				print r.asDict
-				print c['field']
-				print _objVal
-				print e.message
+				log_Error(e.message)
 
 		_rows.append(_drow)
 
@@ -273,9 +270,7 @@ def editFilterForGroup(group_id, row_id):
 @software.route('/group/filter/save/<group_id>', methods=['POST'])
 @login_required
 def saveGroupFilter(group_id):
-	print group_id
 	_form = request.form.to_dict()
-	print _form
 
 	_is_new_filter=False
 	if 'rid' in _form:
@@ -379,9 +374,7 @@ def taskNew():
 @software.route('/task/save/<id>', methods=['POST'])
 @login_required
 def taskSave(id):
-	print id
 	_form = request.form.to_dict()
-	print _form
 
 	_isNewTask=False
 	_task = MpSoftwareTask.query.filter(MpSoftwareTask.tuuid == _form['tuuid']).first()
@@ -432,11 +425,11 @@ def taskRemove():
 		for t in _form['tasks'].split(","):
 			_task = MpSoftwareTask.query.filter(MpSoftwareTask.tuuid == t).first()
 			if _task is not None:
-				print("Delete sw task %s" % (_task.name))
+				log_Info("Delete sw task %s" % (_task.name))
 				_tasks = MpSoftwareGroupTasks.query.filter(MpSoftwareGroupTasks.sw_task_id == t).all()
 				if _tasks is not None:
 					for x in _tasks:
-						print("Delete %s from sw group %s" % (x.sw_task_id, x.sw_group_id))
+						log_Info("Delete %s from sw group %s" % (x.sw_task_id, x.sw_group_id))
 						MpSoftwareGroupTasks.query.filter(MpSoftwareGroupTasks.rid == x.rid).delete()
 
 				db.session.delete(_task)
@@ -780,16 +773,12 @@ def editSWPackage(id):
 		_pre['order'] = r[0].type_order
 		_preReq.append(_pre)
 
-	print _preReq
-
 	for r in swReqPst:
 		_post = {}
 		_post['suuid'] = r[0].suuid_ref
 		_post['name'] = r.sName
 		_post['order'] = r[0].type_order
 		_postReq.append(_post)
-
-	print _postReq
 
 	_data['PKGPREREQ'] = _preReq
 	_data['PKGPOSTREQ'] = _postReq
@@ -806,8 +795,6 @@ def editSWPackage(id):
 ''' AJAX Method '''
 @software.route('/package/save', methods=['POST'])
 def saveSWPackage():
-	# print request.form.get('suuid')
-	# print request.form
 
 	# Check for SUUID, if missing gen one
 	# it should be a new sw item
@@ -851,10 +838,8 @@ def saveSWPackage():
 		setattr(qSW, 'suuid', _suuid)
 		setattr(qSW, 'cdate', datetime.now())
 
-	print request.form.__dict__
 	for v in request.form:
 		if v != 'suuid':
-			print v
 			setattr(qSW, v, request.form[v])
 
 	setattr(qSW, 'mdate', datetime.now())
@@ -967,7 +952,7 @@ def saveSoftwareFile(suuid, file):
 		result['fileURL']  = os.path.join('/sw', suuid, file.filename)
 
 		if os.path.exists(_file_path):
-			print('Removing existing file (%s)' % (_file_path))
+			log_Info('Removing existing file (%s)' % (_file_path))
 			os.remove(_file_path)
 
 		file.save(_file_path)
@@ -993,7 +978,7 @@ def saveImageFile(suuid, file):
 		result['filePath'] = os.path.join('/sw', suuid, file.filename)
 
 		if os.path.exists(_file_path):
-			print('Removing existing file (%s)' % (_file_path))
+			log_Info('Removing existing file (%s)' % (_file_path))
 			os.remove(_file_path)
 
 		file.save(_file_path)

@@ -17,8 +17,9 @@
 	<table id="table" data-toolbar="#toolbar" class="table table-condensed" data-show-export="true">
 		<div id="toolbar">
 			{% if session.role[0] == 1 %}
-			<button id="addButton" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button>
-			<button id="delButton" type="button" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i></button>
+			<button id="addButton" type="button" class="btn btn-default" title="Add New Patch"><i class="glyphicon glyphicon-plus"></i></button>
+            <button id="dupButton" type="button" class="btn btn-default" title="Duplicate Patch"><i class="glyphicon glyphicon-duplicate"></i></button>
+			<button id="delButton" type="button" class="btn btn-default" title="Delete Patch"><i class="glyphicon glyphicon-trash"></i></button>
 			{% endif %}
 		</div>
 	</table>
@@ -134,7 +135,7 @@
 		return html.join('');
 	}
 
-	var $table = $('#table'), $delButton = $('#delButton'), $addButton = $('#addButton');
+	var $table = $('#table'), $delButton = $('#delButton'), $addButton = $('#addButton'), $dupButton = $('#dupButton');
 	$(function ()
 	{
 		$delButton.click(function ()
@@ -166,6 +167,41 @@
 							values: rowsArr
 						});
 						alert("Patch(es) removed successfully.");
+					}
+				});
+			}
+		});
+
+		$dupButton.click(function ()
+		{
+		    var rows = $('#table').bootstrapTable('getAllSelections');
+		    if (rows.length > 1) {
+		        alert("Duplicating multiple patches is not permitted. Please select only one patch at a time.");
+                return;
+            }
+
+			confirm_str = "Are you sure you want to duplicate this patch?";
+			if (confirm(confirm_str) == true)
+			{
+			    var rowsArr = [];
+				for (x in rows) {
+					var _patchID = rows[x]['puuid'];
+					rowsArr.push(_patchID);
+				}
+
+				var _url = "/patches/custom/duplicate/"+rowsArr[0];
+				$.ajax({
+					url: _url,
+					type: 'POST',
+					cache: false,
+					error: function (request, status, error)
+					{
+						jsonValue = jQuery.parseJSON( request.responseText );
+						alert(jsonValue.errormsg);
+					},
+					success: function () {
+					    $('#table').bootstrapTable('refresh');
+						//alert("Patch(es) removed successfully.");
 					}
 				});
 			}

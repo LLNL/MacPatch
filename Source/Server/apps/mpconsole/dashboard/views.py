@@ -287,7 +287,10 @@ def modelTypeCollection(model):
 			if _name in row:
 				if _name == 'client_group':
 					_row_val = row[_name]
-					_dict[_name] = _client_Groups[_row_val]
+					if _row_val:
+						_dict[_name] = _client_Groups[_row_val]
+					else:
+						_dict[_name] = ""
 				else:
 					_dict[_name] = row[_name]
 			else:
@@ -332,7 +335,10 @@ def requiredPatchCollection(patch):
 			if _name in row:
 				if _name == 'client_group':
 					_row_val = row[_name]
-					_dict[_name] = _client_Groups[_row_val]
+					if _row_val:
+						_dict[_name] = _client_Groups[_row_val]
+					else:
+						_dict[_name] = ""
 				else:
 					_dict[_name] = row[_name]
 			else:
@@ -369,7 +375,12 @@ def agentStatusCollection(state):
 		_dict = row[0].asDict
 		_dict['addomain'] = row.mpa_ADDomain
 		_dict['addn'] = row.mpa_distinguishedName
-		_dict['client_group'] = _client_Groups[row.group_id]
+
+		if row.group_id:
+			_dict['client_group'] = _client_Groups[row.group_id]
+		else:
+			_dict['client_group'] = ""
+
 
 		diff = today - row[0].mdate
 		if diff.days <= 7:
@@ -413,7 +424,7 @@ def agentVersionCollection(version):
 			_dict['client_group'] = _client_Groups[row.group_id]
 		else:
 			_dict['client_group'] = "NA"
-			
+
 		_results.append(_dict)
 
 	return _results, colNames
