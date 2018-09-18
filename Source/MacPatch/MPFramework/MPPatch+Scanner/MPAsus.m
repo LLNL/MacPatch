@@ -27,6 +27,7 @@
 #import "MPNetworkUtils.h"
 #import "MPPatchScan.h"
 #import "Constants.h"
+#include <stdlib.h>
 //#import "MPNetConfig.h"
 //#import "MPNetRequest.h"
 
@@ -427,7 +428,8 @@ done:
     NSString *res = nil;
     NSError *error = nil;
     MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
-    res = [req runSyncFileDownload:aURL downloadDirectory:@"/tmp" error:&error];
+	NSString *dlDir = [self genTempDirPathFromURL:aURL];
+    res = [req runSyncFileDownload:aURL downloadDirectory:dlDir error:&error];
     if (error) {
         if (err != NULL) {
             *err = error;
@@ -564,6 +566,22 @@ done:
     qltrace(@"%@",result);
 	if (err != NULL) *err = aErr;	
     return 0;
+}
+
+- (NSString *)genTempDirPathFromURL:(NSString *)url
+{
+	NSString *pathTemplate = [NSString stringWithFormat:@"%@.XXXXXX",url.lastPathComponent];
+	NSString *tempFilePathTemplate = [NSString pathWithComponents:@[NSTemporaryDirectory(), pathTemplate]];
+	
+	// Convert template to ASCII for use by C library functions
+	const char* tempFilePathTemplateASCII = [tempFilePathTemplate cStringUsingEncoding:NSASCIIStringEncoding];
+	
+	// Copy template to temporary buffer so it can be modified in place
+	char *tempFilePathASCII = calloc(strlen(tempFilePathTemplateASCII) + 1, 1);
+	strcpy(tempFilePathASCII, tempFilePathTemplateASCII);
+	
+	NSString *tempPath = [NSString stringWithCString:tempFilePathASCII encoding:NSASCIIStringEncoding];
+	return [NSString stringWithFormat:@"/tmp/%@",tempPath.lastPathComponent];
 }
 
 #pragma mark Notifications

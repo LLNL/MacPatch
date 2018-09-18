@@ -245,6 +245,8 @@ typedef NSUInteger MPPostDataType;
         
         NSString *zipFile = [NSString pathWithComponents:[NSArray arrayWithObjects:[mp_SOFTWARE_DATA_DIR path],@"sw",[aSWDict objectForKey:@"id"],[[aSWDict valueForKeyPath:@"Software.sw_url"] lastPathComponent], nil]];
         fHash = [mpCrypto md5HashForFile:zipFile];
+		logit(lcl_vInfo,@"Check file: %@.",[zipFile lastPathComponent]);
+		logit(lcl_vInfo,@"Check Hash: %@ = %@.",[fHash uppercaseString],[aSWDict valueForKeyPath:@"Software.sw_hash"]);
         if (![[fHash uppercaseString] isEqualToString:[aSWDict valueForKeyPath:@"Software.sw_hash"]]) {
             logit(lcl_vError,@"Error unable to verify software hash for file %@.",[zipFile lastPathComponent]);
             return 1;

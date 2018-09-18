@@ -28,6 +28,7 @@
 #import "MPNetworkUtils.h"
 #import "MPSystemInfo.h"
 #import "Suserver.h"
+#import "MPSystemInfo.h"
 
 #undef  ql_component
 #define ql_component lcl_cMPASUSCatalogs
@@ -36,6 +37,8 @@
 {
     MPSettings      *settings;
     MPNetworkUtils  *mpNetworkUtils;
+	NSDictionary	*systemInfo;
+	NSString		*osver;
 }
 
 @end
@@ -49,6 +52,8 @@
     {
         mpNetworkUtils  = [[MPNetworkUtils alloc] init];
         settings        = [MPSettings sharedInstance];
+		systemInfo		= [MPSystemInfo osVersionOctets];
+		osver			= [NSString stringWithFormat:@"-%@.%@-",systemInfo[@"major"],systemInfo[@"minor"]];
     }
     return self;
 }
@@ -100,9 +105,32 @@
 
 - (BOOL)disableCatalogURL
 {
-	// Disabled this, using interceptor now...
-	//return [self writeCatalogURL:@"http://127.0.0.1:8088/index.sucatalog"];
-	return YES;
+	BOOL result = TRUE;
+	
+	@try
+	{
+		NSDictionary *osVerInfo = [MPSystemInfo osVersionOctets];
+		if ([[osVerInfo objectForKey:@"minor"] intValue] >= 10)
+		{
+			// For Mac OS X 10.10 or higher
+			qlinfo(@"Clearing softwareupdate catalog.");
+			[NSTask launchedTaskWithLaunchPath:@"/usr/sbin/softwareupdate" arguments:@[@"--clear-catalog"]];
+		}
+		else
+		{
+			qlinfo(@"Clearing softwareupdate catalog.");
+			NSMutableDictionary *asusDefaults = [NSMutableDictionary dictionaryWithContentsOfFile:ASUS_PLIST_PATH];
+			[asusDefaults removeObjectForKey:@"CatalogURL"];
+			[asusDefaults writeToFile:ASUS_PLIST_PATH atomically:NO];
+		}
+	}
+	@catch ( NSException *e )
+	{
+		qlerror(@"Error unable to write new config.");
+		result = FALSE;
+	}
+	
+	return result;
 }
 
 #pragma mark - New methods
@@ -114,29 +142,41 @@
         qlinfo(@"Software update server list is empty. Can not set CatalogURL");
         return YES;
     }
-    
+	
+	BOOL suServerFound = FALSE;
     NSString *newCatalogURL = NULL;
     for (Suserver *server in suServers)
     {
-        if ([mpNetworkUtils isHostURLReachable:server.catalogURL])
-        {
-            if ([mpNetworkUtils isURLValid:server.catalogURL returnCode:200])
-            {
-                qldebug(@"SU Catalog verified: %@",server.catalogURL);
-                newCatalogURL = server.catalogURL;
-                break;
-            } else {
-                qlerror(@"CatalogURL: %@ did not return 200.",server.catalogURL);
-                continue;
-            }
-        }
+		// Check to make sure has right os version in it.
+		if ([server.catalogURL rangeOfString:osver].location == NSNotFound)
+		{
+			continue;
+		}
+		else
+		{
+			if ([mpNetworkUtils isHostURLReachable:server.catalogURL])
+			{
+				if ([mpNetworkUtils isURLValid:server.catalogURL returnCode:200])
+				{
+					qldebug(@"SU Catalog verified: %@",server.catalogURL);
+					newCatalogURL = server.catalogURL;
+					suServerFound = TRUE;
+					break;
+				} else {
+					qlerror(@"CatalogURL: %@ did not return 200.",server.catalogURL);
+					continue;
+				}
+			}
+		}
     }
-    
-    // No valid suserver
-    if (newCatalogURL == NULL)
-        return NO;
-    
-    return [self writeCatalogURL:newCatalogURL];
+	
+	if (suServerFound) {
+		[self writeCatalogURL:newCatalogURL];
+		return TRUE;
+	} else {
+		[self disableCatalogURL];
+		return NO;
+	}
 }
 
 @end

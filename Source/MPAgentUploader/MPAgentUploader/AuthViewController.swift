@@ -76,7 +76,8 @@ class AuthViewController: NSViewController
    
         let _ssl = (NSControl.StateValue.init(x_useSSL!) == NSControl.StateValue.on) ? "https" : "http"
         let _url: String = "\(_ssl)://\(x_mpServer!):\(x_mpPort!)\(URI_PREFIX)/auth/token"
-        
+		log.debug("Auth Request URL: \(_url)")
+		
         let _params: Parameters = ["authUser":authUserID.stringValue, "authPass":authUserPass.stringValue]
         
         MPAlamofire.request(_url, method: .post, parameters: _params, encoding: JSONEncoding.default).validate().responseJSON

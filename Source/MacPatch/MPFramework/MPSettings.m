@@ -304,6 +304,9 @@ static MPSettings *_instance;
 
 - (NSArray *)serversFromDictionary:(NSDictionary *)settings
 {
+	Server *master = nil;
+	Server *proxy = nil;
+	
     NSMutableArray *_srvs = [NSMutableArray new];
     NSArray *_raw_srvs = settings[@"data"];
     
@@ -312,26 +315,62 @@ static MPSettings *_instance;
     
     for (NSDictionary *_srv in _raw_srvs)
     {
-        [_srvs addObject:[[Server alloc] initWithDictionary:_srv]];
+		if ([_srv[@"serverType"] intValue] == 0 ) {
+			master = [[Server alloc] initWithDictionary:_srv];
+		} else if ([_srv[@"serverType"] intValue] == 1 ) {
+			[_srvs addObject:[[Server alloc] initWithDictionary:_srv]];
+		}  else if ([_srv[@"serverType"] intValue] == 2 ) {
+			proxy = [[Server alloc] initWithDictionary:_srv];
+		}
     }
-    
-    return (NSArray *)_srvs;
+	
+	NSMutableArray *randSrvs = [NSMutableArray new];
+	if (_srvs.count >= 2) {
+		randSrvs = [NSMutableArray arrayWithArray:[self randomizeArray:_srvs]];
+	} else {
+		randSrvs = [NSMutableArray arrayWithArray:_srvs];
+	}
+	
+	if (master) {
+		[randSrvs addObject:master];
+	}
+	
+	if (proxy) {
+		[randSrvs addObject:proxy];
+	}
+	
+    return (NSArray *)[randSrvs copy];
 }
 
 - (NSArray *)suServersFromDictionary:(NSDictionary *)settings
 {
-    NSMutableArray *_srvs = [NSMutableArray new];
+    NSMutableArray *_srvsInt = [NSMutableArray new];
+	NSMutableArray *_srvsExt = [NSMutableArray new];
     NSArray *_raw_srvs = settings[@"data"];
-    
-    NSSortDescriptor * descriptor = [[NSSortDescriptor alloc] initWithKey:@"serverType" ascending:YES];
-    _raw_srvs = [_raw_srvs sortedArrayUsingDescriptors:@[descriptor]];
     
     for (NSDictionary *_srv in _raw_srvs)
     {
-        [_srvs addObject:[[Suserver alloc] initWithDictionary:_srv]];
+		if ([_srv[@"serverType"] intValue] == 0 ) {
+			[_srvsInt addObject:[[Suserver alloc] initWithDictionary:_srv]];
+		} else if ([_srv[@"serverType"] intValue] == 1 ) {
+			[_srvsExt addObject:[[Suserver alloc] initWithDictionary:_srv]];
+		}
     }
+	
+	NSMutableArray *randSrvs = [NSMutableArray new];
+	if (_srvsInt.count >= 2) {
+		[randSrvs addObjectsFromArray:[self randomizeArray:_srvsInt]];
+	} else {
+		[randSrvs addObjectsFromArray:_srvsInt];
+	}
+	
+	if (_srvsExt.count >= 2) {
+		[randSrvs addObjectsFromArray:[self randomizeArray:_srvsExt]];
+	} else {
+		[randSrvs addObjectsFromArray:_srvsExt];
+	}
     
-    return (NSArray *)_srvs;
+    return (NSArray *)[randSrvs copy];
 }
 
 - (NSArray *)tasksFromDictionary:(NSDictionary *)settings
