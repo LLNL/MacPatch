@@ -470,12 +470,22 @@ def signData(data):
 		rsakey = RSA.importKey(qKeys.priKey)
 		signer = PKCS1_v1_5.new(rsakey)
 		digest = SHA.new()
+		if isinstance(data, dict):
+			_data = ""
+			for key in sorted(data):
+				if not isinstance(data[key], dict):
+					_data = _data + str(key) + str(data[key])
+				else:
+					_data = _data + str(key) + "DICT"
+
+			data = _data
 
 		digest.update(data)
 		sign = signer.sign(digest)
 		return b64encode(sign)
 	else:
 		return None
+
 
 def verifySignedData(signature, data):
 	qKeys = MpSiteKeys.query.filter(MpSiteKeys.active == '1').first()

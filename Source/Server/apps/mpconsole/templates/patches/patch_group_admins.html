@@ -30,33 +30,12 @@
 		$('#table_admins').bootstrapTable(
 		{
 			striped: true,
-			ajax: function loadMyRows(params)
-			{
-				if (params.data.search == '') {
-					params.data.search = undefined;
-				}
-				// patchGroup/members/gid
-				var _url = "/patches/patchGroup/members/{{group_id}}";
-				$.ajax({
-					type: 'GET',
-					url: _url,
-					cache: false,
-					dataType: 'json',
-					success: function(res)
-					{
-						params.success({
-							total: res.total,
-							rows: res.data
-						});
-					}
-				});
-			},
+            url: "/patches/patchGroup/members/{{group_id}}",
 			search: true,
 			pageSize: 10,
 			pageList: [5, 10, 20, 50],
 			pagination: false,
-			queryParamsType: "limit",
-			sidePagination: "server",
+			sidePagination: "client",
 			showRefresh: true,
 			idField: 'user_id',
 			columns: [

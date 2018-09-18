@@ -314,20 +314,24 @@ def customPatchWizardUpdate():
 		# Save File, returns path to file
 		_file = None
 		_fileData = None
-		if "mainPatchFile" in req.form:
+		if "mainPatchFile" in request.files:
 			_file = request.files['mainPatchFile']
 			_fileData = savePatchFile(puuid, _file)
 
 		critDict = dict(request.form)
 
+		newPatch = False
 		mpPatch = MpPatch.query.filter(MpPatch.puuid == puuid).first()
+		if mpPatch is None:
+			newPatch = True
+			mpPatch = MpPatch()
 		mpPatchCols = MpPatch.__table__.columns
 
 		for key in critDict:
 			for col in mpPatchCols:
 				if col.name == key:
 					_val = request.form[col.name]
-					setattr(mpPatch, col.name, _val)
+					setattr(mpPatch, key, _val)
 					continue
 
 		# Save Patch Package Info
@@ -338,6 +342,9 @@ def customPatchWizardUpdate():
 				setattr(mpPatch, 'pkg_hash', _fileData['fileHash'])
 				setattr(mpPatch, 'pkg_path', _fileData['filePath'])
 				setattr(mpPatch, 'pkg_url', _fileData['fileURL'])
+
+		if newPatch:
+			db.session.add(mpPatch)
 
 		# Delete current criteria
 		MpPatchesCriteria.query.filter(MpPatchesCriteria.puuid == puuid).delete()
@@ -408,7 +415,7 @@ def savePatchFile(puuid, file):
 	result['fileSize'] = 0
 
 	# Save uploaded files
-	upload_dir = os.path.join("/tmp", puuid)
+	upload_dir = os.path.join(current_app.config["PATCH_CONTENT_DIR"], puuid)
 	if not os.path.isdir(upload_dir):
 		os.makedirs(upload_dir)
 
@@ -417,12 +424,13 @@ def savePatchFile(puuid, file):
 		filename = secure_filename(file.filename)
 		_file_path = os.path.join(upload_dir, filename)
 		result['filePath'] = _file_path
-		result['fileURL']  = os.path.join('patches', puuid, file.filename)
+		result['fileURL']  = os.path.join('/patches', puuid, file.filename)
 
 		if os.path.exists(_file_path):
 			log_Info('Removing existing file (%s)' % (_file_path))
 			os.remove(_file_path)
 
+		log_Info('Saving file to (%s)' % (_file_path))
 		file.save(_file_path)
 
 		result['fileHash'] = hashlib.md5(open(_file_path, 'rb').read()).hexdigest()

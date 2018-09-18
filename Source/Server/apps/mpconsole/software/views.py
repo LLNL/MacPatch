@@ -975,12 +975,13 @@ def saveImageFile(suuid, file):
 	if file is not None and len(file.filename) > 4:
 		filename = secure_filename(file.filename)
 		_file_path = os.path.join(upload_dir, filename)
-		result['filePath'] = os.path.join('/sw', suuid, file.filename)
+		result['filePath'] = os.path.join('/sw', suuid, filename)
 
 		if os.path.exists(_file_path):
 			log_Info('Removing existing file (%s)' % (_file_path))
 			os.remove(_file_path)
 
+		log_Info("Saving image file {}".format(_file_path))
 		file.save(_file_path)
 
 	return result

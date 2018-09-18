@@ -29,7 +29,7 @@ class MP_AgentUpdate(MPResource):
 		try:
 			if not isValidClientID(cuuid):
 				log_Error('[AgentUpdate][GET]: Failed to verify ClientID (' + cuuid + ')')
-				return {"result": '', "errorno": 424, "errormsg": 'Failed to verify ClientID'}, 424
+				#return {"result": '', "errorno": 424, "errormsg": 'Failed to verify ClientID'}, 424
 
 			if not isValidSignature(self.req_signature, cuuid, self.req_uri, self.req_ts):
 				if current_app.config['ALLOW_MIXED_SIGNATURES']:

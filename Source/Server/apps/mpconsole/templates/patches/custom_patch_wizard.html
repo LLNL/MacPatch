@@ -14,6 +14,8 @@
 
 	<link href="{{ url_for('static', filename='yarn_components/selectize/dist/css/selectize.css') }}" rel="stylesheet">
 
+    <link href="{{ url_for('static', filename='css/mp.css') }}" rel="stylesheet">
+
 	<style type="text/css" media="screen">
 		#spanLink {
 			cursor:pointer;
@@ -367,6 +369,10 @@
 		<input type="hidden" name="puuid" value="{{data.puuid}}">
 	</form>
 </div>
+<div id="overlay">
+    <img id="overlayImg" src="{{ url_for('static', filename='img/35.gif')}}" style="display:block;margin:auto;padding-top:10%;" />
+    <h1 style="text-align: center; color: white; ">Saving...</h1>
+</div>
 {%  endblock %}
 
 
@@ -449,7 +455,7 @@
 					formDataNew.append('pkg_postinstall', pstValue );
 
 					var res = true;
-
+                    $('#overlay').show();
 					$.ajax({
 						type:'POST',
 						url: '/patches/customPatchWizard/update',
@@ -461,11 +467,14 @@
 							alert("Patch Updated Successfully");
 							$('#modalDialog').modal('hide');
 							res = true;
+
+							$('#overlay').hide();
+							parent.closeIFrame();
 						},
 						error: function(jqXHR, textStatus, errorThrown) {
 							alert("Patch Failed to Update");
-							//$('#modalDialog').modal('hide');
 							res = false;
+							$('#overlay').hide();
 						}
 					});
 
@@ -474,7 +483,8 @@
 				onFinished: function (event, currentIndex)
 				{
 					//alert("Submitted!");
-					parent.closeIFrame();
+                    // console.log("onFinished:");
+					// parent.closeIFrame();
 				}
 			});
 
