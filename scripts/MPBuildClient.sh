@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------
 # Script: MPBuildClient.sh
-# Version: 1.6
+# Version: 1.7
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -14,6 +14,7 @@
 #   1.4		Script No Longer is static location
 #	1.5		Changed Vars for MP 3.1
 #	1.6		Updated version numbers
+#	1.7		Add OS Query to agent install
 #
 # -------------------------------------------------------------
 
@@ -26,6 +27,7 @@ UPDTPKGVER="3.1.0.0"
 PKG_STATE=""
 CODESIGNIDENTITY="*"
 MIN_OS="10.9"
+INCOSQUERY=false
 BUILDPLIST="/Library/Preferences/mp.build.client31.plist"
 if [ -f "$BUILDPLIST" ]; then
 	CODESIGNIDENTITYALT=`defaults read ${BUILDPLIST} name`
@@ -89,13 +91,64 @@ echo " - Set overall MacPatch Client minimum os version "
 read -p "Set MacPatch Client minimum os version [$MIN_OS_VAR]: " MIN_OS_VARS
 MIN_OS=${MIN_OS_VARS:-$MIN_OS_VAR}
 
+
+# Convert bool to string
+if $INCOSQUERY; then
+	INC_OSQUERY_VAR="Y"
+else
+	INC_OSQUERY_VAR="N"
+fi
+
+# If There is a saved plist read it, and set string value
+if [ -f "$BUILDPLIST" ]; then
+	INC_OSQUERY_VAR=`defaults read ${BUILDPLIST} incOSQuery`
+	if (($? > 0)); then
+		if $INCOSQUERY; then
+			INC_OSQUERY_VAR="Y"
+		else
+			INC_OSQUERY_VAR="N"
+		fi
+
+	else
+	
+		if [[ $INC_OSQUERY_VAR == 1 ]]; then
+			INC_OSQUERY_VAR="Y"
+		else	
+			INC_OSQUERY_VAR="N"
+		fi
+
+	fi
+	
+fi
+
+echo
+echo " - Include OSQuery with MacPatch Installer "
+read -p "Would you like to include OSQuery with MacPatch (Y/N)? [$INC_OSQUERY_VAR]: " INC_OSQUERY_IN
+INC_OSQUERY_TXT=${INC_OSQUERY_IN:-$INC_OSQUERY_VAR}
+INC_OSQUERY_TXT=`echo $INC_OSQUERY_TXT | awk '{print toupper($0)}'`
+if [ "$INC_OSQUERY_TXT" != "$INC_OSQUERY_VAR" ]; then
+	if [[ "$INC_OSQUERY_TXT" == "Y" ]]; then
+		defaults write ${BUILDPLIST} incOSQuery -bool YES
+	else 
+		defaults write ${BUILDPLIST} incOSQuery -bool NO
+	fi
+fi
+
+if [[ "$INC_OSQUERY_TXT" == "Y" ]]; then
+	INCOSQUERY=true
+else 
+	INCOSQUERY=false
+fi
+
+
 # MacPatch Client Release Level
 echo
 read -p "Please choose the desired state (R[elease]/B[eta]/A[lpha])? [R]: " PKGSTATE
 PKGSTATE=${PKGSTATE:-R}
-if [ "$PKGSTATE" == "b" ] || [ "$PKGSTATE" == "B" ]; then
+PKGSTATE=`echo $PKGSTATE | awk '{print toupper($0)}'`
+if [ "$PKGSTATE" == "B" ]; then
 	PKG_STATE="- (Beta)"
-elif [ "$PKGSTATE" == "a" ] || [ "$PKGSTATE" == "A" ]; then
+elif [ "$PKGSTATE" == "A" ]; then
 	PKG_STATE="- (Alpha)"
 else
 	echo "Setting Package desired state to \"Release\""
@@ -106,10 +159,10 @@ echo
 echo "A valid code siginging identidy is required."
 read -p "Would you like to code sign all binaries (Y/N)? [N]: " SIGNCODE
 SIGNCODE=${SIGNCODE:-N}
+SIGNCODE=`echo $SIGNCODE | awk '{print toupper($0)}'`
+if [ "$SIGNCODE" == "N" ] || [ "$SIGNCODE" == "Y" ]; then
 
-if [ "$SIGNCODE" == "n" ] || [ "$SIGNCODE" == "N" ] || [ "$SIGNCODE" == "y" ] || [ "$SIGNCODE" == "Y" ]; then
-
-	if [ "$SIGNCODE" == "y" ] || [ "$SIGNCODE" == "Y" ] ; then
+	if [ "$SIGNCODE" == "Y" ] ; then
 		# Compile the agent components
 		read -p "Please enter your code sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
 		CODESIGNIDENTITY=${CODESIGNIDENTITY:-$CODESIGNIDENTITYALT}
@@ -135,17 +188,24 @@ find ${BUILDROOT} -name "*.build" -print | xargs -I{} rm -rf {}
 find ${BUILDROOT} -name "*.dSYM" -print | xargs -I{} rm -rf {}
 
 # Remove the static library and header files
-rm ${BUILDROOT}/Release/libMacPatch.a
-rm ${BUILDROOT}/Release/libcrypto.a
-rm ${BUILDROOT}/Release/libssl.a
-rm -r ${BUILDROOT}/Release/usr
+if [ -f "${BUILDROOT}/Release/libMacPatch.a" ]; then
+	rm ${BUILDROOT}/Release/libMacPatch.a
+fi
+if [ -f "${BUILDROOT}/Release/libcrypto.a" ]; then
+	rm ${BUILDROOT}/Release/libcrypto.a
+fi
+if [ -f "${BUILDROOT}/Release/libssl.a" ]; then
+	rm ${BUILDROOT}/Release/libssl.a
+fi
+if [ -d "${BUILDROOT}/Release/usr" ]; then
+	rm -r ${BUILDROOT}/Release/usr
+fi
 
 cp -R ${PKGROOT}/Base ${BUILDROOT}
 cp -R ${PKGROOT}/Updater ${BUILDROOT}
 cp -R ${PKGROOT}/Combined ${BUILDROOT}
 
 mv ${BUILDROOT}/Release/ccusr ${BUILDROOT}/Base/Scripts/ccusr
-#mv ${BUILDROOT}/Release/MPPrefMigrate ${BUILDROOT}/Base/Scripts/MPPrefMigrate
 mv ${BUILDROOT}/Release/MPAgentUp2Date ${BUILDROOT}/Updater/Files/Library/MacPatch/Updater/
 mv ${BUILDROOT}/Release/MPLoginAgent.app ${BUILDROOT}/Base/Files/Library/PrivilegedHelperTools/
 cp -R ${BUILDROOT}/Release/* ${BUILDROOT}/Base/Files/Library/MacPatch/Client/
@@ -217,16 +277,19 @@ sed -i '' "s/\[STATE\]/$PKG_STATE/g" "${BUILDROOT}/Combined/Resources/Welcome.rt
 BUILD_FILE="${BUILDROOT}/Combined/MP-$BASEPKGVER-$BUILD_NO_STR$PKG_STATE"
 echo "MP-$BASEPKGVER-$BUILD_NO_STR$PKG_STATE" > "${BUILD_FILE}"
 
-#mkdir -p ${BUILDROOT}/Combined/PKGPlugins
-#open ${BUILDROOT}/Combined/PKGPlugins
-#sleep 20
-
 # Create the almost final package
-# --plugins ${BUILDROOT}/Combined/PKGPlugins \
-productbuild --distribution ${BUILDROOT}/Combined/Distribution \
---resources ${BUILDROOT}/Combined/Resources \
---package-path ${BUILDROOT}/Combined/Packages \
-${BUILDROOT}/Combined/MPClientInstall.pkg
+if $INCOSQUERY; then
+	cp ${SRCROOT}/client/osquery-3.2.6.pkg ${BUILDROOT}/Combined/Packages/
+	productbuild --distribution ${BUILDROOT}/Combined/Distribution_osquery \
+	--resources ${BUILDROOT}/Combined/Resources \
+	--package-path ${BUILDROOT}/Combined/Packages \
+	${BUILDROOT}/Combined/MPClientInstall.pkg
+else
+	productbuild --distribution ${BUILDROOT}/Combined/Distribution \
+	--resources ${BUILDROOT}/Combined/Resources \
+	--package-path ${BUILDROOT}/Combined/Packages \
+	${BUILDROOT}/Combined/MPClientInstall.pkg
+fi
 
 # Expand the newly created package so we can add the nessasary files
 pkgutil --expand ${BUILDROOT}/Combined/MPClientInstall.pkg ${BUILDROOT}/Combined/.MPClientInstall
@@ -257,8 +320,8 @@ defaults write ${BUILDPLIST} min_os "$MIN_OS"
 echo
 read -p "Would you like to copy the installer to repo location for a pull request? (Y/N)? [N]: " COPYINSTALLPKG
 COPYINSTALLPKG=${COPYINSTALLPKG:-N}
-
-if [ "$COPYINSTALLPKG" == "y" ] || [ "$COPYINSTALLPKG" == "Y" ]; then
+COPYINSTALLPKG=`echo $COPYINSTALLPKG | awk '{print toupper($0)}'`
+if [ "$COPYINSTALLPKG" == "Y" ]; then
 	rm -rf "${SRCROOT}/Agent"
 	mkdir "${SRCROOT}/Agent"
 	cp "${BUILDROOT}/Combined/MPClientInstall.pkg.zip" "${SRCROOT}/Agent/"
