@@ -9,10 +9,10 @@ img_media: /static/assets/main/images
 
 google_analytics: UA-78256402-1
 
-collections:
-  docs:
-    output: true
-    permalink: /docs/:path/
+#collections:
+#  docs:
+#    output: true
+#    permalink: /docs/:path/
 
 # paginate: 10
 
