@@ -17,7 +17,6 @@ services:
       - "443:443"
       - "80:80"
       - "3600:3600"
-    # command: "init-db"
     volumes:
       - $PWD/ssl/server.crt:/opt/MacPatch/Server/etc/ssl/server.crt
       - $PWD/ssl/server.key:/opt/MacPatch/Server/etc/ssl/server.key

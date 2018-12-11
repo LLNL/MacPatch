@@ -31,8 +31,6 @@
     docker-compose up
     ```
 
-    After the first run you can comment out the `command: "init-db"` line in the `docker-compose.yml` file. This command initialized the database and is only required on the first run.
-
 You now have a fully functional MacPatch environment running at [https://localhost](https://localhost). The default admin username/password is `mpadmin`/`password`.
 
 ## Using an existing database
