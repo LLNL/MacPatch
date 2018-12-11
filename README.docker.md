@@ -35,7 +35,7 @@ You now have a fully functional MacPatch environment running at [https://localho
 
 ## Using an existing database
 
-The `docker-compose.yml` file includes a docker MySQL database. If you prefer to use an existing database, remove the `db` block from the `docker-compose.yml` file. If your database has been initialized previously, you can also comment out the `command: "init-db"` line of the `macpatch` block.
+The `docker-compose.yml` file includes a docker MySQL database. If you prefer to use an existing database, remove the `db` block from the `docker-compose.yml` file.
 
 You will also need to provide docker with a `config.cfg` file with information about your database.
 
