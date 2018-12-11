@@ -9,7 +9,7 @@
     docker load < llnl-macpatch-18.10.29-1540838966.tar
     ```
 
-2. MacPatch requires an SSL cert. For testing you can generate self signed cert.
+2. MacPatch requires an SSL cert. For testing you can generate a self signed cert.
 
     ```
     mkdir ssl
@@ -18,7 +18,7 @@
         -newkey rsa:2048 -keyout ssl/server.key -out ssl/server.crt
     ```
 
-3. Create local folders to store persistent content from the docker container.
+3. Create local folders to store persistent data outside the docker container.
 
     ```
     mkdir content
@@ -31,7 +31,7 @@
     docker-compose up
     ```
 
-You now have a fully functional MacPatch environment running at [https://localhost](https://localhost). The default admin username/password is `mpadmin`/`password`.
+You now have a full MacPatch environment running at [https://localhost](https://localhost). The default admin username/password is `mpadmin`/`password`.
 
 ## Using an existing database
 
