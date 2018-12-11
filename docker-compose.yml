@@ -1,0 +1,27 @@
+version: '3.2'
+services:
+  db:
+    image: "mysql:5.6"
+    restart: always
+    volumes:
+      - $PWD/dbstore:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "my-secret-pw"
+      MYSQL_DATABASE: "MacPatchDB3"
+      MYSQL_USER: "dbadmin"
+      MYSQL_PASSWORD: "dbadmin"
+  macpatch:
+    image: llnl/macpatch
+    restart: always
+    ports:
+      - "443:443"
+      - "80:80"
+      - "3600:3600"
+    # command: "init-db"
+    volumes:
+      - $PWD/ssl/server.crt:/opt/MacPatch/Server/etc/ssl/server.crt
+      - $PWD/ssl/server.key:/opt/MacPatch/Server/etc/ssl/server.key
+      - $PWD/content:/opt/MacPatch/Content
+      - $PWD/docker/run.sh:/run.sh
+      # - /path/to/myconfig//db-config.cfg:/opt/MacPatch/Server/apps/config.cfg
+      # - /path/to/myconfig/siteconfig.json:/opt/MacPatch/Server/etc/siteconfig.json

@@ -1,0 +1,64 @@
+{
+    "description": "SiteConfig for new MPApi, pyhton flask web services.",
+    "settings": {
+        "paths": {
+            "content": "/opt/MacPatch/Content/Web",
+            "base": "/opt/MacPatch/Server"
+        },
+        "ldap_filters": [
+            {
+                "config_name": "DEMO_CONFIG",
+                "config_ldap": {
+                    "secure": "1",
+                    "userPas": "USER PASSWORD",
+                    "userDN": "USER DN PATH",
+                    "server": "SERVERNAME.COM",
+                    "searchbase": "SEARCH-BASE",
+                    "attributes": "cn,name,dn,samAccountName,memberOf",
+                    "port": 636
+                },
+                "config_enabled": false
+            }
+        ],
+        "users": {
+            "admin": {
+                "enabled": true,
+                "name": "mpadmin",
+                "pass": "password"
+            }
+        },
+        "server": {
+            "isMaster": false,
+            "apiKey": "123456",
+            "autoGenServerKeys": true,
+            "inventory_dir": "/opt/MacPatch/Server/InvData",
+            "priKey": "/opt/MacPatch/Server/etc/keys/server_pri.pem",
+            "pubKey": "/opt/MacPatch/Server/etc/keys/server_pub.pem"
+        },
+        "ldap": {
+            "loginUsrPrefix": "",
+            "useSSL": true,
+            "secure": "CFSSL_BASIC",
+            "loginAttr": "userPrincipalName",
+            "enabled": false,
+            "server": "adroot-1.empty-root.llnl.gov",
+            "loginUsrSufix": "@llnl.gov",
+            "attributes": "givenname,initials,sn,mail,memberOf,dn,samAccountName,userPrincipalName",
+            "searchbase": "dc=llnl,dc=gov",
+            "port": "3269"
+        },
+        "services": {
+            "mpapi": true,
+            "console": true,
+            "mpwsl": true,
+            "wsapi": false
+        },
+        "mailserver": {
+            "username": "exampleusername",
+            "password": "examplepassword",
+            "enabled": false,
+            "port": 25,
+            "server": "127.0.0.1"
+        }
+    }
+}
