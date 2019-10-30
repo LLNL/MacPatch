@@ -1,0 +1,5 @@
+M2Crypto
+mysql-connector-python
+pycrypto
+python-crontab
+requests

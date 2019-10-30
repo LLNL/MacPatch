@@ -17,10 +17,10 @@ RUN yum -y update && \
     pcre-devel \
     openssl \
     openssl-devel \
-    python-devel \
-    python-setuptools \
-    python-wheel \
-    python-pip \
+    python3-devel \
+    python3-setuptools \
+    python3 \
+    python3-pip \
     swig \
     yarn \
     supervisor \
@@ -65,12 +65,25 @@ RUN yarn install --cwd $MPSERVERBASE/apps/mpconsole --modules-folder static/yarn
 
 
 # Create virtual environtment for flask apps
-ADD docker/pyRequired.txt $MPSERVERBASE/apps/pyRequired.txt
-RUN virtualenv --no-site-packages $MPSERVERBASE/apps/env
-RUN source $MPSERVERBASE/apps/env/bin/activate && \
-    pip install m2crypto --no-cache-dir --upgrade && \
-    pip install -r $MPSERVERBASE/apps/pyRequired.txt
+# ADD docker/pyRequired.txt $MPSERVERBASE/apps/pyRequired.txt
+# RUN virtualenv --no-site-packages $MPSERVERBASE/apps/env
+# RUN source $MPSERVERBASE/apps/env/bin/activate && \
+#     pip install m2crypto --no-cache-dir --upgrade && \
+#     pip install -r $MPSERVERBASE/apps/pyRequired.txt
 
+# Create virtual environtments
+ADD docker/requirement-server.txt $MPSERVERBASE/apps/requirements-server.txt
+ADD docker/requirement-api.txt $MPSERVERBASE/apps/requirements-api.txt
+ADD docker/requirement-console.txt $MPSERVERBASE/apps/requirements-console.txt
+RUN python3 -m $MPSERVERBASE/env/server \
+    python3 -m $MPSERVERBASE/env/api \
+    python3 -m $MPSERVERBASE/env/console
+RUN source $MPSERVERBASE/env/server/bin/activate && \
+    pip install -r $MPSERVERBASE/apps/requirements-server.txt
+RUN source $MPSERVERBASE/env/api/bin/activate && \
+    pip install -r $MPSERVERBASE/apps/requirements-api.txt
+RUN source $MPSERVERBASE/env/console/bin/activate && \
+    pip install -r $MPSERVERBASE/apps/requirements-console.txt
 
 # Copy in config files
 ADD docker/config/config.cfg $MPSERVERBASE/apps/config.cfg
