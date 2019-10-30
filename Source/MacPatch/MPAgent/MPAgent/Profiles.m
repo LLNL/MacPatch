@@ -49,13 +49,14 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 
 @synthesize isExecuting;
 @synthesize isFinished;
+@synthesize taskName;
 
 - (id)init
 {
     self = [super init];
 	if (self) {
-		isExecuting = NO;
-        isFinished  = NO;
+		self.isExecuting = NO;
+        self.isFinished  = NO;
 		settings	= [MPSettings sharedInstance];
 		fm          = [NSFileManager defaultManager];
 	}
@@ -77,8 +78,8 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 {
     [self willChangeValueForKey:@"isFinished"];
     [self willChangeValueForKey:@"isExecuting"];
-    isExecuting = NO;
-    isFinished = YES;
+    self.isExecuting = NO;
+    self.isFinished = YES;
     [self didChangeValueForKey:@"isExecuting"];
     [self didChangeValueForKey:@"isFinished"];
 }
@@ -87,12 +88,12 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
 {
     if ([self isCancelled]) {
         [self willChangeValueForKey:@"isFinished"];
-        isFinished = YES;
+        self.isFinished = YES;
         [self didChangeValueForKey:@"isFinished"];
     } else {
         [self willChangeValueForKey:@"isExecuting"];
 		[self performSelectorInBackground:@selector(main) withObject:nil];
-        isExecuting = YES;
+        self.isExecuting = YES;
         [self didChangeValueForKey:@"isExecuting"];
     }
 }
@@ -120,11 +121,11 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
             qldebug(@"MP Profiles:%@",profiles);
         }
         
-        NSMutableArray *profileIdentities = [[NSMutableArray alloc] init];
-        NSMutableArray *profilesToRemove = [[NSMutableArray alloc] init];
-        NSArray *installedProfiles = [self readMPInstalledProfileData]; // returns an array of recorded installed profile id's
-        NSArray *installedProfilesRaw = [self readMPInstalledProfiles]; // returns and array of complete install profile dicts
-        NSArray *localProfiles = [self readLocalProfileData];
+        NSMutableArray *profileIdentities 	= [[NSMutableArray alloc] init];
+        NSMutableArray *profilesToRemove 	= [[NSMutableArray alloc] init];
+        NSArray *installedProfiles 			= [self readMPInstalledProfileData]; // returns an array of recorded installed profile id's
+        NSArray *installedProfilesRaw 		= [self readMPInstalledProfiles]; // returns and array of complete install profile dicts
+        NSArray *localProfiles 				= [self readLocalProfileData];
 
         // Install Profiles
         for (NSDictionary *p in profiles)
@@ -147,10 +148,13 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
             BOOL foundInMPInstalledArray = NO;
             
             BOOL profileIDIsInstalled = [self profileIsInstalledOnDisk:[p objectForKey:@"profileIdentifier"] installedProfiles:localProfiles];
-            if (!profileIDIsInstalled) {
+            if (!profileIDIsInstalled)
+			{
                 qlinfo(@"Profile %@ needs to be installed.",[p objectForKey:@"profileIdentifier"]);
                 needsInstall = YES;
-            } else {
+            }
+			else
+			{
                 // Profile ID Is installed
                 // See if it needs an update
                 for (NSDictionary *mpInstProfile in installedProfilesRaw)
@@ -171,7 +175,8 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
                     }
                 }
                 
-                if (foundInMPInstalledArray == NO) {
+                if (foundInMPInstalledArray == NO)
+				{
                     qlinfo(@"Profile %@ needs to be installed. Was not found to be installed via MP.",[p objectForKey:@"profileIdentifier"]);
                     [self recordProfileInstallToDisk:p];
                 }
@@ -189,17 +194,31 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
             // Install Needed Profile
             if (needsInstall == YES)
             {
-                NSString *profileOnDisk = [self writeProfileToDisk:[p objectForKey:@"data"]];
-                if (!profileOnDisk) {
-                    qlerror(@"Error, unable to install profile %@",[p objectForKey:@"profileIdentifier"]);
-                }
-                if ([self installProfile:profileOnDisk] == NO) {
-                    qlerror(@"Error, install profile %@ failed.",[p objectForKey:@"profileIdentifier"]);
-                } else {
-                    qlinfo(@"Profile, %@ was installed.",[p objectForKey:@"profileIdentifier"]);
-                    [fm removeItemAtPath:profileOnDisk error:NULL];
-                    [self recordProfileInstallToDisk:p];
-                }
+				BOOL passProfileCriteria = YES;
+				// Check if profile has criteria that needs to be run on the client
+				// If it passes the criteria it will be installed
+				if ([p objectForKey:@"criteria"])
+				{
+					NSArray *criArr = [p objectForKey:@"criteria"];
+					if (criArr.count >= 1) {
+						passProfileCriteria = [self evaluateProfileCriteria:criArr];
+					}
+				}
+				
+				if (passProfileCriteria)
+				{
+					NSString *profileOnDisk = [self writeProfileToDisk:[p objectForKey:@"data"]];
+					if (!profileOnDisk) {
+						qlerror(@"Error, unable to install profile %@",[p objectForKey:@"profileIdentifier"]);
+					}
+					if ([self installProfile:profileOnDisk] == NO) {
+						qlerror(@"Error, install profile %@ failed.",[p objectForKey:@"profileIdentifier"]);
+					} else {
+						qlinfo(@"Profile, %@ was installed.",[p objectForKey:@"profileIdentifier"]);
+						[fm removeItemAtPath:profileOnDisk error:NULL];
+						[self recordProfileInstallToDisk:p];
+					}
+				}
             }
         }
         
@@ -493,6 +512,97 @@ static NSString *kMPProfilesData = @"Data/gov.llnl.mp.custom.profiles.plist";
         }
     }
     return result;
+}
+
+- (BOOL)evaluateProfileCriteria:(NSArray *)criteria
+{
+	int count = 0;
+	
+	MPBundle	*mpbndl;
+	MPFileCheck	*mpfile;
+	MPScript	*mpscript;
+	
+	// Loop vars
+	NSArray *qryArr;
+	
+	int i = 0;
+	for (i=0; i < criteria.count; i++)
+	{
+		NSDictionary *criteriaObj = [criteria objectAtIndex:i];
+		NSString *criString = [criteriaObj[@"type_data"] decodeBase64AsString];
+		qryArr = [criString componentsSeparatedByString:@"@" escapeString:@"@@"];
+
+		/*
+		 typeQuery  	 = [qryArr objectAtIndex:1];
+		 typeQueryString = [qryArr objectAtIndex:2];
+		 typeResult		 = [qryArr objectAtIndex:3];
+		 */
+		
+		if ([@"BundleID" isEqualToString:criteriaObj[@"type"]])
+		{
+			mpbndl = [[MPBundle alloc] init];
+			if ([qryArr count] != 3) {
+				qlerror(@"Error, not enough args for patch query entry.");
+				break;
+			}
+
+			if ([mpbndl queryBundleID:qryArr[1] action:qryArr[0] result:qryArr[2]])
+			{
+				qlinfo(@"BundleID=TRUE: %@",[qryArr objectAtIndex:1]);
+				count++;
+			}
+			else
+			{
+				qlinfo(@"BundleID=FALSE: %@",[qryArr objectAtIndex:1]);
+			}
+		}
+		
+		if ([@"File" isEqualToString:criteriaObj[@"type"]])
+		{
+			mpfile = [[MPFileCheck alloc] init];
+			if ([qryArr count] != 3) {
+				qlerror(@"Error, not enough args for patch query entry.");
+				break;
+			}
+			
+			if ([mpfile queryFile:qryArr[1] action:qryArr[0] param:qryArr[2]])
+			{
+				qlinfo(@"File=TRUE: %@",qryArr[1]);
+				count++;
+			}
+			else
+			{
+				qlinfo(@"File=FALSE: %@",qryArr[1]);
+			}
+		}
+		
+		if ([@"Script" isEqualToString:criteriaObj[@"type"]])
+		{
+			mpscript = [[MPScript alloc] init];
+			if ([qryArr count] > 1)
+			{
+				qlerror(@"Error, too many args. Sript will not be run.");
+				break;
+			}
+			
+			if ([mpscript runScript:qryArr[0]])
+			{
+				qlinfo(@"SCRIPT=TRUE");
+				count++;
+			}
+			else
+			{
+				qlinfo(@"SCRIPT=FALSE");
+			}
+		}
+	}
+	
+	if (count == criteria.count)
+	{
+		return YES;
+	} else {
+		return NO;
+	}
 }
 
 @end

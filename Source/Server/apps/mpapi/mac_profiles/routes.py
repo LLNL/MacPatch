@@ -42,19 +42,17 @@ class ProfilesForClient(MPResource):
 						_profile['id'] = row.profileID
 						_profile['profileIdentifier'] = row.profileIdentifier
 						_profile['rev'] = row.profileRev
-						_profile['data'] = base64.b64encode(row.profileData)
+						_profile['data'] = base64.b64encode(row.profileData).decode('utf-8')
 						_profile['remove'] = row.uninstallOnRemove
 						_profiles.append(_profile)
 
 			return {'errorno': '0', 'errormsg': '', 'result': _profiles}, 200
 
-		except IntegrityError, exc:
-			log_Error('[ProfilesForClient][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))
-			return {'errorno': 500, 'errormsg': exc.message, 'result': []}, 500
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[ProfilesForClient][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
-			return {'errorno': 500, 'errormsg': e.message, 'result': []}, 500
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[ProfilesForClient][Get][Exception][Line: {}] CUUID: {} Message: {}'.format(exc_tb.tb_lineno, cuuid, message))
+			return {'errorno': 500, 'errormsg': message, 'result': {}}, 500
 
 
 ''' ------------------------------- '''
@@ -104,7 +102,7 @@ class Profile(object):
 		return(self.__dict__)
 
 	def keys(self):
-		return self.__dict__.keys()
+		return list(self.__dict__.keys())
 
 # Add Routes Resources
 mac_profiles_api.add_resource(ProfilesForClient,     '/client/profiles/<string:cuuid>')

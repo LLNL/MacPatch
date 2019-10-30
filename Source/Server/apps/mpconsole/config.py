@@ -7,9 +7,10 @@ MP_SRV_DIR = MP_ROOT_DIR+'/Server'
 
 class BaseConfig:
 
-	DEBUG   = False
-	TESTING = False
-	BASEDIR = basedir
+	DEBUG   						= False
+	TESTING 						= True
+	BASEDIR 						= basedir
+	MAX_CONTENT_LENGTH              = 9000 * 1024 * 1024    # 9000 Mb limit
 	# DEBUG_TB_ENABLED = True
 	# SQLALCHEMY_RECORD_QUERIES = False
 
@@ -51,6 +52,13 @@ class BaseConfig:
 
 	SCHEDULER_API_ENABLED 		= True
 	ALLOW_CONTENT_DOWNLOAD 		= False
+
+	# AWS
+	USE_AWS_S3					= False
+	AWS_S3_KEY					= None
+	AWS_S3_SECRET				= None
+	AWS_S3_BUCKET				= None
+	AWS_S3_REGION				= None
 
 class DevelopmentConfig(BaseConfig):
 

@@ -16,6 +16,7 @@ import shutil
 import json
 
 from datetime import datetime
+from dateutil.parser import parse
 
 from .  import patches
 from .. import db
@@ -23,6 +24,7 @@ from .. model import *
 from .. modes import *
 from .. mplogger import *
 from .. mputil import *
+from .. aws import *
 
 '''
 ----------------------------------------------------------------
@@ -101,7 +103,7 @@ def applePatchWizard(akey):
 
 	cList = ApplePatch.query.filter(ApplePatch.akey == akey).first()
 	# Base64 Encoded Description needs to be decoded and cleaned up
-	desc = base64.b64decode(cList.description64)
+	desc = base64.b64decode(cList.description64).decode('utf-8')
 	if "<!DOCTYPE" in desc or "<HTML>" in desc:
 		desc = desc.replace("Data('","")
 		desc = desc.replace("\\n", "")
@@ -234,13 +236,17 @@ def customList():
 	_clist = MpPatch.query.order_by(MpPatch.mdate.desc()).all()
 	_clistCols = ['puuid', 'patch_name', 'patch_ver', 'bundle_id', 'description',
 				'patch_severity', 'patch_state', 'patch_reboot', 'active',
-				'pkg_size', 'pkg_path', 'pkg_url', 'mdate']
+				'pkg_size', 'pkg_path', 'pkg_url', 'pkg_useS3', 'mdate']
 	_results = []
 	for r in _clist:
 		_dict = r.asDict
 		_row = {}
 		for col in _clistCols:
 			_row[col] = _dict[col]
+
+		if _row['pkg_useS3'] == 1:
+			_row['pkg_url'] = getS3UrlForPatch(_row['puuid'])
+
 		_results.append(_row)
 
 	return json.dumps({'data': _results}, default=json_serial), 200
@@ -292,6 +298,10 @@ def customPatchWizard(puuid):
 			break
 
 	base_url = request.url_root
+
+	if patch.pkg_useS3 == 1:
+		patch.pkg_S3path = getS3UrlForPatch(patch.puuid)
+
 	return render_template('patches/custom_patch_wizard.html', data=patch, columns=patchCols, dataAlt=patchDict,
 							dataCrit=patchCrit, dataCritLen=patchCritLen, dataCritAlt=pathCritLst,
 							hasOSArch=_hasOSArch, dataReq=patchReq, baseurl=base_url)
@@ -316,7 +326,12 @@ def customPatchWizardUpdate():
 		_fileData = None
 		if "mainPatchFile" in request.files:
 			_file = request.files['mainPatchFile']
-			_fileData = savePatchFile(puuid, _file)
+			if request.form['pkg_useS3'] == '1':
+				_fileData = savePatchFileToTMP(puuid, _file)
+				uploadFileToS3(_fileData['filePath'],_fileData['fileURL'])
+				shutil.rmtree(os.path.join('/tmp', request.form['puuid']))
+			else:
+				_fileData = savePatchFile(puuid, _file)
 
 		critDict = dict(request.form)
 
@@ -400,8 +415,8 @@ def customPatchWizardUpdate():
 
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
-		log_Error('Message: %s' % (e.message))
-		return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
+		log_Error('Message: %s' % (e))
+		return {'errorno': 500, 'errormsg': e, 'result': {}}, 500
 
 	return json.dumps({'data': {}}, default=json_serial), 200
 
@@ -435,9 +450,43 @@ def savePatchFile(puuid, file):
 		file.save(_file_path)
 
 		result['fileHash'] = hashlib.md5(open(_file_path, 'rb').read()).hexdigest()
-		result['fileSize'] = os.path.getsize(_file_path)
+		result['fileSize'] = (os.path.getsize(_file_path)/float(1000))
 
 	return result
+
+def savePatchFileToTMP(puuid, file):
+
+	result = {}
+	result['fileName'] = None
+	result['filePath'] = None
+	result['fileURL']  = None
+	result['fileHash'] = None
+	result['fileSize'] = 0
+
+	# Save uploaded files
+	upload_dir = os.path.join('/tmp', puuid)
+	if not os.path.isdir(upload_dir):
+		os.makedirs(upload_dir)
+
+	if file is not None and len(file.filename) > 4:
+		filename = secure_filename(file.filename)
+		_file_path = os.path.join(upload_dir, filename)
+		result['fileName'] = filename
+		result['filePath'] = _file_path
+		result['fileURL']  = os.path.join('/patches', puuid, filename)
+
+		if os.path.exists(_file_path):
+			log_Info('Removing existing file (%s)' % (_file_path))
+			os.remove(_file_path)
+
+		log_Info('Saving file to (%s)' % (_file_path))
+		file.save(_file_path)
+
+		result['fileHash'] = hashlib.md5(open(_file_path, 'rb').read()).hexdigest()
+		result['fileSize'] = (os.path.getsize(_file_path)/float(1000))
+
+	return result
+
 
 @patches.route('/custom/duplicate/<patch_id>',methods=['POST'])
 @login_required
@@ -465,6 +514,9 @@ def customDuplicate(patch_id):
 		setattr(qGet1, 'pkg_path', _pkg_path.replace(patch_id, _new_puuid))
 		setattr(qGet1, 'pkg_url', _pkg_url.replace(patch_id, _new_puuid))
 
+		setattr(qGet1, 'cdate', datetime.now())
+		setattr(qGet1, 'mdate', datetime.now())
+
 		db.session.add(qGet1)
 
 		# Duplicate patch criteria
@@ -485,7 +537,7 @@ def customDuplicate(patch_id):
 			else:
 				log("{}, unable to duplicate custom patch {}({}). Directory does not exist".format(session.get('user'), qGet1.patch_name, patch_id))
 
-		except OSError, e:
+		except OSError as e:
 			log_Error("Error: %s - %s." % (e.filename,e.strerror))
 
 
@@ -495,7 +547,8 @@ def customDuplicate(patch_id):
 		db.session.commit()
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
-		log_Error('Message: %s' % (e.message))
+		message=str(e.args[0]).encode("utf-8")
+		log_Error('Message: %s' % (message))
 
 	return json.dumps({'data': {}}, default=json_serial), 200
 
@@ -513,9 +566,13 @@ def customDelete():
 		if qGet1 is not None:
 			# Need to delete from file system
 			try:
-				_patch_dir = "/opt/MacPatch/Content/Web/patches/" + puuid
-				shutil.rmtree(_patch_dir)
-			except OSError, e:
+				if qGet1.pkg_useS3 == 1:
+					deleteS3PatchFile(qGet1.pkg_url)
+				else:
+					_patch_dir = "/opt/MacPatch/Content/Web/patches/" + puuid
+					shutil.rmtree(_patch_dir)
+
+			except OSError as e:
 				log_Error("Error: %s - %s." % (e.filename,e.strerror))
 
 			db.session.delete(qGet1)
@@ -526,7 +583,8 @@ def customDelete():
 			db.session.commit()
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('Message: %s' % (e.message))
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('Message: %s' % (message))
 
 	return json.dumps({'data': {}}, default=json_serial), 200
 
@@ -865,7 +923,7 @@ def patchGroupContentEdit(id):
 	_results = []
 	for v in result:
 		_row = {}
-		for column, value in v.items():
+		for column, value in list(v.items()):
 			if column != 'patch_install_weight' and column != 'patch_reboot_override' and column != 'size' and column != 'active':
 				if column == 'postdate':
 					if value is not None:
@@ -874,7 +932,7 @@ def patchGroupContentEdit(id):
 						_row[column] = "1970-01-01 12:00:00"
 				else:
 					# Check for \r\n in tile to clean up, javascript does not like it
-					if isinstance(value, unicode):
+					if isinstance(value, str):
 						_row[column] = value.replace('\n', ' ').replace('\r', '')
 					else:
 						_row[column] = value
@@ -922,7 +980,7 @@ def patchGroupContent(group_id):
 	_results = []
 	for v in result:
 		_row = {}
-		for column, value in v.items():
+		for column, value in list(v.items()):
 			if column != 'patch_install_weight' and column != 'patch_reboot_override' and column != 'size' and column != 'active':
 				if column == 'postdate':
 					if value is not None:
@@ -936,7 +994,7 @@ def patchGroupContent(group_id):
 						_row['state'] = 1
 				else:
 					# Check for \r\n in tile to clean up, javascript does not like it
-					if isinstance(value, unicode):
+					if isinstance(value, str):
 						_row[column] = value.replace('\n', ' ').replace('\r', '')
 					else:
 						_row[column] = value
@@ -1059,7 +1117,7 @@ def patchGroupPatchesSave(group_id):
 
 	jsonData = json.dumps(_patchData)
 	setattr(pData, 'rev', dts)
-	setattr(pData, 'hash', hashlib.md5(jsonData).hexdigest())
+	setattr(pData, 'hash', hashlib.md5(jsonData.encode('utf-8')).hexdigest())
 	setattr(pData, 'data', jsonData)
 	setattr(pData, 'data_type', "JSON")
 	setattr(pData, 'mdate', _now)
@@ -1102,14 +1160,8 @@ def customDataForPatchID(patch_id):
 			row = {}
 			row["name"] = p.patch_name
 			row["hash"] = p.pkg_hash
-			if p.pkg_preinstall is not None:
-				row["preinst"] = base64.b64encode(p.pkg_preinstall)
-			else:
-				row["preinst"] = "NA"
-			if p.pkg_postinstall is not None:
-				row["postinst"] = base64.b64encode(p.pkg_postinstall)
-			else:
-				row["postinst"] = "NA"
+			row["preinst"] = b64EncodeAsString(p.pkg_preinstall, 'NA')
+			row["postinst"] = b64EncodeAsString(p.pkg_postinstall,'NA')
 			row["env"] = p.pkg_env_var or "NA"
 			row["reboot"] = p.patch_reboot
 			row["type"] = "1"
@@ -1170,7 +1222,7 @@ def requiredListPaged(limit,offset,search,sort,order):
 	_results = []
 	for v in _result:
 		_row = {}
-		for column, value in v.items():
+		for column, value in list(v.items()):
 			_row[column] = value
 		_results.append(_row)
 
@@ -1208,37 +1260,64 @@ def requiredQuery(filterStr='undefined', page=0, page_size=0, sort='date', order
 	if filterStr == 'undefined' or len(filterStr) <= 0:
 		# Query for All Records, sql0 is used for count, sql1 is the query for paging
 		sql0 = text("""SELECT date FROM mp_client_patches_full_view""")
-		sql1 = text("""SELECT v.*, c.hostname, c.ipaddr, c.osver FROM mp_client_patches_full_view v
-					Left Join mp_clients c ON c.cuuid = v.cuuid
-					ORDER BY """ + order_by_str + """ LIMIT """ + str(offset) + """,""" + str(page_size))
+		sql1 =	f"SELECT v.*, c.hostname, c.ipaddr, c.osver FROM mp_client_patches_full_view v " \
+				f"Left Join mp_clients c ON c.cuuid = v.cuuid " \
+				f"ORDER BY {order_by_str} LIMIT {str(offset)}, {str(page_size)}"
+
 	else:
 		# Query used when searching, sql0 is not used for count since search is the total
 		isFirst = True
 		whereStr = 'WHERE'
 		for col in columns:
+
 			if col[2] == '1':
+				hasDate = isDateString(filterStr, True)
+				if 'date' in col[0]:
+					if not hasDate:
+						continue
+
 				if isFirst:
 					whereStr = whereStr + " " + col[0] + " like '%" + filterStr + "%'"
 					isFirst = False
 				else:
 					whereStr = whereStr + " OR " + col[0] + " like '%" + filterStr + "%'"
 
-		sql1 = text("""SELECT v.*, c.hostname, c.ipaddr, c.osver FROM mp_client_patches_full_view v
-					Left Join mp_clients c ON c.cuuid = v.cuuid
-					""" + whereStr + """
-					ORDER BY """ + order_by_str + """ LIMIT """ + str(offset) + """,""" + str(page_size))
+		sql0 = f"SELECT v.*, c.hostname, c.ipaddr, c.osver FROM mp_client_patches_full_view v " \
+			   f"Left Join mp_clients c ON c.cuuid = v.cuuid " \
+			   f"{whereStr}"
+		sql0 = text(sql0)
 
+		sql1 =  f"SELECT v.*, c.hostname, c.ipaddr, c.osver FROM mp_client_patches_full_view v "\
+					f"Left Join mp_clients c ON c.cuuid = v.cuuid " \
+					f"{whereStr} "\
+					f"ORDER BY {order_by_str}  LIMIT {str(offset)} , {str(page_size)}"
+
+
+	recCounter1 = 0
+	recCounter2 = 0
 	# Execute the SQL statement(s)
 	if sql0 is not None:
 		res1 = db.engine.execute(sql0)
 		recCounter1 = res1.rowcount
 
 	if sql1 is not None:
-		result = db.engine.execute(sql1)
+		result = db.engine.execute(text(sql1))
 		recCounter2 = result.rowcount
 
 	# Return tuple, query results and a record count
 	return (result, recCounter1, recCounter2)
+
+def isDateString(string, fuzzy=False):
+	"""
+    Return whether the string can be interpreted as a date.
+    :param string: str, string to check for date
+    :param fuzzy: bool, ignore unknown tokens in string if True
+    """
+	try:
+		parse(string, fuzzy=fuzzy)
+		return True
+	except ValueError:
+		return False
 
 @patches.route('/installed')
 @login_required
@@ -1266,7 +1345,10 @@ def installedListPaged(limit,offset,search,sort,order):
 
 	colsForQuery = ['cuuid', 'patch', 'patch_name', 'type', 'mdate']
 	qResult = installedQuery(search, int(offset), int(limit), sort, order, getNewTotal)
-	query = qResult[0]
+	if qResult is not None:
+		query = qResult[0]
+	else:
+		query = []
 
 	session['my_search_name'] = 'installedList'
 
@@ -1310,14 +1392,14 @@ def installedQuery(filterStr='undefined', page=0, page_size=0, sort='mdate', ord
 
 	if filterStr == 'undefined' or len(filterStr) <= 0:
 		query = MpInstalledPatch.query.join(MpClient, MpClient.cuuid == MpInstalledPatch.cuuid).add_columns(
-			MpClient.hostname, MpClient.osver, MpClient.ipaddr).order_by(order_by_str)
+			MpClient.hostname, MpClient.osver, MpClient.ipaddr).order_by(text(order_by_str))
 	else:
 		query = MpInstalledPatch.query.join(MpClient, MpClient.cuuid == MpInstalledPatch.cuuid).add_columns(
 			MpClient.hostname, MpClient.osver, MpClient.ipaddr).filter(or_(MpInstalledPatch.patch.contains(filterStr),
 																		MpInstalledPatch.patch_name.contains(filterStr),
 																		MpInstalledPatch.type.contains(filterStr),
 																		MpClient.hostname.contains(filterStr),
-																		MpClient.ipaddr.contains(filterStr))).order_by(order_by_str)
+																		MpClient.ipaddr.contains(filterStr))).order_by(text(order_by_str))
 
 	# count of rows
 	if getCount:

@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, send_file
 from flask_security import login_required
 from datetime import *
 import json
@@ -7,6 +7,7 @@ import uuid
 import re
 from yattag import indent
 import hashlib
+from io import BytesIO
 
 from . import osmanage
 from .. import login_manager
@@ -14,6 +15,7 @@ from .. import db
 from .. model import *
 from .. modes import *
 from .. mplogger import *
+from .. clients.views import revGroupSWRes
 
 '''
 	This method queries the DB for all uploaded profiles
@@ -105,7 +107,7 @@ def profileEdit(profile_id):
 
 	# Parse BLOB Data
 	pData = str(profile.profileData)
-	pData = unicode(pData, errors='replace')
+	#pData = str(pData, errors='replace')
 
 	# Using RE get the data between <?xml ... </plist>
 	stringlist = re.findall('<\?.+</plist>', pData, re.DOTALL)
@@ -114,6 +116,7 @@ def profileEdit(profile_id):
 	if len(stringlist) >= 1:
 		pData2 = stringlist[0]
 		pData2 = pData2.replace('\\n', '')  # Remove \n from string purely for formatting
+		pData2 = pData2.replace('\\t', '')
 		pretty_string = indent(pData2,indentation='    ')
 
 	return render_template('os_managment/os_profile_manager.html', profileData=profile, profileDataAlt=pData, profileCriteriaAlt=cri,
@@ -148,12 +151,14 @@ def profileSave(profile_id):
 			if _file_data and allowed_file(_file.filename):
 				# Gen Hash
 				profile__hash = hashlib.md5(_file_data).hexdigest()
-				setattr(profile, 'profileData', _file_data.encode('string-escape').encode('utf-8'))
+				#setattr(profile, 'profileData', _file_data.encode('string-escape').encode('utf-8'))
+				setattr(profile, 'profileData', _file_data)
 				setattr(profile, 'profileHash', profile__hash)
 
 		# Save Profile Data
 		setattr(profile, 'profileName', formDict['profileName'])
 		setattr(profile, 'profileDescription', formDict['profileDescription'])
+		setattr(profile, 'profileIdentifier', formDict['profileIdentifier'])
 		setattr(profile, 'enabled', formDict['enabled'])
 		setattr(profile, 'isglobal', formDict['isglobal'])
 		setattr(profile, 'uninstallOnRemove', formDict['uninstallOnRemove'])
@@ -293,6 +298,25 @@ def profileDelete():
 	else:
 		log_Error("{} does not have permission to delete config profile.".format(session.get('user')))
 		return json.dumps({'error': 0}), 403
+
+''' AJAX Request '''
+@osmanage.route('/profile/download/<profile_id>',methods=['GET'])
+@login_required
+def profileDownload(profile_id):
+	if request.method == 'GET':
+		profile = MpOsConfigProfiles.query.filter(MpOsConfigProfiles.profileID == profile_id).first()
+		if profile is not None:
+			fileName = profile.profileName.replace(" ","") + ".mobileconfig"
+			file = send_file(BytesIO(profile.profileData),attachment_filename=fileName)
+			# ,filename=fileName
+			return file
+			#print "file:"+fileName
+
+		else:
+			log_Error("Unable to find profile id {}".format(profile_id))
+
+	return json.dumps({'error': 0}), 200
+
 
 '''
 	-------------------------------------------
@@ -501,28 +525,140 @@ def postProfile():
 	App Filters
 	-------------------------------------------
 '''
+swaf_columns = [('appID', 'App ID', '0'),('bundleID', 'Bundle ID', '0'), ('displayName', 'Display Name', '1'), ('processName', 'Process Name', '1'),
+				('message', 'Message', '1'), ('killProc', 'Kill Process', '1'), ('sendEmail', 'Send Email', '0'), ('enabled', 'Enabled', '1'),
+				('isglobal', 'Is Global', '1')]
+
 @osmanage.route('/app_filters')
 @login_required
 def appFilters():
-	columns = [('profileID', 'Profile ID', '0'), ('profileIdentifier', 'Profile Identifier', '1'), ('profileName', 'Name', '1'),
-				('profileDescription', 'Description', '1'), ('profileRev', 'Revision', '1'), ('enabled', 'Enabled', '1'),
-				('uninstallOnRemove', 'Uninstall On Remove', '1')]
 
-	profileQuery = MpOsConfigProfiles.query.all()
+	return render_template('os_managment/os_app_filters.html', data=[], columns=swaf_columns)
+
+''' AJAX Method '''
+@osmanage.route('/app_filter/list', methods=['GET'])
+@login_required
+def appFilterList():
+	srList = MpSoftwareRestrictions.query.all()
+	_results = []
+	if srList is not None:
+		for sr in srList:
+			row = {}
+			for c in swaf_columns:
+				y = "sr."+c[0]
+				row[c[0]] = eval(y)
+			_results.append(row)
+
+	return json.dumps({'data': _results, 'total': 0}), 200
+
+@osmanage.route('/app_filter/add')
+@login_required
+def appFilterAdd():
+	return render_template('os_managment/os_app_restriction.html', data=[], type='new',appID='1234')
+
+@osmanage.route('/app_filter/edit/<appID>')
+@login_required
+def appFilterEdit(appID):
+	data = []
+	swRes = MpSoftwareRestrictions.query.filter(MpSoftwareRestrictions.appID == appID).first()
+	if swRes is not None:
+		data = swRes
+
+	return render_template('os_managment/os_app_restriction.html', data=swRes, type='edit')
+
+''' AJAX Method '''
+@osmanage.route('/app_filter/save', methods=['POST'])
+@login_required
+def appFilterSave():
+	_form = request.form
+	if adminRole() or localAdmin():
+		formDict = _form.to_dict()
+		if not formDict:
+			return json.dumps({'error': 404, 'data': [], 'total': 0}), 404
+
+		appID = str(uuid.uuid4())
+		isNew = False
+		swRes = MpSoftwareRestrictions.query.filter(MpSoftwareRestrictions.appID == formDict['appID']).first()
+		if swRes is None:
+			swRes = MpSoftwareRestrictions()
+			isNew = True
+
+		# Save Profile Data
+		setattr(swRes, 'bundleID', formDict['bundleID'])
+		setattr(swRes, 'displayName', formDict['displayName'])
+		setattr(swRes, 'processName', formDict['processName'])
+		setattr(swRes, 'message', formDict['message'])
+		setattr(swRes, 'killProc', formDict['killProc'])
+		setattr(swRes, 'sendEmail', formDict['sendEmail'])
+		setattr(swRes, 'enabled', formDict['enabled'])
+		setattr(swRes, 'isglobal', formDict['isglobal'])
+
+		if isNew:
+			setattr(swRes, 'appID', appID)
+			db.session.add(swRes)
+			log("{} added new software restriction ({}).".format(session.get('user'), appID))
+
+		db.session.commit()
+		return json.dumps({'error': 0}), 200
+	else:
+		return json.dumps({'error': 401}), 401
+
+''' AJAX Request '''
+@osmanage.route('/app_filter/delete',methods=['DELETE'])
+@login_required
+def appFilterDelete():
+	if adminRole() or localAdmin():
+		if request.method == 'DELETE':
+			formDict = request.form.to_dict()
+			app_ids = formDict['appID'].split(",")
+			for aid in app_ids:
+				delSWRes = MpSoftwareRestrictions.query.filter(MpSoftwareRestrictions.appID == aid).first()
+				delSWResForGroup = MpClientGroupSoftwareRestrictions.query.filter(MpClientGroupSoftwareRestrictions.appID == aid).all()
+				if delSWRes is not None:
+					log_Info("{} deleted software restriction {}.".format(session.get('user'), delSWRes.displayName))
+					db.session.delete(delSWRes)
+
+				if delSWResForGroup is not None:
+					for swResG in delSWResForGroup:
+						log_Info("{} deleted software restriction {} from client group {}.".format(session.get('user'), delSWRes.displayName, swResG.group_id))
+						revGroupSWRes(swResG.group_id)
+						db.session.delete(swResG)
+
+			db.session.commit()
+
+		return json.dumps({'error': 0}), 200
+	else:
+		log_Error("{} does not have permission to delete software restrictions.".format(session.get('user')))
+		return json.dumps({'error': 0}), 403
+
+swafcg_columns = [('appID', 'App ID', '0'),('displayName', 'Display Name', '1'), ('processName', 'Process Name', '1'),('enabled', 'Enabled', '1')]
+
+''' AJAX Method '''
+@osmanage.route('/app_filter/list/<client_group>', methods=['GET'])
+
+def appFilterClientGroupList(client_group):
+
+	cgList = MpClientGroupSoftwareRestrictions.query.filter(MpClientGroupSoftwareRestrictions.group_id == client_group).all()
 
 	_results = []
-	for p in profileQuery:
-		row = {}
-		for c in columns:
-			y = "p."+c[0]
-			if c[0] == 'enabled' or c[0] == 'uninstallOnRemove':
-				row[c[0]] = "Yes" if eval(y) == 1 else "No"
-			else:
-				row[c[0]] = eval(y)
+	if cgList is not None:
+		srList = MpSoftwareRestrictions.query.all()
+		# Loop through client group sw restrictions
+		for cg in cgList:
+			# Find corresponding sw restriction record
+			swRes = swRestrictionForID(srList,cg.appID)
+			if swRes is not None:
+				row = {'appID':cg.appID,'displayName':swRes.displayName,'processName':swRes.processName,'enabled':cg.enabled}
+				_results.append(row)
 
-		_results.append(row)
+	return json.dumps({'data': _results, 'total': 0}), 200
 
-	return render_template('os_managment/os_app_filters.html', data=_results, columns=columns)
+def swRestrictionForID(swResList, appID):
+	for s in swResList:
+		if s.appID == appID and s.isglobal == 0:
+			return s
+
+	return None
 
 '''
 	-------------------------------------------

@@ -67,7 +67,7 @@ class SoftwareTasksForGroup(MPResource):
 					if q_sw_group_alt_data is not None and q_sw_group_alt_data.gData is not None:
 						_group_alt_data = json.loads(q_sw_group_alt_data.gData) # Parse the JSON Data
 						_merge_list = _group_data['result']['Tasks'] + _group_alt_data['result']['Tasks'] # Merge Both Tasks Lists
-						_new_tasks = {v['id']:v for v in _merge_list}.values() # Filter out any duplicates
+						_new_tasks = list({v['id']:v for v in _merge_list}.values()) # Filter out any duplicates
 
 						# Replace old tasks list with new merged list
 						_group_data['result']['Tasks'] = _new_tasks
@@ -89,7 +89,7 @@ class SoftwareTasksForGroup(MPResource):
 						continue
 
 					for v, ver in enumerate(_os_vers.split(',')):
-						if LooseVersion(ver) >= LooseVersion(osver):
+						if LooseVersion(ver.strip()) >= LooseVersion(osver.strip()):
 							_tasks_new.append(task)
 							break
 
@@ -105,14 +105,11 @@ class SoftwareTasksForGroup(MPResource):
 				log_Error('[SoftwareTasksForGroup][Get][%s] Group (%s) Not Found' % (cuuid, groupName))
 				return wsResult.resultNoSignature(errorno=1, errormsg='No Data for Group'), 202
 
-		except IntegrityError, exc:
-			log_Error('[SoftwareTasksForGroup][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=exc.message), 500
-
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[SoftwareTasksForGroup][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=e.message), 500
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[SoftwareTasksForGroup][Get][Exception][Line: {}] CUUID: {} Message: {}'.format(exc_tb.tb_lineno, cuuid, message))
+			return {'errorno': 500, 'errormsg': message, 'result': {}}, 500
 
 	def softwareGroupsForClient(self, clientID):
 
@@ -166,7 +163,7 @@ class SoftwareTaskForTaskID(MPResource):
 				_task = SWTask()
 				_task_data = _task.struct()
 
-				for t in _task.keys():
+				for t in list(_task.keys()):
 					if t in q_task.__dict__:
 						t_Val = eval("q_task." + t)
 						if type(t_Val) is not datetime:
@@ -188,18 +185,17 @@ class SoftwareTaskForTaskID(MPResource):
 			if q_software is not None:
 				_sw = Software()
 				_sw_data = _sw.struct()
-				for s in _sw.keys():
+				for s in list(_sw.keys()):
 					if s in q_software.__dict__:
 						s_Val = eval("q_software." + s)
 						if type(s_Val) is not datetime:
 							if s == "sw_pre_install" or s == "sw_post_install" or s == "sw_uninstall":
-								_sw_data[s] = base64.b64encode(s_Val)
+								_sw_data[s] = base64.b64encode(s_Val).decode('utf-8')
 							else:
 								_sw_data[s] = s_Val
 						else:
 							_sw_data[s] = s_Val.strftime("%Y-%m-%d %H:%M:%S")
 					else:
-						print s
 						if s == "vendorUrl":
 							_sw_data['vendorUrl'] = eval("q_software.sVendorURL")
 
@@ -225,15 +221,13 @@ class SoftwareTaskForTaskID(MPResource):
 							_sw_data['sid'] = eval("q_software.suuid")
 
 						elif s == "sw_post_install":
-							_sw_data['sw_post_install'] = base64.b64encode(
-								eval("q_software.sw_post_install_script"))
+							_sw_data['sw_post_install'] = b64EncodeAsString(rowWithDefault(q_software,"sw_post_install_script",defaultValue=''),defaultValue='')
 
 						elif s == "sw_uninstall":
-							_sw_data['sw_uninstall'] = base64.b64encode(eval("q_software.sw_uninstall_script"))
+							_sw_data['sw_uninstall'] = b64EncodeAsString(rowWithDefault(q_software,"sw_uninstall_script",defaultValue=''),defaultValue='')
 
 						elif s == "sw_pre_install":
-							_sw_data['sw_pre_install'] = base64.b64encode(
-								eval("q_software.sw_pre_install_script"))
+							_sw_data['sw_pre_install'] = b64EncodeAsString(rowWithDefault(q_software,"sw_pre_install_script",defaultValue=''),defaultValue='')
 
 				task['Software'] = _sw_data
 
@@ -259,15 +253,11 @@ class SoftwareTaskForTaskID(MPResource):
 			wsResult.data = wsData.toDict()
 			return wsResult.resultWithSignature(), 200
 
-		except IntegrityError, exc:
-			log_Error(
-				'[SoftwareTaskForTaskID][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=exc.message), 500
-
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[SoftwareTaskForTaskID][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=e.message), 500
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[SoftwareTaskForTaskID][Get][Exception][Line: {}] CUUID: {} Message: {}'.format(exc_tb.tb_lineno, cuuid, message))
+			return wsResult.resultNoSignature(errorno=500, errormsg=message), 500
 
 class SoftwareGroups(MPResource):
 
@@ -318,13 +308,11 @@ class SoftwareGroups(MPResource):
 				log_Error('[SoftwareDistributionGroups][Get][%s]: Not groups found.' % (cuuid))
 				return wsResult.resultNoSignature(), 404
 
-		except IntegrityError, exc:
-			log_Error('[SoftwareDistributionGroups][Get][IntegrityError] CUUID: %s Message: %s' % (cuuid, exc.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=exc.message), 500
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[SoftwareDistributionGroups][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, cuuid, e.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=e.message), 500
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[SoftwareDistributionGroups][Get][Exception][Line: {}] CUUID: {} Message: {}'.format(exc_tb.tb_lineno, cuuid, message))
+			return wsResult.resultNoSignature(errorno=500, errormsg=message), 500
 
 class SoftwareForClientGroup(MPResource):
 
@@ -357,14 +345,11 @@ class SoftwareForClientGroup(MPResource):
 
 			return {"result": {'data': res, 'type':'RequiredSoftware'}, "errorno": 0, "errormsg": 'none'}, 200
 
-
-		except IntegrityError, exc:
-			log_Error('[AgentStatus][Get][IntegrityError]: client_id: %s Message: %s' % (client_id, exc.message))
-			return {"result": {'data': {}, 'type':'AgentStatus'}, "errorno": 500, "errormsg": exc.message}, 500
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[AgentStatus][Get][Exception][Line: %d] client_id: %s Message: %s' % (exc_tb.tb_lineno, client_id, e.message))
-			return {'errorno': 500, 'errormsg': e.message, 'result': {'data': {}, 'type':'AgentStatus'}}, 500
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[AgentStatus][Get][Exception][Line: {}] CUUID: {} Message: {}'.format(exc_tb.tb_lineno, client_id, message))
+			return {'errorno': 500, 'errormsg': message, 'result': {'data': {}, 'type':'AgentStatus'}}, 500
 
 	def criteriaForSUUID(self, suuid):
 		res = MpSoftwareCriteria.query.filter(MpSoftwareCriteria.suuid == suuid).all()
@@ -411,7 +396,7 @@ class Software(object):
 		return(self.__dict__)
 
 	def keys(self):
-		return self.__dict__.keys()
+		return list(self.__dict__.keys())
 
 class SWTask(object):
 	def __init__(self):
@@ -432,7 +417,7 @@ class SWTask(object):
 		return(self.__dict__)
 
 	def keys(self):
-		return self.__dict__.keys()
+		return list(self.__dict__.keys())
 
 class SoftwareCritera(object):
 	def __init__(self):
@@ -444,7 +429,7 @@ class SoftwareCritera(object):
 		return(self.__dict__)
 
 	def keys(self):
-		return self.__dict__.keys()
+		return list(self.__dict__.keys())
 
 # Add Routes Resources
 software_2_api.add_resource(SoftwareTasksForGroup,		'/sw/tasks/<string:cuuid>/<string:groupName>', endpoint='swTasks')

@@ -34,17 +34,14 @@ class GetAuthToken(MPResource):
 			s = Serializer(current_app.config['SECRET_KEY'], expires_in=3600)
 			_token = s.dumps({'id': _body['authUser']})
 
-			log_Debug('[GetAuthToken][Get]: Token (%s) issued for user (%s) and password.' % (_token, _body['authUser']))
-			return {"result": {'token': _token}, "errorno": 0, "errormsg": 'none'}, 200
+			log_Debug('[GetAuthToken][Get]: Token (%s) issued for user (%s) and password.' % (_token.decode('utf-8'), _body['authUser']))
+			return {"result": {'token': _token.decode('utf-8')}, "errorno": 0, "errormsg": 'none'}, 200
 
-		except IntegrityError, exc:
-			log_Error('[GetAuthToken][Get][except]: %s' % (exc.message))
-			return {"result": '', "errorno": 500, "errormsg": exc.message}, 500
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[GetAuthToken][Get][Exception][Line: %d] Message: %s' % (
-				exc_tb.tb_lineno, e.message))
-			return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[GetAuthToken][Get][Exception][Line: {}] Message: {}'.format(exc_tb.tb_lineno, message))
+			return {'errorno': 500, 'errormsg': message, 'result': {}}, 500
 
 	def post(self):
 		try:
@@ -64,16 +61,14 @@ class GetAuthToken(MPResource):
 			s = Serializer(current_app.config['SECRET_KEY'], expires_in=3600)
 			_token = s.dumps({'id': _body['authUser']})
 
-			log_Debug('[GetAuthToken][Post]: Token (%s) issued for user (%s) and password.' % (_token, _body['authUser']))
-			return {"result": {'token': _token}, "errorno": 0, "errormsg": 'none'}, 200
+			log_Debug('[GetAuthToken][Post]: Token (%s) issued for user (%s) and password.' % (_token.decode('UTF-8'), _body['authUser']))
+			return {"result": {'token': _token.decode('UTF-8')}, "errorno": 0, "errormsg": 'none'}, 200
 
-		except IntegrityError, exc:
-			log_Error('[GetAuthToken][Post][except]: %s' % (exc.message))
-			return {"result": '', "errorno": 500, "errormsg": exc.message}, 500
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[GetAuthToken][Post][Exception][Line: %d] Message: %s' % (exc_tb.tb_lineno, e.message))
-			return {'errorno': 500, 'errormsg': e.message, 'result': {}}, 500
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[GetAuthToken][POST][Exception][Line: {}] Message: {}'.format(exc_tb.tb_lineno, message))
+			return {'errorno': 500, 'errormsg': message, 'result': {}}, 500
 
 # Routes
 auth_api.add_resource(GetAuthToken,      '/auth/token')

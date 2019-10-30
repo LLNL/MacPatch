@@ -40,7 +40,7 @@ def read_config_file(configFile):
 			print('Well darn.')
 
 	else:
-		print("Error, could not open file " + configFile.strip())
+		print(("Error, could not open file " + configFile.strip()))
 
 	return data
 
@@ -91,9 +91,9 @@ def signData(data):
 			data = _data
 
 		try:
-			private_key = serialization.load_pem_private_key( str(qKeys.priKey),None, default_backend() )
-			signature = private_key.sign( data, padding.PKCS1v15(), hashes.SHA1() )
-			encodedSignature = b64encode(signature)
+			private_key = serialization.load_pem_private_key( bytes(qKeys.priKey,'utf-8'), password=None, backend=default_backend() )
+			signature = private_key.sign( data.encode('utf-8'), padding.PKCS1v15(), hashes.SHA1() )
+			encodedSignature = b64encode(signature).decode('utf-8')
 
 			return encodedSignature
 
@@ -111,10 +111,10 @@ def verifySignedData(signature, data):
 	if qKeys is not None:
 		try:
 			# Get Keys
-			private_key = serialization.load_pem_private_key(str(qKeys.priKey), None, default_backend())
+			private_key = serialization.load_pem_private_key( bytes(qKeys.priKey,'utf-8'), password=None, backend=default_backend() )
 			public_key = private_key.public_key()
 			# Verify Signature
-			result = public_key.verify(b64decode(signature), data, padding.PKCS1v15(),hashes.SHA1())
+			result = public_key.verify(b64decode(signature), data.encode('utf-8'), padding.PKCS1v15(),hashes.SHA1())
 			return True
 		except InvalidSignature:
 			log_Error("InvalidSignature, Unable to verify signature.")
@@ -166,3 +166,4 @@ def copytree(src, dst, symlinks = False, ignore = None):
 			copytree(s, d, symlinks, ignore)
 		else:
 			shutil.copy2(s, d)
+

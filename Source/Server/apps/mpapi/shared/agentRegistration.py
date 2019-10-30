@@ -134,7 +134,13 @@ def setRegKeyUsed(ClientID, aKey, rid):
 def writeRegInfoToDatabase(regInfo, decoded_client_key, enable=1):
 	try:
 		log_Info('Create Client Registration Data Record')
+		updateRecord = False
 		regObj = MPAgentRegistration()
+		qGet = MPAgentRegistration.query.filter_by(cuuid=regInfo['cuuid']).first()
+		if qGet is not None:
+			updateRecord = False
+			regObj = qGet
+
 		setattr(regObj, 'cuuid', regInfo['cuuid'])
 		setattr(regObj, 'enabled', enable)
 		setattr(regObj, 'clientKey', decoded_client_key)
@@ -143,8 +149,12 @@ def writeRegInfoToDatabase(regInfo, decoded_client_key, enable=1):
 		setattr(regObj, 'hostname', regInfo['HostName'])
 		setattr(regObj, 'serialno', regInfo['SerialNo'])
 		setattr(regObj, 'reg_date', datetime.now())
-		log_Debug('Add Registration Data Record')
-		db.session.add(regObj)
+		if updateRecord == False:
+			log_Info('Add Registration Data Record for ' + regInfo['cuuid'])
+			db.session.add(regObj)
+		else:
+			log_Info('Update Registration Data Record for ' + regInfo['cuuid'])
+
 		db.session.commit()
 
 		# Add Client to Default Group
@@ -153,7 +163,8 @@ def writeRegInfoToDatabase(regInfo, decoded_client_key, enable=1):
 		return True
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
-		log_Error('[Registration][Post][writeRegInfoToDatabase][Line: %d] Message: %s' % (exc_tb.tb_lineno, e.message))
+		message=str(e.args[0]).encode("utf-8")
+		log_Error('[Registration][Post][writeRegInfoToDatabase][Line: %d] Message: %s' % (exc_tb.tb_lineno, message))
 		db.session.rollback()
 		return False
 
@@ -188,7 +199,8 @@ def addClientToGroup(ClientID):
 
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
-		log_Error('[Registration][addClientToGroup][Line: %d] Message: %s' % (exc_tb.tb_lineno, e.message))
+		message=str(e.args[0]).encode("utf-8")
+		log_Error('[Registration][addClientToGroup][Line: %d] Message: %s' % (exc_tb.tb_lineno, message))
 		db.session.rollback()
 		return False
 
