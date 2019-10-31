@@ -22,7 +22,7 @@
 
     ```
     mkdir content
-    mdkir dbstore
+    mkdir dbstore
     ```
 
 4. Start the docker environment.
