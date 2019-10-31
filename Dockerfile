@@ -12,21 +12,21 @@ RUN yum -y update && \
     yum -y groupinstall "Development tools" && \
     yum -y install epel-release && \
     yum -y install gcc \
-    gcc-c++ \
-    zlib-devel \
-    pcre-devel \
-    openssl \
-    openssl-devel \
-    python3-devel \
-    python3-setuptools \
-    python3 \
-    python3-pip \
-    swig \
-    yarn \
-    supervisor \
-    nginx
+        gcc-c++ \
+        zlib-devel \
+        pcre-devel \
+        openssl \
+        openssl-devel \
+        python3-devel \
+        python3-setuptools \
+        python3 \
+        python3-pip \
+        swig \
+        yarn \
+        supervisor \
+        nginx
 
-RUN pip install virtualenv
+RUN pip3 install --upgrade pip virtualenv
 
 RUN useradd -r -M -s /dev/null -U www-data
 
@@ -48,15 +48,15 @@ RUN mkdir -p $MPBASE/Content/Web/clients \
 # Create virtual environment
 RUN virtualenv --no-site-packages $MPSERVERBASE/venv
 RUN source $MPSERVERBASE/venv/bin/activate && \
-    pip install pycrypto \
-    argparse \
-    biplist \
-    python-dateutil \
-    requests \
-    six \
-    wheel \
-    mysql-connector-python-rf \
-    python-crontab
+    pip3 install pycrypto \
+        argparse \
+        biplist \
+        python-dateutil \
+        requests \
+        six \
+        wheel \
+        mysql-connector-python-rf \
+        python-crontab
 
 
 # Run yarn
