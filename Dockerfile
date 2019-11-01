@@ -64,13 +64,6 @@ WORKDIR $MPSERVERBASE/apps/mpconsole
 RUN yarn install --cwd $MPSERVERBASE/apps/mpconsole --modules-folder static/yarn_components --no-bin-links
 
 
-# Create virtual environtment for flask apps
-# ADD docker/pyRequired.txt $MPSERVERBASE/apps/pyRequired.txt
-# RUN virtualenv --no-site-packages $MPSERVERBASE/apps/env
-# RUN source $MPSERVERBASE/apps/env/bin/activate && \
-#     pip install m2crypto --no-cache-dir --upgrade && \
-#     pip install -r $MPSERVERBASE/apps/pyRequired.txt
-
 # Create virtual environtments
 ADD docker/requirements-server.txt $MPSERVERBASE/apps/requirements-server.txt
 ADD docker/requirements-api.txt $MPSERVERBASE/apps/requirements-api.txt
@@ -93,6 +86,8 @@ ADD docker/supervisord.conf $MPSERVERBASE/supervisord/supervisord.conf
 ADD docker/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD docker/nginx/sites /etc/nginx/sites/
 ADD docker/run.sh /run.sh
+ADD docker/run-api.sh /run-api.sh
+ADD docker/run-console.sh /run-console.sh
 
 
 # Apply permissions and ownership
