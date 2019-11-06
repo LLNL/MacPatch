@@ -11,7 +11,7 @@ services:
       MYSQL_USER: "dbadmin"
       MYSQL_PASSWORD: "dbadmin"
     deploy:
-      replicas: 2
+      replicas: 1
   nginx:
     image: nginx
     restart: always
