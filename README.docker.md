@@ -1,12 +1,9 @@
 ## Starting a test environment
 
-1. Download a prebuilt docker image and load it.
+1. Build the docker image.
 
     ```
-    mkdir macpatch
-    cd macpatch
-    curl -O https://skynet.llnl.gov/docker/macpatch/llnl-macpatch-18.10.29-1540838966.tar
-    docker load < llnl-macpatch-18.10.29-1540838966.tar
+    docker build -t llnl/macpatch .
     ```
 
 2. MacPatch requires an SSL cert. For testing you can generate a self signed cert.
@@ -23,6 +20,7 @@
     ```
     mkdir content
     mkdir dbstore
+    mkdir invdata/files
     ```
 
 4. Start the docker environment.
@@ -57,8 +55,6 @@ Add your `config.cfg` file to the docker container by adding it to the `volumes`
 # docker-compose.yml
 ...
     volumes:
-      - $PWD/ssl/server.crt:/opt/MacPatch/Server/etc/ssl/server.crt
-      - $PWD/ssl/server.key:/opt/MacPatch/Server/etc/ssl/server.key
       - $PWD/content:/opt/MacPatch/Content
       - $PWD/config.cfg:/opt/MacPatch/Server/apps/config.cfg
 ...
