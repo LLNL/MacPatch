@@ -45,20 +45,6 @@ RUN mkdir -p $MPBASE/Content/Web/clients \
     $MPSERVERBASE/apps/log
 
 
-# Create virtual environment
-RUN virtualenv --no-site-packages $MPSERVERBASE/venv
-RUN source $MPSERVERBASE/venv/bin/activate && \
-    pip3 install pycrypto \
-        argparse \
-        biplist \
-        python-dateutil \
-        requests \
-        six \
-        wheel \
-        mysql-connector-python-rf \
-        python-crontab
-
-
 # Run yarn
 WORKDIR $MPSERVERBASE/apps/mpconsole
 RUN yarn install --cwd $MPSERVERBASE/apps/mpconsole --modules-folder static/yarn_components --no-bin-links
@@ -86,8 +72,6 @@ ADD docker/supervisord.conf $MPSERVERBASE/supervisord/supervisord.conf
 ADD docker/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD docker/nginx/sites /etc/nginx/sites/
 ADD docker/run.sh /run.sh
-ADD docker/run-api.sh /run-api.sh
-ADD docker/run-console.sh /run-console.sh
 
 
 # Apply permissions and ownership
