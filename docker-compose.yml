@@ -33,7 +33,7 @@ services:
     command: ["console"]
     volumes:
       - ./content:/opt/MacPatch/Content
-      # - /path/to/myconfig//db-config.cfg:/opt/MacPatch/Server/apps/config.cfg
+      # - /path/to/myconfig/db-config.cfg:/opt/MacPatch/Server/apps/config.cfg
       # - /path/to/myconfig/siteconfig.json:/opt/MacPatch/Server/etc/siteconfig.json
     deploy:
       replicas: 2
@@ -46,3 +46,12 @@ services:
       - ./content:/opt/MacPatch/Content
     deploy:
       replicas: 6
+  inventory:
+    image: llnl/macpatch
+    build: .
+    restart: always
+    command: ["inventory"]
+    volumes:
+      - ./invdata:/opt/MacPatch/Server/InvData
+    deploy:
+      replicas: 4
