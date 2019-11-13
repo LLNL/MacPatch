@@ -56,7 +56,7 @@ Add your `config.cfg` file to the docker container by adding it to the `volumes`
 ...
     volumes:
       - $PWD/content:/opt/MacPatch/Content
-      - $PWD/config.cfg:/opt/MacPatch/Server/apps/config.cfg
+      - $PWD/config.cfg:/opt/MacPatch/Server/etc/config.cfg
 ...
 ```
 
