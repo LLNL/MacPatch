@@ -10,8 +10,6 @@ services:
       MYSQL_DATABASE: "MacPatchDB3"
       MYSQL_USER: "dbadmin"
       MYSQL_PASSWORD: "dbadmin"
-    deploy:
-      replicas: 1
   nginx:
     image: nginx
     restart: always
@@ -24,8 +22,6 @@ services:
       - "443:443"
       - "80:80"
       - "3600:3600"
-    deploy:
-      replicas: 3
   console:
     image: macpatch
     build: .
@@ -35,8 +31,6 @@ services:
       - ./content:/opt/MacPatch/Content
       # - /path/to/myconfig/db-config.cfg:/opt/MacPatch/Server/apps/config.cfg
       # - /path/to/myconfig/siteconfig.json:/opt/MacPatch/Server/etc/siteconfig.json
-    deploy:
-      replicas: 2
   api:
     image: macpatch
     build: .
@@ -44,8 +38,6 @@ services:
     command: ["api"]
     volumes:
       - ./content:/opt/MacPatch/Content
-    deploy:
-      replicas: 6
   inventory:
     image: macpatch
     build: .
@@ -53,5 +45,3 @@ services:
     command: ["inventory"]
     volumes:
       - ./invdata:/opt/MacPatch/Server/InvData
-    deploy:
-      replicas: 4
