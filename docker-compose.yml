@@ -27,7 +27,7 @@ services:
     deploy:
       replicas: 3
   console:
-    image: llnl/macpatch
+    image: macpatch
     build: .
     restart: always
     command: ["console"]
@@ -38,7 +38,7 @@ services:
     deploy:
       replicas: 2
   api:
-    image: llnl/macpatch
+    image: macpatch
     build: .
     restart: always
     command: ["api"]
@@ -47,7 +47,7 @@ services:
     deploy:
       replicas: 6
   inventory:
-    image: llnl/macpatch
+    image: macpatch
     build: .
     restart: always
     command: ["inventory"]

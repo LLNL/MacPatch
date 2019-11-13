@@ -3,7 +3,7 @@
 1. Build the docker image.
 
     ```
-    docker build -t llnl/macpatch .
+    docker build -t macpatch .
     ```
 
 2. MacPatch requires an SSL cert. For testing you can generate a self signed cert.
@@ -65,11 +65,11 @@ Add your `config.cfg` file to the docker container by adding it to the `volumes`
 Building the docker image locally.
 
 ```
-docker build --rm -t llnl/macpatch .
+docker build --rm -t macpatch .
 ```
 
 Creating an image tar.
 
 ```
-docker save llnl/macpatch > llnl-macpatch-$(date "+%y.%m.%d-%s").tar
+docker save macpatch > macpatch-$(date "+%y.%m.%d-%s").tar
 ```
