@@ -47,8 +47,7 @@ def create_app(config_object=DefaultConfig):
 	cors = CORS(app)
 
 	app.config.from_object(config_object)
-	# app.config.from_pyfile('../config.cfg', silent=True)
-	app.config.from_pyfile('../../etc/config.cfg', silent=True)
+	app.config.from_pyfile('../config.cfg', silent=True)
 	app.config.from_pyfile('../conf_console.cfg', silent=True)
 	# Trim White Space from templates
 	app.jinja_env.trim_blocks = True

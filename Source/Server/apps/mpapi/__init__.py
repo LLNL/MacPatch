@@ -31,8 +31,7 @@ def create_app(config_object=DefaultConfig):
 		db.session.remove()
 
 	app.config.from_object(config_object)
-	# app.config.from_pyfile('../config.cfg', silent=True)
-	app.config.from_pyfile('../../etc/config.cfg', silent=True)
+	app.config.from_pyfile('../config.cfg', silent=True)
 	app.config.from_pyfile('../conf_wsapi.cfg', silent=True)
 	app.config['JSON_SORT_KEYS'] = False
 

@@ -66,7 +66,7 @@ RUN source $MPSERVERBASE/env/console/bin/activate && \
     pip3 install -r $MPSERVERBASE/apps/requirements-console.txt
 
 # Copy in config files
-ADD docker/config/config.cfg $MPSERVERBASE/etc/config.cfg
+ADD docker/config/config.cfg $MPSERVERBASE/apps/config.cfg
 ADD docker/config/siteconfig.json $MPSERVERBASE/etc/siteconfig.json
 ADD docker/supervisord.conf $MPSERVERBASE/supervisord/supervisord.conf
 ADD docker/nginx/nginx.conf /etc/nginx/nginx.conf
