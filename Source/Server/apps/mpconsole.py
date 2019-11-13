@@ -18,7 +18,7 @@ class GunicornServer(Command):
 	"""Start GUNICORN Server"""
 	description = 'Run the app within Gunicorn'
 
-	def __init__(self, host='127.0.0.1', port=int(os.environ.get("PORT", 3602)), workers=2, daemon=False):
+	def __init__(self, host=app.config.get('GUNICORN_ADDRESS', '127.0.0.1'), port=int(app.config.get('GUNICORN_CONSOLE_PORT', 3602)), workers=2, daemon=False):
 		self.port = port
 		self.host = host
 		self.workers = workers
@@ -53,7 +53,6 @@ class GunicornServer(Command):
 					'loglevel': 'info',
 					'timeout': 300,
 				}
-
 			def load(self):
 				return app
 
