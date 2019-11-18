@@ -87,6 +87,7 @@ USEOLDPY=false
 MPBASE="/opt/MacPatch"
 MPSRVCONTENT="${MPBASE}/Content/Web"
 MPSERVERBASE="/opt/MacPatch/Server"
+MPSERVERCONF="/opt/MacPatch/ServerConfig"
 BUILDROOT="${MPBASE}/.build/server"
 TMP_DIR="${MPBASE}/.build/tmp"
 SRC_DIR="${MPSERVERBASE}/conf/src/server"

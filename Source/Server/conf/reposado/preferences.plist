@@ -15,6 +15,7 @@
         <string>http://[SUS-BASE-SERVER]/content/catalogs/others/index-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog</string>
         <string>http://[SUS-BASE-SERVER]/content/catalogs/others/index-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog</string>
         <string>http://[SUS-BASE-SERVER]/content/catalogs/others/index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog</string>
+        <string>http://[SUS-BASE-SERVER]/content/catalogs/others/index-10.15-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog</string>
     </array>
     <key>LocalCatalogURLBase</key>
     <string>http://[SUS-SERVER-NAME]</string>
@@ -24,7 +25,7 @@
         <string>en</string>
     </array>
     <key>RepoSyncLogFile</key>
-    <string>[SRVBASE]/logs/reposado_sync.log</string>
+    <string>[SRVCONF]/logs/reposado_sync.log</string>
     <key>UpdatesMetadataDir</key>
     <string>[SRVCONTENT]/Reposado/metadata</string>
     <key>UpdatesRootDir</key>

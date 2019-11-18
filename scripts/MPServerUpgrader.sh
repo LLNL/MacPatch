@@ -60,7 +60,7 @@ BUILDROOT="${MPBASE}/.build/server"
 DTS=`date "+%Y%m%d-%H%M%S"`
 SERVERBACKUPNAME="Server.$DTS"
 SERVERBACKUPPATH="/opt/MacPatch/ServerUpgrade/$SERVERBACKUPNAME"
-
+MPSERVERCONF="/opt/MacPatch/ServerConfig"
 MPBASEBACK="/tmp/MPUSrvUpgrade"
 GITBRANCH="master"
 MOVECONTENT=true
