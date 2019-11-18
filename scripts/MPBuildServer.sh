@@ -482,13 +482,6 @@ else
     --with-http_ssl_module \
     --with-pcre > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 	
-    # Old
-    #./configure --prefix=${MPSERVERBASE}/nginx \
-	#--without-http_autoindex_module \
-	#--without-http_ssi_module \
-	#-with-http_ssl_module \
-	#--with-openssl=${TMP_DIR}/openssl \
-	#--with-pcre=${TMP_DIR}/pcre  > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 fi
 
 make  >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
@@ -512,6 +505,7 @@ do
 	#echo "$f"
 	perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $f
 	perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $f
+    perl -pi -e "s#\[SRVCONF\]#$MPSERVERCONF#g" $f
 done
 
 # ------------------
@@ -547,7 +541,7 @@ echo
 echo "* Creating self signed SSL certificate"
 echo "-----------------------------------------------------------------------"
 
-certsDir="${MPSERVERBASE}/etc/ssl"
+certsDir="${MPSERVERCONF}/etc/ssl"
 if [ ! -d "${certsDir}" ]; then
 	mkdirP "${certsDir}"
 fi
@@ -582,10 +576,6 @@ fi
 echo
 echo "* Create Virtualenv for Web services app"
 echo "-----------------------------------------------------------------------"
-
-mkdir -p "${MPSERVERBASE}/apps/log"
-chown $OWNERGRP "${MPSERVERBASE}/apps/log"
-chmod 2777 "${MPSERVERBASE}/apps/log"
 
 cd "${MPSERVERBASE}"
 python3 -m venv env/server
@@ -680,6 +670,12 @@ echo "* Clean up Server dirtectory"
 echo "-----------------------------------------------------------------------"
 find ${MPBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
 rm -rf ${BUILDROOT}
+
+
+echo
+echo "* Move Config files"
+echo "-----------------------------------------------------------------------"
+mv "${MPSERVERBASE}/etc" "$MPSERVERCONF"
 
 # ------------------
 # Set Permissions
