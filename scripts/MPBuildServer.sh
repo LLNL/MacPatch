@@ -324,6 +324,8 @@ mkdirP ${MPBASE}/Content/Web/tools
 mkdirP ${MPBASE}/ServerConfig
 mkdirP ${MPBASE}/ServerConfig/etc
 mkdirP ${MPBASE}/ServerConfig/flask
+mkdirP ${MPBASE}/ServerConfig/jobs
+mkdirP ${MPBASE}/ServerConfig/logs/apps
 touch ${MPBASE}/ServerConfig/flask/conf_api.cfg
 touch ${MPBASE}/ServerConfig/flask/conf_console.cfg
 cp -rp ${MPBASE}/Source/Server ${MPSERVERBASE}
