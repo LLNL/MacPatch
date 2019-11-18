@@ -5,7 +5,7 @@ import pymysql
 
 # ----------------------------------------------
 # Notes:
-# Version: 1
+# Version: 1.b
 #
 # This script will quickly check all api's for the MacPatch server.
 # It does not include all API's as some dont have tests yet or
