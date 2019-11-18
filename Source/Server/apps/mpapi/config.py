@@ -1,6 +1,9 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+MP_ROOT_DIR		= '/opt/MacPatch'
+MP_SRV_DIR		= MP_ROOT_DIR+'/Server'
+MP_SRVCNF_DIR 	= MP_ROOT_DIR+'/ServerConfig'
 
 class BaseConfig:
 
@@ -43,13 +46,14 @@ class BaseConfig:
 	REQUIRE_SIGNATURES      		= False
 	ALLOW_MIXED_SIGNATURES  		= True
 	POST_CHECKIN_TO_SYSLOG  		= False
+	MP_SRVCNF_DIR					= MP_SRVCNF_DIR+'/flask'
 
 	# Content
 	CONTENT_DIR             		= '/opt/MacPatch/Content'
 	WEB_CONTENT_DIR 	    		= '/opt/MacPatch/Content/Web'
 	AGENT_CONTENT_DIR       		= '/opt/MacPatch/Content/Web/clients'
 	PATCH_CONTENT_DIR       		= '/opt/MacPatch/Content/Web/patches'
-	ALLOW_CONTENT_DOWNLOAD			= False
+	ALLOW_CONTENT_DOWNLOAD			= True
 
 	# Inventory
 	INVENTORY_PROCESS				= 'Hybrid' # DB, File, Hybrid

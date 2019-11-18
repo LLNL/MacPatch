@@ -2,8 +2,9 @@ import os
 import logging
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-MP_ROOT_DIR = '/opt/MacPatch'
-MP_SRV_DIR = MP_ROOT_DIR+'/Server'
+MP_ROOT_DIR		= '/opt/MacPatch'
+MP_SRV_DIR		= MP_ROOT_DIR+'/Server'
+MP_SRVCNF_DIR 	= MP_ROOT_DIR+'/ServerConfig'
 
 class BaseConfig:
 
@@ -44,6 +45,7 @@ class BaseConfig:
 	AGENT_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/clients'
 	PATCH_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/patches'
 	SW_CONTENT_DIR 		= MP_ROOT_DIR+'/Content/Web/sw'
+	MP_SRVCNF_DIR		= MP_SRVCNF_DIR+'/flask'
 
 	CORS_HEADERS        = 'Content-Type'
 

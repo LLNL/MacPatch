@@ -321,6 +321,11 @@ mkdirP ${MPBASE}/Content/Web/patches
 mkdirP ${MPBASE}/Content/Web/sav
 mkdirP ${MPBASE}/Content/Web/sw
 mkdirP ${MPBASE}/Content/Web/tools
+mkdirP ${MPBASE}/ServerConfig
+mkdirP ${MPBASE}/ServerConfig/etc
+mkdirP ${MPBASE}/ServerConfig/flask
+touch ${MPBASE}/ServerConfig/flask/conf_api.cfg
+touch ${MPBASE}/ServerConfig/flask/conf_console.cfg
 cp -rp ${MPBASE}/Source/Server ${MPSERVERBASE}
 mkdirP ${MPSERVERBASE}/InvData/files
 mkdirP ${MPSERVERBASE}/lib

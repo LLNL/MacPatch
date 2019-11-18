@@ -25,9 +25,9 @@
 
 '''
   MacPatch Patch Loader Setup Script
-  MacPatch Version 3.3.x
+  MacPatch Version 3.4.x
 
-  Script Version 2.4.0
+  Script Version 2.5.0
 '''
 
 import os
@@ -57,10 +57,11 @@ if os.geteuid() != 0:
 # ----------------------------------------------------------------------------
 MP_BASE	 	    = "/opt/MacPatch"
 MP_SRV_BASE	    = "/opt/MacPatch/Server"
-MP_SRV_ETC	    = MP_SRV_BASE+"/etc"
-MP_FLASK_FILE   = MP_SRV_BASE+"/apps/config.cfg"
-MP_CONF_FILE    = MP_SRV_BASE+"/etc/siteconfig.json"
-MP_SRVC_FILE    = MP_SRV_BASE+"/etc/.mpservices.json"
+MP_SRVCNF       = "/opt/MacPatch/ServerConfig"
+MP_SRV_ETC	    = MP_SRVCNF+"/etc"
+MP_FLASK_FILE   = MP_SRVCNF+"/flask/config.cfg"
+MP_CONF_FILE    = MP_SRVCNF+"/etc/siteconfig.json"
+MP_SRVC_FILE    = MP_SRVCNF+"/etc/.mpservices.json"
 
 if sys.platform.startswith('linux'):
 	dist_type 	 = platform.dist()[0]
