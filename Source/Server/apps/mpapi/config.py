@@ -29,18 +29,19 @@ class BaseConfig:
 	DB_NAME                         = 'MacPatchDB3'
 	SQLALCHEMY_DATABASE_URI         = 'mysql+pymysql://'
 	SQLALCHEMY_TRACK_MODIFICATIONS  = False
-	SQLALCHEMY_POOL_SIZE            = 50
-	SQLALCHEMY_POOL_TIMEOUT         = 20
-	SQLALCHEMY_POOL_RECYCLE         = 170
+	SQLALCHEMY_ENGINE_OPTIONS = {  'pool_size' : 200,
+                                   'pool_recycle':120,
+                                   'pool_timeout':15,
+                                   'pool_pre_ping': True }
 
 	# App Options
 	SECRET_KEY              		= '~t\x86\xc9\x1ew\x8bOcX\x85O\xb6\xa2\x11kL\xd1\xce\x7f\x14<y\x9e'
 	LOGGING_FORMAT          		= '%(asctime)s [%(name)s][%(levelname).3s] --- %(message)s'
 	LOGGING_LEVEL           		= 'info'
-	LOGGING_LOCATION        		= '/opt/MacPatch/Server/apps/logs'
+    LOGGING_LOCATION                = MP_SRVCNF_DIR+'/logs/apps'
 
 	# MacPatch App Options
-	SITECONFIG_FILE         		= '/opt/MacPatch/Server/etc/siteconfig.json'
+	SITECONFIG_FILE         		= MP_SRVCNF_DIR+'/etc/siteconfig.json'
 	VERIFY_CLIENTID         		= True
 	VERIFY_CLIENTID_OLD     		= True
 	REQUIRE_SIGNATURES      		= False

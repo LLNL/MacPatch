@@ -48,8 +48,8 @@ class GunicornServer(Command):
 					'daemon': daemon,
 					'worker_class': 'gevent',
 					'preload_app': True,
-					'accesslog': '/opt/MacPatch/Server/logs/console_access.log',
-					'errorlog': '/opt/MacPatch/Server/logs/console_error.log',
+					'accesslog': '/opt/MacPatch/ServerConf/logs/console_access.log',
+					'errorlog': '/opt/MacPatch/ServerConf/logs/console_error.log',
 					'loglevel': 'info',
 					'timeout': 300,
 				}

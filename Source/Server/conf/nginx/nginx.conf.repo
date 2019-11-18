@@ -83,7 +83,10 @@ http {
             if ( $http_user_agent ~ "Darwin/18" ){
               rewrite ^/index(.*)\.sucatalog$ /content/catalogs/others/index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1$1.sucatalog last;
             }
-
+            ## 10.15.x - Catalina
+            if ( $http_user_agent ~ "Darwin/19" ){
+              rewrite ^/index(.*)\.sucatalog$ /content/catalogs/others/index-10.15-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1$1.sucatalog last;
+            }
         }
 
         #error_page  404              /404.html;

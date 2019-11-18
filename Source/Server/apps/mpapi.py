@@ -49,8 +49,8 @@ class GunicornServer(Command):
 					'worker_class': 'gevent',
 					'worker_connections': 2000,
 					'preload_app': True,
-					'accesslog': '/opt/MacPatch/Server/logs/api_access.log',
-					'errorlog': '/opt/MacPatch/Server/logs/api_error.log',
+					'accesslog': '/opt/MacPatch/ServerConf/logs/api_access.log',
+					'errorlog': '/opt/MacPatch/ServerConf/logs/api_error.log',
 					'loglevel': 'info',
 					'timeout': 90,
 				}
