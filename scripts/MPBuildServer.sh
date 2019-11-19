@@ -514,7 +514,6 @@ done
 # ------------------
 # Link & Set Permissions
 # ------------------
-ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
 chown -R $OWNERGRP ${MPSERVERBASE}
 
 # Admin Site - App
