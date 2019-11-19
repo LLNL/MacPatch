@@ -46,8 +46,9 @@ if [[ "$unamestr" == 'Linux' ]]; then
 elif [[ "$unamestr" == 'Darwin' ]]; then
    platform='mac'
 fi
+
 OWNERGRP="79:70"
-if [[ "$platform" == "linux" ]];
+if [[ "$platform" == "linux" ]]; then
     OWNERGRP="www-data:www-data"
 fi
 
@@ -70,7 +71,7 @@ UPGRADETYPE="All"
 
 usage() { echo "Usage: $0 [-b GitHub Branch] [-t Upgrade Type (Webapps, All)] -d (Is Distribution server)" 1>&2; exit 1; }
 
-while getopts "hb:d" opt; do
+while getopts "hb:t:d" opt; do
 	case $opt in
 		b)
 			GITBRANCH=${OPTARG}

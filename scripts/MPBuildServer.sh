@@ -36,8 +36,6 @@
 # 3.1.1     All of MP now uses a virtualenv
 # 3.2.0     Replaced bower with yarn for javascript package management
 # 3.3.0     Add python 3 support
-# 3.4.0     New Server directory structure to help better support upgrades
-#			And the use of docker
 #
 #
 # ----------------------------------------------------------------------------
@@ -329,7 +327,6 @@ mkdirP ${MPBASE}/ServerConfig/etc
 mkdirP ${MPBASE}/ServerConfig/flask
 mkdirP ${MPBASE}/ServerConfig/jobs
 mkdirP ${MPBASE}/ServerConfig/logs/apps
-touch ${MPBASE}/ServerConfig/flask/config.cfg
 touch ${MPBASE}/ServerConfig/flask/conf_api.cfg
 touch ${MPBASE}/ServerConfig/flask/conf_console.cfg
 cp -rp ${MPBASE}/Source/Server ${MPSERVERBASE}
