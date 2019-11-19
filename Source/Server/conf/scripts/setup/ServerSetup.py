@@ -27,7 +27,7 @@
   MacPatch Patch Loader Setup Script
   MacPatch Version 3.4.x
 
-  Script Version 2.5.0
+  Script Version 2.5.1
 '''
 
 import os
