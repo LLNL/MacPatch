@@ -56,14 +56,11 @@ ADD docker/requirements-api.txt $MPSERVERBASE/apps/requirements-api.txt
 ADD docker/requirements-console.txt $MPSERVERBASE/apps/requirements-console.txt
 RUN mkdir -p $MPSERVERBASE/env && \
     python3 -m venv $MPSERVERBASE/env/server && \
+    $MPSERVERBASE/env/server/bin/pip3 install -r $MPSERVERBASE/apps/requirements-server.txt && \
     python3 -m venv $MPSERVERBASE/env/api && \
-    python3 -m venv $MPSERVERBASE/env/console
-RUN source $MPSERVERBASE/env/server/bin/activate && \
-    pip3 install -r $MPSERVERBASE/apps/requirements-server.txt
-RUN source $MPSERVERBASE/env/api/bin/activate && \
-    pip3 install -r $MPSERVERBASE/apps/requirements-api.txt
-RUN source $MPSERVERBASE/env/console/bin/activate && \
-    pip3 install -r $MPSERVERBASE/apps/requirements-console.txt
+    $MPSERVERBASE/env/api/bin/pip3 install -r $MPSERVERBASE/apps/requirements-api.txt && \
+    python3 -m venv $MPSERVERBASE/env/console && \
+    $MPSERVERBASE/env/console/bin/pip3 install -r $MPSERVERBASE/apps/requirements-console.txt
 
 # Copy in config files
 ADD docker/config/config.cfg $MPSERVERBASE/apps/config.cfg

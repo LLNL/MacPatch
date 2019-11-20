@@ -8,5 +8,6 @@ pycrypto==2.6.1
 python-crontab==2.3.8
 python-dateutil==2.8.0
 requests==2.22.0
+simplejson==3.16.0
 six==1.12.0
 urllib3==1.25.3
