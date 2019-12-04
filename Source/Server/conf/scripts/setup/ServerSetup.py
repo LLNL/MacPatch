@@ -699,11 +699,11 @@ class MPDatabase:
 
 class MPLdap:
 
-	config_file = MP_SRV_BASE+"/etc/siteconfig.json"
+    config_file = MP_CONF_FILE
 
 	def __init__(self):
 
-		MPLdap.config_file = MP_SRV_BASE+"/etc/siteconfig.json"
+		MPLdap.config_file = MP_CONF_FILE
 
 	def loadConfig(self):
 		config = {}
