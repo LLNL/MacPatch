@@ -699,7 +699,7 @@ class MPDatabase:
 
 class MPLdap:
 
-    config_file = MP_CONF_FILE
+	config_file = MP_CONF_FILE
 
 	def __init__(self):
 		MPLdap.config_file = MP_CONF_FILE
