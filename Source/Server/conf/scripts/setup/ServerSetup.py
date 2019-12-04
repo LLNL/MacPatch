@@ -702,7 +702,6 @@ class MPLdap:
     config_file = MP_CONF_FILE
 
 	def __init__(self):
-
 		MPLdap.config_file = MP_CONF_FILE
 
 	def loadConfig(self):
