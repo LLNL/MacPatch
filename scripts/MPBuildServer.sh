@@ -499,14 +499,14 @@ make install >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 mv ${MPSERVERCONF}/nginx/conf/nginx.conf ${MPSERVERCONF}/nginx/conf/nginx.conf.orig
 
 if $USEMACOS; then
-	echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
+	echo " - Copy nginx.conf.mac to ${MPSERVERCONF}/nginx/conf/nginx.conf"
 	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERCONF}/nginx/conf/nginx.conf
 else
-	echo " - Copy nginx.conf to ${MPSERVERBASE}/nginx/conf/nginx.conf"
+	echo " - Copy nginx.conf to ${MPSERVERCONF}/nginx/conf/nginx.conf"
 	cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERCONF}/nginx/conf/nginx.conf
 fi
-echo " - Copy nginx sites to ${MPSERVERBASE}/nginx/conf/sites"
-cp -r ${MPSERVERBASE}/conf/nginx/sites ${MPSERVERCONF}/nginx/conf/sites
+echo " - Copy nginx sites to ${MPSERVERCONF}/nginx/conf/sites"
+cp ${MPSERVERBASE}/conf/nginx/sites/*.conf ${MPSERVERCONF}/nginx/conf/sites/
 
 perl -pi -e "s#\[SRVBASE\]#$MPSERVERCONF#g" $MPSERVERBASE/nginx/conf/nginx.conf
 FILES=$MPSERVERCONF/nginx/conf/sites/*.conf
