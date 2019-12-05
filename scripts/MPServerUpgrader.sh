@@ -165,6 +165,7 @@ if [[ "$UPGRADETYPE" == "All" ]]; then
     # Rename NGINX conf dir, upgrade will install new version of
     # nginx and conf and be overwritten
     mv $MPSERVERCONF/nginx $MPSERVERCONF/nginx.$DTS
+    mv $MPSERVERCONF/logs $MPSERVERCONF/logs.$DTS
 
     # Build new instance of the Server
     /opt/MacPatch/scripts/MPBuildServer.sh -u

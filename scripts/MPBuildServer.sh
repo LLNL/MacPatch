@@ -464,7 +464,7 @@ fi
 echo
 echo "* Build and configure NGINX"
 echo "-----------------------------------------------------------------------"
-echo "See nginx build status in ${MPSERVERBASE}/logs/nginx-build.log"
+echo "See nginx build status in ${MPSERVERCONF}/logs/nginx-build.log"
 echo
 NGINX_SW=`find "${SRC_DIR}" -name "nginx-"* -type f -exec basename {} \; | head -n 1`
 
