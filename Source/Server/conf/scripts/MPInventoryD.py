@@ -25,7 +25,7 @@
 
 '''
     Script: MPInventory.py
-    Version: 1.7.0
+    Version: 1.7.1
 '''
 
 import logging
@@ -67,11 +67,13 @@ myConfig = {
 # Define logging for global use
 logger        = logging.getLogger('MPInventory')
 
-MP_SRV_BASE   = "/opt/MacPatch/Server"
-MP_FLASK_FILE = MP_SRV_BASE+"/apps/config.cfg"
-logFile       = MP_SRV_BASE+"/logs/MPInventory.log"
+MP_SRV        = "/opt/MacPatch"
+MP_SRV_BASE   = MP_SRV+"/Server"
+MP_SRV_CONF   = MP_SRV+"/ServerConfig"
+MP_FLASK_FILE = MP_SRV_CONF+"/flask/config.cfg"
+logFile       = MP_SRV_CONF+"/logs/MPInventory.log"
 invFilesDir   = MP_SRV_BASE+"/InvData/files"
-confFile      = MP_SRV_BASE+"/etc/siteconfig.json"
+confFile      = MP_SRV_CONF+"/etc/siteconfig.json"
 
 # ----------------------------------------------------------------------------
 # Read flask config data from file
