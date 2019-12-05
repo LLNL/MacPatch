@@ -494,8 +494,11 @@ fi
 make  >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 make install >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 
+# Make sites dir
 mkdir -p ${MPSERVERBASE}/conf/nginx/sites
+# Rename orig nginx.conf file
 mv ${MPSERVERCONF}/nginx/conf/nginx.conf ${MPSERVERCONF}/nginx/conf/nginx.conf.orig
+
 if $USEMACOS; then
 	echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
 	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERCONF}/nginx/conf/nginx.conf
