@@ -79,6 +79,7 @@ ENABLESSL=false
 MPBASE="/opt/MacPatch"
 MPSRVCONTENT="${MPBASE}/Content"
 MPSERVERBASE="/opt/MacPatch/Server"
+MPSERVERCONF="/opt/MacPatch/ServerConfig"
 BUILDROOT="${MPBASE}/.build/server"
 TMP_DIR="${MPBASE}/.build/tmp"
 SRC_DIR="${MPSERVERBASE}/conf/src/server"
@@ -410,6 +411,7 @@ fi
 # Copy Reposado Plist and set variables
 cp ${MPSERVERBASE}/conf/reposado/preferences.plist ${MPSERVERBASE}/Reposado/code/preferences.plist
 perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
+perl -pi -e "s#\[SRVCONF\]#$MPSERVERCONF#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
 perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
 perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" ${MPSERVERBASE}/Reposado/code/preferences.plist
 # ask if you want to change hostanme & default sus-content server

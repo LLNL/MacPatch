@@ -5,7 +5,7 @@ import pymysql
 
 # ----------------------------------------------
 # Notes:
-# Version: 1
+# Version: 1.b
 #
 # This script will quickly check all api's for the MacPatch server.
 # It does not include all API's as some dont have tests yet or
@@ -20,7 +20,7 @@ import pymysql
 # ----------------------------------------------
 
 restServer="http://127.0.0.1:5001"
-client_id='BDA43E37-0296-5E33-9DA3-1CDB58998558'
+client_id='BDA43E37-0296-5E33-9DA3-1CDB58998558' # Sample Client ID
 
 # Agent Version
 agent_ver="3.1.2.8"
@@ -36,7 +36,7 @@ plugin_bundleID='gov.llnl.mp.inv.NIHAuthPlugin'
 plugin_version='1.1.1'
 
 # Software
-swTaskID='095E64D9-391F-4154-876695C0EE17E689' #XQuartz
+swTaskID='095E64D9-391F-4154-876695C0EE17E689' #Sample ID
 
 # Servers
 suSListVersionID='1'	# Default List ID
@@ -48,13 +48,11 @@ get_urls=[]
 def testDB():
 
 	# Create a connection object to the MySQL Database Server
-	hostName = "10.254.196.144"
+	hostName = "127.0.0.1"
 	userName = "mpdbadm"
-	userPassword = "Apple2e123"
-	databaseName = "MacPatchDB33QA"
-
+	userPassword = "password"
+	databaseName = "MacPatchDB3"
 	cusrorType = pymysql.cursors.DictCursor
-
 	databaseConnection = pymysql.connect(host=hostName,
 										 user=userName,
 										 password=userPassword,

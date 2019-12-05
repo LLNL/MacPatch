@@ -24,9 +24,9 @@
         <key>UserName</key>
         <string>_appserver</string>
         <key>StandardErrorPath</key>
-        <string>/opt/MacPatch/Server/logs/mpapi_stderr.log</string>
+        <string>/opt/MacPatch/ServerConfig/logs/mpapi_stderr.log</string>
         <key>StandardOutPath</key>
-        <string>/opt/MacPatch/Server/logs/mpapi_stdout.log</string>
+        <string>/opt/MacPatch/ServerConfig/logs/mpapi_stdout.log</string>
         <key>WorkingDirectory</key>
         <string>/opt/MacPatch/Server/env/api/bin</string>
 </dict>

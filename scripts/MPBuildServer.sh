@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.2.0
+# Version: 3.4.0
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -36,6 +36,8 @@
 # 3.1.1     All of MP now uses a virtualenv
 # 3.2.0     Replaced bower with yarn for javascript package management
 # 3.3.0     Add python 3 support
+# 3.4.0     New Server directory structure to help better support upgrades
+#			And the use of docker
 #
 #
 # ----------------------------------------------------------------------------
@@ -87,6 +89,7 @@ USEOLDPY=false
 MPBASE="/opt/MacPatch"
 MPSRVCONTENT="${MPBASE}/Content/Web"
 MPSERVERBASE="/opt/MacPatch/Server"
+MPSERVERCONF="/opt/MacPatch/ServerConfig"
 BUILDROOT="${MPBASE}/.build/server"
 TMP_DIR="${MPBASE}/.build/tmp"
 SRC_DIR="${MPSERVERBASE}/conf/src/server"
@@ -321,6 +324,14 @@ mkdirP ${MPBASE}/Content/Web/patches
 mkdirP ${MPBASE}/Content/Web/sav
 mkdirP ${MPBASE}/Content/Web/sw
 mkdirP ${MPBASE}/Content/Web/tools
+mkdirP ${MPBASE}/ServerConfig
+mkdirP ${MPBASE}/ServerConfig/etc
+mkdirP ${MPBASE}/ServerConfig/flask
+mkdirP ${MPBASE}/ServerConfig/jobs
+mkdirP ${MPBASE}/ServerConfig/logs/apps
+touch ${MPBASE}/ServerConfig/flask/config.cfg
+touch ${MPBASE}/ServerConfig/flask/conf_api.cfg
+touch ${MPBASE}/ServerConfig/flask/conf_console.cfg
 cp -rp ${MPBASE}/Source/Server ${MPSERVERBASE}
 mkdirP ${MPSERVERBASE}/InvData/files
 mkdirP ${MPSERVERBASE}/lib
@@ -474,13 +485,6 @@ else
     --with-http_ssl_module \
     --with-pcre > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 	
-    # Old
-    #./configure --prefix=${MPSERVERBASE}/nginx \
-	#--without-http_autoindex_module \
-	#--without-http_ssi_module \
-	#-with-http_ssl_module \
-	#--with-openssl=${TMP_DIR}/openssl \
-	#--with-pcre=${TMP_DIR}/pcre  > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 fi
 
 make  >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
@@ -504,12 +508,13 @@ do
 	#echo "$f"
 	perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $f
 	perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $f
+    perl -pi -e "s#\[SRVCONF\]#$MPSERVERCONF#g" $f
 done
 
 # ------------------
 # Link & Set Permissions
 # ------------------
-ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
+
 chown -R $OWNERGRP ${MPSERVERBASE}
 
 # Admin Site - App
@@ -539,7 +544,7 @@ echo
 echo "* Creating self signed SSL certificate"
 echo "-----------------------------------------------------------------------"
 
-certsDir="${MPSERVERBASE}/etc/ssl"
+certsDir="${MPSERVERCONF}/etc/ssl"
 if [ ! -d "${certsDir}" ]; then
 	mkdirP "${certsDir}"
 fi
@@ -575,10 +580,6 @@ echo
 echo "* Create Virtualenv for Web services app"
 echo "-----------------------------------------------------------------------"
 
-mkdir -p "${MPSERVERBASE}/apps/log"
-chown $OWNERGRP "${MPSERVERBASE}/apps/log"
-chmod 2777 "${MPSERVERBASE}/apps/log"
-
 cd "${MPSERVERBASE}"
 python3 -m venv env/server
 python3 -m venv env/api
@@ -596,45 +597,48 @@ if $USEMACOS; then
 	# Server venv
     echo "Creating server scripts virtual env..."
 	source ${MPSERVERBASE}/env/server/bin/activate
-    pip -q install --upgrade pip
-    pip -q install pycrypto
-	pip -q install requests
-	pip -q install mysql-connector-python
+    ${MPSERVERBASE}/env/server/bin/pip3 -q install --upgrade pip --no-cache-dir
+    ${MPSERVERBASE}/env/server/bin/pip3 -q install pycrypto --no-cache-dir
+	${MPSERVERBASE}/env/server/bin/pip3 -q install requests --no-cache-dir
+	${MPSERVERBASE}/env/server/bin/pip3 -q install mysql-connector-python --no-cache-dir
 	
 	env LDFLAGS="-L${OPENSSLPWD}/lib" \
 	CFLAGS="-I${OPENSSLPWD}/include" \
 	SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
-    pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
+    ${MPSERVERBASE}/env/server/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
 
-	env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip -q install -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR
+	env "CFLAGS=-I/usr/local/include -L/usr/local/lib" ${MPSERVERBASE}/env/server/bin/pip3 \
+	-q install -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR --no-cache-dir
     deactivate
 
 	# API venv
     echo "Creating api virtual env..."
     source ${MPSERVERBASE}/env/api/bin/activate
-    pip -q install --upgrade pip
+    ${MPSERVERBASE}/env/api/bin/pip3 -q install --upgrade pip --no-cache-dir
 
 	 # Install M2Crypto first
 	env LDFLAGS="-L${OPENSSLPWD}/lib" \
 	CFLAGS="-I${OPENSSLPWD}/include" \
 	SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
-    pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
+    ${MPSERVERBASE}/env/api/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
 
-	env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip -q install -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR
+	env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip -q install \
+	-r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR --no-cache-dir
     deactivate
 
     # Console venv
     echo "Creating console virtual env..."
 	source ${MPSERVERBASE}/env/console/bin/activate
-    pip -q install --upgrade pip
+    ${MPSERVERBASE}/env/console/bin/pip3 -q install --upgrade pip --no-cache-dir
 
     # Install M2Crypto first
     env LDFLAGS="-L${OPENSSLPWD}/lib" \
     CFLAGS="-I${OPENSSLPWD}/include" \
     SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
-    pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
+    ${MPSERVERBASE}/env/console/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
 
-    env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip -q install -r ${MPSERVERBASE}/apps/pyRequiredConsole.txt $CA_STR
+    env "CFLAGS=-I/usr/local/include -L/usr/local/lib" ${MPSERVERBASE}/env/console/bin/pip3 \
+	-q install -r ${MPSERVERBASE}/apps/pyRequiredConsole.txt $CA_STR --no-cache-dir
     deactivate
 
 else
@@ -672,6 +676,15 @@ echo "* Clean up Server dirtectory"
 echo "-----------------------------------------------------------------------"
 find ${MPBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
 rm -rf ${BUILDROOT}
+
+# ------------------
+# Move the Server/etc files to ServerConfig dir
+# ------------------
+echo
+echo "* Move Config files"
+echo "-----------------------------------------------------------------------"
+cp ${MPSERVERBASE}/etc/* $MPSERVERCONF/etc
+rm -rf "${MPSERVERBASE}/etc"
 
 # ------------------
 # Set Permissions

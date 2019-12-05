@@ -56,3 +56,25 @@ def getFilesInDirToRemove(sw_path):
 			files = _files
 
 	return files
+
+@maint.route('/orphan')
+@login_required
+def orphan():
+	results = []
+	result = []
+	dirs = []
+	suuids = []
+	qSW = MpSoftware.query.all()
+	for d in os.walk('/opt/MPContent/Web/sw'):
+		dirname = os.path.basename(d[0])
+		dirs.append(dirname)
+
+	for s in qSW:
+		suuids.append(s.suuid)
+
+	result = [[x for x in dirs if x not in suuids], [x for x in suuids if x not in dirs]]
+	for f in result:
+		for x in f:
+			results.append(os.path.join('/opt/MPContent/Web/sw',x))
+
+	return render_template('maint/orphan.html', data=results)

@@ -10,6 +10,7 @@ import base64
 import hashlib
 import sys
 from datetime import datetime
+import shutil
 
 from .  import software
 from .. import db
@@ -1029,6 +1030,16 @@ def duplicateSWPackage(id):
 def deleteSWPackage(id):
 
 	qSW = MpSoftware.query.filter(MpSoftware.suuid == id).first()
+	sw_path = qSW.sw_path
+	if os.path.exists(sw_path):
+		parDir = os.path.dirname(sw_path)
+		log_Info('Removing sw package file (%s)' % (sw_path))
+		if os.path.exists(parDir):
+			try:
+				shutil.rmtree(parDir)
+			except OSError as e:
+				log_Error("Error Delete Dir: %s - %s." % (e.filename, e.strerror))
+ 
 	qSWC = MpSoftwareCriteria.query.filter(MpSoftwareCriteria.suuid == id).all()
 	qSWR = MpSoftwareRequisits.query.filter(MpSoftwareRequisits.suuid == id).all()
 

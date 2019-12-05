@@ -10,7 +10,7 @@
 	<array>
 		<string>/opt/MacPatch/Server/conf/scripts/MPAVDefsSync.py</string>
 		<string>-p</string>
-		<string>/opt/MacPatch/Server/conf/etc/gov.llnl.mpavdl.plist</string>
+		<string>/opt/MacPatch/ServerConfig/etc/gov.llnl.mpavdl.plist</string>
 		<string>-r</string>
 	</array>
 	<key>StartInterval</key>
@@ -18,8 +18,8 @@
 	<key>ServiceDescription</key>
 	<string>MacPatch SAV AV Defs Downloader</string>
 	<key>StandardOutPath</key>
-	<string>/opt/MacPatch/Server/logs/MPAVDefsSync_stdout.log</string>
+	<string>/opt/MacPatch/ServerConfig/logs/MPAVDefsSync_stdout.log</string>
 	<key>StandardErrorPath</key>
-	<string>/opt/MacPatch/Server/logs/MPAVDefsSync_stderr.log</string>
+	<string>/opt/MacPatch/ServerConfig/logs/MPAVDefsSync_stderr.log</string>
 </dict>
 </plist>

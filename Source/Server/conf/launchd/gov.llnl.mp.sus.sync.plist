@@ -10,15 +10,15 @@
 	<array>
 		<string>/opt/MacPatch/Server/conf/scripts/MPSUSPatchSync.py</string>
 		<string>--config</string>
-		<string>/opt/MacPatch/Server/etc/patchloader.json</string>
+		<string>/opt/MacPatch/ServerConfig/etc/patchloader.json</string>
 	</array>
 	<key>StartInterval</key>
 	<integer>28800</integer>
 	<key>ServiceDescription</key>
 	<string>MacPatch Apple Patches Downloader</string>
 	<key>StandardOutPath</key>
-	<string>/opt/MacPatch/Server/logs/MPSUSPatchSync_stdout.log</string>
+	<string>/opt/MacPatch/ServerConfig/logs/MPSUSPatchSync_stdout.log</string>
 	<key>StandardErrorPath</key>
-	<string>/opt/MacPatch/Server/logs/MPSUSPatchSync_stderr.log</string>
+	<string>/opt/MacPatch/ServerConfig/logs/MPSUSPatchSync_stderr.log</string>
 </dict>
 </plist>

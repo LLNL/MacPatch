@@ -238,14 +238,16 @@ def customList():
 				'patch_severity', 'patch_state', 'patch_reboot', 'active',
 				'pkg_size', 'pkg_path', 'pkg_url', 'pkg_useS3', 'mdate']
 	_results = []
+	_aws = MPaws()
 	for r in _clist:
 		_dict = r.asDict
 		_row = {}
+
 		for col in _clistCols:
 			_row[col] = _dict[col]
 
-		if _row['pkg_useS3'] == 1:
-			_row['pkg_url'] = getS3UrlForPatch(_row['puuid'])
+		#if _row['pkg_useS3'] == 1:
+		#	_row['pkg_url'] = _aws.getS3UrlForPatch(_row['puuid'])
 
 		_results.append(_row)
 
@@ -300,7 +302,8 @@ def customPatchWizard(puuid):
 	base_url = request.url_root
 
 	if patch.pkg_useS3 == 1:
-		patch.pkg_S3path = getS3UrlForPatch(patch.puuid)
+		aws = MPaws()
+		patch.pkg_S3path = aws.getS3UrlForPatch(patch.puuid)
 
 	return render_template('patches/custom_patch_wizard.html', data=patch, columns=patchCols, dataAlt=patchDict,
 							dataCrit=patchCrit, dataCritLen=patchCritLen, dataCritAlt=pathCritLst,
@@ -327,8 +330,9 @@ def customPatchWizardUpdate():
 		if "mainPatchFile" in request.files:
 			_file = request.files['mainPatchFile']
 			if request.form['pkg_useS3'] == '1':
-				_fileData = savePatchFileToTMP(puuid, _file)
-				uploadFileToS3(_fileData['filePath'],_fileData['fileURL'])
+				aws = MPaws()
+				_fileData = aws.savePatchFileToTMP(puuid, _file)
+				aws.uploadFileToS3(_fileData['filePath'],_fileData['fileURL'])
 				shutil.rmtree(os.path.join('/tmp', request.form['puuid']))
 			else:
 				_fileData = savePatchFile(puuid, _file)
@@ -559,15 +563,18 @@ def customDelete():
 	if not localAdmin() and not adminRole():
 		log_Error("{} does not have permission to delete custom patch(s).".format(session.get('user')))
 		return json.dumps({'data': {}}, default=json_serial), 403
-
+	update_groups = []
 	for puuid in ids.split(","):
-		removePatchFromPatchGroupsAlt(puuid)
+		gids = removePatchFromPatchGroupsAlt(puuid)
+		update_groups.extend(gids)
+  
 		qGet1 = MpPatch.query.filter(MpPatch.puuid == puuid).first()
 		if qGet1 is not None:
 			# Need to delete from file system
 			try:
 				if qGet1.pkg_useS3 == 1:
-					deleteS3PatchFile(qGet1.pkg_url)
+					aws = MPaws()
+					aws.deleteS3PatchFile(qGet1.pkg_url)
 				else:
 					_patch_dir = "/opt/MacPatch/Content/Web/patches/" + puuid
 					shutil.rmtree(_patch_dir)
@@ -585,17 +592,26 @@ def customDelete():
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			message=str(e.args[0]).encode("utf-8")
 			log_Error('Message: %s' % (message))
+	
+	# Update Patch Groups
+	_update_groups = set(update_groups)
+	for gid in _update_groups:
+			patchGroupPatchesSave(gid)	
 
 	return json.dumps({'data': {}}, default=json_serial), 200
 
 def removePatchFromPatchGroupsAlt(patch_id):
+	groups = []
 	qGet = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_id == patch_id).all()
 	if qGet is not None:
 		for row in qGet:
 			gID = row.patch_group_id
+			groups.append(gID)
 			db.session.delete(row)
 			db.session.commit()
-			patchGroupPatchesSave(gID)
+			#patchGroupPatchesSave(gID)
+
+	return groups
 
 ''' AJAX Request '''
 @patches.route('/custom/picker',methods=['GET'])
@@ -1443,7 +1459,7 @@ def json_serial(obj):
 	if isinstance(obj, datetime):
 		serial = obj.strftime('%Y-%m-%d %H:%M:%S')
 		return serial
-	raise TypeError("Type not serializable")
+	
 
 def escapeStringForACEEditor(data_string):
 	result = ""
