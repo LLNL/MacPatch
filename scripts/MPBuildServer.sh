@@ -469,7 +469,7 @@ cd ${BUILDROOT}/nginx
 
 if $USELINUX; then
 	./configure --prefix=${MPSERVERBASE}/nginx \
-    --conf-path=${MPSERVERCONF}/nginx/ \
+    --conf-path=${MPSERVERCONF}/nginx/nginx.conf \
     --without-http_autoindex_module \
     --with-http_v2_module \
 	--with-http_ssl_module \
@@ -483,7 +483,7 @@ else
     ./configure --prefix=${MPSERVERBASE}/nginx \
     --with-cc-opt="-I${OPENSSLPWD}/include" \
     --with-ld-opt="-L${OPENSSLPWD}/lib" \
-    --conf-path=${MPSERVERCONF}/nginx/ \
+    --conf-path=${MPSERVERCONF}/nginx/nginx.conf \
     --with-http_v2_module \
     --without-http_autoindex_module \
     --without-http_ssi_module \
