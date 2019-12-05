@@ -246,8 +246,8 @@ def customList():
 		for col in _clistCols:
 			_row[col] = _dict[col]
 
-		#if _row['pkg_useS3'] == 1:
-		#	_row['pkg_url'] = _aws.getS3UrlForPatch(_row['puuid'])
+		if _row['pkg_useS3'] == 1:
+			_row['pkg_url'] = _aws.getS3UrlForPatch(_row['puuid'])
 
 		_results.append(_row)
 
