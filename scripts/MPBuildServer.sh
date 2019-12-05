@@ -463,13 +463,13 @@ echo
 NGINX_SW=`find "${SRC_DIR}" -name "nginx-"* -type f -exec basename {} \; | head -n 1`
 
 mkdir -p ${BUILDROOT}/nginx
-mkdir -p ${MPSERVERCONF}/nginx/conf/sites
+mkdir -p ${MPSERVERCONF}/nginx/sites
 tar xfz ${SRC_DIR}/${NGINX_SW} --strip 1 -C ${BUILDROOT}/nginx
 cd ${BUILDROOT}/nginx
 
 if $USELINUX; then
 	./configure --prefix=${MPSERVERBASE}/nginx \
-    --conf-path=${MPSERVERCONF}/nginx/conf/ \
+    --conf-path=${MPSERVERCONF}/nginx/ \
     --without-http_autoindex_module \
     --with-http_v2_module \
 	--with-http_ssl_module \
@@ -483,7 +483,7 @@ else
     ./configure --prefix=${MPSERVERBASE}/nginx \
     --with-cc-opt="-I${OPENSSLPWD}/include" \
     --with-ld-opt="-L${OPENSSLPWD}/lib" \
-    --conf-path=${MPSERVERCONF}/nginx/conf/ \
+    --conf-path=${MPSERVERCONF}/nginx/ \
     --with-http_v2_module \
     --without-http_autoindex_module \
     --without-http_ssi_module \
@@ -496,20 +496,20 @@ make  >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 make install >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 
 # Rename orig nginx.conf file
-mv ${MPSERVERCONF}/nginx/conf/nginx.conf ${MPSERVERCONF}/nginx/conf/nginx.conf.orig
+mv ${MPSERVERCONF}/nginx/nginx.conf ${MPSERVERCONF}/nginx/nginx.conf.orig
 
 if $USEMACOS; then
 	echo " - Copy nginx.conf.mac to ${MPSERVERCONF}/nginx/conf/nginx.conf"
-	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERCONF}/nginx/conf/nginx.conf
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERCONF}/nginx/nginx.conf
 else
 	echo " - Copy nginx.conf to ${MPSERVERCONF}/nginx/conf/nginx.conf"
-	cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERCONF}/nginx/conf/nginx.conf
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERCONF}/nginx/nginx.conf
 fi
 echo " - Copy nginx sites to ${MPSERVERCONF}/nginx/conf/sites"
-cp ${MPSERVERBASE}/conf/nginx/sites/*.conf ${MPSERVERCONF}/nginx/conf/sites/
+cp ${MPSERVERBASE}/conf/nginx/sites/*.conf ${MPSERVERCONF}/nginx/sites/
 
-perl -pi -e "s#\[SRVBASE\]#$MPSERVERCONF#g" $MPSERVERBASE/nginx/conf/nginx.conf
-FILES=$MPSERVERCONF/nginx/conf/sites/*.conf
+perl -pi -e "s#\[SRVBASE\]#$MPSERVERCONF#g" $MPSERVERCONF/nginx/nginx.conf
+FILES=$MPSERVERCONF/nginx/sites/*.conf
 for f in $FILES
 do
 	#echo "$f"
