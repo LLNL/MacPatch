@@ -48,8 +48,10 @@ elif [[ "$unamestr" == 'Darwin' ]]; then
    platform='mac'
 fi
 
+GRP="70"
 OWNERGRP="79:70"
 if [[ "$platform" == "linux" ]]; then
+    GRP="www-data"
     OWNERGRP="www-data:www-data"
 fi
 
@@ -317,6 +319,7 @@ echo "Setting Permissions..."
 chmod -R 0775 "${MPBASE}/Content"
 chown -R $OWNERGRP "${MPBASE}/Content"
 chmod -R 0775 "${MPSERVERCONF}/logs"
+chown -R $OWNERGRP "${MPSERVERCONF}/logs"
 chmod -R 0775 "${MPSERVERCONF}/etc"
 chmod -R 0775 "${MPSERVERBASE}/InvData"
 chown -R $OWNERGRP "${MPSERVERBASE}/env"
