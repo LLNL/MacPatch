@@ -18,5 +18,6 @@ pymysql>=0.9.3
 humanize>=0.5.1
 gunicorn==20.0.4
 gevent==1.4.0
+botocore==1.13.31
 boto3==1.10.31
 meinheld==1.0.1
