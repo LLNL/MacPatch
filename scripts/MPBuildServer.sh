@@ -463,6 +463,7 @@ echo
 NGINX_SW=`find "${SRC_DIR}" -name "nginx-"* -type f -exec basename {} \; | head -n 1`
 
 mkdir -p ${BUILDROOT}/nginx
+mkdir -p ${MPSERVERCONF}/nginx/conf/sites
 tar xfz ${SRC_DIR}/${NGINX_SW} --strip 1 -C ${BUILDROOT}/nginx
 cd ${BUILDROOT}/nginx
 
@@ -494,8 +495,6 @@ fi
 make  >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 make install >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 
-# Make sites dir
-mkdir -p ${MPSERVERBASE}/conf/nginx/sites
 # Rename orig nginx.conf file
 mv ${MPSERVERCONF}/nginx/conf/nginx.conf ${MPSERVERCONF}/nginx/conf/nginx.conf.orig
 
