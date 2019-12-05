@@ -453,12 +453,6 @@ if $USELINUX; then
 fi
 
 # ------------------
-# Upgrade Python Modules/Binaries
-# ------------------
-
-
-
-# ------------------
 # Build NGINX
 # ------------------
 echo
@@ -480,7 +474,7 @@ if $USELINUX; then
 	--with-http_ssl_module \
 	--with-pcre \
 	--user=www-data \
-	--group=www-data > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+	--group=www-data > ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 else
     # Now using brew installed openssl and pcre
     OPENSSLPWD=`sudo -u _appserver bash -c "brew --prefix openssl"`
@@ -493,7 +487,7 @@ else
     --without-http_autoindex_module \
     --without-http_ssi_module \
     --with-http_ssl_module \
-    --with-pcre > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+    --with-pcre > ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 	
 fi
 
