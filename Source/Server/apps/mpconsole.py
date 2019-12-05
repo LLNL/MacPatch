@@ -46,7 +46,7 @@ class GunicornServer(Command):
 					'bind': '{0}:{1}'.format(host, port),
 					'workers': workers,
 					'daemon': daemon,
-					'worker_class': 'gevent',
+					'worker_class': 'meinheld.gmeinheld.MeinheldWorker',
 					'preload_app': True,
 					'accesslog': '/opt/MacPatch/ServerConfig/logs/console_access.log',
 					'errorlog': '/opt/MacPatch/ServerConfig/logs/console_error.log',
