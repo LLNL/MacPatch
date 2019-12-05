@@ -167,6 +167,7 @@ if [[ "$UPGRADETYPE" == "All" ]]; then
     mv $MPSERVERCONF/nginx $MPSERVERCONF/nginx.$DTS
     mv $MPSERVERCONF/logs $MPSERVERCONF/logs.$DTS
     mkdir -p $MPSERVERCONF/logs/apps
+    exit
 
     # Build new instance of the Server
     /opt/MacPatch/scripts/MPBuildServer.sh -u
