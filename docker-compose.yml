@@ -30,9 +30,8 @@ services:
     command: ["console"]
     volumes:
       - ./content:/opt/MacPatch/Content
-      # - /path/to/myconfig/db-config.cfg:/opt/MacPatch/Server/apps/config.cfg
-      # - /path/to/myconfig/siteconfig.json:/opt/MacPatch/Server/etc/siteconfig.json
-  api:
+      # - ./Source/Server/apps:/opt/MacPatch/Server/apps
+      # - .config/:/opt/MacPatch/ServerConfig
     image: macpatch
     build: .
     restart: always
