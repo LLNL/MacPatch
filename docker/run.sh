@@ -25,6 +25,8 @@ elif [ "$1" == "console" ]; then
 elif [ "$1" == "inventory" ]; then
   # run only the inventory service
   echo "Starting MacPatch Inventory service..."
+  # copy config.cfg to apps/ untill MPInventoryD.py is updated to use the new location
+  cp -f "$MPSERVERCONFIG/flask/config.cfg" "$MPSERVERBASE/apps/config.cfg"
   "$MPSERVERBASE/conf/scripts/MPInventoryD.py" --config "$MPSERVERBASE/etc/siteconfig.json" --files "$MPSERVERBASE/InvData/files"
 elif [ "$1" == "asus" ]; then
   # run only the asus sync script then exit. 

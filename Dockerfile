@@ -2,7 +2,8 @@ FROM centos:7
 LABEL maintainer="Jorge Escobar escobar6@llnl.gov"
 
 ENV MPBASE "/opt/MacPatch"
-ENV MPSERVERBASE "/opt/MacPatch/Server"
+ENV MPSERVERBASE "$MPBASE/Server"
+ENV MPSERVERCONFIG "$MPBASE/ServerConfig"
 ENV OWNERGRP "www-data:www-data"
 
 
@@ -34,16 +35,23 @@ RUN useradd -r -M -s /dev/null -U www-data
 # Setup directory structure
 ADD Source/Server $MPSERVERBASE
 RUN mkdir -p $MPBASE/Content/Web/clients \
-    $MPBASE/Content/Web/patches \
-    $MPBASE/Content/Web/sav \
-    $MPBASE/Content/Web/sw \
-    $MPBASE/Content/Web/tools \
-    $MPSERVERBASE/InvData/files \
-    $MPSERVERBASE/lib \
-    $MPSERVERBASE/logs \
-    $MPSERVERBASE/etc/ssl \
-    $MPSERVERBASE/apps/log
-
+        $MPBASE/Content/Web/patches \
+        $MPBASE/Content/Web/sav \
+        $MPBASE/Content/Web/sw \
+        $MPBASE/Content/Web/tools \
+        $MPSERVERBASE/InvData/files \
+        $MPSERVERBASE/lib \
+        $MPSERVERBASE/etc/ssl \
+        $MPSERVERBASE/logs \
+        $MPSERVERCONFIG/etc \
+        $MPSERVERCONFIG/flask \
+        $MPSERVERCONFIG/jobs \
+        $MPSERVERCONFIG/logs/apps \
+        $MPBASE/ServerConf/logs && \
+    touch $MPSERVERCONFIG/flask/conf_api.cfg && \
+    touch $MPSERVERCONFIG/flask/conf_console.cfg
+    # $MPSERVERBASE/logs \
+    # $MPSERVERBASE/apps/log
 
 # Run yarn
 WORKDIR $MPSERVERBASE/apps/mpconsole
@@ -63,8 +71,8 @@ RUN mkdir -p $MPSERVERBASE/env && \
     $MPSERVERBASE/env/console/bin/pip3 install -r $MPSERVERBASE/apps/requirements-console.txt
 
 # Copy in config files
-ADD docker/config/config.cfg $MPSERVERBASE/apps/config.cfg
-ADD docker/config/siteconfig.json $MPSERVERBASE/etc/siteconfig.json
+ADD docker/config/config.cfg $MPSERVERCONFIG/flask/config.cfg
+ADD docker/config/siteconfig.json $MPSERVERCONFIG/etc/siteconfig.json
 ADD docker/supervisord.conf $MPSERVERBASE/supervisord/supervisord.conf
 ADD docker/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD docker/nginx/sites /etc/nginx/sites/
@@ -73,11 +81,12 @@ ADD docker/run.sh /run.sh
 
 # Apply permissions and ownership
 RUN chmod -R 0775 "$MPBASE/Content" \
-    "$MPSERVERBASE/logs" \
-    "$MPSERVERBASE/etc" \
-    "$MPSERVERBASE/InvData"
-RUN chmod 2777 "$MPSERVERBASE/apps/log"
-RUN chown -R $OWNERGRP $MPBASE
+    "$MPSERVERCONFIG" \
+    "$MPSERVERBASE/InvData" \
+    "$MPSERVERBASE/logs"
+    # "$MPSERVERBASE/etc"
+RUN chmod 2777 "$MPSERVERCONFIG/logs"
+RUN chown -R $OWNERGRP "$MPBASE"
 
 
 # Cleanup
