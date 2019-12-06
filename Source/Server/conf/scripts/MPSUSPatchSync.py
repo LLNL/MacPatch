@@ -25,7 +25,7 @@
 
 '''
     Script: MPSUSPatchSync
-    Version: 1.6.0
+    Version: 1.6.1
 
     Description: This Script read all of the patch information
     from the apple software update sucatlog files and post the
@@ -82,11 +82,13 @@ from pprint import pprint
 from sys import platform
 import simplejson
 
-MP_SRV_BASE  = "/opt/MacPatch/Server"
+MP_SRV        = "/opt/MacPatch"
+MP_SRV_BASE   = MP_SRV+"/Server"
+MP_SRV_CONF   = MP_SRV+"/ServerConfig"
 logFileName  = "MPSUSPatchSync.log"
-logFile      = MP_SRV_BASE+"/logs/"+logFileName
-loaderConf   = MP_SRV_BASE+"/etc/patchloader.json"
-siteConf     = MP_SRV_BASE+"/etc/siteconfig.json"
+logFile      = MP_SRV_CONF+"/logs/"+logFileName
+loaderConf   = MP_SRV_CONF+"/etc/patchloader.json"
+siteConf     = MP_SRV_CONF+"/etc/siteconfig.json"
 
 # Define logging for global use
 logger = logging.getLogger('MPSUSPatchSync')

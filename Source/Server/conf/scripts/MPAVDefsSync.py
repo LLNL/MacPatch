@@ -25,7 +25,7 @@
 
 '''
 Script : MPAVDefsSync
-Version : 1.1.0
+Version : 1.1.1
 Description: This script will download the last 3 Symantec AV Defs
 files via ftp from Symantec. It will also delete older AV Defs zip
 files.
@@ -63,8 +63,17 @@ args = parser.parse_args()
 
 # Setup Logging
 try:
+	MP_SRV        = "/opt/MacPatch"
+	MP_SRV_BASE   = MP_SRV+"/Server"
+	MP_SRV_CONF   = MP_SRV+"/ServerConfig"
+	MP_FLASK_FILE = MP_SRV_CONF+"/flask/config.cfg"
+	logFile       = MP_SRV_CONF+"/logs/MPAVDefsSync.log"
+	invFilesDir   = MP_SRV_BASE+"/InvData/files"
+	confFile      = MP_SRV_CONF+"/etc/siteconfig.json"
+
+
 	logger = logging.getLogger('MPAVDefsSync')
-	hdlr = logging.FileHandler('/opt/MacPatch/Server/logs/MPAVDefsSync.log')
+	hdlr = logging.FileHandler(logFile)
 	formatter = logging.Formatter('%(asctime)s %(levelname)s --- %(message)s')
 	hdlr.setFormatter(formatter)
 	logger.addHandler(hdlr)
@@ -106,7 +115,7 @@ else:
 if "avDownloadToFilePaths" in avConf:
 	avDefsLoc = avConf["avDownloadToFilePath"]
 else:
-	avDefsLoc = "/opt/MacPatch/Content/Web/sav"
+	avDefsLoc = MP_SRV+"/Content/Web/sav"
 
 # ------------------------------
 # Global Variables
@@ -203,7 +212,7 @@ def removeAllOutDatedFiles(nFiles):
 	newFiles = nFiles['ppc'] + nFiles['x86']
 
 	# List all Currently downloaded files
-	currentFiles = glob.glob('/opt/MacPatch/Content/Web/sav/*.zip')
+	currentFiles = glob.glob(MP_SRV+'/Content/Web/sav/*.zip')
 
 	# Loop through files and if they are not in the new list
 	# then remove it.
