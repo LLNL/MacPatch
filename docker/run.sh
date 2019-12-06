@@ -9,6 +9,7 @@ function wait_for_db () {
     sleep 15
   done
   "$MPSERVERBASE/env/api/bin/python" "$MPSERVERBASE/apps/mpapi.py" populate_db
+  echo "The database is up, moving on."
 }
 
 
@@ -30,7 +31,7 @@ elif [ "$1" == "inventory" ]; then
   "$MPSERVERBASE/conf/scripts/MPInventoryD.py" --config "$MPSERVERBASE/etc/siteconfig.json" --files "$MPSERVERBASE/InvData/files"
 elif [ "$1" == "asus" ]; then
   # run only the asus sync script then exit. 
-  # can be called via cron from host os
+  # can be called via cron from host OS
   #   ex: 0 * * * *   docker exec macpatch_api_1 /run.sh asus
   echo "Running MacPatch ASUS sync script..."
   "$MPSERVERBASE/conf/scripts/MPSUSPatchSync.py" --config "$MPSERVERBASE/etc/patchloader.json"
