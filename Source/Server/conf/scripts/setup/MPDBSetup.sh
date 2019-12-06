@@ -55,21 +55,27 @@ fi
 DBNAME="MacPatchDB3"
 MPUSER="mpdbadm"
 MPUSRPAS=""
-HOST=`hostname`
+HOST="localhost"
+PORT="3306"
 RESSTR=""
 SKIPCHECKS=false
+USESERVER=false
 
 usage() { echo "Usage: $0 [-c (SKIP CHECKS)]" 1>&2; exit 1; }
 
-while getopts "hc" opt; do
+while getopts "h:p:cs" opt; do
     case $opt in
         c)
             SKIPCHECKS=true
             ;;
+        s)
+            USESERVER=true
+            ;;
         h)
-            echo
-            usage
-            exit 1
+            HOST=${OPTARG}
+            ;;
+        p)
+            PORT=${OPTARG}
             ;;
         \?)
             echo "Invalid option: -$OPTARG" >&2
@@ -164,7 +170,11 @@ echo "MySQL Database is about to be configured."
 echo "You will be prompted for the MySQL root user password"
 echo
 
-$MYSQL -uroot -p -e "$SQL"
+if $USESERVER; then
+    $MYSQL --host=$HOST --port=$PORT -uroot -p -e "$SQL"
+else
+    $MYSQL -uroot -p -e "$SQL"
+fi
 if [ $? -ne 0 ]; then
   echo
   read -p "An error was detected, would you like to continue (Y/N)? [N]: " CONTONERR
