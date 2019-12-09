@@ -32,6 +32,7 @@ services:
       - ./content:/opt/MacPatch/Content
       # - ./Source/Server/apps:/opt/MacPatch/Server/apps
       # - .config/:/opt/MacPatch/ServerConfig
+  api:
     image: macpatch
     build: .
     restart: always
