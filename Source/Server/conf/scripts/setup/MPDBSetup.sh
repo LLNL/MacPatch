@@ -27,7 +27,7 @@
 
 # -------------------------------------------------------------
 # Script: MPDBSetup.sh
-# Version: 1.2.0
+# Version: 1.3.0
 #
 # Description:
 # This script will setup and configure a MySQL server for
@@ -39,6 +39,7 @@
 # 
 # 1.1.0 Altered script for new python based backend
 # 1.2.0 Changed the code for adding password, now requires a verify
+# 1.3.0 Added flag to skip db check, good for docker
 #
 # -------------------------------------------------------------
 
@@ -54,8 +55,42 @@ fi
 DBNAME="MacPatchDB3"
 MPUSER="mpdbadm"
 MPUSRPAS=""
-HOST=`hostname`
+HOST="localhost"
+PORT="3306"
 RESSTR=""
+SKIPCHECKS=false
+USESERVER=false
+
+usage() { echo "Usage: $0 [-c (SKIP CHECKS)]" 1>&2; exit 1; }
+
+while getopts "h:p:cs" opt; do
+    case $opt in
+        c)
+            SKIPCHECKS=true
+            ;;
+        s)
+            USESERVER=true
+            ;;
+        h)
+            HOST=${OPTARG}
+            ;;
+        p)
+            PORT=${OPTARG}
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            echo
+            usage
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument." >&2
+            echo
+            usage
+            exit 1
+            ;;
+    esac
+done
 
 readUsrPass () {
   _prompt="$1"
@@ -83,13 +118,15 @@ if [ -z "$MYSQL" ] ; then
   exit 1;
 fi
 
-CHECKFORMY=`ps -aef | grep mysqld | grep -v grep | head -n1`
-if [ -z "$CHECKFORMY" ] ; then
-  clear
-  echo
-  echo "Could not find mysqld running. Please make sure that"
-  echo "mysql is running before continuing."
-  exit 1;
+if ! $SKIPCHECKS; then
+    CHECKFORMY=`ps -aef | grep mysqld | grep -v grep | head -n1`
+    if [ -z "$CHECKFORMY" ] ; then
+      clear
+      echo
+      echo "Could not find mysqld running. Please make sure that"
+      echo "mysql is running before continuing."
+      exit 1;
+    fi
 fi
 
 clear
@@ -133,7 +170,11 @@ echo "MySQL Database is about to be configured."
 echo "You will be prompted for the MySQL root user password"
 echo
 
-$MYSQL -uroot -p -e "$SQL"
+if $USESERVER; then
+    $MYSQL --host=$HOST --port=$PORT -uroot -p -e "$SQL"
+else
+    $MYSQL -uroot -p -e "$SQL"
+fi
 if [ $? -ne 0 ]; then
   echo
   read -p "An error was detected, would you like to continue (Y/N)? [N]: " CONTONERR

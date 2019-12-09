@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.4.0
+# Version: 3.5.0
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -38,6 +38,8 @@
 # 3.3.0     Add python 3 support
 # 3.4.0     New Server directory structure to help better support upgrades
 #			And the use of docker
+# 3.5.0     Add support for upgrade flag, so when MPServerUpgrader.sh runs
+#           it only does whats needed.
 #
 #
 # ----------------------------------------------------------------------------
@@ -85,6 +87,7 @@ USEMACOS=false
 MACPROMPTFORXCODE=true
 MACPROMPTFORBREW=true
 USEOLDPY=false
+ISUPGRADE=false
 
 MPBASE="/opt/MacPatch"
 MPSRVCONTENT="${MPBASE}/Content/Web"
@@ -149,11 +152,14 @@ fi
 
 usage() { echo "Usage: $0 [-c ALT_SSL_CERT]" 1>&2; exit 1; }
 
-while getopts "hc:" opt; do
+while getopts "hc:u" opt; do
 	case $opt in
 		c)
 			CA_CERT=${OPTARG}
 			;;
+        u)
+            ISUPGRADE=true
+            ;;
 		h)
 			echo
 			usage
@@ -324,14 +330,16 @@ mkdirP ${MPBASE}/Content/Web/patches
 mkdirP ${MPBASE}/Content/Web/sav
 mkdirP ${MPBASE}/Content/Web/sw
 mkdirP ${MPBASE}/Content/Web/tools
-mkdirP ${MPBASE}/ServerConfig
-mkdirP ${MPBASE}/ServerConfig/etc
-mkdirP ${MPBASE}/ServerConfig/flask
-mkdirP ${MPBASE}/ServerConfig/jobs
-mkdirP ${MPBASE}/ServerConfig/logs/apps
-touch ${MPBASE}/ServerConfig/flask/config.cfg
-touch ${MPBASE}/ServerConfig/flask/conf_api.cfg
-touch ${MPBASE}/ServerConfig/flask/conf_console.cfg
+if ! $ISUPGRADE; then    
+    mkdirP ${MPBASE}/ServerConfig
+    mkdirP ${MPBASE}/ServerConfig/etc
+    mkdirP ${MPBASE}/ServerConfig/flask
+    mkdirP ${MPBASE}/ServerConfig/jobs
+    mkdirP ${MPBASE}/ServerConfig/logs/apps
+    touch ${MPBASE}/ServerConfig/flask/config.cfg
+    touch ${MPBASE}/ServerConfig/flask/conf_api.cfg
+    touch ${MPBASE}/ServerConfig/flask/conf_console.cfg
+fi
 cp -rp ${MPBASE}/Source/Server ${MPSERVERBASE}
 mkdirP ${MPSERVERBASE}/InvData/files
 mkdirP ${MPSERVERBASE}/lib
@@ -445,33 +453,29 @@ if $USELINUX; then
 fi
 
 # ------------------
-# Upgrade Python Modules/Binaries
-# ------------------
-
-
-
-# ------------------
 # Build NGINX
 # ------------------
 echo
 echo "* Build and configure NGINX"
 echo "-----------------------------------------------------------------------"
-echo "See nginx build status in ${MPSERVERBASE}/logs/nginx-build.log"
+echo "See nginx build status in ${MPSERVERCONF}/logs/nginx-build.log"
 echo
 NGINX_SW=`find "${SRC_DIR}" -name "nginx-"* -type f -exec basename {} \; | head -n 1`
 
 mkdir -p ${BUILDROOT}/nginx
+mkdir -p ${MPSERVERCONF}/nginx/sites
 tar xfz ${SRC_DIR}/${NGINX_SW} --strip 1 -C ${BUILDROOT}/nginx
 cd ${BUILDROOT}/nginx
 
 if $USELINUX; then
 	./configure --prefix=${MPSERVERBASE}/nginx \
+    --conf-path=${MPSERVERCONF}/nginx/nginx.conf \
     --without-http_autoindex_module \
     --with-http_v2_module \
 	--with-http_ssl_module \
 	--with-pcre \
 	--user=www-data \
-	--group=www-data > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+	--group=www-data > ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 else
     # Now using brew installed openssl and pcre
     OPENSSLPWD=`sudo -u _appserver bash -c "brew --prefix openssl"`
@@ -479,30 +483,33 @@ else
     ./configure --prefix=${MPSERVERBASE}/nginx \
     --with-cc-opt="-I${OPENSSLPWD}/include" \
     --with-ld-opt="-L${OPENSSLPWD}/lib" \
+    --conf-path=${MPSERVERCONF}/nginx/nginx.conf \
     --with-http_v2_module \
     --without-http_autoindex_module \
     --without-http_ssi_module \
     --with-http_ssl_module \
-    --with-pcre > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+    --with-pcre > ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 	
 fi
 
-make  >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
-make install >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+make  >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
+make install >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 
-mv ${MPSERVERBASE}/nginx/conf/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf.orig
+# Rename orig nginx.conf file
+mv ${MPSERVERCONF}/nginx/nginx.conf ${MPSERVERCONF}/nginx/nginx.conf.orig
+
 if $USEMACOS; then
-	echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
-	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERBASE}/nginx/conf/nginx.conf
+	echo " - Copy nginx.conf.mac to ${MPSERVERCONF}/nginx/conf/nginx.conf"
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERCONF}/nginx/nginx.conf
 else
-	echo " - Copy nginx.conf to ${MPSERVERBASE}/nginx/conf/nginx.conf"
-	cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf
+	echo " - Copy nginx.conf to ${MPSERVERCONF}/nginx/conf/nginx.conf"
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERCONF}/nginx/nginx.conf
 fi
-echo " - Copy nginx sites to ${MPSERVERBASE}/nginx/conf/sites"
-cp -r ${MPSERVERBASE}/conf/nginx/sites ${MPSERVERBASE}/nginx/conf/sites
+echo " - Copy nginx sites to ${MPSERVERCONF}/nginx/conf/sites"
+cp ${MPSERVERBASE}/conf/nginx/sites/*.conf ${MPSERVERCONF}/nginx/sites/
 
-perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $MPSERVERBASE/nginx/conf/nginx.conf
-FILES=$MPSERVERBASE/nginx/conf/sites/*.conf
+perl -pi -e "s#\[SRVBASE\]#$MPSERVERCONF#g" $MPSERVERCONF/nginx/nginx.conf
+FILES=$MPSERVERCONF/nginx/sites/*.conf
 for f in $FILES
 do
 	#echo "$f"
@@ -540,37 +547,39 @@ yarn install --cwd ${MPSERVERBASE}/apps/mpconsole --modules-folder static/yarn_c
 # Generate self signed certificates
 # ------------------------------------------------------------
 #clear
-echo
-echo "* Creating self signed SSL certificate"
-echo "-----------------------------------------------------------------------"
+if ! $ISUPGRADE; then
+    echo
+    echo "* Creating self signed SSL certificate"
+    echo "-----------------------------------------------------------------------"
 
-certsDir="${MPSERVERCONF}/etc/ssl"
-if [ ! -d "${certsDir}" ]; then
-	mkdirP "${certsDir}"
-fi
+    certsDir="${MPSERVERCONF}/etc/ssl"
+    if [ ! -d "${certsDir}" ]; then
+    	mkdirP "${certsDir}"
+    fi
 
-USER="MacPatch"
-EMAIL="admin@localhost"
-ORG="MacPatch"
-DOMAIN=`hostname`
-COUNTRY="NO"
-STATE="State"
-LOCATION="Country"
+    USER="MacPatch"
+    EMAIL="admin@localhost"
+    ORG="MacPatch"
+    DOMAIN=`hostname`
+    COUNTRY="NO"
+    STATE="State"
+    LOCATION="Country"
 
-cd ${certsDir}
-OPTS=(/C="$COUNTRY"/ST="$STATE"/L="$LOCATION"/O="$ORG"/OU="$USER"/CN="$DOMAIN"/emailAddress="$EMAIL")
-COMMAND=(openssl req -new -sha256 -x509 -nodes -days 999 -subj "${OPTS[@]}" -newkey rsa:2048 -keyout server.key -out server.crt)
+    cd ${certsDir}
+    OPTS=(/C="$COUNTRY"/ST="$STATE"/L="$LOCATION"/O="$ORG"/OU="$USER"/CN="$DOMAIN"/emailAddress="$EMAIL")
+    COMMAND=(openssl req -new -sha256 -x509 -nodes -days 999 -subj "${OPTS[@]}" -newkey rsa:2048 -keyout server.key -out server.crt)
 
-"${COMMAND[@]}"
-if (( $? )) ; then
-	echo -e "ERROR: Something went wrong!"
-	exit 1
-else
-	echo "Done!"
-	echo
-	echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
-	echo "if running in a production environment."
-	echo
+    "${COMMAND[@]}"
+    if (( $? )) ; then
+    	echo -e "ERROR: Something went wrong!"
+    	exit 1
+    else
+    	echo "Done!"
+    	echo
+    	echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
+    	echo "if running in a production environment."
+    	echo
+    fi
 fi
 
 # ------------------------------------------------------------
@@ -680,11 +689,13 @@ rm -rf ${BUILDROOT}
 # ------------------
 # Move the Server/etc files to ServerConfig dir
 # ------------------
-echo
-echo "* Move Config files"
-echo "-----------------------------------------------------------------------"
-cp ${MPSERVERBASE}/etc/* $MPSERVERCONF/etc
-rm -rf "${MPSERVERBASE}/etc"
+if ! $ISUPGRADE; then
+    echo
+    echo "* Move Config files"
+    echo "-----------------------------------------------------------------------"
+    cp ${MPSERVERBASE}/etc/* $MPSERVERCONF/etc
+    rm -rf "${MPSERVERBASE}/etc"
+fi
 
 # ------------------
 # Set Permissions
@@ -693,8 +704,9 @@ clear
 echo "Setting Permissions..."
 chmod -R 0775 "${MPBASE}/Content"
 chown -R $OWNERGRP "${MPBASE}/Content"
-chmod -R 0775 "${MPSERVERBASE}/logs"
-chmod -R 0775 "${MPSERVERBASE}/etc"
+chmod -R 0775 "${MPSERVERCONF}/logs"
+chown -R $OWNERGRP "${MPSERVERCONF}/logs"
+chmod -R 0775 "${MPSERVERCONF}/etc"
 chmod -R 0775 "${MPSERVERBASE}/InvData"
 chown -R $OWNERGRP "${MPSERVERBASE}/env"
 

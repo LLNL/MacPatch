@@ -25,7 +25,7 @@
 
 '''
 	Script: MPSyncContent
-	Version: 1.5.1
+	Version: 1.5.2
 '''
 
 import datetime
@@ -44,21 +44,18 @@ import json
 # Define logging for global use
 logger       = logging.getLogger('MPSyncContent')
 
-MP_HOME      = "/opt/MacPatch"
-MP_SRV_BASE  = MP_HOME+"/Server"
-
-logFile      = MP_SRV_BASE+"/logs/MPSyncContent.log"
+MP_SRV        = "/opt/MacPatch"
+MP_SRV_BASE   = MP_SRV+"/Server"
+MP_SRV_CONF   = MP_SRV+"/ServerConfig"
+MP_SYNC_CONF  = MP_SRV_CONF+"/etc/syncContent.json"
+logFile       = MP_SRV_CONF+"/logs/MPSyncContent.log"
 
 # Rsync Path
 SYNC_DIR_NAME="mpContentWeb3"
 # Rsync Server
 MASTER_SERVER="localhost"
 # Sync Content to...
-LOCAL_CONTENT=MP_HOME+"/Content/Web"
-
-
-MP_SRV_CONF=MP_SRV_BASE+"/conf"
-MP_SYNC_CONF=MP_SRV_BASE+"/etc/syncContent.json"
+LOCAL_CONTENT=MP_SRV+"/Content/Web"
 
 # Global OS vars
 __version__ = "1.5.0"
@@ -153,6 +150,20 @@ def main():
 	elif args.server is not None:
 		MASTER_SERVER = args.server
 
+	else:
+		_conf = readJSONFile(MP_SYNC_CONF)
+		if _conf is not None:
+				if 'MPServerAddress' in _conf:
+				MASTER_SERVER = _conf['MPServerAddress']
+			elif 'settings' in _conf:
+				if 'MPServerAddress' in _conf['settings']:
+					MASTER_SERVER = _conf['settings']['MPServerAddress']
+			else:
+				logger.error("Error, MPServerAddress was not found in config.")
+				sys.exit(1)
+		else:
+			logger.error("Error, MPServerAddress was not found in config.")
+			sys.exit(1)
 
 	# We dont allow localhost
 	if MASTER_SERVER == "localhost":

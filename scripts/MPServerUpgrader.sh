@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPServerUpgrader.sh
-# Version: 2.0
+# Version: 2.1
 #
 # Description:
 # Upgrade script will upgrade a current install of the MacPatch server
@@ -10,6 +10,7 @@
 # History:
 #
 #   2.0     Add multiple upgrade types
+#   2.1     Updates to upgrade procedure
 #
 # ----------------------------------------------------------------------------
 
@@ -47,8 +48,10 @@ elif [[ "$unamestr" == 'Darwin' ]]; then
    platform='mac'
 fi
 
+GRP="70"
 OWNERGRP="79:70"
 if [[ "$platform" == "linux" ]]; then
+    GRP="www-data"
     OWNERGRP="www-data:www-data"
 fi
 
@@ -146,7 +149,6 @@ elif [[ "$UPGRADETYPE" == "Webapps" ]]; then
     mkdir -p $SERVERBACKUPPATH
     mv $MPSERVERBASE/env $SERVERBACKUPPATH/env
     mv $MPSERVERBASE/apps $SERVERBACKUPPATH/apps
-    mv $MPSERVERBASE/conf $SERVERBACKUPPATH/conf
 else
     echo "Invalid upgrade type, now exiting."
     exit 1
@@ -162,6 +164,12 @@ git pull
 
 
 if [[ "$UPGRADETYPE" == "All" ]]; then
+    # Rename NGINX conf dir, upgrade will install new version of
+    # nginx and conf and be overwritten
+    mv $MPSERVERCONF/nginx $MPSERVERCONF/nginx.$DTS
+    mv $MPSERVERCONF/logs $MPSERVERCONF/logs.$DTS
+    mkdir -p $MPSERVERCONF/logs/apps
+
     # Build new instance of the Server
     /opt/MacPatch/scripts/MPBuildServer.sh -u
 elif [[ "$UPGRADETYPE" == "Webapps" ]]; then
@@ -310,8 +318,9 @@ clear
 echo "Setting Permissions..."
 chmod -R 0775 "${MPBASE}/Content"
 chown -R $OWNERGRP "${MPBASE}/Content"
-chmod -R 0775 "${MPSERVERBASE}/logs"
-chmod -R 0775 "${MPSERVERBASE}/etc"
+chmod -R 0775 "${MPSERVERCONF}/logs"
+chown -R $OWNERGRP "${MPSERVERCONF}/logs"
+chmod -R 0775 "${MPSERVERCONF}/etc"
 chmod -R 0775 "${MPSERVERBASE}/InvData"
 chown -R $OWNERGRP "${MPSERVERBASE}/env"
 
