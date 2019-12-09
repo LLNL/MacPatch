@@ -10,6 +10,8 @@ services:
       MYSQL_DATABASE: "MacPatchDB3"
       MYSQL_USER: "dbadmin"
       MYSQL_PASSWORD: "dbadmin"
+    ports:
+      - 3306:3306
   nginx:
     image: nginx
     restart: always
