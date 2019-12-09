@@ -26,7 +26,7 @@ elif [ "$1" == "console" ]; then
 elif [ "$1" == "inventory" ]; then
   # run only the inventory service
   echo "Starting MacPatch Inventory service..."
-  "$MPSERVERBASE/conf/scripts/MPInventoryD.py" --config "$MPSERVERBASE/etc/siteconfig.json" --files "$MPSERVERBASE/InvData/files"
+  "$MPSERVERBASE/conf/scripts/MPInventoryD.py" --config "$MPSERVERBASE/etc/siteconfig.json" --files "$MPSERVERBASE/InvData/files" --echo
 elif [ "$1" == "asus" ]; then
   # run only the asus sync script then exit. 
   # can be called via cron from host OS
