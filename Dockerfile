@@ -47,7 +47,6 @@ RUN mkdir -p $MPBASE/Content/Web/clients \
         $MPSERVERCONFIG/flask \
         $MPSERVERCONFIG/jobs \
         $MPSERVERCONFIG/logs/apps \
-        $MPBASE/ServerConf/logs && \
     touch $MPSERVERCONFIG/flask/conf_api.cfg && \
     touch $MPSERVERCONFIG/flask/conf_console.cfg
 
