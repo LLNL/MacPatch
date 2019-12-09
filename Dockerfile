@@ -50,8 +50,7 @@ RUN mkdir -p $MPBASE/Content/Web/clients \
         $MPBASE/ServerConf/logs && \
     touch $MPSERVERCONFIG/flask/conf_api.cfg && \
     touch $MPSERVERCONFIG/flask/conf_console.cfg
-    # $MPSERVERBASE/logs \
-    # $MPSERVERBASE/apps/log
+
 
 # Run yarn
 WORKDIR $MPSERVERBASE/apps/mpconsole
@@ -83,9 +82,8 @@ ADD docker/run.sh /run.sh
 RUN chmod -R 0775 "$MPBASE/Content" \
     "$MPSERVERCONFIG" \
     "$MPSERVERBASE/InvData" \
-    "$MPSERVERBASE/logs"
-    # "$MPSERVERBASE/etc"
-RUN chmod 2777 "$MPSERVERCONFIG/logs"
+    "$MPSERVERCONFIG/logs" \
+    "$MPSERVERCONFIG/etc"
 RUN chown -R $OWNERGRP "$MPBASE"
 
 
