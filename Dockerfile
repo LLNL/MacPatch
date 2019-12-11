@@ -32,7 +32,7 @@ RUN pip3 install --upgrade pip virtualenv
 RUN useradd -r -M -s /dev/null -U www-data
 
 
-# Setup directory structure
+# Setup MacPatch directory structure
 ADD Source/Server $MPSERVERBASE
 RUN mkdir -p $MPBASE/Content/Web/clients \
         $MPBASE/Content/Web/patches \
@@ -74,6 +74,8 @@ ADD docker/config/siteconfig.json $MPSERVERCONFIG/etc/siteconfig.json
 ADD docker/supervisord.conf $MPSERVERBASE/supervisord/supervisord.conf
 ADD docker/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD docker/nginx/sites /etc/nginx/sites/
+ADD docker/ssl/server.crt /etc/ssl/server.crt
+ADD docker/ssl/server.key /etc/ssl/server.key
 ADD docker/run.sh /run.sh
 
 
