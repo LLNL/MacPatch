@@ -1,40 +1,65 @@
-# ![MPLogo](./images/MPLogo_3_64x64.png) MacPatch 3.3.x
+## Starting a test environment
 
-## Overview
-MacPatch simplifies the act of patching and installing software on Mac OS X based systems. The client relies on using the built-in software update application for patching the Mac OS X system updates and it's own scan and patch engine for custom patches. 
+1. Build the docker image.
 
-MacPatch offers features and functionality that provide Mac OS X administrators with best possible patching solution to meet the challenges of supporting Mac OS X in a Workgroup or Enterprise.
+    ```
+    docker build -t macpatch .
+    ```
 
-## Features
+2. Create local folders to store persistent data outside the docker container.
 
-* Custom patch creation
-* Custom patch groups
-* End-User Self Patch
-* Software Distribution
-* Inventory Collection
-* Basic Reporting
-* Mac OS X Profiles support
-* AutoPKG support
+    ```
+    mkdir content
+    mkdir dbstore
+    mkdir invdata/files
+    ```
 
-## System Requirements
+3. Start the docker environment.
 
-### Client 
-* Mac OS X 10.12.x and higher.
+    ```
+    docker-compose up
+    ```
 
-##### Server Requirements:
-* Mac OS X or Mac OS X Server 10.12 or higher 
-* Linux: RHEL 7, CentOS 7, Ubuntu 16.x
-* 4 GB of RAM, 8 GB is recommended
-* Python 3.6 or higher
-* MySQL 5.7.x **(Note: MySQL 8 has not been tested.)**	
+You now have a full MacPatch environment running at [https://localhost](https://localhost). The default admin username/password is `mpadmin`/`password`.
 
-## Documentation - [MacPatch Docs](https://macpatch-docs.llnl.gov)
+## Using an existing database
 
-Install and Setup: [Server - Install & Setup](https://macpatch-docs.llnl.gov/server_install.html)
+The `docker-compose.yml` file includes a docker MySQL database. If you prefer to use an existing database, remove the `db` block from the `docker-compose.yml` file.
 
-## Help
-For questions or help visit the [MacPatch](https://groups.google.com/d/forum/macpatch) group.
+You will also need to provide docker with a `config.cfg` file with information about your database.
 
-## License
+```
+# config.cfg
 
-MacPatch is available under the GNU GPLv2 license. See the [LICENSE](LICENSE "License") file for more info.
+DB_HOST = 'mydb.example.com'
+DB_PORT = '3306'
+DB_NAME = 'MacPatchDB3'
+DB_PASS = 'admin'
+DB_USER = 'db-admin-password'
+DB_USER_RO = 'rouser'
+DB_PASS_RO = 'ro-user-password'
+```
+
+Add your `config.cfg` file to the docker container by adding it to the `volumes` section of the `docker-compose.yml` file.
+
+```
+# docker-compose.yml
+...
+    volumes:
+      - $PWD/config.cfg:/opt/MacPatch/ServerConfig/flask/config.cfg
+...
+```
+
+## Misc.
+
+Building the docker image locally.
+
+```
+docker build --rm -t macpatch .
+```
+
+Creating an image tar.
+
+```
+docker save macpatch > macpatch-$(date "+%y.%m.%d-%s").tar
+```
