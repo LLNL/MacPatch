@@ -20,7 +20,7 @@
     docker-compose up
     ```
 
-You now have a full MacPatch environment running at [https://localhost](https://localhost). The default admin username/password is `mpadmin`/`password`.
+You now have a demo MacPatch server running. You can access the web console at [https://localhost](https://localhost). The default admin username/password is `mpadmin`/`password`.
 
 ## Using an existing database
 
@@ -52,13 +52,7 @@ Add your `config.cfg` file to the docker container by adding it to the `volumes`
 
 ## Misc.
 
-Building the docker image locally.
-
-```
-docker build --rm -t macpatch .
-```
-
-Creating an image tar.
+Creating an image tar archive.
 
 ```
 docker save macpatch > macpatch-$(date "+%y.%m.%d-%s").tar
