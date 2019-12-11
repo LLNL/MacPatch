@@ -1,10 +1,10 @@
 from flask import request
 from flask_restful import reqparse
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import text
 from datetime import datetime
 
 import json
-import base64
 
 from . import *
 from .. import db
@@ -13,17 +13,18 @@ from .. model import *
 from .. mplogger import *
 from .. wsresult import *
 from .. shared.patches import *
+from .. aws import *
 
 parser = reqparse.RequestParser()
 
 # Get Patch Group Patches Fast & Dynamic
+
 class PatchGroupPatches(MPResource):
 
 	def __init__(self):
 		self.reqparse = reqparse.RequestParser()
 		super(PatchGroupPatches, self).__init__()
 
-	# @cache.cached(timeout=300)
 	def get(self, client_id):
 
 		wsResult = WSResult()
@@ -56,19 +57,22 @@ class PatchGroupPatches(MPResource):
 
 			# Query all sources needed
 			_apple_all = self.appleContent()
-			_appMP_all = self.appleMPAdditions()
 			_third_all = self.allCustomActiveContent()
 
 			# Get Patch Group Patches
 			q_data = MpPatchGroupPatches.query.filter(MpPatchGroupPatches.patch_group_id == group_id).all()
+
 			if q_data is not None:
 				if len(q_data) >= 1:
 					for row in q_data:
+						rowDict = row.asDict
+
 						# Parse Apple Patches
-						for aRow in _apple_all:
-							if row.patch_id == aRow.akey:
-								_apple_patches.append(self.getApplePatchData(aRow, _appMP_all))
-								break
+						aPatchResult = self.getApplePatchData(row.patch_id, _apple_all)
+						if aPatchResult is not None:
+							_apple_patches.append(aPatchResult)
+							continue
+
 						# Parse Custom Patches
 						for tRow in _third_all:
 							if row.patch_id == tRow.puuid:
@@ -87,61 +91,57 @@ class PatchGroupPatches(MPResource):
 			wsResult.data = wsData.toDict()
 			return wsResult.resultNoSignature(), 200
 
-		except IntegrityError, exc:
-			log_Error('[PatchGroupPatches][Get][IntegrityError] CUUID: %s Message: %s' % (client_id, exc.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=exc.message), 500
-
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[PatchGroupPatches][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, client_id, e.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=e.message), 500
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[PatchGroupPatches][Get][Exception][Line: {}] CUUID: {} Message: {}'.format(exc_tb.tb_lineno, client_id, message))
+			return wsResult.resultNoSignature(errorno=500, errormsg=message), 500
 
 	# Methods for Content, this way I can cache the results as they dont change often
 	@cache.cached(timeout=300, key_prefix='AppleCachedList')
 	def appleContent(self):
-		return ApplePatch.query.all()
 
-	@cache.cached(timeout=300, key_prefix='AppleMPCachedList')
-	def appleMPAdditions(self):
-		return ApplePatchAdditions.query.all()
+		# Combine, apple additions with apple patch
+		sql_str = text("""select ap.akey, ap.title, ap.postdate, ap.restartaction, ap.supatchname, ap.version, 
+							mpa.severity, mpa.severity_int, mpa.patch_state, mpa.patch_install_weight, mpa.patch_reboot
+							from apple_patches ap
+							LEFT JOIN apple_patches_mp_additions mpa ON
+							ap.supatchname = mpa.supatchname""")
+
+		results_pre = []
+		q_data = db.engine.execute(sql_str)
+
+		if q_data.rowcount <= 0:
+			return results_pre
+
+		# results from sqlalchemy are returned as a list of tuples; this procedure converts it into a list of dicts
+		for row_number, row in enumerate(q_data):
+			results_pre.append({})
+			for column_number, value in enumerate(row):
+				results_pre[row_number][list(row.keys())[column_number]] = value
+
+		# set the reboot override
+		results = []
+		for row in results_pre:
+			if row["restartaction"] == 'NoRestart' and row['patch_reboot'] == 1:
+				row['restartaction'] = 'RequireRestart'
+			elif row["restartaction"] == 'RequireRestart' and row['patch_reboot'] == 0:
+				row['restartaction'] = 'NoRestart'
+
+			results.append(row)
+
+		return results
 
 	@cache.cached(timeout=300, key_prefix='CustomCachedList')
 	def allCustomActiveContent(self):
 		return MpPatch.query.filter(MpPatch.active == 1).all()
 
-	# Need to add mac patch apple patch additions to the
-	# apple patch object, I'm are creating a model here
-	# thats usable :-)
-	@cache.cached(timeout=300, key_prefix='AppleCombCachedList')
-	def getApplePatchData(self, appleData, patchAdditions):
-		patch = {}
-
-		patch['akey'] = appleData.akey
-		patch['title'] = appleData.title
-		patch['postdate'] = appleData.postdate
-		patch['restartaction'] = appleData.restartaction
-		patch['patch_reboot'] = '0'
-		if appleData.restartaction == 'RequireRestart':
-			patch['patch_reboot'] = '1'
-		patch['supatchname'] = appleData.supatchname
-		patch['version'] = appleData.version
-
-		# MP Addition
-		patch['severity'] = 'High'
-		patch['severity_int'] = '3'
-		patch['patch_state'] = 'Create'
-		patch['patch_install_weight'] = '60'
-
-		for row in patchAdditions:
-			if row.supatchname == appleData.supatchname:
-				patch['severity'] = row.severity
-				patch['severity_int'] = row.severity_int
-				patch['patch_state'] = row.patch_state
-				patch['patch_install_weight'] = row.patch_install_weight
-				if appleData.restartaction == 'NoRestart':
-					if row.patch_reboot == 1:
-						patch['restartaction'] = 'RequireRestart'
-						patch['patch_reboot'] = '1'
+	# return the apple patch for using akey
+	def getApplePatchData(self, akey, patchList):
+		patch = None
+		for x in patchList:
+			if x['akey'] == akey:
+				patch = x
 				break
 
 		return patch
@@ -186,7 +186,7 @@ class PatchScanList(MPResource):
 				log_Error('[PatchScanList][Get]: Failed to verify Signature for client (%s)' % (client_id))
 				return wsResult.resultNoSignature(errorno=424,errormsg='Failed to verify Signature'), 424
 
-			log_Debug('[PatchScanList][Get]: Args: ccuid=(%s) severity=(%s)' % (client_id, severity))
+			log_Debug('[PatchScanList][Get]: Args: cuuid=(%s) severity=(%s)' % (client_id, severity))
 
 
 			agentSettings = AgentSettings()
@@ -202,88 +202,11 @@ class PatchScanList(MPResource):
 				log_Error('[PatchScanListFilterOS][Get]: Failed to get a scan list for client %s' % (client_id))
 				return {"result": {}, "errorno": 0, "errormsg": 'none'}, 404
 
-
-		except IntegrityError, exc:
-			log_Error('[PatchGroupPatches][Get][IntegrityError] CCUID: %s Message: %s' % (client_id, exc.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=exc.message), 500
-
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[PatchGroupPatches][Get][Exception][Line: %d] CCUID: %s Message: %s' % (exc_tb.tb_lineno, client_id, e.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=e.message), 500
-
-
-# Get Patch Data for BundleID
-class PatchForBundleID(MPResource):
-
-	def __init__(self):
-		self.reqparse = reqparse.RequestParser()
-		super(PatchForBundleID, self).__init__()
-
-	def get(self, client_id, bundle_id):
-
-		wsResult = WSResult()
-		wsData = WSData()
-		wsData.data = {}
-		wsData.type = 'PatchForBundleID'
-		wsResult.result = wsData
-
-		try:
-			if not isValidClientID(client_id):
-				log_Error('[PatchGroupPatches][Get]: Failed to verify ClientID (%s)' % (client_id))
-				return wsResult.resultNoSignature(errorno=424,errormsg='Failed to verify ClientID'), 424
-
-			if not isValidSignature(self.req_signature, client_id, self.req_uri, self.req_ts):
-				log_Error('[PatchGroupPatches][Get]: Failed to verify Signature for client (%s)' % (client_id))
-				return wsResult.resultNoSignature(errorno=424,errormsg='Failed to verify Signature'), 424
-
-			_data = {}
-			_data['Custom'] = []
-			_patches = []
-
-			# Query all sources needed
-			_sw = self.customContentUsingBundleID(bundle_id)
-			for row in _sw:
-				patch = row.asDict
-				# Remove un-needed attributes
-				del patch['pkg_path']
-				del patch['cve_id']
-				del patch['patch_severity']
-				del patch['cdate']
-				if row.pkg_preinstall is not None:
-					if row.pkg_preinstall != "":
-						patch['pkg_preinstall'] = base64.b64encode(row.pkg_preinstall)
-
-				if row.pkg_postinstall is not None:
-					if row.pkg_postinstall != "":
-						patch['pkg_postinstall'] = base64.b64encode(row.pkg_postinstall)
-
-				_patches.append(patch)
-
-			# Sort the results based on bundle id then version
-			_sorted = sorted(_patches, key=lambda elem: "%s %s" % (
-				elem['bundle_id'], (".".join([i.zfill(5) for i in elem['patch_ver'].split(".")]))), reverse=True)
-
-			# grab first item from the list, it's the latest version for the bundle id
-			wsData.data = _sorted[0]
-
-			wsResult.data = wsData.toDict()
-			return wsResult.resultNoSignature(), 200
-
-		except IntegrityError, exc:
-			log_Error('[PatchGroupPatches][Get][IntegrityError] CUUID: %s Message: %s' % (client_id, exc.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=exc.message), 500
-
-		except Exception as e:
-			exc_type, exc_obj, exc_tb = sys.exc_info()
-			log_Error('[PatchGroupPatches][Get][Exception][Line: %d] CUUID: %s Message: %s' % (exc_tb.tb_lineno, client_id, e.message))
-			return wsResult.resultNoSignature(errorno=500, errormsg=e.message), 500
-
-	@cache.cached(timeout=300, key_prefix='CustomCachedList')
-	def customContentUsingBundleID(self, bundleID):
-		return MpPatch.query.filter(MpPatch.active == 1,
-									MpPatch.patch_state == "Production",
-									MpPatch.bundle_id == bundleID ).all()
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[PatchGroupPatches][Get][Exception][Line: {}] CUUID: {} Message: {}'.format(exc_tb.tb_lineno, client_id, message))
+			return wsResult.resultNoSignature(errorno=500, errormsg=message), 500
 
 # --------------------------------------------------------------------
 # MP Agent 3.1
@@ -294,5 +217,3 @@ patches_3_api.add_resource(PatchGroupPatches,		'/client/patch/group/<string:clie
 
 patches_3_api.add_resource(PatchScanList, 			'/client/patch/scan/list/all/<string:client_id>', endpoint='sevAll')
 patches_3_api.add_resource(PatchScanList, 			'/client/patch/scan/list/<string:severity>/<string:client_id>', endpoint='sevCustom')
-
-patches_3_api.add_resource(PatchForBundleID,		'/patch/bundleID/<string:bundle_id>/<string:client_id>')

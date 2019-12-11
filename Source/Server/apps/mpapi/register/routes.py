@@ -65,7 +65,7 @@ class Registration(MPResource):
 		'''
 
 		content = request.get_json(silent=True)
-		print content
+		print(content)
 
 		if all(key in content for key in ("cKey", "CPubKeyPem", "ClientHash", "HostName", "SerialNo")):
 
@@ -152,7 +152,7 @@ class RegistrationStatus(MPResource):
 
 ''' Private Methods '''
 def verifyClientHash(encodedKey, hash):
-	_lHash = hashlib.sha1(encodedKey).hexdigest()
+	_lHash = hashlib.sha1(str(encodedKey).encode('utf-8')).hexdigest()
 	if _lHash.lower() == hash.lower():
 		return True
 	else:

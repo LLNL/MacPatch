@@ -1,0 +1,13 @@
+certifi==2019.6.16
+chardet==3.0.4
+idna==2.8
+M2Crypto==0.35.2
+mysql-connector-python==8.0.17
+protobuf==3.9.1
+pycrypto==2.6.1
+python-crontab==2.3.8
+python-dateutil==2.8.0
+requests==2.22.0
+simplejson==3.16.0
+six==1.12.0
+urllib3==1.25.3

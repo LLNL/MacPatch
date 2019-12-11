@@ -485,7 +485,7 @@
     }
     
     if (avApplication == nil) {
-        logit(lcl_vError,@"Unable to find a McAfee AV product.");
+        qlinfo(@"Unable to find a McAfee AV product.");
         return nil;
     }
     // Get App Bundle Version, App Version and Suite Vers are different
@@ -841,11 +841,12 @@
 {
     // First we need to download the update
     int result = 0;
-    MPAsus *mpAsus = [[MPAsus alloc] init];
     NSError *err = nil;
-    NSString *dlPatchLoc = [mpAsus downloadUpdate:pkgURL error:&err];
-    
-    if (err) {
+	MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
+	NSString *dlDir = [@"/private/tmp" stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+	NSString *dlPatchLoc = [req runSyncFileDownload:pkgURL downloadDirectory:dlDir error:&err];
+    if (err)
+	{
         logit(lcl_vError,@"Error downloading a patch, skipping %@. Err Message: %@",pkgURL, [err localizedDescription]);
         result = 1;
     }
@@ -855,7 +856,8 @@
         logit(lcl_vInfo,@"Uncompressing patch, to begin install.");
         logit(lcl_vInfo,@"Begin decompression of file, %@",dlPatchLoc);
         err = nil;
-        [mpAsus unzip:dlPatchLoc error:&err];
+		MPFileUtils *fu = [MPFileUtils new];
+        [fu unzip:dlPatchLoc error:&err];
         if (err) {
             logit(lcl_vError,@"Error decompressing a patch, skipping %@. Err Message:%@",dlPatchLoc,[err localizedDescription]);
             result = 1;

@@ -1,4 +1,4 @@
-#!/opt/MacPatch/Server/venv/bin/python
+#!/opt/MacPatch/Server/env/server/bin/python
 
 '''
  Copyright (c) 2013, Lawrence Livermore National Security, LLC.
@@ -25,7 +25,7 @@
 
 '''
 	Script: MPSyncContent
-	Version: 1.0.1
+	Version: 1.5.2
 '''
 
 import datetime
@@ -37,40 +37,37 @@ import sys
 import subprocess
 import hashlib
 import platform
-import commands
+import subprocess
 import json
 
 
 # Define logging for global use
 logger       = logging.getLogger('MPSyncContent')
 
-MP_HOME      = "/opt/MacPatch"
-MP_SRV_BASE  = MP_HOME+"/Server"
-
-logFile      = MP_SRV_BASE+"/logs/MPSyncContent.log"
+MP_SRV        = "/opt/MacPatch"
+MP_SRV_BASE   = MP_SRV+"/Server"
+MP_SRV_CONF   = MP_SRV+"/ServerConfig"
+MP_SYNC_CONF  = MP_SRV_CONF+"/etc/syncContent.json"
+logFile       = MP_SRV_CONF+"/logs/MPSyncContent.log"
 
 # Rsync Path
 SYNC_DIR_NAME="mpContentWeb3"
 # Rsync Server
 MASTER_SERVER="localhost"
 # Sync Content to...
-LOCAL_CONTENT=MP_HOME+"/Content/Web"
-
-
-MP_SRV_CONF=MP_SRV_BASE+"/conf"
-MP_SYNC_CONF=MP_SRV_BASE+"/etc/syncContent.json"
+LOCAL_CONTENT=MP_SRV+"/Content/Web"
 
 # Global OS vars
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 os_type = platform.system()
 system_name = platform.uname()[1]
 
 def script_is_running():
 	script_name = os.path.basename(__file__)
 	cmd = "ps aux | grep -e '%s' | grep -v grep | awk '{print $2}'| awk '{print $2}'" % script_name
-	l = commands.getstatusoutput(cmd)
+	l = subprocess.getstatusoutput(cmd)
 	if l[1]:
-		print "Error, script is already running. Now exiting script."
+		print("Error, script is already running. Now exiting script.")
 		logger.error("Error, script is already running. Now exiting script.")
 		sys.exit(0);
 
@@ -78,7 +75,7 @@ def readJSONFile(filename):
 	returndata = {}
 
 	if not os.path.exists(filename):
-		print "Unable to open " + filename +". File not found."
+		print("Unable to open " + filename +". File not found.")
 		sys.exit(1)
 
 	try:
@@ -86,7 +83,7 @@ def readJSONFile(filename):
 		returndata = json.load(fd)
 		fd.close()
 	except:
-		print 'COULD NOT LOAD:', filename
+		print('COULD NOT LOAD:', filename)
 
 	return returndata
 
@@ -117,8 +114,8 @@ def main():
 		logger.addHandler(hdlr)
 		logger.setLevel(logging.INFO)
 
-	except Exception, e:
-		print "%s" % e
+	except Exception as e:
+		print("%s" % e)
 		sys.exit(1)
 
 	# Set Default Values
@@ -143,6 +140,9 @@ def main():
 		if _conf is not None:
 			if 'MPServerAddress' in _conf:
 				MASTER_SERVER = _conf['MPServerAddress']
+			elif 'settings' in _conf:
+				if 'MPServerAddress' in _conf['settings']:
+					MASTER_SERVER = _conf['settings']['MPServerAddress']
 			else:
 				logger.error("Error, MPServerAddress was not found in config.")
 				sys.exit(1)
@@ -150,6 +150,20 @@ def main():
 	elif args.server is not None:
 		MASTER_SERVER = args.server
 
+	else:
+		_conf = readJSONFile(MP_SYNC_CONF)
+		if _conf is not None:
+				if 'MPServerAddress' in _conf:
+				MASTER_SERVER = _conf['MPServerAddress']
+			elif 'settings' in _conf:
+				if 'MPServerAddress' in _conf['settings']:
+					MASTER_SERVER = _conf['settings']['MPServerAddress']
+			else:
+				logger.error("Error, MPServerAddress was not found in config.")
+				sys.exit(1)
+		else:
+			logger.error("Error, MPServerAddress was not found in config.")
+			sys.exit(1)
 
 	# We dont allow localhost
 	if MASTER_SERVER == "localhost":

@@ -13,9 +13,9 @@
 	<key>ServiceDescription</key>
 	<string>MacPatch Content Sync Script</string>
 	<key>StandardErrorPath</key>
-	<string>/opt/MacPatch/Server/logs/mp_sync_stdout.log</string>
+	<string>/opt/MacPatch/ServerConfig/logs/mp_sync_stdout.log</string>
 	<key>StandardOutPath</key>
-	<string>/opt/MacPatch/Server/logs/mp_sync_stdout.log</string>
+	<string>/opt/MacPatch/ServerConfig/logs/mp_sync_stdout.log</string>
 	<key>StartInterval</key>
 	<integer>1800</integer>
 	<key>RunAtLoad</key>

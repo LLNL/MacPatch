@@ -27,7 +27,7 @@
 
 # -------------------------------------------------------------
 # Script: MPDBSetup.sh
-# Version: 1.2.0
+# Version: 1.3.0
 #
 # Description:
 # This script will setup and configure a MySQL server for
@@ -39,6 +39,7 @@
 # 
 # 1.1.0 Altered script for new python based backend
 # 1.2.0 Changed the code for adding password, now requires a verify
+# 1.3.0 Added flag to skip db check, good for docker
 #
 # -------------------------------------------------------------
 
@@ -53,11 +54,43 @@ fi
 
 DBNAME="MacPatchDB3"
 MPUSER="mpdbadm"
-MPROUSR="mpdbro"
 MPUSRPAS=""
-MPUSRROPAS=""
-HOST=`hostname`
+HOST="localhost"
+PORT="3306"
 RESSTR=""
+SKIPCHECKS=false
+USESERVER=false
+
+usage() { echo "Usage: $0 [-c (SKIP CHECKS)]" 1>&2; exit 1; }
+
+while getopts "h:p:cs" opt; do
+    case $opt in
+        c)
+            SKIPCHECKS=true
+            ;;
+        s)
+            USESERVER=true
+            ;;
+        h)
+            HOST=${OPTARG}
+            ;;
+        p)
+            PORT=${OPTARG}
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            echo
+            usage
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument." >&2
+            echo
+            usage
+            exit 1
+            ;;
+    esac
+done
 
 readUsrPass () {
   _prompt="$1"
@@ -85,13 +118,15 @@ if [ -z "$MYSQL" ] ; then
   exit 1;
 fi
 
-CHECKFORMY=`ps -aef | grep mysqld | grep -v grep | head -n1`
-if [ -z "$CHECKFORMY" ] ; then
-  clear
-  echo
-  echo "Could not find mysqld running. Please make sure that"
-  echo "mysql is running before continuing."
-  exit 1;
+if ! $SKIPCHECKS; then
+    CHECKFORMY=`ps -aef | grep mysqld | grep -v grep | head -n1`
+    if [ -z "$CHECKFORMY" ] ; then
+      clear
+      echo
+      echo "Could not find mysqld running. Please make sure that"
+      echo "mysql is running before continuing."
+      exit 1;
+    fi
 fi
 
 clear
@@ -115,39 +150,19 @@ do
     echo "Please try again"
 done
 
-echo
-read -p "MacPatch Read Only User Account [mpdbro]: " MPROUSR
-MPROUSR=${MPROUSR:-mpdbro}
-
-while true
-do
-    readUsrPass "Password: "
-    MPUSRROPAS="$RESSTR"
-    echo
-    readUsrPass "Password (verify): "
-    MPUSRROPASb="$RESSTR"
-    echo
-    [ "$MPUSRROPAS" = "$MPUSRROPASb" ] && break
-    echo "Please try again"
-done
-
 # For MySQL 5.7, not supported yet
 QA="DROP USER IF EXISTS 'mpdbadm'@'localhost';"
 QB="DROP USER IF EXISTS 'mpdbadm'@'%';"
-QC="DROP USER IF EXISTS 'mpdbro'@'localhost';"
-QD="DROP USER IF EXISTS 'mpdbro'@'%';"
 
 Q1="CREATE DATABASE IF NOT EXISTS ${BTICK}$DBNAME${BTICK};"
 Q2="CREATE USER '${MPUSER}'@'%' IDENTIFIED BY '${MPUSRPAS}';"
 Q3="GRANT ALL ON $DBNAME.* TO '${MPUSER}'@'%' IDENTIFIED BY '${MPUSRPAS}';"
 Q4="GRANT ALL PRIVILEGES ON $DBNAME.* TO '${MPUSER}'@'localhost' IDENTIFIED BY '${MPUSRPAS}';"
-Q5="CREATE USER '${MPROUSR}'@'%' IDENTIFIED BY '${MPUSRROPAS}';"
-Q6="GRANT SELECT ON $DBNAME.* TO '${MPROUSR}'@'%';"
 Q7="SET GLOBAL log_bin_trust_function_creators = 1;"
 Q8="DELETE FROM mysql.user WHERE User='';"
 Q9="FLUSH PRIVILEGES;"
 
-SQL="${Q1}${Q2}${Q3}${Q4}${Q5}${Q6}${Q7}${Q8}${Q9}"
+SQL="${Q1}${Q2}${Q3}${Q4}${Q7}${Q8}${Q9}"
 
 clear
 echo
@@ -155,7 +170,11 @@ echo "MySQL Database is about to be configured."
 echo "You will be prompted for the MySQL root user password"
 echo
 
-$MYSQL -uroot -p -e "$SQL"
+if $USESERVER; then
+    $MYSQL --host=$HOST --port=$PORT -uroot -p -e "$SQL"
+else
+    $MYSQL -uroot -p -e "$SQL"
+fi
 if [ $? -ne 0 ]; then
   echo
   read -p "An error was detected, would you like to continue (Y/N)? [N]: " CONTONERR

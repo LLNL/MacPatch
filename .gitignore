@@ -133,6 +133,8 @@ Source_dev/
 *.log.*
 working/
 
-# MacPatch, ignore root dir items
-/Server
-/Content
+# Ignore folders created for dev
+/content
+/dbstore
+/ssl
+/invdata

@@ -10,6 +10,7 @@ import base64
 import hashlib
 import sys
 from datetime import datetime
+import shutil
 
 from .  import software
 from .. import db
@@ -62,7 +63,8 @@ def groups():
 					_drow[c['field']] = _objVal
 			except Exception as e:
 				exc_type, exc_obj, exc_tb = sys.exc_info()
-				log_Error(e.message)
+				message=str(e.args[0]).encode("utf-8")
+				log_Error(message)
 
 		_rows.append(_drow)
 
@@ -281,7 +283,7 @@ def saveGroupFilter(group_id):
 		else:
 			filter = MpSoftwareGroupFilters.query.filter(MpSoftwareGroupFilters.rid == _form['rid']).first()
 
-	for key, value in _form.iteritems():
+	for key, value in list(_form.items()):
 		if key not in ['rid', 'gid']:
 			setattr(filter, key, value)
 
@@ -382,7 +384,7 @@ def taskSave(id):
 		_isNewTask=True
 		_task = MpSoftwareTask()
 
-	for key, value in _form.iteritems():
+	for key, value in list(_form.items()):
 		setattr(_task, key, value)
 
 	setattr(_task, 'mdate', datetime.now())
@@ -614,9 +616,9 @@ def swPackageData(swID):
 		"sw_url":qSW.sw_url,
 		"sw_hash":qSW.sw_hash,
 		"sw_size":str(qSW.sw_size),
-		"sw_pre_install":base64.b64encode(qSW.sw_pre_install_script),
-		"sw_post_install":base64.b64encode(qSW.sw_post_install_script),
-		"sw_uninstall":base64.b64encode(qSW.sw_uninstall_script),
+		"sw_pre_install":base64.b64encode(qSW.sw_pre_install_script).decode('utf-8'),
+		"sw_post_install":base64.b64encode(qSW.sw_post_install_script).decode('utf-8'),
+		"sw_uninstall":base64.b64encode(qSW.sw_uninstall_script).decode('utf-8'),
 		"sw_env_var":qSW.sw_env_var,
 		"auto_patch":str(qSW.auto_patch),
 		"patch_bundle_id":qSW.patch_bundle_id,
@@ -879,14 +881,14 @@ def saveSWPackage():
 
 		for rpre in _reqsPre:
 			qSWRAdd = MpSoftwareRequisits()
-			for k, v in rpre.items():
+			for k, v in list(rpre.items()):
 				setattr(qSWRAdd, k, v)
 
 			db.session.add(qSWRAdd)
 
 		for rpst in _reqsPost:
 			qSWRAdd = MpSoftwareRequisits()
-			for k, v in rpst.items():
+			for k, v in list(rpst.items()):
 				setattr(qSWRAdd, k, v)
 
 			db.session.add(qSWRAdd)
@@ -958,7 +960,7 @@ def saveSoftwareFile(suuid, file):
 		file.save(_file_path)
 
 		result['fileHash'] = hashlib.md5(open(_file_path, 'rb').read()).hexdigest()
-		result['fileSize'] = os.path.getsize(_file_path) / 1024
+		result['fileSize'] = (os.path.getsize(_file_path)/float(1000))
 
 	return result
 
@@ -1028,6 +1030,16 @@ def duplicateSWPackage(id):
 def deleteSWPackage(id):
 
 	qSW = MpSoftware.query.filter(MpSoftware.suuid == id).first()
+	sw_path = qSW.sw_path
+	if os.path.exists(sw_path):
+		parDir = os.path.dirname(sw_path)
+		log_Info('Removing sw package file (%s)' % (sw_path))
+		if os.path.exists(parDir):
+			try:
+				shutil.rmtree(parDir)
+			except OSError as e:
+				log_Error("Error Delete Dir: %s - %s." % (e.filename, e.strerror))
+ 
 	qSWC = MpSoftwareCriteria.query.filter(MpSoftwareCriteria.suuid == id).all()
 	qSWR = MpSoftwareRequisits.query.filter(MpSoftwareRequisits.suuid == id).all()
 
@@ -1052,7 +1064,12 @@ def deleteSWPackage(id):
 -------------------------------------------------
 '''
 def getDoc(col_obj):
-	return col_obj.doc
+	print(col_obj.name)
+	print(col_obj.doc)
+	if col_obj.doc is None:
+		return 0
+	else:
+		return col_obj.doc
 
 def isOwnerOfSWGroup(id):
 

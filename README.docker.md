@@ -1,31 +1,20 @@
 ## Starting a test environment
 
-1. Download a prebuilt docker image and load it.
+1. Build the docker image.
 
     ```
-    mkdir macpatch
-    cd macpatch
-    curl -O https://skynet.llnl.gov/docker/macpatch/llnl-macpatch-18.10.29-1540838966.tar
-    docker load < llnl-macpatch-18.10.29-1540838966.tar
+    docker build -t macpatch .
     ```
 
-2. MacPatch requires an SSL cert. For testing you can generate a self signed cert.
-
-    ```
-    mkdir ssl
-    openssl req -new -sha256 -x509 -nodes -days 999 -subj \
-        "/C=NO/ST=State/L=Country/O=MacPatch/OU=MacPatch/CN=$HOSTNAME/emailAddress=admin@mpdemo.com" \
-        -newkey rsa:2048 -keyout ssl/server.key -out ssl/server.crt
-    ```
-
-3. Create local folders to store persistent data outside the docker container.
+2. Create local folders to store persistent data outside the docker container.
 
     ```
     mkdir content
-    mdkir dbstore
+    mkdir dbstore
+    mkdir invdata/files
     ```
 
-4. Start the docker environment.
+3. Start the docker environment.
 
     ```
     docker-compose up
@@ -57,10 +46,7 @@ Add your `config.cfg` file to the docker container by adding it to the `volumes`
 # docker-compose.yml
 ...
     volumes:
-      - $PWD/ssl/server.crt:/opt/MacPatch/Server/etc/ssl/server.crt
-      - $PWD/ssl/server.key:/opt/MacPatch/Server/etc/ssl/server.key
-      - $PWD/content:/opt/MacPatch/Content
-      - $PWD/config.cfg:/opt/MacPatch/Server/apps/config.cfg
+      - $PWD/config.cfg:/opt/MacPatch/ServerConfig/flask/config.cfg
 ...
 ```
 
@@ -69,11 +55,11 @@ Add your `config.cfg` file to the docker container by adding it to the `volumes`
 Building the docker image locally.
 
 ```
-docker build --rm -t llnl/macpatch .
+docker build --rm -t macpatch .
 ```
 
 Creating an image tar.
 
 ```
-docker save llnl/macpatch > llnl-macpatch-$(date "+%y.%m.%d-%s").tar
+docker save macpatch > macpatch-$(date "+%y.%m.%d-%s").tar
 ```

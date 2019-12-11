@@ -10,7 +10,7 @@
 	<array>
 		<string>/opt/MacPatch/Server/conf/scripts/MPInventoryD.py</string>
 		<string>--config</string>
-		<string>/opt/MacPatch/Server/etc/siteconfig.json</string>
+		<string>/opt/MacPatch/ServerConfig/etc/siteconfig.json</string>
 		<string>--files</string>
 		<string>/opt/MacPatch/Server/InvData/files</string>
 	</array>

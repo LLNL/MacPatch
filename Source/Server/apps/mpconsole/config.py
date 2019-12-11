@@ -2,14 +2,16 @@ import os
 import logging
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-MP_ROOT_DIR = '/opt/MacPatch'
-MP_SRV_DIR = MP_ROOT_DIR+'/Server'
+MP_ROOT_DIR		= '/opt/MacPatch'
+MP_SRV_DIR		= MP_ROOT_DIR+'/Server'
+MP_SRVCNF_DIR 	= MP_ROOT_DIR+'/ServerConfig'
 
 class BaseConfig:
 
-	DEBUG   = False
-	TESTING = False
-	BASEDIR = basedir
+	DEBUG   						= False
+	TESTING 						= True
+	BASEDIR 						= basedir
+	MAX_CONTENT_LENGTH              = 9000 * 1024 * 1024    # 9000 Mb limit
 	# DEBUG_TB_ENABLED = True
 	# SQLALCHEMY_RECORD_QUERIES = False
 
@@ -27,30 +29,39 @@ class BaseConfig:
 	DB_NAME                         = 'MacPatchDB'
 	SQLALCHEMY_DATABASE_URI         = 'mysql+pymysql://'
 	SQLALCHEMY_TRACK_MODIFICATIONS  = False
-	SQLALCHEMY_POOL_SIZE            = 50
-	SQLALCHEMY_POOL_TIMEOUT         = 20
-	SQLALCHEMY_POOL_RECYCLE         = 170
+	SQLALCHEMY_ENGINE_OPTIONS = { 'pool_size' : 50,
+                                  'pool_recycle': 120,
+                                  'pool_timeout': 20,
+                                  'pool_pre_ping': True }
 
 	# App Options
 	SECRET_KEY          = '~t\x86\xc9\x1ew\x8bOcX\x85O\xb6\xa2\x11kL\xd1\xce\x7f\x14<y\x9e'
 	LOGGING_FORMAT      = '%(asctime)s [%(name)s][%(levelname).3s] --- %(message)s'
 	LOGGING_LEVEL       = 'info'
-	LOGGING_LOCATION    = MP_SRV_DIR+'/apps/logs'
+	LOGGING_LOCATION    = MP_SRVCNF_DIR+'/logs/apps'
 
 	# MacPatch App Options
-	SITECONFIG_FILE     = MP_SRV_DIR+'/etc/siteconfig.json'
+	SITECONFIG_FILE     = MP_SRVCNF_DIR+'/etc/siteconfig.json'
 	CONTENT_DIR         = MP_ROOT_DIR+'/Content'
 	AGENT_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/clients'
 	PATCH_CONTENT_DIR   = MP_ROOT_DIR+'/Content/Web/patches'
 	SW_CONTENT_DIR 		= MP_ROOT_DIR+'/Content/Web/sw'
+	MP_SRVCNF_DIR		= MP_SRVCNF_DIR+'/flask'
 
 	CORS_HEADERS        = 'Content-Type'
 
-	JOBS_FILE = basedir+'/jobs.json'
+	JOBS_FILE = MP_SRVCNF_DIR+'/jobs/jobs.json'
 	JOBS = []
 
 	SCHEDULER_API_ENABLED 		= True
 	ALLOW_CONTENT_DOWNLOAD 		= False
+
+	# AWS
+	USE_AWS_S3					= False
+	AWS_S3_KEY					= None
+	AWS_S3_SECRET				= None
+	AWS_S3_BUCKET				= None
+	AWS_S3_REGION				= None
 
 class DevelopmentConfig(BaseConfig):
 

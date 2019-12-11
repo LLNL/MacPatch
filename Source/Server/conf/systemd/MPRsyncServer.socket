@@ -1,0 +1,10 @@
+[Unit]
+Description=MacPatch Rsync Server Socket
+Conflicts=MPRsyncServer.service
+
+[Socket]
+ListenStream=873
+Accept=yes
+
+[Install]
+WantedBy=sockets.target 

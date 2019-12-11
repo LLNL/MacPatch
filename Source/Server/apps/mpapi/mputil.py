@@ -15,6 +15,7 @@ import os.path
 import hmac
 from ldap3 import Server, Connection, ALL, AUTO_BIND_NO_TLS, SUBTREE, ALL_ATTRIBUTES
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
+from werkzeug.security import check_password_hash
 
 from cryptography.exceptions import *
 from cryptography.hazmat.backends import default_backend
@@ -22,7 +23,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
-from base64 import b64encode, b64decode, encodestring
+from base64 import b64encode, b64decode
 
 from . import db
 from . model import MPAgentRegistration, MpClient, AdmGroupUsers, AdmUsers, AdmUsersInfo, MpSiteKeys
@@ -167,7 +168,7 @@ def authUser(username_or_token, password):
 		# Token Was Good
 		return True
 
-	print("Error unable to verify user against any datasource.")
+	log_Error("Error unable to verify user against any datasource.")
 	return res
 
 '''
@@ -196,8 +197,8 @@ def dbUserAuth(user, password):
 	try:
 		admUser = AdmUsers.query.filter(AdmUsers.user_id == user, AdmUsers.enabled == 1).first()
 		if admUser:
-			hash_pass = hashlib.md5(password).hexdigest()
-			if admUser.user_pass.lower() == hash_pass.lower():
+			res = check_password_hash(admUser.user_pass, password)
+			if res:
 				return True
 			else:
 				log_Error("Error with user name or password.")
@@ -208,7 +209,7 @@ def dbUserAuth(user, password):
 
 	except:  # catch *all* exceptions
 		e = sys.exc_info()[0]
-		print e
+		print(e)
 		return False
 
 '''
@@ -292,7 +293,7 @@ def adminUserRights(user):
 
 	except:  # catch *all* exceptions
 		e = sys.exc_info()[0]
-		print e
+		print(e)
 		return None
 
 def isValidAutoPKGUser(user):
@@ -411,7 +412,7 @@ def sendEmailMessage(subject, message, address=None):
 		content = headers + "\r\n\r\n" + message
 		session.sendmail('macpatch@your.macpatch.server.com', admEmlLst, content)
 	except:
-		print("Unexpected error:", sys.exc_info()[0])
+		print(("Unexpected error:", sys.exc_info()[0]))
 
 # ----------------------------------------------------------------------------
 '''
@@ -430,7 +431,7 @@ def read_config_file(configFile):
 			print('Well darn.')
 
 	else:
-		print("Error, could not open file " + configFile.strip())
+		print(("Error, could not open file " + configFile.strip()))
 
 	return data
 
@@ -481,18 +482,25 @@ def signData(data):
 			data = _data
 
 		try:
-			private_key = serialization.load_pem_private_key( str(qKeys.priKey),None, default_backend() )
-			signature = private_key.sign( data, padding.PKCS1v15(), hashes.SHA1() )
-			encodedSignature = b64encode(signature)
+			private_key = serialization.load_pem_private_key( bytes(qKeys.priKey,'utf-8'), password=None, backend=default_backend() )
+			if not private_key:
+				log_Error("Missing Private Key.")
+			signature = private_key.sign( data.encode('utf-8'), padding.PKCS1v15(), hashes.SHA1() )
+			encodedSignature = b64encode(signature).decode('utf-8')
 
 			return encodedSignature
 
 		except InvalidKey:
 			log_Error("InvalidKey, Unable to sign data.")
 			return None
-		except:
+
+		except Exception as e:
 			log_Error("Error, Unable to sign data.")
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			message=str(e.args[0]).encode("utf-8")
+			log_Error('[signData][Exception][Line: {}] Message: {}'.format(exc_tb.tb_lineno, message))
 			return None
+
 	else:
 		return None
 
@@ -501,11 +509,12 @@ def verifySignedData(signature, data):
 	if qKeys is not None:
 		try:
 			# Get Keys
-			private_key = serialization.load_pem_private_key(str(qKeys.priKey), None, default_backend())
+			private_key = serialization.load_pem_private_key( bytes(qKeys.priKey,'utf-8'), password=None, backend=default_backend() )
 			public_key = private_key.public_key()
 			# Verify Signature
-			result = public_key.verify(b64decode(signature), data, padding.PKCS1v15(),hashes.SHA1())
+			result = public_key.verify(b64decode(signature), data.encode('utf-8'), padding.PKCS1v15(),hashes.SHA1())
 			return True
+
 		except InvalidSignature:
 			log_Error("InvalidSignature, Unable to verify signature.")
 			log_Debug("Signature: " + signature)
@@ -521,3 +530,32 @@ def verifySignedData(signature, data):
 
 	log_Error("[verifySignedData] Error, unable to get RSA keys from database.")
 	return False
+
+# ----------------------------------------------------------------------------
+'''
+	Base64 With Default
+'''
+def b64EncodeAsString(data, defaultValue=None):
+	result = ''
+	if defaultValue is not None:
+		result = defaultValue
+
+	if data is not None:
+		if data.__class__ is not 'bytes':
+			if len(data) > 0:
+				data = data.encode('utf-8')
+				result = b64encode(data).decode('utf-8')
+		else:
+			if len(data) > 0:
+				result = b64encode(data).decode('utf-8')
+
+	return result
+
+def rowWithDefault(obj,attribute,defaultValue=None):
+	row = obj.asDict
+	if attribute in row:
+		return row[attribute]
+	else:
+		return defaultValue
+
+

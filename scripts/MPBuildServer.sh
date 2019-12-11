@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.2.0
+# Version: 3.5.0
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -35,6 +35,11 @@
 # 3.1.0     Updates to remove tomcat and use new console
 # 3.1.1     All of MP now uses a virtualenv
 # 3.2.0     Replaced bower with yarn for javascript package management
+# 3.3.0     Add python 3 support
+# 3.4.0     New Server directory structure to help better support upgrades
+#			And the use of docker
+# 3.5.0     Add support for upgrade flag, so when MPServerUpgrader.sh runs
+#           it only does whats needed.
 #
 #
 # ----------------------------------------------------------------------------
@@ -82,10 +87,12 @@ USEMACOS=false
 MACPROMPTFORXCODE=true
 MACPROMPTFORBREW=true
 USEOLDPY=false
+ISUPGRADE=false
 
 MPBASE="/opt/MacPatch"
 MPSRVCONTENT="${MPBASE}/Content/Web"
 MPSERVERBASE="/opt/MacPatch/Server"
+MPSERVERCONF="/opt/MacPatch/ServerConfig"
 BUILDROOT="${MPBASE}/.build/server"
 TMP_DIR="${MPBASE}/.build/tmp"
 SRC_DIR="${MPSERVERBASE}/conf/src/server"
@@ -97,6 +104,22 @@ minorVer="0"
 buildVer="0"
 
 if [[ $platform == 'linux' ]]; then
+
+	pyv="$(python -V 2>&1)"
+	if [ $? != 0 ]; then
+		pyv="$(python3 -V 2>&1)"
+		if [ $? != 0 ]; then
+			echo " "
+			echo "Python was not detected on this system. Please install python then re-run this script."
+			echo " "
+			exit 1
+		else
+			# create symlink to python3 
+			pyPath=`which python3`
+			ln -s $pyPath /bin/pyhton
+		fi
+	fi
+
 	USELINUX=true
 	OWNERGRP="www-data:www-data"
 	LNXDIST=`python -c "import platform;print(platform.linux_distribution()[0])"`
@@ -129,11 +152,14 @@ fi
 
 usage() { echo "Usage: $0 [-c ALT_SSL_CERT]" 1>&2; exit 1; }
 
-while getopts "hc:" opt; do
+while getopts "hc:u" opt; do
 	case $opt in
 		c)
 			CA_CERT=${OPTARG}
 			;;
+        u)
+            ISUPGRADE=true
+            ;;
 		h)
 			echo
 			usage
@@ -304,6 +330,16 @@ mkdirP ${MPBASE}/Content/Web/patches
 mkdirP ${MPBASE}/Content/Web/sav
 mkdirP ${MPBASE}/Content/Web/sw
 mkdirP ${MPBASE}/Content/Web/tools
+if ! $ISUPGRADE; then    
+    mkdirP ${MPBASE}/ServerConfig
+    mkdirP ${MPBASE}/ServerConfig/etc
+    mkdirP ${MPBASE}/ServerConfig/flask
+    mkdirP ${MPBASE}/ServerConfig/jobs
+    mkdirP ${MPBASE}/ServerConfig/logs/apps
+    touch ${MPBASE}/ServerConfig/flask/config.cfg
+    touch ${MPBASE}/ServerConfig/flask/conf_api.cfg
+    touch ${MPBASE}/ServerConfig/flask/conf_console.cfg
+fi
 cp -rp ${MPBASE}/Source/Server ${MPSERVERBASE}
 mkdirP ${MPSERVERBASE}/InvData/files
 mkdirP ${MPSERVERBASE}/lib
@@ -313,25 +349,9 @@ mkdirP ${MPSERVERBASE}/logs
 # Copy compiled files
 # ------------------
 if $USEMACOS; then
-	echo
-	echo "* Uncompress source files needed for build"
-	echo "-----------------------------------------------------------------------"
 
 	# Copy Agent Uploader
 	cp ${MPSERVERBASE}/conf/Content/Web/tools/MPAgentUploader.zip ${MPBASE}/Content/Web/tools/
-
-	PCRE_SW=`find "${SRC_DIR}" -name "pcre-"* -type f -exec basename {} \; | head -n 1`
-	OSSL_SW=`find "${SRC_DIR}" -name "openssl-"* -type f -exec basename {} \; | head -n 1`
-
-	# PCRE
-	echo " - Uncompress ${PCRE_SW}"
-	mkdir -p ${TMP_DIR}/pcre
-	tar xfz ${SRC_DIR}/${PCRE_SW} --strip 1 -C ${TMP_DIR}/pcre
-
-	# OpenSSL
-	echo " - Uncompress ${OSSL_SW}"
-	mkdir -p ${TMP_DIR}/openssl
-	tar xfz ${SRC_DIR}/${OSSL_SW} --strip 1 -C ${TMP_DIR}/openssl
 
 	# BREW Software Check
 	XOPENSSL=false
@@ -387,7 +407,7 @@ if $USELINUX; then
 		# Add the Yarn repo
 		curl -sLk https://dl.yarnpkg.com/rpm/yarn.repo -o /etc/yum.repos.d/yarn.repo
 		# Check if needed packges are installed or install
-		pkgs=("gcc" "gcc-c++" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release" "python-devel" "python-setuptools" "python-wheel" "python-pip" "swig" "yarn")
+        pkgs=("gcc" "gcc-c++" "zlib-devel" "pcre-devel" "openssl-devel" "epel-release" "python3" "python3-devel" "python3-setuptools" "python3-pip" "swig" "yarn")
 		for i in "${pkgs[@]}"
 		do
 			p=`rpm -qa --qf '%{NAME}\n' | grep -e ${i}$ | head -1`
@@ -401,14 +421,26 @@ if $USELINUX; then
 		apt-add-repository universe
 		apt-get update
 
+        ubuntuVer=`cat /etc/lsb_release | grep DISTRIB_RELEASE | awk -F= '{print $2}'`
 
+        # Yarn not getting installed  
 		# Add the Yarn repo
 		curl -sSk https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 		echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 		#statements
-		pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev" "python-dev" "python-pip" "swig" "yarn")
+		pkgs=("build-essential" "zlib1g-dev" "libpcre3-dev" "libssl-dev" "python3-dev" "python3-pip" "python3-venv" "swig" "yarn")
 		for i in "${pkgs[@]}"
 		do
+            if [ $i == "yarn" ]; then 
+                if [ $(ver $ubuntuVer) -lt $(ver 16.05) ]; then  
+                    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+                    echo
+                    echo "Install nodejs 10.x"
+                    sudo apt-get install -y nodejs
+                    echo
+                fi
+            fi
+
 			p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
 			if [ -z $p ]; then
 				echo
@@ -421,146 +453,75 @@ if $USELINUX; then
 fi
 
 # ------------------
-# Upgrade Python Modules/Binaries
-# ------------------
-echo
-echo "* Upgrade/Install required python tools."
-echo "-----------------------------------------------------------------------"
-HAVEPIP=`which pip`
-if [ $? != 0 ] ; then
-	easy_install --quiet pip
-fi
-
-if ! command_exists virtualenv ; then
-	pip install virtualenv
-fi
-
-if command_exists virtualenv ; then
-	VENV_VER=`virtualenv --version`
-	echo "virtualenv version $VENV_VER"
-	if [ $(ver $VENV_VER) -lt $(ver "15.0.0") ]; then
-		echo "virtualenv is an older version."
-		echo "Install and setup of the virtual environment may not succeed."
-		read -p "Would you like to continue (Y/N)? [Y]: " VENVOK
-		VENVOK=${VENVOK:-Y}
-		if [ "$VENVOK" == "Y" ] || [ "$VENVOK" == "y" ] ; then
-			echo
-		else
-			exit 1
-		fi
-	fi
-
-	virtualenv --no-site-packages ${MPSERVERBASE}/venv
-	source ${MPSERVERBASE}/venv/bin/activate
-
-	pip_mods=( "pycrypto" "argparse" "biplist" "python-dateutil" "requests" "six" "wheel" "mysql-connector-python-rf" )
-	pip_mods_lnx=( "python-crontab" )
-
-	# Install all common python modules
-	for p in "${pip_mods[@]}"
-	do
-		echo " - Installing ${p}, python module."
-		pip install --quiet --upgrade ${p}
-		if [ $? != 0 ] ; then
-			echo " Error installing ${p}"
-			sleep 2
-			echo
-			echo " - Trying ${p}, python module again."
-			pip install --quiet --upgrade ${p}
-			if [ $? != 0 ] ; then
-				echo " Error installing ${p}"
-			fi
-		fi
-	done
-
-	# Install linux only python modules
-	if $USELINUX; then
-		for p in "${pip_mods_lnx[@]}"
-		do
-			echo " - Installing ${p}, python module."
-			pip install --quiet --upgrade ${p}
-			if [ $? != 0 ] ; then
-				echo " Error installing ${p}"
-				sleep 2
-				echo
-				echo " - Trying ${p}, python module again."
-				pip install --quiet --upgrade ${p}
-				if [ $? != 0 ] ; then
-					echo " Error installing ${p}"
-				fi
-			fi
-		done
-	fi
-
-	deactivate
-else
-	echo "virtualenv was not found. Please create virtual env after"
-	echo "build script has completed."
-	echo
-	echo "% cd $MPSERVERBASE"
-	echo "% virtualenv venv"
-	echo
-	sleep 5
-fi
-
-
-# ------------------
 # Build NGINX
 # ------------------
 echo
 echo "* Build and configure NGINX"
 echo "-----------------------------------------------------------------------"
-echo "See nginx build status in ${MPSERVERBASE}/logs/nginx-build.log"
+echo "See nginx build status in ${MPSERVERCONF}/logs/nginx-build.log"
 echo
 NGINX_SW=`find "${SRC_DIR}" -name "nginx-"* -type f -exec basename {} \; | head -n 1`
 
 mkdir -p ${BUILDROOT}/nginx
+mkdir -p ${MPSERVERCONF}/nginx/sites
 tar xfz ${SRC_DIR}/${NGINX_SW} --strip 1 -C ${BUILDROOT}/nginx
 cd ${BUILDROOT}/nginx
 
 if $USELINUX; then
 	./configure --prefix=${MPSERVERBASE}/nginx \
+    --conf-path=${MPSERVERCONF}/nginx/nginx.conf \
+    --without-http_autoindex_module \
+    --with-http_v2_module \
 	--with-http_ssl_module \
 	--with-pcre \
 	--user=www-data \
-	--group=www-data > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+	--group=www-data > ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 else
+    # Now using brew installed openssl and pcre
+    OPENSSLPWD=`sudo -u _appserver bash -c "brew --prefix openssl"`
 	export KERNEL_BITS=64
-	./configure --prefix=${MPSERVERBASE}/nginx \
-	--without-http_autoindex_module \
-	--without-http_ssi_module \
-	--with-http_ssl_module \
-	--with-openssl=${TMP_DIR}/openssl \
-	--with-pcre=${TMP_DIR}/pcre  > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+    ./configure --prefix=${MPSERVERBASE}/nginx \
+    --with-cc-opt="-I${OPENSSLPWD}/include" \
+    --with-ld-opt="-L${OPENSSLPWD}/lib" \
+    --conf-path=${MPSERVERCONF}/nginx/nginx.conf \
+    --with-http_v2_module \
+    --without-http_autoindex_module \
+    --without-http_ssi_module \
+    --with-http_ssl_module \
+    --with-pcre > ${MPSERVERCONF}/logs/nginx-build.log 2>&1
+	
 fi
 
-make  >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
-make install >> ${MPSERVERBASE}/logs/nginx-build.log 2>&1
+make  >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
+make install >> ${MPSERVERCONF}/logs/nginx-build.log 2>&1
 
-mv ${MPSERVERBASE}/nginx/conf/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf.orig
+# Rename orig nginx.conf file
+mv ${MPSERVERCONF}/nginx/nginx.conf ${MPSERVERCONF}/nginx/nginx.conf.orig
+
 if $USEMACOS; then
-	echo " - Copy nginx.conf.mac to ${MPSERVERBASE}/nginx/conf/nginx.conf"
-	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERBASE}/nginx/conf/nginx.conf
+	echo " - Copy nginx.conf.mac to ${MPSERVERCONF}/nginx/conf/nginx.conf"
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf.mac ${MPSERVERCONF}/nginx/nginx.conf
 else
-	echo " - Copy nginx.conf to ${MPSERVERBASE}/nginx/conf/nginx.conf"
-	cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERBASE}/nginx/conf/nginx.conf
+	echo " - Copy nginx.conf to ${MPSERVERCONF}/nginx/conf/nginx.conf"
+	cp ${MPSERVERBASE}/conf/nginx/nginx.conf ${MPSERVERCONF}/nginx/nginx.conf
 fi
-echo " - Copy nginx sites to ${MPSERVERBASE}/nginx/conf/sites"
-cp -r ${MPSERVERBASE}/conf/nginx/sites ${MPSERVERBASE}/nginx/conf/sites
+echo " - Copy nginx sites to ${MPSERVERCONF}/nginx/conf/sites"
+cp ${MPSERVERBASE}/conf/nginx/sites/*.conf ${MPSERVERCONF}/nginx/sites/
 
-perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $MPSERVERBASE/nginx/conf/nginx.conf
-FILES=$MPSERVERBASE/nginx/conf/sites/*.conf
+perl -pi -e "s#\[SRVBASE\]#$MPSERVERCONF#g" $MPSERVERCONF/nginx/nginx.conf
+FILES=$MPSERVERCONF/nginx/sites/*.conf
 for f in $FILES
 do
 	#echo "$f"
 	perl -pi -e "s#\[SRVBASE\]#$MPSERVERBASE#g" $f
 	perl -pi -e "s#\[SRVCONTENT\]#$MPSRVCONTENT#g" $f
+    perl -pi -e "s#\[SRVCONF\]#$MPSERVERCONF#g" $f
 done
 
 # ------------------
 # Link & Set Permissions
 # ------------------
-ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
+
 chown -R $OWNERGRP ${MPSERVERBASE}
 
 # Admin Site - App
@@ -586,37 +547,39 @@ yarn install --cwd ${MPSERVERBASE}/apps/mpconsole --modules-folder static/yarn_c
 # Generate self signed certificates
 # ------------------------------------------------------------
 #clear
-echo
-echo "* Creating self signed SSL certificate"
-echo "-----------------------------------------------------------------------"
+if ! $ISUPGRADE; then
+    echo
+    echo "* Creating self signed SSL certificate"
+    echo "-----------------------------------------------------------------------"
 
-certsDir="${MPSERVERBASE}/etc/ssl"
-if [ ! -d "${certsDir}" ]; then
-	mkdirP "${certsDir}"
-fi
+    certsDir="${MPSERVERCONF}/etc/ssl"
+    if [ ! -d "${certsDir}" ]; then
+    	mkdirP "${certsDir}"
+    fi
 
-USER="MacPatch"
-EMAIL="admin@localhost"
-ORG="MacPatch"
-DOMAIN=`hostname`
-COUNTRY="NO"
-STATE="State"
-LOCATION="Country"
+    USER="MacPatch"
+    EMAIL="admin@localhost"
+    ORG="MacPatch"
+    DOMAIN=`hostname`
+    COUNTRY="NO"
+    STATE="State"
+    LOCATION="Country"
 
-cd ${certsDir}
-OPTS=(/C="$COUNTRY"/ST="$STATE"/L="$LOCATION"/O="$ORG"/OU="$USER"/CN="$DOMAIN"/emailAddress="$EMAIL")
-COMMAND=(openssl req -new -sha256 -x509 -nodes -days 999 -subj "${OPTS[@]}" -newkey rsa:2048 -keyout server.key -out server.crt)
+    cd ${certsDir}
+    OPTS=(/C="$COUNTRY"/ST="$STATE"/L="$LOCATION"/O="$ORG"/OU="$USER"/CN="$DOMAIN"/emailAddress="$EMAIL")
+    COMMAND=(openssl req -new -sha256 -x509 -nodes -days 999 -subj "${OPTS[@]}" -newkey rsa:2048 -keyout server.key -out server.crt)
 
-"${COMMAND[@]}"
-if (( $? )) ; then
-	echo -e "ERROR: Something went wrong!"
-	exit 1
-else
-	echo "Done!"
-	echo
-	echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
-	echo "if running in a production environment."
-	echo
+    "${COMMAND[@]}"
+    if (( $? )) ; then
+    	echo -e "ERROR: Something went wrong!"
+    	exit 1
+    else
+    	echo "Done!"
+    	echo
+    	echo "NOTE: It's strongly recommended that an actual signed certificate be installed"
+    	echo "if running in a production environment."
+    	echo
+    fi
 fi
 
 # ------------------------------------------------------------
@@ -626,60 +589,93 @@ echo
 echo "* Create Virtualenv for Web services app"
 echo "-----------------------------------------------------------------------"
 
-cd "${MPSERVERBASE}/apps"
-mkdir -p "${MPSERVERBASE}/apps/log"
-chown $OWNERGRP "${MPSERVERBASE}/apps/log"
-chmod 2777 "${MPSERVERBASE}/apps/log"
+cd "${MPSERVERBASE}"
+python3 -m venv env/server
+python3 -m venv env/api
+python3 -m venv env/console
 
-if command_exists virtualenv ; then
-	VENV_VER=`virtualenv --version`
-	echo "virtualenv version $VENV_VER"
-	if [ $(ver $VENV_VER) -lt $(ver "15.0.0") ]; then
-		echo "virtualenv is an older version."
-		echo "Install and setup of the virtual environment may not succeed."
-		read -p "Would you like to continue (Y/N)? [Y]: " VENVOK
-		VENVOK=${VENVOK:-Y}
-		if [ "$VENVOK" == "Y" ] || [ "$VENVOK" == "y" ] ; then
-			echo
-		else
-			exit 1
-		fi
-	fi
-
-	virtualenv --no-site-packages env
-	source env/bin/activate
-
-	CA_STR=""
-	if [ "$CA_CERT" != "NA" ]; then
-		CA_STR="--cert \"$CA_CERT\""
-	fi
-
-	if $USEMACOS; then
-		# Install M2Crypto first
-		OPENSSLPWD=`sudo -u _appserver bash -c "brew --prefix openssl"`
-		env LDFLAGS="-L${OPENSSLPWD}/lib" \
-		CFLAGS="-I${OPENSSLPWD}/include" \
-		SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
-		pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
-
-		env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip -q install -r pyRequired.txt $CA_STR
-	else
-		# Install M2Crypto first
-		pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
-		pip -q install -r pyRequired.txt $CA_STR
-	fi
-
-	deactivate
-else
-	echo "virtualenv was not found. Please create virtual env."
-	echo
-	echo "% cd $MPSERVERBASE/apps"
-	echo "% virtualenv --no-site-packages --no-pip env"
-	echo "% source env/bin/activate"
-	echo "% pip -q install -r pyRequired.txt"
-	echo "% deactivate"
-	echo
+CA_STR=""
+if [ "$CA_CERT" != "NA" ]; then
+	CA_STR="--cert \"$CA_CERT\""
 fi
+
+cd "${MPSERVERBASE}/apps"
+if $USEMACOS; then
+	OPENSSLPWD=`sudo -u _appserver bash -c "brew --prefix openssl"`
+	
+	# Server venv
+    echo "Creating server scripts virtual env..."
+	source ${MPSERVERBASE}/env/server/bin/activate
+    ${MPSERVERBASE}/env/server/bin/pip3 -q install --upgrade pip --no-cache-dir
+    ${MPSERVERBASE}/env/server/bin/pip3 -q install pycrypto --no-cache-dir
+	${MPSERVERBASE}/env/server/bin/pip3 -q install requests --no-cache-dir
+	${MPSERVERBASE}/env/server/bin/pip3 -q install mysql-connector-python --no-cache-dir
+	
+	env LDFLAGS="-L${OPENSSLPWD}/lib" \
+	CFLAGS="-I${OPENSSLPWD}/include" \
+	SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
+    ${MPSERVERBASE}/env/server/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
+
+	env "CFLAGS=-I/usr/local/include -L/usr/local/lib" ${MPSERVERBASE}/env/server/bin/pip3 \
+	-q install -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR --no-cache-dir
+    deactivate
+
+	# API venv
+    echo "Creating api virtual env..."
+    source ${MPSERVERBASE}/env/api/bin/activate
+    ${MPSERVERBASE}/env/api/bin/pip3 -q install --upgrade pip --no-cache-dir
+
+	 # Install M2Crypto first
+	env LDFLAGS="-L${OPENSSLPWD}/lib" \
+	CFLAGS="-I${OPENSSLPWD}/include" \
+	SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
+    ${MPSERVERBASE}/env/api/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
+
+	env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip -q install \
+	-r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR --no-cache-dir
+    deactivate
+
+    # Console venv
+    echo "Creating console virtual env..."
+	source ${MPSERVERBASE}/env/console/bin/activate
+    ${MPSERVERBASE}/env/console/bin/pip3 -q install --upgrade pip --no-cache-dir
+
+    # Install M2Crypto first
+    env LDFLAGS="-L${OPENSSLPWD}/lib" \
+    CFLAGS="-I${OPENSSLPWD}/include" \
+    SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
+    ${MPSERVERBASE}/env/console/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
+
+    env "CFLAGS=-I/usr/local/include -L/usr/local/lib" ${MPSERVERBASE}/env/console/bin/pip3 \
+	-q install -r ${MPSERVERBASE}/apps/pyRequiredConsole.txt $CA_STR --no-cache-dir
+    deactivate
+
+else
+    echo "Creating server scripts virtual env..."
+    source ${MPSERVERBASE}/env/server/bin/activate
+    pip -q install --upgrade pip --no-cache-dir
+    pip -q install pycrypto --no-cache-dir
+	pip -q install python-crontab --no-cache-dir
+	pip -q install requests --no-cache-dir
+	pip -q install mysql-connector-python --no-cache-dir
+	pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
+    deactivate
+
+    echo "Creating api virtual env..."
+    source ${MPSERVERBASE}/env/api/bin/activate
+    pip -q install --upgrade pip --no-cache-dir
+	pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
+	pip -q install -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR
+    deactivate
+
+    echo "Creating console virtual env..."
+    source ${MPSERVERBASE}/env/console/bin/activate
+    pip -q install --upgrade pip --no-cache-dir
+    pip -q install m2crypto --no-cache-dir --upgrade $CA_STR
+    pip -q install -r ${MPSERVERBASE}/apps/pyRequiredConsole.txt $CA_STR
+    deactivate
+fi
+
 
 # ------------------
 # Clean up structure place holders
@@ -691,16 +687,28 @@ find ${MPBASE} -name ".mpRM" -print | xargs -I{} rm -rf {}
 rm -rf ${BUILDROOT}
 
 # ------------------
+# Move the Server/etc files to ServerConfig dir
+# ------------------
+if ! $ISUPGRADE; then
+    echo
+    echo "* Move Config files"
+    echo "-----------------------------------------------------------------------"
+    cp ${MPSERVERBASE}/etc/* $MPSERVERCONF/etc
+    rm -rf "${MPSERVERBASE}/etc"
+fi
+
+# ------------------
 # Set Permissions
 # ------------------
 clear
 echo "Setting Permissions..."
 chmod -R 0775 "${MPBASE}/Content"
 chown -R $OWNERGRP "${MPBASE}/Content"
-chmod -R 0775 "${MPSERVERBASE}/logs"
-chmod -R 0775 "${MPSERVERBASE}/etc"
+chmod -R 0775 "${MPSERVERCONF}/logs"
+chown -R $OWNERGRP "${MPSERVERCONF}/logs"
+chmod -R 0775 "${MPSERVERCONF}/etc"
 chmod -R 0775 "${MPSERVERBASE}/InvData"
-chown -R $OWNERGRP "${MPSERVERBASE}/apps/env"
+chown -R $OWNERGRP "${MPSERVERBASE}/env"
 
 echo
 echo

@@ -1,0 +1,23 @@
+# Python 3 = MacPatch API Modules
+Flask==1.1.1
+Flask-SQLAlchemy==2.4.1
+Flask-Script==2.0.6
+Flask-Migrate==2.5.2
+Flask-Caching==1.8.0
+Flask-RESTful==0.3.7
+Flask-Login==0.4.1
+Flask-Cors==3.0.8
+Flask-Mail==0.9.1
+cryptography==2.8
+Flask-Security==3.0.0
+SQLAlchemy==1.3.11
+ldap3==2.6.0
+yattag==1.11.2
+requests>=2.19.1
+pymysql>=0.9.3
+humanize>=0.5.1
+gunicorn==20.0.4
+gevent==1.4.0
+botocore==1.13.31
+boto3==1.10.31
+meinheld==1.0.1

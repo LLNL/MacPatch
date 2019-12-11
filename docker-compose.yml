@@ -4,23 +4,47 @@ services:
     image: "mysql:5.6"
     restart: always
     volumes:
-      - $PWD/dbstore:/var/lib/mysql
+      - ./dbstore:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: "my-secret-pw"
       MYSQL_DATABASE: "MacPatchDB3"
       MYSQL_USER: "dbadmin"
       MYSQL_PASSWORD: "dbadmin"
-  macpatch:
-    image: llnl/macpatch
+    ports:
+      - 3306:3306
+  nginx:
+    image: nginx
     restart: always
+    volumes:
+      - ./docker/nginx/sites:/etc/nginx/sites
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/ssl/server.crt:/etc/ssl/server.crt
+      - ./docker/ssl/server.key:/etc/ssl/server.key
+      - ./content:/opt/MacPatch/Content
     ports:
       - "443:443"
       - "80:80"
       - "3600:3600"
+  console:
+    image: macpatch
+    build: .
+    restart: always
+    command: ["console"]
     volumes:
-      - $PWD/ssl/server.crt:/opt/MacPatch/Server/etc/ssl/server.crt
-      - $PWD/ssl/server.key:/opt/MacPatch/Server/etc/ssl/server.key
-      - $PWD/content:/opt/MacPatch/Content
-      - $PWD/docker/run.sh:/run.sh
-      # - /path/to/myconfig//db-config.cfg:/opt/MacPatch/Server/apps/config.cfg
-      # - /path/to/myconfig/siteconfig.json:/opt/MacPatch/Server/etc/siteconfig.json
+      - ./content:/opt/MacPatch/Content
+      # - ./Source/Server/apps:/opt/MacPatch/Server/apps
+      # - .config/:/opt/MacPatch/ServerConfig
+  api:
+    image: macpatch
+    build: .
+    restart: always
+    command: ["api"]
+    volumes:
+      - ./content:/opt/MacPatch/Content
+  inventory:
+    image: macpatch
+    build: .
+    restart: always
+    command: ["inventory"]
+    volumes:
+      - ./invdata:/opt/MacPatch/Server/InvData
