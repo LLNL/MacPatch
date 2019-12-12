@@ -23,9 +23,7 @@ RUN yum -y update && \
         python3 \
         python3-pip \
         swig \
-        yarn \
-        supervisor \
-        nginx
+        yarn 
 
 RUN pip3 install --upgrade pip virtualenv
 
@@ -71,25 +69,16 @@ RUN mkdir -p $MPSERVERBASE/env && \
 # Copy in config files
 ADD docker/config/config.cfg $MPSERVERCONFIG/flask/config.cfg
 ADD docker/config/siteconfig.json $MPSERVERCONFIG/etc/siteconfig.json
-ADD docker/supervisord.conf $MPSERVERBASE/supervisord/supervisord.conf
-ADD docker/nginx/nginx.conf /etc/nginx/nginx.conf
-ADD docker/nginx/sites /etc/nginx/sites/
-ADD docker/nginx/ssl/server.crt /etc/ssl/server.crt
-ADD docker/nginx/ssl/server.key /etc/ssl/server.key
 ADD docker/run.sh /run.sh
 
 
 # Apply permissions and ownership
-RUN chmod -R 0775 "$MPBASE/Content" \
-    "$MPSERVERCONFIG" \
-    "$MPSERVERBASE/InvData" \
-    "$MPSERVERCONFIG/logs" \
-    "$MPSERVERCONFIG/etc"
-RUN chown -R $OWNERGRP "$MPBASE"
+RUN chmod -R 0775 "$MPBASE" && \
+    chown -R $OWNERGRP "$MPBASE"
 
 
 # Cleanup
-RUN find $MPBASE -name ".mpRM" -print | xargs -I{} rm -rf {}
+RUN find $MPBASE -name ".mpRM" -delete
 
 
 VOLUME $MPBASE/Content
