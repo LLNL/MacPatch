@@ -74,8 +74,8 @@ ADD docker/config/siteconfig.json $MPSERVERCONFIG/etc/siteconfig.json
 ADD docker/supervisord.conf $MPSERVERBASE/supervisord/supervisord.conf
 ADD docker/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD docker/nginx/sites /etc/nginx/sites/
-ADD docker/ssl/server.crt /etc/ssl/server.crt
-ADD docker/ssl/server.key /etc/ssl/server.key
+ADD docker/nginx/ssl/server.crt /etc/ssl/server.crt
+ADD docker/nginx/ssl/server.key /etc/ssl/server.key
 ADD docker/run.sh /run.sh
 
 
