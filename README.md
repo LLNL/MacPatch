@@ -1,15 +1,21 @@
-## Starting a test environment
+## How to build a test environment
 
 1. Create local folders to store persistent data outside the docker container.
 
     ```
     mkdir content
+    mkdir invdata/files
     mkdir dbstore
     chmod a+rw dbstore
-    mkdir invdata/files
     ```
 
-2. Start the docker environment.
+2. Download the recommended [docker-compose.yml](https://github.com/LLNL/MacPatch/blob/docker/docker-compose.yml) file. (You'll have this already if you cloned the repo.)
+
+    ```
+    curl -O https://github.com/LLNL/MacPatch/blob/docker/docker-compose.yml
+    ```
+
+3. Start up the environment.
 
     ```
     docker-compose up
