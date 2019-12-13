@@ -11,6 +11,7 @@
     ```
     mkdir content
     mkdir dbstore
+    chmod a+rw dbstore
     mkdir invdata/files
     ```
 
