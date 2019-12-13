@@ -56,9 +56,6 @@ ADD docker/run.sh /run.sh
 RUN chmod -R 0775 "$MPBASE" && \
     chown -R $OWNERGRP "$MPBASE"
 
-# Cleanup
-RUN find $MPBASE -name ".mpRM" -delete
-
 VOLUME $MPBASE/Content
 
 EXPOSE 80 443 3600
