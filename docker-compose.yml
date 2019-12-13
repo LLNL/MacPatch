@@ -26,8 +26,7 @@ services:
       - "80:80"
       - "3600:3600"
   console:
-    image: macpatch
-    build: .
+    image: escobar6/macpatch
     restart: always
     command: ["console"]
     volumes:
@@ -35,15 +34,13 @@ services:
       # - ./Source/Server/apps:/opt/MacPatch/Server/apps
       # - .config/:/opt/MacPatch/ServerConfig
   api:
-    image: macpatch
-    build: .
+    image: escobar6/macpatch
     restart: always
     command: ["api"]
     volumes:
       - ./content:/opt/MacPatch/Content
   inventory:
-    image: macpatch
-    build: .
+    image: escobar6/macpatch
     restart: always
     command: ["inventory"]
     volumes:

@@ -1,12 +1,6 @@
 ## Starting a test environment
 
-1. Build the docker image.
-
-    ```
-    docker build -t macpatch .
-    ```
-
-2. Create local folders to store persistent data outside the docker container.
+1. Create local folders to store persistent data outside the docker container.
 
     ```
     mkdir content
@@ -15,7 +9,7 @@
     mkdir invdata/files
     ```
 
-3. Start the docker environment.
+2. Start the docker environment.
 
     ```
     docker-compose up
@@ -49,12 +43,4 @@ Add your `config.cfg` file to the docker container by adding it to the `volumes`
     volumes:
       - $PWD/config.cfg:/opt/MacPatch/ServerConfig/flask/config.cfg
 ...
-```
-
-## Misc.
-
-Creating an image tar archive.
-
-```
-docker save macpatch > macpatch-$(date "+%y.%m.%d-%s").tar
 ```
