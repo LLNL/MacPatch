@@ -668,40 +668,15 @@
         NSURL *appSupportDir = [[fm URLsForDirectory:NSApplicationSupportDirectory inDomains:NSSystemDomainMask] objectAtIndex:0];
         NSURL *appSupportMPDir = [appSupportDir URLByAppendingPathComponent:@"MacPatch/SW_Data"];
         
-		NSString *appImage = sw[@"image"]?:@"AppStore";
-
         SoftwareCellView *cellView = [tableView makeViewWithIdentifier:@"MainCell" owner:self];
+		cellView.serverArray = [settings.servers copy];
         cellView.mp_SOFTWARE_DATA_DIR = appSupportMPDir;
         cellView.rowData = [sw copy];
 		cellView.actionButton.title = @"Install";
 		[cellView.actionButton setState:0];
 		[cellView.errorImage setImage:[NSImage imageNamed:@"EmptyImage"]];
-		
-		if (![sw[@"Software"][@"sw_img_path"] isEqualToString:@"None"]) {
-			MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
-			NSString *imgURL = sw[@"Software"][@"sw_img_path"];
-			if (imgURL.length > 2)
-			{
-				if (!sw[@"swImgData"])
-				{
-					NSData *imgData = [req dataForURLPath:[NSString stringWithFormat:@"/mp-content%@",imgURL.urlEncode]];
-					if (imgData) {
-						NSImage *image = [[NSImage alloc] initWithData:imgData];
-						[cellView.swIcon setImage:image];
-						sw[@"swImgData"] = imgData;
-					} else {
-						[cellView.swIcon setImage:[NSImage imageNamed:appImage]];
-					}
-				} else {
-					NSImage *image = [[NSImage alloc] initWithData:sw[@"swImgData"]];
-					[cellView.swIcon setImage:image];
-				}
-			}
-		} else {
-			[cellView.swIcon setImage:[NSImage imageNamed:appImage]];
-		}
-		
-        
+		//NSString *appImage = sw[@"image"]?:@"AppStore";
+        //[cellView.swIcon setImage:[NSImage imageNamed:appImage]];
         [cellView.swTitle setStringValue:sw[@"name"]];
 		[cellView.swCompany setPlaceholderString:@""];
 		[cellView.swCompany setStringValue:[NSString stringWithFormat:@"%@",sw[@"Software"][@"vendor"]]];
@@ -741,6 +716,7 @@
     }
     return nil;
 }
+
 
 #pragma mark - Search
 - (IBAction)searchString:(id)sender

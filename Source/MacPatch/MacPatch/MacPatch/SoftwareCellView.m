@@ -23,6 +23,8 @@
 @property (atomic, strong, readwrite) NSXPCConnection *worker;
 @property (nonatomic, strong) MPOProgressBar *progressBarNew;
 
+@property (nonatomic)         NSInteger requestCount;
+
 - (void)connectToHelperTool;
 - (void)connectAndExecuteCommandBlock:(void(^)(NSError *))commandBlock;
 
@@ -55,8 +57,55 @@
 	}
 	
 	[self connectToHelperTool];
+	[self loadImage];
 	//[self setupCell];
     // Drawing code here.
+}
+
+- (void)loadImage
+{
+    NSString *imgURL = _rowData[@"Software"][@"sw_img_path"];
+	if ([imgURL isEqualToString:@"None"]) return; //If no image then dont try
+	
+    if (self.requestCount == -1) {
+        self.requestCount++;
+    } else {
+        if (self.requestCount >= (self.serverArray.count - 1)) {
+			qlerror(@"[SoftwareCellView]: Error, could not complete request, failed all servers.");
+            return;
+        } else {
+            self.requestCount++;
+        }
+    }
+    
+    Server *server = [self.serverArray objectAtIndex:self.requestCount];
+	NSString *urlPath = [NSString stringWithFormat:@"/mp-content%@",imgURL.urlEncode];
+    NSString *url = [NSString stringWithFormat:@"%@://%@:%d%@",server.usessl ? @"https":@"http", server.host, (int)server.port, urlPath];
+	qldebug(@"[CELL IMAGE][%@]: %@", _rowData[@"name"], url);
+    __block STHTTPRequest *r = [STHTTPRequest requestWithURLString:url];
+    r.allowSelfSignedCert = server.allowSelfSigned;
+    __weak STHTTPRequest *wr = r;
+    __block __typeof(self) weakSelf = self;
+    
+    r.completionDataBlock = ^(NSDictionary *headers, NSData *data)
+    {
+        __strong STHTTPRequest *sr = wr;
+        if(sr == nil) return;
+        if (sr.responseStatus >= 200 && sr.responseStatus <= 299) {
+			NSImage *image = [[NSImage alloc] initWithData:data];
+			[self.swIcon setImage:image];
+        } else {
+            [weakSelf loadImage];
+        }
+    };
+    // Error block
+    r.errorBlock = ^(NSError *error)
+    {
+		qlerror(@"%@",error.localizedDescription);
+        [weakSelf loadImage];
+    };
+    
+    [r startAsynchronous];
 }
 
 // Setup User Notification for Software Install Operation

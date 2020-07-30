@@ -19,6 +19,7 @@
 }
 @property (nonatomic, strong) NSURL         *mp_SOFTWARE_DATA_DIR;
 @property (nonatomic, strong) NSDictionary  *rowData;
+@property (nonatomic, strong) NSArray		*serverArray;
 @property (nonatomic, assign) BOOL 			isAppInstalled;
 
 @property (nonatomic, strong) IBOutlet NSProgressIndicator *progressBar;

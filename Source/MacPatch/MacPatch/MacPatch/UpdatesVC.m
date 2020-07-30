@@ -46,6 +46,15 @@
 	NSMutableArray* _content;
 }
 
+- (IBAction)resizeIt:(id)sender
+{
+	[self resizeTableViewForPatchAll];
+}
+
+-(IBAction)backToDefault:(id)sender
+{
+	[self resizeTableViewToDefaultSize];
+}
 
 - (void)viewDidLoad
 {
@@ -197,12 +206,15 @@
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[cell.updateButton setHidden:YES];
 			});
-		} else {
+		} else if ([cell.rowData[@"restart"] isEqualToString:@"Yes"]) {
 			hasRebootPatch = YES;
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[cell.updateButton setTitle:@"On Reboot"];
 				[cell.updateButton setEnabled:NO];
 			});
+		} else {
+			qlerror(@"Error, restart attribute value was not set properly.");
+			qlerror(@"Row Data: %@",cell.rowData);
 		}
 		
 	}
@@ -230,7 +242,6 @@
 				
 				if (resultCode == 0) {
 					qlinfo(@"Install was sucessful");
-					[self resizeTableViewToDefaultSize];
 				} else {
 					qlerror(@"resultCode: %ld",resultCode);
 					if (!error) {
