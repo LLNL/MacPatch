@@ -25,7 +25,7 @@
 
 '''
     Script: MPSUSPatchSync
-    Version: 1.6.1
+    Version: 1.6.2
 
     Description: This Script read all of the patch information
     from the apple software update sucatlog files and post the
@@ -244,7 +244,7 @@ def postDataToWebService(patches, config):
     logger.debug("Post URL: "+ _url)
 
     payload = {'type': 'json' , 'data': simplejson.dumps(patches)}
-    headers = {'X-API-Key': apiKey, 'MPVersion-API': wsPostVersion, 'X-API-TS': dts}
+    headers = {'X-API-Key': apiKey, 'MPVersion-API': wsPostVersion, 'X-API-TS': dts, 'X-AGENT-ID': 'MacPatch', 'X-AGENT-VER': '99'}
 
     try:
         request = requests.post(_url, data=payload, verify=False, headers=headers)
