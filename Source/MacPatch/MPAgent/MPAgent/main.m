@@ -37,7 +37,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"3.3.6.6"
+#define APPVERSION	@"3.3.6.8"
 #define APPNAME		@"MPAgent"
 // This Define will be modified durning MPClientBuild script
 #define APPBUILD	@"[BUILD]"
@@ -348,7 +348,12 @@ int main (int argc, char * argv[])
 			if (echoToConsole) {
 				[LCLLogFile setMirrorsToStdErr:YES];
 			}
-			logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
+			if (a_Type == 99) {
+				logit(lcl_vInfo,@"***** %@ v.%@ (Daemon)started *****", APPNAME, APPVERSION);
+			} else {
+				logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
+			}
+			
 		}
 		
 		MPInv *inv;

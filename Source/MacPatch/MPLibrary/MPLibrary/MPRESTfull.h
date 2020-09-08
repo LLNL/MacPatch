@@ -199,4 +199,13 @@
  @return Dictionary of the revision and rules
  */
 - (NSDictionary *)getSoftwareRestrictions:(NSError **)err;
+
+/**
+ Get S3 url for package type
+
+ @param type (patch, sw)
+ @param id ID of the package to download
+ @return Dictionary (url is the key)
+ */
+- (NSDictionary *)getS3URLForType:(NSString *)type id:(NSString *)packageID;
 @end

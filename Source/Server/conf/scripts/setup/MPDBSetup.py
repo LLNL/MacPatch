@@ -30,6 +30,7 @@
   Script Version 1.0.0
 '''
 
+import argparse
 import getpass
 import os
 import psutil
@@ -37,6 +38,8 @@ import socket
 import subprocess
 import mysql.connector
 from mysql.connector import errorcode
+
+
 
 def passwordEntry():
 	passwrd = ""
@@ -61,7 +64,7 @@ def isProcessRunning(processName):
 				return True
 		except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
 			pass
-	
+
 	return False
 
 def which(program):
@@ -85,32 +88,40 @@ def mpSqlModes(modes):
 	res = res.replace(",ONLY_FULL_GROUP_BY", "")
 	return res
 
-def main():
-	
+def main(dbHost, dbPort, dbVer):
+
 	MPUSRPAS=""
-	HOST=socket.gethostname()
+	if dbHost is None:
+		HOST=socket.gethostname()
+	else:
+		HOST=dbHost
+
 	RESSTR=""
 	MYSQLVER="0"
- 
-	mysqld=which('mysqld')
-	if mysqld is None:
-		print("Could not find mysqld. Please make sure that")
-		print("mysqld is installed.")
-		exit(1)
+
+	if dbHost is None:
+		mysqld=which('mysqld')
+		if mysqld is None:
+			print("Could not find mysqld. Please make sure that")
+			print("mysqld is installed.")
+			exit(1)
+		else:
+			result = subprocess.run(['mysqld', '-V'], stdout=subprocess.PIPE)
+			resLst = result.stdout.decode('utf-8').split(" ")
+			for i, v in enumerate(resLst):
+				if v == 'Ver':
+					i += 1
+					MYSQLVER=resLst[i]
+					break
+
+		if not isProcessRunning('mysqld'):
+			print("Could not find mysqld running. Please make sure that")
+			print("mysql is running before continuing.")
+			exit(1)
 	else:
-		result = subprocess.run(['mysqld', '-V'], stdout=subprocess.PIPE)
-		resLst = result.stdout.decode('utf-8').split(" ")
-		for i, v in enumerate(resLst):
-			if v == 'Ver':
-				i += 1
-				MYSQLVER=resLst[i]
-				break
- 
-	if not isProcessRunning('mysqld'):
-		print("Could not find mysqld running. Please make sure that")
-		print("mysql is running before continuing.")
-		exit(1)
- 
+		if dbVer is not None:
+			MYSQLVER=dbVer
+
 	print("")
 	print("*************** MacPatch Database Setup ***************")
 	print("Notice:")
@@ -122,12 +133,13 @@ def main():
 	mp_db_usr = input("MacPatch Database User Account [mpdbadm]: ") or "mpdbadm"
 	print("MacPatch Database User Password... ")
 	mp_db_usr_pass = passwordEntry()
- 
+
 	SQL=[]
 	Q1=f"CREATE DATABASE IF NOT EXISTS `{mp_db_name}`;"
 	Q2=f"CREATE USER '{mp_db_usr}'@'%' IDENTIFIED BY '{mp_db_usr_pass}';"
 
 	if MYSQLVER.startswith('8'):
+		print('8')
 		QA="DROP USER IF EXISTS 'mpdbadm'@'localhost';"
 		QB="DROP USER IF EXISTS 'mpdbadm'@'%';"
 		Q3=f"GRANT ALL PRIVILEGES ON {mp_db_name}.* TO '{mp_db_usr}'@'%' WITH GRANT OPTION;"
@@ -135,23 +147,28 @@ def main():
 		Q4=f"GRANT ALL PRIVILEGES ON {mp_db_name}.* TO '{mp_db_usr}'@'localhost' WITH GRANT OPTION;"
 		SQL=[QA, QB, Q1, Q2, Q3, Q4A, Q4]
 	else:
+		print('old')
 		# Older Version of MySQL 5.x
-		Q3=f"GRANT ALL ON {mp_db_name}.* TO '{mp_db_usr}'@'%' IDENTIFIED BY '{mp_db_usr_pass}';"	
+		Q3=f"GRANT ALL ON {mp_db_name}.* TO '{mp_db_usr}'@'%' IDENTIFIED BY '{mp_db_usr_pass}';"
 		Q4=f"GRANT ALL PRIVILEGES ON {mp_db_name}.* TO '{mp_db_usr}'@'localhost' IDENTIFIED BY '{mp_db_usr_pass}';"
-		SQL=[Q1, Q2, Q3, Q4]		
-	
+		SQL=[Q1, Q2, Q3, Q4]
+
 	SQL.append("SET GLOBAL log_bin_trust_function_creators = 1;")
 	SQL.append("DELETE FROM mysql.user WHERE User='';")
 	SQL.append("FLUSH PRIVILEGES;")
- 
+
 	print("")
 	print("Please enter the MySQL root password to apply the configuration")
 	db_root_pass = getpass.getpass("Password: ")
-	cnx = mysql.connector.connect(user='root', password=db_root_pass)
+	if dbHost is None:
+		cnx = mysql.connector.connect(user='root', password=db_root_pass)
+	else:
+		cnx = mysql.connector.connect(user='root', password=db_root_pass, host=dbHost, port=dbPort)
+
 	cursor = cnx.cursor()
- 
+
 	hadErr = False
-	for qry in SQL: 
+	for qry in SQL:
 		try:
 			cursor.execute(qry)
 		except mysql.connector.Error as err:
@@ -180,14 +197,20 @@ def main():
 	modes = mpSqlModes(modeLst[0])
 	newModesQry=(f"SET GLOBAL sql_mode = '{modes}';")
 	cursor.execute(newModesQry)
- 
-	cursor.close()	
+
+	cursor.close()
 	cnx.close()
- 
+
 	# Done
 	print("")
 	print("*************** MacPatch Database Setup Complete ***************")
 	print(f"MacPatch database ({mp_db_name}) has been configured.")
 	print("")
 if __name__ == "__main__":
-	main()
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-H', action='store', dest='dbHost', default=None, help='MySQL Server Host or IP')
+	parser.add_argument('-p', action='store', dest='dbPort', default=3306, help='MySQL Server TCP Port')
+	parser.add_argument('-v', action='store', dest='dbVer', default=0, help='MySQL Server Version, use 8 or 7 for 5.7')
+	args = parser.parse_args()
+
+	main(args.dbHost, args.dbPort, args.dbVer)

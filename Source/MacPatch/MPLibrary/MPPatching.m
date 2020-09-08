@@ -496,11 +496,34 @@ typedef enum {
 					{
 						qlinfo(@"Start download for patch %@",[currPatchToInstallDict[@"pkg_url"] lastPathComponent]);
 						[self postStatusToDelegate:@"Downloading %@",[currPatchToInstallDict[@"pkg_url"] lastPathComponent]];
-						NSString *patchURL = [NSString stringWithFormat:@"/mp-content%@",currPatchToInstallDict[@"pkg_url"]];
+						NSString *patchURL;
+						BOOL useS3 = NO;
+						if ([currPatchToInstallDict[@"pkg_useS3"] intValue] == 1)
+						{
+							MPRESTfull *mpr = [MPRESTfull new];
+							NSDictionary *mpr_res = [mpr getS3URLForType:@"patch" id:_patch[@"patch_id"]];
+							if (mpr_res) {
+								useS3 = YES;
+								patchURL = mpr_res[@"url"];
+							} else {
+								qlerror(@"Result from getting the S3 url was nil. No download can occure.");
+								patchInstallErrors++;
+								[failedPatches addObject:_patch];
+								[cdb recordHistory:kMPPatchType name:_patch[@"patch"] uuid:_patch[@"patch_id"] action:kMPInstallAction result:1 errorMsg:@"Failed to download patch"];
+								break;
+							}
+						} else {
+							patchURL = [NSString stringWithFormat:@"/mp-content%@",currPatchToInstallDict[@"pkg_url"]];
+						}
+						
 						
 						qlinfo(@"Download patch from: %@",patchURL);
 						err = nil;
-						dlPatchLoc = [self downloadUpdate:patchURL error:&err];
+						if (useS3) {
+							dlPatchLoc = [self downloadUpdate:patchURL useFullURL:YES error:&err];
+						} else {
+							dlPatchLoc = [self downloadUpdate:patchURL error:&err];
+						}
 						if (err) {
 							qlerror(@"Error downloading a patch, skipping %@. Err Message: %@",_patch[@"patch"],err.localizedDescription);
 							patchInstallErrors++;
@@ -517,9 +540,6 @@ typedef enum {
 						if (![self doesHashMatch:dlPatchLoc knownHash:currPatchToInstallDict[@"pkg_hash"]])
 						{
 							qlerror(@"The downloaded file did not pass the file hash validation. No install will occur.");
-							
-							//fu = [MPFileUtils new];
-							//[fu removeContentsOfDirectory:dlPatchLoc.stringByDeletingLastPathComponent];
 							qlerror(@"Remove: %@",dlPatchLoc);
 							
 							patchInstallErrors++;
@@ -1065,13 +1085,22 @@ typedef enum {
 #pragma mark Networking
 - (NSString *)downloadUpdate:(NSString *)url error:(NSError **)err
 {
+	return [self downloadUpdate:url useFullURL:NO error:err];
+}
+
+- (NSString *)downloadUpdate:(NSString *)url useFullURL:(BOOL)isFullURL error:(NSError **)err
+{
 	NSString *res = nil;
 	NSError *error = nil;
 	MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
 	req.delegate = self;
 	NSString *uuid = [[NSUUID UUID] UUIDString];
 	NSString *dlDir = [@"/private/tmp" stringByAppendingPathComponent:uuid];
-	res = [req runSyncFileDownload:url downloadDirectory:dlDir error:&error];
+	if (isFullURL) {
+		res = [req runSyncFileDownloadFromServer:url downloadDirectory:dlDir error:&error];
+	} else {
+		res = [req runSyncFileDownload:url downloadDirectory:dlDir error:&error];
+	}
 	qlerror(@"[downloadUpdate][res]:%@",res);
 	if (error) {
 		qlerror(@"[downloadUpdate][error]:%@",error.localizedDescription);
@@ -1168,7 +1197,9 @@ typedef enum {
 	NSString *string = [[NSString alloc] initWithFormat:str arguments:va];
 	va_end(va);
 	qlinfo(@"postStatusToDelegate: %@",string);
-	[self.delegate patchProgress:string];
+	if ([self.delegate respondsToSelector:@selector(patchProgress:)]) {
+		[self.delegate patchProgress:string];
+	}
 }
 
 @end

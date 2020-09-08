@@ -7,7 +7,6 @@
 //
 
 #import "MPHTTPRequest.h"
-
 #import "MacPatch.h"
 #import "MPWSResult.h"
 #import "STHTTPRequest.h"
@@ -199,6 +198,7 @@
     [r setHeaderWithName:@"X-API-TS" value:ts];
     [r setHeaderWithName:@"X-API-Signature" value:sg];
     [r setHeaderWithName:@"X-Agent-ID" value:@"MacPatch"];
+	[r setHeaderWithName:@"X-Agent-VER" value:settings.clientVer];
     
     
     __weak STHTTPRequest *wr = r;
@@ -254,6 +254,7 @@
     [r setHeaderWithName:@"content-type" value:@"application/json; charset=utf-8"];
     [r setHeaderWithName:@"Accept" value:@"application/json"];
     [r setHeaderWithName:@"X-Agent-ID" value:@"MacPatch"];
+	[r setHeaderWithName:@"X-Agent-VER" value:settings.clientVer];
     
     NSError *jerror = nil;
     // Convert body to JSON Data
@@ -673,6 +674,7 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     request.HTTPMethod = @"GET";
     [request setValue:@"MacPatch" forHTTPHeaderField:@"X-Agent-ID"];
+	[request setValue:settings.clientVer forHTTPHeaderField:@"X-Agent-VER"];
     
     NSString *sg;
     NSString *ts = [self generateTimeStampForSignature];
@@ -750,6 +752,7 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     request.HTTPMethod = @"POST";
     [request setValue:@"MacPatch" forHTTPHeaderField:@"X-Agent-ID"];
+	[request setValue:settings.clientVer forHTTPHeaderField:@"X-Agent-VER"];
     
     // Generate Signture
     NSString *sg;
@@ -913,30 +916,7 @@
         completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
     }
 }
-/*
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
-{
-	completionHandler(NSURLSessionResponseAllow);
-	_downloadSize=[response expectedContentLength];
-	_dataToDownload=[[NSMutableData alloc]init];
-}
 
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
-{
-	[_dataToDownload appendData:data];
-	float progress = [ _dataToDownload length ]/_downloadSize;
-	
-	if([delegate respondsToSelector:@selector(downloadProgress:)])
-	{
-		[self postStatusToDelegate:[NSString stringWithFormat:@"%i\uFF05 Downloaded",(int)progress]];
-	}
-}
-
--(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
-{
-	qlerror(@"completed; error: %@", error);
-}
-*/
 - (void)postStatusToDelegate:(NSString *)str, ...
 {
 	va_list va;

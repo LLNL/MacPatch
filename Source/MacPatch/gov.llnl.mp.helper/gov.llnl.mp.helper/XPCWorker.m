@@ -1075,13 +1075,25 @@ NSString *const MPXPCErrorDomain = @"gov.llnl.mp.helper";
 
 - (BOOL)downloadSoftware:(NSDictionary *)swTask toDestination:(NSString *)toPath
 {
-	NSString *_url = [NSString stringWithFormat:@"/mp-content%@",[swTask valueForKeyPath:@"Software.sw_url"]];
+	NSString *_url;
+	NSInteger useS3 = [swTask valueForKeyPath:@"Software.sw_useS3"];
+	if (useS3 == 1) {
+		MPRESTfull *mpr = [MPRESTfull new];
+		NSDictionary *res = [mpr getS3URLForType:@"sw" id:swTask[@"id"]];
+		if (res) {
+			_url = res[@"url"];
+		} else {
+			qlerror(@"Result from getting the S3 url was nil. No download can occure.");
+			return FALSE;
+		}
+	} else {
+		_url = [NSString stringWithFormat:@"/mp-content%@",[swTask valueForKeyPath:@"Software.sw_url"]];
+	}
 	
 	NSError *dlErr = nil;
 	MPHTTPRequest *req = [[MPHTTPRequest alloc] init];
 	req.delegate = self;
 	NSString *dlPath = [req runSyncFileDownload:_url downloadDirectory:toPath error:&dlErr];
-	//NSString *dlPath = [req runSyncFileDownloadAlt:_url downloadDirectory:toPath error:&dlErr];
 	qldebug(@"Downloaded software to %@",dlPath);
 	return YES;
 }

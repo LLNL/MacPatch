@@ -1,10 +1,27 @@
 //
 //  SoftwareViewController.m
-//  MPPortal
-//
-//  Created by Heizer, Charles on 12/13/12.
-//  Copyright (c) 2012 LLNL. All rights reserved.
-//
+/*
+Copyright (c) 2017, Lawrence Livermore National Security, LLC.
+Produced at the Lawrence Livermore National Laboratory (cf, DISCLAIMER).
+Written by Charles Heizer <heizer1 at llnl.gov>.
+LLNL-CODE-636469 All rights reserved.
+
+This file is part of MacPatch, a program for installing and patching
+software.
+
+MacPatch is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License (as published by the Free
+Software Foundation) version 2, dated June 1991.
+
+MacPatch is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the terms and conditions of the GNU General Public
+License for more details.
+
+You should have received a copy of the GNU General Public License along
+with MacPatch; if not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*/
 
 #import "SoftwareViewController.h"
 #import "SWInstallItem.h"
@@ -336,7 +353,9 @@
 			});
 			return;
 		} else {
-			[self->swTasks removeAllObjects];
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[self->swTasks removeAllObjects];
+			});
 			[self->swTasks addObjectsFromArray:[self filterSoftwareTasks:tasks]];
 			//[self filterSoftwareTasks:tasks];
 		}
@@ -675,9 +694,11 @@
 		cellView.actionButton.title = @"Install";
 		[cellView.actionButton setState:0];
 		[cellView.errorImage setImage:[NSImage imageNamed:@"EmptyImage"]];
+		
 		//NSString *appImage = sw[@"image"]?:@"AppStore";
-        //[cellView.swIcon setImage:[NSImage imageNamed:appImage]];
-        [cellView.swTitle setStringValue:sw[@"name"]];
+		[cellView.swIcon setImage:[NSImage imageNamed:@"AppStore"]];
+        
+		[cellView.swTitle setStringValue:sw[@"name"]];
 		[cellView.swCompany setPlaceholderString:@""];
 		[cellView.swCompany setStringValue:[NSString stringWithFormat:@"%@",sw[@"Software"][@"vendor"]]];
         [cellView.swVersion setStringValue:[NSString stringWithFormat:@"Version %@",sw[@"Software"][@"version"]]];

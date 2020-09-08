@@ -94,7 +94,7 @@ enum {
 
 /**
  Scan host for patches
- 
+
  @param patchType - filter scan based on type All, Apple, Custom
  @param reply foundPatches, patchGroupData
  */
