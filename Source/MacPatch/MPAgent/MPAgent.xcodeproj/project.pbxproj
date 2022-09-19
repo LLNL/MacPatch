@@ -18,7 +18,6 @@
 		8F4B1F0716DD77FF00E15A9E /* AgentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F0316DD77FF00E15A9E /* AgentController.m */; };
 		8F4B1F1716DE634600E15A9E /* ClientCheckInOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F0C16DE634600E15A9E /* ClientCheckInOperation.m */; };
 		8F4B1F1816DE634600E15A9E /* AgentScanAndUpdateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F0E16DE634600E15A9E /* AgentScanAndUpdateOperation.m */; };
-		8F4B1F1916DE634600E15A9E /* AntiVirusScanAndUpdateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1016DE634600E15A9E /* AntiVirusScanAndUpdateOperation.m */; };
 		8F4B1F1A16DE634600E15A9E /* InventoryOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1216DE634600E15A9E /* InventoryOperation.m */; };
 		8F4B1F1B16DE634600E15A9E /* PatchScanAndUpdateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1416DE634600E15A9E /* PatchScanAndUpdateOperation.m */; };
 		8F4B1F1C16DE634600E15A9E /* MPSWDistTaskOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B1F1616DE634600E15A9E /* MPSWDistTaskOperation.m */; };
@@ -55,8 +54,6 @@
 		8FA6A8861B96230C006A329B /* MPInventoryPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A8851B96230C006A329B /* MPInventoryPlugin.m */; };
 		8FB1AB7827A45575003DC95C /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB1AB7727A45570003DC95C /* libcurl.tbd */; };
 		8FE03DD11B600C5A005D39EE /* MPAgentUpdater.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD01B600C5A005D39EE /* MPAgentUpdater.m */; };
-		8FE03DD61B60195A005D39EE /* AntiVirus.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD51B60195A005D39EE /* AntiVirus.m */; };
-		8FE03DD91B601AC6005D39EE /* AVSoftware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE03DD81B601AC6005D39EE /* AVSoftware.m */; };
 		8FE1996025B0D6F1001CA72C /* MPProvision.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE1995F25B0D6F1001CA72C /* MPProvision.m */; };
 		8FE560DA16DE978B00BB7600 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560D916DE978B00BB7600 /* libz.dylib */; };
 		8FE560DE16DE979E00BB7600 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE560DD16DE979E00BB7600 /* libicucore.dylib */; };
@@ -106,8 +103,6 @@
 		8F4B1F0C16DE634600E15A9E /* ClientCheckInOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientCheckInOperation.m; sourceTree = "<group>"; };
 		8F4B1F0D16DE634600E15A9E /* AgentScanAndUpdateOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentScanAndUpdateOperation.h; sourceTree = "<group>"; };
 		8F4B1F0E16DE634600E15A9E /* AgentScanAndUpdateOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AgentScanAndUpdateOperation.m; sourceTree = "<group>"; };
-		8F4B1F0F16DE634600E15A9E /* AntiVirusScanAndUpdateOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AntiVirusScanAndUpdateOperation.h; sourceTree = "<group>"; };
-		8F4B1F1016DE634600E15A9E /* AntiVirusScanAndUpdateOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AntiVirusScanAndUpdateOperation.m; sourceTree = "<group>"; };
 		8F4B1F1116DE634600E15A9E /* InventoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InventoryOperation.h; sourceTree = "<group>"; };
 		8F4B1F1216DE634600E15A9E /* InventoryOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InventoryOperation.m; sourceTree = "<group>"; };
 		8F4B1F1316DE634600E15A9E /* PatchScanAndUpdateOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatchScanAndUpdateOperation.h; sourceTree = "<group>"; };
@@ -174,10 +169,6 @@
 		8FD5E0FD23A9723F00A47F7C /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		8FE03DCF1B600C5A005D39EE /* MPAgentUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAgentUpdater.h; sourceTree = "<group>"; };
 		8FE03DD01B600C5A005D39EE /* MPAgentUpdater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAgentUpdater.m; sourceTree = "<group>"; };
-		8FE03DD41B60195A005D39EE /* AntiVirus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AntiVirus.h; sourceTree = "<group>"; };
-		8FE03DD51B60195A005D39EE /* AntiVirus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AntiVirus.m; sourceTree = "<group>"; };
-		8FE03DD71B601AC6005D39EE /* AVSoftware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVSoftware.h; sourceTree = "<group>"; };
-		8FE03DD81B601AC6005D39EE /* AVSoftware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVSoftware.m; sourceTree = "<group>"; };
 		8FE1995E25B0D6F1001CA72C /* MPProvision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPProvision.h; sourceTree = "<group>"; };
 		8FE1995F25B0D6F1001CA72C /* MPProvision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPProvision.m; sourceTree = "<group>"; };
 		8FE560CB16DE71A100BB7600 /* libMacPatch.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMacPatch.a; path = "../../../../Developer/Xcode/DerivedData/MacPatch-gcqqukpepnyosjeqfffypdzoyyfx/Build/Products/Debug/libMacPatch.a"; sourceTree = "<group>"; };
@@ -337,8 +328,6 @@
 				8F8019F62284DF3E006E6BC5 /* MPOperation.m */,
 				8F4B1F0D16DE634600E15A9E /* AgentScanAndUpdateOperation.h */,
 				8F4B1F0E16DE634600E15A9E /* AgentScanAndUpdateOperation.m */,
-				8F4B1F0F16DE634600E15A9E /* AntiVirusScanAndUpdateOperation.h */,
-				8F4B1F1016DE634600E15A9E /* AntiVirusScanAndUpdateOperation.m */,
 				8F9C2B5B1DDA1E33002A39D2 /* AppStoreOperation.h */,
 				8F9C2B5C1DDA1E33002A39D2 /* AppStoreOperation.m */,
 				8F4B1F0B16DE634600E15A9E /* ClientCheckInOperation.h */,
@@ -422,30 +411,10 @@
 			isa = PBXGroup;
 			children = (
 				8FF7E9CD210A557300678B93 /* Software */,
-				8FE03DD31B601938005D39EE /* AntiVirus */,
 				8FE03DCE1B600C26005D39EE /* AgentUpdater */,
 				8FA6A85E1B9621BF006A329B /* Inventory */,
 			);
 			name = Classes;
-			sourceTree = "<group>";
-		};
-		8FE03DD31B601938005D39EE /* AntiVirus */ = {
-			isa = PBXGroup;
-			children = (
-				8FE03DDA1B601ACA005D39EE /* Model */,
-				8FE03DD41B60195A005D39EE /* AntiVirus.h */,
-				8FE03DD51B60195A005D39EE /* AntiVirus.m */,
-			);
-			name = AntiVirus;
-			sourceTree = "<group>";
-		};
-		8FE03DDA1B601ACA005D39EE /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				8FE03DD71B601AC6005D39EE /* AVSoftware.h */,
-				8FE03DD81B601AC6005D39EE /* AVSoftware.m */,
-			);
-			name = Model;
 			sourceTree = "<group>";
 		};
 		8FF7E9CD210A557300678B93 /* Software */ = {
@@ -519,13 +488,11 @@
 				8F4B1EF016DD77BD00E15A9E /* main.m in Sources */,
 				8F53E2051FDA077F004D4C32 /* LocalAdminAccounts.m in Sources */,
 				8F2FC03E1E205523004710C7 /* MPFirmware.m in Sources */,
-				8FE03DD91B601AC6005D39EE /* AVSoftware.m in Sources */,
 				8F4B1F0616DD77FF00E15A9E /* MPAgent.m in Sources */,
 				8F4F55A4233010B20087E45D /* CheckIn.m in Sources */,
 				8FA6A8821B9621BF006A329B /* PowerProfile.m in Sources */,
 				8F6D32461CD3C34E006B1094 /* MPOSUpgrade.m in Sources */,
 				8FA6A87D1B9621BF006A329B /* MPInv.m in Sources */,
-				8FE03DD61B60195A005D39EE /* AntiVirus.m in Sources */,
 				8F9C2B5D1DDA1E33002A39D2 /* AppStoreOperation.m in Sources */,
 				8F2E697F1922C330001BF9D6 /* PostFailedWSRequests.m in Sources */,
 				8FA6A8861B96230C006A329B /* MPInventoryPlugin.m in Sources */,
@@ -542,7 +509,6 @@
 				8F9C2B561DDA1D17002A39D2 /* CKSoftwareProduct+ASProduct.m in Sources */,
 				8FA6A87E1B9621BF006A329B /* MPServerEntry.m in Sources */,
 				8FA6A8771B9621BF006A329B /* BatteryInfo.m in Sources */,
-				8F4B1F1916DE634600E15A9E /* AntiVirusScanAndUpdateOperation.m in Sources */,
 				8FA6A8781B9621BF006A329B /* CHDisk.m in Sources */,
 				8F4B1F1A16DE634600E15A9E /* InventoryOperation.m in Sources */,
 				8F53E2081FDA0E4A004D4C32 /* SmartCardReaderList.m in Sources */,
@@ -679,7 +645,7 @@
 				CLANG_WARN_INT_CONVERSION = NO;
 				CODE_SIGN_ENTITLEMENTS = MPAgent/MPAgent.entitlements;
 				CODE_SIGN_IDENTITY = "-";
-				CURRENT_PROJECT_VERSION = 3.6.4.2;
+				CURRENT_PROJECT_VERSION = 3.6.5.1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -699,7 +665,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/MPAgent/MPAgent-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 3.6.4;
+				MARKETING_VERSION = 3.6.5;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -725,7 +691,7 @@
 				CLANG_WARN_INT_CONVERSION = NO;
 				CODE_SIGN_ENTITLEMENTS = MPAgent/MPAgent.entitlements;
 				CODE_SIGN_IDENTITY = "-";
-				CURRENT_PROJECT_VERSION = 3.6.4.2;
+				CURRENT_PROJECT_VERSION = 3.6.5.1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -745,7 +711,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/MPAgent/MPAgent-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 3.6.4;
+				MARKETING_VERSION = 3.6.5;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

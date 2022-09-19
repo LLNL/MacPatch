@@ -77,5 +77,7 @@
 - (NSDictionary *)stringToDict:(NSString *)theString theDelimiter:(NSString *)theDelimiter;
 - (BOOL)sendResultsToWebService:(NSDictionary *)aDataMgrData;
 
+// Test
+- (int)collectInventoryDataV2;
 
 @end

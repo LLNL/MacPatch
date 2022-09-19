@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.6.1
+# Version: 3.6.3
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,8 +12,8 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
-# 1.4:    Remove Jetty Support
-#     Added Tomcat 7.0.57
+# 1.4:      Remove Jetty Support
+#           Added Tomcat 7.0.57
 # 1.5:      Added Tomcat 7.0.63
 # 1.6:      Variableized the tomcat config
 #           removed all Jetty refs
@@ -41,6 +41,8 @@
 #           Changed Linux dist detection to /etc/os-release
 # 3.6.0     M2Crypto has been updated to install without special flags
 # 3.6.1     Updated Nodejs install for yarn
+# 3.6.2
+# 3.6.3     Update for MacPAtch 3.6.5 add IPv6 support to NGINX
 #
 # ----------------------------------------------------------------------------
 
@@ -463,6 +465,7 @@ if $USELINUX; then
     --with-http_v2_module \
     --with-http_ssl_module \
     --with-pcre \
+    --with-ipv6 \
     --user=www-data \
     --group=www-data > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 else
@@ -476,6 +479,7 @@ else
     --without-http_autoindex_module \
     --without-http_ssi_module \
     --with-http_ssl_module \
+    --with-ipv6 \
     --with-pcre > ${MPSERVERBASE}/logs/nginx-build.log 2>&1
 
 fi
@@ -525,8 +529,8 @@ fi
 echo
 echo "* Installing Javascript modules"
 echo
-cd ${MPSERVERBASE}/apps/mpconsole
-yarn install --cwd ${MPSERVERBASE}/apps/mpconsole --modules-folder static/yarn_components --no-bin-links
+cd ${MPSERVERBASE}/apps/console/app
+yarn install --cwd ${MPSERVERBASE}/apps/console/app --modules-folder static/yarn_components --no-bin-links
 
 # ------------------------------------------------------------
 # Generate self signed certificates
@@ -572,19 +576,14 @@ echo
 echo "* Create Virtualenv for Web services app"
 echo "-----------------------------------------------------------------------"
 
-mkdir -p "${MPSERVERBASE}/apps/log"
-chown $OWNERGRP "${MPSERVERBASE}/apps/log"
-chmod 2777 "${MPSERVERBASE}/apps/log"
+mkdir -p "${MPSERVERBASE}/logs"
+chown $OWNERGRP "${MPSERVERBASE}/logs"
+chmod 2777 "${MPSERVERBASE}/logs"
 
 cd "${MPSERVERBASE}"
 python3 -m venv env/server --copies --clear
 python3 -m venv env/api --copies --clear
 python3 -m venv env/console --copies --clear
-
-CA_STR=""
-if [ "$CA_CERT" != "NA" ]; then
-    CA_STR="--cert \"$CA_CERT\""
-fi
 
 cd "${MPSERVERBASE}/apps"
 if $USEMACOS; then
@@ -595,13 +594,13 @@ if $USEMACOS; then
     source ${MPSERVERBASE}/env/server/bin/activate
     ${MPSERVERBASE}/env/server/bin/pip3 -q install --upgrade pip --no-cache-dir
     ${MPSERVERBASE}/env/server/bin/pip3 -q install pycrypto --no-cache-dir
-    ${MPSERVERBASE}/env/server/bin/pip3 -q install simplejson --no-cache-dir--no-cache-dir
+    ${MPSERVERBASE}/env/server/bin/pip3 -q install simplejson --no-cache-dir
     ${MPSERVERBASE}/env/server/bin/pip3 -q install requests --no-cache-dir
     ${MPSERVERBASE}/env/server/bin/pip3 -q install mysql-connector-python --no-cache-dir
     ${MPSERVERBASE}/env/server/bin/pip3 -q install psutil --no-cache-dir
 
     env "CFLAGS=-I/usr/local/include -L/usr/local/lib" ${MPSERVERBASE}/env/server/bin/pip3 \
-    -q install -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR
+    -q install -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt
     deactivate
 
     # API venv
@@ -609,8 +608,14 @@ if $USEMACOS; then
     source ${MPSERVERBASE}/env/api/bin/activate
     ${MPSERVERBASE}/env/api/bin/pip3 -q install --upgrade pip --no-cache-dir
 
+    # Install M2Crypto first
+    env LDFLAGS="-L$(brew --prefix openssl@1.1)/lib" \
+    CFLAGS="-I$(brew --prefix openssl@1.1)/include" \
+    SWIG_FEATURES="-cpperraswarn -includeall -I$(brew --prefix openssl@1.1)/include" \
+    ${MPSERVERBASE}/env/api/bin/pip3 -q pip install m2crypto --no-cache-dir
+
     env "CFLAGS=-I/usr/local/include -L/usr/local/lib" ${MPSERVERBASE}/env/api/bin/pip3 -q install \
-    -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR --no-cache-dir
+    -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt --no-cache-dir
     deactivate
 
     # Console venv
@@ -622,10 +627,10 @@ if $USEMACOS; then
     env LDFLAGS="-L${OPENSSLPWD}/lib" \
     CFLAGS="-I${OPENSSLPWD}/include" \
     SWIG_FEATURES="-cpperraswarn -includeall -I${OPENSSLPWD}/include" \
-    ${MPSERVERBASE}/env/console/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
+    ${MPSERVERBASE}/env/console/bin/pip3 -q install m2crypto --no-cache-dir --upgrade
 
     env "CFLAGS=-I/usr/local/include -L/usr/local/lib" ${MPSERVERBASE}/env/console/bin/pip3 \
-    -q install -r ${MPSERVERBASE}/apps/pyRequiredConsole.txt $CA_STR --no-cache-dir
+    -q install -r ${MPSERVERBASE}/apps/pyRequiredConsole.txt --no-cache-dir
     deactivate
 
 else
@@ -638,21 +643,21 @@ else
     ${MPSERVERBASE}/env/server/bin/pip3 -q install mysql-connector-python --no-cache-dir
     ${MPSERVERBASE}/env/server/bin/pip3 -q install psutil --no-cache-dir
     ${MPSERVERBASE}/env/server/bin/pip3 -q install python-crontab --no-cache-dir
-    ${MPSERVERBASE}/env/server/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
+    ${MPSERVERBASE}/env/server/bin/pip3 -q install m2crypto --no-cache-dir --upgrade
     deactivate
 
     echo "Creating api virtual env..."
     source ${MPSERVERBASE}/env/api/bin/activate
     ${MPSERVERBASE}/env/api/bin/pip3 -q install --upgrade pip --no-cache-dir
-    #${MPSERVERBASE}/env/api/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
-    ${MPSERVERBASE}/env/api/bin/pip3 -q install -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt $CA_STR
+    ${MPSERVERBASE}/env/api/bin/pip3 -q install m2crypto --no-cache-dir --upgrade
+    ${MPSERVERBASE}/env/api/bin/pip3 -q install -r ${MPSERVERBASE}/apps/pyRequiredAPI.txt
     deactivate
 
     echo "Creating console virtual env..."
     source ${MPSERVERBASE}/env/console/bin/activate
     ${MPSERVERBASE}/env/console/bin/pip3 -q install --upgrade pip --no-cache-dir
-    #${MPSERVERBASE}/env/console/bin/pip3 -q install m2crypto --no-cache-dir --upgrade $CA_STR
-    ${MPSERVERBASE}/env/console/bin/pip3 -q install -r ${MPSERVERBASE}/apps/pyRequiredConsole.txt $CA_STR
+    ${MPSERVERBASE}/env/console/bin/pip3 -q install m2crypto --no-cache-dir --upgrade
+    ${MPSERVERBASE}/env/console/bin/pip3 -q install -r ${MPSERVERBASE}/apps/pyRequiredConsole.txt
     deactivate
 fi
 

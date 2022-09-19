@@ -32,7 +32,6 @@
 // Operations
 #import "ClientCheckInOperation.h"
 #import "AgentScanAndUpdateOperation.h"
-#import "AntiVirusScanAndUpdateOperation.h"
 #import "InventoryOperation.h"
 #import	"PatchScanAndUpdateOperation.h"
 #import "MPSWDistTaskOperation.h"
@@ -49,7 +48,6 @@
 
     ClientCheckInOperation          *clientOp;
     AgentScanAndUpdateOperation     *agentOp;
-    AntiVirusScanAndUpdateOperation *avOp;
     InventoryOperation              *invOp;
     PatchScanAndUpdateOperation     *patchOp;
     MPSWDistTaskOperation           *swDistOp;
@@ -122,10 +120,8 @@
             [self runPatchScanAndUpdate];
             break;
         case 5:
-            [self runAVInfoScan];
             break;
         case 6:
-            [self runAVInfoScanAndDefsUpdate];
             break;
         case 7:
             [self scanAndUpdateAgentUpdater];
@@ -142,10 +138,7 @@
         case 11:
             [self runPostFailedWSRequests];
             break;
-        case 13:
-            [self runGetSUServerListOperation];
-            break;
-        case 8888:
+        case 25:
             [self authRestartCheck];
             break;
         case 99:
@@ -364,22 +357,6 @@
 										[queue addOperation:agentOp];
 										agentOp = nil;
 										 */
-									}
-									if ([taskDict[@"cmd"] isEqualToString:@"kMPAVInfo"])
-									{
-										avOp = [[AntiVirusScanAndUpdateOperation alloc] init];
-										avOp.taskName = @"kMPAVInfo";
-										[avOp setScanType:0];
-										[queue addOperation:avOp];
-										avOp = nil;
-									}
-									else if ([taskDict[@"cmd"] isEqualToString:@"kMPAVCheck"])
-									{
-										avOp = [[AntiVirusScanAndUpdateOperation alloc] init];
-										avOp.taskName = @"kMPAVCheck";
-										[avOp setScanType:1];
-										[queue addOperation:avOp];
-										avOp = nil;
 									}
 									else if ([taskDict[@"cmd"] isEqualToString:@"kMPInvScan"])
 									{
@@ -663,42 +640,6 @@
     exit(0);
 }
 
-- (void)runAVInfoScan
-{
-    avOp = [[AntiVirusScanAndUpdateOperation alloc] init];
-    [avOp setScanType:0];
-    [queue addOperation:avOp];
-    avOp = nil;
-    
-    if ([NSThread isMainThread]) {
-        while ([[queue operations] count] > 0) {
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-    } else {
-        [queue waitUntilAllOperationsAreFinished];
-    }
-    
-	exit(0);
-}
-
-- (void)runAVInfoScanAndDefsUpdate
-{
-    avOp = [[AntiVirusScanAndUpdateOperation alloc] init];
-    [avOp setScanType:1];
-    [queue addOperation:avOp];
-    avOp = nil;
-    
-    if ([NSThread isMainThread]) {
-        while ([[queue operations] count] > 0) {
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-    } else {
-        [queue waitUntilAllOperationsAreFinished];
-    }
-    
-	exit(0);
-}
-
 -(void)scanAndUpdateAgentUpdater
 {
     agentOp = [[AgentScanAndUpdateOperation alloc] init];
@@ -785,22 +726,21 @@
     exit(0);
 }
 
-- (void)runGetSUServerListOperation
+- (void)unenrollFromMDM:(NSString *)mdmKeyName
 {
-    /*
-    suServerListOp = [[GetASUSListOperation alloc] init];
-    [queue addOperation:suServerListOp];
-    suServerListOp = nil;
     
-    if ([NSThread isMainThread]) {
-        while ([[queue operations] count] > 0) {
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    if ([mdmKeyName.lowercaseString isEqualToString:@"intune"])
+    {
+        qlinfo(@"Attempting to remove this device from InTune.");
+        NSError *err = nil;
+        BOOL res = NO;
+        MPRESTfull *mpr = [MPRESTfull new];
+        res = [mpr unenrollFromMDM:mdmKeyName error:&err];
+        if (err) {
+            qlerror(@"Error, unable to remove this device from InTune.");
+            qlerror(@"%@",err.localizedDescription);
         }
-    } else {
-        [queue waitUntilAllOperationsAreFinished];
     }
-    */
-    exit(0);
 }
 
 #pragma mark - Check In Thread - NEW
@@ -1117,7 +1057,7 @@
                     }
                 }
             }
-            qldebug(@"provCriteria.count %d == %d count",provCriteria.count,count);
+            qldebug(@"provCriteria.count %lu == %d count",(unsigned long)provCriteria.count,count);
             if (provCriteria.count == count)
             {
                 // Criteria is a pass, write .MPProvisionBegin file

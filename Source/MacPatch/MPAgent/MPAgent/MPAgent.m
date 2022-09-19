@@ -175,6 +175,7 @@ static MPAgent *_instance;
 	NSDictionary *clientData = [ci agentData];
 	MPRESTfull *rest = [MPRESTfull new];
      */
+    return YES;
 }
 
 @end

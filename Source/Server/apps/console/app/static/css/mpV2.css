@@ -1,0 +1,9 @@
+
+.xRow {
+    display: table;
+}
+
+.xColumn {
+    display: table-cell;
+    padding-right: 3px;
+}

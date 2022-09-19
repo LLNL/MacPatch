@@ -181,18 +181,22 @@
 		
 		NSString *depStatus = @"NA";
 		NSString *mdmStatus = @"NA";
+        NSString *mdmServer = @"NA";
 		
 		for (NSString *l in lines)
 		{
 			if ([l containsString:@"DEP:"]) {
 				depStatus = [[l componentsSeparatedByString:@":"][1] trim];
 			}
-			if ([l containsString:@"MDM"]) {
-				mdmStatus = [[l componentsSeparatedByString:@":"][1] trim];
-			}
+            if ([l containsString:@"MDM enrollment:"]) {
+                mdmStatus = [[l componentsSeparatedByString:@":"][1] trim];
+            }
+            if ([l containsString:@"MDM server:"]) {
+                mdmServer = [[l componentsSeparatedByString:@":"][1] trim];
+            }
 		}
 		
-		NSDictionary *status = @{@"mdmEnrollment":mdmStatus, @"depEnrollment":depStatus};
+		NSDictionary *status = @{@"mdmEnrollment":mdmStatus, @"depEnrollment":depStatus, @"mdmServer":mdmServer};
 		return status;
 	}
 }

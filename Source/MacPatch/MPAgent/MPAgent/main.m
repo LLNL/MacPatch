@@ -39,7 +39,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#define APPVERSION	@"3.6.4.2"
+#define APPVERSION	@"3.6.5.1"
 #define APPNAME		@"MPAgent"
 // This Define will be modified durning MPClientBuild script
 #define APPBUILD	@"[BUILD]"
@@ -48,11 +48,38 @@
 void usage(void);
 const char * consoleUser(void);
 
+typedef enum {
+    kCheckIn = 1,
+    kPatchScan = 3,
+    kPatchUpdate = 4,
+    kPatchUpdateFilter = 5,
+    kPatchUpdateForBundle = 6,
+    kAgentUpdater = 7,
+    kMandatorySoftwareScan = 8,
+    kOSProfiles = 9,
+    kOSUpgradeState = 10,
+    kInventory = 12,
+    kSoftwareInstallGroup = 13,
+    kSoftwareInstallSID = 14,
+    kSoftwareInstallPlist = 15,
+    kAgentRegister = 16,
+    kAgentRegistrationInfo = 17,
+    kAgentRegistrationEcho = 18,
+    kAgentInstall = 19,
+    kProvisioning = 20,
+    kMandatorySoftwareInstall = 21,
+    kProvisionConfig = 22,
+    kMDMUnenrollDevice = 23,
+    kShowInstalledApps = 24,
+    kFileVaultCheck = 25,
+    kDaemonMode = 99
+} MAINARGS;
+
 int main (int argc, char * argv[])
 {
 	@autoreleasepool
     {
-		int a_Type              = 99;
+		int a_Type              = kDaemonMode;
 		BOOL echoToConsole      = NO;
 		BOOL debugLogging       = NO;
 		BOOL traceLogging       = NO;
@@ -81,6 +108,9 @@ int main (int argc, char * argv[])
         NSString *osMigAction   = NULL;
         NSString *osMigLabel    = @"";
         NSString *osMigID       = @"auto";
+        
+        // MDM Stuff
+        NSString *mdmKey        = @"NA";
 		
 		// Setup argument processing
 		int c;
@@ -117,9 +147,6 @@ int main (int argc, char * argv[])
 				{"Audit"            	,no_argument		,0, 'A'},
 				{"cuuid"            	,no_argument		,0, 'C'},
 				
-				// AV
-				{"AVScan"				,no_argument	    ,0, 'a'},
-				{"AVUpdate"				,no_argument	    ,0, 'U'},
 				
 				// Agent Updater
 				{"AgentUpdater"			,no_argument	    ,0, 'G'},
@@ -164,12 +191,20 @@ int main (int argc, char * argv[])
                 // Test DB
                 {"installedApps"        ,no_argument        ,0, 'E'},
                 
-
+                // MDM
+                {"mdmUnenroll"          ,required_argument  ,0, 'W'},
+                
+                // Test
+                {"inventory"            ,no_argument  ,0, 'y'},
+                
 				{0, 0, 0, 0}
 			};
 			// getopt_long stores the option index here.
+            // H, I, J, N, O, Q
+            // j, n, o, q, w,
+            // Used = y
 			int option_index = 0;
-			c = getopt_long (argc, argv, "eDTVciIYsuxfB:Ft:ACaUGSMg:d:P:Lzpr::R::X:k:l:m:Kvbh:ZE", long_options, &option_index);
+			c = getopt_long (argc, argv, "eDTVciIYsuxfB:Ft:ACGSMg:d:P:Lzpr::R::X:k:l:m:Kvbh:ZEW:y", long_options, &option_index);
 			
 			// Detect the end of the options.
 			if (c == -1)
@@ -190,30 +225,30 @@ int main (int argc, char * argv[])
 					verboseLogging = YES;
 					break;
 				case 'c':
-					a_Type = 1;
+					a_Type = kCheckIn;
 					break;
 				case 'i':
 					isILoadMode = YES;
-					a_Type = 4;
+					a_Type = kPatchUpdate;
 					break;
 				case 'I':
 					isILoadMode = YES;
-					a_Type = 4;
+					a_Type = kPatchUpdate;
 					break;
                 case 'Y':
                     isILoadMode = YES;
                     break;
 				case 's':
-					a_Type = 3;
+					a_Type = kPatchScan;
 					break;
 				case 'u':
-					a_Type = 4;
+					a_Type = kPatchUpdate;
 					break;
 				case 'x':
-					a_Type = 4;
+					a_Type = kPatchUpdate;
 					break;
 				case 'f':
-					a_Type = 50;
+					a_Type = kPatchUpdateFilter;
 					if ([[[NSString stringWithUTF8String:optarg] lowercaseString] isEqualTo:@"apple"]) {
 						updateType = kApplePatches;
 					} else if ([[[NSString stringWithUTF8String:optarg] lowercaseString] isEqualTo:@"custom"] || [[[NSString stringWithUTF8String:optarg] lowercaseString] isEqualTo:@"third"]) {
@@ -223,83 +258,76 @@ int main (int argc, char * argv[])
 					}
 					break;
 				case 'B':
-					a_Type = 60;
+					a_Type = kPatchUpdateForBundle;
 					updateBundle = [NSString stringWithUTF8String:optarg];
 					break;
-					// Inventory
 				case 'F':
 					forceRun = YES;
 					break;
 				case 't':
 					invArg = [NSString stringWithUTF8String:optarg];
-					a_Type = 12;
+					a_Type = kInventory;
 					break;
 				case 'A':
 					invArg = @"Custom";
-					a_Type = 12;
+					a_Type = kInventory;
 					break;
 				case 'C':
 					printf("%s\n",[[MPSystemInfo clientUUID] UTF8String]);
 					return 0;
-				case 'a':
-					a_Type = 5;
-					break;
-				case 'U':
-					a_Type = 6;
-					break;
 				case 'G':
-					a_Type = 7;
+					a_Type = kAgentUpdater;
 					break;
 				case 'S':
-					a_Type = 8;
+					a_Type = kMandatorySoftwareScan;
 					break;
                 case 'M':
-                    a_Type = 21;
+                    a_Type = kMandatorySoftwareInstall;
                     break;
 				case 'g':
 					swArg = [NSString stringWithUTF8String:optarg];
-					a_Type = 13;
+					a_Type = kSoftwareInstallGroup;
 					break;
 				case 'd':
 					swArg = [NSString stringWithUTF8String:optarg];
-					a_Type = 14;
+					a_Type = kSoftwareInstallSID;
 					break;
                 case 'P':
 					swArg = [NSString stringWithUTF8String:optarg];
-					a_Type = 15;
+					a_Type = kSoftwareInstallPlist;
 					break;
                 case 'L':
-                    a_Type = 20;
+                    a_Type = kProvisioning;
                     break;
                 case 'z':
-                    a_Type = 22;
+                    a_Type = kProvisionConfig;
                     break;
                 case 'p':
-					a_Type = 9;
+					a_Type = kOSProfiles;
 					break;
 				case 'r':
-					a_Type = 16;
+					a_Type = kAgentRegister;
 					doRegistration = YES;
 					if (optarg) {
 						regKeyArg = [NSString stringWithUTF8String:optarg];
 					}
 					break;
 				case 'R':
-					a_Type = 17;
+					a_Type = kAgentRegistrationInfo;
 					readRegInfo = YES;
 					if (optarg) {
 						regKeyHash = [NSString stringWithUTF8String:optarg];
 					}
 					break;
 				case 'X':
-					a_Type = 18;
+					a_Type = kAgentRegistrationEcho;
 					if (optarg) {
 						// re-use variable, this is the client key
 						regKeyHash = [NSString stringWithUTF8String:optarg];
 					}
 					break;
                 case 'k':
-					a_Type = 10;
+					a_Type = kOSUpgradeState;
                     if ([[[NSString stringWithUTF8String:optarg] lowercaseString] isEqualTo:@"start"]) {
                         osMigAction = @"start";
                         osMigration = YES;
@@ -319,7 +347,7 @@ int main (int argc, char * argv[])
                     osMigID = [NSString stringWithUTF8String:optarg];
                     break;
 				case 'K':
-					a_Type = 19;
+					a_Type = kAgentInstall;
 					break;
 				case 'v':
 					printf("%s\n",[APPVERSION UTF8String]);
@@ -328,11 +356,22 @@ int main (int argc, char * argv[])
 					printf("%s\n",[APPBUILD UTF8String]);
 					return 0;
                 case 'Z':
-                    a_Type = 8888;
+                    a_Type = kFileVaultCheck;
                     break;
                 case 'E':
-                    a_Type = 7777;
+                    a_Type = kShowInstalledApps;
                     break;
+                case 'W':
+                    a_Type = kMDMUnenrollDevice;
+                    mdmKey = [NSString stringWithUTF8String:optarg];
+                    break;
+                    
+                // Test
+                case 'y':
+                    invArg = @"V2";
+                    a_Type = kInventory;
+                    break;
+                    
 				case 'h':
 				case '?':
 				default:
@@ -364,6 +403,7 @@ int main (int argc, char * argv[])
         [[MPAgent sharedInstance] setG_agentVer:APPVERSION];
         [[MPAgent sharedInstance] setG_agentPid:[NSString stringWithFormat:@"%d",[[NSProcessInfo processInfo] processIdentifier]]];
 		
+        // Setup Logging
 		NSString *_logFile = @"/Library/Logs/MPAgent.log";
 		[MPLog setupLogging:_logFile level:lcl_vInfo];
 		
@@ -384,7 +424,7 @@ int main (int argc, char * argv[])
 			if (echoToConsole) {
 				[LCLLogFile setMirrorsToStdErr:YES];
 			}
-			if (a_Type == 99) {
+			if (a_Type == kDaemonMode) {
 				logit(lcl_vInfo,@"***** %@ v.%@ (Daemon)started *****", APPNAME, APPVERSION);
 			} else {
 				logit(lcl_vInfo,@"***** %@ v.%@ started *****", APPNAME, APPVERSION);
@@ -405,225 +445,224 @@ int main (int argc, char * argv[])
         NSArray *hist;
         MPClientDB *cdb;
 		int result = 1;
-		switch (a_Type)
-		{
-            case 7777:
+		
+        switch (a_Type)
+        {
+            case kCheckIn:
+                // Client Checkin
+                mpac = [[AgentController alloc] init];
+                [mpac runWithType:kCheckIn];
+                return 0;
+                break;
+            case kPatchScan:
+                // Patch Scan
+                mpac = [[AgentController alloc] init];
+                [mpac setILoadMode:isILoadMode];
+                [mpac runPatchScan:updateType forceRun:forceRun];
+                return 0;
+                break;
+            case kPatchUpdate:
+                // Patch Updates
+                mpac = [[AgentController alloc] init];
+                [mpac setILoadMode:isILoadMode];
+                [mpac setForceRun:forceRun];
+                [mpac runPatchScanAndUpdate:updateType bundleID:updateBundle];
+                return 0;
+                break;
+            case kPatchUpdateFilter:
+                break;
+            case kPatchUpdateForBundle:
+                break;
+            case kAgentUpdater:
+                // Update MPUpdate
+                mpac = [[AgentController alloc] init];
+                [mpac runWithType:kAgentUpdater];
+                return 0;
+                break;
+            case kMandatorySoftwareScan:
+                // Mandatory Software Tasks for Client group
+                mpac = [[AgentController alloc] init];
+                [mpac runWithType:kMandatorySoftwareScan];
+                return 0;
+                break;
+            case kOSProfiles:
+                // Scan and install Mac OS Profiles
+                mpac = [[AgentController alloc] init];
+                [mpac runWithType:kOSProfiles];
+                return 0;
+                break;
+            case kOSUpgradeState:
+                // OS Migration
+                mposu = [[MPOSUpgrade alloc] init];
+                if ([[osMigID lowercaseString] isEqualTo:@"auto"]) {
+                    if ([[osMigAction lowercaseString] isEqualTo:@"stop"]) {
+                        uID = [mposu  migrationIDFromFile:OS_MIGRATION_STATUS];
+                    } else {
+                        uID = [[NSUUID UUID] UUIDString];
+                    }
+                } else {
+                    uID = osMigID;
+                }
+                err = nil;
+                result = [mposu postOSUpgradeStatus:osMigAction label:osMigLabel upgradeID:uID error:&err];
+                if (err) {
+                    logit(lcl_vError,@"%@",err.localizedDescription);
+                    fprintf(stderr, "%s\n", [err.localizedDescription UTF8String]);
+                    exit(1);
+                }
+                if (result != 0) {
+                    fprintf(stderr, "Post OS Upgrade status failed.\n");
+                    exit(1);
+                }
+                return 0;
+                break;
+            case kInventory:
+                // Inventory
+                inv = [[MPInv alloc] init];
+                if (invArg != NULL)
+                {
+                    if ([invArg isEqual:@"Custom"]) {
+                        result = [inv collectAuditTypeData];
+                    } else if ([invArg isEqual:@"All"]) {
+                        result = [inv collectInventoryData];
+                    } else if ([invArg isEqual:@"V2"]) {
+                        result = [inv collectInventoryDataV2];
+                    } else {
+                        result = [inv collectInventoryDataForType:invArg];
+                    }
+                }
+                return result;
+                break;
+            case kSoftwareInstallGroup:
+                // Software - Install Group
+                swc = [SoftwareController new];
+                [swc setILoadMode:isILoadMode];
+                result = [swc installSoftwareTasksForGroup:swArg];
+                return result;
+                break;
+            case kSoftwareInstallSID:
+                // Software - Install SW Task
+                // Arg is SW Task ID
+                swc = [SoftwareController new];
+                [swc setILoadMode:isILoadMode];
+                result = [swc installSoftwareTask:swArg];
+                return result;
+                break;
+            case kSoftwareInstallPlist:
+                // Software - Install SW Using Plist
+                swc = [SoftwareController new];
+                [swc setILoadMode:isILoadMode];
+                result = [swc installSoftwareTasksUsingPLIST:swArg];
+                return result;
+                break;
+            case kAgentRegister:
+                // Register
+                mpar = [[MPAgentRegister alloc] init];
+                if (![regKeyArg isEqualToString:@"999999999"]) {
+                    result = [mpar registerClient:regKeyArg error:&err];
+                } else {
+                    result = [mpar registerClient:&err];
+                }
+                
+                if (err) {
+                    NSLog(@"%@",err.localizedDescription);
+                }
+                
+                if (result == 0) {
+                    printf("\nAgent has been registered.\n");
+                } else {
+                    fprintf(stderr, "Agent registration has failed.\n");
+                    exit(1);
+                }
+                
+                exit(0);
+                break;
+            case kAgentRegistrationInfo:
+                // Check Registration
+                mpar = [[MPAgentRegister alloc] init];
+                if (![regKeyHash isEqualToString:@"999999999"]) {
+                    if ([mpar clientIsRegistered]) {
+                        printf("\nAgent is registered.\n");
+                        exit(0);
+                    } else {
+                        printf("Warning: Agent is not registered.\n");
+                        exit(1);
+                    }
+                } else {
+                    // Will add additional check
+                    if ([mpar clientIsRegistered]) {
+                        printf("\nAgent is registered.\n");
+                        exit(0);
+                    } else {
+                        printf("Warning: Agent is not registered.\n");
+                        exit(1);
+                    }
+                }
+                break;
+            case kAgentRegistrationEcho:
+                // Check Registration
+                mpad = [[AgentData alloc] init];
+                [mpad setAgentDataKey:regKeyHash];
+                [mpad echoAgentData];
+                exit(0);
+                break;
+            case kAgentInstall:
+                // Post Agent Install
+                mpAgent = [MPAgent new];
+                [mpAgent postAgentHasBeenInstalled];
+                exit(0);
+                break;
+            case kProvisioning:
+                // Provison Host
+                mpProv = [MPProvision new];
+                [mpProv provisionHost];
+                exit(0);
+                break;
+            case kMandatorySoftwareInstall:
+                // Mandatory Software
+                swc = [SoftwareController new];
+                result = [swc installMandatorySoftware];
+                return result;
+                break;
+            case kProvisionConfig:
+                // Download Provisioning Config
+                mpac = [[AgentController alloc] init];
+                result = [mpac provisionSetupAndConfig];
+                exit(result);
+                break;
+            case kShowInstalledApps:
                 // Test
                 cdb = [[MPClientDB alloc] init];
                 hist = [cdb retrieveInstalledSoftwareTasksDict];
                 qlinfo(@"%@",hist);
                 return 0;
                 break;
-			case 1:
-				// Client Checkin
-				mpac = [[AgentController alloc] init];
-				[mpac runWithType:a_Type];
-				return 0;
-				break;
-			case 3:
-				// Patch Scan
-				mpac = [[AgentController alloc] init];
-				[mpac setILoadMode:isILoadMode];
-				[mpac runPatchScan:updateType forceRun:forceRun];
-				return 0;
-				break;
-			case 4:
-				// Patch Updates
-				mpac = [[AgentController alloc] init];
-				[mpac setILoadMode:isILoadMode];
-				[mpac setForceRun:forceRun];
-				[mpac runPatchScanAndUpdate:updateType bundleID:updateBundle];
-				return 0;
-				break;
-			case 5:
-				// AV Scan
-				mpac = [[AgentController alloc] init];
-				[mpac runWithType:a_Type];
-				return 0;
-				break;
-			case 6:
-				// AV Update
-				mpac = [[AgentController alloc] init];
-				[mpac runWithType:a_Type];
-				return 0;
-				break;
-			case 7:
-				// Update MPUpdate
-				mpac = [[AgentController alloc] init];
-				[mpac runWithType:a_Type];
-				return 0;
-				break;
-			case 8:
-				// Mandatory Software Tasks for Client group
-				mpac = [[AgentController alloc] init];
-				[mpac runWithType:a_Type];
-				return 0;
-				break;
-			case 9:
-				// Scan and install Mac OS Profiles
-				mpac = [[AgentController alloc] init];
-				[mpac runWithType:a_Type];
-				return 0;
-				break;
-			case 10:
-				// OS Migration
-				mposu = [[MPOSUpgrade alloc] init];
-				if ([[osMigID lowercaseString] isEqualTo:@"auto"]) {
-					if ([[osMigAction lowercaseString] isEqualTo:@"stop"]) {
-						uID = [mposu  migrationIDFromFile:OS_MIGRATION_STATUS];
-					} else {
-						uID = [[NSUUID UUID] UUIDString];
-					}
-				} else {
-					uID = osMigID;
-				}
-				err = nil;
-				result = [mposu postOSUpgradeStatus:osMigAction label:osMigLabel upgradeID:uID error:&err];
-				if (err) {
-					logit(lcl_vError,@"%@",err.localizedDescription);
-					fprintf(stderr, "%s\n", [err.localizedDescription UTF8String]);
-					exit(1);
-				}
-				if (result != 0) {
-					fprintf(stderr, "Post OS Upgrade status failed.\n");
-					exit(1);
-				}
-				return 0;
-				break;
-			case 11:
-				// Hold
-				break;
-			case 12:
-				// Inventory
-				inv = [[MPInv alloc] init];
-				if (invArg != NULL)
-				{
-					if ([invArg isEqual:@"Custom"]) {
-						result = [inv collectAuditTypeData];
-					} else if ([invArg isEqual:@"All"]) {
-						result = [inv collectInventoryData];
-					} else {
-						result = [inv collectInventoryDataForType:invArg];
-					}
-				}
-				return result;
-				break;
-			case 13:
-				// Software - Install Group
-				swc = [SoftwareController new];
-				[swc setILoadMode:isILoadMode];
-				result = [swc installSoftwareTasksForGroup:swArg];
-				return result;
-				break;
-			case 14:
-				// Software - Install SW Task
-				// Arg is SW Task ID
-				swc = [SoftwareController new];
-				[swc setILoadMode:isILoadMode];
-				result = [swc installSoftwareTask:swArg];
-				return result;
-				break;
-			case 15:
-				// Software - Install SW Using Plist
-				swc = [SoftwareController new];
-				[swc setILoadMode:isILoadMode];
-				result = [swc installSoftwareTasksUsingPLIST:swArg];
-				return result;
-				break;
-			case 16:
-				// Register
-				mpar = [[MPAgentRegister alloc] init];
-				if (![regKeyArg isEqualToString:@"999999999"]) {
-					result = [mpar registerClient:regKeyArg error:&err];
-				} else {
-					result = [mpar registerClient:&err];
-				}
-				
-				if (err) {
-					NSLog(@"%@",err.localizedDescription);
-				}
-				
-				if (result == 0) {
-					printf("\nAgent has been registered.\n");
-				} else {
-					fprintf(stderr, "Agent registration has failed.\n");
-					exit(1);
-				}
-				
-				exit(0);
-				break;
-			case 17:
-				// Check Registration
-				mpar = [[MPAgentRegister alloc] init];
-				if (![regKeyHash isEqualToString:@"999999999"]) {
-					if ([mpar clientIsRegistered]) {
-						printf("\nAgent is registered.\n");
-						exit(0);
-					} else {
-						printf("Warning: Agent is not registered.\n");
-						exit(1);
-					}
-				} else {
-					// Will add additional check
-					if ([mpar clientIsRegistered]) {
-						printf("\nAgent is registered.\n");
-						exit(0);
-					} else {
-						printf("Warning: Agent is not registered.\n");
-						exit(1);
-					}
-				}
-				break;
-			case 18:
-				// Check Registration
-				mpad = [[AgentData alloc] init];
-				[mpad setAgentDataKey:regKeyHash];
-				[mpad echoAgentData];
-				exit(0);
-				break;
-			case 19:
-				// Post Agent Install
-				mpAgent = [MPAgent new];
-				[mpAgent postAgentHasBeenInstalled];
-				exit(0);
-				break;
-            case 20:
-                // Provison Host
-                mpProv = [MPProvision new];
-                [mpProv provisionHost];
-                exit(0);
-                break;
-            case 21:
-                // Mandatory Software
-                swc = [SoftwareController new];
-                result = [swc installMandatorySoftware];
-                return result;
-                break;
-            case 22:
-                // Download Provisioning Config
+            case kMDMUnenrollDevice:
+                if (![mdmKey isEqualToString:@"NA"] && ![mdmKey isEqualToString:@""]) {
+                    mpac = [[AgentController alloc] init];
+                    [mpac unenrollFromMDM:mdmKey];
+                    return 0;
+                    break;
+                } else {
+                    printf(@"MDM Key Name can not be left blank.\n");
+                }
+                return 1;
+            case kFileVaultCheck:
                 mpac = [[AgentController alloc] init];
-                result = [mpac provisionSetupAndConfig];
-                exit(result);
-                break;
-            case 8888:
-                mpac = [[AgentController alloc] init];
-                [mpac runWithType:a_Type];
+                [mpac runWithType:kFileVaultCheck];
                 return 0;
                 break;
-			case 50:
-				break;
-			case 60:
-				break;
-			case 99:
-				// DEFAULT Daemon Mode
-				mpac = [[AgentController alloc] init];
-				[mpac runWithType:a_Type];
-				[[NSRunLoop currentRunLoop] run];
-				break;
-			default:
-				printf("Unknown arg type. Now exiting.\n");
-				return 0;
-		}
+            
+            case kDaemonMode:
+                // DEFAULT Daemon Mode
+                mpac = [[AgentController alloc] init];
+                [mpac runWithType:kDaemonMode];
+                [[NSRunLoop currentRunLoop] run];
+                break;
+            default:
+                printf("Unknown arg type. Now exiting.\n");
+                return 0;
+        }
     }
     return 0;
 }

@@ -950,4 +950,33 @@
     
     return result;
 }
+
+/**
+ Un-enroll or remove device from a MDM
+ Will return BOOL
+ 
+ @param scope NSString object - prod is default
+ @param err Error object
+ 
+ @return NSArray
+ */
+- (BOOL)unenrollFromMDM:(NSString *)mdmKeyName error:(NSError **)err
+{
+    NSError *error = nil;
+    BOOL result = NO;
+    
+    NSString *urlPath = [NSString stringWithFormat:@"/api/v2/provisioning/mdm/%@/unenroll/%@",self.clientID,mdmKeyName];
+    qldebug(@"[unenrollFromMDM][urlPath] %@",urlPath);
+    
+    result = [self postDataToWS:urlPath data:nil error:&error];
+    if (error) {
+        *err = error;
+    }
+    if (result) {
+        qlinfo(@"Unenroll data was posted to webservice.");
+    }
+    
+    return result;
+}
+
 @end

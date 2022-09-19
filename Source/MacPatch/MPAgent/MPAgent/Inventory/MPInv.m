@@ -47,11 +47,19 @@
 
 
 #define kSP_DATA_Dir			@"/private/tmp/.mpData"
+#define kSP_DATA_DirV2          @"/private/tmp/.mpInvData"
 #define kSP_APP                 @"/usr/sbin/system_profiler"
 #define kINV_SUPPORTED_TYPES	@"SPHardwareDataType,SPSoftwareDataType,SPNetworkDataType,SPApplicationsDataType,SPFrameworksDataType,SPExtensionsDataType,SPSmartCardsDataType,DirectoryServices,InternetPlugins,AppUsage,ClientTasks,DiskInfo,Users,Groups,FileVault,PowerManagment,BatteryInfo,ConfigProfiles,AppStoreApps,Plugins,FirmwarePasswordInfo,LocalAdminAccounts,SmartCardReaders,SINetworkInfo,SIHardDrive,SIPCIBus,SIRAM,SIUSB"
+
+#define kINV_SUPPORTED_TYPESV2 @"SPUniversalAccessDataType,SPSecureElementDataType,SPApplicationsDataType,SPAudioDataType,SPBluetoothDataType,SPCardReaderDataType,SPiBridgeDataType,SPDeveloperToolsDataType,SPDiagnosticsDataType,SPDisabledSoftwareDataType,SPEthernetDataType,SPExtensionsDataType,SPFirewallDataType,SPFontsDataType,SPFrameworksDataType,SPDisplaysDataType,SPHardwareDataType,SPInstallHistoryDataType,SPInternationalDataType,SPNetworkLocationDataType,SPManagedClientDataType,SPMemoryDataType,SPNVMeDataType,SPNetworkDataType,SPPCIDataType,SPPowerDataType,SPPrefPaneDataType,SPPrintersSoftwareDataType,SPPrintersDataType,SPConfigurationProfileDataType,SPSerialATADataType,SPSPIDataType,SPSmartCardsDataType,SPSoftwareDataType,SPStartupItemDataType,SPStorageDataType,SPThunderboltDataType,SPUSBDataType,SPNetworkVolumeDataType,SPAirPortDataType,SPCameraDataType"
+
 #define kTasksPlist             @"/Library/MacPatch/Client/.tasks/gov.llnl.mp.tasks.plist"
 #define kInvHashData            @"/Library/MacPatch/Client/Data/.gov.llnl.mp.inv.data.plist"
 
+// Disabled
+// SPLogsDataType,SPDiscBurningDataType,SPFireWireDataType,SPParallelSCSIDataType
+// SPFibreChannelDataType,SPRawCameraDataType,SPSyncServicesDataType,SPSASDataType
+// SPParallelATADataType,SPLegacySoftwareDataType,SPWWANDataType
 
 @interface MPInv ()
 {
@@ -112,6 +120,115 @@
 - (int)collectInventoryData
 {
 	return [self collectInventoryDataForType:@"All"];
+}
+
+- (int)collectInventoryDataV2
+{
+    NSDate *methodStart = [NSDate date];
+    
+    NSError *err = nil;
+    NSString *filePath = NULL;
+    NSMutableDictionary *result;
+    NSMutableArray *resultsArray = [NSMutableArray new];
+    
+    NSArray *invColTypes = [kINV_SUPPORTED_TYPESV2 componentsSeparatedByString:@","];
+    
+    // Collect all System Profiler Data and write to file.
+    // Write to NSArray of collected data to create one large
+    // inventory file
+    for (NSString *invType in invColTypes)
+    {
+        if ([invType isEqualToString:@""]) continue;
+        
+        logit(lcl_vInfo,@"Collecting inventory for type %@",invType);
+        err = nil;
+        filePath = [self getProfileDataV2:invType error:&err];
+        if (err) {
+            logit(lcl_vError,@"Gathering inventory for data type %@",invType);
+            continue;
+        } else {
+            result = [[NSMutableDictionary alloc] init];
+            [result setObject:filePath forKey:@"file"];
+            [result setObject:invType forKey:@"name"];
+            [result setObject:@"json" forKey:@"type"];
+    
+            [resultsArray addObject:result];
+            result = nil;
+        }
+    }
+    
+    NSData *jdata;
+    NSDictionary *json;
+    NSMutableDictionary *invDict = [NSMutableDictionary new]; // Complete Inventory Dictionary
+    NSMutableDictionary *invKeys = [NSMutableDictionary new]; // Complete Inventory Dictionary Schema
+    
+    NSArray *invContentArray;
+    NSMutableSet *keySet;
+    
+    for (NSDictionary *invItem in resultsArray) {
+        if (!invItem[@"name"]) continue; // Dont process if empty
+        
+        jdata = [NSData dataWithContentsOfFile:invItem[@"file"]];
+        json = [NSJSONSerialization JSONObjectWithData:jdata options:kNilOptions error:nil];
+        
+        invContentArray = [json objectForKey:invItem[@"name"]];
+        
+        if (invContentArray.count >= 1) {
+            keySet = [NSMutableSet set];
+            for (NSDictionary *x in invContentArray) {
+                [keySet addObjectsFromArray:x.allKeys];
+            }
+            [invKeys setObject:[keySet.allObjects copy] forKey:invItem[@"name"]];
+            keySet = nil;
+        } else {
+            NSLog(@"%@ has no data.",invItem[@"name"]);
+            [invKeys setObject:@[] forKey:invItem[@"name"]];
+        }
+        [invDict addEntriesFromDictionary:json];
+        json = nil;
+        jdata = nil;
+    }
+    
+    // Write Inventory to JSON file
+    // For Debug Only
+    NSString *invDictJSON = [self jsonStringFromDictionary:invDict];
+    [invDictJSON writeToFile:@"/private/tmp/inv.json" atomically:NO encoding:NSUTF8StringEncoding error:nil];
+    invDictJSON = nil;
+    
+    // Write Inventory Schema to JSON file
+    // For Debug Only
+    NSString *invKeysJSON = [self jsonStringFromDictionary:invKeys];
+    [invKeysJSON writeToFile:@"/private/tmp/invKeys.json" atomically:NO encoding:NSUTF8StringEncoding error:nil];
+    invKeysJSON = nil;
+    
+    // Post Data
+    [self sendResultsToWebServiceV2:invDict keys:invKeys];
+    
+    // Just for processing
+    NSDate *methodFinish = [NSDate date];
+    NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
+    NSLog(@"executionTime = %f seconds", executionTime);
+    return 0;
+}
+
+- (NSString *)jsonStringFromDictionary:(NSDictionary *)dict
+{
+    NSError *jerror;
+    NSString *jsonString;
+    
+    // NSJSONWritingPrettyPrinted
+    // NSJSONWritingSortedKeys
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&jerror];
+    
+    if (jsonData) {
+        jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    } else {
+        NSLog(@"Got an error: %@", jerror);
+        jsonString = @"";
+    }
+    
+    jsonData = nil;
+    return [jsonString copy];
 }
 
 - (int)collectCustomData
@@ -450,6 +567,51 @@
     return YES;
 }
 
+- (BOOL)sendResultsToWebServiceV2:(NSDictionary *)invData keys:(NSDictionary *)invKeys
+{
+    MPHTTPRequest *req;
+    MPWSResult *result;
+    NSString *urlPath;
+    NSString *apiPath;
+    static NSString *apiBasePath = @"/api/v4/client/inventory";
+    
+    req = [[MPHTTPRequest alloc] init];
+    
+    qlinfo(@"Processing Inventory Schema Data");
+    apiPath = [apiBasePath stringByAppendingPathComponent:@"keys"];
+    qldebug(@"api path = %@",apiPath);
+    
+    urlPath = [apiPath stringByAppendingPathComponent:[settings ccuid]];
+    result = [req runSyncPOST:urlPath body:invKeys];
+    
+    if (result.statusCode >= 200 && result.statusCode <= 299) {
+        logit(lcl_vInfo,@"Key Data post, returned true.");
+        logit(lcl_vDebug,@"Key Data Result: %@",result.result);
+    } else {
+        logit(lcl_vError,@"Key Data post, returned false.");
+        logit(lcl_vError,@"API path: %@.",apiPath);
+        logit(lcl_vDebug,@"%@",result.toDictionary);
+    }
+    
+    qlinfo(@"Processing Inventory Data");
+    apiPath = [apiBasePath stringByAppendingPathComponent:@"data"];
+    qldebug(@"api path = %@",apiPath);
+    
+    urlPath = [apiPath stringByAppendingPathComponent:[settings ccuid]];
+    result = [req runSyncPOST:urlPath body:invData];
+    
+    if (result.statusCode >= 200 && result.statusCode <= 299) {
+        logit(lcl_vInfo,@"Data post, returned true.");
+        logit(lcl_vDebug,@"Data Result: %@",result.result);
+    } else {
+        logit(lcl_vError,@"Data post, returned false.");
+        logit(lcl_vError,@"API path: %@.",apiPath);
+        logit(lcl_vDebug,@"%@",result.toDictionary);
+    }
+    
+    return YES;
+}
+
 - (NSString *)getProfileData:(NSString *)profileType error:(NSError **)error
 {	
 	
@@ -563,6 +725,51 @@
     }
 
     return nil;
+}
+
+- (NSString *)getProfileDataV2:(NSString *)profileType error:(NSError **)error
+{
+    // SystemProfiler Output file Name
+    NSString *spFileName;
+    spFileName = [NSString stringWithFormat:@"%@.json",profileType];
+    
+    NSTask *spTask = [[NSTask alloc] init];
+    [spTask setLaunchPath: kSP_APP];
+    [spTask setArguments:@[profileType,@"-json"]];
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    BOOL isDir;
+    if (([fm fileExistsAtPath:kSP_DATA_DirV2 isDirectory:&isDir] && isDir) == NO) {
+        [fm createDirectoryAtPath:kSP_DATA_DirV2 withIntermediateDirectories:YES attributes:nil error:NULL];
+    }
+    
+    if (![fm isWritableFileAtPath:kSP_DATA_DirV2]) {
+        logit(lcl_vError, @"Temp directory (%@) is not writable. Inventory will no get processed properly.",kSP_DATA_DirV2);
+    }
+    
+    // If File Exists then delete it
+    isDir = NO;
+    if ([fm fileExistsAtPath:[kSP_DATA_DirV2 stringByAppendingPathComponent:spFileName] isDirectory:&isDir] && isDir) {
+        [fm removeItemAtPath:[kSP_DATA_DirV2 stringByAppendingPathComponent:spFileName] error:NULL];
+    }
+
+    NSPipe *pipe;
+    pipe = [NSPipe pipe];
+    [spTask setStandardOutput: pipe];
+    
+    NSFileHandle *file;
+    file = [pipe fileHandleForReading];
+    
+    [spTask launch];
+
+    NSData *data = [file readDataToEndOfFile];
+    
+    NSString *string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+    logit(lcl_vInfo,@"Writing result to %@",[kSP_DATA_DirV2 stringByAppendingPathComponent:spFileName]);
+    [string writeToFile:[kSP_DATA_DirV2 stringByAppendingPathComponent:spFileName] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    
+    return [kSP_DATA_DirV2 stringByAppendingPathComponent:spFileName];
 }
 
 #pragma mark -

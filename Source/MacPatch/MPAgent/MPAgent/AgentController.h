@@ -45,8 +45,6 @@
 - (void)runPatchScanAndUpdate;
 - (void)runPatchScanAndUpdate:(MPPatchContentType)contentType bundleID:(NSString *)bundleID;
 
-- (void)runAVInfoScan;
-- (void)runAVInfoScanAndDefsUpdate;
 - (void)scanAndUpdateAgentUpdater;
 - (void)runSWDistScanAndInstall;
 - (void)runProfilesScanAndInstall;
@@ -55,4 +53,6 @@
 
 - (int)provisionSetupAndConfig;
 - (int)getProvisioningConfig;
+
+- (void)unenrollFromMDM:(NSString *)mdmKeyName;
 @end

@@ -256,4 +256,15 @@
  @return NSArray
  */
 - (NSArray *)getProvisioningCriteriaUsingScope:(NSString *)scope error:(NSError **)err;
+
+/**
+ Get provisioning criteria
+ Will remove client from MDM env
+ 
+ @param mdmKeyName NSString object - key name defined in API config.
+ @param err Error object
+ 
+ @return BOOL
+ */
+- (BOOL)unenrollFromMDM:(NSString *)mdmKeyName error:(NSError **)err;
 @end
