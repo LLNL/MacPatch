@@ -2,7 +2,7 @@
 
 # -------------------------------------------------------------
 # Script: MPBuildClient.sh
-# Version: 2.7
+# Version: 2.8
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -27,27 +27,28 @@
 #	2.6		Added option for setting build root
 #			Added logic for Distribution_Beta file to allow installs over the top
 #	2.7		Added gov.llnl.mp.status.ui to compile process 
+#	2.8		Clean up
 #
 # -------------------------------------------------------------
+
+AGENT_VERS="3.7.0"
+AGENTVER="3.7.0.1"
+UPDATEVER="3.7.0.1"
 
 SCRIPT_PARENT=$(dirname $(dirname $0))
 SRCROOT="$SCRIPT_PARENT/Source"
 PKGROOT="$SCRIPT_PARENT/Packages"
 DATETIME=`date "+%Y%m%d-%H%M%S"`
-BUILDROOT="/private/var/tmp/MP/Client36/$DATETIME"
+BUILDROOT="/private/var/tmp/MP/Client/$AGENT_VERS/$DATETIME"
 PLANB_BUILDROOT=`mktemp -d /tmp/mpPlanB_XXXXXX`
 BUILD_NO_STR=`date +%Y%m%d-%H%M%S`
-
-AGENT_VERS="3.7.0"
-AGENTVER="3.7.0.1"
-UPDATEVER="3.7.0.1"
 
 PKG_STATE=""
 CODESIGNIDENTITY="*"
 MIN_OS="11.15"
 INCPlanBSource=false
 MPPLANB_SRV_ADDR="localhost"
-BUILDPLIST="/Library/Preferences/mp.build.client35.plist"
+BUILDPLIST="/Library/Preferences/mp.build.client.plist"
 
 # Extenral scripts run pre xcode compile
 EXTERNALSCRIPTS=false
@@ -354,16 +355,18 @@ if [ "$SIGNCODE" == "N" ] || [ "$SIGNCODE" == "Y" ]; then
 		read -p "Please enter your code sigining identity [$CODESIGNIDENTITYALT]: " CODESIGNIDENTITY
 		CODESIGNIDENTITY=${CODESIGNIDENTITY:-$CODESIGNIDENTITYALT}
 		if [ "$CODESIGNIDENTITY" != "$CODESIGNIDENTITYALT" ]; then
-			defaults write ${BUILDPLIST} name "${CODESIGNIDENTITY}"
+			defaults write ${BUILDPLIST} name "'${CODESIGNIDENTITY}'"
 		fi
+
 		echo
 		echo "------------------------------------------------------------"
 		echo "Compiling MacPatch Client Components"
 		echo "------------------------------------------------------------"
 		echo
 		echo " - Compiling MacPatch"
-		xcodebuild build -workspace ${SRCROOT}/MacPatch/MacPatch.xcworkspace -scheme MacPatch SYMROOT=${BUILDROOT} -destination "platform=macOS" -configuration Release CODE_SIGN_IDENTITY="${CODESIGNIDENTITY}" OTHER_CODE_SIGN_FLAGS=--timestamp CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO | grep -A 5 error:
 
+		xcodebuild build -workspace ${SRCROOT}/MacPatch/MacPatch.xcworkspace -scheme MacPatch SYMROOT=${BUILDROOT} -destination "platform=macOS" -configuration Release CODE_SIGN_IDENTITY="${CODESIGNIDENTITY}" OTHER_CODE_SIGN_FLAGS=--timestamp CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO | grep -A 5 error:
+		
 		echo " - Compiling gov.llnl.mp.helper"
 		xcodebuild build -workspace ${SRCROOT}/MacPatch/MacPatch.xcworkspace -scheme gov.llnl.mp.helper SYMROOT=${BUILDROOT} -destination "platform=macOS" -configuration Release CODE_SIGN_IDENTITY="${CODESIGNIDENTITY}" OTHER_CODE_SIGN_FLAGS=--timestamp CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO | grep -A 5 error:
 
