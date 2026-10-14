@@ -140,6 +140,7 @@ Source_dev/
 *.log.*
 yarn.lock
 working/
+*.rdb
 
 # MacPatch, ignore root dir items
 /Server
