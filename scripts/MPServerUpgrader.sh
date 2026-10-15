@@ -2,12 +2,18 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPServerUpgrader.sh
-# Version: 3.3
+# Version: 3.4
 #
 # Description:
 # Upgrade script will upgrade a current install of the MacPatch server
 #
 # History:
+# 3.4 - Local source directory support:
+#       - Added -g flag to enable GitHub cloning (now opt-in)
+#       - Default behavior: uses parent directory of script as source
+#       - Typical workflow: clone to /tmp, run script from /tmp/MacPatch/scripts
+#       - Eliminates need for GitHub access if repo already cloned locally
+#       - Validates source directory structure in pre-flight checks
 # 3.3 - No migration option:
 #       - Added -n flag to skip content migration (keep in /opt/MacPatch/Content)
 #       - Traditional mode: backs up and restores content as regular directory
@@ -62,13 +68,14 @@
 # How to use:
 #
 # sudo MPServerUpgrader.sh
-#   - Upgrades MacPatch server from master branch
+#   - Upgrades MacPatch server from local source directory
+#   - Uses parent directory of script as source (e.g., /tmp/MacPatch)
 #   - Creates timestamped backup in /opt/MacPatch_Backup
 #   - Content stored at /opt/MPContent (default)
 #   - Automatically verifies and rolls back on failure
 #
-# sudo MPServerUpgrader.sh -b <branch>
-#   - Upgrades from specified GitHub branch
+# sudo MPServerUpgrader.sh -g -b <branch>
+#   - Upgrades from specified GitHub branch (requires -g flag)
 #
 # sudo MPServerUpgrader.sh -c <path>
 #   - Use custom content directory location (default: /opt/MPContent)
@@ -76,8 +83,8 @@
 # sudo MPServerUpgrader.sh -m
 #   - Upgrade master/distribution server (includes database migration)
 #
-# sudo MPServerUpgrader.sh -b develop -c /data/MPContent -m
-#   - Upgrade master server from develop branch with custom content location
+# sudo MPServerUpgrader.sh -g -b develop -c /data/MPContent -m
+#   - Clone from GitHub develop branch with custom content location
 #
 # What it does:
 # 1. Stops running services (tracks which ones to restart)
@@ -85,7 +92,9 @@
 # 3. Handles content (two modes):
 #    a) Default: Migrates to $CONTENT_DIR, creates symlink
 #    b) With -n: Backs up/restores to /opt/MacPatch/Content (traditional)
-# 4. Clones MacPatch from GitHub (master or specified branch)
+# 4. Installs MacPatch (two modes):
+#    a) Default: Copies from local source directory (parent of script)
+#    b) With -g: Clones from GitHub (master or specified branch)
 # 5. Runs MPBuildServer.sh to build new version
 # 6. Restores config files: .mpapi, .mpglobal, .mpconsole, etc/, nginx/conf/sites
 # 7. Restores content per mode (symlink or direct)
@@ -93,8 +102,9 @@
 # 9. Starts only the services that were running before
 #
 # Options:
-#   -b <branch>  : GitHub branch to clone (default: master)
+#   -b <branch>  : GitHub branch to clone (default: master, requires -g)
 #   -c <path>    : Content directory location (default: /opt/MPContent)
+#   -g           : Clone from GitHub (default: use local source)
 #   -n           : No migration - keep content in /opt/MacPatch/Content
 #   -m           : Master/Distribution server flag (includes DB migration)
 #   -h           : Show help
@@ -106,6 +116,12 @@
 # Old backups are automatically cleaned up (keeps last 5)
 #
 # Services managed: MPNginx, MPAPI, MPConsole, MPInventoryD, MPRsyncServer
+#
+# Typical workflow:
+#   cd /tmp
+#   git clone https://github.com/LLNL/MacPatch.git -b <branch>
+#   cd MacPatch/scripts
+#   sudo ./MPServerUpgrader.sh -m
 #
 # ----------------------------------------------------------------------------
 
@@ -142,9 +158,14 @@ MOVECONTENT=true
 MASTERSERVER=false
 CONTENT_DIR="/opt/MPContent"  # Default content directory location
 SKIP_CONTENT_MIGRATION=false  # If true, keep content in /opt/MacPatch/Content (no symlink)
+USE_GIT_CLONE=false  # If true, clone from GitHub; if false, use local source directory
 MAX_BACKUPS=5  # Keep last 5 backups
 SERVICE_SHUTDOWN_TIMEOUT=60  # Seconds to wait for services to stop
 SERVICE_STARTUP_TIMEOUT=60   # Seconds to wait for services to start
+
+# Determine script directory and parent (source) directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Detect platform
 platform='unknown'
@@ -171,29 +192,32 @@ RUNNING_SERVICES=()
 # Script Input Args ----------------------------------------------------------
 
 usage() {
-	echo "Usage: $0 [-b GitHub Branch] [-c Content Directory] [-n] [-m]" 1>&2
+	echo "Usage: $0 [-b GitHub Branch] [-c Content Directory] [-g] [-n] [-m]" 1>&2
 	echo "" 1>&2
 	echo "Options:" 1>&2
-	echo "  -b <branch>    GitHub branch to clone (default: master)" 1>&2
+	echo "  -b <branch>    GitHub branch to clone (default: master, requires -g)" 1>&2
 	echo "  -c <path>      Content directory location (default: /opt/MPContent)" 1>&2
+	echo "  -g             Clone from GitHub (default: use local source directory)" 1>&2
 	echo "  -n             No migration - keep content in /opt/MacPatch/Content (no symlink)" 1>&2
 	echo "  -m             Master/Distribution server (includes database migration)" 1>&2
 	echo "  -h             Show this help message" 1>&2
 	echo "" 1>&2
 	echo "Examples:" 1>&2
-	echo "  $0                           # Upgrade, migrate content to /opt/MPContent" 1>&2
-	echo "  $0 -n                        # Upgrade, keep content in /opt/MacPatch/Content" 1>&2
-	echo "  $0 -m                        # Upgrade master server with DB migration" 1>&2
-	echo "  $0 -b 4.4.0-dev -m           # Upgrade master from specific branch" 1>&2
+	echo "  $0                           # Upgrade from local source, migrate content" 1>&2
+	echo "  $0 -g                        # Clone from GitHub master branch" 1>&2
+	echo "  $0 -g -b 4.4.0-dev -m        # Clone from specific branch, upgrade master" 1>&2
+	echo "  $0 -n                        # Use local source, keep content in place" 1>&2
 	echo "  $0 -c /data/MPContent -m     # Use custom content directory" 1>&2
-	echo "  $0 -n -b develop -m          # No migration, develop branch, master server" 1>&2
+	echo "  $0 -g -b develop -m          # Clone develop branch, master server" 1>&2
 	echo "" 1>&2
-	echo "Note: -n and -c are mutually exclusive. Use -n to avoid content migration," 1>&2
-	echo "      or -c to specify a custom location (migrates content there)." 1>&2
+	echo "Note: By default, the script uses the parent directory of the script location" 1>&2
+	echo "      as the source (e.g., if script is at /tmp/MacPatch/scripts/MPServerUpgrader.sh," 1>&2
+	echo "      it uses /tmp/MacPatch as the source). Use -g to clone from GitHub instead." 1>&2
+	echo "      Options -n and -c are mutually exclusive." 1>&2
 	exit 1
 }
 
-while getopts "hb:c:nm" opt; do
+while getopts "hb:c:gnm" opt; do
 	case $opt in
 		b)
 			GITBRANCH=${OPTARG}
@@ -202,6 +226,9 @@ while getopts "hb:c:nm" opt; do
 			CONTENT_DIR=${OPTARG}
 			# Remove trailing slash if present
 			CONTENT_DIR="${CONTENT_DIR%/}"
+			;;
+		g)
+			USE_GIT_CLONE=true
 			;;
 		n)
 			SKIP_CONTENT_MIGRATION=true
@@ -372,22 +399,42 @@ preflight_checks() {
         ((error_count++))
     fi
 
-    # Check if git is installed
-    if ! command -v git >/dev/null 2>&1; then
-        echo "ERROR: git is not installed"
-        ((error_count++))
-    fi
+    if $USE_GIT_CLONE; then
+        # Git clone mode - check git and GitHub connectivity
+        echo "Using Git clone mode..."
 
-    # Check if we can reach GitHub
-    if ! git ls-remote https://github.com/LLNL/MacPatch.git HEAD >/dev/null 2>&1; then
-        echo "ERROR: Cannot connect to GitHub repository"
-        ((error_count++))
-    fi
+        # Check if git is installed
+        if ! command -v git >/dev/null 2>&1; then
+            echo "ERROR: git is not installed"
+            ((error_count++))
+        fi
 
-    # Check if branch exists
-    if ! git ls-remote --heads https://github.com/LLNL/MacPatch.git "${GITBRANCH}" | grep -q "${GITBRANCH}"; then
-        echo "ERROR: Branch '${GITBRANCH}' does not exist in repository"
-        ((error_count++))
+        # Check if we can reach GitHub
+        if ! git ls-remote https://github.com/LLNL/MacPatch.git HEAD >/dev/null 2>&1; then
+            echo "ERROR: Cannot connect to GitHub repository"
+            ((error_count++))
+        fi
+
+        # Check if branch exists
+        if ! git ls-remote --heads https://github.com/LLNL/MacPatch.git "${GITBRANCH}" | grep -q "${GITBRANCH}"; then
+            echo "ERROR: Branch '${GITBRANCH}' does not exist in repository"
+            ((error_count++))
+        fi
+    else
+        # Local source mode - validate source directory
+        echo "Using local source directory: ${SOURCE_DIR}"
+
+        if ! validate_path "$SOURCE_DIR" "dir"; then
+            echo "ERROR: Source directory not found at ${SOURCE_DIR}"
+            ((error_count++))
+        fi
+
+        # Check for MPBuildServer.sh in source
+        if [ ! -f "${SOURCE_DIR}/scripts/MPBuildServer.sh" ]; then
+            echo "ERROR: MPBuildServer.sh not found at ${SOURCE_DIR}/scripts/"
+            echo "Source directory does not appear to be a valid MacPatch repository"
+            ((error_count++))
+        fi
     fi
 
     # Check available disk space
@@ -866,7 +913,11 @@ fi
 # Now we can log since backup directory exists
 log_message "=== MacPatch Server Upgrade Started ==="
 log_message "Backup directory: ${MPBASEBACK}"
-log_message "Git branch: ${GITBRANCH}"
+if $USE_GIT_CLONE; then
+    log_message "Source: GitHub clone (branch: ${GITBRANCH})"
+else
+    log_message "Source: Local directory (${SOURCE_DIR})"
+fi
 
 if ! mkdir -p "${MPBASEBACK}/Server/apps"; then
     log_message "ERROR: Failed to create apps backup directory"
@@ -1165,70 +1216,136 @@ else
 fi
 
 # ----------------------------------------------------------------------------
-# Download and build
+# Download/Copy and build
 # ----------------------------------------------------------------------------
 
-log_message "Cloning MacPatch repository (branch: ${GITBRANCH})..."
-clone_dest="/opt/MacPatch"
-build_script="${clone_dest}/scripts/MPBuildServer.sh"
+install_dest="/opt/MacPatch"
+build_script="${install_dest}/scripts/MPBuildServer.sh"
 
-if $SKIP_CONTENT_MIGRATION; then
-    # -n flag: Clone into existing directory (Content already there)
-    log_message "Cloning into existing directory (Content preserved)..."
+if $USE_GIT_CLONE; then
+    # Git clone mode
+    log_message "Cloning MacPatch repository from GitHub (branch: ${GITBRANCH})..."
 
-    if ! cd "$clone_dest"; then
-        log_message "ERROR: Cannot change to ${clone_dest}"
-        exit 1
-    fi
+    if $SKIP_CONTENT_MIGRATION; then
+        # -n flag: Clone into existing directory (Content already there)
+        log_message "Cloning into existing directory (Content preserved)..."
 
-    # Initialize git repo and pull
-    if ! git clone https://github.com/LLNL/MacPatch.git -b "$GITBRANCH" "${clone_dest}/.tmp_clone"; then
-        log_message "ERROR: Failed to clone repository to temp location"
-        exit 1
-    fi
-
-    # Move files from temp clone to current directory
-    log_message "Moving cloned files into place..."
-    if ! mv "${clone_dest}/.tmp_clone"/* "${clone_dest}/" 2>/dev/null; then
-        # Try with dotfiles too
-        mv "${clone_dest}/.tmp_clone"/.[^.]* "${clone_dest}/" 2>/dev/null || true
-    fi
-    mv "${clone_dest}/.tmp_clone"/* "${clone_dest}/" 2>/dev/null || true
-
-    # Remove temp clone directory
-    rm -rf "${clone_dest}/.tmp_clone"
-
-    log_message "Repository cloned successfully (Content preserved)"
-
-else
-    # Default: Clone to fresh directory
-    # Change to /opt directory
-    if ! cd /opt; then
-        log_message "ERROR: Cannot change to /opt directory"
-        exit 1
-    fi
-
-    # Remove any existing clone attempt
-    if [ -d "$clone_dest" ]; then
-        log_message "WARNING: ${clone_dest} already exists, removing..."
-        if ! rm -rf "$clone_dest"; then
-            log_message "ERROR: Failed to remove existing directory"
+        if ! cd "$install_dest"; then
+            log_message "ERROR: Cannot change to ${install_dest}"
             exit 1
         fi
+
+        # Clone to temp location
+        if ! git clone https://github.com/LLNL/MacPatch.git -b "$GITBRANCH" "${install_dest}/.tmp_clone"; then
+            log_message "ERROR: Failed to clone repository to temp location"
+            exit 1
+        fi
+
+        # Move files from temp clone to current directory
+        log_message "Moving cloned files into place..."
+        if ! mv "${install_dest}/.tmp_clone"/* "${install_dest}/" 2>/dev/null; then
+            # Try with dotfiles too
+            mv "${install_dest}/.tmp_clone"/.[^.]* "${install_dest}/" 2>/dev/null || true
+        fi
+        mv "${install_dest}/.tmp_clone"/* "${install_dest}/" 2>/dev/null || true
+
+        # Remove temp clone directory
+        rm -rf "${install_dest}/.tmp_clone"
+
+        log_message "Repository cloned successfully (Content preserved)"
+
+    else
+        # Default: Clone to fresh directory
+        if ! cd /opt; then
+            log_message "ERROR: Cannot change to /opt directory"
+            exit 1
+        fi
+
+        # Remove any existing directory
+        if [ -d "$install_dest" ]; then
+            log_message "WARNING: ${install_dest} already exists, removing..."
+            if ! rm -rf "$install_dest"; then
+                log_message "ERROR: Failed to remove existing directory"
+                exit 1
+            fi
+        fi
+
+        # Clone repository
+        if ! git clone https://github.com/LLNL/MacPatch.git -b "$GITBRANCH" "$install_dest"; then
+            log_message "ERROR: Failed to clone repository"
+            exit 1
+        fi
+
+        log_message "Repository cloned successfully"
     fi
 
-    # Clone repository
-    if ! git clone https://github.com/LLNL/MacPatch.git -b "$GITBRANCH" "$clone_dest"; then
-        log_message "ERROR: Failed to clone repository"
-        exit 1
-    fi
+else
+    # Local source mode - copy from SOURCE_DIR
+    log_message "Copying MacPatch from local source: ${SOURCE_DIR}"
 
-    log_message "Repository cloned successfully"
+    if $SKIP_CONTENT_MIGRATION; then
+        # -n flag: Copy into existing directory (Content already there)
+        log_message "Copying into existing directory (Content preserved)..."
+
+        if ! cd "$install_dest"; then
+            log_message "ERROR: Cannot change to ${install_dest}"
+            exit 1
+        fi
+
+        # Copy everything except Content directory
+        log_message "Copying files from source (excluding Content)..."
+        for item in "${SOURCE_DIR}"/*; do
+            item_name=$(basename "$item")
+            if [ "$item_name" != "Content" ]; then
+                if ! cp -rp "$item" "${install_dest}/"; then
+                    log_message "ERROR: Failed to copy $item_name"
+                    exit 1
+                fi
+            fi
+        done
+
+        # Copy hidden files/directories
+        for item in "${SOURCE_DIR}"/.[^.]*; do
+            if [ -e "$item" ]; then
+                item_name=$(basename "$item")
+                if [ "$item_name" != ".git" ]; then  # Skip .git directory
+                    cp -rp "$item" "${install_dest}/" 2>/dev/null || true
+                fi
+            fi
+        done
+
+        log_message "Source copied successfully (Content preserved)"
+
+    else
+        # Default: Copy to fresh directory
+        if ! cd /opt; then
+            log_message "ERROR: Cannot change to /opt directory"
+            exit 1
+        fi
+
+        # Remove any existing directory
+        if [ -d "$install_dest" ]; then
+            log_message "WARNING: ${install_dest} already exists, removing..."
+            if ! rm -rf "$install_dest"; then
+                log_message "ERROR: Failed to remove existing directory"
+                exit 1
+            fi
+        fi
+
+        # Copy source directory to install destination
+        log_message "Copying source directory to ${install_dest}..."
+        if ! cp -rp "$SOURCE_DIR" "$install_dest"; then
+            log_message "ERROR: Failed to copy source directory"
+            exit 1
+        fi
+
+        log_message "Source copied successfully"
+    fi
 fi
 
-# Verify clone succeeded
-if ! validate_path "$clone_dest" "dir"; then
-    log_message "ERROR: Clone completed but directory not found at ${clone_dest}"
+# Verify installation destination
+if ! validate_path "$install_dest" "dir"; then
+    log_message "ERROR: Installation directory not found at ${install_dest}"
     exit 1
 fi
 
