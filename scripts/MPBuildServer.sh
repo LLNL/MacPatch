@@ -570,7 +570,7 @@ fi
 # Download or use bundled NGINX
 # ------------------
 download_nginx() {
-    local nginx_version="${1:-1.31.2}"
+    local nginx_version="${1:-1.31.7}"
     local nginx_url="https://nginx.org/download/nginx-${nginx_version}.tar.gz"
     local build_dir="/tmp/nginx-build-${DTS}"
     local nginx_tar="nginx-${nginx_version}.tar.gz"
