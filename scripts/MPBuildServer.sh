@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.8.7
+# Version: 3.8.8
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,6 +12,10 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
+# 3.8.8     Added Python version detection and selection
+#           Checks for Python 3.14 first (preferred), then any 3.12+
+#           Minimum version is 3.12, will use 3.14 if available
+#           Skips Python installation if suitable version already present
 # 3.8.7     Extended Python script permission handling
 #           All .py files in conf/scripts now get 755 (admin/utility scripts)
 #           Python scripts with shebangs in both apps and conf/scripts get 755
@@ -936,12 +940,49 @@ fi
 
 # Python 3.12 is the minimum supported version and 3.14 is recommended.
 # Set MP_PYTHON to use a specific interpreter, e.g. MP_PYTHON=python3.14
-py3="${MP_PYTHON:-$py3}"
-if ! command -v "$py3" > /dev/null 2>&1 || ! "$py3" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 12) else 1)'; then
-    echo "MacPatch Server requires Python 3.12 or higher (3.14 is recommended)."
-    echo "\"$py3\" was not found or is older than 3.12. Install a newer Python, or set"
-    echo "MP_PYTHON to the interpreter to use, e.g. MP_PYTHON=python3.14"
-    exit 1
+# If MP_PYTHON is not set, check for python3.14 first (preferred), then python3.12+
+if [ -z "$MP_PYTHON" ]; then
+    # Check for python3.14 first (preferred version)
+    if command -v python3.14 > /dev/null 2>&1; then
+        py3="python3.14"
+        echo "Found preferred Python 3.14"
+    else
+        # Check if default py3 meets minimum version (3.12)
+        if command -v "$py3" > /dev/null 2>&1; then
+            pyVer=$("$py3" -c 'import sys; print(".".join(map(str, sys.version_info[:2])))' 2>/dev/null)
+            if [ -n "$pyVer" ]; then
+                pyMajor=$(echo "$pyVer" | cut -d. -f1)
+                pyMinor=$(echo "$pyVer" | cut -d. -f2)
+                if [ "$pyMajor" -eq 3 ] && [ "$pyMinor" -ge 12 ]; then
+                    echo "Found Python $pyVer (meets minimum 3.12)"
+                else
+                    echo "Python $pyVer found but does not meet minimum version 3.12"
+                    py3=""
+                fi
+            else
+                py3=""
+            fi
+        else
+            py3=""
+        fi
+
+        # If no suitable Python found, error out
+        if [ -z "$py3" ]; then
+            echo "MacPatch Server requires Python 3.12 or higher (3.14 is recommended)."
+            echo "No suitable Python interpreter found. Install Python 3.12+, or set"
+            echo "MP_PYTHON to the interpreter to use, e.g. MP_PYTHON=python3.14"
+            exit 1
+        fi
+    fi
+else
+    # User specified MP_PYTHON, use it but validate minimum version
+    py3="$MP_PYTHON"
+    if ! command -v "$py3" > /dev/null 2>&1 || ! "$py3" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 12) else 1)'; then
+        echo "MacPatch Server requires Python 3.12 or higher (3.14 is recommended)."
+        echo "\"$py3\" was not found or is older than 3.12. Install a newer Python, or set"
+        echo "MP_PYTHON to the interpreter to use, e.g. MP_PYTHON=python3.14"
+        exit 1
+    fi
 fi
 echo "Using Python: $($py3 --version 2>&1) ($(command -v "$py3"))"
 
