@@ -2,12 +2,18 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPServerUpgrader.sh
-# Version: 3.4.1
+# Version: 3.4.2
 #
 # Description:
 # Upgrade script will upgrade a current install of the MacPatch server
 #
 # History:
+# 3.4.2 - Improved permission handling:
+#       - Sets executables to explicit 755 (not just +x which gave 754)
+#       - All executable files now get rwxr-xr-x (755) permissions
+#       - Includes nginx binary, shell scripts, venv binaries, Python scripts
+#       - Service files explicitly set to 644 (not executable)
+#       - Fixes issue where files had 754 instead of 755
 # 3.4.1 - Permission handling fix:
 #       - Fixed issue where virtual environment binaries lost execute permissions
 #       - Now preserves execute bit on files that already have it
@@ -1580,49 +1586,79 @@ if [[ "$platform" == "linux" ]]; then
     log_message "Setting ownership to ${MP_USER}..."
     chown -R ${MP_USER}:${MP_USER} "${MPBASE}" || log_message "WARNING: Failed to set ownership"
 
-    # Set directory permissions
+    # Set directory permissions to 755
     find "${MPBASE}" -type d -exec chmod 755 {} \; || log_message "WARNING: Failed to set directory permissions"
 
-    # Set file permissions (excluding executables)
-    # Files that should remain executable are preserved by checking current permissions
-    log_message "Setting file permissions (preserving executables)..."
-    find "${MPBASE}" -type f ! -perm -111 -exec chmod 644 {} \; 2>/dev/null || log_message "WARNING: Failed to set some file permissions"
+    # Set all file permissions to 644 first (base permission for non-executables)
+    log_message "Setting base file permissions (644)..."
+    find "${MPBASE}" -type f -exec chmod 644 {} \; 2>/dev/null || log_message "WARNING: Failed to set some file permissions"
 
-    # Ensure virtual environment binaries remain executable
+    # Now set executable files to 755 (not just +x, but explicit 755)
+    log_message "Setting executable permissions (755)..."
+
+    # Nginx binary
+    if [ -f "${MPSERVERBASE}/nginx/sbin/nginx" ]; then
+        chmod 755 "${MPSERVERBASE}/nginx/sbin/nginx"
+        log_message "Set nginx binary to 755"
+    fi
+
+    # Virtual environment binaries - all files in venv/bin should be 755
     for venv_bin in "${MPSERVERBASE}/apps/api/venv/bin" "${MPSERVERBASE}/apps/console/venv/bin"; do
         if [ -d "$venv_bin" ]; then
-            log_message "Ensuring virtual environment binaries are executable: $venv_bin"
-            find "$venv_bin" -type f -exec chmod +x {} \; 2>/dev/null || true
+            log_message "Setting venv binaries to 755: $venv_bin"
+            find "$venv_bin" -type f -exec chmod 755 {} \; 2>/dev/null || true
         fi
     done
 
-    # Make scripts executable
-    find "${MPBASE}/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
-    find "${MPBASE}/Server/conf/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+    # Shell scripts in all locations - set to 755
+    find "${MPBASE}/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
+    find "${MPBASE}/Server/conf/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
+    find "${MPBASE}/Server/conf/Content/Web/clients" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
+
+    # Python scripts with shebangs - set to 755
+    find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+
+    # Systemd service files should remain 644 (not executable)
+    find "${MPBASE}/Server/conf/scripts/systemd" -type f -name "*.service" -exec chmod 644 {} \; 2>/dev/null || true
 else
     # macOS: set ownership to _appserver
     log_message "Setting ownership to _appserver..."
     chown -R _appserver:_appserver "${MPBASE}" || log_message "WARNING: Failed to set ownership"
 
-    # Set directory permissions
+    # Set directory permissions to 755
     find "${MPBASE}" -type d -exec chmod 755 {} \; || log_message "WARNING: Failed to set directory permissions"
 
-    # Set file permissions (excluding executables)
-    # Files that should remain executable are preserved by checking current permissions
-    log_message "Setting file permissions (preserving executables)..."
-    find "${MPBASE}" -type f ! -perm -111 -exec chmod 644 {} \; 2>/dev/null || log_message "WARNING: Failed to set some file permissions"
+    # Set all file permissions to 644 first (base permission for non-executables)
+    log_message "Setting base file permissions (644)..."
+    find "${MPBASE}" -type f -exec chmod 644 {} \; 2>/dev/null || log_message "WARNING: Failed to set some file permissions"
 
-    # Ensure virtual environment binaries remain executable
+    # Now set executable files to 755 (not just +x, but explicit 755)
+    log_message "Setting executable permissions (755)..."
+
+    # Nginx binary
+    if [ -f "${MPSERVERBASE}/nginx/sbin/nginx" ]; then
+        chmod 755 "${MPSERVERBASE}/nginx/sbin/nginx"
+        log_message "Set nginx binary to 755"
+    fi
+
+    # Virtual environment binaries - all files in venv/bin should be 755
     for venv_bin in "${MPSERVERBASE}/apps/api/venv/bin" "${MPSERVERBASE}/apps/console/venv/bin"; do
         if [ -d "$venv_bin" ]; then
-            log_message "Ensuring virtual environment binaries are executable: $venv_bin"
-            find "$venv_bin" -type f -exec chmod +x {} \; 2>/dev/null || true
+            log_message "Setting venv binaries to 755: $venv_bin"
+            find "$venv_bin" -type f -exec chmod 755 {} \; 2>/dev/null || true
         fi
     done
 
-    # Make scripts executable
-    find "${MPBASE}/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
-    find "${MPBASE}/Server/conf/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+    # Shell scripts in all locations - set to 755
+    find "${MPBASE}/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
+    find "${MPBASE}/Server/conf/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
+    find "${MPBASE}/Server/conf/Content/Web/clients" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
+
+    # Python scripts with shebangs - set to 755
+    find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+
+    # Systemd service files should remain 644 (not executable)
+    find "${MPBASE}/Server/conf/scripts/systemd" -type f -name "*.service" -exec chmod 644 {} \; 2>/dev/null || true
 fi
 
 # Set special permissions for Content directory

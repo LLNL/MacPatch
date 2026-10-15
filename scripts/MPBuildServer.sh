@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.8.5
+# Version: 3.8.6
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,6 +12,11 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
+# 3.8.6     Improved permission handling with explicit 755 for executables
+#           Sets all files to 644 first, then executables to 755 (not 754)
+#           Ensures consistent rwxr-xr-x (755) for all executable files
+#           Includes nginx binary, shell scripts, venv binaries, Python scripts
+#           Service files explicitly set to 644 (not executable)
 # 3.8.5     Fixed executable permission handling
 #           Explicitly ensures nginx binary remains executable
 #           Ensures shell scripts (.sh) remain executable
@@ -704,27 +709,38 @@ done
 ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
 chown -R $OWNERGRP ${MPSERVERBASE}
 
-# Ensure critical binaries and scripts remain executable after ownership change
-echo "Ensuring executables have correct permissions..."
+# Ensure critical binaries and scripts have correct permissions (755 for executables, 644 for regular files)
+echo "Setting correct file permissions..."
+
+# Set base permissions for all files and directories
+find "${MPSERVERBASE}" -type d -exec chmod 755 {} \; 2>/dev/null || true
+find "${MPSERVERBASE}" -type f -exec chmod 644 {} \; 2>/dev/null || true
+
+# Now set executable files to 755
+echo "Setting executable permissions (755)..."
 
 # Nginx binary
 if [ -f "${MPSERVERBASE}/nginx/sbin/nginx" ]; then
-    chmod +x "${MPSERVERBASE}/nginx/sbin/nginx"
+    chmod 755 "${MPSERVERBASE}/nginx/sbin/nginx"
 fi
 
-# Shell scripts
-find "${MPSERVERBASE}/conf/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
-find "${MPSERVERBASE}/conf/Content/Web/clients" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+# Shell scripts in all locations
+find "${MPSERVERBASE}/conf/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
+find "${MPSERVERBASE}/conf/Content/Web/clients" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
+find "${MPBASE}/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
 
-# Virtual environment binaries
+# Virtual environment binaries (all files in bin directories should be executable)
 for venv_bin in "${MPSERVERBASE}/apps/api/venv/bin" "${MPSERVERBASE}/apps/console/venv/bin"; do
     if [ -d "$venv_bin" ]; then
-        find "$venv_bin" -type f -exec chmod +x {} \; 2>/dev/null || true
+        find "$venv_bin" -type f -exec chmod 755 {} \; 2>/dev/null || true
     fi
 done
 
 # Python scripts with shebangs
-find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod +x 2>/dev/null || true
+find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+
+# Systemd service files should be 644
+find "${MPSERVERBASE}/conf/scripts/systemd" -type f -name "*.service" -exec chmod 644 {} \; 2>/dev/null || true
 
 # Admin Site - App
 echo
@@ -1011,34 +1027,43 @@ chmod -R 0775 "${MPSERVERBASE}/etc"
 chmod -R 0775 "${MPSERVERBASE}/InvData"
 chown -R $OWNERGRP "${MPSERVERBASE}/env"
 
-# Final check: ensure all critical executables have execute permissions
-echo "Verifying executable permissions..."
+# Final check: ensure all files have correct permissions (755 for executables, 644 for others)
+echo "Final permission verification..."
 
 # Nginx binary
 if [ -f "${MPSERVERBASE}/nginx/sbin/nginx" ]; then
-    chmod +x "${MPSERVERBASE}/nginx/sbin/nginx"
-    echo "✓ Nginx binary executable"
+    chmod 755 "${MPSERVERBASE}/nginx/sbin/nginx"
+    echo "✓ Nginx binary (755)"
 fi
 
 # Shell scripts in various locations
 for script_dir in "${MPBASE}/scripts" "${MPSERVERBASE}/conf/scripts" "${MPSERVERBASE}/conf/Content/Web/clients"; do
     if [ -d "$script_dir" ]; then
-        find "$script_dir" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+        # Set all .sh files to 755
+        find "$script_dir" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null || true
+        # Set non-.sh files to 644 (like .service files)
+        find "$script_dir" -type f ! -name "*.sh" -exec chmod 644 {} \; 2>/dev/null || true
     fi
 done
-echo "✓ Shell scripts executable"
+echo "✓ Shell scripts (755)"
 
-# Virtual environment binaries (API and Console)
+# Virtual environment binaries (API and Console) - all should be 755
 for venv_bin in "${MPSERVERBASE}/apps/api/venv/bin" "${MPSERVERBASE}/apps/console/venv/bin"; do
     if [ -d "$venv_bin" ]; then
-        find "$venv_bin" -type f -exec chmod +x {} \; 2>/dev/null || true
+        find "$venv_bin" -type f -exec chmod 755 {} \; 2>/dev/null || true
     fi
 done
-echo "✓ Virtual environment binaries executable"
+echo "✓ Virtual environment binaries (755)"
 
-# Python scripts with shebangs
-find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod +x 2>/dev/null || true
-echo "✓ Python scripts with shebangs executable"
+# Python scripts with shebangs should be 755
+find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+echo "✓ Python scripts with shebangs (755)"
+
+# Ensure systemd service files are 644 (not executable)
+if [ -d "${MPSERVERBASE}/conf/scripts/systemd" ]; then
+    find "${MPSERVERBASE}/conf/scripts/systemd" -type f -name "*.service" -exec chmod 644 {} \; 2>/dev/null || true
+    echo "✓ Systemd service files (644)"
+fi
 
 echo
 echo
