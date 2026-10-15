@@ -2,12 +2,16 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPServerUpgrader.sh
-# Version: 3.4.2
+# Version: 3.4.3
 #
 # Description:
 # Upgrade script will upgrade a current install of the MacPatch server
 #
 # History:
+# 3.4.3 - Extended Python script permission handling:
+#       - All .py files in conf/scripts now get 755 (admin/utility scripts)
+#       - Python scripts with shebangs in both apps and conf/scripts get 755
+#       - Ensures ServerSetup.py and other admin scripts remain executable
 # 3.4.2 - Improved permission handling:
 #       - Sets executables to explicit 755 (not just +x which gave 754)
 #       - All executable files now get rwxr-xr-x (755) permissions
@@ -1617,6 +1621,10 @@ if [[ "$platform" == "linux" ]]; then
 
     # Python scripts with shebangs - set to 755
     find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+    find "${MPSERVERBASE}/conf/scripts" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+
+    # All .py files in conf/scripts should be executable (they're typically admin scripts)
+    find "${MPSERVERBASE}/conf/scripts" -type f -name "*.py" -exec chmod 755 {} \; 2>/dev/null || true
 
     # Systemd service files should remain 644 (not executable)
     find "${MPBASE}/Server/conf/scripts/systemd" -type f -name "*.service" -exec chmod 644 {} \; 2>/dev/null || true
@@ -1656,6 +1664,10 @@ else
 
     # Python scripts with shebangs - set to 755
     find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+    find "${MPSERVERBASE}/conf/scripts" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+
+    # All .py files in conf/scripts should be executable (they're typically admin scripts)
+    find "${MPSERVERBASE}/conf/scripts" -type f -name "*.py" -exec chmod 755 {} \; 2>/dev/null || true
 
     # Systemd service files should remain 644 (not executable)
     find "${MPBASE}/Server/conf/scripts/systemd" -type f -name "*.service" -exec chmod 644 {} \; 2>/dev/null || true

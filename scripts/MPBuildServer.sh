@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.8.6
+# Version: 3.8.7
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,6 +12,10 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
+# 3.8.7     Extended Python script permission handling
+#           All .py files in conf/scripts now get 755 (admin/utility scripts)
+#           Python scripts with shebangs in both apps and conf/scripts get 755
+#           Ensures ServerSetup.py and other admin scripts are executable
 # 3.8.6     Improved permission handling with explicit 755 for executables
 #           Sets all files to 644 first, then executables to 755 (not 754)
 #           Ensures consistent rwxr-xr-x (755) for all executable files
@@ -736,8 +740,12 @@ for venv_bin in "${MPSERVERBASE}/apps/api/venv/bin" "${MPSERVERBASE}/apps/consol
     fi
 done
 
-# Python scripts with shebangs
+# Python scripts with shebangs in apps and conf/scripts
 find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+find "${MPSERVERBASE}/conf/scripts" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+
+# All .py files in conf/scripts should be executable (they're typically admin scripts)
+find "${MPSERVERBASE}/conf/scripts" -type f -name "*.py" -exec chmod 755 {} \; 2>/dev/null || true
 
 # Systemd service files should be 644
 find "${MPSERVERBASE}/conf/scripts/systemd" -type f -name "*.service" -exec chmod 644 {} \; 2>/dev/null || true
@@ -1057,7 +1065,11 @@ echo "✓ Virtual environment binaries (755)"
 
 # Python scripts with shebangs should be 755
 find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
-echo "✓ Python scripts with shebangs (755)"
+find "${MPSERVERBASE}/conf/scripts" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod 755 2>/dev/null || true
+
+# All .py files in conf/scripts should be executable (they're typically admin scripts)
+find "${MPSERVERBASE}/conf/scripts" -type f -name "*.py" -exec chmod 755 {} \; 2>/dev/null || true
+echo "✓ Python scripts (755)"
 
 # Ensure systemd service files are 644 (not executable)
 if [ -d "${MPSERVERBASE}/conf/scripts/systemd" ]; then
