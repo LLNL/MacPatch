@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.8.1
+# Version: 3.8.2
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,6 +12,10 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
+# 3.8.2     Added nginx download with fallback to bundled version
+#           Attempts to download latest nginx from nginx.org first
+#           Falls back to bundled nginx tar.gz if download fails
+#           Validates downloaded file before using it
 # 3.8.1     Check if Node.js is already installed before attempting reinstall
 #           Skip Node.js installation if version >= 18.0.0 is already present
 #           Skip yarn installation if already installed
@@ -111,6 +115,7 @@ py3="python3"
 majorVer="0"
 minorVer="0"
 buildVer="0"
+DTS=$(date +%Y%m%d_%H%M%S)
 
 if [[ $platform == 'linux' ]]; then
 
@@ -547,6 +552,59 @@ fi
 
 
 # ------------------
+# ------------------
+# Download or use bundled NGINX
+# ------------------
+download_nginx() {
+    local nginx_version="${1:-1.31.2}"
+    local nginx_url="https://nginx.org/download/nginx-${nginx_version}.tar.gz"
+    local build_dir="/tmp/nginx-build-${DTS}"
+    local nginx_tar="nginx-${nginx_version}.tar.gz"
+    local download_success=false
+
+    echo
+    echo "* Downloading NGINX ${nginx_version}"
+    echo "-----------------------------------------------------------------------"
+
+    # Create temporary build directory
+    mkdir -p "${build_dir}"
+
+    # Try to download nginx from nginx.org
+    echo "Attempting to download nginx ${nginx_version} from nginx.org..."
+    if curl -f -L -o "${build_dir}/${nginx_tar}" "${nginx_url}" 2>/dev/null; then
+        echo "✓ Successfully downloaded nginx ${nginx_version}"
+        download_success=true
+
+        # Verify the download is a valid tar.gz
+        if tar -tzf "${build_dir}/${nginx_tar}" >/dev/null 2>&1; then
+            echo "✓ Download verified as valid tar.gz"
+            echo "${build_dir}/${nginx_tar}"
+            return 0
+        else
+            echo "✗ Downloaded file is not a valid tar.gz, will use bundled version"
+            download_success=false
+        fi
+    else
+        echo "✗ Failed to download nginx from nginx.org"
+    fi
+
+    # Fallback to bundled nginx tar.gz
+    if ! $download_success; then
+        echo "Using bundled nginx from repository..."
+        local bundled_nginx=$(find "${SRC_DIR}" -name "nginx-*.tar.gz" -type f | head -n 1)
+
+        if [ -n "$bundled_nginx" ] && [ -f "$bundled_nginx" ]; then
+            local bundled_version=$(basename "$bundled_nginx" .tar.gz | sed 's/nginx-//')
+            echo "✓ Found bundled nginx ${bundled_version}: $bundled_nginx"
+            echo "$bundled_nginx"
+            return 0
+        else
+            echo "✗ ERROR: No bundled nginx found in ${SRC_DIR}"
+            return 1
+        fi
+    fi
+}
+
 # Build NGINX
 # ------------------
 echo
@@ -554,10 +612,27 @@ echo "* Build and configure NGINX"
 echo "-----------------------------------------------------------------------"
 echo "See nginx build status in ${MPSERVERBASE}/logs/nginx-build.log"
 echo
-NGINX_SW=`find "${SRC_DIR}" -name "nginx-"* -type f -exec basename {} \; | tail -n +1 | head -n 1`
+
+# Download or get bundled nginx
+NGINX_TAR_PATH=$(download_nginx "1.31.2")
+if [ $? -ne 0 ] || [ -z "$NGINX_TAR_PATH" ]; then
+    echo "ERROR: Failed to obtain nginx source"
+    exit 1
+fi
+
+NGINX_SW=$(basename "$NGINX_TAR_PATH")
+echo "Using nginx: ${NGINX_SW}"
+echo
 
 mkdir -p ${BUILDROOT}/nginx
-tar xfz ${SRC_DIR}/${NGINX_SW} --strip 1 -C ${BUILDROOT}/nginx
+tar xfz "${NGINX_TAR_PATH}" --strip 1 -C ${BUILDROOT}/nginx
+
+# Clean up temporary download if it was downloaded
+if [[ "${NGINX_TAR_PATH}" == /tmp/nginx-build-* ]]; then
+    echo "Cleaning up temporary download directory..."
+    rm -rf "$(dirname "${NGINX_TAR_PATH}")"
+fi
+
 cd ${BUILDROOT}/nginx
 
 if $USELINUX; then

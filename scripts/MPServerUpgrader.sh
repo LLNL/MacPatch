@@ -2,12 +2,17 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPServerUpgrader.sh
-# Version: 3.4
+# Version: 3.4.1
 #
 # Description:
 # Upgrade script will upgrade a current install of the MacPatch server
 #
 # History:
+# 3.4.1 - Permission handling fix:
+#       - Fixed issue where virtual environment binaries lost execute permissions
+#       - Now preserves execute bit on files that already have it
+#       - Explicitly ensures venv/bin/* files remain executable
+#       - Uses find with ! -perm -111 to only chmod non-executable files
 # 3.4 - Local source directory support:
 #       - Added -g flag to enable GitHub cloning (now opt-in)
 #       - Default behavior: uses parent directory of script as source
@@ -1578,8 +1583,18 @@ if [[ "$platform" == "linux" ]]; then
     # Set directory permissions
     find "${MPBASE}" -type d -exec chmod 755 {} \; || log_message "WARNING: Failed to set directory permissions"
 
-    # Set file permissions
-    find "${MPBASE}" -type f -exec chmod 644 {} \; || log_message "WARNING: Failed to set file permissions"
+    # Set file permissions (excluding executables)
+    # Files that should remain executable are preserved by checking current permissions
+    log_message "Setting file permissions (preserving executables)..."
+    find "${MPBASE}" -type f ! -perm -111 -exec chmod 644 {} \; 2>/dev/null || log_message "WARNING: Failed to set some file permissions"
+
+    # Ensure virtual environment binaries remain executable
+    for venv_bin in "${MPSERVERBASE}/apps/api/venv/bin" "${MPSERVERBASE}/apps/console/venv/bin"; do
+        if [ -d "$venv_bin" ]; then
+            log_message "Ensuring virtual environment binaries are executable: $venv_bin"
+            find "$venv_bin" -type f -exec chmod +x {} \; 2>/dev/null || true
+        fi
+    done
 
     # Make scripts executable
     find "${MPBASE}/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
@@ -1592,8 +1607,18 @@ else
     # Set directory permissions
     find "${MPBASE}" -type d -exec chmod 755 {} \; || log_message "WARNING: Failed to set directory permissions"
 
-    # Set file permissions
-    find "${MPBASE}" -type f -exec chmod 644 {} \; || log_message "WARNING: Failed to set file permissions"
+    # Set file permissions (excluding executables)
+    # Files that should remain executable are preserved by checking current permissions
+    log_message "Setting file permissions (preserving executables)..."
+    find "${MPBASE}" -type f ! -perm -111 -exec chmod 644 {} \; 2>/dev/null || log_message "WARNING: Failed to set some file permissions"
+
+    # Ensure virtual environment binaries remain executable
+    for venv_bin in "${MPSERVERBASE}/apps/api/venv/bin" "${MPSERVERBASE}/apps/console/venv/bin"; do
+        if [ -d "$venv_bin" ]; then
+            log_message "Ensuring virtual environment binaries are executable: $venv_bin"
+            find "$venv_bin" -type f -exec chmod +x {} \; 2>/dev/null || true
+        fi
+    done
 
     # Make scripts executable
     find "${MPBASE}/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
