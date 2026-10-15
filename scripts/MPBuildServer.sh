@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.8.3
+# Version: 3.8.5
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,6 +12,17 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
+# 3.8.5     Fixed executable permission handling
+#           Explicitly ensures nginx binary remains executable
+#           Ensures shell scripts (.sh) remain executable
+#           Ensures virtual environment binaries remain executable
+#           Ensures Python scripts with shebangs remain executable
+#           Added verification step at end of build
+# 3.8.4     Added SECRET_KEY validation and generation
+#           Checks .mpglobal file for SECRET_KEY presence and length
+#           Offers to generate secure 64-character SECRET_KEY
+#           Validates existing keys are at least 32 characters
+#           Supports graceful key rotation (preserves old key as SECRET_KEY_OLD)
 # 3.8.3     Fixed nginx download function output handling
 #           Status messages now go to stderr, only path to stdout
 #           Prevents command substitution from capturing echo statements
@@ -693,6 +704,28 @@ done
 ln -s ${MPSERVERBASE}/conf/Content/Doc ${MPBASE}/Content/Doc
 chown -R $OWNERGRP ${MPSERVERBASE}
 
+# Ensure critical binaries and scripts remain executable after ownership change
+echo "Ensuring executables have correct permissions..."
+
+# Nginx binary
+if [ -f "${MPSERVERBASE}/nginx/sbin/nginx" ]; then
+    chmod +x "${MPSERVERBASE}/nginx/sbin/nginx"
+fi
+
+# Shell scripts
+find "${MPSERVERBASE}/conf/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+find "${MPSERVERBASE}/conf/Content/Web/clients" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+
+# Virtual environment binaries
+for venv_bin in "${MPSERVERBASE}/apps/api/venv/bin" "${MPSERVERBASE}/apps/console/venv/bin"; do
+    if [ -d "$venv_bin" ]; then
+        find "$venv_bin" -type f -exec chmod +x {} \; 2>/dev/null || true
+    fi
+done
+
+# Python scripts with shebangs
+find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod +x 2>/dev/null || true
+
 # Admin Site - App
 echo
 echo "* Configuring Console app"
@@ -711,6 +744,115 @@ echo "* Installing Javascript modules"
 echo
 cd ${MPSERVERBASE}/apps/console/mpconsole
 yarn install --cwd ${MPSERVERBASE}/apps/console/mpconsole --modules-folder static/yarn_components --no-bin-links
+
+# ------------------------------------------------------------
+# Check and validate SECRET_KEY in .mpglobal
+# ------------------------------------------------------------
+echo
+echo "* Checking SECRET_KEY configuration"
+echo "-----------------------------------------------------------------------"
+
+MPGLOBAL_FILE="${MPSERVERBASE}/apps/.mpglobal"
+
+# Check if .mpglobal exists
+if [ ! -f "$MPGLOBAL_FILE" ]; then
+    echo "WARNING: .mpglobal file not found at ${MPGLOBAL_FILE}"
+    echo "Creating .mpglobal file..."
+    echo "# Shared App Variables" > "$MPGLOBAL_FILE"
+fi
+
+# Check if SECRET_KEY is set
+if ! grep -q "^SECRET_KEY=" "$MPGLOBAL_FILE"; then
+    echo
+    echo "============================================================================"
+    echo "CRITICAL: SECRET_KEY is not set in .mpglobal file!"
+    echo "============================================================================"
+    echo
+    echo "The SECRET_KEY is required for secure session management and token signing."
+    echo "You must set a strong, random SECRET_KEY before starting the MacPatch services."
+    echo
+    echo "Generate a secure key with:"
+    echo "  python3 -c 'import secrets; print(secrets.token_hex(32))'"
+    echo
+    echo "Then add it to ${MPGLOBAL_FILE}:"
+    echo "  SECRET_KEY=<your-generated-key>"
+    echo
+    echo "The SECRET_KEY must be at least 32 characters long."
+    echo
+    read -p "Would you like to generate and set a SECRET_KEY now? (Y/N) [Y]: " GENERATE_KEY
+    GENERATE_KEY=${GENERATE_KEY:-Y}
+
+    if [ "$GENERATE_KEY" == "Y" ] || [ "$GENERATE_KEY" == "y" ]; then
+        # Generate a secure random key
+        NEW_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')
+
+        if [ -n "$NEW_SECRET_KEY" ]; then
+            echo >> "$MPGLOBAL_FILE"
+            echo "# Flask secret key for session management and token signing" >> "$MPGLOBAL_FILE"
+            echo "# Generated: $(date)" >> "$MPGLOBAL_FILE"
+            echo "SECRET_KEY=${NEW_SECRET_KEY}" >> "$MPGLOBAL_FILE"
+
+            echo
+            echo "✓ SECRET_KEY has been generated and saved to ${MPGLOBAL_FILE}"
+            echo
+        else
+            echo
+            echo "ERROR: Failed to generate SECRET_KEY"
+            echo "Please set it manually in ${MPGLOBAL_FILE}"
+            exit 1
+        fi
+    else
+        echo
+        echo "Build will continue, but you MUST set SECRET_KEY before starting services!"
+        echo "File location: ${MPGLOBAL_FILE}"
+        echo
+    fi
+else
+    # SECRET_KEY exists, validate it
+    SECRET_KEY_VALUE=$(grep "^SECRET_KEY=" "$MPGLOBAL_FILE" | cut -d= -f2)
+    SECRET_KEY_LENGTH=${#SECRET_KEY_VALUE}
+
+    if [ $SECRET_KEY_LENGTH -lt 32 ]; then
+        echo
+        echo "============================================================================"
+        echo "WARNING: SECRET_KEY is too short (${SECRET_KEY_LENGTH} characters)"
+        echo "============================================================================"
+        echo
+        echo "The SECRET_KEY must be at least 32 characters long for security."
+        echo "Current length: ${SECRET_KEY_LENGTH}"
+        echo
+        echo "Generate a new secure key with:"
+        echo "  python3 -c 'import secrets; print(secrets.token_hex(32))'"
+        echo
+        read -p "Would you like to generate a new SECRET_KEY now? (Y/N) [Y]: " REGEN_KEY
+        REGEN_KEY=${REGEN_KEY:-Y}
+
+        if [ "$REGEN_KEY" == "Y" ] || [ "$REGEN_KEY" == "y" ]; then
+            NEW_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')
+
+            if [ -n "$NEW_SECRET_KEY" ]; then
+                # Backup old key as SECRET_KEY_OLD for rotation support
+                sed -i.bak "s/^SECRET_KEY=.*/SECRET_KEY_OLD=${SECRET_KEY_VALUE}/" "$MPGLOBAL_FILE"
+                echo "SECRET_KEY=${NEW_SECRET_KEY}" >> "$MPGLOBAL_FILE"
+
+                echo
+                echo "✓ New SECRET_KEY generated and saved"
+                echo "✓ Old key preserved as SECRET_KEY_OLD for graceful rotation"
+                echo
+            else
+                echo
+                echo "ERROR: Failed to generate SECRET_KEY"
+                exit 1
+            fi
+        else
+            echo
+            echo "WARNING: Continuing with short SECRET_KEY - services may fail to start!"
+            echo
+        fi
+    else
+        echo "✓ SECRET_KEY is set and valid (${SECRET_KEY_LENGTH} characters)"
+    fi
+fi
 
 # ------------------------------------------------------------
 # Generate self signed certificates
@@ -868,6 +1010,35 @@ chmod -R 0775 "${MPSERVERBASE}/logs"
 chmod -R 0775 "${MPSERVERBASE}/etc"
 chmod -R 0775 "${MPSERVERBASE}/InvData"
 chown -R $OWNERGRP "${MPSERVERBASE}/env"
+
+# Final check: ensure all critical executables have execute permissions
+echo "Verifying executable permissions..."
+
+# Nginx binary
+if [ -f "${MPSERVERBASE}/nginx/sbin/nginx" ]; then
+    chmod +x "${MPSERVERBASE}/nginx/sbin/nginx"
+    echo "✓ Nginx binary executable"
+fi
+
+# Shell scripts in various locations
+for script_dir in "${MPBASE}/scripts" "${MPSERVERBASE}/conf/scripts" "${MPSERVERBASE}/conf/Content/Web/clients"; do
+    if [ -d "$script_dir" ]; then
+        find "$script_dir" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+    fi
+done
+echo "✓ Shell scripts executable"
+
+# Virtual environment binaries (API and Console)
+for venv_bin in "${MPSERVERBASE}/apps/api/venv/bin" "${MPSERVERBASE}/apps/console/venv/bin"; do
+    if [ -d "$venv_bin" ]; then
+        find "$venv_bin" -type f -exec chmod +x {} \; 2>/dev/null || true
+    fi
+done
+echo "✓ Virtual environment binaries executable"
+
+# Python scripts with shebangs
+find "${MPSERVERBASE}/apps" -type f -name "*.py" -exec grep -l "^#!" {} \; 2>/dev/null | xargs -r chmod +x 2>/dev/null || true
+echo "✓ Python scripts with shebangs executable"
 
 echo
 echo
