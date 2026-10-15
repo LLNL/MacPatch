@@ -2,7 +2,7 @@
 #
 # ----------------------------------------------------------------------------
 # Script: MPBuildServer.sh
-# Version: 3.6.2
+# Version: 3.8.1
 #
 # Description:
 # This is a very simple script to demonstrate how to automate
@@ -12,6 +12,9 @@
 # Simply modify the GITROOT and BUILDROOT variables
 #
 # History:
+# 3.8.1     Check if Node.js is already installed before attempting reinstall
+#           Skip Node.js installation if version >= 18.0.0 is already present
+#           Skip yarn installation if already installed
 # 1.4:    Remove Jetty Support
 #     Added Tomcat 7.0.57
 # 1.5:      Added Tomcat 7.0.63
@@ -424,14 +427,36 @@ if $USELINUX; then
         for i in "${pkgs[@]}"
         do
             if [ $i == "yarn" ]; then
-                curl -sL https://rpm.nodesource.com/setup_22.x | sudo -E bash -
-                echo
-                echo "Install nodejs 22.x"
-                yum clean all
-                yum install -y -q -e 1 nodejs
-                echo
-                echo "Install yarn via npm"
-                npm install --global yarn
+                # Check if node is already installed with recent enough version
+                minNodeVer="18.0.0"
+                needsNodeInstall=true
+
+                if command -v node >/dev/null 2>&1; then
+                    nodeVer=$(node -v | sed 's/v//g')
+                    if [ $(version $nodeVer) -ge $(version $minNodeVer) ]; then
+                        echo "Node.js $nodeVer is already installed (minimum required: $minNodeVer)"
+                        needsNodeInstall=false
+                    else
+                        echo "Node.js $nodeVer is installed but below minimum version $minNodeVer"
+                    fi
+                fi
+
+                if $needsNodeInstall; then
+                    curl -sL https://rpm.nodesource.com/setup_22.x | sudo -E bash -
+                    echo
+                    echo "Install nodejs 22.x"
+                    yum clean all
+                    yum install -y -q -e 1 nodejs
+                fi
+
+                # Check if yarn is already installed
+                if ! command -v yarn >/dev/null 2>&1; then
+                    echo
+                    echo "Install yarn via npm"
+                    npm install --global yarn
+                else
+                    echo "Yarn is already installed"
+                fi
             else
                 if [ $i == "redis6" ]; then
                     echo " - Install $i"
@@ -462,14 +487,34 @@ if $USELINUX; then
         for i in "${pkgs[@]}"
         do
             if [ $i == "yarn" ]; then
-                if [ $(version $ubuntuVer) -lt $(version 16.05) ]; then
+                # Check if node is already installed with recent enough version
+                minNodeVer="18.0.0"
+                needsNodeInstall=true
+
+                if command -v node >/dev/null 2>&1; then
+                    nodeVer=$(node -v | sed 's/v//g')
+                    if [ $(version $nodeVer) -ge $(version $minNodeVer) ]; then
+                        echo "Node.js $nodeVer is already installed (minimum required: $minNodeVer)"
+                        needsNodeInstall=false
+                    else
+                        echo "Node.js $nodeVer is installed but below minimum version $minNodeVer"
+                    fi
+                fi
+
+                if $needsNodeInstall && [ $(version $ubuntuVer) -lt $(version 16.05) ]; then
                     curl -sL https://deb.nodesource.com/setup_22.x | sudo -E bash -
                     echo
                     echo "Install nodejs 22.x"
                     sudo apt-get install -y nodejs
+                fi
+
+                # Check if yarn is already installed
+                if ! command -v yarn >/dev/null 2>&1; then
                     echo
                     echo "Install yarn via npm"
                     npm install --global yarn
+                else
+                    echo "Yarn is already installed"
                 fi
             else
                 p=`dpkg -l | grep '^ii' | grep ${i} | head -n 1 | awk '{print $2}' | grep ^${i}`
